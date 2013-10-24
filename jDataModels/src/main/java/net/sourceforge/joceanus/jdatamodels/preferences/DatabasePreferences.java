@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.preferences;
+package net.sourceforge.joceanus.jdatamodels.preferences;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.database.BatchControl;
-import net.sourceforge.jOceanus.jDataModels.database.JDBCDriver;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.database.BatchControl;
+import net.sourceforge.joceanus.jdatamodels.database.JDBCDriver;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 
 /**
  * Preferences for a database.

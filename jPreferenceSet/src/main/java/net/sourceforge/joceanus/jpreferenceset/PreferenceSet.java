@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jPreferenceSet;
+package net.sourceforge.joceanus.jpreferenceset;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -31,17 +31,17 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jEventManager.JEventObject;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSetItem;
-import net.sourceforge.jOceanus.jFieldSet.JFieldState;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
+import net.sourceforge.joceanus.jfieldset.JFieldState;
 
 /**
  * Wrapper class for java preferences.
@@ -694,7 +694,9 @@ public abstract class PreferenceSet
          */
         private Object getValue() {
             /* Return the active value */
-            return (isChanged) ? theNewValue : theValue;
+            return (isChanged)
+                    ? theNewValue
+                    : theValue;
         }
 
         /**
@@ -737,7 +739,9 @@ public abstract class PreferenceSet
          * @param pNewValue the new value
          */
         private void setNewValue(final Object pNewValue) {
-            theNewValue = (pNewValue == null) ? theDefault : pNewValue;
+            theNewValue = (pNewValue == null)
+                    ? theDefault
+                    : pNewValue;
             isChanged = !Difference.isEqual(theNewValue, theValue);
         }
 
@@ -861,7 +865,9 @@ public abstract class PreferenceSet
                 boolean myValue = theHandle.getBoolean(pName, false);
 
                 /* Set as initial value */
-                super.setValue(myValue ? Boolean.TRUE : Boolean.FALSE);
+                super.setValue(myValue
+                        ? Boolean.TRUE
+                        : Boolean.FALSE);
 
                 /* else value does not exist */
             } else {
@@ -879,7 +885,9 @@ public abstract class PreferenceSet
 
             /* Take a copy if not null */
             if (myNewValue != null) {
-                myNewValue = myNewValue ? Boolean.TRUE : Boolean.FALSE;
+                myNewValue = myNewValue
+                        ? Boolean.TRUE
+                        : Boolean.FALSE;
             }
 
             /* Set the new value */
@@ -1369,7 +1377,9 @@ public abstract class PreferenceSet
         /* If it is found */
         if (myPref != null) {
             /* Return the relevant state */
-            return myPref.isChanged() ? JFieldState.CHANGED : JFieldState.NORMAL;
+            return myPref.isChanged()
+                    ? JFieldState.CHANGED
+                    : JFieldState.NORMAL;
         }
 
         /* Not recognised */
@@ -1387,6 +1397,8 @@ public abstract class PreferenceSet
         PreferenceItem myPref = getPreference(pField.getName());
 
         /* Return the value */
-        return (myPref == null) ? JDataFieldValue.UnknownField : myPref.getValue();
+        return (myPref == null)
+                ? JDataFieldValue.UnknownField
+                : myPref.getValue();
     }
 }

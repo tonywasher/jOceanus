@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSpreadSheetManager;
+package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;

@@ -20,19 +20,20 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jGordianKnot.MsgDigest;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.MsgDigest;
 
 /**
- * Provides a digest InputStream. This class simply calculates a digest of the data in the stream at this
- * point as it is read. On close of the file, the digest is validated.
+ * Provides a digest InputStream. This class simply calculates a digest of the data in the stream at this point as it is read. On close of the file, the digest
+ * is validated.
  */
-public class DigestInputStream extends InputStream {
+public class DigestInputStream
+        extends InputStream {
     /**
      * Stream closed failure message.
      */

@@ -20,18 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.threads;
+package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar.StatusData;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 
 /**
  * Thread Status.

@@ -23,5 +23,5 @@
 /**
  * Package containing utility threads to handle background tasks.
  */
-package net.sourceforge.jOceanus.jDataModels.threads;
+package net.sourceforge.joceanus.jdatamodels.threads;
 

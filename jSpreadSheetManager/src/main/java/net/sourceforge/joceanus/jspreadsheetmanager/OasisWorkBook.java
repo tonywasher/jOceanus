@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSpreadSheetManager;
+package net.sourceforge.joceanus.jspreadsheetmanager;
 
 import java.awt.Color;
 import java.io.InputStream;
@@ -28,11 +28,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.attribute.table.TableMessageTypeAttribute;

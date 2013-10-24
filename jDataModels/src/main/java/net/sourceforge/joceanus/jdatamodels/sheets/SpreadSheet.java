@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.sheets;
+package net.sourceforge.joceanus.jdatamodels.sheets;
 
 import java.io.File;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
 
 /**
  * Spreadsheet control.

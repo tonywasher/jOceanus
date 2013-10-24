@@ -1,4 +1,4 @@
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.joceanus.jfieldset;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,7 +6,7 @@ import java.awt.Font;
 import javax.swing.border.Border;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 
 /**
  * The Render Data class.
@@ -199,7 +199,9 @@ public final class JFieldData {
         Color myBack = theManager.getStandardBackground();
 
         /* Determine toolTip */
-        String myTip = theState.isError() ? pRow.getFieldErrors(pField) : null;
+        String myTip = theState.isError()
+                ? pRow.getFieldErrors(pField)
+                : null;
 
         /* For selected items flip the foreground/background */
         if (isSelected()) {
@@ -274,7 +276,9 @@ public final class JFieldData {
 
         /* Obtain the state */
         JDataField myField = pElement.getField();
-        theState = (isNull) ? JFieldState.NORMAL : pItem.getFieldState(myField);
+        theState = (isNull)
+                ? JFieldState.NORMAL
+                : pItem.getFieldState(myField);
 
         /* Determine the standard colours */
         theForeGround = theManager.getForeground(theState);
@@ -282,6 +286,8 @@ public final class JFieldData {
 
         /* Determine the Font and ToolTip */
         theFont = theManager.determineFont(theState, isFixed);
-        theToolTipText = (isNull) ? null : theManager.determineToolTip(theState, pItem, myField);
+        theToolTipText = (isNull)
+                ? null
+                : theManager.determineToolTip(theState, pItem, myField);
     }
 }

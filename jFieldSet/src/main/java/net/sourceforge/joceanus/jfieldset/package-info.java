@@ -23,5 +23,5 @@
 /**
  * Java Swing Field Set.
  */
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.joceanus.jfieldset;
 

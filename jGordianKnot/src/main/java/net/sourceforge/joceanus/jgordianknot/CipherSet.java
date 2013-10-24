@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.PrivateKey;
 import java.security.SecureRandom;
@@ -32,11 +32,11 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.EncryptModeNeedle;
-import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.SymKeyNeedle;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.DataHayStack.EncryptModeNeedle;
+import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
 
 /**
  * Set of DataCiphers used for encryption.

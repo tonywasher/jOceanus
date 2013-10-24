@@ -70,6 +70,7 @@
     <svnBranch>v1.2.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnBase>${svnParent}/trunk</svnBase>
+    <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <appLibDir/>
     <JDateButtonVersion>v1.2.0-SNAPSHOT</JDateButtonVersion>

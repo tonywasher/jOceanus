@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,13 +32,13 @@ import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.AsymmetricKey;
-import net.sourceforge.jOceanus.jGordianKnot.MsgDigest;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecurityGenerator;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.MsgDigest;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Class used to extract from a ZipFile.
@@ -138,7 +138,9 @@ public class ZipReadFile {
             }
 
             /* Pick up security key if it is present */
-            theHashBytes = (myEntry == null) ? null : myEntry.getExtra();
+            theHashBytes = (myEntry == null)
+                    ? null
+                    : myEntry.getExtra();
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -166,8 +168,7 @@ public class ZipReadFile {
         try {
             /* Reject this is the wrong security control */
             if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
-                throw new JDataException(ExceptionClass.LOGIC,
-                        "Password Hash does not match ZipFile Security.");
+                throw new JDataException(ExceptionClass.LOGIC, "Password Hash does not match ZipFile Security.");
             }
 
             /* Store the hash and obtain the generator */
@@ -187,7 +188,8 @@ public class ZipReadFile {
                 /* If we have finished up the buffer */
                 if (mySpace == 0) {
                     /* Increase the buffer */
-                    myBuffer = Arrays.copyOf(myBuffer, myLen + BUFFERSIZE);
+                    myBuffer = Arrays.copyOf(myBuffer, myLen
+                                                       + BUFFERSIZE);
                     mySpace += BUFFERSIZE;
                 }
             }
@@ -275,7 +277,8 @@ public class ZipReadFile {
             /* Handle entry not found */
             if (myEntry == null) {
                 myZipFile.close();
-                throw new JDataException(ExceptionClass.DATA, "File not found - " + pFile.getFileName());
+                throw new JDataException(ExceptionClass.DATA, "File not found - "
+                                                              + pFile.getFileName());
             }
 
             /* Note the current input stream */
@@ -300,8 +303,7 @@ public class ZipReadFile {
                 byte[][] myInitVectors = pFile.getInitVectors();
 
                 /* Wrap a digest input stream around the zip file */
-                myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest++],
-                        "Final");
+                myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest++], "Final");
                 myDigest = new DigestInputStream(myMsgDigest, myCurrent);
                 myCurrent = myDigest;
 
@@ -315,8 +317,8 @@ public class ZipReadFile {
                     /* if we are debugging */
                     if (bDebug) {
                         /* Create an extra digest stream */
-                        myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest],
-                                "Debug" + iDigest++);
+                        myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest], "Debug"
+                                                                                                             + iDigest++);
                         myDigest = new DigestInputStream(myMsgDigest, myCurrent);
                         myCurrent = myDigest;
                     }

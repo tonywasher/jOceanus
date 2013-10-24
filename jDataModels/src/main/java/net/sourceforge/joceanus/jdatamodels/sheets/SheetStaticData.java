@@ -20,17 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.sheets;
+package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.StaticData;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetDataItem<T> {
+public abstract class SheetStaticData<T extends StaticData<T, ?>>
+        extends SheetDataItem<T> {
     /**
      * Enabled column.
      */
@@ -93,7 +94,8 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected SheetStaticData(final SheetReader<?> pReader, final String pRange) {
+    protected SheetStaticData(final SheetReader<?> pReader,
+                              final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
     }
@@ -104,7 +106,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pRange the range to create
      * @param pNames the name range to create
      */
-    protected SheetStaticData(final SheetWriter<?> pWriter, final String pRange, final String pNames) {
+    protected SheetStaticData(final SheetWriter<?> pWriter,
+                              final String pRange,
+                              final String pNames) {
         /* Call super constructor */
         super(pWriter, pRange);
 

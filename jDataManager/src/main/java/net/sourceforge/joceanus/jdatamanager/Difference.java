@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.util.Arrays;
 
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataDiffers;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDiffers;
 
 /**
  * Difference enum and utility.

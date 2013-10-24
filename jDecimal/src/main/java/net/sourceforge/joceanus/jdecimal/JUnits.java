@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDecimal;
+package net.sourceforge.joceanus.jdecimal;
 
 /**
  * Represents a Units object.

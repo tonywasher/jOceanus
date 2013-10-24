@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
-
-import java.security.SecureRandom;
+package net.sourceforge.joceanus.jgordianknot;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.Mac;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.HashModeNeedle;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.DataHayStack.HashModeNeedle;
+
 
 /**
  * Password Hash implementation.

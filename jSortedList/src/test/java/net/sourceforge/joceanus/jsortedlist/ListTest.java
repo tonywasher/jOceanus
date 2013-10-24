@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 import java.security.SecureRandom;
 import java.util.HashMap;

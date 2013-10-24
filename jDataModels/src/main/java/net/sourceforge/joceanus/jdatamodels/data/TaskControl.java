@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.

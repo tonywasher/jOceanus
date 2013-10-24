@@ -20,13 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 /**
  * Exception indicating that an incorrect password was given.
  * @author Tony Washer
  */
-public class WrongPasswordException extends Exception {
+public class WrongPasswordException
+        extends Exception {
     /**
      * Serial id.
      */

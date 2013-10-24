@@ -23,5 +23,5 @@
 /**
  * Preference Set definitions.
  */
-package net.sourceforge.jOceanus.jDataModels.preferences;
+package net.sourceforge.joceanus.jdatamodels.preferences;
 

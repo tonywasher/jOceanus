@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
-import net.sourceforge.jOceanus.jSortedList.OrderedIdIndex;
+import net.sourceforge.joceanus.jsortedlist.OrderedIdIndex;
 
 /**
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.

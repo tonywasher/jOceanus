@@ -23,5 +23,5 @@
 /**
  * Main window package.
  */
-package net.sourceforge.jOceanus.jDataModels;
+package net.sourceforge.joceanus.jdatamodels;
 

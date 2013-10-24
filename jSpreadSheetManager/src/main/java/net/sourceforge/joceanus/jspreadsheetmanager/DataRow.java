@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSpreadSheetManager;
+package net.sourceforge.joceanus.jspreadsheetmanager;
 
 /**
  * Class representing a row within a sheet or a view.

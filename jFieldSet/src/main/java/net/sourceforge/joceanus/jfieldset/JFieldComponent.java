@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.joceanus.jfieldset;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -45,14 +45,14 @@ import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import net.sourceforge.jOceanus.jDataManager.DataType;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
-import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelBoolean;
-import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelDateDay;
-import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelObject;
-import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelString;
+import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelBoolean;
+import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelDateDay;
+import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelObject;
+import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelString;
 
 /**
  * Component classes for jFieldSet.
@@ -229,8 +229,12 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         theComponent.setFont(myFont);
 
         /* Set the appropriate border */
-        JComponent myComp = (theScroll != null) ? theScroll : theComponent;
-        myComp.setBorder(myState.isError() ? pRender.getErrorBorder() : theBorder);
+        JComponent myComp = (theScroll != null)
+                ? theScroll
+                : theComponent;
+        myComp.setBorder(myState.isError()
+                ? pRender.getErrorBorder()
+                : theBorder);
 
         /* Display the data */
         displayField();
@@ -250,7 +254,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         theComponent.setToolTipText(null);
 
         /* Set the appropriate border */
-        JComponent myComp = (theScroll != null) ? theScroll : theComponent;
+        JComponent myComp = (theScroll != null)
+                ? theScroll
+                : theComponent;
         myComp.setBorder(theBorder);
 
         /* Display the data */
@@ -318,7 +324,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             pComponent.addFocusListener(myListener);
 
             /* Set correct alignment */
-            int iAlignment = pModel.isFixedWidth() ? SwingConstants.RIGHT : SwingConstants.LEFT;
+            int iAlignment = pModel.isFixedWidth()
+                    ? SwingConstants.RIGHT
+                    : SwingConstants.LEFT;
             pComponent.setHorizontalAlignment(iAlignment);
         }
 

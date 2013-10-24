@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 /**
  * Interface for items that wish to belong to an OrderedIdList.

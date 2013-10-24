@@ -23,5 +23,5 @@
 /**
  * Provides top-level control of data.
  */
-package net.sourceforge.jOceanus.jDataModels.views;
+package net.sourceforge.joceanus.jdatamodels.views;
 

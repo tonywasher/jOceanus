@@ -20,18 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.DigestNeedle;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.DataHayStack.DigestNeedle;
 
 /**
- * Wrapper class for MessageDigest. This allows transformation to and from the external digest format and
- * handles validation of digests.
+ * Wrapper class for MessageDigest. This allows transformation to and from the external digest format and handles validation of digests.
  * @author Tony Washer
  */
 public class MsgDigest {
@@ -167,13 +166,15 @@ public class MsgDigest {
         /* If the data lengths do not match */
         if (theDataLen != theExpectedDataLen) {
             /* Throw an exception */
-            throw new JDataException(ExceptionClass.DATA, "Mismatch on Data lengths for " + theName);
+            throw new JDataException(ExceptionClass.DATA, "Mismatch on Data lengths for "
+                                                          + theName);
         }
 
         /* If the digest does not match */
         if (!Arrays.equals(theDigest.digest(), theExpectedDigest)) {
             /* Throw an exception */
-            throw new JDataException(ExceptionClass.DATA, "Mismatch on Digest for " + theName);
+            throw new JDataException(ExceptionClass.DATA, "Mismatch on Digest for "
+                                                          + theName);
         }
     }
 

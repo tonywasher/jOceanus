@@ -20,20 +20,20 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.database;
+package net.sourceforge.joceanus.jdatamodels.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamodels.data.StaticData;
 
 /**
- * Database table class for Static Data Items. Each data type that represents Static Data should extend this
- * class.
+ * Database table class for Static Data Items. Each data type that represents Static Data should extend this class.
  * @param <T> the data type
  */
-public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableEncrypted<T> {
+public abstract class TableStaticData<T extends StaticData<T, ?>>
+        extends TableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control

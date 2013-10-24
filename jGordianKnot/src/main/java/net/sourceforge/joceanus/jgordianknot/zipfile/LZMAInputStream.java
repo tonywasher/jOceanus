@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +30,12 @@ import SevenZip.Compression.LZMA.Decoder;
 import SevenZip.Compression.LZMA.Encoder;
 
 /**
- * Provides an LZMA decompression InputStream. Due to the design of the 7-Zip libraries the decompression must
- * be performed on a separate thread. A thread is created to read the compressed data from the input stream,
- * decompress the data and write the output to a PipeStream. This class works as the wrapper to read the
- * decompressed data from the PipedStream.
+ * Provides an LZMA decompression InputStream. Due to the design of the 7-Zip libraries the decompression must be performed on a separate thread. A thread is
+ * created to read the compressed data from the input stream, decompress the data and write the output to a PipeStream. This class works as the wrapper to read
+ * the decompressed data from the PipedStream.
  */
-public final class LZMAInputStream extends InputStream {
+public final class LZMAInputStream
+        extends InputStream {
     /**
      * The sink stream to write to for the decoder thread.
      */
@@ -122,7 +122,8 @@ public final class LZMAInputStream extends InputStream {
     /**
      * The decoder thread.
      */
-    private final class DecoderThread extends Thread {
+    private final class DecoderThread
+            extends Thread {
         /**
          * The decoder.
          */

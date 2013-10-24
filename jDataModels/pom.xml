@@ -72,7 +72,8 @@
   </dependencies>
   <properties>
     <svnComponent>jDataModels</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnComponent>jdatamodels</svnComponent>
+    <packageName>${packageBase}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

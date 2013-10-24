@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,21 +28,21 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.jOceanus.jDataModels.data.ControlKey.ControlKeyList;
-import net.sourceforge.jOceanus.jDataModels.data.DataKey.DataKeyList;
-import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.jOceanus.jDataModels.preferences.DataListPreferences;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
+import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
+import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
+import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.joceanus.jdatamodels.preferences.DataListPreferences;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.

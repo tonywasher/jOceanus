@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jJira.data;
+package net.sourceforge.joceanus.jjira.data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
 import net.sourceforge.jOceanus.jJira.soap.RemoteGroup;
 import net.sourceforge.jOceanus.jJira.soap.RemoteProjectRole;
 import net.sourceforge.jOceanus.jJira.soap.RemoteUser;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Handles security for a jira server.
@@ -111,7 +111,8 @@ public class Security {
             return myUser;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load user " + pName, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load user "
+                                                          + pName, e);
         }
     }
 
@@ -164,7 +165,8 @@ public class Security {
             return myGroup;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load group " + pName, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load group "
+                                                          + pName, e);
         }
     }
 
@@ -185,7 +187,8 @@ public class Security {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid RoleId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid RoleId "
+                                                      + pId);
     }
 
     /**

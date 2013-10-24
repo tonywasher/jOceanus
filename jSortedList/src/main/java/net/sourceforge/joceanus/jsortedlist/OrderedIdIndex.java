@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -106,7 +106,9 @@ public class OrderedIdIndex<I, T extends Comparable<? super T> & OrderedIdItem<I
         OrderedNode<T> myNode = theHashMap.get(pId);
 
         /* Return results */
-        return (myNode == null) ? null : myNode.getObject();
+        return (myNode == null)
+                ? null
+                : myNode.getObject();
     }
 
     @Override

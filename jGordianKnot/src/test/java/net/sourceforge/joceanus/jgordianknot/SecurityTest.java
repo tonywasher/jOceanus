@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,12 +37,12 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileContents;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileEntry;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipReadFile;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipWriteFile;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
 
 /**
  * Security Test suite.

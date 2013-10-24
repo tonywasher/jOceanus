@@ -28,5 +28,5 @@
  * <p>This implementation is particularly suited to financial applications since a monetary value of $10,000,000,000,000,000.00 can
  * easily be accommodated within a long. Hopefully this will be sufficient for most peoples purposes.
  */
-package net.sourceforge.jOceanus.jDecimal;
+package net.sourceforge.joceanus.jdecimal;
 

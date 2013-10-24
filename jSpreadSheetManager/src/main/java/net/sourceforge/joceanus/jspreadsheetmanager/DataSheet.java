@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSpreadSheetManager;
+package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
 
 /**
  * Class representing a sheet within a workBook.

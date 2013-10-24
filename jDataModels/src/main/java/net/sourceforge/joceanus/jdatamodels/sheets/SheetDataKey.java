@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.sheets;
+package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataKey;
-import net.sourceforge.jOceanus.jDataModels.data.DataKey.DataKeyList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataKey;
+import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 
 /**
  * SheetDataItem extension for DataKey.

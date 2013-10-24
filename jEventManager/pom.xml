@@ -10,7 +10,8 @@
   <description>Generic Event Manager interface</description>
   <properties>
     <svnComponent>jEventManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jeventmanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

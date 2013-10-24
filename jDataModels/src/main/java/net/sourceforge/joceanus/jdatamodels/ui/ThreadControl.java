@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.ui;
+package net.sourceforge.joceanus.jdatamodels.ui;
 
 /**
  * Control interface for threads.

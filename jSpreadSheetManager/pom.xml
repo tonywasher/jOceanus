@@ -32,7 +32,8 @@
   </dependencies>
   <properties>
     <svnComponent>jSpreadSheetManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jspreadsheetmanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

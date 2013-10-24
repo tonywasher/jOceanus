@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.threads;
+package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
 
 /**
  * A wrapper for a worker thread.

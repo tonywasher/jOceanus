@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
 /**
  * Interfaces for static classes.

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,14 +31,14 @@ import java.security.Signature;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.AsymmetricKey;
-import net.sourceforge.jOceanus.jGordianKnot.MsgDigest;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecurityGenerator;
-import net.sourceforge.jOceanus.jGordianKnot.SymKeyType;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.MsgDigest;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Class used to build a ZipFile.

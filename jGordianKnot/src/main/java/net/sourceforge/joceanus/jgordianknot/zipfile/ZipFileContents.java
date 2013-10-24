@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
 
 /**
  * Class represents the contents of an encrypted Zip file.

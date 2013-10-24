@@ -20,20 +20,21 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataDifference;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataValues;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 
 /**
  * Provides the implementation of delta between two valueSets.
  */
-public class ValueSetDelta implements JDataContents {
+public class ValueSetDelta
+        implements JDataContents {
     /**
      * Old ValueSet.
      */
@@ -71,7 +72,9 @@ public class ValueSetDelta implements JDataContents {
         Object[] myOldValues = theOldSet.getValues();
 
         /* Initialise number of differences */
-        int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion()) ? 0 : 1;
+        int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion())
+                ? 0
+                : 1;
 
         /* Loop through the objects */
         for (int i = 0; i < myNewValues.length; i++) {
@@ -82,7 +85,10 @@ public class ValueSetDelta implements JDataContents {
         }
 
         /* Return the number of differences */
-        return ValueSetDelta.class.getSimpleName() + "(" + myNumDiffs + ")";
+        return ValueSetDelta.class.getSimpleName()
+               + "("
+               + myNumDiffs
+               + ")";
     }
 
     @Override
@@ -131,10 +137,8 @@ public class ValueSetDelta implements JDataContents {
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
             return (theOldSet.isDeletion() == theNewSet.isDeletion())
-                                                                     ? JDataFieldValue.SkipField
-                                                                     : new JDataDifference(
-                                                                             theOldSet.isDeletion(),
-                                                                             Difference.Different);
+                    ? JDataFieldValue.SkipField
+                    : new JDataDifference(theOldSet.isDeletion(), Difference.Different);
         }
 
         /* Adjust index */

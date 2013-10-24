@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -135,7 +135,8 @@ public class ZipFileProperties {
             }
 
             /* else if the property now has no value */
-        } else if ((isNull) && (myProperty.getLongValue() == null)) {
+        } else if ((isNull)
+                   && (myProperty.getLongValue() == null)) {
             /* Remove the value from the list */
             theList.remove(myProperty);
 
@@ -171,7 +172,8 @@ public class ZipFileProperties {
             }
 
             /* else if the property now has no value */
-        } else if ((isNull) && (myProperty.getByteValue() == null)) {
+        } else if ((isNull)
+                   && (myProperty.getByteValue() == null)) {
             /* Remove the value from the list */
             theList.remove(myProperty);
 
@@ -193,7 +195,9 @@ public class ZipFileProperties {
         byte[] myValue = getByteProperty(pName);
 
         /* Return the value */
-        return (myValue == null) ? null : DataConverter.byteArrayToString(myValue);
+        return (myValue == null)
+                ? null
+                : DataConverter.byteArrayToString(myValue);
     }
 
     /**
@@ -206,7 +210,9 @@ public class ZipFileProperties {
         Property myProperty = getProperty(pName);
 
         /* Return the value */
-        return (myProperty == null) ? null : myProperty.getByteValue();
+        return (myProperty == null)
+                ? null
+                : myProperty.getByteValue();
     }
 
     /**
@@ -219,7 +225,9 @@ public class ZipFileProperties {
         Property myProperty = getProperty(pName);
 
         /* Return the value */
-        return (myProperty == null) ? null : myProperty.getLongValue();
+        return (myProperty == null)
+                ? null
+                : myProperty.getLongValue();
     }
 
     /**
@@ -308,7 +316,8 @@ public class ZipFileProperties {
 
         /* Check that we found the value separator */
         if (myLoc == -1) {
-            throw new JDataException(ExceptionClass.DATA, "Missing value separator: " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Missing value separator: "
+                                                          + pValue);
         }
 
         /* Split the values and name */
@@ -318,7 +327,8 @@ public class ZipFileProperties {
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
-            throw new JDataException(ExceptionClass.DATA, "Duplicate name: " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Duplicate name: "
+                                                          + pValue);
         }
 
         /* Locate the Long separator in the string */
@@ -326,16 +336,23 @@ public class ZipFileProperties {
 
         /* Check that we found the long separator */
         if (myLoc == -1) {
-            throw new JDataException(ExceptionClass.DATA, "Missing long separator: " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Missing long separator: "
+                                                          + pValue);
         }
 
         /* Access the separate byte and long values */
-        String myLong = (myLoc < myLen - 1) ? myBytes.substring(myLoc + 1) : null;
-        myBytes = (myLoc > 0) ? myBytes.substring(0, myLoc) : null;
+        String myLong = (myLoc < myLen - 1)
+                ? myBytes.substring(myLoc + 1)
+                : null;
+        myBytes = (myLoc > 0)
+                ? myBytes.substring(0, myLoc)
+                : null;
 
         /* Must have at least one of Bytes/Long */
-        if ((myBytes == null) && (myLong == null)) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid property: " + myName);
+        if ((myBytes == null)
+            && (myLong == null)) {
+            throw new JDataException(ExceptionClass.DATA, "Invalid property: "
+                                                          + myName);
         }
 
         /* Create a new property */
@@ -382,7 +399,8 @@ public class ZipFileProperties {
                          final String pName) {
             /* Check for invalid name */
             if (pName.indexOf(SEP_VALUE) != -1) {
-                throw new IllegalArgumentException("Invalid property name - " + pName);
+                throw new IllegalArgumentException("Invalid property name - "
+                                                   + pName);
             }
 
             /* Store name */
@@ -405,7 +423,8 @@ public class ZipFileProperties {
 
                 /* Reject attempt to add duplicate name */
                 if (iDiff == 0) {
-                    throw new IllegalArgumentException("Duplicate property - " + pName);
+                    throw new IllegalArgumentException("Duplicate property - "
+                                                       + pName);
                 }
 
                 /* Increment index */
@@ -445,7 +464,9 @@ public class ZipFileProperties {
          * @param pValue the new value
          */
         private void setByteValue(final byte[] pValue) {
-            theByteValue = (pValue == null) ? null : Arrays.copyOf(pValue, pValue.length);
+            theByteValue = (pValue == null)
+                    ? null
+                    : Arrays.copyOf(pValue, pValue.length);
         }
 
         /**

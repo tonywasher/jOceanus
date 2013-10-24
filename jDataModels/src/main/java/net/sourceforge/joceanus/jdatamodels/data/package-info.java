@@ -23,5 +23,5 @@
 /**
  * JDataModel.data is a package that forms the base of all data for this system.
  */
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 

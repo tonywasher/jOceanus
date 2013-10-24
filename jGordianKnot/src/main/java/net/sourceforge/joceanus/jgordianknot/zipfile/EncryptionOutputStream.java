@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,14 +28,14 @@ import java.util.Arrays;
 
 import javax.crypto.Cipher;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
- * Provide an encrypt OutputStream wrapper. This class simply wraps an output buffer and encrypts the data
- * before passing it on.
+ * Provide an encrypt OutputStream wrapper. This class simply wraps an output buffer and encrypts the data before passing it on.
  */
-public class EncryptionOutputStream extends OutputStream {
+public class EncryptionOutputStream
+        extends OutputStream {
     /**
      * The underlying output stream.
      */

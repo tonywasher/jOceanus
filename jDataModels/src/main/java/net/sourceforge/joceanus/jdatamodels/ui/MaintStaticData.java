@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.ui;
+package net.sourceforge.joceanus.jdatamodels.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,25 +30,25 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
 
 /**
  * Static Data Table.

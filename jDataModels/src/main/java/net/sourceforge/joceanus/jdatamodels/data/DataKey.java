@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.ControlKey.ControlKeyList;
-import net.sourceforge.jOceanus.jGordianKnot.CipherSet;
-import net.sourceforge.jOceanus.jGordianKnot.DataCipher;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecurityGenerator;
-import net.sourceforge.jOceanus.jGordianKnot.SymKeyType;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
+import net.sourceforge.joceanus.jgordianknot.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.DataCipher;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey. For a single control key, one DataKey is allocated

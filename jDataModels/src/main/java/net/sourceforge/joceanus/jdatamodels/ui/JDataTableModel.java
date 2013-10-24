@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.ui;
+package net.sourceforge.joceanus.jdatamodels.ui;
 
 import java.util.ResourceBundle;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldData;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager.PopulateFieldData;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSet.JFieldValue;
-import net.sourceforge.jOceanus.jTableFilter.TableFilter;
-import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jfieldset.JFieldData;
+import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jfieldset.JFieldSet.JFieldValue;
+import net.sourceforge.joceanus.jtablefilter.TableFilter;
+import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
 
 /**
  * Data Table model class.

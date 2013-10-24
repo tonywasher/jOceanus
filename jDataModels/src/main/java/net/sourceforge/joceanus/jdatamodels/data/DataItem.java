@@ -20,28 +20,28 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.DataState;
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.ItemValidation;
-import net.sourceforge.jOceanus.jDataManager.ItemValidation.ErrorElement;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataValues;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataManager.ValueSetHistory;
-import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSetItem;
-import net.sourceforge.jOceanus.jFieldSet.JFieldState;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
+import net.sourceforge.joceanus.jdatamanager.DataState;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.ItemValidation;
+import net.sourceforge.joceanus.jdatamanager.ItemValidation.ErrorElement;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamanager.ValueSetHistory;
+import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
+import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
+import net.sourceforge.joceanus.jfieldset.JFieldState;
+import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at

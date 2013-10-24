@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.views;
+package net.sourceforge.joceanus.jdatamodels.views;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,20 +30,20 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.database.Database;
-import net.sourceforge.jOceanus.jDataModels.preferences.JFieldPreferences;
-import net.sourceforge.jOceanus.jDataModels.preferences.SecurityPreferences;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
-import net.sourceforge.jOceanus.jEventManager.JEventObject;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.database.Database;
+import net.sourceforge.joceanus.jdatamodels.preferences.JFieldPreferences;
+import net.sourceforge.joceanus.jdatamodels.preferences.SecurityPreferences;
+import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * Provides top-level control of data.

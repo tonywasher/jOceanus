@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.awt.Dimension;
 
@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 
 /**
  * Data Window display class.

@@ -10,7 +10,8 @@
   <description>Small decimal implementation for Java</description>
   <properties>
     <svnComponent>jDecimal</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jdecimal</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

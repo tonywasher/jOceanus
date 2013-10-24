@@ -20,8 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
-
+package net.sourceforge.joceanus.jgordianknot;
 
 /**
  * Security mode base class.

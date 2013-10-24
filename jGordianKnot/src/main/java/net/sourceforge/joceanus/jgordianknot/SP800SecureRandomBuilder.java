@@ -1,4 +1,4 @@
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 /**
  * Linked list element.
@@ -333,7 +333,8 @@ public class OrderedNode<T extends Comparable<? super T>> {
     protected static <X extends Comparable<? super X>> OrderedNode<X> getFirstNodeInSequence(final OrderedNode<X> pNode) {
         /* While we have a preceding item that is equal */
         OrderedNode<X> myNode = pNode;
-        while ((myNode.thePrev != null) && (myNode.compareTo(myNode.thePrev) == 0)) {
+        while ((myNode.thePrev != null)
+               && (myNode.compareTo(myNode.thePrev) == 0)) {
             /* Shift node */
             myNode = myNode.thePrev;
         }
@@ -351,7 +352,8 @@ public class OrderedNode<T extends Comparable<? super T>> {
     protected static <X extends Comparable<? super X>> OrderedNode<X> getLastNodeInSequence(final OrderedNode<X> pNode) {
         /* While we have a following item that is equal */
         OrderedNode<X> myNode = pNode;
-        while ((myNode.theNext != null) && (myNode.compareTo(myNode.theNext) == 0)) {
+        while ((myNode.theNext != null)
+               && (myNode.compareTo(myNode.theNext) == 0)) {
             /* Shift node */
             myNode = myNode.theNext;
         }

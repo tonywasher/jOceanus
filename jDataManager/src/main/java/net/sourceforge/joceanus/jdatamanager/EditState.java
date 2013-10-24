@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 /**
  * Enumeration of edit states of DataItem and DataList objects in a view.
@@ -52,13 +52,16 @@ public enum EditState {
      * @return the combined state
      */
     public EditState combineState(final EditState pState) {
-        if ((this == ERROR) || (pState == ERROR)) {
+        if ((this == ERROR)
+            || (pState == ERROR)) {
             return ERROR;
         }
-        if ((this == DIRTY) || (pState == DIRTY)) {
+        if ((this == DIRTY)
+            || (pState == DIRTY)) {
             return DIRTY;
         }
-        if ((this == VALID) || (pState == VALID)) {
+        if ((this == VALID)
+            || (pState == VALID)) {
             return VALID;
         }
         return CLEAN;

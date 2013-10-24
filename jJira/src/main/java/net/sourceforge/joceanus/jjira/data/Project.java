@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jJira.data;
+package net.sourceforge.joceanus.jjira.data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -28,15 +28,15 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jJira.data.Security.User;
-import net.sourceforge.jOceanus.jJira.data.Server.IssueType;
 import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
 import net.sourceforge.jOceanus.jJira.soap.RemoteComponent;
 import net.sourceforge.jOceanus.jJira.soap.RemoteIssueType;
 import net.sourceforge.jOceanus.jJira.soap.RemoteProject;
 import net.sourceforge.jOceanus.jJira.soap.RemoteVersion;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.data.Security.User;
+import net.sourceforge.joceanus.jjira.data.Server.IssueType;
 
 /**
  * Represents a Jira project.
@@ -215,7 +215,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId "
+                                                      + pId);
     }
 
     /**
@@ -235,7 +236,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid ComponentId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid ComponentId "
+                                                      + pId);
     }
 
     /**
@@ -272,7 +274,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid VersionId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid VersionId "
+                                                      + pId);
     }
 
     /**

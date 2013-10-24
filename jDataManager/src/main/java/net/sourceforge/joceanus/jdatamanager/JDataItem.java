@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -47,7 +47,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 
 /**
  * Data Item.
@@ -150,8 +150,10 @@ public class JDataItem {
         theSlider.setMinimum(0);
 
         /* Create the Buttons */
-        theNext = new JButton("+" + SHIFT_ONE);
-        thePrev = new JButton("-" + SHIFT_ONE);
+        theNext = new JButton("+"
+                              + SHIFT_ONE);
+        thePrev = new JButton("-"
+                              + SHIFT_ONE);
 
         /* Create the toggle button */
         theToggle = new JButton();
@@ -342,14 +344,18 @@ public class JDataItem {
         theLabel.setVisible(true);
 
         /* Enable movement buttons */
-        theNext.setEnabled(myPos < mySize - SHIFT_ONE);
+        theNext.setEnabled(myPos < mySize
+                                   - SHIFT_ONE);
         thePrev.setEnabled(myPos >= SHIFT_ONE);
 
         /* Handle tick spacing */
         determineTickSpacing(mySize);
 
         /* Set the text detail */
-        theLabel.setText("Item " + (myPos + 1) + " of " + mySize);
+        theLabel.setText("Item "
+                         + (myPos + 1)
+                         + " of "
+                         + mySize);
         theSlider.setValue(myPos);
 
         /* Set the text detail */
@@ -384,7 +390,8 @@ public class JDataItem {
             /* else check on spacing */
         } else {
             /* Determine how many major ticks that gives us */
-            int iNumTicks = theSlider.getMaximum() / iMajor;
+            int iNumTicks = theSlider.getMaximum()
+                            / iMajor;
 
             /* If we have 5 or more ticks */
             if (iNumTicks >= (TICK_FACTOR >> 1)) {
@@ -398,7 +405,8 @@ public class JDataItem {
                 theSlider.setMajorTickSpacing(iMajor >> 1);
 
                 /* Minor ticks is one-tenth the major ticks */
-                theSlider.setMinorTickSpacing(iMajor / TICK_FACTOR);
+                theSlider.setMinorTickSpacing(iMajor
+                                              / TICK_FACTOR);
             }
         }
 
@@ -423,7 +431,8 @@ public class JDataItem {
     /**
      * Data Listener class.
      */
-    private class DataListener implements HyperlinkListener, ActionListener, ChangeListener {
+    private class DataListener
+            implements HyperlinkListener, ActionListener, ChangeListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent pEvent) {
             /* If this is an activated event */
@@ -475,7 +484,8 @@ public class JDataItem {
 
         @Override
         public void stateChanged(final ChangeEvent e) {
-            if ((theSlider.equals(e.getSource())) && (!theSlider.getValueIsAdjusting())) {
+            if ((theSlider.equals(e.getSource()))
+                && (!theSlider.getValueIsAdjusting())) {
                 /* Access value and current position */
                 int myPos = theSlider.getValue();
                 int myCurr = theDetail.getIndex();
@@ -487,7 +497,8 @@ public class JDataItem {
 
                 /* Shift to the correct item */
                 JDataDetail myList = theDetail.getPartnerDetail();
-                myList.shiftIterator(myPos - myCurr);
+                myList.shiftIterator(myPos
+                                     - myCurr);
                 displayDetail(myList.getPartnerDetail());
             }
         }

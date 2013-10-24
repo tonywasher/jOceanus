@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.database;
+package net.sourceforge.joceanus.jdatamodels.database;
 
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.ColumnType;
-import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.ColumnType;
+import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
@@ -129,7 +129,9 @@ public enum JDBCDriver {
         boolean isSQLServer = this.equals(SQLServer);
         switch (pType) {
             case Boolean:
-                return (isSQLServer) ? "bit" : "boolean";
+                return (isSQLServer)
+                        ? "bit"
+                        : "boolean";
             case Short:
                 return "smallint";
             case Integer:
@@ -139,15 +141,23 @@ public enum JDBCDriver {
             case Float:
                 return "real";
             case Double:
-                return (isSQLServer) ? "float" : "double precision";
+                return (isSQLServer)
+                        ? "float"
+                        : "double precision";
             case Date:
                 return "date";
             case Money:
-                return (isSQLServer) ? "money" : "numeric(18,2)";
+                return (isSQLServer)
+                        ? "money"
+                        : "numeric(18,2)";
             case Decimal:
-                return (isSQLServer) ? "decimal" : "numeric";
+                return (isSQLServer)
+                        ? "decimal"
+                        : "numeric";
             case Binary:
-                return (isSQLServer) ? "varbinary" : "bytea";
+                return (isSQLServer)
+                        ? "varbinary"
+                        : "bytea";
             case String:
             default:
                 return "varchar";

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.database;
+package net.sourceforge.joceanus.jdatamodels.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,33 +33,33 @@ import java.util.Map;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.BinaryColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.BooleanColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.DateColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.DilutionColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.IdColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.IntegerColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.LongColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.MoneyColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.PriceColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.RateColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.RatioColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.ReferenceColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.StringColumn;
-import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.UnitsColumn;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jGordianKnot.CipherSet;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BinaryColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BooleanColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.DateColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.DilutionColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.IdColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.IntegerColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.LongColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.MoneyColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.PriceColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.RateColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.RatioColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.ReferenceColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.StringColumn;
+import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.UnitsColumn;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jgordianknot.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Database field definition class. Maps each dataType to a database field.

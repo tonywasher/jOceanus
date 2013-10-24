@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jPreferenceSet;
+package net.sourceforge.joceanus.jpreferenceset;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,23 +49,23 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jLayoutManager.GridBagUtilities;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.BooleanPreference;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.ColorPreference;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.DatePreference;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.EnumPreference;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.IntegerPreference;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.PreferenceItem;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.PreferenceType;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.StringPreference;
-import net.sourceforge.jOceanus.jPreferenceSet.ValueField.ValueClass;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jlayoutmanager.GridBagUtilities;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.BooleanPreference;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.ColorPreference;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.DatePreference;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.EnumPreference;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.IntegerPreference;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceItem;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceType;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.StringPreference;
+import net.sourceforge.joceanus.jpreferenceset.ValueField.ValueClass;
 
 /**
  * Preference Set panel.

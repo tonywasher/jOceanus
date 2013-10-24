@@ -22,7 +22,8 @@
   </dependencies>
   <properties>
     <svnComponent>jDataManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jdatamanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

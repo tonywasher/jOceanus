@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 /**
  * Enumeration of states of DataItem and DataList objects.
@@ -79,7 +79,9 @@ public enum DataState {
         /* If we are a new element */
         if (myBase.getVersion() > 0) {
             /* Return status */
-            return myCurr.isDeletion() ? DELNEW : NEW;
+            return myCurr.isDeletion()
+                    ? DELNEW
+                    : NEW;
         }
 
         /* If we have no changes we are CLEAN */
@@ -93,6 +95,8 @@ public enum DataState {
         }
 
         /* Return RECOVERED or CHANGED depending on whether we started as deleted */
-        return (myBase.isDeletion()) ? RECOVERED : CHANGED;
+        return (myBase.isDeletion())
+                ? RECOVERED
+                : CHANGED;
     }
 }

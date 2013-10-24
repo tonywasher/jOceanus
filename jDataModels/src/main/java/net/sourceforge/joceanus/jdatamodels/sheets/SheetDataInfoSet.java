@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.sheets;
+package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfo.DataInfoList;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfo.DataInfoList;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
 
 /**
  * Utility class to handle DataInfo associated with an owner.

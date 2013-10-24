@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jPreferenceSet;
+package net.sourceforge.joceanus.jpreferenceset;
 
 import java.awt.Component;
 import java.io.File;
@@ -34,7 +34,8 @@ import javax.swing.filechooser.FileFilter;
  * File selector class.
  * @author Tony Washer
  */
-public class FileSelector extends JFileChooser {
+public class FileSelector
+        extends JFileChooser {
     /**
      * Serial Id.
      */
@@ -171,7 +172,8 @@ public class FileSelector extends JFileChooser {
     /**
      * FileFilter class.
      */
-    private final class SelectionFilter extends FileFilter {
+    private final class SelectionFilter
+            extends FileFilter {
         @Override
         public boolean accept(final File pFile) {
             /* Always accept directories */
@@ -183,12 +185,14 @@ public class FileSelector extends JFileChooser {
             String myName = pFile.getName();
 
             /* Check the prefix */
-            if ((thePrefix != null) && (!myName.startsWith(thePrefix))) {
+            if ((thePrefix != null)
+                && (!myName.startsWith(thePrefix))) {
                 return false;
             }
 
             /* Check the suffix */
-            if ((theSuffix != null) && (!myName.endsWith(theSuffix))) {
+            if ((theSuffix != null)
+                && (!myName.endsWith(theSuffix))) {
                 return false;
             }
 

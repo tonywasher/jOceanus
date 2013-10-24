@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.database;
+package net.sourceforge.joceanus.jdatamodels.database;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataModels.data.ControlData;
-import net.sourceforge.jOceanus.jDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamodels.data.ControlData;
+import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 
 /**
  * Database table class for ControlData.

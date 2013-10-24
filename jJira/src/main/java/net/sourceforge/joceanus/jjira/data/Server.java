@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jJira.data;
+package net.sourceforge.joceanus.jjira.data;
 
 import java.awt.Color;
 import java.net.MalformedURLException;
@@ -33,11 +33,6 @@ import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jJira.data.Security.Group;
-import net.sourceforge.jOceanus.jJira.data.Security.Role;
-import net.sourceforge.jOceanus.jJira.data.Security.User;
 import net.sourceforge.jOceanus.jJira.soap.AbstractRemoteConstant;
 import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
 import net.sourceforge.jOceanus.jJira.soap.JiraSoapServiceServiceLocator;
@@ -48,7 +43,10 @@ import net.sourceforge.jOceanus.jJira.soap.RemotePriority;
 import net.sourceforge.jOceanus.jJira.soap.RemoteProject;
 import net.sourceforge.jOceanus.jJira.soap.RemoteResolution;
 import net.sourceforge.jOceanus.jJira.soap.RemoteStatus;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.data.Security.User;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 import org.apache.log4j.PropertyConfigurator;
 
@@ -158,7 +156,8 @@ public class Server {
         try {
             /* Access the Jira preferences */
             JiraPreferences myPreferences = thePreferenceMgr.getPreferenceSet(JiraPreferences.class);
-            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER) + LOCATION;
+            String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER)
+                             + LOCATION;
 
             /* Locate the service */
             theService = myLocator.getJirasoapserviceV2(new URL(baseUrl));
@@ -199,8 +198,7 @@ public class Server {
             JiraPreferences myPreferences = thePreferenceMgr.getPreferenceSet(JiraPreferences.class);
 
             /* Login to the service */
-            theAuthToken = theService.login(myPreferences.getStringValue(JiraPreferences.NAME_USER),
-                                            myPreferences.getStringValue(JiraPreferences.NAME_PASS));
+            theAuthToken = theService.login(myPreferences.getStringValue(JiraPreferences.NAME_USER), myPreferences.getStringValue(JiraPreferences.NAME_PASS));
             return theAuthToken;
         } catch (RemoteException e) {
             /* Pass the exception on */
@@ -236,7 +234,8 @@ public class Server {
             return myProject;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load project " + pKey, e);
+            throw new JDataException(ExceptionClass.JIRA, "Failed to load project "
+                                                          + pKey, e);
         }
     }
 
@@ -260,7 +259,8 @@ public class Server {
         /* Handle filter not found */
         if (myFilter == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Filter does not exists " + pFilter);
+            throw new JDataException(ExceptionClass.JIRA, "Filter does not exists "
+                                                          + pFilter);
         }
 
         /* Protect against exceptions */
@@ -333,7 +333,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId "
+                                                      + pId);
     }
 
     /**
@@ -353,7 +354,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid StatusId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid StatusId "
+                                                      + pId);
     }
 
     /**
@@ -373,7 +375,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid ResolutionId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid ResolutionId "
+                                                      + pId);
     }
 
     /**
@@ -393,7 +396,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid PriorityId " + pId);
+        throw new JDataException(ExceptionClass.JIRA, "Invalid PriorityId "
+                                                      + pId);
     }
 
     /**
@@ -583,7 +587,8 @@ public class Server {
     /**
      * IssueType class.
      */
-    public final class IssueType extends ServerConstant {
+    public final class IssueType
+            extends ServerConstant {
         /**
          * Is this IssueType a sub-task.
          */
@@ -611,7 +616,8 @@ public class Server {
     /**
      * Status class.
      */
-    public final class Status extends ServerConstant {
+    public final class Status
+            extends ServerConstant {
         /**
          * Constructor.
          * @param pStatus the underlying status
@@ -625,7 +631,8 @@ public class Server {
     /**
      * Resolution class.
      */
-    public final class Resolution extends ServerConstant {
+    public final class Resolution
+            extends ServerConstant {
         /**
          * Constructor.
          * @param pResolution the underlying resolution
@@ -639,7 +646,8 @@ public class Server {
     /**
      * Priority class.
      */
-    public final class Priority extends ServerConstant {
+    public final class Priority
+            extends ServerConstant {
         /**
          * The colour for this priority.
          */

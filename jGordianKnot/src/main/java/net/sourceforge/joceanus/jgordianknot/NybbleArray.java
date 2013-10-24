@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.util.Arrays;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 
 /**
  * An array of bytes treated as an array of nybbles (i.e. two entries per byte).

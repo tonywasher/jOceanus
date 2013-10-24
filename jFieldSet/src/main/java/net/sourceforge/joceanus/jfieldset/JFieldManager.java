@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.joceanus.jfieldset;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -28,25 +28,25 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.RateCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.RowCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.DilutionCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.IntegerCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.UnitsCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 
 /**
  * Class to determine rendering details for an item.
@@ -400,9 +400,13 @@ public class JFieldManager {
         /* Switch on the state */
         switch (pState) {
             case CHANGED:
-                return (isFixed ? FONT_NUMCHANGED : FONT_CHANGED);
+                return (isFixed
+                        ? FONT_NUMCHANGED
+                        : FONT_CHANGED);
             default:
-                return (isFixed ? FONT_NUMERIC : FONT_STANDARD);
+                return (isFixed
+                        ? FONT_NUMERIC
+                        : FONT_STANDARD);
         }
     }
 

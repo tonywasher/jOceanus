@@ -23,5 +23,5 @@
 /**
  * Package to provide an easy to use link into Jira from Java.
  */
-package net.sourceforge.jOceanus.jJira.data;
+package net.sourceforge.joceanus.jjira.data;
 

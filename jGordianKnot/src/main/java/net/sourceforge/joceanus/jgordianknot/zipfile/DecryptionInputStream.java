@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
- * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it as a Zip
- * file. It will read control information from the HEADER zip entry and will use this information to decrypts
- * the data from the DATA Zip Entry.
+ * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it as a Zip file. It will read control information from the
+ * HEADER zip entry and will use this information to decrypts the data from the DATA Zip Entry.
  */
-public class DecryptionInputStream extends InputStream {
+public class DecryptionInputStream
+        extends InputStream {
     /**
      * Stream closed failure message.
      */
@@ -283,7 +283,8 @@ public class DecryptionInputStream extends InputStream {
          * @return the number of data bytes in the buffer
          */
         public int available() {
-            return theDataLen - theReadOffset;
+            return theDataLen
+                   - theReadOffset;
         }
 
         /**
@@ -297,10 +298,13 @@ public class DecryptionInputStream extends InputStream {
                              final int pOffset,
                              final int pLength) {
             /* Determine how much data we have available */
-            int iNumRead = theDataLen - theReadOffset;
+            int iNumRead = theDataLen
+                           - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = (iNumRead <= pLength) ? iNumRead : pLength;
+            iNumRead = (iNumRead <= pLength)
+                    ? iNumRead
+                    : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

@@ -20,42 +20,42 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedBigDecimal;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedBigInteger;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedBoolean;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedCharArray;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedDate;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedDateDay;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedDilution;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedDouble;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedFloat;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedInteger;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedLong;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedPrice;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedRate;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedRatio;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedShort;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBigDecimal;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBigInteger;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBoolean;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedCharArray;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDate;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDateDay;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDilution;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDouble;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedFloat;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedInteger;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedLong;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedMoney;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedPrice;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRate;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRatio;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedShort;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedUnits;
 
 /**
  * Encrypted field generator.

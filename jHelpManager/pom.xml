@@ -10,7 +10,8 @@
   <description>Simple Java Help Manager allowing a quick help system to be bult for an application</description>
   <properties>
     <svnComponent>jHelpManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jhelpmanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

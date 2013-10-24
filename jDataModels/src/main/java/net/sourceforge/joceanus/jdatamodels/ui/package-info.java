@@ -24,5 +24,5 @@
  * User interface classes for JDataModels.
  * @author Tony Washer
  */
-package net.sourceforge.jOceanus.jDataModels.ui;
+package net.sourceforge.joceanus.jdatamodels.ui;
 

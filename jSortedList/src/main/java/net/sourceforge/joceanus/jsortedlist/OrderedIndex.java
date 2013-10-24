@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 import java.util.Arrays;
 
@@ -112,8 +112,9 @@ public class OrderedIndex<T extends Comparable<? super T>> {
     protected OrderedIndex(final int pIndexGranularity) {
         /* Reject if granularity is out of range */
         if ((pIndexGranularity < OrderedIndex.MIN_GRANULARITY_SHIFT)
-                || (pIndexGranularity > OrderedIndex.MAX_GRANULARITY_SHIFT)) {
-            throw new IllegalArgumentException("Invalid Granularity " + pIndexGranularity);
+            || (pIndexGranularity > OrderedIndex.MAX_GRANULARITY_SHIFT)) {
+            throw new IllegalArgumentException("Invalid Granularity "
+                                               + pIndexGranularity);
         }
 
         /* Store the granularity */
@@ -212,8 +213,7 @@ public class OrderedIndex<T extends Comparable<? super T>> {
                 /* If the element is before the last element */
             } else if (iDiff > 0) {
                 /*
-                 * Binary chop to find the search start point. We need to loop while we have a search span
-                 * greater than granularity
+                 * Binary chop to find the search start point. We need to loop while we have a search span greater than granularity
                  */
                 while (iMinimum < iMaximum - 1) {
                     /* Access test item */
@@ -265,8 +265,8 @@ public class OrderedIndex<T extends Comparable<? super T>> {
     }
 
     /**
-     * Obtain the node for the specified item. This slow method is used on the reSort method where we expect
-     * the item to be outside its natural ordering and hence not found by the standard search.
+     * Obtain the node for the specified item. This slow method is used on the reSort method where we expect the item to be outside its natural ordering and
+     * hence not found by the standard search.
      * @param pItem the item
      * @return the relevant node (or null)
      */
@@ -326,8 +326,7 @@ public class OrderedIndex<T extends Comparable<? super T>> {
             /* If the element is before the last element */
             if (iDiff > 0) {
                 /*
-                 * Binary chop to find the search start point. We need to loop while we have a search span
-                 * greater than granularity
+                 * Binary chop to find the search start point. We need to loop while we have a search span greater than granularity
                  */
                 while (iMinimum < iMaximum - 1) {
                     /* Access test item */
@@ -369,16 +368,14 @@ public class OrderedIndex<T extends Comparable<? super T>> {
     }
 
     /**
-     * Register link between object and node to allow fast lookup of node from object. Standard implementation
-     * is a stub.
+     * Register link between object and node to allow fast lookup of node from object. Standard implementation is a stub.
      * @param pNode the Node
      */
     protected void registerLink(final OrderedNode<T> pNode) {
     }
 
     /**
-     * deRegister link between object and node to allow fast lookup of node from object. Standard
-     * implementation is a stub.
+     * deRegister link between object and node to allow fast lookup of node from object. Standard implementation is a stub.
      * @param pNode the Node
      */
     protected void deRegisterLink(final OrderedNode<T> pNode) {
@@ -395,7 +392,8 @@ public class OrderedIndex<T extends Comparable<? super T>> {
         /* If we need to extend the map */
         if (theActiveMapLength > theMapLength - 1) {
             /* Extend the map by expansion number of entries */
-            theMap = Arrays.copyOf(theMap, theMapLength + EXPANSION_SIZE);
+            theMap = Arrays.copyOf(theMap, theMapLength
+                                           + EXPANSION_SIZE);
 
             /* Adjust the map length */
             theMapLength += EXPANSION_SIZE;
@@ -431,7 +429,8 @@ public class OrderedIndex<T extends Comparable<? super T>> {
         OrderedNode<T> myLast = theList.getLast();
 
         /* If the last node has been shifted and needs storing, then store it */
-        if ((!pNode.equals(myLast)) && ((myLast.getIndex() & theGranularityMask) == 0)) {
+        if ((!pNode.equals(myLast))
+            && ((myLast.getIndex() & theGranularityMask) == 0)) {
             insertNode(myLast);
         }
     }
@@ -473,8 +472,7 @@ public class OrderedIndex<T extends Comparable<? super T>> {
         }
 
         /*
-         * Determine the active map length (note that list is one too large since we have yet to remove this
-         * item)
+         * Determine the active map length (note that list is one too large since we have yet to remove this item)
          */
         theActiveMapLength = 1 + ((theList.size() - 2) >>> theGranularityShift);
     }

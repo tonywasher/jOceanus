@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataValues;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 
 /**
  * ValueSet class.
@@ -255,7 +255,8 @@ public class ValueSet {
         Object[] myObj = mySet.theValues;
 
         /* Check for deletion flag and # of values */
-        if ((isDeletion != mySet.isDeletion) || (theNumValues != mySet.theNumValues)) {
+        if ((isDeletion != mySet.isDeletion)
+            || (theNumValues != mySet.theNumValues)) {
             return false;
         }
 
@@ -264,7 +265,8 @@ public class ValueSet {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             JDataField myField = myIterator.next();
-            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
+            if ((!myField.isEqualityField())
+                || (!myField.isValueSetField())) {
                 continue;
             }
 
@@ -282,14 +284,17 @@ public class ValueSet {
     @Override
     public int hashCode() {
         /* Use deletion flag in hash Code */
-        int iHashCode = isDeletion ? DELETION_HASH : 1;
+        int iHashCode = isDeletion
+                ? DELETION_HASH
+                : 1;
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             JDataField myField = myIterator.next();
-            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
+            if ((!myField.isEqualityField())
+                || (!myField.isValueSetField())) {
                 continue;
             }
 
@@ -320,7 +325,8 @@ public class ValueSet {
         Object[] myObj = pOriginal.theValues;
 
         /* Check for deletion flag and # of values */
-        if ((isDeletion != pOriginal.isDeletion) || (theNumValues != pOriginal.theNumValues)) {
+        if ((isDeletion != pOriginal.isDeletion)
+            || (theNumValues != pOriginal.theNumValues)) {
             return Difference.Different;
         }
 
@@ -329,7 +335,8 @@ public class ValueSet {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
             JDataField myField = myIterator.next();
-            if ((!myField.isEqualityField()) || (!myField.isValueSetField())) {
+            if ((!myField.isEqualityField())
+                || (!myField.isValueSetField())) {
                 continue;
             }
 
@@ -345,7 +352,9 @@ public class ValueSet {
         }
 
         /* Determine the difference */
-        return (isSecureDiff) ? Difference.Security : Difference.Identical;
+        return (isSecureDiff)
+                ? Difference.Security
+                : Difference.Identical;
     }
 
     /**
@@ -359,7 +368,9 @@ public class ValueSet {
         /*
          * No difference if field does not exist, is not-equality or is not valueSet
          */
-        if ((pField == null) || (!pField.isEqualityField()) || (!pField.isValueSetField())) {
+        if ((pField == null)
+            || (!pField.isEqualityField())
+            || (!pField.isValueSetField())) {
             return Difference.Identical;
         }
 

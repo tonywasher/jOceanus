@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.ui;
+package net.sourceforge.joceanus.jdatamodels.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -35,18 +35,18 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.RowColumnModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel.RowTableModel;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableScroll;
-import net.sourceforge.jOceanus.jEventManager.JEventTable;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxSelector;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jTableFilter.TableFilter;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.RowColumnModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel.RowTableModel;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jeventmanager.JEventTable;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxSelector;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jtablefilter.TableFilter;
 
 /**
  * Template class to provide a table to handle a data type.

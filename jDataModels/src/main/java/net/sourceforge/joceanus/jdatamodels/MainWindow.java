@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels;
+package net.sourceforge.joceanus.jdatamodels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,27 +41,27 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataWindow;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.threads.CreateBackup;
-import net.sourceforge.jOceanus.jDataModels.threads.CreateDatabase;
-import net.sourceforge.jOceanus.jDataModels.threads.CreateExtract;
-import net.sourceforge.jOceanus.jDataModels.threads.LoadBackup;
-import net.sourceforge.jOceanus.jDataModels.threads.LoadDatabase;
-import net.sourceforge.jOceanus.jDataModels.threads.LoadExtract;
-import net.sourceforge.jOceanus.jDataModels.threads.PurgeDatabase;
-import net.sourceforge.jOceanus.jDataModels.threads.RenewSecurity;
-import net.sourceforge.jOceanus.jDataModels.threads.StoreDatabase;
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jDataModels.threads.UpdatePassword;
-import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
-import net.sourceforge.jOceanus.jDataModels.ui.ThreadControl;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jHelpManager.HelpModule;
-import net.sourceforge.jOceanus.jHelpManager.HelpWindow;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataWindow;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.threads.CreateBackup;
+import net.sourceforge.joceanus.jdatamodels.threads.CreateDatabase;
+import net.sourceforge.joceanus.jdatamodels.threads.CreateExtract;
+import net.sourceforge.joceanus.jdatamodels.threads.LoadBackup;
+import net.sourceforge.joceanus.jdatamodels.threads.LoadDatabase;
+import net.sourceforge.joceanus.jdatamodels.threads.LoadExtract;
+import net.sourceforge.joceanus.jdatamodels.threads.PurgeDatabase;
+import net.sourceforge.joceanus.jdatamodels.threads.RenewSecurity;
+import net.sourceforge.joceanus.jdatamodels.threads.StoreDatabase;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jdatamodels.threads.UpdatePassword;
+import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
+import net.sourceforge.joceanus.jdatamodels.ui.ThreadControl;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jhelpmanager.HelpModule;
+import net.sourceforge.joceanus.jhelpmanager.HelpWindow;
 
 /**
  * Main window for application.

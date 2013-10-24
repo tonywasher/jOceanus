@@ -22,7 +22,8 @@
   </dependencies>
   <properties>
     <svnComponent>jPreferenceSet</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jpreferenceset</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

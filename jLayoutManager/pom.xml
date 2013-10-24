@@ -10,7 +10,8 @@
   <description>Java Swing Layout Manager Utilities</description>
   <properties>
     <svnComponent>jLayoutManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jlayoutmanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

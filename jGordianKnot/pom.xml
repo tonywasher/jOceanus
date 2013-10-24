@@ -37,7 +37,8 @@
   </dependencies>
   <properties>
     <svnComponent>jGordianKnot</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jgordianknot</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

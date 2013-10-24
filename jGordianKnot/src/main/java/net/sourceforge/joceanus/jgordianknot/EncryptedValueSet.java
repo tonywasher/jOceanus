@@ -20,18 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataValues;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 
 /**
  * Encrypted ValueSet class.
  */
-public class EncryptedValueSet extends ValueSet {
+public class EncryptedValueSet
+        extends ValueSet {
     /**
      * Constructor.
      * @param pItem the item
@@ -67,7 +68,8 @@ public class EncryptedValueSet extends ValueSet {
 
         /* Handle bad usage */
         if (!EncryptedField.class.isInstance(myObject)) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field " + pField.getName());
+            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+                                               + pField.getName());
         }
 
         /* Return the bytes */
@@ -92,7 +94,8 @@ public class EncryptedValueSet extends ValueSet {
 
         /* Handle bad usage */
         if (!EncryptedField.class.isInstance(myObject)) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field " + pField.getName());
+            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+                                               + pField.getName());
         }
 
         /* Return the value */
@@ -115,7 +118,8 @@ public class EncryptedValueSet extends ValueSet {
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
             Object myValue = myValues[i];
-            if ((myValue == null) || (!EncryptedField.class.isInstance(myValue))) {
+            if ((myValue == null)
+                || (!EncryptedField.class.isInstance(myValue))) {
                 continue;
             }
 
@@ -136,20 +140,25 @@ public class EncryptedValueSet extends ValueSet {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;
-        Object[] myBaseValues = (pBaseValues == null) ? null : pBaseValues.getValues();
+        Object[] myBaseValues = (pBaseValues == null)
+                ? null
+                : pBaseValues.getValues();
 
         /* Loop through the values */
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
             Object myValue = myValues[i];
-            if ((myValue == null) || (!EncryptedField.class.isInstance(myValue))) {
+            if ((myValue == null)
+                || (!EncryptedField.class.isInstance(myValue))) {
                 continue;
             }
 
             /* Access relevant fields */
             EncryptedField<?> myField = (EncryptedField<?>) myValue;
             EncryptedField<?> myBaseField = null;
-            Object myBaseObj = (myBaseValues == null) ? null : myBaseValues[i];
+            Object myBaseObj = (myBaseValues == null)
+                    ? null
+                    : myBaseValues[i];
             if (EncryptedField.class.isInstance(myBaseObj)) {
                 myBaseField = (EncryptedField<?>) myBaseObj;
             }

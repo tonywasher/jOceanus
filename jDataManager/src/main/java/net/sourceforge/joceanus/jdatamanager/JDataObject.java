@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 
 /**
  * Data object formatting and interfaces.

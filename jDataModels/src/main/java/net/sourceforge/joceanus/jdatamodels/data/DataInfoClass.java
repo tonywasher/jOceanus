@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.data;
+package net.sourceforge.joceanus.jdatamodels.data;
 
-import net.sourceforge.jOceanus.jDataManager.DataType;
+import net.sourceforge.joceanus.jdatamanager.DataType;
 
 /**
  * DataInfoClass interface.

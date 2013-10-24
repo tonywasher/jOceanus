@@ -22,7 +22,8 @@
   </dependencies>
   <properties>
     <svnComponent>jFieldSet</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jfieldset</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

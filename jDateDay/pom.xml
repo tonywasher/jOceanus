@@ -22,8 +22,9 @@
   </dependencies>
   <properties>
     <svnComponent>jDateDay</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
-    <packageMain>${packageName}.Demo.JDateDayExample</packageMain>
+    <svnPackage>jdateday</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
+    <packageMain>${packageName}.demo.JDateDayExample</packageMain>
     <appJar>${project.artifactId}-${project.version}</appJar>
     <appDir>${project.build.directory}/site/demo</appDir>
   </properties>

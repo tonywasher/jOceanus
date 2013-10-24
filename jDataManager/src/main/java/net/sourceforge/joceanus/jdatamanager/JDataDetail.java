@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataDifference;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
 
 /**
  * Debug Detail class that holds details of links to other objects.
@@ -136,7 +136,8 @@ public class JDataDetail {
      * @return true/false
      */
     protected final boolean isList() {
-        return isList && (theList.size() > 0);
+        return isList
+               && (theList.size() > 0);
     }
 
     /**
@@ -211,9 +212,15 @@ public class JDataDetail {
         }
 
         /* Allocate iterator if needed */
-        theList = (isList) ? (List<?>) pObject : null;
-        theIterator = (isList()) ? theList.listIterator() : null;
-        thePartnerDetail = (isList()) ? new JDataDetail(this, theIterator.next()) : null;
+        theList = (isList)
+                ? (List<?>) pObject
+                : null;
+        theIterator = (isList())
+                ? theList.listIterator()
+                : null;
+        thePartnerDetail = (isList())
+                ? new JDataDetail(this, theIterator.next())
+                : null;
     }
 
     /**
@@ -251,7 +258,8 @@ public class JDataDetail {
         /* If we are stepping forwards */
         if (myNumSteps > 0) {
             /* Loop through the steps */
-            while ((myNumSteps-- > 0) && (theIterator.hasNext())) {
+            while ((myNumSteps-- > 0)
+                   && (theIterator.hasNext())) {
                 /* Shift to next element */
                 myNext = theIterator.next();
             }
@@ -265,7 +273,8 @@ public class JDataDetail {
             theIterator.previous();
 
             /* Loop through the steps */
-            while ((myNumSteps++ < 0) && (theIterator.hasPrevious())) {
+            while ((myNumSteps++ < 0)
+                   && (theIterator.hasPrevious())) {
                 /* Shift to previous element */
                 myNext = theIterator.previous();
             }
@@ -290,7 +299,8 @@ public class JDataDetail {
         }
 
         /* Ignore if no history */
-        if ((theBackward == null) && (theForward == null)) {
+        if ((theBackward == null)
+            && (theForward == null)) {
             return null;
         }
 
@@ -336,10 +346,14 @@ public class JDataDetail {
 
         /* Handle forward/backward links */
         if (myName.equals(LINK_FORWARD)) {
-            return (isChild) ? thePartnerDetail.theForward : theForward;
+            return (isChild)
+                    ? thePartnerDetail.theForward
+                    : theForward;
         }
         if (myName.equals(LINK_BACKWARD)) {
-            return (isChild) ? thePartnerDetail.theBackward : theBackward;
+            return (isChild)
+                    ? thePartnerDetail.theBackward
+                    : theBackward;
         }
 
         /* Loop through the links */
@@ -446,7 +460,8 @@ public class JDataDetail {
             theObject = pObject;
 
             /* Assign name */
-            theName = "Object" + ++pDetail.theNextId;
+            theName = "Object"
+                      + ++pDetail.theNextId;
 
             /* Add to the links */
             theNext = pDetail.theLinks;

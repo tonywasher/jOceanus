@@ -20,31 +20,31 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataModels.sheets;
+package net.sourceforge.joceanus.jdatamodels.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jSpreadSheetManager.CellPosition;
-import net.sourceforge.jOceanus.jSpreadSheetManager.CellStyleType;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataSheet;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jspreadsheetmanager.CellPosition;
+import net.sourceforge.joceanus.jspreadsheetmanager.CellStyleType;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataSheet;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.

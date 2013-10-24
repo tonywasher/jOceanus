@@ -20,24 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jPreferenceSet;
+package net.sourceforge.joceanus.jpreferenceset;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jEventManager.JEventObject;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jeventmanager.JEventObject;
 
 /**
  * Manager class for preference sets.
  * @author Tony Washer
  */
-public class PreferenceManager extends JEventObject implements JDataContents {
+public class PreferenceManager
+        extends JEventObject
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -59,7 +61,9 @@ public class PreferenceManager extends JEventObject implements JDataContents {
         PreferenceSet mySet = theMap.get(pField.getName());
 
         /* Return the value */
-        return (mySet == null) ? JDataFieldValue.UnknownField : mySet;
+        return (mySet == null)
+                ? JDataFieldValue.UnknownField
+                : mySet;
     }
 
     /**

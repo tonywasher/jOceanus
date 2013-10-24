@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDecimal;
+package net.sourceforge.joceanus.jdecimal;
 
 /**
  * Represents a Dilution object. Many shares are quoted with a diluted price which must be rectified by a dilution factor to obtain the correct price. This

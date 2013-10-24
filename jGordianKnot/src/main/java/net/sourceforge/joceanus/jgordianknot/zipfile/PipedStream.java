@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot.ZipFile;
+package net.sourceforge.joceanus.jgordianknot.zipfile;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -29,8 +29,7 @@ import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
- * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and
- * reading from an input stream.
+ * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and reading from an input stream.
  * @author Tony Washer
  */
 public class PipedStream {
@@ -92,7 +91,8 @@ public class PipedStream {
     /**
      * The inputStream class.
      */
-    private class PipedInputStream extends InputStream {
+    private class PipedInputStream
+            extends InputStream {
         /**
          * The currently active element.
          */
@@ -182,10 +182,13 @@ public class PipedStream {
             }
 
             /* Determine how much data we have available */
-            int iNumRead = theDataLen - theReadOffset;
+            int iNumRead = theDataLen
+                           - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = (iNumRead <= pLength) ? iNumRead : pLength;
+            iNumRead = (iNumRead <= pLength)
+                    ? iNumRead
+                    : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {
@@ -222,7 +225,8 @@ public class PipedStream {
     /**
      * The outputStream class.
      */
-    private class PipedOutputStream extends OutputStream {
+    private class PipedOutputStream
+            extends OutputStream {
         /**
          * has this stream been closed.
          */

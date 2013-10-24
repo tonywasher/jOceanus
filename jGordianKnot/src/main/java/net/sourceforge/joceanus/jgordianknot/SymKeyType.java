@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jGordianKnot;
+package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -93,7 +93,8 @@ public enum SymKeyType {
      * @return the cipher name
      */
     public String getCipher() {
-        return getAlgorithm() + FULLALGORITHM;
+        return getAlgorithm()
+               + FULLALGORITHM;
     }
 
     /**
@@ -116,7 +117,8 @@ public enum SymKeyType {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: "
+                                                      + id);
     }
 
     /**
@@ -134,8 +136,10 @@ public enum SymKeyType {
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+        if ((pNumTypes < 1)
+            || (pNumTypes > iNumValues)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: "
+                                                           + pNumTypes);
         }
 
         /* Create the result set */

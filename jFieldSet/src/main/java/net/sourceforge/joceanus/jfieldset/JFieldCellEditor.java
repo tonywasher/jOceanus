@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.joceanus.jfieldset;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,13 +40,13 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayCellEditor;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSet.JFieldValue;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayCellEditor;
+import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JDecimalParser;
+import net.sourceforge.joceanus.jfieldset.JFieldSet.JFieldValue;
 
 /**
  * Cell editors.
@@ -97,7 +97,9 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setText(((pValue == null) || (JFieldValue.Error.equals(pValue))) ? "" : (String) pValue);
+            theField.setText(((pValue == null) || (JFieldValue.Error.equals(pValue)))
+                    ? ""
+                    : (String) pValue);
             return theField;
         }
 
@@ -217,7 +219,9 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setSelected(((pValue == null) || (JFieldValue.Error.equals(pValue))) ? Boolean.FALSE : (Boolean) pValue);
+            theField.setSelected(((pValue == null) || (JFieldValue.Error.equals(pValue)))
+                    ? Boolean.FALSE
+                    : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -341,7 +345,9 @@ public class JFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            return (theCombo != null) ? theCombo.getSelectedItem() : null;
+            return (theCombo != null)
+                    ? theCombo.getSelectedItem()
+                    : null;
         }
 
         @Override
@@ -403,8 +409,12 @@ public class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Access the range */
-            JDateDay myStart = (theRange == null) ? null : theRange.getStart();
-            JDateDay myEnd = (theRange == null) ? null : theRange.getEnd();
+            JDateDay myStart = (theRange == null)
+                    ? null
+                    : theRange.getStart();
+            JDateDay myEnd = (theRange == null)
+                    ? null
+                    : theRange.getEnd();
             JDateDay myCurr;
 
             /* If the value is null */

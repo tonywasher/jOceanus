@@ -10,7 +10,8 @@
   <description>Java Sorted Linked Lists</description>
   <properties>
     <svnComponent>jSortedList</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jsortedlist</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

@@ -23,5 +23,5 @@
 /**
  * Preference Set Manager.
  */
-package net.sourceforge.jOceanus.jPreferenceSet;
+package net.sourceforge.joceanus.jpreferenceset;
 

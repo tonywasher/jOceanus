@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSortedList;
+package net.sourceforge.joceanus.jsortedlist;
 
 import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
@@ -31,7 +31,8 @@ import java.util.NoSuchElementException;
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedListIterator<T extends Comparable<? super T>> implements ListIterator<T> {
+public class OrderedListIterator<T extends Comparable<? super T>>
+        implements ListIterator<T> {
     /**
      * Owning list.
      */
@@ -92,7 +93,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
      */
     private OrderedNode<T> nextNode() {
         /* Return the next node */
-        return (theNodeBefore != null) ? theNodeBefore.getNext() : theList.getFirst();
+        return (theNodeBefore != null)
+                ? theNodeBefore.getNext()
+                : theList.getFirst();
     }
 
     /**
@@ -101,7 +104,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
      */
     private OrderedNode<T> previousNode() {
         /* Return the previous node */
-        return (theNodeAfter != null) ? theNodeAfter.getPrev() : theList.getLast();
+        return (theNodeAfter != null)
+                ? theNodeAfter.getPrev()
+                : theList.getLast();
     }
 
     @Override
@@ -131,7 +136,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myNext = nextNode();
 
         /* Return the next object */
-        return (myNext != null) ? myNext.getObject() : null;
+        return (myNext != null)
+                ? myNext.getObject()
+                : null;
     }
 
     /**
@@ -143,7 +150,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myPrev = previousNode();
 
         /* Return the previous object */
-        return (myPrev != null) ? myPrev.getObject() : null;
+        return (myPrev != null)
+                ? myPrev.getObject()
+                : null;
     }
 
     /**
@@ -155,7 +164,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myFirst = theList.getFirst();
 
         /* Return the next object */
-        return (myFirst != null) ? myFirst.getObject() : null;
+        return (myFirst != null)
+                ? myFirst.getObject()
+                : null;
     }
 
     /**
@@ -167,7 +178,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myLast = theList.getLast();
 
         /* Return the previous object */
-        return (myLast != null) ? myLast.getObject() : null;
+        return (myLast != null)
+                ? myLast.getObject()
+                : null;
     }
 
     @Override
@@ -222,7 +235,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myNext = nextNode();
 
         /* Return the index */
-        return (myNext != null) ? myNext.getIndex() : theList.size();
+        return (myNext != null)
+                ? myNext.getIndex()
+                : theList.size();
     }
 
     @Override
@@ -231,7 +246,9 @@ public class OrderedListIterator<T extends Comparable<? super T>> implements Lis
         OrderedNode<T> myPrev = previousNode();
 
         /* Return the index */
-        return (myPrev != null) ? myPrev.getIndex() : -1;
+        return (myPrev != null)
+                ? myPrev.getIndex()
+                : -1;
     }
 
     /**
