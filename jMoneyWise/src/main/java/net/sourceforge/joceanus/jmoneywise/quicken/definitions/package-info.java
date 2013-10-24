@@ -23,5 +23,5 @@
 /**
  * Quicken definitions for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
+package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 

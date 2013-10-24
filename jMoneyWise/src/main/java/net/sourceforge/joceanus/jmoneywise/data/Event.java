@@ -20,37 +20,37 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data;
+package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.DataState;
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet.InfoSetItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jdatamanager.DataState;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * New version of Event DataItem utilising EventInfo.

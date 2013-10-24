@@ -64,7 +64,8 @@
     <appDir>../../backup/</appDir>
     <appLibDir>lib/</appLibDir>
     <svnComponent>jMoneyWise</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jmoneywise</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
     <packageMain>${packageName}.Control</packageMain>
   </properties>
   <build>

@@ -10,8 +10,9 @@
   <description>JTable RowSorter than implements a simplified filter/sort mechanism based on natural order of the rows</description>
   <properties>
     <svnComponent>jTableFilter</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
-    <packageMain>${packageName}.Demo.DemoFilter</packageMain>
+    <svnPackage>jtablefilter</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
+    <packageMain>${packageName}.demo.DemoFilter</packageMain>
     <appJar>${project.artifactId}-${project.version}</appJar>
     <appDir>${project.build.directory}/site/demo</appDir>
    </properties>

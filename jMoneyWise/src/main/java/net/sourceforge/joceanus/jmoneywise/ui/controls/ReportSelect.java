@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -38,19 +38,19 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
-import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis.AnalysisYear;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
-import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis;
+import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis.AnalysisYear;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 
 /**
  * Report selection panel.

@@ -23,5 +23,5 @@
 /**
  * Help support details for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.help;
+package net.sourceforge.joceanus.jmoneywise.help;
 

@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
+import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
 /**
  * SheetDataInfo extension for EventInfo.

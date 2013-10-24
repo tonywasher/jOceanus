@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise;
+package net.sourceforge.joceanus.jmoneywise;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
 
 /**
  * Main entry point for program.

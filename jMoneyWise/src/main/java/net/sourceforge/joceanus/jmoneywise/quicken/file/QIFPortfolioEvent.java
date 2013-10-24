@@ -20,34 +20,34 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QActionType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QPortfolioLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryAccountLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFClearedLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFDateLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFPayeeLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFPriceLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFRatioLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFSecurityLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFUnitsLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFXferAccountLine;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jdecimal.JDecimalParser;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryAccountLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFClearedLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFDateLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFPayeeLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFPriceLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFRatioLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFSecurityLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFUnitsLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
 
 /**
  * Class representing a QIF Portfolio Event record.

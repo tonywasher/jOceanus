@@ -20,27 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data;
+package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataFieldRequired;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataFieldRequired;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * EventInfoSet class.

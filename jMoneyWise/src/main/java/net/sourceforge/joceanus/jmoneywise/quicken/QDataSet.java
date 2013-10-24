@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,15 +29,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Quicken DataSet Representation.

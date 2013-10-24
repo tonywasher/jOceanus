@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 
 /**
  * Class representing a QIF Account record.

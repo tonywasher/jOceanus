@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.tasks;
+package net.sourceforge.joceanus.jsvnmanager.tasks;
 
 import java.io.File;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jJira.data.Issue;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.data.Issue;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNCommitInfo;
@@ -147,8 +147,7 @@ public class CommitMgr {
             String myMessage = myBuilder.toString();
 
             /* Build the commit package */
-            SVNCommitPacket[] myPackets = myCommit.doCollectCommitItems(myPaths, false, true,
-                                                                        SVNDepth.INFINITY, true, null);
+            SVNCommitPacket[] myPackets = myCommit.doCollectCommitItems(myPaths, false, true, SVNDepth.INFINITY, true, null);
 
             /* Ensure that there is only one packet */
             if (myPackets.length > 1) {
@@ -169,7 +168,8 @@ public class CommitMgr {
     /**
      * EventHandler.
      */
-    private final class CommitHandler implements ISVNEventHandler {
+    private final class CommitHandler
+            implements ISVNEventHandler {
         @Override
         public void checkCancelled() throws SVNCancelException {
             if (theReport.isCancelled()) {
@@ -186,23 +186,28 @@ public class CommitMgr {
             /* If this is the start of the checkOut */
             if (myAction.equals(SVNEventAction.COMMIT_COMPLETED)) {
                 /* Record the revision */
-                theReport.setNewStage("Commit completed at revision " + pEvent.getRevision());
+                theReport.setNewStage("Commit completed at revision "
+                                      + pEvent.getRevision());
 
             } else if (myAction.equals(SVNEventAction.COMMIT_ADDED)) {
                 /* Report activity */
-                theReport.setNewStage("A " + pEvent.getFile().getPath());
+                theReport.setNewStage("A "
+                                      + pEvent.getFile().getPath());
 
             } else if (myAction.equals(SVNEventAction.COMMIT_MODIFIED)) {
                 /* Report activity */
-                theReport.setNewStage("M " + pEvent.getFile().getPath());
+                theReport.setNewStage("M "
+                                      + pEvent.getFile().getPath());
 
             } else if (myAction.equals(SVNEventAction.COMMIT_DELETED)) {
                 /* Report activity */
-                theReport.setNewStage("D " + pEvent.getFile().getPath());
+                theReport.setNewStage("D "
+                                      + pEvent.getFile().getPath());
 
             } else if (myAction.equals(SVNEventAction.COMMIT_REPLACED)) {
                 /* Report activity */
-                theReport.setNewStage("R " + pEvent.getFile().getPath());
+                theReport.setNewStage("R "
+                                      + pEvent.getFile().getPath());
 
             } else {
                 theReport.setNewStage(pEvent.getFile().getPath());

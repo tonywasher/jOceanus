@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,24 +39,24 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableScroll;
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder;
-import net.sourceforge.jOceanus.jMoneyWise.reports.ReportBuilder;
-import net.sourceforge.jOceanus.jMoneyWise.reports.ReportManager;
-import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis.AnalysisYear;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
+import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis;
+import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis.AnalysisYear;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 import org.w3c.dom.Document;
 

@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.database;
+package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.database.Database;
-import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.database.Database;
+import net.sourceforge.joceanus.jdatamodels.database.TableDataInfo;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 
 /**
  * TableDataInfo extension for TaxYearInfo.

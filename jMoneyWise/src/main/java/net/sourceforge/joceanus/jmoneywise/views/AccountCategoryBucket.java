@@ -20,24 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.views;
+package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
-import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
+import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
+import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 
 /**
  * Account Category Bucket.

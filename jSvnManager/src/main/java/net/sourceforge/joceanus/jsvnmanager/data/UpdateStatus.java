@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.data;
+package net.sourceforge.joceanus.jsvnmanager.data;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
@@ -37,7 +37,8 @@ import org.tmatesoft.svn.core.wc.SVNStatusType;
  * Status record in Working Copy.
  * @author Tony Washer
  */
-public class UpdateStatus implements JDataContents {
+public class UpdateStatus
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -95,19 +96,21 @@ public class UpdateStatus implements JDataContents {
         if (FIELD_PSTATUS.equals(pField)) {
             SVNStatusType myStatus = theStatus.getPropertiesStatus();
             return (myStatus != SVNStatusType.STATUS_NORMAL)
-                                                            ? myStatus.toString()
-                                                            : JDataFieldValue.SkipField;
+                    ? myStatus.toString()
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_KIND.equals(pField)) {
             return theStatus.getKind().toString();
         }
         if (FIELD_COPYFROM.equals(pField)) {
-            return theStatus.isCopied() ? theStatus.getCopyFromURL() : JDataFieldValue.SkipField;
+            return theStatus.isCopied()
+                    ? theStatus.getCopyFromURL()
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_COPYREV.equals(pField)) {
             return theStatus.isCopied()
-                                       ? theStatus.getCopyFromRevision().getNumber()
-                                       : JDataFieldValue.SkipField;
+                    ? theStatus.getCopyFromRevision().getNumber()
+                    : JDataFieldValue.SkipField;
         }
 
         /* Unknown */
@@ -135,7 +138,8 @@ public class UpdateStatus implements JDataContents {
         theStatus = pStatus;
 
         /* Determine the name */
-        String myLocation = pCopy.getLocation() + File.separator;
+        String myLocation = pCopy.getLocation()
+                            + File.separator;
         String myName = theStatus.getFile().getAbsolutePath();
         if (myName.startsWith(myLocation)) {
             theName = myName.substring(myLocation.length());
@@ -147,7 +151,9 @@ public class UpdateStatus implements JDataContents {
     /**
      * List class.
      */
-    public static class UpdateStatusList extends ArrayList<UpdateStatus> implements JDataContents {
+    public static class UpdateStatusList
+            extends ArrayList<UpdateStatus>
+            implements JDataContents {
         /**
          * Serial Id.
          */

@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.database;
+package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.database.Database;
-import net.sourceforge.jOceanus.jDataModels.database.TableStaticData;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory.TaxCategoryList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.database.Database;
+import net.sourceforge.joceanus.jdatamodels.database.TableStaticData;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 
 /**
  * TableStaticData extension for TaxBucket.

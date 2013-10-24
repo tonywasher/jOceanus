@@ -20,20 +20,20 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QAccountLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QAccountLineType;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 
 /**
  * Class representing a QIF Account record.

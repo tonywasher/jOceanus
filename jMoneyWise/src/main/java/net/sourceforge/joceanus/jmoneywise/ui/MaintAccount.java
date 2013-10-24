@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -40,40 +40,40 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.DataType;
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
-import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
-import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
-import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfoSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.AccountSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
+import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jfieldset.JFieldSet;
+import net.sourceforge.joceanus.jfieldset.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jlayoutmanager.SpringUtilities;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
+import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AccountSelect;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Account maintenance panel.

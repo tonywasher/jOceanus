@@ -20,21 +20,21 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QLineType;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
 
 /**
  * A standard event line in the QIF file.

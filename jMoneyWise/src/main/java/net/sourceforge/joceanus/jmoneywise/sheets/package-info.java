@@ -23,5 +23,5 @@
 /**
  * SpreadSheet support for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 

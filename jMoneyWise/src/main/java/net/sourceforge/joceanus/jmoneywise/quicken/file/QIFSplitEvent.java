@@ -20,18 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFRateLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFXferAccountLine;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFRateLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
 
 /**
  * Split Event Record.

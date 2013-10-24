@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise;
+package net.sourceforge.joceanus.jmoneywise;
 
 /**
  * Top level package.

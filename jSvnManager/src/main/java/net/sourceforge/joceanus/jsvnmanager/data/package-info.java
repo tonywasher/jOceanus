@@ -24,5 +24,5 @@
  * Data Models for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.jOceanus.jSvnManager.data;
+package net.sourceforge.joceanus.jsvnmanager.data;
 

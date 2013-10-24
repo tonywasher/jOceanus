@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.data;
+package net.sourceforge.joceanus.jsvnmanager.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -144,7 +144,8 @@ public class ClientManager {
     /**
      * EventHandler.
      */
-    private static final class NullEventHandler implements ISVNEventHandler {
+    private static final class NullEventHandler
+            implements ISVNEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {

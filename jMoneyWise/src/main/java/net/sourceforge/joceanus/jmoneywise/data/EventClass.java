@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data;
+package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
+import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
+import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 
 /**
  * Tag for an event.

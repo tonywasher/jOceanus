@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.ui;
+package net.sourceforge.joceanus.jsvnmanager.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -35,7 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
 
 /**
  * Status window for SubVersion operations.

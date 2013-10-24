@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.threads;
+package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Finance Status Thread control.

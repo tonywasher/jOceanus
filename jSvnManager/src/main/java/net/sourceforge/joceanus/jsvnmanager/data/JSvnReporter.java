@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.data;
+package net.sourceforge.joceanus.jsvnmanager.data;
 
 /**
  * Report Subversion events.
@@ -62,7 +62,8 @@ public class JSvnReporter {
     /**
      * Report Task.
      */
-    public interface ReportTask extends ReportStatus {
+    public interface ReportTask
+            extends ReportStatus {
         /**
          * Complete Task.
          * @param pTask the task that has completed.

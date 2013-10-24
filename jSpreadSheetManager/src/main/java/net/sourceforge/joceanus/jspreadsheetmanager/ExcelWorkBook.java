@@ -268,13 +268,8 @@ public class ExcelWorkBook {
         myRef = myArea.getFirstCell();
         CellPosition myFirstCell = new CellPosition(myRef.getCol(), myRef.getRow());
 
-        /* Obtain the sheet and reject if missing */
+        /* Obtain the sheet */
         DataSheet mySheet = getSheet(myRef.getSheetName());
-        if (mySheet == null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
-                                                           + pName
-                                                           + " not found in workbook");
-        }
 
         /* Return the view */
         return new DataView(mySheet, myFirstCell, myLastCell);

@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.joceanus.jmoneywise.quicken;
 
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 
 /**
  * Quicken Price.

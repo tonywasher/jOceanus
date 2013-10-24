@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,41 +33,41 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableMouse;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
-import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTable;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableMouse;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Account Patterns Table.

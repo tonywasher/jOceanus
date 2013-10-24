@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data.statics;
+package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 /**
  * Enumeration of Tax Bucket Sections.

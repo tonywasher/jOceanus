@@ -23,5 +23,5 @@
 /**
  * Database support details for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.database;
+package net.sourceforge.joceanus.jmoneywise.database;
 

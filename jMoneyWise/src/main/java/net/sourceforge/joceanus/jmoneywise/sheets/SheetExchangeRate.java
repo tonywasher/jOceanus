@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JRatio;
-import net.sourceforge.jOceanus.jMoneyWise.data.ExchangeRate;
-import net.sourceforge.jOceanus.jMoneyWise.data.ExchangeRate.ExchangeRateList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
+import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 
 /**
  * SheetDataItem extension for ExchangeRate.

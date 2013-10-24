@@ -20,27 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.views;
+package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.DataState;
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.joceanus.jdatamanager.DataState;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
 /**
  * Extension of AccountPrice to cater for spot prices.

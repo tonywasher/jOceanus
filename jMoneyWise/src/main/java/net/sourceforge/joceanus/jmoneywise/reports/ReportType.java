@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 
 /**
  * Report Types.

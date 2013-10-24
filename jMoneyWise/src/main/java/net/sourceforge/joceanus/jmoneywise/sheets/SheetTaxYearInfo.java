@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 
 /**
  * SheetDataInfo extension for TaxYearInfo.

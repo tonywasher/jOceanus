@@ -42,7 +42,8 @@
   </dependencies>
   <properties>
     <svnComponent>jSvnManager</svnComponent>
-    <packageName>${project.groupId}.${svnComponent}</packageName>
+    <svnPackage>jsvnmanager</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <repositories>
     <repository>

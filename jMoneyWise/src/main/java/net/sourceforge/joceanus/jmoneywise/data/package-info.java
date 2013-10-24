@@ -23,5 +23,5 @@
 /**
  * Data classes for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.data;
+package net.sourceforge.joceanus.jmoneywise.data;
 

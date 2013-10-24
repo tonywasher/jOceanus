@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jJira;
+package net.sourceforge.joceanus.jjira;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jJira.data.Server;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jjira.data.Server;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * Jira test suite.

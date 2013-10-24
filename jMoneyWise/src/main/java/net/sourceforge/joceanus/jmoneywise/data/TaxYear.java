@@ -20,30 +20,30 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data;
+package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.DataState;
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet.InfoSetItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
+import net.sourceforge.joceanus.jdatamanager.DataState;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.

@@ -20,24 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AccountBucket;
+import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
+import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.CategoryType;
+import net.sourceforge.joceanus.jmoneywise.views.Analysis;
+import net.sourceforge.joceanus.jmoneywise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

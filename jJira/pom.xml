@@ -85,8 +85,8 @@
   </dependencies>
   <properties>
     <svnComponent>jJira</svnComponent>
-    <svnPackage>jJira</svnPackage>
-    <packageName>${packageBase}.${svnPackage}</packageName>
+    <svnPackage>jjira</svnPackage>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

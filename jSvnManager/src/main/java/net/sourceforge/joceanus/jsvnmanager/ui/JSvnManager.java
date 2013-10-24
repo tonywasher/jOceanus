@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.ui;
+package net.sourceforge.joceanus.jsvnmanager.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,23 +34,23 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataManager.JDataWindow;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch.BranchOpType;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.SubVersionPreferences;
-import net.sourceforge.jOceanus.jSvnManager.data.Tag;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.jOceanus.jSvnManager.threads.CreateBranchTags;
-import net.sourceforge.jOceanus.jSvnManager.threads.CreateNewBranch;
-import net.sourceforge.jOceanus.jSvnManager.threads.CreateTagExtract;
-import net.sourceforge.jOceanus.jSvnManager.threads.CreateWorkingCopy;
-import net.sourceforge.jOceanus.jSvnManager.threads.DiscoverData;
-import net.sourceforge.jOceanus.jSvnManager.threads.RevertWorkingCopy;
-import net.sourceforge.jOceanus.jSvnManager.threads.UpdateWorkingCopy;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JDataWindow;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch.BranchOpType;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jsvnmanager.data.Tag;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jsvnmanager.threads.CreateBranchTags;
+import net.sourceforge.joceanus.jsvnmanager.threads.CreateNewBranch;
+import net.sourceforge.joceanus.jsvnmanager.threads.CreateTagExtract;
+import net.sourceforge.joceanus.jsvnmanager.threads.CreateWorkingCopy;
+import net.sourceforge.joceanus.jsvnmanager.threads.DiscoverData;
+import net.sourceforge.joceanus.jsvnmanager.threads.RevertWorkingCopy;
+import net.sourceforge.joceanus.jsvnmanager.threads.UpdateWorkingCopy;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 

@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.Analysis;
+import net.sourceforge.joceanus.jmoneywise.views.EventCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.views.EventCategoryBucket.EventAttribute;
+import net.sourceforge.joceanus.jmoneywise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

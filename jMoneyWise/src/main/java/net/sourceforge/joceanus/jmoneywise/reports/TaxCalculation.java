@@ -20,24 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent;
-import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
+import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.Analysis;
+import net.sourceforge.joceanus.jmoneywise.views.ChargeableEvent;
+import net.sourceforge.joceanus.jmoneywise.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxAttribute;
+import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

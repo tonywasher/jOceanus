@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jMoneyWise.data.EventClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QClassLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jmoneywise.data.EventClass;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QClassLineType;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 
 /**
  * Class representing a QIF Class record.

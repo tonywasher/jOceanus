@@ -23,5 +23,5 @@
 /**
  * Control widgets.
  */
-package net.sourceforge.jOceanus.jMoneyWise.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 

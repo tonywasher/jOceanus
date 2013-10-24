@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.threads;
+package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QDataSet;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * WorkerThread extension to create a QIF archive.

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -33,25 +33,25 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.MainWindow;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
-import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
-import net.sourceforge.jOceanus.jHelpManager.HelpException;
-import net.sourceforge.jOceanus.jHelpManager.HelpModule;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.help.FinanceHelp;
-import net.sourceforge.jOceanus.jMoneyWise.threads.FinanceStatus;
-import net.sourceforge.jOceanus.jMoneyWise.threads.LoadArchive;
-import net.sourceforge.jOceanus.jMoneyWise.threads.WriteQIF;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
-import net.sourceforge.jOceanus.jSvnManager.threads.SubversionBackup;
-import net.sourceforge.jOceanus.jSvnManager.threads.SubversionRestore;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.MainWindow;
+import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jhelpmanager.HelpException;
+import net.sourceforge.joceanus.jhelpmanager.HelpModule;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
+import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
+import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
+import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jsvnmanager.threads.SubversionBackup;
+import net.sourceforge.joceanus.jsvnmanager.threads.SubversionRestore;
 
 /**
  * Main Window for jMoneyWise.

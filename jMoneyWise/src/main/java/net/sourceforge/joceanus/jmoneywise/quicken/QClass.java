@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QCategoryLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QClassLineType;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jmoneywise.data.EventClass;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QClassLineType;
 
 /**
  * Quicken Class.

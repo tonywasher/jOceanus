@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.threads;
+package net.sourceforge.joceanus.jsvnmanager.threads;
 
 import java.io.File;
 import java.util.Collection;
@@ -28,20 +28,22 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportTask;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.jOceanus.jSvnManager.tasks.Directory;
-import net.sourceforge.jOceanus.jSvnManager.tasks.VersionMgr;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jsvnmanager.tasks.Directory;
+import net.sourceforge.joceanus.jsvnmanager.tasks.VersionMgr;
 
 /**
  * Thread to handle creation of branch tags.
  * @author Tony Washer
  */
-public class CreateBranchTags extends SwingWorker<Void, String> implements ReportStatus {
+public class CreateBranchTags
+        extends SwingWorker<Void, String>
+        implements ReportStatus {
     /**
      * Branches.
      */

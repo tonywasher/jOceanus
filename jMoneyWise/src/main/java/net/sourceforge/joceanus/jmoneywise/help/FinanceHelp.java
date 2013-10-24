@@ -20,16 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.help;
+package net.sourceforge.joceanus.jmoneywise.help;
 
-import net.sourceforge.jOceanus.jHelpManager.HelpException;
-import net.sourceforge.jOceanus.jHelpManager.HelpModule;
+import net.sourceforge.joceanus.jhelpmanager.HelpException;
+import net.sourceforge.joceanus.jhelpmanager.HelpModule;
 
 /**
  * Help Module for FinanceApp.
  * @author Tony Washer
  */
-public class FinanceHelp extends HelpModule {
+public class FinanceHelp
+        extends HelpModule {
     /**
      * Constructor.
      * @throws HelpException on error

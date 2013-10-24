@@ -20,30 +20,30 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.analysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountBucket.AccountBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.DilutionEvent.DilutionEventList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.InvestmentAnalysis.InvestmentAnalysisList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.InvestmentAnalysis.InvestmentAnalysisList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
 /**
  * Data Analysis.

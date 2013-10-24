@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
 /**
  * SheetReader extension for FinanceData.

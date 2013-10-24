@@ -23,5 +23,5 @@
 /**
  * Quicken export support for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.joceanus.jmoneywise.quicken;
 

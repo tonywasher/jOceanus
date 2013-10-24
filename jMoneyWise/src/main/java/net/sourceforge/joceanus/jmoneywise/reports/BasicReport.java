@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
-import net.sourceforge.jOceanus.jSortedList.NestedHashMap;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.Analysis;
+import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
 import org.w3c.dom.Document;
 

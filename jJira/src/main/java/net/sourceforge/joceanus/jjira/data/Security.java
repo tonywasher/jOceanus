@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
-import net.sourceforge.jOceanus.jJira.soap.RemoteGroup;
-import net.sourceforge.jOceanus.jJira.soap.RemoteProjectRole;
-import net.sourceforge.jOceanus.jJira.soap.RemoteUser;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jjira.soap.RemoteGroup;
+import net.sourceforge.joceanus.jjira.soap.RemoteProjectRole;
+import net.sourceforge.joceanus.jjira.soap.RemoteUser;
 
 /**
  * Handles security for a jira server.

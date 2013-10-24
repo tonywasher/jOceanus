@@ -28,17 +28,21 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
-import net.sourceforge.jOceanus.jJira.soap.RemoteComment;
-import net.sourceforge.jOceanus.jJira.soap.RemoteComponent;
-import net.sourceforge.jOceanus.jJira.soap.RemoteFieldValue;
-import net.sourceforge.jOceanus.jJira.soap.RemoteIssue;
-import net.sourceforge.jOceanus.jJira.soap.RemoteVersion;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.data.Project.Component;
+import net.sourceforge.joceanus.jjira.data.Project.Version;
 import net.sourceforge.joceanus.jjira.data.Security.User;
 import net.sourceforge.joceanus.jjira.data.Server.IssueType;
+import net.sourceforge.joceanus.jjira.data.Server.Priority;
 import net.sourceforge.joceanus.jjira.data.Server.Resolution;
+import net.sourceforge.joceanus.jjira.data.Server.Status;
+import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jjira.soap.RemoteComment;
+import net.sourceforge.joceanus.jjira.soap.RemoteComponent;
+import net.sourceforge.joceanus.jjira.soap.RemoteFieldValue;
+import net.sourceforge.joceanus.jjira.soap.RemoteIssue;
+import net.sourceforge.joceanus.jjira.soap.RemoteVersion;
 
 /**
  * Represents a Jira issue.

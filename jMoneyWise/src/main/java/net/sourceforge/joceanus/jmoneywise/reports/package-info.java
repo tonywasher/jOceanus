@@ -23,5 +23,5 @@
 /**
  * Reports of MoneyWise data.
  */
-package net.sourceforge.jOceanus.jMoneyWise.reports;
+package net.sourceforge.joceanus.jmoneywise.reports;
 

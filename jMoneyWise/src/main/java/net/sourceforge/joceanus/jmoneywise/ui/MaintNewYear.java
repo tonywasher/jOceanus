@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,35 +30,35 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import net.sourceforge.jOceanus.jDataManager.EditState;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
-import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
+import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTable;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 
 /**
  * NewYear maintenance panel.

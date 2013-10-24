@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -33,8 +33,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 
 /**
  * Statement type selection panel.

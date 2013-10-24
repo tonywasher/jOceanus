@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.tasks;
+package net.sourceforge.joceanus.jsvnmanager.tasks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,17 +28,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch.BranchList;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch.BranchOpType;
-import net.sourceforge.jOceanus.jSvnManager.data.Component;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.Tag;
-import net.sourceforge.jOceanus.jSvnManager.project.ProjectDefinition;
-import net.sourceforge.jOceanus.jSvnManager.project.ProjectId;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch.BranchList;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch.BranchOpType;
+import net.sourceforge.joceanus.jsvnmanager.data.Component;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.Tag;
+import net.sourceforge.joceanus.jsvnmanager.project.ProjectDefinition;
+import net.sourceforge.joceanus.jsvnmanager.project.ProjectId;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -147,7 +147,7 @@ public class VersionMgr {
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create branch "
-                    + pTarget.getBranchName(), e);
+                                                                + pTarget.getBranchName(), e);
         }
     }
 
@@ -191,7 +191,7 @@ public class VersionMgr {
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create tag "
-                    + pTarget.getTagName(), e);
+                                                                + pTarget.getTagName(), e);
         }
     }
 
@@ -336,7 +336,8 @@ public class VersionMgr {
     /**
      * EventHandler.
      */
-    private final class VersionHandler implements ISVNEventHandler {
+    private final class VersionHandler
+            implements ISVNEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {

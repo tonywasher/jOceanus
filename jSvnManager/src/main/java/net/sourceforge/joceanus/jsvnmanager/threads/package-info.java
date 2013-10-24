@@ -24,5 +24,5 @@
  * Threads for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.jOceanus.jSvnManager.threads;
+package net.sourceforge.joceanus.jsvnmanager.threads;
 

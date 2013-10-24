@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventClassLink;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventClassLink.EventClassLinkList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
+import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 
 /**
  * SheetDataItem extension for EventClass.

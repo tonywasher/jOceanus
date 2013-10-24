@@ -73,7 +73,7 @@
   <properties>
     <svnComponent>jDataModels</svnComponent>
     <svnComponent>jdatamodels</svnComponent>
-    <packageName>${packageBase}.${svnPackage}</packageName>
+    <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
     <plugins>

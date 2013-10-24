@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.tasks;
+package net.sourceforge.joceanus.jsvnmanager.tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,19 +28,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileEntry;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipReadFile;
-import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipWriteFile;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;

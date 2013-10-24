@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -29,39 +29,39 @@ import java.util.ResourceBundle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
-import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
-import net.sourceforge.jOceanus.jDataModels.ui.MaintStatic;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
-import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jJira.data.JiraPreferences;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory.TaxCategoryList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
-import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jSvnManager.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jdatamodels.ui.MaintStatic;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jjira.data.JiraPreferences;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jpreferenceset.MaintPreferences;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
 
 /**
  * Maintenance Tab panel.

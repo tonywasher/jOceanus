@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -32,38 +32,38 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.Difference;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataManager;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel;
-import net.sourceforge.jOceanus.jDataModels.ui.JDataTableMouse;
-import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
-import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.SpotSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices;
-import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices.SpotList;
-import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices.SpotPrice;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
+import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataManager;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTable;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableMouse;
+import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
+import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * SpotPrices panel.

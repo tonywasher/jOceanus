@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.data.statics;
+package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.jOceanus.jDataManager.DataType;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoClass;
+import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
 
 /**
  * Enumeration of Tax Year Info Classes.

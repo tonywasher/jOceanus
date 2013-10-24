@@ -23,5 +23,5 @@
 /**
  * Classes to manage the POM file.
  */
-package net.sourceforge.jOceanus.jSvnManager.project;
+package net.sourceforge.joceanus.jsvnmanager.project;
 

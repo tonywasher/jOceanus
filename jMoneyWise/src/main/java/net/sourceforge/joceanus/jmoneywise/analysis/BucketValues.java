@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.analysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.EnumMap;
 
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFormat;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jdecimal.JUnits;
 
 /**
  * Values for a bucket.

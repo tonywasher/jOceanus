@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.views;
+package net.sourceforge.joceanus.jmoneywise.views;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.database.Database;
-import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.DataAnalyser;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
-import net.sourceforge.jOceanus.jMoneyWise.database.FinanceDatabase;
-import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet;
-import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamodels.database.Database;
+import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.database.FinanceDatabase;
+import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet;
+import net.sourceforge.joceanus.jmoneywise.views.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * Data Control for FinanceApp.

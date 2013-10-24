@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.ui;
+package net.sourceforge.joceanus.jsvnmanager.ui;
 
 import javax.swing.SwingUtilities;
 

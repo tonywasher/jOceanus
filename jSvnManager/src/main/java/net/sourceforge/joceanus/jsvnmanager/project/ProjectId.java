@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.project;
+package net.sourceforge.joceanus.jsvnmanager.project;
 
 import java.util.ArrayList;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -37,7 +37,8 @@ import org.apache.maven.model.Model;
  * Project element of POM.
  * @author Tony Washer
  */
-public final class ProjectId implements JDataContents {
+public final class ProjectId
+        implements JDataContents {
     /**
      * SnapShot indication.
      */
@@ -65,7 +66,11 @@ public final class ProjectId implements JDataContents {
 
     @Override
     public String formatObject() {
-        return theGroupId + "_" + theArtifactId + "_" + theVersion;
+        return theGroupId
+               + "_"
+               + theArtifactId
+               + "_"
+               + theVersion;
     }
 
     @Override
@@ -194,7 +199,8 @@ public final class ProjectId implements JDataContents {
         /* Strip off SNAPSHOT indication */
         if (theVersionText.endsWith(SUFFIX_SNAPSHOT)) {
             /* Strip it off */
-            return theVersionText.substring(0, theVersionText.length() - SUFFIX_SNAPSHOT.length());
+            return theVersionText.substring(0, theVersionText.length()
+                                               - SUFFIX_SNAPSHOT.length());
         }
 
         /* Default to versionText */
@@ -208,7 +214,8 @@ public final class ProjectId implements JDataContents {
     protected void setSnapshotVersion(final String pVersion) {
         /* Update version and text */
         theVersion = pVersion;
-        theVersionText = pVersion + SUFFIX_SNAPSHOT;
+        theVersionText = pVersion
+                         + SUFFIX_SNAPSHOT;
 
         /* Update version */
         updateVersion();
@@ -297,13 +304,17 @@ public final class ProjectId implements JDataContents {
 
     @Override
     public int hashCode() {
-        return theGroupId.hashCode() + theArtifactId.hashCode() + theVersion.hashCode();
+        return theGroupId.hashCode()
+               + theArtifactId.hashCode()
+               + theVersion.hashCode();
     }
 
     /**
      * Project list.
      */
-    public static final class ProjectList extends ArrayList<ProjectId> implements JDataContents {
+    public static final class ProjectList
+            extends ArrayList<ProjectId>
+            implements JDataContents {
         /**
          * The Serial Id.
          */
@@ -321,7 +332,9 @@ public final class ProjectId implements JDataContents {
 
         @Override
         public String formatObject() {
-            return "ProjectList(" + size() + ")";
+            return "ProjectList("
+                   + size()
+                   + ")";
         }
 
         @Override

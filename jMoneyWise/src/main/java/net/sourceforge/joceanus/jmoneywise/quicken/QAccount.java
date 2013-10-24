@@ -20,20 +20,20 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventBaseList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEventList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QAccountLineType;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventBaseList;
+import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventList;
+import net.sourceforge.joceanus.jmoneywise.quicken.QPortfolioEvent.QPortfolioEventList;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QAccountLineType;
 
 /**
  * Quicken Account.

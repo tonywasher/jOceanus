@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.project;
+package net.sourceforge.joceanus.jsvnmanager.project;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,13 +32,13 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jSvnManager.project.ProjectId.ProjectList;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jsvnmanager.project.ProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -50,7 +50,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Represents the definition of a project.
  * @author Tony Washer
  */
-public class ProjectDefinition implements JDataContents {
+public class ProjectDefinition
+        implements JDataContents {
     /**
      * POM name.
      */
@@ -157,12 +158,12 @@ public class ProjectDefinition implements JDataContents {
         } catch (JDataException e) {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to load Project file for "
-                    + pFile.getAbsolutePath(), e);
+                                                          + pFile.getAbsolutePath(), e);
 
         } catch (IOException e) {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to load Project file for "
-                    + pFile.getAbsolutePath(), e);
+                                                          + pFile.getAbsolutePath(), e);
 
         } finally {
             if (myInBuffer != null) {
@@ -250,7 +251,9 @@ public class ProjectDefinition implements JDataContents {
         File myFile = new File(pLocation, POM_NAME);
 
         /* Return the file */
-        return (myFile.exists()) ? myFile : null;
+        return (myFile.exists())
+                ? myFile
+                : null;
     }
 
     /**

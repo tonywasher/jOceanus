@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.tasks;
+package net.sourceforge.joceanus.jsvnmanager.tasks;
 
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSvnManager.data.Branch;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.Tag;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jsvnmanager.data.Branch;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.Tag;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -114,7 +114,7 @@ public class CheckOut {
             myUpdate.doCheckout(myURL, pPath, SVNRevision.HEAD, pRevision, SVNDepth.INFINITY, false);
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to checkOut branch "
-                    + pBranch.getBranchName(), e);
+                                                                + pBranch.getBranchName(), e);
         }
     }
 
@@ -133,11 +133,10 @@ public class CheckOut {
         try {
             /* Checkout the branch */
             SVNURL myURL = pBranch.getURL();
-            myUpdate.doSwitch(pPath, myURL, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, false,
-                              true);
+            myUpdate.doSwitch(pPath, myURL, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, false, true);
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to switch branch "
-                    + pBranch.getBranchName(), e);
+                                                                + pBranch.getBranchName(), e);
         }
     }
 
@@ -155,7 +154,8 @@ public class CheckOut {
             /* Update the working copy */
             myUpdate.doUpdate(pPath, SVNRevision.HEAD, SVNDepth.INFINITY, true, true);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to update path " + pPath.getPath(), e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to update path "
+                                                                + pPath.getPath(), e);
         }
     }
 
@@ -176,7 +176,8 @@ public class CheckOut {
             /* Revert the working copy */
             myClient.doRevert(myPaths, SVNDepth.INFINITY, null);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to revert path " + pPath.getPath(), e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to revert path "
+                                                                + pPath.getPath(), e);
         }
     }
 
@@ -195,11 +196,10 @@ public class CheckOut {
         try {
             /* Export the tag */
             SVNURL myURL = pTag.getURL();
-            myUpdate.doExport(myURL, pPath, SVNRevision.HEAD, SVNRevision.HEAD, null, false,
-                              SVNDepth.INFINITY);
+            myUpdate.doExport(myURL, pPath, SVNRevision.HEAD, SVNRevision.HEAD, null, false, SVNDepth.INFINITY);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to export tag " + pTag.getTagName(),
-                    e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to export tag "
+                                                                + pTag.getTagName(), e);
         }
     }
 
@@ -304,7 +304,8 @@ public class CheckOut {
     /**
      * EventHandler.
      */
-    private final class CheckOutHandler implements ISVNEventHandler {
+    private final class CheckOutHandler
+            implements ISVNEventHandler {
         /**
          * Prefix.
          */
@@ -325,7 +326,8 @@ public class CheckOut {
         private String adjustName(final SVNEvent pEvent) {
             /* Obtain the name */
             String myName = pEvent.getFile().getPath();
-            if ((thePrefix != null) && (myName.startsWith(thePrefix))) {
+            if ((thePrefix != null)
+                && (myName.startsWith(thePrefix))) {
                 myName = myName.substring(thePrefix.length());
             }
             return myName;
@@ -348,15 +350,18 @@ public class CheckOut {
 
             } else if (myAction.equals(SVNEventAction.UPDATE_ADD)) {
                 /* Report activity */
-                theReport.setNewStage("A " + adjustName(pEvent));
+                theReport.setNewStage("A "
+                                      + adjustName(pEvent));
 
             } else if (myAction.equals(SVNEventAction.UPDATE_UPDATE)) {
                 /* Report activity */
-                theReport.setNewStage("U " + adjustName(pEvent));
+                theReport.setNewStage("U "
+                                      + adjustName(pEvent));
 
             } else if (myAction.equals(SVNEventAction.UPDATE_DELETE)) {
                 /* Report activity */
-                theReport.setNewStage("D " + adjustName(pEvent));
+                theReport.setNewStage("D "
+                                      + adjustName(pEvent));
 
             } else {
                 theReport.setNewStage(pEvent.getFile().getPath());

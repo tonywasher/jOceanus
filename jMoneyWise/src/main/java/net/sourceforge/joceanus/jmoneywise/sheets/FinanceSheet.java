@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.sheets;
+package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,21 +32,21 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
+import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
+import net.sourceforge.joceanus.jdatamodels.sheets.SheetWriter;
+import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
 
 /**
  * SpreadSheet extension for FinanceData.

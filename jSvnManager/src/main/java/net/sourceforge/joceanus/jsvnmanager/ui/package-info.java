@@ -23,5 +23,5 @@
 /**
  * Package to handle user interface for JSvnManager.
  */
-package net.sourceforge.jOceanus.jSvnManager.ui;
+package net.sourceforge.joceanus.jsvnmanager.ui;
 

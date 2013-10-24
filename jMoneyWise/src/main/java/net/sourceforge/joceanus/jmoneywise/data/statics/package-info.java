@@ -23,5 +23,5 @@
 /**
  * Static Data package.
  */
-package net.sourceforge.jOceanus.jMoneyWise.data.statics;
+package net.sourceforge.joceanus.jmoneywise.data.statics;
 

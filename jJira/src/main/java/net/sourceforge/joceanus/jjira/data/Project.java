@@ -28,15 +28,15 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
-import net.sourceforge.jOceanus.jJira.soap.RemoteComponent;
-import net.sourceforge.jOceanus.jJira.soap.RemoteIssueType;
-import net.sourceforge.jOceanus.jJira.soap.RemoteProject;
-import net.sourceforge.jOceanus.jJira.soap.RemoteVersion;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jjira.data.Security.User;
 import net.sourceforge.joceanus.jjira.data.Server.IssueType;
+import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jjira.soap.RemoteComponent;
+import net.sourceforge.joceanus.jjira.soap.RemoteIssueType;
+import net.sourceforge.joceanus.jjira.soap.RemoteProject;
+import net.sourceforge.joceanus.jjira.soap.RemoteVersion;
 
 /**
  * Represents a Jira project.

@@ -23,5 +23,5 @@
 /**
  * User interface modules for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.joceanus.jmoneywise.ui;
 

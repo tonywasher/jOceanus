@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.tasks;
+package net.sourceforge.joceanus.jsvnmanager.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNException;
@@ -116,8 +116,7 @@ public class RevisionHistory {
         /* Protect against exceptions */
         try {
             /* Obtain information about the revision */
-            myLog.doLog(pFile, null, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, true,
-                        0, new LogHandler());
+            myLog.doLog(pFile, null, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, true, 0, new LogHandler());
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history", e);
         }
@@ -126,7 +125,8 @@ public class RevisionHistory {
     /**
      * EventHandler.
      */
-    private final class LogHandler implements ISVNLogEntryHandler {
+    private final class LogHandler
+            implements ISVNLogEntryHandler {
 
         @Override
         public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {

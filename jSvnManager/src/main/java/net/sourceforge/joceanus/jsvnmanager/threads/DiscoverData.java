@@ -20,24 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.threads;
+package net.sourceforge.joceanus.jsvnmanager.threads;
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportTask;
-import net.sourceforge.jOceanus.jSvnManager.data.Repository;
-import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
 
 /**
  * Thread to handle analysis of repository.
  * @author Tony Washer
  */
-public class DiscoverData extends SwingWorker<Void, String> implements ReportStatus {
+public class DiscoverData
+        extends SwingWorker<Void, String>
+        implements ReportStatus {
     /**
      * Preference Manager.
      */

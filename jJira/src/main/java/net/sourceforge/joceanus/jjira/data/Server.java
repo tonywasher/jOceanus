@@ -33,19 +33,21 @@ import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
-import net.sourceforge.jOceanus.jJira.soap.AbstractRemoteConstant;
-import net.sourceforge.jOceanus.jJira.soap.JiraSoapService;
-import net.sourceforge.jOceanus.jJira.soap.JiraSoapServiceServiceLocator;
-import net.sourceforge.jOceanus.jJira.soap.RemoteFilter;
-import net.sourceforge.jOceanus.jJira.soap.RemoteIssue;
-import net.sourceforge.jOceanus.jJira.soap.RemoteIssueType;
-import net.sourceforge.jOceanus.jJira.soap.RemotePriority;
-import net.sourceforge.jOceanus.jJira.soap.RemoteProject;
-import net.sourceforge.jOceanus.jJira.soap.RemoteResolution;
-import net.sourceforge.jOceanus.jJira.soap.RemoteStatus;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jjira.data.Security.Group;
+import net.sourceforge.joceanus.jjira.data.Security.Role;
 import net.sourceforge.joceanus.jjira.data.Security.User;
+import net.sourceforge.joceanus.jjira.soap.AbstractRemoteConstant;
+import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jjira.soap.JiraSoapServiceServiceLocator;
+import net.sourceforge.joceanus.jjira.soap.RemoteFilter;
+import net.sourceforge.joceanus.jjira.soap.RemoteIssue;
+import net.sourceforge.joceanus.jjira.soap.RemoteIssueType;
+import net.sourceforge.joceanus.jjira.soap.RemotePriority;
+import net.sourceforge.joceanus.jjira.soap.RemoteProject;
+import net.sourceforge.joceanus.jjira.soap.RemoteResolution;
+import net.sourceforge.joceanus.jjira.soap.RemoteStatus;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 import org.apache.log4j.PropertyConfigurator;

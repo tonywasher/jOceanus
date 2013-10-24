@@ -20,24 +20,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.threads;
+package net.sourceforge.joceanus.jsvnmanager.threads;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
-import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
-import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
-import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
-import net.sourceforge.jOceanus.jSvnManager.tasks.Backup;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
+import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
+import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jsvnmanager.tasks.Backup;
 
 /**
  * Thread to handle subVersion backups.
  * @author Tony Washer
  * @param <T> the dataset type
  */
-public class SubversionBackup<T extends DataSet<T>> extends WorkerThread<Void> {
+public class SubversionBackup<T extends DataSet<T>>
+        extends WorkerThread<Void> {
     /**
      * Task description.
      */

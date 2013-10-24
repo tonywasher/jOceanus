@@ -20,16 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jSvnManager.data;
+package net.sourceforge.joceanus.jsvnmanager.data;
 
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 
 /**
  * Preferences for SubVersion.
  * @author Tony Washer
  */
-public class SubVersionPreferences extends PreferenceSet {
+public class SubVersionPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Subversion Repository Base.
      */
