@@ -940,6 +940,7 @@ public final class ExchangeRate
                     /* Access the current rate for the new default currency */
                     /* TODO This must exist on the same date */
                     myCurrRate = findRate(pCurrency, myDate).getExchangeRate();
+                    myCurrDate = myDate;
                 }
 
                 /* Update the item */

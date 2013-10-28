@@ -37,12 +37,11 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.Accoun
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
 /**
@@ -87,6 +86,11 @@ public class Analysis
     private static final JDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPayees"));
 
     /**
+     * PortfolioBuckets Field Id.
+     */
+    private static final JDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolios"));
+
+    /**
      * AccountCategoryBuckets Field Id.
      */
     private static final JDataField FIELD_ACTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccountCat"));
@@ -129,6 +133,11 @@ public class Analysis
         if (FIELD_PAYEES.equals(pField)) {
             return (thePayees.size() > 0)
                     ? thePayees
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_PORTFOLIOS.equals(pField)) {
+            return (thePortfolios.size() > 0)
+                    ? thePortfolios
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_ACTCATS.equals(pField)) {
@@ -190,6 +199,11 @@ public class Analysis
      * The payee buckets.
      */
     private final PayeeBucketList thePayees;
+
+    /**
+     * The portfolio buckets.
+     */
+    private final PortfolioBucketList thePortfolios;
 
     /**
      * The account category buckets.
@@ -265,6 +279,14 @@ public class Analysis
     }
 
     /**
+     * Obtain the portfolio buckets list.
+     * @return the list
+     */
+    public PortfolioBucketList getPortfolios() {
+        return thePortfolios;
+    }
+
+    /**
      * Obtain the account categories list.
      * @return the list
      */
@@ -318,6 +340,7 @@ public class Analysis
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
+        thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
 
@@ -345,6 +368,7 @@ public class Analysis
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
+        thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
 
@@ -369,6 +393,7 @@ public class Analysis
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
+        thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
 
@@ -394,26 +419,5 @@ public class Analysis
                 myBucket.setOpeningBalance(myBalance);
             }
         }
-    }
-
-    /**
-     * Obtain Investment Analysis for Investment Event.
-     * @param pEvent the event
-     * @param pSecurity the security for the event
-     * @return the analysis
-     */
-    public InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
-                                                    final Account pSecurity) {
-        /* Locate the security bucket */
-        SecurityBucket mySecurity = theSecurities.findItemById(pSecurity.getId());
-        if (mySecurity == null) {
-            return null;
-        }
-
-        /* Obtain the investment analysis for the event */
-        InvestmentAnalysisList myAnalyses = mySecurity.getInvestmentAnalyses();
-        return (myAnalyses == null)
-                ? null
-                : myAnalyses.findItemById(pEvent.getId());
     }
 }

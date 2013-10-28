@@ -179,7 +179,7 @@ public final class AccountCategoryBucket
     }
 
     /**
-     * Set Attribute.
+     * Set Value.
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */

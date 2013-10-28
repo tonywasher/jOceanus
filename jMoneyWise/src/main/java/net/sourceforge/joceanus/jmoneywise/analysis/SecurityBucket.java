@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -31,11 +30,11 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.analysis.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
@@ -81,14 +80,14 @@ public final class SecurityBucket
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
-     * Investment Analysis Field Id.
-     */
-    private static final JDataField FIELD_INVEST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDetail"));
-
-    /**
      * Base Field Id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
+
+    /**
+     * History Field Id.
+     */
+    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
 
     /**
      * FieldSet map.
@@ -121,19 +120,24 @@ public final class SecurityBucket
     private final FinanceData theData;
 
     /**
-     * The base.
+     * Values.
      */
-    private final SecurityBucket theBase;
+    private final SecurityValues theValues;
 
     /**
-     * InvestmentAnalyses list.
+     * The base values.
      */
-    private InvestmentAnalysisList theInvestmentAnalyses = null;
+    private final SecurityValues theBaseValues;
 
     /**
-     * Attribute Map.
+     * Is the bucket idle.
      */
-    private final Map<SecurityAttribute, Object> theAttributes;
+    private final Boolean isIdle;
+
+    /**
+     * History Map.
+     */
+    private final BucketHistory<SecurityValues> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -154,15 +158,11 @@ public final class SecurityBucket
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
-        if (FIELD_INVEST.equals(pField)) {
-            return (theInvestmentAnalyses != null)
-                    ? theInvestmentAnalyses
-                    : JDataFieldValue.SkipField;
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase != null)
-                    ? theBase
-                    : JDataFieldValue.SkipField;
+            return theBaseValues;
         }
 
         /* Handle Attribute fields */
@@ -223,19 +223,11 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain the investmentAnalysisList.
-     * @return the investmentAnalysisList
+     * Is this bucket idle.
+     * @return true/false
      */
-    public InvestmentAnalysisList getInvestmentAnalyses() {
-        return theInvestmentAnalyses;
-    }
-
-    /**
-     * Obtain the base.
-     * @return the base
-     */
-    public SecurityBucket getBase() {
-        return theBase;
+    public Boolean isIdle() {
+        return isIdle;
     }
 
     /**
@@ -255,11 +247,27 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain the attribute map.
-     * @return the attribute map
+     * Obtain the value map.
+     * @return the value map
      */
-    protected Map<SecurityAttribute, Object> getAttributes() {
-        return theAttributes;
+    protected SecurityValues getValues() {
+        return theValues;
+    }
+
+    /**
+     * Obtain the base value map.
+     * @return the base value map
+     */
+    protected SecurityValues getBaseValues() {
+        return theBaseValues;
+    }
+
+    /**
+     * Obtain the history map.
+     * @return the history map
+     */
+    private BucketHistory<SecurityValues> getHistoryMap() {
+        return theHistory;
     }
 
     /**
@@ -267,10 +275,10 @@ public final class SecurityBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setAttribute(final SecurityAttribute pAttr,
-                                final Object pValue) {
+    protected void setValue(final SecurityAttribute pAttr,
+                            final Object pValue) {
         /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
+        theValues.put(pAttr, pValue);
     }
 
     /**
@@ -300,80 +308,12 @@ public final class SecurityBucket
 
     /**
      * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X> X getAttribute(final SecurityAttribute pAttr,
-                               final Class<X> pClass) {
-        /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
-    }
-
-    /**
-     * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
     private Object getAttribute(final SecurityAttribute pAttr) {
-        /* Obtain the attribute */
-        return theAttributes.get(pAttr);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JPrice getPriceAttribute(final SecurityAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JPrice.class);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getMoneyAttribute(final SecurityAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JMoney.class);
-    }
-
-    /**
-     * Obtain a units attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JUnits getUnitsAttribute(final SecurityAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JUnits.class);
-    }
-
-    /**
-     * Obtain an attribute value from the base.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X extends JDecimal> X getBaseAttribute(final SecurityAttribute pAttr,
-                                                    final Class<X> pClass) {
-        /* Obtain the attribute */
-        return (theBase == null)
-                ? null
-                : theBase.getAttribute(pAttr, pClass);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getBaseMoneyAttribute(final SecurityAttribute pAttr) {
-        /* Obtain the attribute */
-        return getBaseAttribute(pAttr, JMoney.class);
+        /* Obtain the value */
+        return theValues.get(pAttr);
     }
 
     /**
@@ -388,26 +328,98 @@ public final class SecurityBucket
         thePortfolio = pSecurity.getPortfolio();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
-        theBase = null;
 
         /* Obtain category, allowing for autoExpense */
         theCategory = theSecurity.getAccountCategory();
 
-        /* Create the attribute map */
-        theAttributes = new EnumMap<SecurityAttribute, Object>(SecurityAttribute.class);
+        /* Create the value maps */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        isIdle = false;
 
-        /* Initialise units to zero */
-        setAttribute(SecurityAttribute.Units, new JUnits());
+        /* Create the history map */
+        theHistory = new BucketHistory<SecurityValues>();
+    }
 
-        /* Initialise money values */
-        setAttribute(SecurityAttribute.Cost, new JMoney());
-        setAttribute(SecurityAttribute.Invested, new JMoney());
-        setAttribute(SecurityAttribute.Gains, new JMoney());
-        setAttribute(SecurityAttribute.Gained, new JMoney());
-        setAttribute(SecurityAttribute.Dividend, new JMoney());
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityBucket pBase,
+                           final JDateDay pDate) {
+        /* Copy details from base */
+        theSecurity = pBase.getSecurity();
+        thePortfolio = pBase.getPortfolio();
+        theCategory = pBase.getAccountCategory();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
 
-        /* allocate the InvestmentAnalysis list */
-        theInvestmentAnalyses = new InvestmentAnalysisList(theData, theSecurity);
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
+
+        /* Copy base values from source */
+        theBaseValues = pBase.getBaseValues().getSnapShot();
+
+        /* Obtain values for date */
+        SecurityValues myValues = theHistory.getValuesForDate(pDate);
+
+        /* Determine values */
+        isIdle = (myValues == null);
+        theValues = (isIdle)
+                ? theBaseValues.getSnapShot()
+                : myValues;
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private SecurityBucket(final Analysis pAnalysis,
+                           final SecurityBucket pBase,
+                           final JDateDayRange pRange) {
+        /* Copy details from base */
+        theSecurity = pBase.getSecurity();
+        thePortfolio = pBase.getPortfolio();
+        theCategory = pBase.getAccountCategory();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
+
+        /* Obtain values for range */
+        SecurityValues[] myArray = theHistory.getValuesForRange(pRange);
+
+        /* If no activity took place up to this date */
+        if (myArray == null) {
+            /* Use base values and note idleness */
+            theValues = pBase.getBaseValues().getSnapShot();
+            theBaseValues = theValues.getSnapShot();
+            isIdle = true;
+
+            /* else we have values */
+        } else {
+            /* Determine base values */
+            SecurityValues myFirst = myArray[0];
+            theBaseValues = (myFirst == null)
+                    ? pBase.getBaseValues().getSnapShot()
+                    : myFirst;
+
+            /* Determine values */
+            SecurityValues myValues = myArray[1];
+            isIdle = (myValues == null);
+            theValues = (isIdle)
+                    ? theBaseValues.getSnapShot()
+                    : myValues;
+        }
+
+        /* Adjust to base values */
+        adjustToBaseValues();
     }
 
     @Override
@@ -448,91 +460,62 @@ public final class SecurityBucket
     }
 
     /**
-     * Adjust security for debit.
-     * @param pEvent the event causing the debit
+     * Adjust security units.
+     * @param pDelta the delta
      */
-    protected void adjustForDebit(final Event pEvent) {
-        JUnits myDelta = pEvent.getDebitUnits();
-        if (myDelta != null) {
-            JUnits myUnits = getUnitsAttribute(SecurityAttribute.Units);
-            myUnits.subtractUnits(myDelta);
-        }
+    protected void adjustUnits(final JUnits pDelta) {
+        JUnits myUnits = theValues.getUnitsValue(SecurityAttribute.Units);
+        myUnits = new JUnits(myUnits);
+        myUnits.addUnits(pDelta);
     }
 
     /**
-     * Adjust account for credit.
-     * @param pEvent the event causing the credit
+     * Adjust security cost.
+     * @param pDelta the delta
      */
-    protected void adjustForCredit(final Event pEvent) {
-        JUnits myDelta = pEvent.getCreditUnits();
-        if (myDelta != null) {
-            JUnits myUnits = getUnitsAttribute(SecurityAttribute.Units);
-            myUnits.addUnits(myDelta);
-        }
+    protected void adjustCost(final JMoney pDelta) {
+        JMoney myCost = theValues.getMoneyValue(SecurityAttribute.Cost);
+        myCost = new JMoney(myCost);
+        myCost.addAmount(pDelta);
     }
 
     /**
-     * Copy a map.
-     * @param pSource the source map
-     * @param pTarget the target map
+     * Adjust security invested.
+     * @param pDelta the delta
      */
-    protected void copyMap(final Map<SecurityAttribute, Object> pSource,
-                           final Map<SecurityAttribute, Object> pTarget) {
-        /* Clear the target map */
-        pTarget.clear();
-
-        /* For each entry in the source map */
-        for (Map.Entry<SecurityAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            SecurityAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
-
-            /* Create copy of object in map */
-            if (myObject instanceof JPrice) {
-                pTarget.put(myAttr, new JPrice((JPrice) myObject));
-            } else if (myObject instanceof JMoney) {
-                pTarget.put(myAttr, new JMoney((JMoney) myObject));
-            } else if (myObject instanceof JUnits) {
-                pTarget.put(myAttr, new JUnits((JUnits) myObject));
-            }
-        }
+    protected void adjustInvested(final JMoney pDelta) {
+        JMoney myInvested = theValues.getMoneyValue(SecurityAttribute.Invested);
+        myInvested = new JMoney(myInvested);
+        myInvested.addAmount(pDelta);
     }
 
     /**
-     * Clone a map.
-     * @param pSource the source map
-     * @param pTarget the target map
+     * Adjust security gains.
+     * @param pDelta the delta
      */
-    private void cloneMap(final Map<SecurityAttribute, Object> pSource,
-                          final Map<SecurityAttribute, Object> pTarget) {
-        /* For each entry in the source map */
-        for (Map.Entry<SecurityAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            SecurityAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
+    protected void adjustGains(final JMoney pDelta) {
+        JMoney myGains = theValues.getMoneyValue(SecurityAttribute.Gains);
+        myGains = new JMoney(myGains);
+        myGains.addAmount(pDelta);
+    }
 
-            /* Switch on the Attribute */
-            switch (myAttr) {
-                case Valuation:
-                case Cost:
-                case Gained:
-                    pTarget.put(myAttr, new JMoney((JMoney) myObject));
-                    break;
-                case Gains:
-                case Invested:
-                case Dividend:
-                    pTarget.put(myAttr, new JMoney());
-                    break;
-                case Units:
-                    pTarget.put(myAttr, new JUnits((JUnits) myObject));
-                    break;
-                case Price:
-                    pTarget.put(myAttr, myObject);
-                    break;
-                default:
-                    break;
-            }
-        }
+    /**
+     * Adjust security dividends.
+     * @param pDelta the delta
+     */
+    protected void adjustDividend(final JMoney pDelta) {
+        JMoney myDividend = theValues.getMoneyValue(SecurityAttribute.Dividend);
+        myDividend = new JMoney(myDividend);
+        myDividend.addAmount(pDelta);
+    }
+
+    /**
+     * Register the event.
+     * @param pEvent the event
+     */
+    protected void registerEvent(final Event pEvent) {
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -545,22 +528,14 @@ public final class SecurityBucket
         AccountPrice myActPrice = myPrices.getLatestPrice(getSecurity(), pDate);
 
         /* Access units */
-        JUnits myUnits = getUnitsAttribute(SecurityAttribute.Units);
-        JPrice myPrice;
-
-        /* If we found a price */
-        if (myActPrice != null) {
-            /* Store the price */
-            myPrice = myActPrice.getPrice();
-
-            /* else assume zero price */
-        } else {
-            myPrice = new JPrice();
-        }
+        JUnits myUnits = theValues.getUnitsValue(SecurityAttribute.Units);
+        JPrice myPrice = (myActPrice != null)
+                ? myActPrice.getPrice()
+                : new JPrice();
 
         /* Calculate the value */
-        setAttribute(SecurityAttribute.Price, myPrice);
-        setAttribute(SecurityAttribute.Valuation, myUnits.valueAtPrice(myPrice));
+        setValue(SecurityAttribute.Price, myPrice);
+        setValue(SecurityAttribute.Valuation, myUnits.valueAtPrice(myPrice));
     }
 
     /**
@@ -568,13 +543,12 @@ public final class SecurityBucket
      */
     protected void calculateProfit() {
         /* Calculate the profit */
-        JMoney myValuation = getMoneyAttribute(SecurityAttribute.Valuation);
+        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.Valuation);
         JMoney myProfit = new JMoney(myValuation);
-        myProfit.subtractAmount(getMoneyAttribute(SecurityAttribute.Cost));
-        myProfit.addAmount(getMoneyAttribute(SecurityAttribute.Gained));
+        myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Invested));
 
         /* Set the attribute */
-        setAttribute(SecurityAttribute.Profit, myProfit);
+        setValue(SecurityAttribute.Profit, myProfit);
     }
 
     /**
@@ -582,15 +556,14 @@ public final class SecurityBucket
      */
     private void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = new JMoney(getMoneyAttribute(SecurityAttribute.Valuation));
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Valuation);
+        myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        if (theBase != null) {
-            myValue.subtractAmount(getBaseMoneyAttribute(SecurityAttribute.Valuation));
-        }
+        myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.Valuation));
 
         /* Set the delta */
-        setAttribute(SecurityAttribute.ValueDelta, myValue);
+        setValue(SecurityAttribute.ValueDelta, myValue);
     }
 
     /**
@@ -603,26 +576,84 @@ public final class SecurityBucket
     }
 
     /**
+     * Adjust to Base values.
+     */
+    private void adjustToBaseValues() {
+        /* Adjust invested values */
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Invested);
+        JMoney myBaseValue = theBaseValues.getMoneyValue(SecurityAttribute.Invested);
+        myValue.subtractAmount(myBaseValue);
+        theBaseValues.put(SecurityAttribute.Invested, null);
+
+        /* Adjust dividend values */
+        myValue = theValues.getMoneyValue(SecurityAttribute.Dividend);
+        myBaseValue = theBaseValues.getMoneyValue(SecurityAttribute.Dividend);
+        myValue.subtractAmount(myBaseValue);
+        theBaseValues.put(SecurityAttribute.Dividend, null);
+    }
+
+    /**
      * Is the bucket active?
      * @return true/false
      */
     public boolean isActive() {
-        JUnits myUnits = getUnitsAttribute(SecurityAttribute.Units);
-        return (myUnits != null)
-               && (myUnits.isNonZero());
+        return theValues.isActive();
     }
 
     /**
-     * Is the bucket relevant? That is to say is either this bucket or it's base active?
-     * @return true/false
+     * SecurityValues class.
      */
-    public boolean isRelevant() {
-        /* Relevant if this value or the previous value is non-zero */
-        if (isActive()) {
-            return true;
+    public static class SecurityValues
+            extends BucketValues<SecurityValues, SecurityAttribute> {
+        /**
+         * SerialId.
+         */
+        private static final long serialVersionUID = -7405283325286707968L;
+
+        /**
+         * Constructor.
+         */
+        protected SecurityValues() {
+            /* Initialise class */
+            super(SecurityAttribute.class);
+
+            /* Initialise units etc. to zero */
+            put(SecurityAttribute.Units, new JUnits());
+            put(SecurityAttribute.Cost, new JMoney());
+            put(SecurityAttribute.Invested, new JMoney());
+            put(SecurityAttribute.Gains, new JMoney());
+            put(SecurityAttribute.Dividend, new JMoney());
         }
-        return (theBase != null)
-               && (theBase.isActive());
+
+        /**
+         * Constructor.
+         * @param pSource the source map.
+         */
+        private SecurityValues(final SecurityValues pSource) {
+            /* Initialise class */
+            super(pSource);
+        }
+
+        @Override
+        protected SecurityValues getSnapShot() {
+            return new SecurityValues(this);
+        }
+
+        @Override
+        protected SecurityValues[] getSnapShotArray() {
+            /* Allocate the array and return it */
+            return new SecurityValues[2];
+        }
+
+        /**
+         * Are the values active?
+         * @return true/false
+         */
+        public boolean isActive() {
+            JUnits myUnits = getUnitsValue(SecurityAttribute.Units);
+            return (myUnits != null)
+                   && (myUnits.isNonZero());
+        }
     }
 
     /**
@@ -733,9 +764,9 @@ public final class SecurityBucket
         Cost,
 
         /**
-         * Gained.
+         * Gains.
          */
-        Gained,
+        Gains,
 
         /**
          * Invested.
@@ -746,11 +777,6 @@ public final class SecurityBucket
          * Dividend.
          */
         Dividend,
-
-        /**
-         * Gains.
-         */
-        Gains,
 
         /**
          * Profit.

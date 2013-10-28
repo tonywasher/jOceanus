@@ -542,6 +542,15 @@ public final class AccountBucket
     }
 
     /**
+     * Register the event.
+     * @param pEvent the event
+     */
+    protected void registerEvent(final Event pEvent) {
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
+    }
+
+    /**
      * Adjust to Base values.
      */
     private void adjustToBaseValues() {

@@ -27,17 +27,12 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.InvestmentAnalysis.InvestmentAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
@@ -271,100 +266,100 @@ public class MetaAnalysis {
      */
     private void processMarketMovement(final SecurityBucket pAsset) {
         /* Access key information */
-        Account myAccount = pAsset.getSecurity();
-        JMoney myValue = pAsset.getMoneyAttribute(SecurityAttribute.Valuation);
-        JMoney myInvested = pAsset.getMoneyAttribute(SecurityAttribute.Invested);
-        JMoney myGains = pAsset.getMoneyAttribute(SecurityAttribute.Gains);
-        JMoney myGained = pAsset.getMoneyAttribute(SecurityAttribute.Gained);
-        JMoney myDividend = pAsset.getMoneyAttribute(SecurityAttribute.Dividend);
-        JPrice myPrice = pAsset.getPriceAttribute(SecurityAttribute.Price);
-        JMoney myBaseValue = pAsset.getBaseMoneyAttribute(SecurityAttribute.Valuation);
+        // Account myAccount = pAsset.getSecurity();
+        // JMoney myValue = pAsset.getMoneyAttribute(SecurityAttribute.Valuation);
+        // JMoney myInvested = pAsset.getMoneyAttribute(SecurityAttribute.Invested);
+        // JMoney myGains = pAsset.getMoneyAttribute(SecurityAttribute.Gains);
+        // JMoney myGained = pAsset.getMoneyAttribute(SecurityAttribute.Gained);
+        // JMoney myDividend = pAsset.getMoneyAttribute(SecurityAttribute.Dividend);
+        // JPrice myPrice = pAsset.getPriceAttribute(SecurityAttribute.Price);
+        // JMoney myBaseValue = pAsset.getBaseMoneyAttribute(SecurityAttribute.Valuation);
 
-        JDateDayRange myDateRange = theAnalysis.getData().getDateRange();
+        // JDateDayRange myDateRange = theAnalysis.getData().getDateRange();
 
         /* Create an investment analysis for End Of Year */
-        InvestmentAnalysis myEvent = pAsset.getInvestmentAnalyses().addAnalysis(myDateRange.getEnd());
+        // InvestmentAnalysis myEvent = pAsset.getInvestmentAnalyses().addAnalysis(myDateRange.getEnd());
 
         /* Add price and value */
-        myEvent.setAttribute(InvestmentAttribute.FinalPrice, myPrice);
-        if (myBaseValue != null) {
-            myEvent.setAttribute(InvestmentAttribute.InitialValue, myBaseValue);
-        }
-        myEvent.setAttribute(InvestmentAttribute.FinalValue, myValue);
-        myEvent.setAttribute(InvestmentAttribute.FinalInvested, myInvested);
-        myEvent.setAttribute(InvestmentAttribute.FinalGains, myGains);
-        myEvent.setAttribute(InvestmentAttribute.FinalDividend, myDividend);
+        // myEvent.setAttribute(InvestmentAttribute.FinalPrice, myPrice);
+        // if (myBaseValue != null) {
+        // myEvent.setAttribute(InvestmentAttribute.InitialValue, myBaseValue);
+        // }
+        // myEvent.setAttribute(InvestmentAttribute.FinalValue, myValue);
+        // myEvent.setAttribute(InvestmentAttribute.FinalInvested, myInvested);
+        // myEvent.setAttribute(InvestmentAttribute.FinalGains, myGains);
+        // myEvent.setAttribute(InvestmentAttribute.FinalDividend, myDividend);
 
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
          */
-        JMoney myMarket = new JMoney(myValue);
-        if (myBaseValue != null) {
-            myMarket.subtractAmount(myBaseValue);
-        }
-        myMarket.subtractAmount(myInvested);
+        // JMoney myMarket = new JMoney(myValue);
+        // if (myBaseValue != null) {
+        // myMarket.subtractAmount(myBaseValue);
+        // }
+        // myMarket.subtractAmount(myInvested);
 
         /* If there have been gains realised in this period */
-        if (myGains.isNonZero()) {
-            /* If we are subject to capital gains */
-            if (myAccount.getAccountCategoryClass().isCapitalGains()) {
-                /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGains);
+        // if (myGains.isNonZero()) {
+        /* If we are subject to capital gains */
+        // if (myAccount.getAccountCategoryClass().isCapitalGains()) {
+        /* Subtract them from the market movement */
+        // myMarket.subtractAmount(myGains);
 
-                /* If the gains are positive */
-                if (myGains.isPositive()) {
-                    /* Add to capital Gains and market income */
-                    theCapitalGains.addIncome(myGains);
-                    theMarketAccount.addIncome(myGains);
+        /* If the gains are positive */
+        // if (myGains.isPositive()) {
+        /* Add to capital Gains and market income */
+        // theCapitalGains.addIncome(myGains);
+        // theMarketAccount.addIncome(myGains);
 
-                    /* else the gains are negative */
-                } else {
-                    /* Add to capital Loss and market expense */
-                    theCapitalGains.subtractExpense(myGains);
-                    theMarketAccount.subtractExpense(myGains);
-                }
+        /* else the gains are negative */
+        // } else {
+        /* Add to capital Loss and market expense */
+        // theCapitalGains.subtractExpense(myGains);
+        // theMarketAccount.subtractExpense(myGains);
+        // }
 
-                /* else if this is a LifeBond */
-            } else if (myAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
-                /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGains);
+        /* else if this is a LifeBond */
+        // } else if (myAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
+        /* Subtract them from the market movement */
+        // myMarket.subtractAmount(myGains);
 
-                /* If the gains are positive */
-                if (myGains.isPositive()) {
-                    /* Add the market income */
-                    theMarketAccount.addIncome(myGains);
-                }
-            }
-        }
+        /* If the gains are positive */
+        // if (myGains.isPositive()) {
+        /* Add the market income */
+        // theMarketAccount.addIncome(myGains);
+        // }
+        // }
+        // }
 
         /* Determine the delta gained */
-        JMoney myDeltaGained = new JMoney(myGains);
-        myDeltaGained.addAmount(myDividend);
+        // JMoney myDeltaGained = new JMoney(myGains);
+        // myDeltaGained.addAmount(myDividend);
 
         /* Record initial and delta gained */
-        myEvent.setAttribute(InvestmentAttribute.InitialGained, new JMoney(myGained));
-        myEvent.setAttribute(InvestmentAttribute.DeltaGained, myDeltaGained);
+        // myEvent.setAttribute(InvestmentAttribute.InitialGained, new JMoney(myGained));
+        // myEvent.setAttribute(InvestmentAttribute.DeltaGained, myDeltaGained);
 
         /* Adjust the Gained Total and calculate the profit */
-        myGained.addAmount(myDeltaGained);
-        myEvent.setAttribute(InvestmentAttribute.FinalGained, myGained);
-        pAsset.calculateProfit();
+        // myGained.addAmount(myDeltaGained);
+        // myEvent.setAttribute(InvestmentAttribute.FinalGained, myGained);
+        // pAsset.calculateProfit();
 
         /* If the market movement is positive */
-        if (myMarket.isPositive()) {
-            /* Add to market income and growth */
-            theMarketAccount.addIncome(myMarket);
-            theMarketGrowth.addIncome(myMarket);
+        // if (myMarket.isPositive()) {
+        /* Add to market income and growth */
+        // theMarketAccount.addIncome(myMarket);
+        // theMarketGrowth.addIncome(myMarket);
 
-            /* else the market movement is negative */
-        } else {
-            /* Add to market expense and shrink */
-            theMarketAccount.subtractExpense(myMarket);
-            theMarketGrowth.subtractExpense(myMarket);
-        }
+        /* else the market movement is negative */
+        // } else {
+        /* Add to market expense and shrink */
+        // theMarketAccount.subtractExpense(myMarket);
+        // theMarketGrowth.subtractExpense(myMarket);
+        // }
 
         /* Record market details */
-        myEvent.setAttribute(InvestmentAttribute.MarketMovement, myMarket);
+        // myEvent.setAttribute(InvestmentAttribute.MarketMovement, myMarket);
     }
 
     /**
