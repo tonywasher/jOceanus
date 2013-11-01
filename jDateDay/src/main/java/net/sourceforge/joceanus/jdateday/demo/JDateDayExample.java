@@ -534,7 +534,7 @@ public class JDateDayExample
         theLocaleList.addItemListener(theListener);
 
         /* Set the default item */
-        theLocaleList.setSelectedItem(ShortLocale.UnitedKingdom);
+        theLocaleList.setSelectedItem(ShortLocale.UK);
     }
 
     /**
@@ -734,42 +734,42 @@ public class JDateDayExample
         /**
          * China (shorten day names to one character, and shrink from the right to make sure they are different).
          */
-        China(Locale.CHINA, 1, false),
+        CHINA(Locale.CHINA, 1, false),
 
         /**
          * Germany.
          */
-        Germany(Locale.GERMANY),
+        GERMANY(Locale.GERMANY),
 
         /**
          * France.
          */
-        France(Locale.FRANCE),
+        FRANCE(Locale.FRANCE),
 
         /**
          * Italy.
          */
-        Italy(Locale.ITALY),
+        ITALY(Locale.ITALY),
 
         /**
          * Japan (shorten day names to one character).
          */
-        Japan(Locale.JAPAN, 1),
+        JAPAN(Locale.JAPAN, 1),
 
         /**
          * Korea (shorten day names to one character).
          */
-        Korea(Locale.KOREA, 1),
+        KOREA(Locale.KOREA, 1),
 
         /**
          * US.
          */
-        UnitedStates(Locale.US),
+        US(Locale.US),
 
         /**
          * UK (shorten day names to two characters).
          */
-        UnitedKingdom(Locale.UK, 2);
+        UK(Locale.UK, 2);
 
         /**
          * Locale property.
@@ -847,6 +847,30 @@ public class JDateDayExample
             theLocale = pLocale;
             theMaxDayLen = iMaxDayLen;
             doShrinkFromRight = bShrinkFromRight;
+        }
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case CHINA:
+                    return "China";
+                case FRANCE:
+                    return "France";
+                case GERMANY:
+                    return "Germany";
+                case ITALY:
+                    return "Italy";
+                case JAPAN:
+                    return "Japan";
+                case KOREA:
+                    return "Korea";
+                case US:
+                    return "UnitedStates";
+                case UK:
+                    return "UnitedKingdom";
+                default:
+                    return "Unknown";
+            }
         }
     }
 }

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jdateday;
 
 import java.util.Calendar;
+import java.util.ResourceBundle;
 
 /**
  * DatePeriod class representing standard date ranges.
@@ -32,32 +33,32 @@ public enum JDatePeriod {
     /**
      * OneWeek.
      */
-    OneWeek(Calendar.DAY_OF_MONTH, 7),
+    ONEWEEK(Calendar.DAY_OF_MONTH, 7),
 
     /**
      * Two Weeks.
      */
-    Fortnight(Calendar.DAY_OF_MONTH, 14),
+    FORTNIGHT(Calendar.DAY_OF_MONTH, 14),
 
     /**
      * One Month.
      */
-    OneMonth(Calendar.MONTH, 1),
+    ONEMONTH(Calendar.MONTH, 1),
 
     /**
      * Three Months.
      */
-    QuarterYear(Calendar.MONTH, 3),
+    QUARTERYEAR(Calendar.MONTH, 3),
 
     /**
      * Six Months.
      */
-    HalfYear(Calendar.MONTH, 6),
+    HALFYEAR(Calendar.MONTH, 6),
 
     /**
      * One Year.
      */
-    OneYear(Calendar.YEAR, 1),
+    ONEYEAR(Calendar.YEAR, 1),
 
     /**
      * Financial Year.
@@ -67,12 +68,22 @@ public enum JDatePeriod {
     /**
      * Custom.
      */
-    Custom(-1, -1),
+    CUSTOM(-1, -1),
 
     /**
      * All.
      */
-    AllDates(-1, -1);
+    ALLDATES(-1, -1);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDatePeriod.class.getName());
+
+    /**
+     * The String name
+     */
+    private String theName;
 
     /**
      * The calendar field.
@@ -113,5 +124,17 @@ public enum JDatePeriod {
         /* Store values */
         theField = pField;
         theAmount = pAmount;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
     }
 }

@@ -406,7 +406,7 @@ public class JDateDay
      * @param pPeriod the period to adjust by
      */
     public void adjustForwardByPeriod(final JDatePeriod pPeriod) {
-        if (pPeriod == JDatePeriod.AllDates) {
+        if (pPeriod == JDatePeriod.ALLDATES) {
             return;
         }
         adjustField(pPeriod.getField(), pPeriod.getAmount(true));
@@ -417,7 +417,7 @@ public class JDateDay
      * @param pPeriod the period to adjust by
      */
     public void adjustBackwardByPeriod(final JDatePeriod pPeriod) {
-        if (pPeriod == JDatePeriod.AllDates) {
+        if (pPeriod == JDatePeriod.ALLDATES) {
             return;
         }
         adjustField(pPeriod.getField(), pPeriod.getAmount(false));

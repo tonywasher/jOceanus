@@ -568,7 +568,7 @@ public class JDateDayRangeSelect
          * @return true/false
          */
         private boolean isCustom() {
-            return (thePeriod == JDatePeriod.Custom);
+            return (thePeriod == JDatePeriod.CUSTOM);
         }
 
         /**
@@ -576,7 +576,7 @@ public class JDateDayRangeSelect
          */
         private JDateRangeState() {
             /* Default the period */
-            thePeriod = JDatePeriod.OneMonth;
+            thePeriod = JDatePeriod.ONEMONTH;
 
             /* Determine initial date */
             JDateDay myDate = new JDateDay(theLocale);
@@ -708,7 +708,7 @@ public class JDateDayRangeSelect
 
             /* If we are unlimited */
             switch (thePeriod) {
-                case AllDates:
+                case ALLDATES:
                     /* Previous and next are not allowed */
                     isPrevOK = false;
                     isNextOK = false;
@@ -719,7 +719,7 @@ public class JDateDayRangeSelect
                     break;
 
                 /* If we are custom */
-                case Custom:
+                case CUSTOM:
                     /* Previous and next are disallowed */
                     isPrevOK = false;
                     isNextOK = false;
