@@ -155,12 +155,6 @@ public abstract class Database<T extends DataSet<T>> {
         theTables.add(pTable);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
-
     /**
      * Close the connection to the database rolling back any outstanding transaction.
      */

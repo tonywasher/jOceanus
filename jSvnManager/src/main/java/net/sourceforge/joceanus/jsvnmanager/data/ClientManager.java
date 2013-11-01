@@ -68,15 +68,6 @@ public class ClientManager {
         theAuth = SVNWCUtil.createDefaultAuthenticationManager(myUser, myPass);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        /* Dispose of any connections */
-        dispose();
-
-        /* Pass call on */
-        super.finalize();
-    }
-
     /**
      * Allocate new Client Manager instance.
      * @return the instance

@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 
@@ -107,11 +108,6 @@ public final class PayeeBucket
     private final PayeeValues theBaseValues;
 
     /**
-     * Is the bucket idle.
-     */
-    private final Boolean isIdle;
-
-    /**
      * History Map.
      */
     private final BucketHistory<PayeeValues> theHistory;
@@ -156,12 +152,19 @@ public final class PayeeBucket
         return getName();
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
     /**
      * Obtain the name.
      * @return the name
      */
     public String getName() {
-        return thePayee.getName();
+        return (thePayee == null)
+                ? null
+                : thePayee.getName();
     }
 
     /**
@@ -178,11 +181,11 @@ public final class PayeeBucket
     }
 
     /**
-     * Is this bucket idle.
+     * Is this bucket idle?
      * @return true/false
      */
     public Boolean isIdle() {
-        return isIdle;
+        return theHistory.isIdle();
     }
 
     /**
@@ -283,13 +286,12 @@ public final class PayeeBucket
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Create the values map */
-        theValues = new PayeeValues();
-        theBaseValues = new PayeeValues();
-        isIdle = false;
-
         /* Create the history map */
-        theHistory = new BucketHistory<PayeeValues>();
+        theHistory = new BucketHistory<PayeeValues>(new PayeeValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -306,20 +308,12 @@ public final class PayeeBucket
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<PayeeValues>(pBase.getHistoryMap(), pDate);
 
-        /* Copy base values from source */
-        theBaseValues = pBase.getBaseValues().getSnapShot();
-
-        /* Obtain values for date */
-        PayeeValues myValues = theHistory.getValuesForDate(pDate);
-
-        /* Determine values */
-        isIdle = (myValues == null);
-        theValues = (isIdle)
-                ? theBaseValues.getSnapShot()
-                : myValues;
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -336,37 +330,12 @@ public final class PayeeBucket
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<PayeeValues>(pBase.getHistoryMap(), pRange);
 
-        /* Obtain values for range */
-        PayeeValues[] myArray = theHistory.getValuesForRange(pRange);
-
-        /* If no activity took place up to this date */
-        if (myArray == null) {
-            /* Use base values and note idleness */
-            theValues = pBase.getBaseValues().getSnapShot();
-            theBaseValues = theValues.getSnapShot();
-            isIdle = true;
-
-            /* else we have values */
-        } else {
-            /* Determine base values */
-            PayeeValues myFirst = myArray[0];
-            theBaseValues = (myFirst == null)
-                    ? pBase.getBaseValues().getSnapShot()
-                    : myFirst;
-
-            /* Determine values */
-            PayeeValues myValues = myArray[1];
-            isIdle = (myValues == null);
-            theValues = (isIdle)
-                    ? theBaseValues.getSnapShot()
-                    : myValues;
-        }
-
-        /* Adjust to base values */
-        adjustToBaseValues();
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -649,23 +618,6 @@ public final class PayeeBucket
     }
 
     /**
-     * Adjust to Base values.
-     */
-    private void adjustToBaseValues() {
-        /* Adjust income values */
-        JMoney myValue = getNewIncome();
-        JMoney myBaseValue = theBaseValues.getMoneyValue(PayeeAttribute.Income);
-        myValue.subtractAmount(myBaseValue);
-        theBaseValues.put(PayeeAttribute.Income, null);
-
-        /* Adjust expense values */
-        myValue = getNewExpense();
-        myBaseValue = theBaseValues.getMoneyValue(PayeeAttribute.Expense);
-        myValue.subtractAmount(myBaseValue);
-        theBaseValues.put(PayeeAttribute.Expense, null);
-    }
-
-    /**
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
@@ -700,9 +652,18 @@ public final class PayeeBucket
     }
 
     /**
+     * Adjust to base.
+     */
+    private void adjustToBase() {
+        /* Adjust to base values */
+        theValues.adjustToBaseValues(theBaseValues);
+        theBaseValues.resetBaseValues();
+    }
+
+    /**
      * PayeeValues class.
      */
-    public final class PayeeValues
+    public static final class PayeeValues
             extends BucketValues<PayeeValues, PayeeAttribute> {
         /**
          * SerialId.
@@ -736,9 +697,27 @@ public final class PayeeBucket
         }
 
         @Override
-        protected PayeeValues[] getSnapShotArray() {
-            /* Allocate the array and return it */
-            return new PayeeValues[2];
+        protected void adjustToBaseValues(final PayeeValues pBase) {
+            /* Adjust income values */
+            JMoney myValue = getMoneyValue(PayeeAttribute.Income);
+            myValue = new JMoney(myValue);
+            JMoney myBaseValue = pBase.getMoneyValue(PayeeAttribute.Income);
+            myValue.subtractAmount(myBaseValue);
+            put(PayeeAttribute.Income, myValue);
+
+            /* Adjust expense values */
+            myValue = getMoneyValue(PayeeAttribute.Expense);
+            myValue = new JMoney(myValue);
+            myBaseValue = pBase.getMoneyValue(PayeeAttribute.Expense);
+            myValue.subtractAmount(myBaseValue);
+            put(PayeeAttribute.Expense, myValue);
+        }
+
+        @Override
+        protected void resetBaseValues() {
+            /* Reset Income and expense values */
+            put(PayeeAttribute.Income, new JMoney());
+            put(PayeeAttribute.Expense, new JMoney());
         }
 
         /**
@@ -812,6 +791,11 @@ public final class PayeeBucket
         private final Analysis theAnalysis;
 
         /**
+         * The data.
+         */
+        private final FinanceData theData;
+
+        /**
          * The totals.
          */
         private final PayeeBucket theTotals;
@@ -832,6 +816,7 @@ public final class PayeeBucket
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
         }
 
@@ -847,6 +832,7 @@ public final class PayeeBucket
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
@@ -859,8 +845,7 @@ public final class PayeeBucket
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
-                    /* Calculate the delta and add to the list */
-                    myBucket.calculateDelta();
+                    /* Add to the list */
                     append(myBucket);
                 }
             }
@@ -878,6 +863,7 @@ public final class PayeeBucket
             /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
@@ -890,8 +876,8 @@ public final class PayeeBucket
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
-                    /* Calculate the delta and add to the list */
-                    myBucket.calculateDelta();
+                    /* Adjust to the base and add to the list */
+                    myBucket.adjustToBase();
                     append(myBucket);
                 }
             }
@@ -934,6 +920,19 @@ public final class PayeeBucket
         }
 
         /**
+         * Obtain the PayeeBucket for a given accountCategory class.
+         * @param pClass the account category class
+         * @return the bucket
+         */
+        protected PayeeBucket getBucket(final AccountCategoryClass pClass) {
+            /* Determine required category */
+            Account myAccount = theData.getAccounts().getSingularClass(pClass);
+
+            /* Return the bucket */
+            return getBucket(myAccount);
+        }
+
+        /**
          * Produce totals for the Payees.
          */
         protected void produceTotals() {
@@ -941,6 +940,9 @@ public final class PayeeBucket
             Iterator<PayeeBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 PayeeBucket myCurr = myIterator.next();
+
+                /* Calculate the delta */
+                myCurr.calculateDelta();
 
                 /* Add to totals bucket */
                 theTotals.addValues(myCurr);

@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -131,6 +132,11 @@ public final class AccountCategoryBucket
     @Override
     public String formatObject() {
         return getName();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
     }
 
     /**
@@ -325,7 +331,7 @@ public final class AccountCategoryBucket
     }
 
     /**
-     * Add bucket to totals.
+     * Add account category bucket to totals.
      * @param pBucket the underlying bucket
      */
     private void addValues(final AccountCategoryBucket pBucket) {
@@ -337,10 +343,22 @@ public final class AccountCategoryBucket
     }
 
     /**
-     * Add bucket to totals.
+     * Add account bucket to totals.
      * @param pBucket the underlying bucket
      */
     protected void addValues(final AccountBucket pBucket) {
+        /* Add values */
+        addValues(theValues, pBucket.getValues());
+
+        /* Add base values */
+        addValues(theBaseValues, pBucket.getBaseValues());
+    }
+
+    /**
+     * Add portfolio bucket to totals.
+     * @param pBucket the underlying bucket
+     */
+    protected void addValues(final PortfolioBucket pBucket) {
         /* Add values */
         addValues(theValues, pBucket.getValues());
 
@@ -496,6 +514,9 @@ public final class AccountCategoryBucket
                 AccountBucket myCurr = myIterator.next();
                 AccountCategory myCategory = myCurr.getAccountCategory();
 
+                /* Calculate the delta */
+                myCurr.calculateDelta();
+
                 /* Access category bucket and add values */
                 AccountCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
@@ -503,14 +524,46 @@ public final class AccountCategoryBucket
         }
 
         /**
+         * Analyse portfolios.
+         * @param pPortfolios the portfolio buckets
+         */
+        protected void analysePortfolios(final PortfolioBucketList pPortfolios) {
+            /* Skip if there are no portfolios */
+            if (pPortfolios.size() == 0) {
+                return;
+            }
+
+            /* Obtain the portfolios category */
+            AccountCategory myTotal = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Portfolio);
+            AccountCategoryBucket myTotals = getBucket(myTotal);
+
+            /* Loop through the buckets */
+            Iterator<PortfolioBucket> myIterator = pPortfolios.listIterator();
+            while (myIterator.hasNext()) {
+                /* Access bucket and category */
+                PortfolioBucket myCurr = myIterator.next();
+
+                /* Calculate delta for the portfolio */
+                myCurr.calculateDelta();
+
+                /* Add values */
+                myTotals.addValues(myCurr);
+                theTotals.addValues(myCurr);
+            }
+
+            /* Re-calculate delta for the totals */
+            myTotals.calculateDelta();
+            theTotals.calculateDelta();
+        }
+
+        /**
          * Produce totals for the categories.
+         * <p>
+         * Note that portfolios will be added in by a later call to analysePortfolios.
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
             OrderedIdList<Integer, AccountCategoryBucket> myTotals = new OrderedIdList<Integer, AccountCategoryBucket>(AccountCategoryBucket.class);
-
-            /* Determine if this is a ranged analysis */
-            boolean isRanged = theAnalysis.isRangedAnalysis();
 
             /* Loop through the buckets */
             Iterator<AccountCategoryBucket> myIterator = listIterator();
@@ -522,9 +575,7 @@ public final class AccountCategoryBucket
                 AccountCategory myParent = myCategory.getParentCategory();
 
                 /* Calculate delta for the category */
-                if (isRanged) {
-                    myCurr.calculateDelta();
-                }
+                myCurr.calculateDelta();
 
                 /* Access parent bucket */
                 AccountCategoryBucket myTotal = findItemById(myParent.getId());
@@ -555,18 +606,10 @@ public final class AccountCategoryBucket
                 AccountCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
-                if (isRanged) {
-                    myCurr.calculateDelta();
-                }
+                myCurr.calculateDelta();
 
                 /* Add it to the list */
                 add(myCurr);
-            }
-
-            /* Calculate delta for the totals */
-            if ((isRanged)
-                && (theTotals != null)) {
-                theTotals.calculateDelta();
             }
         }
     }

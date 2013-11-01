@@ -21,7 +21,8 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
-import java.util.ArrayList;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,6 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
@@ -190,13 +190,11 @@ public class SecureManager {
             } catch (WrongPasswordException e) {
                 myPass.setError("Incorrect password. Please re-enter");
                 continue;
-            } finally {
-                /* Clear out the password */
-                if (myPassword != null) {
-                    Arrays.fill(myPassword, (char) 0);
-                }
             }
         }
+
+        /* release password resources */
+        myPass.release();
 
         /* If we did not get a password */
         if (!isPasswordOk) {

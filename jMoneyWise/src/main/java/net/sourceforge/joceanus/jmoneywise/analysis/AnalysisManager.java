@@ -25,9 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
@@ -130,19 +132,24 @@ public class AnalysisManager
      */
     private void produceTotals(final Analysis pAnalysis) {
         /* Access the lists */
-        AccountCategoryBucketList myAccountCategories = pAnalysis.getAccountCategories();
+        AccountBucketList myAccounts = pAnalysis.getAccounts();
         PayeeBucketList myPayees = pAnalysis.getPayees();
         EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
 
-        /* Calculate AccountCategory totals */
-        myAccountCategories.analyseAccounts(pAnalysis.getAccounts());
-        // myAccountCategories.analyseSecurities(pAnalysis.getSecurities());
+        /* Analyse the accounts */
+        AccountCategoryBucketList myAccountCategories = pAnalysis.getAccountCategories();
+        myAccountCategories.analyseAccounts(myAccounts);
         myAccountCategories.produceTotals();
 
-        /* Calculate Payee totals */
+        /* Analyse the securities */
+        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        myPortfolios.analyseSecurities(pAnalysis.getSecurities());
+        myAccountCategories.analysePortfolios(pAnalysis.getPortfolios());
+
+        /* Analyse the Payees */
         myPayees.produceTotals();
 
-        /* Calculate EventCategory totals */
+        /* Analyse the EventCategories */
         myEventCategories.produceTotals();
     }
 }

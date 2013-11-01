@@ -72,10 +72,17 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     protected abstract T getSnapShot();
 
     /**
-     * Obtain snapShot array.
-     * @return the snapShot.
+     * Adjust to base values.
+     * @param pBaseValues the base values.
      */
-    protected abstract T[] getSnapShotArray();
+    protected void adjustToBaseValues(final T pBaseValues) {
+    }
+
+    /**
+     * Reset base values.
+     */
+    protected void resetBaseValues() {
+    }
 
     /**
      * Set Value.

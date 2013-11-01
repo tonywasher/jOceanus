@@ -106,6 +106,16 @@ public class Analysis
     private static final JDataField FIELD_TAXCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxCat"));
 
     /**
+     * Prices Field Id.
+     */
+    private static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrices"));
+
+    /**
+     * Rates Field Id.
+     */
+    private static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRates"));
+
+    /**
      * Charges Field Id.
      */
     private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCharges"));
@@ -153,6 +163,16 @@ public class Analysis
         if (FIELD_TAXCATS.equals(pField)) {
             return ((theTaxCategories != null) && (theTaxCategories.size() > 0))
                     ? theTaxCategories
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_PRICES.equals(pField)) {
+            return (thePrices.size() > 0)
+                    ? thePrices
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_RATES.equals(pField)) {
+            return (theRates.size() > 0)
+                    ? theRates
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_CHARGES.equals(pField)) {
@@ -219,6 +239,16 @@ public class Analysis
      * The tax category buckets.
      */
     private final TaxCategoryBucketList theTaxCategories;
+
+    /**
+     * The prices.
+     */
+    private final SecurityPriceMap thePrices;
+
+    /**
+     * The rates.
+     */
+    private final AccountRateMap theRates;
 
     /**
      * The charges.
@@ -311,6 +341,22 @@ public class Analysis
     }
 
     /**
+     * Obtain the prices.
+     * @return the prices
+     */
+    public SecurityPriceMap getPrices() {
+        return thePrices;
+    }
+
+    /**
+     * Obtain the rates.
+     * @return the rates
+     */
+    public AccountRateMap getRates() {
+        return theRates;
+    }
+
+    /**
      * Obtain the charges.
      * @return the charges
      */
@@ -340,13 +386,21 @@ public class Analysis
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
+        theTaxCategories = null;
+
+        /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
-        theTaxCategories = null;
 
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
         theDilutions = new DilutionEventList(theData);
+
+        /* Create the security price map */
+        thePrices = new SecurityPriceMap(theData);
+
+        /* Create the account rate map */
+        theRates = new AccountRateMap(theData);
 
         /* Add opening balances */
         addOpeningBalances();
@@ -365,14 +419,18 @@ public class Analysis
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this, pSource.getAccounts(), pDate);
-        theSecurities = new SecurityBucketList(this);
+        theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
-        thePortfolios = new PortfolioBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
 
-        /* Create the Dilution/Chargeable Event List */
+        /* Create totalling buckets */
+        thePortfolios = new PortfolioBucketList(this);
+        theAccountCategories = new AccountCategoryBucketList(this);
+
+        /* Access the underlying maps/lists */
+        thePrices = pSource.getPrices();
+        theRates = pSource.getRates();
         theCharges = pSource.getCharges();
         theDilutions = pSource.getDilutions();
     }
@@ -390,14 +448,18 @@ public class Analysis
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this, pSource.getAccounts(), pRange);
-        theSecurities = new SecurityBucketList(this);
+        theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
-        thePortfolios = new PortfolioBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
 
-        /* Create the Dilution/Chargeable Event List */
+        /* Create totalling buckets */
+        thePortfolios = new PortfolioBucketList(this);
+        theAccountCategories = new AccountCategoryBucketList(this);
+
+        /* Access the underlying maps/lists */
+        thePrices = pSource.getPrices();
+        theRates = pSource.getRates();
         theCharges = pSource.getCharges();
         theDilutions = pSource.getDilutions();
     }

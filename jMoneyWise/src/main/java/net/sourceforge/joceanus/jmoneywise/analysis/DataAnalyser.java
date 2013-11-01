@@ -177,9 +177,6 @@ public class DataAnalyser
         /* Store the parameters */
         theData = pData;
 
-        /* Access the TaxMan account */
-        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
-
         /* Access the lists */
         TaxYearList myTaxYears = theData.getTaxYears();
         EventList myEvents = theData.getEvents();
@@ -194,7 +191,7 @@ public class DataAnalyser
         thePayeeBuckets = theAnalysis.getPayees();
         theCategoryBuckets = theAnalysis.getEventCategories();
         theDilutions = theAnalysis.getDilutions();
-        theTaxMan = thePayeeBuckets.getBucket(myTaxMan);
+        theTaxMan = thePayeeBuckets.getBucket(AccountCategoryClass.TaxMan);
 
         /* Access the Event iterator */
         Iterator<Event> myIterator = myEvents.listIterator();
@@ -701,7 +698,9 @@ public class DataAnalyser
     }
 
     /**
-     * Process an event that is a taxable gain. This capital event relates only to the Debit Account
+     * Process an event that is a taxable gain.
+     * <p>
+     * This capital event relates only to the Debit Account
      * @param pEvent the event
      */
     private void processTaxableGain(final Event pEvent) {
@@ -789,7 +788,9 @@ public class DataAnalyser
     }
 
     /**
-     * Process an event that is stock right waived. This capital event relates only to the Debit Account
+     * Process an event that is stock right waived.
+     * <p>
+     * This capital event relates only to the Debit Account
      * @param pEvent the event
      */
     private void processStockRightWaived(final Event pEvent) {
@@ -858,11 +859,11 @@ public class DataAnalyser
         myAsset.adjustGains(myDeltaGains);
 
         /* Register the event */
-        myAsset.registerEvent(pEvent);
+        myValues = myAsset.registerEvent(pEvent);
 
-        /* Record additional details TODO should be applied to the event values */
-        myAsset.setValue(SecurityAttribute.Price, myPrice); // TODO
-        myAsset.setValue(SecurityAttribute.Valuation, myValue); // TODO
+        /* Record additional details to the registered event values */
+        myValues.setValue(SecurityAttribute.Price, myPrice);
+        myValues.setValue(SecurityAttribute.Valuation, myValue);
 
         /* Adjust the credit account bucket */
         AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
@@ -872,7 +873,9 @@ public class DataAnalyser
     }
 
     /**
-     * Process an event that is Stock DeMerger. This capital event relates to both the Credit and Debit accounts
+     * Process an event that is Stock DeMerger.
+     * <p>
+     * This capital event relates to both the Credit and Debit accounts
      * @param pEvent the event
      */
     private void processStockDeMerger(final Event pEvent) {
@@ -910,7 +913,6 @@ public class DataAnalyser
 
         /* Access the Credit Asset Account Bucket */
         myAsset = theSecurityBuckets.getBucket(myCredit);
-        myValues = myAsset.getValues();
 
         /* The deltaCost is transferred to the credit account */
         myDeltaCost = new JMoney(myDeltaCost);
@@ -931,97 +933,35 @@ public class DataAnalyser
     }
 
     /**
-     * Process an event that is the Cash portion of a StockTakeOver. This capital event relates to the Debit Account and to the ThirdParty Account.
-     * @param pEvent the event
-     * @param pSource the debit capital event
-     */
-    private JMoney processCashTakeover(final Event pEvent,
-                                       final SecurityBucket pSource,
-                                       final JMoney pStockValue) {
-        Account myDebit = pEvent.getDebit();
-        Account myCredit = pEvent.getThirdParty();
-        AccountPriceList myPrices = theData.getPrices();
-        JMoney myAmount = pEvent.getAmount();
-
-        /* Access the Debit Asset Security Bucket */
-        SecurityValues myValues = pSource.getValues();
-
-        /* Get the appropriate price for the account */
-        AccountPrice myActPrice = myPrices.getLatestPrice(myDebit, pEvent.getDate());
-        JPrice myPrice = myActPrice.getPrice();
-        pSource.setValue(SecurityAttribute.Price, myPrice); // TODO
-
-        /* Determine value of this stock at the current time */
-        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.Units);
-        JMoney myValue = myUnits.valueAtPrice(myPrice);
-        pSource.setValue(SecurityAttribute.Valuation, myValue); // TODO
-
-        /* Record the cash value of the takeover */
-        // pSource.setAttribute(InvestmentAttribute.TakeOverCashValue, myAmount);
-
-        /* Access the current cost */
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.Cost);
-        JMoney myCashCost;
-        JMoney myStockCost;
-
-        /* Calculate the portion of the value that creates a large transaction */
-        JMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
-
-        /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
-        if ((myAmount.compareTo(LIMIT_VALUE) > 0)
-            && (myAmount.compareTo(myPortion) > 0)) {
-            /* Calculate the total cost of the takeover */
-            JMoney myTotalCost = new JMoney(myAmount);
-            myTotalCost.addAmount(pStockValue);
-
-            /* Split the total cost of the takeover between stock and cash */
-            myStockCost = myTotalCost.valueAtWeight(myValue, myTotalCost);
-            myCashCost = new JMoney(myTotalCost);
-            myCashCost.subtractAmount(myStockCost);
-
-            /* else this is viewed as small and is taken out of the cost */
-        } else {
-            /* Set the CashCost to be the entire amount */
-            myCashCost = new JMoney(myAmount);
-
-            /* If the reduction is greater than the total cost */
-            if (myCashCost.compareTo(myCost) > 0) {
-                /* Reduction is the total cost */
-                myCashCost = new JMoney(myCost);
-            }
-
-            /* Calculate the residual cost */
-            myStockCost = new JMoney(myCashCost);
-            myStockCost.negate();
-            myStockCost.addAmount(myCost);
-        }
-
-        /* Calculate the gains */
-        JMoney myDeltaGains = new JMoney(myAmount);
-        myDeltaGains.subtractAmount(myCashCost);
-
-        /* Record the current/delta gains */
-        pSource.adjustGains(myDeltaGains);
-
-        /* Adjust the credit account bucket */
-        AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
-        myBucket.adjustForCredit(pEvent);
-
-        /* Return the stock cost */
-        return myStockCost;
-    }
-
-    /**
-     * Process an event that is StockTakeover. This capital event relates to both the Credit and Debit accounts In particular it makes reference to the
-     * CashTakeOver aspect of the debit account
+     * Process an event that is StockTakeover.
+     * <p>
+     * This can be accomplished using a cash portion (to a ThirdParty account) and these workings are split out.
      * @param pEvent the event
      */
     private void processStockTakeover(final Event pEvent) {
+        JMoney myAmount = pEvent.getAmount();
+        Account myThirdParty = pEvent.getThirdParty();
+
+        /* If we have a ThirdParty cash part of the transaction */
+        if ((myThirdParty != null)
+            && (myAmount.isNonZero())) {
+            /* Process a Stock And Cash Takeover */
+            processStockAndCashTakeOver(pEvent);
+        } else {
+            /* Process a StockOnly TakeOverk */
+            processStockOnlyTakeOver(pEvent);
+        }
+    }
+
+    /**
+     * Process an event that is a StockOnlyTakeover.
+     * <p>
+     * This capital event relates to both the Credit and Debit accounts
+     * @param pEvent the event
+     */
+    private void processStockOnlyTakeOver(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        Account myThirdParty = pEvent.getThirdParty();
-        AccountPriceList myPrices = theData.getPrices();
-        JMoney myStockCost;
 
         /* Access the Asset Security Buckets */
         SecurityBucket myDebitAsset = theSecurityBuckets.getBucket(myDebit);
@@ -1030,34 +970,128 @@ public class DataAnalyser
         SecurityValues myCreditValues = myCreditAsset.getValues();
 
         /* Get the appropriate price for the credit account */
-        AccountPrice myActPrice = myPrices.getLatestPrice(myCredit, pEvent.getDate());
-        JPrice myPrice = myActPrice.getPrice();
+        SecurityPriceMap myPriceMap = theAnalysis.getPrices();
+        JPrice myPrice = myPriceMap.getPriceForDate(myCredit, pEvent.getDate());
 
         /* Determine value of the stock part of the takeover */
         JUnits myDeltaUnits = pEvent.getCreditUnits();
         JMoney myStockValue = myDeltaUnits.valueAtPrice(myPrice);
 
-        /* If we have a ThirdParty cash part of the transaction */
-        if ((myThirdParty != null)
-            && (pEvent.getAmount().isNonZero())) {
-            /* Process the cash part of the takeover */
-            myStockCost = processCashTakeover(pEvent, myDebitAsset, myStockValue);
-        } else {
-            /* Determine the cost of the new stock */
-            myStockCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
-        }
+        /* Determine the residual cost of the old stock */
+        JMoney myStockCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
 
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myStockCost);
         myCreditAsset.adjustUnits(myDeltaUnits);
         myCreditAsset.adjustInvested(myStockValue);
-        myCreditValues.setValue(SecurityAttribute.Price, myPrice); // TODO
 
         /* Register the event */
-        myCreditAsset.registerEvent(pEvent);
+        myCreditValues = myCreditAsset.registerEvent(pEvent);
+        myCreditValues.setValue(SecurityAttribute.Price, myPrice);
+        myCreditValues.setValue(SecurityAttribute.Valuation, myStockValue);
 
         /* Drive debit cost down to zero */
         JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myDeltaCost = new JMoney(myCost);
+        myDeltaCost.negate();
+        myDebitAsset.adjustCost(myDeltaCost);
+
+        /* Drive debit units down to zero */
+        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.Units);
+        myDeltaUnits = new JUnits(myUnits);
+        myDeltaUnits.negate();
+        myDebitAsset.adjustUnits(myDeltaUnits);
+
+        /* Adjust debit Invested amount */
+        myStockValue = new JMoney(myStockValue);
+        myStockValue.negate();
+        myDebitAsset.adjustInvested(myStockValue);
+
+        /* Register the event */
+        myDebitAsset.registerEvent(pEvent);
+    }
+
+    /**
+     * Process an event that is StockAndCashTakeover.
+     * <p>
+     * This capital event relates to both the Credit and Debit accounts. In particular it makes reference to the CashTakeOver aspect of the debit account
+     * @param pEvent the event
+     */
+    private void processStockAndCashTakeOver(final Event pEvent) {
+        JDateDay myDate = pEvent.getDate();
+        Account myDebit = pEvent.getDebit();
+        Account myCredit = pEvent.getCredit();
+        Account myThirdParty = pEvent.getThirdParty();
+        JMoney myAmount = pEvent.getAmount();
+
+        /* Access the Asset Security Buckets */
+        SecurityBucket myDebitAsset = theSecurityBuckets.getBucket(myDebit);
+        SecurityValues myDebitValues = myDebitAsset.getValues();
+        SecurityBucket myCreditAsset = theSecurityBuckets.getBucket(myCredit);
+        SecurityValues myCreditValues = myCreditAsset.getValues();
+
+        /* Get the appropriate prices for the assets */
+        SecurityPriceMap myPriceMap = theAnalysis.getPrices();
+        JPrice myDebitPrice = myPriceMap.getPriceForDate(myDebit, myDate);
+        JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
+
+        /* Determine value of the base stock */
+        JUnits myBaseUnits = myDebitValues.getUnitsValue(SecurityAttribute.Units);
+        JMoney myBaseValue = myBaseUnits.valueAtPrice(myDebitPrice);
+
+        /* Determine value of the stock part of the takeover */
+        JUnits myDeltaUnits = pEvent.getCreditUnits();
+        JMoney myStockValue = myDeltaUnits.valueAtPrice(myCreditPrice);
+
+        /* Access the current debit cost */
+        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCostXfer;
+
+        /* Calculate the portion of the value that creates a large transaction */
+        JMoney myPortion = myBaseValue.valueAtRate(LIMIT_RATE);
+
+        /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
+        if ((myAmount.compareTo(LIMIT_VALUE) > 0)
+            && (myAmount.compareTo(myPortion) > 0)) {
+            /* Calculate the total cost of the takeover */
+            JMoney myTotalCost = new JMoney(myAmount);
+            myTotalCost.addAmount(myStockValue);
+
+            /* Determine the transferable cost */
+            myCostXfer = myCost.valueAtWeight(myStockValue, myTotalCost);
+
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
+            /* If the cash amount is greater than the total cost */
+            if (myAmount.compareTo(myCost) > 0) {
+                /* No Cost is transferred to the credit asset */
+                myCostXfer = new JMoney();
+            } else {
+                /* Transferred cost is cost minus the cash amount */
+                myCostXfer = new JMoney(myCost);
+                myCostXfer.subtractAmount(myAmount);
+            }
+        }
+
+        /* Calculate the gains */
+        JMoney myDeltaGains = new JMoney(myAmount);
+        myDeltaGains.subtractAmount(myCost);
+        myDeltaGains.addAmount(myCostXfer);
+
+        /* Record the current/delta gains */
+        myDebitAsset.adjustGains(myDeltaGains);
+
+        /* Adjust cost/units/invested of the credit account */
+        myCreditAsset.adjustCost(myCostXfer);
+        myCreditAsset.adjustUnits(myDeltaUnits);
+        myCreditAsset.adjustInvested(myStockValue);
+
+        /* Register the event */
+        myCreditValues = myCreditAsset.registerEvent(pEvent);
+        myCreditValues.setValue(SecurityAttribute.Price, myCreditPrice);
+        myCreditValues.setValue(SecurityAttribute.Valuation, myStockValue);
+
+        /* Drive debit cost down to zero */
         JMoney myDeltaCost = new JMoney(myCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCost(myDeltaCost);
@@ -1075,6 +1109,12 @@ public class DataAnalyser
         myDebitAsset.adjustInvested(myStockValue);
 
         /* Register the event */
-        myDebitAsset.registerEvent(pEvent);
+        myDebitValues = myDebitAsset.registerEvent(pEvent);
+        myDebitValues.setValue(SecurityAttribute.Price, myDebitPrice);
+        myCreditValues.setValue(SecurityAttribute.Valuation, myBaseValue);
+
+        /* Adjust the ThirdParty account bucket */
+        AccountBucket myBucket = theAccountBuckets.getBucket(myThirdParty);
+        myBucket.adjustForCredit(pEvent);
     }
 }

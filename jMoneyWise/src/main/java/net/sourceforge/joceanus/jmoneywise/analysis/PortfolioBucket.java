@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
@@ -44,7 +45,7 @@ import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 /**
  * Portfolio Bucket.
  */
-public class PortfolioBucket
+public final class PortfolioBucket
         implements JDataContents, Comparable<PortfolioBucket>, OrderedIdItem<Integer> {
     /**
      * Resource Bundle.
@@ -118,6 +119,11 @@ public class PortfolioBucket
     @Override
     public String formatObject() {
         return getName();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
     }
 
     /**
@@ -205,7 +211,7 @@ public class PortfolioBucket
 
     /**
      * Constructor.
-     * @param pCategory the account category
+     * @param pPortfolio the portfolio account
      */
     private PortfolioBucket(final Account pPortfolio) {
         /* Store the category */
@@ -256,7 +262,7 @@ public class PortfolioBucket
     /**
      * Calculate delta.
      */
-    private void calculateDelta() {
+    protected void calculateDelta() {
         /* Obtain a copy of the value */
         JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
         myValue = new JMoney(myValue);
@@ -382,6 +388,10 @@ public class PortfolioBucket
          * @param pSecurities the security buckets
          */
         protected void analyseSecurities(final SecurityBucketList pSecurities) {
+            /* Market Analysis */
+            MarketAnalysis myMarket = new MarketAnalysis();
+            JDateDayRange myRange = theAnalysis.getDateRange();
+
             /* Loop through the buckets */
             Iterator<SecurityBucket> myIterator = pSecurities.listIterator();
             while (myIterator.hasNext()) {
@@ -389,10 +399,19 @@ public class PortfolioBucket
                 SecurityBucket myCurr = myIterator.next();
                 Account myPortfolio = myCurr.getPortfolio();
 
-                /* Access category bucket and add values */
+                /* Analyse the security bucket */
+                myCurr.analyseBucket(myRange);
+
+                /* Process market movements */
+                myMarket.processSecurity(myCurr);
+
+                /* Access security bucket and add values */
                 PortfolioBucket myBucket = getBucket(myPortfolio);
                 myBucket.addValues(myCurr);
             }
+
+            /* Propagate totals */
+            myMarket.propagateTotals(theAnalysis);
         }
     }
 }

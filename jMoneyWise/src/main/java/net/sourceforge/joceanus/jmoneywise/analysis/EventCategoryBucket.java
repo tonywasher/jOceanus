@@ -117,11 +117,6 @@ public final class EventCategoryBucket
     private final CategoryValues theBaseValues;
 
     /**
-     * Is the bucket idle.
-     */
-    private final Boolean isIdle;
-
-    /**
      * History Map.
      */
     private final BucketHistory<CategoryValues> theHistory;
@@ -171,12 +166,19 @@ public final class EventCategoryBucket
         return getName();
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
     /**
      * Obtain the name.
      * @return the name
      */
     public String getName() {
-        return theCategory.getName();
+        return (theCategory == null)
+                ? null
+                : theCategory.getName();
     }
 
     @Override
@@ -201,11 +203,11 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Is this bucket idle.
+     * Is this bucket idle?
      * @return true/false
      */
     public Boolean isIdle() {
-        return isIdle;
+        return theHistory.isIdle();
     }
 
     /**
@@ -300,13 +302,12 @@ public final class EventCategoryBucket
                 ? null
                 : pCategory.getCategoryType();
 
-        /* Create the values map */
-        theValues = new CategoryValues();
-        theBaseValues = new CategoryValues();
-        isIdle = false;
-
         /* Create the history map */
-        theHistory = new BucketHistory<CategoryValues>();
+        theHistory = new BucketHistory<CategoryValues>(new CategoryValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -323,20 +324,12 @@ public final class EventCategoryBucket
         theType = pBase.getEventCategoryType();
         theAnalysis = pAnalysis;
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<CategoryValues>(pBase.getHistoryMap(), pDate);
 
-        /* Copy base values from source */
-        theBaseValues = pBase.getBaseValues().getSnapShot();
-
-        /* Obtain values for date */
-        CategoryValues myValues = theHistory.getValuesForDate(pDate);
-
-        /* Determine values */
-        isIdle = (myValues == null);
-        theValues = (isIdle)
-                ? theBaseValues.getSnapShot()
-                : myValues;
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -353,37 +346,12 @@ public final class EventCategoryBucket
         theType = pBase.getEventCategoryType();
         theAnalysis = pAnalysis;
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<CategoryValues>(pBase.getHistoryMap(), pRange);
 
-        /* Obtain values for range */
-        CategoryValues[] myArray = theHistory.getValuesForRange(pRange);
-
-        /* If no activity took place up to this date */
-        if (myArray == null) {
-            /* Use base values and note idleness */
-            theValues = pBase.getBaseValues().getSnapShot();
-            theBaseValues = theValues.getSnapShot();
-            isIdle = true;
-
-            /* else we have values */
-        } else {
-            /* Determine base values */
-            CategoryValues myFirst = myArray[0];
-            theBaseValues = (myFirst == null)
-                    ? pBase.getBaseValues().getSnapShot()
-                    : myFirst;
-
-            /* Determine values */
-            CategoryValues myValues = myArray[1];
-            isIdle = (myValues == null);
-            theValues = (isIdle)
-                    ? theBaseValues.getSnapShot()
-                    : myValues;
-        }
-
-        /* Adjust to base values */
-        adjustToBaseValues();
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -611,23 +579,6 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Adjust to Base values.
-     */
-    private void adjustToBaseValues() {
-        /* Adjust income values */
-        JMoney myValue = getNewIncome();
-        JMoney myBaseValue = theBaseValues.getMoneyValue(EventAttribute.Income);
-        myValue.subtractAmount(myBaseValue);
-        theBaseValues.put(EventAttribute.Income, null);
-
-        /* Adjust expense values */
-        myValue = getNewExpense();
-        myBaseValue = theBaseValues.getMoneyValue(EventAttribute.Expense);
-        myValue.subtractAmount(myBaseValue);
-        theBaseValues.put(EventAttribute.Expense, null);
-    }
-
-    /**
      * Calculate Income delta.
      */
     protected void calculateDelta() {
@@ -640,6 +591,15 @@ public final class EventCategoryBucket
 
         /* Set the delta */
         setValue(EventAttribute.Delta, myDelta);
+    }
+
+    /**
+     * Adjust to base.
+     */
+    private void adjustToBase() {
+        /* Adjust to base values */
+        theValues.adjustToBaseValues(theBaseValues);
+        theBaseValues.resetBaseValues();
     }
 
     /**
@@ -664,7 +624,7 @@ public final class EventCategoryBucket
     /**
      * CategoryValues class.
      */
-    public final class CategoryValues
+    public static final class CategoryValues
             extends BucketValues<CategoryValues, EventAttribute> {
         /**
          * SerialId.
@@ -698,9 +658,27 @@ public final class EventCategoryBucket
         }
 
         @Override
-        protected CategoryValues[] getSnapShotArray() {
-            /* Allocate the array and return it */
-            return new CategoryValues[2];
+        protected void adjustToBaseValues(final CategoryValues pBase) {
+            /* Adjust income values */
+            JMoney myValue = getMoneyValue(EventAttribute.Income);
+            myValue = new JMoney(myValue);
+            JMoney myBaseValue = pBase.getMoneyValue(EventAttribute.Income);
+            myValue.subtractAmount(myBaseValue);
+            put(EventAttribute.Income, myValue);
+
+            /* Adjust expense values */
+            myValue = getMoneyValue(EventAttribute.Expense);
+            myValue = new JMoney(myValue);
+            myBaseValue = pBase.getMoneyValue(EventAttribute.Expense);
+            myValue.subtractAmount(myBaseValue);
+            put(EventAttribute.Expense, myValue);
+        }
+
+        @Override
+        protected void resetBaseValues() {
+            /* Reset Income and expense values */
+            put(EventAttribute.Income, new JMoney());
+            put(EventAttribute.Expense, new JMoney());
         }
 
         /**
@@ -869,7 +847,6 @@ public final class EventCategoryBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    myBucket.calculateDelta();
                     add(myBucket);
                 }
             }
@@ -907,8 +884,8 @@ public final class EventCategoryBucket
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
-                    /* Calculate the delta and add to the list */
-                    myBucket.calculateDelta();
+                    /* Adjust to the base */
+                    myBucket.adjustToBase();
                     add(myBucket);
                 }
             }
@@ -1024,9 +1001,6 @@ public final class EventCategoryBucket
             /* Create a list of new buckets */
             OrderedIdList<Integer, EventCategoryBucket> myTotals = new OrderedIdList<Integer, EventCategoryBucket>(EventCategoryBucket.class);
 
-            /* Determine if this is a ranged analysis */
-            boolean isRanged = theAnalysis.isRangedAnalysis();
-
             /* Loop through the buckets */
             Iterator<EventCategoryBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
@@ -1038,6 +1012,9 @@ public final class EventCategoryBucket
 
                 /* Access parent bucket */
                 EventCategoryBucket myTotal = findItemById(myParent.getId());
+
+                /* Calculate the delta */
+                myCurr.calculateDelta();
 
                 /* If the bucket does not exist */
                 if (myTotal == null) {
@@ -1062,17 +1039,14 @@ public final class EventCategoryBucket
                 EventCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
-                if (isRanged) {
-                    myCurr.calculateDelta();
-                }
+                myCurr.calculateDelta();
 
                 /* Add it to the list */
                 add(myCurr);
             }
 
             /* Calculate delta for the totals */
-            if ((isRanged)
-                && (theTotals != null)) {
+            if (theTotals != null) {
                 theTotals.calculateDelta();
             }
         }

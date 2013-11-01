@@ -48,6 +48,11 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
     private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
+     * Id Id.
+     */
+    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
+
+    /**
      * Date Id.
      */
     private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDate"));
@@ -69,6 +74,9 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ID.equals(pField)) {
+            return theId;
+        }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
         }
@@ -79,7 +87,12 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
     }
 
     /**
-     * The date of the event.
+     * The id of the event.
+     */
+    private final Integer theId;
+
+    /**
+     * The date.
      */
     private final JDateDay theDate;
 
@@ -87,6 +100,14 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * SnapShot Values.
      */
     private final T theSnapShot;
+
+    /**
+     * Obtain id.
+     * @return the id
+     */
+    protected Integer getId() {
+        return theId;
+    }
 
     /**
      * Obtain date.
@@ -105,16 +126,41 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
     }
 
     /**
+     * Obtain new snapShot.
+     * @return the snapShot
+     */
+    protected T getNewSnapShot() {
+        return theSnapShot.getSnapShot();
+    }
+
+    /**
      * Constructor.
      * @param pEvent the event
      * @param pValues the values
      */
     protected BucketSnapShot(final Event pEvent,
                              final T pValues) {
-        /* Store event date */
+        /* Store event details */
+        theId = pEvent.getId();
         theDate = pEvent.getDate();
 
         /* Store the snapshot map */
         theSnapShot = pValues.getSnapShot();
+    }
+
+    /**
+     * Constructor.
+     * @param pSnapShot the snapShot
+     * @param pBaseValues the base values
+     */
+    protected BucketSnapShot(final BucketSnapShot<T> pSnapShot,
+                             final T pBaseValues) {
+        /* Store event details */
+        theId = pSnapShot.getId();
+        theDate = pSnapShot.getDate();
+
+        /* Store the snapshot map */
+        theSnapShot = pSnapShot.getNewSnapShot();
+        theSnapShot.adjustToBaseValues(pBaseValues);
     }
 }

@@ -270,12 +270,16 @@ public class PasswordDialog
         setLocationRelativeTo(pParent);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
+    /**
+     * Release resources.
+     */
+    public void release() {
         if (thePassword != null) {
             Arrays.fill(thePassword, (char) 0);
         }
-        super.finalize();
+        if (theConfirm != null) {
+            Arrays.fill(theConfirm, (char) 0);
+        }
     }
 
     @Override

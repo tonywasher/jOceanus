@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -130,11 +129,6 @@ public final class AccountBucket
     private final AccountValues theBaseValues;
 
     /**
-     * Is the bucket idle.
-     */
-    private final Boolean isIdle;
-
-    /**
      * History Map.
      */
     private final BucketHistory<AccountValues> theHistory;
@@ -185,6 +179,11 @@ public final class AccountBucket
         return getName();
     }
 
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
     /**
      * Obtain the name.
      * @return the name
@@ -223,11 +222,11 @@ public final class AccountBucket
     }
 
     /**
-     * Is this bucket idle.
+     * Is this bucket idle?
      * @return true/false
      */
     public Boolean isIdle() {
-        return isIdle;
+        return theHistory.isIdle();
     }
 
     /**
@@ -334,13 +333,12 @@ public final class AccountBucket
         /* Determine whether this is a credit card */
         isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CreditCard);
 
-        /* Create the value maps */
-        theValues = new AccountValues();
-        theBaseValues = new AccountValues();
-        isIdle = false;
-
         /* Create the history map */
-        theHistory = new BucketHistory<AccountValues>();
+        theHistory = new BucketHistory<AccountValues>(new AccountValues());
+
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -359,20 +357,12 @@ public final class AccountBucket
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<AccountValues>(pBase.getHistoryMap(), pDate);
 
-        /* Copy base values from source */
-        theBaseValues = pBase.getBaseValues().getSnapShot();
-
-        /* Obtain values for date */
-        AccountValues myValues = theHistory.getValuesForDate(pDate);
-
-        /* Determine values */
-        isIdle = (myValues == null);
-        theValues = (isIdle)
-                ? theBaseValues.getSnapShot()
-                : myValues;
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     /**
@@ -391,40 +381,12 @@ public final class AccountBucket
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Reference the underlying history */
-        theHistory = pBase.getHistoryMap();
+        /* Access the relevant history */
+        theHistory = new BucketHistory<AccountValues>(pBase.getHistoryMap(), pRange);
 
-        /* Obtain values for range */
-        AccountValues[] myArray = theHistory.getValuesForRange(pRange);
-
-        /* If no activity took place up to this date */
-        if (myArray == null) {
-            /* Use base values and note idleness */
-            theValues = pBase.getBaseValues().getSnapShot();
-            theBaseValues = theValues.getSnapShot();
-            isIdle = true;
-
-            /* else we have values */
-        } else {
-            /* Determine base values */
-            AccountValues myFirst = myArray[0];
-            theBaseValues = (myFirst == null)
-                    ? pBase.getBaseValues().getSnapShot()
-                    : myFirst;
-
-            /* Determine values */
-            AccountValues myValues = myArray[1];
-            isIdle = (myValues == null);
-            theValues = (isIdle)
-                    ? theBaseValues.getSnapShot()
-                    : myValues;
-        }
-
-        /* If this is a creditCard */
-        if (isCreditCard) {
-            /* Adjust to base values */
-            adjustToBaseValues();
-        }
+        /* Access the key value maps */
+        theValues = theHistory.getValues();
+        theBaseValues = theHistory.getBaseValues();
     }
 
     @Override
@@ -469,10 +431,11 @@ public final class AccountBucket
      * @param pBalance the opening balance
      */
     protected void setOpeningBalance(final JMoney pBalance) {
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = getNewValuation();
         JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
         myValue.addAmount(pBalance);
         myBaseValue.addAmount(pBalance);
+        setValue(AccountAttribute.Valuation, myValue);
     }
 
     /**
@@ -551,24 +514,13 @@ public final class AccountBucket
     }
 
     /**
-     * Adjust to Base values.
-     */
-    private void adjustToBaseValues() {
-        /* Adjust spend values */
-        JMoney myValue = getNewSpend();
-        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.Spend);
-        myValue.subtractAmount(myBaseValue);
-        theBaseValues.put(AccountAttribute.Spend, null);
-    }
-
-    /**
      * record the rate of the account at a given date.
      * @param pDate the date of valuation
      */
     private void recordRate(final JDateDay pDate) {
         /* Obtain the appropriate rate record */
-        AccountRateList myRates = theData.getRates();
-        AccountRate myRate = myRates.getLatestRate(theAccount, pDate);
+        AccountRateMap myRates = theAnalysis.getRates();
+        AccountRate myRate = myRates.getRateForDate(theAccount, pDate);
         JDateDay myDate = theAccount.getMaturity();
 
         /* If we have a rate */
@@ -589,7 +541,7 @@ public final class AccountBucket
     /**
      * Calculate delta.
      */
-    private void calculateDelta() {
+    protected void calculateDelta() {
         /* Obtain a copy of the value */
         JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
         myValue = new JMoney(myValue);
@@ -600,6 +552,10 @@ public final class AccountBucket
 
         /* Set the delta */
         setValue(AccountAttribute.Delta, myValue);
+
+        /* Adjust to base values */
+        theValues.adjustToBaseValues(theBaseValues);
+        theBaseValues.resetBaseValues();
     }
 
     /**
@@ -647,9 +603,19 @@ public final class AccountBucket
         }
 
         @Override
-        protected AccountValues[] getSnapShotArray() {
-            /* Allocate the array and return it */
-            return new AccountValues[2];
+        protected void adjustToBaseValues(final AccountValues pBase) {
+            /* Adjust spend values */
+            JMoney myValue = getMoneyValue(AccountAttribute.Spend);
+            myValue = new JMoney(myValue);
+            JMoney myBaseValue = pBase.getMoneyValue(AccountAttribute.Spend);
+            myValue.subtractAmount(myBaseValue);
+            put(AccountAttribute.Spend, myValue);
+        }
+
+        @Override
+        protected void resetBaseValues() {
+            /* Reset spend values */
+            put(AccountAttribute.Spend, new JMoney());
         }
 
         /**
@@ -777,8 +743,7 @@ public final class AccountBucket
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive()
                     || !myBucket.isIdle()) {
-                    /* Calculate the delta and add to the list */
-                    myBucket.calculateDelta();
+                    /* Add to the list */
                     append(myBucket);
                 }
             }

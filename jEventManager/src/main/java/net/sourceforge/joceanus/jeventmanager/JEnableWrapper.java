@@ -37,7 +37,7 @@ public final class JEnableWrapper {
     /**
      * Constructor.
      */
-    private JEnableWrapper() {
+    protected JEnableWrapper() {
     }
 
     /**
