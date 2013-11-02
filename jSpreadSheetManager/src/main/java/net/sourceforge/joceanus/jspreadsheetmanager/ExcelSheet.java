@@ -278,34 +278,34 @@ public class ExcelSheet
      */
     private static int getColumnWidth(final CellStyleType pStyle) {
         switch (pStyle) {
-            case Integer:
+            case INTEGER:
                 return DataWorkBook.WIDTH_INT
                        * WIDTH_CHAR;
-            case Boolean:
+            case BOOLEAN:
                 return DataWorkBook.WIDTH_BOOL
                        * WIDTH_CHAR;
-            case Date:
+            case DATE:
                 return DataWorkBook.WIDTH_DATE
                        * WIDTH_CHAR;
-            case Money:
+            case MONEY:
                 return DataWorkBook.WIDTH_MONEY
                        * WIDTH_CHAR;
-            case Price:
+            case PRICE:
                 return DataWorkBook.WIDTH_PRICE
                        * WIDTH_CHAR;
-            case Units:
+            case UNITS:
                 return DataWorkBook.WIDTH_UNITS
                        * WIDTH_CHAR;
-            case Rate:
+            case RATE:
                 return DataWorkBook.WIDTH_RATE
                        * WIDTH_CHAR;
-            case Dilution:
+            case DILUTION:
                 return DataWorkBook.WIDTH_DILUTION
                        * WIDTH_CHAR;
-            case Ratio:
+            case RATIO:
                 return DataWorkBook.WIDTH_RATIO
                        * WIDTH_CHAR;
-            case String:
+            case STRING:
             default:
                 return DataWorkBook.WIDTH_STRING
                        * WIDTH_CHAR;

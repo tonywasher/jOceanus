@@ -4,9 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Currency;
 
+import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -44,20 +47,20 @@ public class Tester {
          */
         try {
             /* Create workBook and sheet */
-            DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);
+            DataWorkBook myBook = new DataWorkBook(WorkBookType.OASISODS);
             DataSheet mySheet = myBook.newSheet("TestData");
 
             /* Set default styles for the columns */
-            mySheet.getMutableColumnByIndex(1).setDefaultCellStyle(CellStyleType.String);
-            mySheet.getMutableColumnByIndex(2).setDefaultCellStyle(CellStyleType.Date);
-            mySheet.getMutableColumnByIndex(10).setDefaultCellStyle(CellStyleType.Boolean);
-            mySheet.getMutableColumnByIndex(4).setDefaultCellStyle(CellStyleType.Rate);
-            mySheet.getMutableColumnByIndex(5).setDefaultCellStyle(CellStyleType.Units);
-            mySheet.getMutableColumnByIndex(7).setDefaultCellStyle(CellStyleType.Integer);
-            mySheet.getMutableColumnByIndex(3).setDefaultCellStyle(CellStyleType.Money);
-            mySheet.getMutableColumnByIndex(11).setDefaultCellStyle(CellStyleType.Price);
-            mySheet.getMutableColumnByIndex(12).setDefaultCellStyle(CellStyleType.Dilution);
-            mySheet.getMutableColumnByIndex(13).setDefaultCellStyle(CellStyleType.Ratio);
+            mySheet.getMutableColumnByIndex(1).setDefaultCellStyle(CellStyleType.STRING);
+            mySheet.getMutableColumnByIndex(2).setDefaultCellStyle(CellStyleType.DATE);
+            mySheet.getMutableColumnByIndex(10).setDefaultCellStyle(CellStyleType.BOOLEAN);
+            mySheet.getMutableColumnByIndex(4).setDefaultCellStyle(CellStyleType.RATE);
+            mySheet.getMutableColumnByIndex(5).setDefaultCellStyle(CellStyleType.UNITS);
+            mySheet.getMutableColumnByIndex(7).setDefaultCellStyle(CellStyleType.INTEGER);
+            mySheet.getMutableColumnByIndex(3).setDefaultCellStyle(CellStyleType.MONEY);
+            mySheet.getMutableColumnByIndex(11).setDefaultCellStyle(CellStyleType.PRICE);
+            mySheet.getMutableColumnByIndex(12).setDefaultCellStyle(CellStyleType.DILUTION);
+            mySheet.getMutableColumnByIndex(13).setDefaultCellStyle(CellStyleType.RATIO);
 
             /* Access an explicit row */
             int i = mySheet.getRowCount();
@@ -96,7 +99,7 @@ public class Tester {
             /* Load the file and access the sheet */
             FileInputStream myInFile = new FileInputStream(myXFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            myBook = new DataWorkBook(myInBuffer, WorkBookType.OasisODS);
+            myBook = new DataWorkBook(myInBuffer, WorkBookType.OASISODS);
             mySheet = myBook.getSheet("TestData");
             myInBuffer.close();
 
@@ -125,8 +128,9 @@ public class Tester {
             myCell = myRow.getReadOnlyCellByIndex(3);
             myValue = myCell.getRatioValue();
             myCell = null;
-
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JDataException e) {
             e.printStackTrace();
         }
     }
@@ -143,7 +147,7 @@ public class Tester {
             File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
             FileInputStream myInFile = new FileInputStream(myFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            DataWorkBook myBook = new DataWorkBook(myInBuffer, WorkBookType.OasisODS);
+            DataWorkBook myBook = new DataWorkBook(myInBuffer, WorkBookType.OASISODS);
             DataView myView = myBook.getRangeView("Finance82");
             int iNumRows = myView.getRowCount();
             int iNumCols = myView.getColumnCount();
@@ -181,9 +185,10 @@ public class Tester {
                 myCell = myView.getRowCellByIndex(myRow, 8);
                 myCell = null;
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            e = null;
+        } catch (JDataException e) {
             e = null;
         }
     }
-
 }

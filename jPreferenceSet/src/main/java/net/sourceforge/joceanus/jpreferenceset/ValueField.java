@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jfieldset.JFieldSet.JFieldValue;
+import net.sourceforge.joceanus.jfieldset.JFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.

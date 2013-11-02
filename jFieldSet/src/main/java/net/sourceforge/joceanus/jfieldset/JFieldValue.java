@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSpreadSheetManager: SpreadSheet management
+ * jFieldSet: Java Swing Field Set
  * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,65 +20,38 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jspreadsheetmanager;
+package net.sourceforge.joceanus.jfieldset;
+
+import java.util.ResourceBundle;
 
 /**
- * Cell Style type.
+ * Special values for renderer.
  */
-public enum CellStyleType {
+public enum JFieldValue {
+    /**
+     * Error.
+     */
+    ERROR;
 
     /**
-     * Integer.
+     * Resource Bundle.
      */
-    INTEGER,
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JFieldValue.class.getName());
 
     /**
-     * Boolean.
+     * The String name.
      */
-    BOOLEAN,
+    private String theName;
 
-    /**
-     * Rate.
-     */
-    RATE,
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
 
-    /**
-     * Dilution.
-     */
-    DILUTION,
-
-    /**
-     * Ratio.
-     */
-    RATIO,
-
-    /**
-     * Price.
-     */
-    PRICE,
-
-    /**
-     * Money.
-     */
-    MONEY,
-
-    /**
-     * Units.
-     */
-    UNITS,
-
-    /**
-     * Date.
-     */
-    DATE,
-
-    /**
-     * String.
-     */
-    STRING,
-
-    /**
-     * Header.
-     */
-    HEADER;
+        /* return the name */
+        return theName;
+    }
 }

@@ -126,9 +126,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * @param pField the field for the model
      * @param pClass the class of the model
      */
-    private JFieldModel(final JFieldSet<T> pFieldSet,
-                        final JDataField pField,
-                        final DataType pClass) {
+    protected JFieldModel(final JFieldSet<T> pFieldSet,
+                          final JDataField pField,
+                          final DataType pClass) {
         /* Store values */
         theFieldSet = pFieldSet;
         theClass = pClass;

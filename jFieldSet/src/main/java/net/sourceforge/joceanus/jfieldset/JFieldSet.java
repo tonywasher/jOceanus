@@ -49,16 +49,6 @@ import net.sourceforge.joceanus.jeventmanager.JEventObject;
 public class JFieldSet<T extends JFieldSetItem>
         extends JEventObject {
     /**
-     * Special values for renderer.
-     */
-    public enum JFieldValue {
-        /**
-         * Error.
-         */
-        Error;
-    }
-
-    /**
      * The map of fields.
      */
     private final Map<JDataField, JFieldElement<T>> theMap;

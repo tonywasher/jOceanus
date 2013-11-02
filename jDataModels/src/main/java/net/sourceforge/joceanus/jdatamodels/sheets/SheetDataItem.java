@@ -598,7 +598,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Date);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.DATE);
     }
 
     /**
@@ -610,7 +610,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.String);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.STRING);
     }
 
     /**
@@ -622,7 +622,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Money);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.MONEY);
     }
 
     /**
@@ -634,7 +634,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Price);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.PRICE);
     }
 
     /**
@@ -646,7 +646,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Units);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.UNITS);
     }
 
     /**
@@ -658,7 +658,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Rate);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.RATE);
     }
 
     /**
@@ -670,7 +670,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Dilution);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.DILUTION);
     }
 
     /**
@@ -682,7 +682,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Ratio);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.RATIO);
     }
 
     /**
@@ -694,7 +694,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Boolean);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.BOOLEAN);
     }
 
     /**
@@ -706,7 +706,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Integer);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.INTEGER);
     }
 
     /**

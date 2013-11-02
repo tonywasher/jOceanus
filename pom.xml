@@ -6,7 +6,7 @@
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
-  <url>http://sourceforge.net/projects/joceanus/site/</url>
+  <url>http://joceanus.sourceforge.net/staging/</url>
   <packaging>pom</packaging>
   <modules>
     <module>jMoneyWise</module>

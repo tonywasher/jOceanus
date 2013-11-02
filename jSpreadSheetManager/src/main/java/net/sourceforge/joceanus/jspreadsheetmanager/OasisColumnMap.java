@@ -32,7 +32,6 @@ import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnGroupElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnsElement;
-import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableHeaderColumnsElement;
 import org.w3c.dom.Node;
 
@@ -62,11 +61,6 @@ public class OasisColumnMap {
     private final OasisSheet theOasisSheet;
 
     /**
-     * Underlying table element.
-     */
-    private final TableTableElement theOasisTable;
-
-    /**
      * Number of columns.
      */
     private int theNumColumns = 0;
@@ -88,10 +82,9 @@ public class OasisColumnMap {
     protected OasisColumnMap(final OasisSheet pSheet) {
         /* Store parameters */
         theOasisSheet = pSheet;
-        theOasisTable = pSheet.getTableElement();
 
         /* Process the columns */
-        processColumnNode(theOasisTable);
+        processColumnNode(pSheet.getTableElement());
     }
 
     /**

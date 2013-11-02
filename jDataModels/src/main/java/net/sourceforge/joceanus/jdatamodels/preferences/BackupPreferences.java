@@ -106,7 +106,7 @@ public class BackupPreferences
     /**
      * Default value for BackupType.
      */
-    private static final WorkBookType DEFAULT_BACKUP_TYPE = WorkBookType.ExcelXLS;
+    private static final WorkBookType DEFAULT_BACKUP_TYPE = WorkBookType.EXCELXLS;
 
     /**
      * Default value for Archive File.

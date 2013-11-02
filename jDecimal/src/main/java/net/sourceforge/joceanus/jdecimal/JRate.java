@@ -55,9 +55,8 @@ public class JRate
      * Constructor for rate from a decimal string.
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument
-     * @throws NullPointerException on null argument
      */
-    public JRate(final String pSource) throws IllegalArgumentException, NullPointerException {
+    public JRate(final String pSource) {
         /* Parse the string and correct the scale */
         JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);

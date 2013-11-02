@@ -81,7 +81,7 @@ public enum JDatePeriod {
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDatePeriod.class.getName());
 
     /**
-     * The String name
+     * The String name.
      */
     private String theName;
 

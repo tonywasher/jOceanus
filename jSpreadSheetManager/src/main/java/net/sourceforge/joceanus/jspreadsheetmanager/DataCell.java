@@ -394,22 +394,22 @@ public abstract class DataCell {
      */
     protected static CellStyleType getCellStyle(final JDecimal pValue) {
         if (pValue instanceof JPrice) {
-            return CellStyleType.Price;
+            return CellStyleType.PRICE;
         }
         if (pValue instanceof JMoney) {
-            return CellStyleType.Money;
+            return CellStyleType.MONEY;
         }
         if (pValue instanceof JUnits) {
-            return CellStyleType.Units;
+            return CellStyleType.UNITS;
         }
         if (pValue instanceof JRate) {
-            return CellStyleType.Rate;
+            return CellStyleType.RATE;
         }
         if (pValue instanceof JDilution) {
-            return CellStyleType.Dilution;
+            return CellStyleType.DILUTION;
         }
         if (pValue instanceof JRatio) {
-            return CellStyleType.Ratio;
+            return CellStyleType.RATIO;
         }
         return null;
     }

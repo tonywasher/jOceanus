@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jfieldset.JFieldData;
 import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jfieldset.JFieldSet.JFieldValue;
+import net.sourceforge.joceanus.jfieldset.JFieldValue;
 import net.sourceforge.joceanus.jtablefilter.TableFilter;
 import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
 
@@ -158,7 +158,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         /* If we have a null value for an error field, set error description */
         if ((o == null)
             && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
-            o = JFieldValue.Error;
+            o = JFieldValue.ERROR;
         }
 
         /* Return to caller */

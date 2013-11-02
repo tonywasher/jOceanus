@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
-import net.sourceforge.joceanus.jfieldset.JFieldSet.JFieldValue;
 
 /**
  * Cell editors.
@@ -97,7 +96,7 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setText(((pValue == null) || (JFieldValue.Error.equals(pValue)))
+            theField.setText(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
                     ? ""
                     : (String) pValue);
             return theField;
@@ -219,7 +218,7 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setSelected(((pValue == null) || (JFieldValue.Error.equals(pValue)))
+            theField.setSelected(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
                     ? Boolean.FALSE
                     : (Boolean) pValue);
             theField.addItemListener(theListener);
@@ -419,7 +418,7 @@ public class JFieldCellEditor {
 
             /* If the value is null */
             if ((pValue == null)
-                || (JFieldValue.Error.equals(pValue))) {
+                || (JFieldValue.ERROR.equals(pValue))) {
                 myCurr = new JDateDay();
             } else {
                 myCurr = (JDateDay) pValue;

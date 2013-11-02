@@ -100,9 +100,8 @@ public class JMoney
      * Constructor for money from a decimal string.
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument
-     * @throws NullPointerException on null argument
      */
-    public JMoney(final String pSource) throws IllegalArgumentException, NullPointerException {
+    public JMoney(final String pSource) {
         /* Use default constructor */
         this();
 

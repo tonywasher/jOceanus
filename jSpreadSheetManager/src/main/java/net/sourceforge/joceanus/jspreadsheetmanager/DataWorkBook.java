@@ -179,12 +179,12 @@ public class DataWorkBook {
 
         /* Switch on workbook type */
         switch (pType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 theExcelBook = new ExcelWorkBook(pInput);
                 theOasisBook = null;
                 theBookType = pType;
                 break;
-            case OasisODS:
+            case OASISODS:
                 theOasisBook = new OasisWorkBook(pInput);
                 theExcelBook = null;
                 theBookType = pType;
@@ -206,12 +206,12 @@ public class DataWorkBook {
 
         /* Switch on workbook type */
         switch (pType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 theExcelBook = new ExcelWorkBook();
                 theOasisBook = null;
                 theBookType = pType;
                 break;
-            case OasisODS:
+            case OASISODS:
                 theOasisBook = new OasisWorkBook();
                 theExcelBook = null;
                 theBookType = pType;
@@ -230,10 +230,10 @@ public class DataWorkBook {
     public void saveToStream(final OutputStream pOutput) throws JDataException {
         /* Switch on workbook type */
         switch (theBookType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 theExcelBook.saveToStream(pOutput);
                 break;
-            case OasisODS:
+            case OASISODS:
                 theOasisBook.saveToStream(pOutput);
                 break;
             default:
@@ -253,9 +253,9 @@ public class DataWorkBook {
 
         /* Switch on workbook type */
         switch (theBookType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 return theExcelBook.newSheet(pName);
-            case OasisODS:
+            case OASISODS:
                 return theOasisBook.newSheet(pName);
             default:
                 return null;
@@ -278,9 +278,9 @@ public class DataWorkBook {
 
         /* Switch on workbook type */
         switch (theBookType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 return theExcelBook.newSheet(pName);
-            case OasisODS:
+            case OASISODS:
                 return theOasisBook.newSheet(pName, pNumRows, pNumCols);
             default:
                 return null;
@@ -295,9 +295,9 @@ public class DataWorkBook {
     public DataSheet getSheet(final String pName) {
         /* Switch on workbook type */
         switch (theBookType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 return theExcelBook.getSheet(pName);
-            case OasisODS:
+            case OASISODS:
                 return theOasisBook.getSheet(pName);
             default:
                 return null;
@@ -313,9 +313,9 @@ public class DataWorkBook {
     public DataView getRangeView(final String pName) throws JDataException {
         /* Switch on workbook type */
         switch (theBookType) {
-            case ExcelXLS:
+            case EXCELXLS:
                 return theExcelBook.getRangeView(pName);
-            case OasisODS:
+            case OASISODS:
                 return theOasisBook.getRangeView(pName);
             default:
                 return null;
@@ -343,12 +343,12 @@ public class DataWorkBook {
         /**
          * Excel xls.
          */
-        ExcelXLS("xls"),
+        EXCELXLS("xls"),
 
         /**
          * Oasis ods.
          */
-        OasisODS("ods");
+        OASISODS("ods");
 
         /**
          * File extension.

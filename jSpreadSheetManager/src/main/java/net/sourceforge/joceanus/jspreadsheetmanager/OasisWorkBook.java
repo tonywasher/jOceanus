@@ -655,7 +655,7 @@ public class OasisWorkBook {
      * @param pWidth the character width
      * @return the name of the style
      */
-    protected String getStyleWidth(final int pWidth) {
+    private String getStyleWidth(final int pWidth) {
         return (pWidth << 1)
                + "mm";
     }
@@ -671,10 +671,10 @@ public class OasisWorkBook {
                                     final CellStyleType pType) {
         /* Switch on type */
         switch (pType) {
-            case Date:
+            case DATE:
                 theStyles.appendChild(new OdfNumberDateStyle(theContentDom, pFormat, pStyleName));
                 break;
-            case Rate:
+            case RATE:
                 theStyles.appendChild(new OdfNumberPercentageStyle(theContentDom, pFormat, pStyleName));
                 break;
             default:
@@ -738,70 +738,70 @@ public class OasisWorkBook {
 
         /* Create the Date Column Style */
         OdfStyle myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        String myName = getColumnStyleName(CellStyleType.Date);
+        String myName = getColumnStyleName(CellStyleType.DATE);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_DATE));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Money Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Money);
+        myName = getColumnStyleName(CellStyleType.MONEY);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_MONEY));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Price Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Price);
+        myName = getColumnStyleName(CellStyleType.PRICE);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_PRICE));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Units Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Units);
+        myName = getColumnStyleName(CellStyleType.UNITS);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_UNITS));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Rate Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Rate);
+        myName = getColumnStyleName(CellStyleType.RATE);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_RATE));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Dilution Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Dilution);
+        myName = getColumnStyleName(CellStyleType.DILUTION);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_DILUTION));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Ratio Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Ratio);
+        myName = getColumnStyleName(CellStyleType.RATIO);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_RATIO));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Integer Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Integer);
+        myName = getColumnStyleName(CellStyleType.INTEGER);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_INT));
         theStyleMap.put(myName, myStyle);
 
         /* Create the Boolean Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.Boolean);
+        myName = getColumnStyleName(CellStyleType.BOOLEAN);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_BOOL));
         theStyleMap.put(myName, myStyle);
 
         /* Create the String Column Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableColumn);
-        myName = getColumnStyleName(CellStyleType.String);
+        myName = getColumnStyleName(CellStyleType.STRING);
         myStyle.setStyleNameAttribute(myName);
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_STRING));
         theStyleMap.put(myName, myStyle);
@@ -832,11 +832,11 @@ public class OasisWorkBook {
      */
     private String getStyleAlignment(final CellStyleType pType) {
         switch (pType) {
-            case Header:
-            case Boolean:
+            case HEADER:
+            case BOOLEAN:
                 return ALIGN_CENTER;
-            case Date:
-            case String:
+            case DATE:
+            case STRING:
                 return ALIGN_LEFT;
             default:
                 return ALIGN_RIGHT;
@@ -850,9 +850,9 @@ public class OasisWorkBook {
      */
     private String getStyleFont(final CellStyleType pType) {
         switch (pType) {
-            case Header:
-            case Boolean:
-            case String:
+            case HEADER:
+            case BOOLEAN:
+            case STRING:
                 return DataWorkBook.FONT_VALUE;
             default:
                 return DataWorkBook.FONT_NUMERIC;
@@ -958,8 +958,8 @@ public class OasisWorkBook {
         CellStyleType myType = DataFormats.getCellStyleType(pValue);
 
         /* Handle the header style */
-        if (myType == CellStyleType.String) {
-            myType = CellStyleType.Header;
+        if (myType == CellStyleType.STRING) {
+            myType = CellStyleType.HEADER;
             myStyle.setProperty(OdfTextProperties.FontWeight, FONT_BOLD);
             myStyle.setProperty(OdfTableCellProperties.CellProtect, Boolean.TRUE.toString());
         }

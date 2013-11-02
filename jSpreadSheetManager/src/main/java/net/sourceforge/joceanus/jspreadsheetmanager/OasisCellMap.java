@@ -29,7 +29,6 @@ import java.util.ListIterator;
 import org.odftoolkit.odfdom.dom.OdfDocumentNamespace;
 import org.odftoolkit.odfdom.dom.attribute.table.TableNumberColumnsRepeatedAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
-import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.w3c.dom.Node;
 
 /**
@@ -62,11 +61,6 @@ public class OasisCellMap {
     private final OasisSheet theOasisSheet;
 
     /**
-     * Underlying table row element.
-     */
-    private final TableTableRowElement theOasisTableRow;
-
-    /**
      * Number of cells.
      */
     private int theNumCells = 0;
@@ -88,11 +82,10 @@ public class OasisCellMap {
     protected OasisCellMap(final OasisRow pRow) {
         /* Store parameters */
         theOasisRow = pRow;
-        theOasisTableRow = pRow.getRowElement();
         theOasisSheet = pRow.getSheet();
 
         /* Loop through the children of the table */
-        processCellNode(theOasisTableRow);
+        processCellNode(pRow.getRowElement());
     }
 
     /**

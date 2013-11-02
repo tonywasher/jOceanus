@@ -163,7 +163,7 @@ public class JDecimalParser {
      */
     private void parseDecimalValue(final String pValue,
                                    final String pDecSeparator,
-                                   final JDecimal pResult) throws IllegalArgumentException {
+                                   final JDecimal pResult) {
         /* Create a working copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
         int myPos;
@@ -255,13 +255,12 @@ public class JDecimalParser {
      * @param pValue The value to parse.
      * @param pResult the decimal to hold the result in
      * @throws IllegalArgumentException on invalid decimal
-     * @throws NullPointerException on null value
      */
     protected static void parseDecimalValue(final String pValue,
-                                            final JDecimal pResult) throws IllegalArgumentException, NullPointerException {
+                                            final JDecimal pResult) {
         /* Handle null value */
         if (pValue == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
 
         /* Create a working copy */
@@ -379,7 +378,7 @@ public class JDecimalParser {
      * @return the parsed currency
      * @throws IllegalArgumentException on invalid currency
      */
-    private Currency parseCurrency(final StringBuilder pWork) throws IllegalArgumentException {
+    private Currency parseCurrency(final StringBuilder pWork) {
         /* Look for a currency separator */
         int iPos = pWork.indexOf(JDecimalFormatter.STR_CURRSEP);
         if (iPos > -1) {
@@ -479,7 +478,7 @@ public class JDecimalParser {
      * @return the parsed money
      * @throws IllegalArgumentException on invalid money value
      */
-    public JMoney parseMoneyValue(final String pValue) throws IllegalArgumentException {
+    public JMoney parseMoneyValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -535,7 +534,7 @@ public class JDecimalParser {
      * @return the parsed price
      * @throws IllegalArgumentException on invalid price value
      */
-    public JPrice parsePriceValue(final String pValue) throws IllegalArgumentException {
+    public JPrice parsePriceValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -575,7 +574,7 @@ public class JDecimalParser {
      * @return the parsed DilutedPrice
      * @throws IllegalArgumentException on invalid diluted price value
      */
-    public JDilutedPrice parseDilutedPriceValue(final String pValue) throws IllegalArgumentException {
+    public JDilutedPrice parseDilutedPriceValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -615,7 +614,7 @@ public class JDecimalParser {
      * @return the parsed rate
      * @throws IllegalArgumentException on invalid rate value
      */
-    public JRate parseRateValue(final String pValue) throws IllegalArgumentException {
+    public JRate parseRateValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -663,7 +662,7 @@ public class JDecimalParser {
      * @return the parsed units
      * @throws IllegalArgumentException on invalid units value
      */
-    public JUnits parseUnitsValue(final String pValue) throws IllegalArgumentException {
+    public JUnits parseUnitsValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -688,7 +687,7 @@ public class JDecimalParser {
      * @return the parsed dilution
      * @throws IllegalArgumentException on invalid dilution value
      */
-    public JDilution parseDilutionValue(final String pValue) throws IllegalArgumentException {
+    public JDilution parseDilutionValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -713,7 +712,7 @@ public class JDecimalParser {
      * @return the parsed ratio
      * @throws IllegalArgumentException on invalid ratio value
      */
-    public JRatio parseRatioValue(final String pValue) throws IllegalArgumentException {
+    public JRatio parseRatioValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -738,7 +737,7 @@ public class JDecimalParser {
      * @return the parsed decimal
      * @throws IllegalArgumentException on invalid decimal value
      */
-    public JDecimal parseDecimalValue(final String pValue) throws IllegalArgumentException {
+    public JDecimal parseDecimalValue(final String pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -784,7 +783,7 @@ public class JDecimalParser {
      * @return the parsed money
      * @throws IllegalArgumentException on invalid money value
      */
-    public JMoney createMoneyFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JMoney createMoneyFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -802,7 +801,7 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid money value
      */
     public JMoney createMoneyFromDouble(final Double pValue,
-                                        final String pCurrCode) throws IllegalArgumentException {
+                                        final String pCurrCode) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -830,7 +829,7 @@ public class JDecimalParser {
      * @return the parsed price
      * @throws IllegalArgumentException on invalid price value
      */
-    public JPrice createPriceFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JPrice createPriceFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -848,7 +847,7 @@ public class JDecimalParser {
      * @throws IllegalArgumentException on invalid price value
      */
     public JPrice createPriceFromDouble(final Double pValue,
-                                        final String pCurrCode) throws IllegalArgumentException {
+                                        final String pCurrCode) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -877,7 +876,7 @@ public class JDecimalParser {
      * @return the parsed rate
      * @throws IllegalArgumentException on invalid rate value
      */
-    public JRate createRateFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JRate createRateFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -902,7 +901,7 @@ public class JDecimalParser {
      * @return the parsed units
      * @throws IllegalArgumentException on invalid units value
      */
-    public JUnits createUnitsFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JUnits createUnitsFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -927,7 +926,7 @@ public class JDecimalParser {
      * @return the parsed rate
      * @throws IllegalArgumentException on invalid price value
      */
-    public JDilution createDilutionFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JDilution createDilutionFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -952,7 +951,7 @@ public class JDecimalParser {
      * @return the parsed ratio
      * @throws IllegalArgumentException on invalid ratio value
      */
-    public JRatio createRatioFromDouble(final Double pValue) throws IllegalArgumentException {
+    public JRatio createRatioFromDouble(final Double pValue) {
         /* Handle null value */
         if (pValue == null) {
             return null;

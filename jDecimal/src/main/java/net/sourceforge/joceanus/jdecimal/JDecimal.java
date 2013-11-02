@@ -97,9 +97,8 @@ public class JDecimal
      * Constructor.
      * @param pSource the decimal as a string
      * @throws IllegalArgumentException on invalidly formatted argument
-     * @throws NullPointerException on null argument
      */
-    public JDecimal(final String pSource) throws IllegalArgumentException, NullPointerException {
+    public JDecimal(final String pSource) {
         /* Parse the string */
         JDecimalParser.parseDecimalValue(pSource, this);
 
@@ -564,7 +563,7 @@ public class JDecimal
      * Move decimal point to the right.
      * @param pPlaces number of places to move the decimal point
      */
-    public void movePointRight(final int pPlaces) {
+    public final void movePointRight(final int pPlaces) {
         /* Call movePointLeft */
         movePointLeft(-pPlaces);
     }

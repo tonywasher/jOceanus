@@ -32,7 +32,6 @@ import org.odftoolkit.odfdom.dom.OdfDocumentNamespace;
 import org.odftoolkit.odfdom.dom.attribute.table.TableNumberRowsRepeatedAttribute;
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
-import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableHeaderRowsElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowGroupElement;
@@ -64,11 +63,6 @@ public class OasisRowMap {
     private final OasisSheet theOasisSheet;
 
     /**
-     * Underlying table element.
-     */
-    private final TableTableElement theOasisTable;
-
-    /**
      * Number of rows.
      */
     private int theNumRows = 0;
@@ -97,11 +91,10 @@ public class OasisRowMap {
                           final int pInitCols) {
         /* Store parameters */
         theOasisSheet = pSheet;
-        theOasisTable = pSheet.getTableElement();
         theNumCols = pInitCols;
 
         /* Process the rows */
-        processRowNode(theOasisTable);
+        processRowNode(pSheet.getTableElement());
     }
 
     /**

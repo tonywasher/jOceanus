@@ -246,7 +246,7 @@ public class JDataFormatter {
      * @throws IllegalArgumentException on bad Date/JDecimal format
      */
     public <T> T parseValue(final String pSource,
-                            final Class<T> pClass) throws IllegalArgumentException {
+                            final Class<T> pClass) {
         if (pClass == Boolean.class) {
             return pClass.cast(Boolean.parseBoolean(pSource));
         }
@@ -320,7 +320,7 @@ public class JDataFormatter {
      * @throws IllegalArgumentException on bad Date/JDecimal format
      */
     public <T> T parseValue(final Double pSource,
-                            final Class<T> pClass) throws IllegalArgumentException {
+                            final Class<T> pClass) {
         if (pClass == JPrice.class) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
@@ -360,7 +360,7 @@ public class JDataFormatter {
      */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
-                            final Class<T> pClass) throws IllegalArgumentException {
+                            final Class<T> pClass) {
         if (pClass == JPrice.class) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));

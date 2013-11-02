@@ -371,11 +371,11 @@ public class ExcelWorkBook {
      */
     private short getStyleAlignment(final CellStyleType pType) {
         switch (pType) {
-            case Header:
-            case Boolean:
+            case HEADER:
+            case BOOLEAN:
                 return CellStyle.ALIGN_CENTER;
-            case Date:
-            case String:
+            case DATE:
+            case STRING:
                 return CellStyle.ALIGN_LEFT;
             default:
                 return CellStyle.ALIGN_RIGHT;
@@ -389,10 +389,10 @@ public class ExcelWorkBook {
      */
     private Font getStyleFont(final CellStyleType pType) {
         switch (pType) {
-            case Header:
+            case HEADER:
                 return theHeaderFont;
-            case Boolean:
-            case String:
+            case BOOLEAN:
+            case STRING:
                 return theValueFont;
             default:
                 return theNumberFont;
@@ -455,7 +455,7 @@ public class ExcelWorkBook {
         myStyle.setAlignment(getStyleAlignment(myType));
 
         /* If we have a data format */
-        if ((myType != CellStyleType.Boolean)
+        if ((myType != CellStyleType.BOOLEAN)
             && (DataFormats.hasDataFormat(myType))) {
             /* Determine the format */
             String myFormat = DataFormats.getDataFormatString(pValue);
@@ -489,8 +489,8 @@ public class ExcelWorkBook {
         CellStyleType myType = DataFormats.getCellStyleType(pValue);
 
         /* Handle the header style */
-        if (myType == CellStyleType.String) {
-            myType = CellStyleType.Header;
+        if (myType == CellStyleType.STRING) {
+            myType = CellStyleType.HEADER;
             myStyle.setLocked(true);
         }
 
@@ -499,7 +499,7 @@ public class ExcelWorkBook {
         myStyle.setAlignment(getStyleAlignment(myType));
 
         /* If we have a data format */
-        if ((myType != CellStyleType.Boolean)
+        if ((myType != CellStyleType.BOOLEAN)
             && (DataFormats.hasDataFormat(myType))) {
             /* Determine the format */
             String myFormat = DataFormats.getAlternateFormatString(pValue);

@@ -241,23 +241,23 @@ public final class DataFormats {
      */
     protected static String getDataFormatString(final CellStyleType pType) {
         switch (pType) {
-            case Date:
+            case DATE:
                 return getDataFormatString(new JDateDay());
-            case Boolean:
+            case BOOLEAN:
                 return getDataFormatString(Boolean.TRUE);
-            case Integer:
+            case INTEGER:
                 return getDataFormatString(Integer.valueOf(0));
-            case Money:
+            case MONEY:
                 return getDataFormatString(new JMoney(STR_ZERO));
-            case Price:
+            case PRICE:
                 return getDataFormatString(new JPrice(STR_ZERO));
-            case Rate:
+            case RATE:
                 return getDataFormatString(new JRate(STR_ZERO));
-            case Units:
+            case UNITS:
                 return getDataFormatString(new JUnits(STR_ZERO));
-            case Dilution:
+            case DILUTION:
                 return getDataFormatString(new JDilution(STR_ZERO));
-            case Ratio:
+            case RATIO:
                 return getDataFormatString(new JRatio(STR_ZERO));
             default:
                 return null;
@@ -323,27 +323,27 @@ public final class DataFormats {
      */
     protected static String getFormatName(final CellStyleType pType) {
         switch (pType) {
-            case Header:
+            case HEADER:
                 return getAlternateFormatName(STR_NULL);
-            case String:
+            case STRING:
                 return getFormatName(STR_NULL);
-            case Date:
+            case DATE:
                 return getFormatName(new JDateDay());
-            case Boolean:
+            case BOOLEAN:
                 return getFormatName(Boolean.TRUE);
-            case Integer:
+            case INTEGER:
                 return getFormatName(Integer.valueOf(0));
-            case Money:
+            case MONEY:
                 return getFormatName(new JMoney(STR_ZERO));
-            case Price:
+            case PRICE:
                 return getFormatName(new JPrice(STR_ZERO));
-            case Rate:
+            case RATE:
                 return getFormatName(new JRate(STR_ZERO));
-            case Units:
+            case UNITS:
                 return getFormatName(new JUnits(STR_ZERO));
-            case Dilution:
+            case DILUTION:
                 return getFormatName(new JDilution(STR_ZERO));
-            case Ratio:
+            case RATIO:
                 return getFormatName(new JRatio(STR_ZERO));
             default:
                 return null;
@@ -400,7 +400,7 @@ public final class DataFormats {
      */
     protected static String getAlternateFormatName(final Object pValue) {
         if (pValue instanceof String) {
-            return getStyleName(CellStyleType.Header.toString());
+            return getStyleName(CellStyleType.HEADER.toString());
         }
         String myXtra = "Curr";
         if (pValue instanceof JPrice) {
@@ -425,15 +425,15 @@ public final class DataFormats {
      */
     protected static boolean hasDataFormat(final CellStyleType pType) {
         switch (pType) {
-            case Date:
-            case Boolean:
-            case Integer:
-            case Money:
-            case Price:
-            case Rate:
-            case Units:
-            case Dilution:
-            case Ratio:
+            case DATE:
+            case BOOLEAN:
+            case INTEGER:
+            case MONEY:
+            case PRICE:
+            case RATE:
+            case UNITS:
+            case DILUTION:
+            case RATIO:
                 return true;
             default:
                 return false;
@@ -447,34 +447,34 @@ public final class DataFormats {
      */
     protected static CellStyleType getCellStyleType(final Object pValue) {
         if (pValue instanceof String) {
-            return CellStyleType.String;
+            return CellStyleType.STRING;
         }
         if (pValue instanceof JDateDay) {
-            return CellStyleType.Date;
+            return CellStyleType.DATE;
         }
         if (pValue instanceof Boolean) {
-            return CellStyleType.Boolean;
+            return CellStyleType.BOOLEAN;
         }
         if (pValue instanceof Integer) {
-            return CellStyleType.Integer;
+            return CellStyleType.INTEGER;
         }
         if (pValue instanceof JPrice) {
-            return CellStyleType.Price;
+            return CellStyleType.PRICE;
         }
         if (pValue instanceof JMoney) {
-            return CellStyleType.Money;
+            return CellStyleType.MONEY;
         }
         if (pValue instanceof JRate) {
-            return CellStyleType.Rate;
+            return CellStyleType.RATE;
         }
         if (pValue instanceof JUnits) {
-            return CellStyleType.Units;
+            return CellStyleType.UNITS;
         }
         if (pValue instanceof JDilution) {
-            return CellStyleType.Dilution;
+            return CellStyleType.DILUTION;
         }
         if (pValue instanceof JRatio) {
-            return CellStyleType.Ratio;
+            return CellStyleType.RATIO;
         }
         return null;
     }
