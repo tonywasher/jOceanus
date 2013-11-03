@@ -85,6 +85,14 @@ public class View
     }
 
     /**
+     * Obtain the analyser.
+     * @return the analyser.
+     */
+    public DataAnalyser getAnalyser() {
+        return theAnalyser;
+    }
+
+    /**
      * Obtain the dilution list.
      * @return the dilution list.
      */

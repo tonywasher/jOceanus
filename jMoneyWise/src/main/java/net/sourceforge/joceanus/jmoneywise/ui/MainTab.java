@@ -160,6 +160,11 @@ public class MainTab
     private ReportTab theReportTab = null;
 
     /**
+     * The report alternate panel.
+     */
+    private ReportAlt theReportAlt = null;
+
+    /**
      * The SpotPricesPanel.
      */
     private PricePoint theSpotView = null;
@@ -256,6 +261,10 @@ public class MainTab
         /* Create the Report Tab */
         theReportTab = new ReportTab(theView);
         theTabs.addTab(TITLE_REPORT, theReportTab);
+
+        /* Create the Report Tab */
+        theReportAlt = new ReportAlt(theView);
+        theTabs.addTab("XtraReport", theReportAlt);
 
         /* Create the SpotView Tab */
         theSpotView = new PricePoint(theView);

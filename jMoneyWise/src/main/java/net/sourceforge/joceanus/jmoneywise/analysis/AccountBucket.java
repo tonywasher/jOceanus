@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.AccountRateMap;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
@@ -249,7 +250,7 @@ public final class AccountBucket
      * Obtain the value map.
      * @return the value map
      */
-    protected AccountValues getValues() {
+    public AccountValues getValues() {
         return theValues;
     }
 
@@ -257,7 +258,7 @@ public final class AccountBucket
      * Obtain the base value map.
      * @return the base value map
      */
-    protected AccountValues getBaseValues() {
+    public AccountValues getBaseValues() {
         return theBaseValues;
     }
 

@@ -108,13 +108,13 @@ public class BucketHistory<T extends BucketValues<T, ?>>
         BucketSnapShot<T> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = this.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T>> myEntry = myIterator.next();
             BucketSnapShot<T> myEvent = myEntry.getValue();
 
             /* If we have passed the Date, break the loop */
-            if (pDate.compareTo(myEvent.getDate()) > 0) {
+            if (pDate.compareTo(myEvent.getDate()) < 0) {
                 break;
             }
 
@@ -147,14 +147,14 @@ public class BucketHistory<T extends BucketValues<T, ?>>
         BucketSnapShot<T> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = this.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T>> myEntry = myIterator.next();
             BucketSnapShot<T> myEvent = myEntry.getValue();
 
             /* If we are past the initial Date */
             int iRange = pRange.compareTo(myEvent.getDate());
-            if (iRange >= 0) {
+            if (iRange <= 0) {
                 /* If we are within the range */
                 if (iRange == 0) {
                     /* Note that this counts as latest */
@@ -187,7 +187,7 @@ public class BucketHistory<T extends BucketValues<T, ?>>
             BucketSnapShot<T> myEvent = myEntry.getValue();
 
             /* If we are past the range, break the loop */
-            if (pRange.compareTo(myEvent.getDate()) > 0) {
+            if (pRange.compareTo(myEvent.getDate()) < 0) {
                 break;
             }
 

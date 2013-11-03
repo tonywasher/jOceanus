@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.AccountRateMap;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
@@ -417,6 +419,12 @@ public class Analysis
         theData = pSource.getData();
         theDateRange = new JDateDayRange(null, pDate);
 
+        /* Access the underlying maps/lists */
+        thePrices = pSource.getPrices();
+        theRates = pSource.getRates();
+        theCharges = pSource.getCharges();
+        theDilutions = pSource.getDilutions();
+
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this, pSource.getAccounts(), pDate);
         theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pDate);
@@ -427,12 +435,6 @@ public class Analysis
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
-
-        /* Access the underlying maps/lists */
-        thePrices = pSource.getPrices();
-        theRates = pSource.getRates();
-        theCharges = pSource.getCharges();
-        theDilutions = pSource.getDilutions();
     }
 
     /**
@@ -446,6 +448,12 @@ public class Analysis
         theData = pSource.getData();
         theDateRange = pRange;
 
+        /* Access the underlying maps/lists */
+        thePrices = pSource.getPrices();
+        theRates = pSource.getRates();
+        theCharges = pSource.getCharges();
+        theDilutions = pSource.getDilutions();
+
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this, pSource.getAccounts(), pRange);
         theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pRange);
@@ -456,12 +464,6 @@ public class Analysis
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
-
-        /* Access the underlying maps/lists */
-        thePrices = pSource.getPrices();
-        theRates = pSource.getRates();
-        theCharges = pSource.getCharges();
-        theDilutions = pSource.getDilutions();
     }
 
     /**

@@ -94,11 +94,11 @@ public class JDateDayRange
     public short compareTo(final JDateDay pDate) {
         if ((theStart != null)
             && (theStart.compareTo(pDate) > 0)) {
-            return 1;
+            return -1;
         }
         if ((theEnd != null)
             && (theEnd.compareTo(pDate) < 0)) {
-            return -1;
+            return 1;
         }
         return 0;
     }

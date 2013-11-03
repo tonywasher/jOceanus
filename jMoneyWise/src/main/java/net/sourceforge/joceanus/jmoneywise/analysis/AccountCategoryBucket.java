@@ -292,9 +292,12 @@ public final class AccountCategoryBucket
 
         /* If we have do not have value */
         if (myClass.isNonAsset()) {
-            /* If this is a credit card account */
+            /* If this is a totals account */
             if (myClass == AccountCategoryClass.Totals) {
                 return CategoryType.Total;
+            }
+            if (myClass == AccountCategoryClass.Portfolio) {
+                return CategoryType.Portfolio;
             }
 
             /* This is a payee */
@@ -303,14 +306,9 @@ public final class AccountCategoryBucket
                     : CategoryType.Payee;
         }
 
-        /* If this is a credit card account */
-        if (myClass == AccountCategoryClass.CreditCard) {
-            return CategoryType.CreditCard;
-        }
-
-        /* Return asset or money */
-        return (myClass.hasUnits())
-                ? CategoryType.Priced
+        /* Return creditCard/Money */
+        return (myClass == AccountCategoryClass.CreditCard)
+                ? CategoryType.CreditCard
                 : CategoryType.Money;
     }
 
@@ -629,9 +627,9 @@ public final class AccountCategoryBucket
         CreditCard,
 
         /**
-         * Priced.
+         * Portfolio.
          */
-        Priced,
+        Portfolio,
 
         /**
          * Payee.
@@ -649,14 +647,13 @@ public final class AccountCategoryBucket
         Total;
 
         /**
-         * Does this account type have balances?
+         * Is this a subTotal category?
          * @return true/false
          */
-        public boolean hasBalances() {
+        public boolean isSubTotal() {
             switch (this) {
-                case Money:
-                case CreditCard:
-                case Priced:
+                case SubTotal:
+                case Portfolio:
                     return true;
                 default:
                     return false;

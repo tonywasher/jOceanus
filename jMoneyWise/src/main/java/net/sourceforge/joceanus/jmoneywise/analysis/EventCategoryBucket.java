@@ -214,7 +214,7 @@ public final class EventCategoryBucket
      * Obtain the value map.
      * @return the value map
      */
-    protected CategoryValues getValues() {
+    public CategoryValues getValues() {
         return theValues;
     }
 
@@ -222,7 +222,7 @@ public final class EventCategoryBucket
      * Obtain the base value map.
      * @return the base value map
      */
-    protected CategoryValues getBaseValues() {
+    public CategoryValues getBaseValues() {
         return theBaseValues;
     }
 

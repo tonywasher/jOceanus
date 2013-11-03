@@ -64,7 +64,7 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
 
     @Override
     public String formatObject() {
-        return FIELD_DEFS.getName();
+        return theDate.toString();
     }
 
     @Override

@@ -78,7 +78,7 @@ public class AnalysisManager
      * @param pDate the date for the analysis.
      * @return the analysis
      */
-    protected Analysis getAnalysis(final JDateDay pDate) {
+    public Analysis getAnalysis(final JDateDay pDate) {
         /* Create the new Range */
         JDateDayRange myRange = new JDateDayRange(theFirstDate, pDate);
 
@@ -102,7 +102,7 @@ public class AnalysisManager
      * @param pRange the date range for the analysis.
      * @return the analysis
      */
-    protected Analysis getAnalysis(final JDateDayRange pRange) {
+    public Analysis getAnalysis(final JDateDayRange pRange) {
         /* Look for the existing analysis */
         Analysis myAnalysis = get(pRange);
         if (myAnalysis == null) {

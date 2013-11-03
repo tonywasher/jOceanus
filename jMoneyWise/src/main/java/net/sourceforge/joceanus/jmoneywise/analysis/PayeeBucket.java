@@ -208,7 +208,7 @@ public final class PayeeBucket
      * Obtain the value map.
      * @return the value map
      */
-    protected PayeeValues getValues() {
+    public PayeeValues getValues() {
         return theValues;
     }
 
@@ -216,7 +216,7 @@ public final class PayeeBucket
      * Obtain the base value map.
      * @return the base value map
      */
-    protected PayeeValues getBaseValues() {
+    public PayeeValues getBaseValues() {
         return theBaseValues;
     }
 

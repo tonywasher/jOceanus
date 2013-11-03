@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.CategoryType;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
@@ -307,6 +308,7 @@ public class DataAnalyser
                 /* Determine the type of the debit account */
                 CategoryType myType = AccountCategoryBucket.determineCategoryType(myDebit.getAccountCategory());
                 switch (myType) {
+                    case Portfolio:
                     case Payee:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
                         myPayee.adjustForDebit(pEvent);
@@ -335,6 +337,7 @@ public class DataAnalyser
                 /* Determine the type of the credit account */
                 CategoryType myType = AccountCategoryBucket.determineCategoryType(myCredit.getAccountCategory());
                 switch (myType) {
+                    case Portfolio:
                     case Payee:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
                         myPayee.adjustForCredit(pEvent);

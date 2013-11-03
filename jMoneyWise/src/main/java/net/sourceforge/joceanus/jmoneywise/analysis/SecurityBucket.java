@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -249,7 +250,7 @@ public final class SecurityBucket
      * Obtain the value map.
      * @return the value map
      */
-    protected SecurityValues getValues() {
+    public SecurityValues getValues() {
         return theValues;
     }
 
@@ -257,7 +258,7 @@ public final class SecurityBucket
      * Obtain the base value map.
      * @return the base value map
      */
-    protected SecurityValues getBaseValues() {
+    public SecurityValues getBaseValues() {
         return theBaseValues;
     }
 
