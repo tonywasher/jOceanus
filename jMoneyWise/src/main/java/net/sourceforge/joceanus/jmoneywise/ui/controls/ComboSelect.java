@@ -90,7 +90,7 @@ public class ComboSelect {
     /**
      * Refresh data after load/update.
      */
-    public void refreshData() {
+    public final void refreshData() {
         /* Store the data */
         theData = theView.getData();
 

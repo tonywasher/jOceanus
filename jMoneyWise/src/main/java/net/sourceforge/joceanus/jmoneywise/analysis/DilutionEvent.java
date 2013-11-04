@@ -248,8 +248,8 @@ public final class DilutionEvent
      * @param pId the id for the dilution
      * @param pEvent the underlying event
      */
-    private DilutionEvent(final int pId,
-                          final Event pEvent) {
+    protected DilutionEvent(final int pId,
+                            final Event pEvent) {
         /* Local variables */
         Account myAccount;
 

@@ -54,7 +54,7 @@ public final class Control {
      */
     private static void createAndShowGUI() {
         try {
-            theWindow = new MainTab();
+            theWindow = new MainTab(theLogger);
             theWindow.makeFrame();
 
         } catch (JDataException e) {

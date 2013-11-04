@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.help;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jhelpmanager.HelpException;
 import net.sourceforge.joceanus.jhelpmanager.HelpModule;
 
@@ -33,9 +35,10 @@ public class FinanceHelp
         extends HelpModule {
     /**
      * Constructor.
+     * @param pLogger the logger
      * @throws HelpException on error
      */
-    public FinanceHelp() throws HelpException {
-        super(FinanceHelp.class, "help.xml");
+    public FinanceHelp(final Logger pLogger) throws HelpException {
+        super(FinanceHelp.class, "help.xml", pLogger);
     }
 }

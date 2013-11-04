@@ -101,8 +101,8 @@ public final class QSecurity
      * @param pAnalysis the analysis
      * @param pAccount the security account
      */
-    private QSecurity(final QAnalysis pAnalysis,
-                      final Account pAccount) {
+    protected QSecurity(final QAnalysis pAnalysis,
+                        final Account pAccount) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 

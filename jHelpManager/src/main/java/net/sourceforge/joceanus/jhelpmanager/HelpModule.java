@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -76,6 +78,24 @@ public abstract class HelpModule {
     private String theInitial = null;
 
     /**
+     * The logger.
+     */
+    private final Logger theLogger;
+
+    /**
+     * The stream close error.
+     */
+    protected static final String ERROR_STREAM = "Failed to close stream";
+
+    /**
+     * Obtain the logger.
+     * @return the logger
+     */
+    protected Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
      * Obtain the list of pages.
      * @return the list of pages
      */
@@ -111,10 +131,15 @@ public abstract class HelpModule {
      * Constructor.
      * @param pClass the class representing the resource
      * @param pDefinitions the definitions file name
+     * @param pLogger the logger
      * @throws HelpException on error
      */
     public HelpModule(final Class<?> pClass,
-                      final String pDefinitions) throws HelpException {
+                      final String pDefinitions,
+                      final Logger pLogger) throws HelpException {
+        /* Store the logger */
+        theLogger = pLogger;
+
         /* Allocate the list */
         theList = new ArrayList<HelpPage>();
 
@@ -200,7 +225,7 @@ public abstract class HelpModule {
             try {
                 myStream.close();
             } catch (IOException e) {
-                myStream = null;
+                theLogger.log(Level.SEVERE, ERROR_STREAM, e);
             }
 
             /* Catch exceptions */
@@ -225,7 +250,7 @@ public abstract class HelpModule {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
             }
         }
     }
@@ -270,7 +295,7 @@ public abstract class HelpModule {
 
                         /* Ignore errors */
                     } catch (IOException ex) {
-                        myStream = null;
+                        theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
                     }
                 }
             }

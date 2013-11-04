@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jhelpmanager;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -87,6 +89,11 @@ public class HelpWindow
     private final DefaultMutableTreeNode theRoot;
 
     /**
+     * The logger.
+     */
+    private final transient Logger theLogger;
+
+    /**
      * Constructor.
      * @param pParent the parent frame
      * @param pModule the help module to display
@@ -103,6 +110,9 @@ public class HelpWindow
 
         /* Set the title */
         setTitle("Help Manager");
+
+        /* Access the logger */
+        theLogger = pModule.getLogger();
 
         /* Access the Help entries and list */
         HelpEntry[] myEntries = pModule.getHelpEntries();
@@ -244,7 +254,7 @@ public class HelpWindow
                         theEditor.setPage(e.getURL());
                     }
                 } catch (IOException t) {
-                    url = null;
+                    theLogger.log(Level.SEVERE, HelpModule.ERROR_STREAM, t);
                 }
             }
         }

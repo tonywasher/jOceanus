@@ -184,7 +184,7 @@ public class AnalysisMaps {
     /**
      * Price List class.
      */
-    private static class PriceList
+    private static final class PriceList
             extends ArrayList<AccountPrice>
             implements JDataContents {
         /**
@@ -218,7 +218,7 @@ public class AnalysisMaps {
         /**
          * The security.
          */
-        private final Account theSecurity;
+        private final transient Account theSecurity;
 
         @Override
         public String formatObject() {
@@ -234,7 +234,7 @@ public class AnalysisMaps {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pSecurity the security
          */
         private PriceList(final Account pSecurity) {
@@ -329,7 +329,7 @@ public class AnalysisMaps {
     /**
      * Rate List class.
      */
-    private static class RateList
+    private static final class RateList
             extends ArrayList<AccountRate>
             implements JDataContents {
         /**
@@ -363,7 +363,7 @@ public class AnalysisMaps {
         /**
          * The account.
          */
-        private final Account theAccount;
+        private final transient Account theAccount;
 
         @Override
         public String formatObject() {
@@ -379,7 +379,7 @@ public class AnalysisMaps {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pAccount the account
          */
         private RateList(final Account pAccount) {

@@ -78,8 +78,8 @@ public final class QClass
      * @param pAnalysis the analysis
      * @param pClass the class
      */
-    private QClass(final QAnalysis pAnalysis,
-                   final EventClass pClass) {
+    protected QClass(final QAnalysis pAnalysis,
+                     final EventClass pClass) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 

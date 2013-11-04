@@ -91,8 +91,8 @@ public final class QCategory
      * @param pAnalysis the analysis
      * @param pCategory the category
      */
-    private QCategory(final QAnalysis pAnalysis,
-                      final EventCategory pCategory) {
+    protected QCategory(final QAnalysis pAnalysis,
+                        final EventCategory pCategory) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 

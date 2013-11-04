@@ -260,9 +260,24 @@ public class JDateDayExample
     private boolean doPretty = true;
 
     /**
+     * The first date format.
+     */
+    private static final String DATEFORMAT_1 = "dd-MMM-yyyy";
+
+    /**
      * The selected format.
      */
-    private String theFormat = "dd-MMM-yyyy";
+    private static final String DATEFORMAT_2 = "dd/MMM/yy";
+
+    /**
+     * The selected format.
+     */
+    private static final String DATEFORMAT_3 = "yyyy/MMM/dd";
+
+    /**
+     * The selected format.
+     */
+    private String theFormat = DATEFORMAT_1;
 
     /**
      * The listener.
@@ -543,9 +558,9 @@ public class JDateDayExample
     private void makeFormatList() {
         /* Create the Combo box and populate it */
         theFormatList = new JComboBox<String>();
-        theFormatList.addItem("dd-MMM-yyyy");
-        theFormatList.addItem("dd/MMM/yy");
-        theFormatList.addItem("yyyy/MMM/dd");
+        theFormatList.addItem(DATEFORMAT_1);
+        theFormatList.addItem(DATEFORMAT_2);
+        theFormatList.addItem(DATEFORMAT_3);
 
         /* Add Listener to List */
         theFormatList.addItemListener(theListener);

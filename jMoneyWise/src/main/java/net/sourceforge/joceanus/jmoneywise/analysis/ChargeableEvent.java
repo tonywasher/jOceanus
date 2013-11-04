@@ -192,8 +192,8 @@ public final class ChargeableEvent
      * @param pEvent the Event
      * @param pGains the Gains
      */
-    private ChargeableEvent(final Event pEvent,
-                            final JMoney pGains) {
+    protected ChargeableEvent(final Event pEvent,
+                              final JMoney pGains) {
         /* Calculate slice */
         theSlice = new JMoney(pGains);
         theSlice.divide(pEvent.getYears());

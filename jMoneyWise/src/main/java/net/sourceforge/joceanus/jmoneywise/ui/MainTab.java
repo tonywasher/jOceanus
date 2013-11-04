@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -140,6 +141,11 @@ public class MainTab
     private final View theView;
 
     /**
+     * The logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * The tabs.
      */
     private JEnableTabbed theTabs = null;
@@ -224,7 +230,7 @@ public class MainTab
     @Override
     protected HelpModule getHelpModule() throws JDataException {
         try {
-            return new FinanceHelp();
+            return new FinanceHelp(theLogger);
         } catch (HelpException e) {
             throw new JDataException(ExceptionClass.DATA, "Unable to load help", e);
         }
@@ -232,11 +238,15 @@ public class MainTab
 
     /**
      * Constructor.
+     * @param pLogger the logger
      * @throws JDataException on error
      */
-    public MainTab() throws JDataException {
+    public MainTab(final Logger pLogger) throws JDataException {
         /* Create the view */
         theView = new View();
+
+        /* Store the logger */
+        theLogger = pLogger;
 
         /* Create the combo list */
         theComboList = new ComboSelect(theView);

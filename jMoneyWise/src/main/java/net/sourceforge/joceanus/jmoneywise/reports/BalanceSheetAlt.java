@@ -261,7 +261,7 @@ public class BalanceSheetAlt
     }
 
     /**
-     * Create a delayed category table
+     * Create a delayed category table.
      * @param pParent the parent table
      * @param pSource the source bucket
      * @return the new document fragment
@@ -308,7 +308,7 @@ public class BalanceSheetAlt
     }
 
     /**
-     * Create a delayed portfolio table
+     * Create a delayed portfolio table.
      * @param pParent the parent table
      * @param pSource the source bucket
      * @return the new document fragment

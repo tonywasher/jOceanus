@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jdatebutton.JDateConfig;
 
@@ -45,6 +46,26 @@ public class JDateDay
      * The Year shift for DateDay Id. This is 9 corresponding to (1 shiftLeft 9 places) = 512
      */
     protected static final int SHIFT_ID_YEAR = 9;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDay.class.getName());
+
+    /**
+     * Text for Null Date Error.
+     */
+    private static final String ERROR_NULLDATE = NLS_BUNDLE.getString("ErrorNullDate");
+
+    /**
+     * Text for Null Locale Error.
+     */
+    private static final String ERROR_NULLLOCALE = NLS_BUNDLE.getString("ErrorNullLocale");
+
+    /**
+     * Text for Bad Format Error.
+     */
+    private static final String ERROR_BADFORMAT = NLS_BUNDLE.getString("ErrorBadFormat");
 
     /**
      * The format to be used.
@@ -202,7 +223,7 @@ public class JDateDay
                     final Locale pLocale) {
         /* Null dates not allowed */
         if (pDate == null) {
-            throw new IllegalArgumentException("Null Date not allowed");
+            throw new IllegalArgumentException(ERROR_NULLDATE);
         }
 
         /* Create the Date */
@@ -216,7 +237,7 @@ public class JDateDay
     public JDateDay(final JDateDay pDate) {
         /* Null dates not allowed */
         if (pDate == null) {
-            throw new IllegalArgumentException("Null Date not allowed");
+            throw new IllegalArgumentException(ERROR_NULLDATE);
         }
 
         /* Create the Date */
@@ -286,7 +307,8 @@ public class JDateDay
             Date myDate = theDateFormat.parse(pValue);
             buildDateDay(myDate, pLocale);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid Date string "
+            throw new IllegalArgumentException(ERROR_BADFORMAT
+                                               + " "
                                                + pValue, e);
         }
     }
@@ -300,7 +322,7 @@ public class JDateDay
                               final Locale pLocale) {
         /* Null dates not allowed */
         if (pDate == null) {
-            throw new IllegalArgumentException("Null Date not allowed");
+            throw new IllegalArgumentException(ERROR_NULLDATE);
         }
 
         /* Access Date within calendar */
@@ -324,7 +346,7 @@ public class JDateDay
                               final Locale pLocale) {
         /* Null locale not allowed */
         if (pLocale == null) {
-            throw new IllegalArgumentException("Null Locale not allowed");
+            throw new IllegalArgumentException(ERROR_NULLLOCALE);
         }
 
         /* Build date values */
