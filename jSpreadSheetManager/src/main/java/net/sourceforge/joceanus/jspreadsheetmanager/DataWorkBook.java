@@ -105,6 +105,11 @@ public class DataWorkBook {
     protected static final String FONT_NUMERIC = "Courier";
 
     /**
+     * Bad WorkBook type error text.
+     */
+    private static final String ERROR_TYPE = "Unsupported WorkBook Type: ";
+
+    /**
      * ReadOnly.
      */
     private final boolean isReadOnly;
@@ -190,7 +195,7 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, "Unsupported WorkBookType: "
+                throw new JDataException(ExceptionClass.LOGIC, ERROR_TYPE
                                                                + pType);
         }
     }
@@ -217,7 +222,7 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, "Unsupported WorkBookType: "
+                throw new JDataException(ExceptionClass.LOGIC, ERROR_TYPE
                                                                + pType);
         }
     }

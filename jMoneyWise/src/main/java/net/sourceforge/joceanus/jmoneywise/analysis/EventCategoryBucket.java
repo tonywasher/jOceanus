@@ -1001,7 +1001,7 @@ public final class EventCategoryBucket
         /**
          * Adjust for Standard Gains.
          * @param pEvent the event
-         * @param pReduction the gains
+         * @param pGains the gains
          */
         protected void adjustStandardGain(final Event pEvent,
                                           final JMoney pGains) {

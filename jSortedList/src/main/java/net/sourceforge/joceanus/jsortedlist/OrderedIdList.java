@@ -103,7 +103,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
             T myItem = myIterator.next();
 
             /* Add the item */
-            add(myItem);
+            addTheItem(myItem);
         }
     }
 
@@ -201,6 +201,16 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     @Override
     public boolean add(final T pItem) {
+        /* Call standard method */
+        return addTheItem(pItem);
+    }
+
+    /**
+     * Add item to list.
+     * @param pItem the item to add
+     * @return was the item added? true/false
+     */
+    protected final boolean addTheItem(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
             throw new IllegalArgumentException(NULL_DISALLOWED);
@@ -212,7 +222,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
         }
 
         /* Pass call down */
-        return super.add(pItem);
+        return super.addItem(pItem);
     }
 
     /**

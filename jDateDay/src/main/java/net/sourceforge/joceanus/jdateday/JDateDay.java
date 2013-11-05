@@ -549,7 +549,7 @@ public class JDateDay
     }
 
     /**
-     * Compare this date to a range
+     * Compare this date to a range.
      * @param pRange the range to compare to
      * @return -1 if date is before range, 0 if date is within range, 1 if date is after range
      */

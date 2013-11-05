@@ -69,6 +69,11 @@ public class NestedHashMap<K, V>
     private static final int SHIFT_DEF_BITS = 4;
 
     /**
+     * The self reference text.
+     */
+    private static final String SELF_REF = "(this map)";
+
+    /**
      * The adjustment shift.
      */
     private transient int theShiftBits = 0;
@@ -510,11 +515,11 @@ public class NestedHashMap<K, V>
 
             /* Add to the buffer (handling self reference) */
             myBuilder.append((myKey == this)
-                    ? "(this Map)"
+                    ? SELF_REF
                     : myKey);
             myBuilder.append('=');
             myBuilder.append((myValue == this)
-                    ? "(this Map)"
+                    ? SELF_REF
                     : myValue);
         }
 

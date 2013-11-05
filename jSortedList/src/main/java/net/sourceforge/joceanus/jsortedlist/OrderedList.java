@@ -166,7 +166,7 @@ public class OrderedList<T extends Comparable<? super T>>
             T myItem = myIterator.next();
 
             /* Add the item */
-            add(myItem);
+            addItem(myItem);
         }
     }
 
@@ -187,6 +187,16 @@ public class OrderedList<T extends Comparable<? super T>>
 
     @Override
     public boolean add(final T pItem) {
+        /* Call standard method */
+        return addItem(pItem);
+    }
+
+    /**
+     * Add item to list.
+     * @param pItem the item to add
+     * @return was the item added? true/false
+     */
+    protected final boolean addItem(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
             throw new IllegalArgumentException(NULL_DISALLOWED);
@@ -240,9 +250,9 @@ public class OrderedList<T extends Comparable<? super T>>
      * Insert node.
      * @param pNode - node to insert into list
      */
-    protected void insertNode(final OrderedNode<T> pNode) {
+    private void insertNode(final OrderedNode<T> pNode) {
         /* If we are adding to an empty list */
-        if (isEmpty()) {
+        if (theFirst == null) {
             /* Add to head of list */
             pNode.addToHead();
 
@@ -298,7 +308,7 @@ public class OrderedList<T extends Comparable<? super T>>
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         /* Return details */
         return (theFirst == null);
     }

@@ -405,6 +405,7 @@ public class PricePoint
                     && (myBase.isDeleted())) {
                     return false;
                 }
+                return true;
             case NEW:
             case CHANGED:
             case RECOVERED:

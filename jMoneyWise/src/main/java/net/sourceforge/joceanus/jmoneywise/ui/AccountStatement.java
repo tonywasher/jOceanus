@@ -922,7 +922,6 @@ public class AccountStatement
                     return null;
                 case COLUMN_DEBIT:
                     if (!pLine.isCredit()) {
-
                         return (isUnits)
                                 ? pLine.getDebitUnits()
                                 : pLine.getAmount();

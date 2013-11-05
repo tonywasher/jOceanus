@@ -59,24 +59,34 @@ public class JFieldManager {
     private static final int ACCOUNTING_WIDTH = 10;
 
     /**
+     * Value Font.
+     */
+    private static final String FONTFACE_VALUE = "Arial";
+
+    /**
+     * Numeric Font.
+     */
+    private static final String FONTFACE_NUMERIC = "Courier";
+
+    /**
      * The standard font.
      */
-    private static final Font FONT_STANDARD = new Font("Arial", Font.PLAIN, 12);
+    private static final Font FONT_STANDARD = new Font(FONTFACE_VALUE, Font.PLAIN, 12);
 
     /**
      * The numeric font.
      */
-    private static final Font FONT_NUMERIC = new Font("Courier", Font.PLAIN, 12);
+    private static final Font FONT_NUMERIC = new Font(FONTFACE_NUMERIC, Font.PLAIN, 12);
 
     /**
      * The changed font.
      */
-    private static final Font FONT_CHANGED = new Font("Arial", Font.ITALIC, 12);
+    private static final Font FONT_CHANGED = new Font(FONTFACE_VALUE, Font.ITALIC, 12);
 
     /**
      * The changed numeric font.
      */
-    private static final Font FONT_NUMCHANGED = new Font("Courier", Font.ITALIC, 12);
+    private static final Font FONT_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.ITALIC, 12);
 
     /**
      * The Data Manager.

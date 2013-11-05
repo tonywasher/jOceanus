@@ -46,6 +46,11 @@ import org.w3c.dom.Node;
 public class OasisCell
         extends DataCell {
     /**
+     * The bad value error text.
+     */
+    private static final String ERROR_VALUE = "Bad value at cell ";
+
+    /**
      * The list of cells.
      */
     private final OasisCellMap theCellMap;
@@ -151,7 +156,7 @@ public class OasisCell
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
                                                                    + myAddress, e);
         }
     }
@@ -171,7 +176,7 @@ public class OasisCell
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
                                                                    + myAddress, e);
         }
     }
@@ -193,7 +198,7 @@ public class OasisCell
             return myRow.parseValue(pSource, pCurrCode, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
                                                                    + myAddress, e);
         }
     }

@@ -31,6 +31,11 @@ import java.util.Currency;
 public class JMoney
         extends JDecimal {
     /**
+     * Invalid Currency error text.
+     */
+    private static final String ERROR_DIFFER = "Cannot add together two different currencies";
+
+    /**
      * Currency for money.
      */
     private final Currency theCurrency;
@@ -162,7 +167,7 @@ public class JMoney
     public void addAmount(final JMoney pValue) {
         /* Currency must be identical */
         if (!theCurrency.equals(pValue.getCurrency())) {
-            throw new IllegalArgumentException("Cannot add together two different currencies");
+            throw new IllegalArgumentException(ERROR_DIFFER);
         }
 
         /* Add the value */
@@ -176,7 +181,7 @@ public class JMoney
     public void subtractAmount(final JMoney pValue) {
         /* Currency must be identical */
         if (!theCurrency.equals(pValue.getCurrency())) {
-            throw new IllegalArgumentException("Cannot add together two different currencies");
+            throw new IllegalArgumentException(ERROR_DIFFER);
         }
 
         /* Subtract the value */

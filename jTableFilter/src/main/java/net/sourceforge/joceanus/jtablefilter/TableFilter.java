@@ -39,6 +39,16 @@ import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
 public class TableFilter<T extends Comparable<? super T>>
         extends RowSorter<TableFilterModel<T>> {
     /**
+     * Invalid Range error text.
+     */
+    private static final String ERROR_RANGE = "Invalid Range";
+
+    /**
+     * Invalid Index error text.
+     */
+    private static final String ERROR_INDEX = "Invalid Index";
+
+    /**
      * Interface for Model.
      * @param <T> the row type
      */
@@ -297,7 +307,7 @@ public class TableFilter<T extends Comparable<? super T>>
         /* Handle out of range */
         if ((pIndex < 0)
             || (pIndex >= getViewRowCount())) {
-            throw new IndexOutOfBoundsException("Invalid Index");
+            throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
         /* Return mapping */
@@ -309,7 +319,7 @@ public class TableFilter<T extends Comparable<? super T>>
         /* Handle out of range */
         if ((pIndex < 0)
             || (pIndex >= getModelRowCount())) {
-            throw new IndexOutOfBoundsException("Invalid Index");
+            throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
         /* Return mapping */
@@ -353,7 +363,7 @@ public class TableFilter<T extends Comparable<? super T>>
         if ((pFirstRow < 0)
             || (pEndRow >= iNumRows)
             || (pFirstRow > pEndRow)) {
-            throw new IndexOutOfBoundsException("Invalid Range");
+            throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
         /* Make a deep copy of the ViewToModel */
@@ -418,7 +428,7 @@ public class TableFilter<T extends Comparable<? super T>>
         if ((pFirstRow < 0)
             || (pFirstRow > iNumRows)
             || (pFirstRow > pEndRow)) {
-            throw new IndexOutOfBoundsException("Invalid Range");
+            throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
         /* Determine the number of rows that we are inserting plus trailing entries */
@@ -497,7 +507,7 @@ public class TableFilter<T extends Comparable<? super T>>
         if ((pFirstRow < 0)
             || (pEndRow >= iNumRows)
             || (pFirstRow > pEndRow)) {
-            throw new IndexOutOfBoundsException("Invalid Range");
+            throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
         /* Make a copy of the ViewToModel, expanded to full amount */

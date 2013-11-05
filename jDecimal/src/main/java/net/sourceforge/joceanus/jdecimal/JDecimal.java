@@ -54,6 +54,11 @@ public class JDecimal
     private static final int INT_SHIFT = 32;
 
     /**
+     * Out of range error text.
+     */
+    private static final String ERROR_RANGE = "Value out of range";
+
+    /**
      * The unscaled value.
      */
     private long theValue;
@@ -888,7 +893,7 @@ public class JDecimal
         long myValue = getIntegral();
         if ((myValue > Integer.MAX_VALUE)
             || (myValue < Integer.MIN_VALUE)) {
-            throw new ArithmeticException("Value out of range");
+            throw new ArithmeticException(ERROR_RANGE);
         }
 
         /* return the integer value */
@@ -908,7 +913,7 @@ public class JDecimal
         long myValue = getIntegral();
         if ((myValue > Short.MAX_VALUE)
             || (myValue < Short.MIN_VALUE)) {
-            throw new ArithmeticException("Value out of range");
+            throw new ArithmeticException(ERROR_RANGE);
         }
 
         /* return the short value */
@@ -928,7 +933,7 @@ public class JDecimal
         long myValue = getIntegral();
         if ((myValue > Byte.MAX_VALUE)
             || (myValue < Byte.MIN_VALUE)) {
-            throw new ArithmeticException("Value out of range");
+            throw new ArithmeticException(ERROR_RANGE);
         }
 
         /* return the byte value */

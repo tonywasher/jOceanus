@@ -61,6 +61,11 @@ public class DemoFilter
     private static final long serialVersionUID = 1701124585110023740L;
 
     /**
+     * New Name text.
+     */
+    private static final String NAME_NEW = "New Name";
+
+    /**
      * Logger.
      */
     private static Logger theLogger = Logger.getAnonymousLogger();
@@ -673,7 +678,7 @@ public class DemoFilter
             /* if this is an insert command */
             if (myCmd.equals(POPUP_INSERTEND)) {
                 /* Notify the table */
-                theModel.addNewRowAtEnd("New Name");
+                theModel.addNewRowAtEnd(NAME_NEW);
 
                 /* if this is a delete command */
             } else if (myCmd.startsWith(CMD_INSERT)) {
@@ -682,7 +687,7 @@ public class DemoFilter
                 int myRow = Integer.parseInt(myCmd);
 
                 /* Notify the table */
-                theModel.addNewRowAtIndex(myRow, "New Name");
+                theModel.addNewRowAtIndex(myRow, NAME_NEW);
 
                 /* if this is a delete command */
             } else if (myCmd.startsWith(CMD_DELETE)) {

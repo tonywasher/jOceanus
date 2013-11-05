@@ -44,6 +44,11 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
  */
 public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
+     * Bad Data type error text.
+     */
+    private static final String ERROR_TYPE = "Invalid DataType: ";
+
+    /**
      * The standard mask.
      */
     private static final String STRING_MASK = "*****";
@@ -238,7 +243,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
                 /* Unsupported classes */
                 default:
-                    throw new IllegalArgumentException("Invalid DataType "
+                    throw new IllegalArgumentException(ERROR_TYPE
                                                        + pClass);
             }
         }
@@ -543,7 +548,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
                 /* Unsupported classes */
                 default:
-                    throw new IllegalArgumentException("Invalid DataType "
+                    throw new IllegalArgumentException(ERROR_TYPE
                                                        + pClass);
             }
         }
@@ -595,7 +600,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
 
                 /* Unsupported classes */
                 default:
-                    throw new IllegalArgumentException("Invalid DataType "
+                    throw new IllegalArgumentException(ERROR_TYPE
                                                        + pClass);
             }
         }

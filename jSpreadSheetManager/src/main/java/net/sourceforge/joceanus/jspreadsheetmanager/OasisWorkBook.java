@@ -118,6 +118,16 @@ public class OasisWorkBook {
                                             + "pt";
 
     /**
+     * The load failure error text.
+     */
+    private static final String ERROR_LOAD = "Failed to load workbook";
+
+    /**
+     * The save failure error text.
+     */
+    private static final String ERROR_SAVE = "Failed to save workbook";
+
+    /**
      * Self Reference.
      */
     private final OasisWorkBook theWorkBook = this;
@@ -239,7 +249,7 @@ public class OasisWorkBook {
             buildSheetMap();
             buildRangeMap();
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
+            throw new JDataException(ExceptionClass.EXCEL, ERROR_LOAD, e);
         }
     }
 
@@ -277,7 +287,7 @@ public class OasisWorkBook {
             /* Create the cellStyles */
             createCellStyles();
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
+            throw new JDataException(ExceptionClass.EXCEL, ERROR_LOAD, e);
         }
     }
 
@@ -290,7 +300,7 @@ public class OasisWorkBook {
         try {
             theBook.save(pOutput);
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to save workbook", e);
+            throw new JDataException(ExceptionClass.EXCEL, ERROR_SAVE, e);
         }
     }
 
