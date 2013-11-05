@@ -53,7 +53,7 @@ import org.w3c.dom.Element;
  * NetWorth report builder.
  */
 public class NetWorthAlt
-        extends BasicReportAlt<Object, Object> {
+        extends BasicReportAlt {
     /**
      * Resource Bundle.
      */
@@ -247,12 +247,12 @@ public class NetWorthAlt
             String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
+            SecurityValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -363,7 +363,7 @@ public class NetWorthAlt
         while (myIterator.hasNext()) {
             SecurityBucket myBucket = myIterator.next();
 
-            /* Skip record if incorrect category */
+            /* Skip record if incorrect portfolio */
             if (!Difference.isEqual(myBucket.getPortfolio(), myPortfolio)) {
                 continue;
             }

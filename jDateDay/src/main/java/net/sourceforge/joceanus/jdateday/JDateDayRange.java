@@ -87,26 +87,29 @@ public class JDateDayRange
     }
 
     /**
-     * Determine whether a Date is within the date range.
+     * Determine whether a Date is within this range.
      * @param pDate the date to test
-     * @return -1, 0, 1 if early, in range or late
+     * @return -1 if the date is after the range, 0 if the date is within the range, 1 if the date is before the range
      */
     public short compareTo(final JDateDay pDate) {
+        /* Check start date */
         if ((theStart != null)
             && (theStart.compareTo(pDate) > 0)) {
-            return -1;
-        }
-        if ((theEnd != null)
-            && (theEnd.compareTo(pDate) < 0)) {
             return 1;
         }
+
+        /* Check end date */
+        if ((theEnd != null)
+            && (theEnd.compareTo(pDate) < 0)) {
+            return -1;
+        }
+
+        /* Date must be within range */
         return 0;
     }
 
     @Override
     public int compareTo(final JDateDayRange that) {
-        int result;
-
         /* Handle the trivial cases */
         if (this == that) {
             return 0;
@@ -126,7 +129,7 @@ public class JDateDayRange
             }
 
             /* Compare the start dates */
-            result = theStart.compareTo(that.theStart);
+            int result = theStart.compareTo(that.theStart);
             if (result != 0) {
                 return result;
             }
@@ -143,11 +146,13 @@ public class JDateDayRange
             }
 
             /* Compare the end dates */
-            result = theEnd.compareTo(that.theEnd);
+            int result = theEnd.compareTo(that.theEnd);
             if (result != 0) {
                 return result;
             }
         }
+
+        /* Ranges are identical */
         return 0;
     }
 

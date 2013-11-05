@@ -78,6 +78,11 @@ public final class PayeeBucket
     private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
 
     /**
+     * Totals bucket name.
+     */
+    private static final String NAME_TOTALS = NLS_BUNDLE.getString("NameTotals");
+
+    /**
      * FieldSet map.
      */
     private static final Map<JDataField, PayeeAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, PayeeAttribute.class);
@@ -163,7 +168,7 @@ public final class PayeeBucket
      */
     public String getName() {
         return (thePayee == null)
-                ? null
+                ? NAME_TOTALS
                 : thePayee.getName();
     }
 

@@ -521,9 +521,10 @@ public final class SecurityBucket
      */
     protected void calculateProfit() {
         /* Calculate the profit */
-        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.Delta);
         JMoney myProfit = new JMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Invested));
+        myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.Dividend));
 
         /* Set the attribute */
         setValue(SecurityAttribute.Profit, myProfit);
@@ -546,6 +547,9 @@ public final class SecurityBucket
 
         /* Set the delta */
         setValue(SecurityAttribute.Delta, myValue);
+
+        /* Calculate the profit */
+        calculateProfit();
 
         /* Calculate the market movement */
         calculateMarket();
@@ -570,7 +574,7 @@ public final class SecurityBucket
 
         /* Subtract the investment and gains */
         myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Invested));
-        myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Gains));
+        // myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Gains));
 
         /* Set the delta */
         setValue(SecurityAttribute.Market, myValue);
@@ -844,11 +848,6 @@ public final class SecurityBucket
          * Dividend.
          */
         Dividend,
-
-        /**
-         * Income.
-         */
-        Income,
 
         /**
          * Market.

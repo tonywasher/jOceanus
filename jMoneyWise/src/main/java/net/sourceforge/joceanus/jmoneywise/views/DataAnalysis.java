@@ -402,7 +402,7 @@ public class DataAnalysis
 
             /* Check the range and exit loop if required */
             int myResult = myRange.compareTo(myCurr.getDate());
-            if (myResult != 1) {
+            if (myResult <= 0) {
                 break;
             }
 
@@ -447,7 +447,7 @@ public class DataAnalysis
 
             /* Check the range and exit loop if required */
             int myResult = myRange.compareTo(myCurr.getDate());
-            if (myResult == -1) {
+            if (myResult < 0) {
                 break;
             }
 

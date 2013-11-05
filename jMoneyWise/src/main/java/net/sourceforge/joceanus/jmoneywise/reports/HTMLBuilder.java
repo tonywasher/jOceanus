@@ -353,14 +353,14 @@ public class HTMLBuilder {
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
-        /* Define background colour for subcategory row */
+        /* Define background colour for subCategory row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_DTLSUMMROW);
         myBuilder.append(" { background-color: #89c35c; }"); // GreenPeas
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
-        /* Define background colour for alternate subcategory row */
+        /* Define background colour for alternate subCategory row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_ALTDTLSUMMROW);
         myBuilder.append(" { background-color: #c3fdb8; }"); // LightJade

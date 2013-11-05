@@ -69,7 +69,7 @@ public class ReportBuilderAlt {
     /**
      * Map of allocated reports.
      */
-    private final Map<ReportType, BasicReportAlt<?, ?>> theReportMap;
+    private final Map<ReportType, BasicReportAlt> theReportMap;
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class ReportBuilderAlt {
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<ReportType, BasicReportAlt<?, ?>>(ReportType.class);
+        theReportMap = new EnumMap<ReportType, BasicReportAlt>(ReportType.class);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ReportBuilderAlt {
     public Document createReport(final Analysis pAnalysis,
                                  final ReportType pType) {
         /* Access existing report */
-        BasicReportAlt<?, ?> myReport = theReportMap.get(pType);
+        BasicReportAlt myReport = theReportMap.get(pType);
 
         /* If we have not previously allocated this report */
         if (myReport == null) {

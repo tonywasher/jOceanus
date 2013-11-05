@@ -680,6 +680,9 @@ public class DataAnalyser
         if (myDeltaGains.isNonZero()) {
             /* Adjust the gains */
             myAsset.adjustGains(myDeltaGains);
+
+            /* Adjust the capitalGains category bucket */
+            theCategoryBuckets.adjustStandardGain(pEvent, myDeltaGains);
         }
 
         /* Register the event */
@@ -856,10 +859,18 @@ public class DataAnalyser
         /* Record the current/delta cost */
         myAsset.adjustCost(myDeltaCost);
 
-        /* Record the delta gains */
+        /* Determine the delta gains */
         JMoney myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
-        myAsset.adjustGains(myDeltaGains);
+
+        /* If we have some gains */
+        if (myDeltaGains.isNonZero()) {
+            /* Record the delta gains */
+            myAsset.adjustGains(myDeltaGains);
+
+            /* Adjust the capitalGains category bucket */
+            theCategoryBuckets.adjustStandardGain(pEvent, myDeltaGains);
+        }
 
         /* Register the event */
         myValues = myAsset.registerEvent(pEvent);
@@ -1081,8 +1092,14 @@ public class DataAnalyser
         myDeltaGains.subtractAmount(myCost);
         myDeltaGains.addAmount(myCostXfer);
 
-        /* Record the current/delta gains */
-        myDebitAsset.adjustGains(myDeltaGains);
+        /* If we have some gains */
+        if (myDeltaGains.isNonZero()) {
+            /* Record the delta gains */
+            myDebitAsset.adjustGains(myDeltaGains);
+
+            /* Adjust the capitalGains category bucket */
+            theCategoryBuckets.adjustStandardGain(pEvent, myDeltaGains);
+        }
 
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myCostXfer);

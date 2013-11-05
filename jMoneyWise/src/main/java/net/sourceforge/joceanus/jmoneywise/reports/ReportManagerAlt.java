@@ -69,7 +69,7 @@ public class ReportManagerAlt {
     /**
      * The Current report.
      */
-    private BasicReportAlt<?, ?> theReport = null;
+    private BasicReportAlt theReport = null;
 
     /**
      * The Current text.
@@ -116,7 +116,7 @@ public class ReportManagerAlt {
      * Set Report.
      * @param pReport the document
      */
-    public void setReport(final BasicReportAlt<?, ?> pReport) {
+    public void setReport(final BasicReportAlt pReport) {
         /* Store the report */
         theReport = pReport;
 

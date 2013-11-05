@@ -53,7 +53,7 @@ import org.w3c.dom.Element;
  * BalanceSheet report builder.
  */
 public class BalanceSheetAlt
-        extends BasicReportAlt<Object, Object> {
+        extends BasicReportAlt {
     /**
      * Resource Bundle.
      */
@@ -217,7 +217,7 @@ public class BalanceSheetAlt
         /* Create an embedded table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
-        /* Loop through the Category Buckets */
+        /* Loop through the Portfolio Buckets */
         Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
             PortfolioBucket myBucket = myIterator.next();
@@ -226,15 +226,15 @@ public class BalanceSheetAlt
             String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            SecurityValues myValues = myBucket.getValues();
+            SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Delta));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Delta));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);

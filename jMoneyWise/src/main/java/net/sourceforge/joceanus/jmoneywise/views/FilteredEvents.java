@@ -118,7 +118,7 @@ public class FilteredEvents
             int myResult = pRange.compareTo(myCurr.getDate());
 
             /* Handle out of range */
-            if (myResult == 1) {
+            if (myResult > 0) {
                 continue;
             } else if (myResult == -1) {
                 break;

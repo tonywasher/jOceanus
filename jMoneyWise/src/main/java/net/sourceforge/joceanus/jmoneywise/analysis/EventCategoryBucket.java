@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountType;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
@@ -90,6 +91,11 @@ public final class EventCategoryBucket
      * FieldSet map.
      */
     private static final Map<JDataField, EventAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventAttribute.class);
+
+    /**
+     * Totals bucket name.
+     */
+    private static final String NAME_TOTALS = NLS_BUNDLE.getString("NameTotals");
 
     /**
      * The analysis.
@@ -177,7 +183,7 @@ public final class EventCategoryBucket
      */
     public String getName() {
         return (theCategory == null)
-                ? null
+                ? NAME_TOTALS
                 : theCategory.getName();
     }
 
@@ -782,6 +788,16 @@ public final class EventCategoryBucket
         private final EventCategoryBucket theCharityDonation;
 
         /**
+         * The CapitalGains.
+         */
+        private final EventCategoryBucket theCapitalGains;
+
+        /**
+         * The TaxFreeGains.
+         */
+        private final EventCategoryBucket theTaxFreeGains;
+
+        /**
          * The TaxableGains.
          */
         private final EventCategoryBucket theTaxableGains;
@@ -812,6 +828,8 @@ public final class EventCategoryBucket
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.DeemedBenefit));
             theCharityDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CharityDonation));
             theTaxableGains = getBucket(myList.getSingularClass(EventCategoryClass.TaxableGain));
+            theTaxFreeGains = getBucket(myList.getSingularClass(EventCategoryClass.TaxFreeGain));
+            theCapitalGains = getBucket(myList.getSingularClass(EventCategoryClass.CapitalGain));
         }
 
         /**
@@ -835,6 +853,8 @@ public final class EventCategoryBucket
             theDeemedBenefit = null;
             theCharityDonation = null;
             theTaxableGains = null;
+            theTaxFreeGains = null;
+            theCapitalGains = null;
 
             /* Loop through the buckets */
             Iterator<EventCategoryBucket> myIterator = pBase.listIterator();
@@ -873,6 +893,8 @@ public final class EventCategoryBucket
             theDeemedBenefit = null;
             theCharityDonation = null;
             theTaxableGains = null;
+            theTaxFreeGains = null;
+            theCapitalGains = null;
 
             /* Loop through the buckets */
             Iterator<EventCategoryBucket> myIterator = pBase.listIterator();
@@ -954,25 +976,57 @@ public final class EventCategoryBucket
             /* Adjust for Tax Credit */
             JMoney myTaxCredit = pEvent.getTaxCredit();
             if (myTaxCredit != null) {
-                theTaxCredit.addIncome(pEvent, myTaxCredit);
+                theTaxCredit.addExpense(pEvent, myTaxCredit);
             }
 
             /* Adjust for NatInsurance */
             JMoney myNatIns = pEvent.getNatInsurance();
             if (myNatIns != null) {
-                theNatInsurance.addIncome(pEvent, myNatIns);
+                theNatInsurance.addExpense(pEvent, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
             JMoney myBenefit = pEvent.getDeemedBenefit();
             if (myBenefit != null) {
-                theDeemedBenefit.addIncome(pEvent, myBenefit);
+                theDeemedBenefit.addExpense(pEvent, myBenefit);
             }
 
             /* Adjust for Charity Donation */
             JMoney myDonation = pEvent.getCharityDonation();
             if (myDonation != null) {
-                theCharityDonation.addIncome(pEvent, myDonation);
+                theCharityDonation.addExpense(pEvent, myDonation);
+            }
+        }
+
+        /**
+         * Adjust for Standard Gains.
+         * @param pEvent the event
+         * @param pReduction the gains
+         */
+        protected void adjustStandardGain(final Event pEvent,
+                                          final JMoney pGains) {
+
+            /* Access debit account */
+            Account mySecurity = pEvent.getDebit();
+
+            /* If this is subject to capital gains */
+            if (mySecurity.getAccountCategoryClass().isCapitalGains()) {
+                /* Add to Capital Gains income/expense */
+                if (pGains.isPositive()) {
+                    /* Adjust category */
+                    if (mySecurity.isTaxFree()) {
+                        theTaxFreeGains.addIncome(pEvent, pGains);
+                    } else {
+                        theCapitalGains.addIncome(pEvent, pGains);
+                    }
+                } else {
+                    /* Adjust category */
+                    if (mySecurity.isTaxFree()) {
+                        theTaxFreeGains.subtractExpense(pEvent, pGains);
+                    } else {
+                        theCapitalGains.subtractExpense(pEvent, pGains);
+                    }
+                }
             }
         }
 
@@ -984,13 +1038,13 @@ public final class EventCategoryBucket
         protected void adjustTaxableGain(final Event pEvent,
                                          final JMoney pReduction) {
             /* Adjust Taxable Gains */
-            theTaxableGains.adjustValues(pEvent);
             theTaxableGains.subtractIncome(pReduction);
+            theTaxableGains.adjustValues(pEvent);
 
             /* Adjust for Tax Credit */
             JMoney myTaxCredit = pEvent.getTaxCredit();
             if (myTaxCredit != null) {
-                theTaxCredit.addIncome(pEvent, myTaxCredit);
+                theTaxCredit.addExpense(pEvent, myTaxCredit);
             }
         }
 
@@ -1030,6 +1084,7 @@ public final class EventCategoryBucket
                 }
 
                 /* Add to totals bucket */
+                myTotal.addValues(myCurr);
                 theTotals.addValues(myCurr);
             }
 

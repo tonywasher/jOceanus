@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
  * Income/Expense report builder.
  */
 public class IncomeExpenseAlt
-        extends BasicReportAlt<EventCategoryBucket, EventCategoryBucket> {
+        extends BasicReportAlt {
     /**
      * Resource Bundle.
      */
@@ -146,13 +146,31 @@ public class IncomeExpenseAlt
 
     @Override
     protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+        Object mySource = pTable.getSource();
+        if (mySource instanceof EventCategoryBucket) {
+            EventCategoryBucket mySourceBucket = (EventCategoryBucket) mySource;
+            return createDelayedCategory(pTable.getParent(), mySourceBucket);
+        }
+
+        /* Return the null table */
+        return null;
+    }
+
+    /**
+     * Create a delayed category table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    protected HTMLTable createDelayedCategory(final HTMLTable pParent,
+                                              final EventCategoryBucket pSource) {
         /* Access the category */
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
-        EventCategoryBucket mySource = pTable.getSource();
-        EventCategory myCategory = mySource.getEventCategory();
+        EventCategory myCategory = pSource.getEventCategory();
 
         /* Create an embedded table */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
@@ -187,7 +205,7 @@ public class IncomeExpenseAlt
     }
 
     @Override
-    protected void processFilter(final EventCategoryBucket pSource) {
+    protected void processFilter(final Object pSource) {
         /* Create the new filter */
         // EventFilter myFilter = new EventFilter(theAnalysis.getData());
         // myFilter.setFilter(pSource);

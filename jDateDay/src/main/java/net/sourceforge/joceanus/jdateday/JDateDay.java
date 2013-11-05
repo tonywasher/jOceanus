@@ -548,6 +548,30 @@ public class JDateDay
         return (theDay - pThat.theDay);
     }
 
+    /**
+     * Compare this date to a range
+     * @param pRange the range to compare to
+     * @return -1 if date is before range, 0 if date is within range, 1 if date is after range
+     */
+    public int compareTo(final JDateDayRange pRange) {
+        /* Check start of range */
+        JDateDay myStart = pRange.getStart();
+        if ((myStart != null)
+            && (compareTo(myStart) < 0)) {
+            return -1;
+        }
+
+        /* Check end of range */
+        JDateDay myEnd = pRange.getEnd();
+        if ((myEnd != null)
+            && (compareTo(myEnd) > 0)) {
+            return 1;
+        }
+
+        /* Must be within range */
+        return 0;
+    }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */

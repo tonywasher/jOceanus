@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
@@ -73,6 +72,11 @@ public final class PortfolioBucket
     private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
+     * Totals bucket name.
+     */
+    private static final String NAME_TOTALS = NLS_BUNDLE.getString("NameTotals");
+
+    /**
      * The portfolio.
      */
     private final Account thePortfolio;
@@ -80,12 +84,12 @@ public final class PortfolioBucket
     /**
      * Values.
      */
-    private final AccountValues theValues;
+    private final SecurityValues theValues;
 
     /**
      * The base values.
      */
-    private final AccountValues theBaseValues;
+    private final SecurityValues theBaseValues;
 
     @Override
     public JDataFields getDataFields() {
@@ -131,7 +135,9 @@ public final class PortfolioBucket
      * @return the name
      */
     public String getName() {
-        return thePortfolio.getName();
+        return (thePortfolio == null)
+                ? NAME_TOTALS
+                : thePortfolio.getName();
     }
 
     @Override
@@ -151,7 +157,7 @@ public final class PortfolioBucket
      * Obtain the values.
      * @return the values
      */
-    public AccountValues getValues() {
+    public SecurityValues getValues() {
         return theValues;
     }
 
@@ -159,7 +165,7 @@ public final class PortfolioBucket
      * Obtain the base values.
      * @return the base values
      */
-    public AccountValues getBaseValues() {
+    public SecurityValues getBaseValues() {
         return theBaseValues;
     }
 
@@ -168,7 +174,7 @@ public final class PortfolioBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setValue(final AccountAttribute pAttr,
+    protected void setValue(final SecurityAttribute pAttr,
                             final JMoney pValue) {
         /* Set the value into the list */
         theValues.put(pAttr, pValue);
@@ -218,8 +224,16 @@ public final class PortfolioBucket
         thePortfolio = pPortfolio;
 
         /* Create the value maps */
-        theValues = new AccountValues();
-        theBaseValues = new AccountValues();
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+
+        /* Create valuation fields for the portfolio */
+        theValues.setValue(SecurityAttribute.Valuation, new JMoney());
+        theBaseValues.setValue(SecurityAttribute.Valuation, new JMoney());
+
+        /* Create profit fields for the portfolio */
+        theValues.setValue(SecurityAttribute.Profit, new JMoney());
+        theBaseValues.setValue(SecurityAttribute.Profit, new JMoney());
     }
 
     @Override
@@ -264,15 +278,15 @@ public final class PortfolioBucket
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Valuation);
         myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.Valuation);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.Delta, myValue);
+        setValue(SecurityAttribute.Delta, myValue);
     }
 
     /**
@@ -292,12 +306,39 @@ public final class PortfolioBucket
      * @param pTotals the totals
      * @param pSource the values to add
      */
-    private static void addValues(final AccountValues pTotals,
+    private static void addValues(final SecurityValues pTotals,
                                   final SecurityValues pSource) {
-        /* Add base values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
+        /* Add valuation values */
+        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.Valuation);
         JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.Valuation);
         myValue.addAmount(mySrcValue);
+
+        /* Add invested values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Invested);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Invested);
+        myValue.addAmount(mySrcValue);
+
+        /* Add cost values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Cost);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Cost);
+        myValue.addAmount(mySrcValue);
+
+        /* Add gains values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Gains);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Gains);
+        myValue.addAmount(mySrcValue);
+
+        /* Add dividends values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Dividend);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Dividend);
+        myValue.addAmount(mySrcValue);
+
+        /* Add profit values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Profit);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Profit);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
     }
 
     /**
@@ -335,6 +376,11 @@ public final class PortfolioBucket
          */
         private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
 
+        /**
+         * Totals field Id.
+         */
+        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTotals"));
+
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
@@ -342,6 +388,9 @@ public final class PortfolioBucket
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
             }
             return JDataFieldValue.UnknownField;
         }
@@ -352,6 +401,19 @@ public final class PortfolioBucket
         private final Analysis theAnalysis;
 
         /**
+         * The totals.
+         */
+        private final PortfolioBucket theTotals;
+
+        /**
+         * Obtain the Totals.
+         * @return the totals
+         */
+        public PortfolioBucket getTotals() {
+            return theTotals;
+        }
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -359,6 +421,7 @@ public final class PortfolioBucket
             /* Initialise class */
             super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
         }
 
         /**
@@ -381,6 +444,15 @@ public final class PortfolioBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Allocate the Totals PortfolioBucket.
+         * @return the bucket
+         */
+        private PortfolioBucket allocateTotalsBucket() {
+            /* Obtain the totals portfolio */
+            return new PortfolioBucket(null);
         }
 
         /**
@@ -408,6 +480,7 @@ public final class PortfolioBucket
                 /* Access security bucket and add values */
                 PortfolioBucket myBucket = getBucket(myPortfolio);
                 myBucket.addValues(myCurr);
+                theTotals.addValues(myCurr);
             }
 
             /* Propagate totals */

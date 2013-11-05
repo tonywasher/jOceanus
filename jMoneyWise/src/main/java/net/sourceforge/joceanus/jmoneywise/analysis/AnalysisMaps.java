@@ -157,7 +157,7 @@ public class AnalysisMaps {
                     int iComp = pRange.compareTo(myCurr.getDate());
 
                     /* Break if this is later than the date */
-                    if (iComp > 0) {
+                    if (iComp < 0) {
                         break;
                     }
 
@@ -165,7 +165,7 @@ public class AnalysisMaps {
                     myLatest = myCurr.getPrice();
 
                     /* Record early date if required */
-                    if (iComp < 0) {
+                    if (iComp > 0) {
                         myFirst = myLatest;
                     }
                 }

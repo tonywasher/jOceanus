@@ -1046,9 +1046,9 @@ public class Event
                 int myResult = pRange.compareTo(myCurr.getDate());
 
                 /* Handle out of range */
-                if (myResult == 1) {
+                if (myResult > 0) {
                     continue;
-                } else if (myResult == -1) {
+                } else if (myResult < 0) {
                     break;
                 }
 

@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
  * CashFlow report builder.
  */
 public class CashFlowAlt
-        extends BasicReportAlt<PayeeBucket, PayeeBucket> {
+        extends BasicReportAlt {
     /**
      * Resource Bundle.
      */
@@ -136,7 +136,7 @@ public class CashFlowAlt
     }
 
     @Override
-    protected void processFilter(final PayeeBucket pSource) {
+    protected void processFilter(final Object pSource) {
         /* Create the new filter */
         // EventFilter myFilter = new EventFilter(theAnalysis.getData());
         // myFilter.setFilter(pSource);

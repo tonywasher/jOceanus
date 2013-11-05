@@ -46,26 +46,6 @@ public class MarketAnalysis {
     private final JMoney theMarketExpense = new JMoney();
 
     /**
-     * CapitalGains Income.
-     */
-    private final JMoney theGainsIncome = new JMoney();
-
-    /**
-     * CapitalGains Expense.
-     */
-    private final JMoney theGainsExpense = new JMoney();
-
-    /**
-     * TaxFreeGains Income.
-     */
-    private final JMoney theTaxFreeIncome = new JMoney();
-
-    /**
-     * TaxFreeGains Expense.
-     */
-    private final JMoney theTaxFreeExpense = new JMoney();
-
-    /**
      * MarketGrowth Income.
      */
     private final JMoney theGrowthIncome = new JMoney();
@@ -91,25 +71,21 @@ public class MarketAnalysis {
         /* If there are gains in the period */
         if (myGains.isNonZero()) {
             if (mySecurity.getAccountCategoryClass().isCapitalGains()) {
+                /* Subtract them from the market movement */
+                myMarket.subtractAmount(myGains);
+
                 /* Add to Capital Gains income/expense */
                 if (myGains.isPositive()) {
-                    /* Adjust category and market account */
-                    if (mySecurity.isTaxFree()) {
-                        theTaxFreeIncome.addAmount(myGains);
-                    } else {
-                        theGainsIncome.addAmount(myGains);
-                    }
+                    /* Adjust market account */
                     theMarketIncome.addAmount(myGains);
                 } else {
-                    /* Adjust category and market account */
-                    if (mySecurity.isTaxFree()) {
-                        theTaxFreeExpense.subtractAmount(myGains);
-                    } else {
-                        theGainsExpense.subtractAmount(myGains);
-                    }
+                    /* Adjust market account */
                     theMarketExpense.subtractAmount(myGains);
                 }
             } else if (mySecurity.isCategoryClass(AccountCategoryClass.LifeBond)) {
+                /* Subtract them from the market movement */
+                myMarket.subtractAmount(myGains);
+
                 /* If the gains are positive */
                 if (myGains.isPositive()) {
                     /* Add the market income */
@@ -122,11 +98,11 @@ public class MarketAnalysis {
         if (myMarket.isNonZero()) {
             /* Add to MarketGrowth income/expense */
             if (myMarket.isPositive()) {
-                theGrowthIncome.addAmount(myGains);
-                theMarketIncome.addAmount(myGains);
+                theGrowthIncome.addAmount(myMarket);
+                theMarketIncome.addAmount(myMarket);
             } else {
-                theGrowthExpense.subtractAmount(myGains);
-                theMarketExpense.subtractAmount(myGains);
+                theGrowthExpense.subtractAmount(myMarket);
+                theMarketExpense.subtractAmount(myMarket);
             }
         }
     }
@@ -160,28 +136,6 @@ public class MarketAnalysis {
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);
             myGrowth.addExpense(theGrowthExpense);
-        }
-
-        /* If we have capitalGains */
-        if ((theGainsIncome.isNonZero())
-            || (theGainsExpense.isNonZero())) {
-            /* Access capitalGain category */
-            EventCategoryBucket myGains = myCategories.getBucket(EventCategoryClass.CapitalGain);
-
-            /* Adjust totals */
-            myGains.addIncome(theGainsIncome);
-            myGains.addExpense(theGainsExpense);
-        }
-
-        /* If we have taxFreeGains */
-        if ((theTaxFreeIncome.isNonZero())
-            || (theTaxFreeExpense.isNonZero())) {
-            /* Access taxFreeGain category */
-            EventCategoryBucket myGains = myCategories.getBucket(EventCategoryClass.TaxFreeGain);
-
-            /* Adjust totals */
-            myGains.addIncome(theGainsIncome);
-            myGains.addExpense(theGainsExpense);
         }
     }
 }

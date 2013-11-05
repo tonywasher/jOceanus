@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribu
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -374,6 +376,19 @@ public final class AccountCategoryBucket
         /* Add base values */
         JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
         JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.Valuation);
+        myValue.addAmount(mySrcValue);
+    }
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final AccountValues pTotals,
+                                  final SecurityValues pSource) {
+        /* Add base values */
+        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
+        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.Valuation);
         myValue.addAmount(mySrcValue);
     }
 
