@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jdatamodels.preferences;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Backup preferences.

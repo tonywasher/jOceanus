@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Write control for spreadsheets.

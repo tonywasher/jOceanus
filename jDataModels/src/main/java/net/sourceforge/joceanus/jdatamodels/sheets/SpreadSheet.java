@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Spreadsheet control.

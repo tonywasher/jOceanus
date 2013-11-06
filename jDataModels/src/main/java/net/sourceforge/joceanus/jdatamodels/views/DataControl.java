@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jdatamodels.views;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -132,6 +133,11 @@ public abstract class DataControl<T extends DataSet<T>>
     private JDataManager theDataMgr = null;
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * The Field Manager.
      */
     private final JFieldManager theFieldMgr;
@@ -152,10 +158,19 @@ public abstract class DataControl<T extends DataSet<T>>
     private final Map<String, JDataEntry> theMap;
 
     /**
-     * Constructor for default preferences.
+     * Obtain logger.
+     * @return the Logger
+     */
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
+     * Constructor for default control.
+     * @param pLogger the logger.
      * @throws JDataException on error
      */
-    protected DataControl() throws JDataException {
+    protected DataControl(final Logger pLogger) throws JDataException {
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 
@@ -164,7 +179,8 @@ public abstract class DataControl<T extends DataSet<T>>
         initDataMgr();
 
         /* Create the Preference manager */
-        thePreferenceMgr = new PreferenceManager();
+        theLogger = pLogger;
+        thePreferenceMgr = new PreferenceManager(theLogger);
 
         /* Access the Security Preferences */
         SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);

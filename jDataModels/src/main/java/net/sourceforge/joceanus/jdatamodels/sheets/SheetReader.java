@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Load control for spreadsheets.

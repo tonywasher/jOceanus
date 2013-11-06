@@ -88,7 +88,7 @@ public class ValueField
      * Constructor.
      */
     public ValueField() {
-        this(ValueClass.String);
+        this(ValueClass.STRING);
     }
 
     /**
@@ -112,28 +112,28 @@ public class ValueField
         /* Switch on requested class */
         switch (pClass) {
         /* Create appropriate model class */
-            case String:
+            case STRING:
                 theModel = new StringModel();
                 break;
-            case Integer:
+            case INTEGER:
                 theModel = new IntegerModel();
                 break;
-            case Money:
+            case MONEY:
                 theModel = new MoneyModel();
                 break;
-            case Rate:
+            case RATE:
                 theModel = new RateModel();
                 break;
-            case Units:
+            case UNITS:
                 theModel = new UnitsModel();
                 break;
-            case Price:
+            case PRICE:
                 theModel = new PriceModel();
                 break;
-            case Dilution:
+            case DILUTION:
                 theModel = new DilutionModel();
                 break;
-            case CharArray:
+            case CHARARRAY:
                 theModel = new CharArrayModel();
                 break;
             default:
@@ -921,50 +921,5 @@ public class ValueField
             /* Determine whether the value has changed */
             return (!Difference.isEqual(getValue(), pValue));
         }
-    }
-
-    /**
-     * Classes of ValueField.
-     */
-    public enum ValueClass {
-        /**
-         * String.
-         */
-        String,
-
-        /**
-         * Integer.
-         */
-        Integer,
-
-        /**
-         * Money.
-         */
-        Money,
-
-        /**
-         * Rate.
-         */
-        Rate,
-
-        /**
-         * Units.
-         */
-        Units,
-
-        /**
-         * Price.
-         */
-        Price,
-
-        /**
-         * Dilution.
-         */
-        Dilution,
-
-        /**
-         * Char Array.
-         */
-        CharArray;
     }
 }

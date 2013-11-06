@@ -242,11 +242,11 @@ public class MainTab
      * @throws JDataException on error
      */
     public MainTab(final Logger pLogger) throws JDataException {
-        /* Create the view */
-        theView = new View();
-
         /* Store the logger */
         theLogger = pLogger;
+
+        /* Create the view */
+        theView = new View(theLogger);
 
         /* Create the combo list */
         theComboList = new ComboSelect(theView);

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jjira;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jjira.data.Server;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
@@ -31,12 +33,17 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
  */
 public class TestJira {
     /**
+     * Logger.
+     */
+    private static Logger theLogger = Logger.getLogger(TestJira.class.getName());
+
+    /**
      * Main entry point.
      * @param args the parameters
      */
     public static void main(String[] args) {
         try {
-            Server myServer = new Server(new PreferenceManager());
+            Server myServer = new Server(new PreferenceManager(theLogger));
             myServer.loadIssuesFromFilter("AllIssues");
         } catch (JDataException e) {
         }

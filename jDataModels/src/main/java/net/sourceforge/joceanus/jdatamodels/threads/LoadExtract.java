@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so that a
@@ -91,7 +91,7 @@ public class LoadExtract<T extends DataSet<T>>
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Extract to load", myBackupDir, myPrefix, myType.getExtension());
-        myDialog.showDialog();
+        myDialog.showDialog(theStatus.getLogger());
         File myFile = myDialog.getSelectedFile();
 
         /* If we did not select a file */

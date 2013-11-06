@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jsvnmanager.ui;
 
+import java.util.logging.Logger;
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -30,9 +32,14 @@ import javax.swing.SwingUtilities;
  */
 public final class JSvnStarter {
     /**
-     * Logger.
+     * SvnManager.
      */
     private static JSvnManager theManager;
+
+    /**
+     * Logger.
+     */
+    private static Logger theLogger = Logger.getLogger(JSvnStarter.class.getName());
 
     /**
      * Obtain the manager.
@@ -53,7 +60,7 @@ public final class JSvnStarter {
      */
     private static void createAndShowGUI() {
         /* Create the SvnManager program */
-        theManager = new JSvnManager();
+        theManager = new JSvnManager(theLogger);
     }
 
     /**

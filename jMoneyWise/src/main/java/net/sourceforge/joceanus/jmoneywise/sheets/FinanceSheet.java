@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * SpreadSheet extension for FinanceData.

@@ -44,6 +44,11 @@ import net.sourceforge.joceanus.jjira.soap.RemoteVersion;
  */
 public class Project {
     /**
+     * Archive failure error text.
+     */
+    private static final String ERROR_ARCH = "Failed to archive version";
+
+    /**
      * Self reference.
      */
     private final Project theSelf = this;
@@ -586,7 +591,7 @@ public class Project {
                 theVers.setArchived(doArchive);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JDataException(ExceptionClass.JIRA, "Failed to archive version", e);
+                throw new JDataException(ExceptionClass.JIRA, ERROR_ARCH, e);
             }
         }
 
@@ -617,7 +622,7 @@ public class Project {
                 theService.releaseVersion(myToken, theSelf.getId(), theVers);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JDataException(ExceptionClass.JIRA, "Failed to archive version", e);
+                throw new JDataException(ExceptionClass.JIRA, ERROR_ARCH, e);
             }
         }
     }

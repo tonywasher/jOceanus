@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jpreferenceset;
 import java.awt.Component;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
@@ -40,6 +42,11 @@ public class FileSelector
      * Serial Id.
      */
     private static final long serialVersionUID = -7626176642686030118L;
+
+    /**
+     * Show Dialog error Text.
+     */
+    private static final String ERROR_SHOW = "Failed to show dialog";
 
     /**
      * The frame that is the parent to this fileSelector.
@@ -127,8 +134,9 @@ public class FileSelector
 
     /**
      * Show the dialog to select a file using an invokeAndWait clause if necessary.
+     * @param pLogger the logger
      */
-    public void showDialog() {
+    public void showDialog(final Logger pLogger) {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
@@ -145,8 +153,10 @@ public class FileSelector
                     }
                 });
             } catch (InvocationTargetException e) {
+                pLogger.log(Level.SEVERE, ERROR_SHOW, e);
                 theResult = null;
             } catch (InterruptedException e) {
+                pLogger.log(Level.SEVERE, ERROR_SHOW, e);
                 theResult = null;
             }
         }

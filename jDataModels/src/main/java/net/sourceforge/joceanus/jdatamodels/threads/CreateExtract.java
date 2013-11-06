@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
+import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
  * Thread to create a extract spreadsheet of a data set.

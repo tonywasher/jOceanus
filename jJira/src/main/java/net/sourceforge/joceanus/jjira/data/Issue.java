@@ -50,6 +50,31 @@ import net.sourceforge.joceanus.jjira.soap.RemoteVersion;
  */
 public class Issue {
     /**
+     * Commment Link error text.
+     */
+    private static final String ERROR_ADDCOMM = "Failed to add comment";
+
+    /**
+     * Component Link error text.
+     */
+    private static final String ERROR_LINKCOMP = "Failed to link component";
+
+    /**
+     * Version Link error text.
+     */
+    private static final String ERROR_LINKVERS = "Failed to link version";
+
+    /**
+     * Invalid Component error text.
+     */
+    private static final String ERROR_COMP = "Component does not exist ";
+
+    /**
+     * Invalid Version error text.
+     */
+    private static final String ERROR_VERS = "Version does not exist ";
+
+    /**
      * Server.
      */
     private final Server theServer;
@@ -387,7 +412,7 @@ public class Issue {
             theService.addComment(myToken, theId, myComment);
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to add comment", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_ADDCOMM, e);
         }
     }
 
@@ -411,7 +436,7 @@ public class Issue {
         Component myNewComp = theProject.getComponentByName(pComponent);
         if (myNewComp == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Component does not exists "
+            throw new JDataException(ExceptionClass.JIRA, ERROR_COMP
                                                           + pComponent);
         }
 
@@ -443,7 +468,7 @@ public class Issue {
             return myNewComp;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKCOMP, e);
         }
     }
 
@@ -467,7 +492,7 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Version does not exists "
+            throw new JDataException(ExceptionClass.JIRA, ERROR_VERS
                                                           + pVersion);
         }
 
@@ -499,7 +524,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKVERS, e);
         }
     }
 
@@ -523,7 +548,7 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Version does not exists "
+            throw new JDataException(ExceptionClass.JIRA, ERROR_VERS
                                                           + pVersion);
         }
 
@@ -555,7 +580,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKVERS, e);
         }
     }
 }

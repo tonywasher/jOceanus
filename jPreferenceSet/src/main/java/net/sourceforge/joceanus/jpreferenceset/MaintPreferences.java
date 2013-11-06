@@ -29,6 +29,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -106,6 +108,11 @@ public class MaintPreferences
     private static final String NLS_SET = NLS_BUNDLE.getString("PreferenceSet");
 
     /**
+     * Store data error text.
+     */
+    private static final String ERROR_STORE = NLS_BUNDLE.getString("ErrorStore");
+
+    /**
      * The field manager.
      */
     private final transient JFieldManager theFieldMgr;
@@ -114,6 +121,11 @@ public class MaintPreferences
      * The Data entry.
      */
     private final transient JDataEntry theDataEntry;
+
+    /**
+     * The logger.
+     */
+    private final transient Logger theLogger;
 
     /**
      * The OK button.
@@ -161,8 +173,9 @@ public class MaintPreferences
                             final JFieldManager pFieldMgr,
                             final JDataManager pDataMgr,
                             final JDataEntry pSection) {
-        /* Access field manager */
+        /* Access field manager and logger */
         theFieldMgr = pFieldMgr;
+        theLogger = pPreferenceMgr.getLogger();
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -263,7 +276,7 @@ public class MaintPreferences
      */
     private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
-        PreferenceSetPanel myPanel = new PreferenceSetPanel(theFieldMgr, pSet);
+        PreferenceSetPanel myPanel = new PreferenceSetPanel(theLogger, theFieldMgr, pSet);
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());
@@ -288,7 +301,7 @@ public class MaintPreferences
         try {
             theActive.storeChanges();
         } catch (JDataException e) {
-            e = null;
+            theLogger.log(Level.SEVERE, ERROR_STORE, e);
         }
 
         /* Set correct visibility */

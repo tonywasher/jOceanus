@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -44,6 +46,11 @@ public class PreferenceManager
      * Report fields.
      */
     private final JDataFields theFields = new JDataFields(PreferenceManager.class.getSimpleName());
+
+    /**
+     * Load error text.
+     */
+    private static final String ERROR_LOAD = "Failed to load preference Set";
 
     @Override
     public JDataFields getDataFields() {
@@ -72,11 +79,33 @@ public class PreferenceManager
     private Map<String, PreferenceSet> theMap = new HashMap<String, PreferenceSet>();
 
     /**
+     * Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * Obtain the collection of preference sets.
      * @return the preference sets
      */
     public Collection<PreferenceSet> getPreferenceSets() {
         return theMap.values();
+    }
+
+    /**
+     * Obtain logger.
+     * @return the logger
+     */
+    protected Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
+     * Constructor.
+     * @param pLogger the logger.
+     */
+    public PreferenceManager(final Logger pLogger) {
+        /* Store the logger */
+        theLogger = pLogger;
     }
 
     /**
@@ -106,8 +135,10 @@ public class PreferenceManager
                 /* Fire the action performed */
                 fireActionEvent(ActionEvent.ACTION_PERFORMED, mySet);
             } catch (IllegalAccessException e) {
+                theLogger.log(Level.SEVERE, ERROR_LOAD, e);
                 mySet = null;
             } catch (InstantiationException e) {
+                theLogger.log(Level.SEVERE, ERROR_LOAD, e);
                 mySet = null;
             }
         }

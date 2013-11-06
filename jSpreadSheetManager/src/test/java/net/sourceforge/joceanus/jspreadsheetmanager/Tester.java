@@ -17,7 +17,6 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook.WorkBookType;
 import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
 
 public class Tester {

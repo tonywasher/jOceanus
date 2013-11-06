@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.views;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
@@ -102,9 +104,13 @@ public class View
 
     /**
      * Constructor.
+     * @param pLogger the logger.
      * @throws JDataException on error
      */
-    public View() throws JDataException {
+    public View(final Logger pLogger) throws JDataException {
+        /* Call super-constructor */
+        super(pLogger);
+
         /* Create an empty data set */
         setData(getNewData());
     }

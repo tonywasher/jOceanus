@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
@@ -54,6 +56,11 @@ public class ThreadStatus<T extends DataSet<T>>
      * The status data.
      */
     private final StatusData theStatus;
+
+    /**
+     * The logger.
+     */
+    private final Logger theLogger;
 
     /**
      * The data control.
@@ -104,6 +111,14 @@ public class ThreadStatus<T extends DataSet<T>>
     }
 
     /**
+     * Obtain logger.
+     * @return the Logger
+     */
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
      * Obtain StatusBar.
      * @return the StatusBar
      */
@@ -120,6 +135,7 @@ public class ThreadStatus<T extends DataSet<T>>
                         final StatusBar pStatusBar) {
         /* Store parameter */
         theControl = pControl;
+        theLogger = pControl.getLogger();
         theStatusBar = pStatusBar;
 
         /* Access the threadStatus properties */

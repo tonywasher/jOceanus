@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -63,9 +64,7 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.DatePreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.EnumPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.IntegerPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceItem;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceType;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.StringPreference;
-import net.sourceforge.joceanus.jpreferenceset.ValueField.ValueClass;
 
 /**
  * Preference Set panel.
@@ -114,6 +113,11 @@ public class PreferenceSetPanel
     private static final String NLS_COLORTEXT = NLS_BUNDLE.getString("ColourText");
 
     /**
+     * Text for Select prompt.
+     */
+    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectText");
+
+    /**
      * The PreferenceSet for this panel.
      */
     private final transient PreferenceSet thePreferences;
@@ -144,6 +148,11 @@ public class PreferenceSetPanel
     private final transient JDataFormatter theFormatter;
 
     /**
+     * The Logger.
+     */
+    private final transient Logger theLogger;
+
+    /**
      * The Set name.
      */
     private String theName = null;
@@ -155,16 +164,19 @@ public class PreferenceSetPanel
 
     /**
      * Constructor.
+     * @param pLogger the logger
      * @param pFieldMgr the field manager
      * @param pSet the preference set
      */
-    public PreferenceSetPanel(final JFieldManager pFieldMgr,
+    public PreferenceSetPanel(final Logger pLogger,
+                              final JFieldManager pFieldMgr,
                               final PreferenceSet pSet) {
         /* Options SubPanel */
         JEnablePanel myOptions = null;
         int myRow = 0;
 
         /* Record the set and manager */
+        theLogger = pLogger;
         thePreferences = pSet;
         theFieldMgr = pFieldMgr;
         theFormatter = pFieldMgr.getDataFormatter();
@@ -193,7 +205,7 @@ public class PreferenceSetPanel
 
             /* Switch on the preference type */
             switch (myPref.getType()) {
-                case Boolean:
+                case BOOLEAN:
                     /* If we do not yet have an options panel */
                     if (myOptions == null) {
                         /* Create options */
@@ -206,7 +218,7 @@ public class PreferenceSetPanel
                     /* Add the item to the options panel */
                     myOptions.add(myItem.getComponent());
                     break;
-                case String:
+                case STRING:
                     /* Add the Label into the first slot */
                     GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
                     add(myItem.getLabel(), myConstraints);
@@ -216,8 +228,8 @@ public class PreferenceSetPanel
                     add(myItem.getComponent(), myConstraints);
                     theCompList.add(myItem.getComponent());
                     break;
-                case Directory:
-                case File:
+                case DIRECTORY:
+                case FILE:
                     /* Add the Label into the first slot */
                     GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
                     add(myItem.getLabel(), myConstraints);
@@ -350,7 +362,7 @@ public class PreferenceSetPanel
 
             /* Create the label item */
             switch (theType) {
-                case Boolean:
+                case BOOLEAN:
                     theLabel = null;
                     break;
                 default:
@@ -364,24 +376,24 @@ public class PreferenceSetPanel
             /* Switch on field type */
             switch (theType) {
             /* Create the Underlying field */
-                case String:
-                case Directory:
-                case File:
+                case STRING:
+                case DIRECTORY:
+                case FILE:
                     theField = new StringField(thePreference);
                     break;
-                case Integer:
+                case INTEGER:
                     theField = new IntegerField(thePreference);
                     break;
-                case Boolean:
+                case BOOLEAN:
                     theField = new BooleanField(thePreference);
                     break;
-                case Date:
+                case DATE:
                     theField = new DateField(thePreference);
                     break;
-                case Color:
+                case COLOR:
                     theField = new ColorField(thePreference);
                     break;
-                case Enum:
+                case ENUM:
                     theField = new EnumField(thePreference);
                     break;
                 default:
@@ -462,7 +474,7 @@ public class PreferenceSetPanel
 
             @Override
             protected JComponent getLabel() {
-                return (theType == PreferenceType.String)
+                return (theType == PreferenceType.STRING)
                         ? super.getLabel()
                         : theButton;
             }
@@ -474,7 +486,7 @@ public class PreferenceSetPanel
             private StringField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theString = (StringPreference) pPreference;
-                theField = new ValueField(ValueClass.String, theFormatter);
+                theField = new ValueField(ValueClass.STRING, theFormatter);
                 theField.setColumns(WIDTH_STRING);
 
                 /* Add property change listener */
@@ -482,7 +494,7 @@ public class PreferenceSetPanel
                 theField.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
 
                 /* If the preference type is string we have finished */
-                if (pPreference.getType() == PreferenceType.String) {
+                if (pPreference.getType() == PreferenceType.STRING) {
                     return;
                 }
 
@@ -535,11 +547,12 @@ public class PreferenceSetPanel
                         /* Switch on the preference type */
                         switch (theType) {
                         /* If we are a directory preference */
-                            case Directory:
+                            case DIRECTORY:
                                 /* Create and show the dialog */
-                                FileSelector myDialog = new FileSelector(theSelf, "Select "
+                                FileSelector myDialog = new FileSelector(theSelf, NLS_SELECT
+                                                                                  + " "
                                                                                   + theString.getDisplay(), new File(theString.getValue()));
-                                myDialog.showDialog();
+                                myDialog.showDialog(theLogger);
 
                                 /* Handle selection */
                                 File myDir = myDialog.getSelectedFile();
@@ -553,11 +566,12 @@ public class PreferenceSetPanel
                                 break;
 
                             /* If we are a file preference */
-                            case File:
+                            case FILE:
                                 /* Create and show the dialog */
-                                FileSelector myFileDialog = new FileSelector(theSelf, "Select "
+                                FileSelector myFileDialog = new FileSelector(theSelf, NLS_SELECT
+                                                                                      + " "
                                                                                       + theString.getDisplay(), new File(theString.getValue()), null, null);
-                                myFileDialog.showDialog();
+                                myFileDialog.showDialog(theLogger);
 
                                 /* Handle selection */
                                 File myFile = myFileDialog.getSelectedFile();
@@ -599,7 +613,7 @@ public class PreferenceSetPanel
             private IntegerField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theInteger = (IntegerPreference) pPreference;
-                theField = new ValueField(ValueClass.Integer, theFormatter);
+                theField = new ValueField(ValueClass.INTEGER, theFormatter);
                 theField.setColumns(WIDTH_INTEGER);
 
                 /* Add property change listener */
@@ -877,7 +891,7 @@ public class PreferenceSetPanel
             /**
              * The underlying combo box field.
              */
-            private final JComboBox<String> theField;
+            private final JComboBox<Enum<?>> theField;
 
             /**
              * The preference as an EnumPreference.
@@ -891,12 +905,12 @@ public class PreferenceSetPanel
             private EnumField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theEnum = (EnumPreference<?>) pPreference;
-                theField = new JComboBox<String>();
+                theField = new JComboBox<Enum<?>>();
 
                 /* For all values */
                 for (Enum<?> myEnum : theEnum.getValues()) {
                     /* Add to the combo box */
-                    theField.addItem(myEnum.name());
+                    theField.addItem(myEnum);
                 }
 
                 /* Add item listener */
@@ -906,7 +920,7 @@ public class PreferenceSetPanel
             @Override
             protected void updateField() {
                 /* Update the field */
-                theField.setSelectedItem(theEnum.getValue().name());
+                theField.setSelectedItem(theEnum.getValue());
 
                 /* Set font and foreground */
                 theField.setForeground(theFieldMgr.getForeground(thePreferences, theEnum.getDataField()));
@@ -931,8 +945,7 @@ public class PreferenceSetPanel
                     if ((theField.equals(o))
                         && (evt.getStateChange() == ItemEvent.SELECTED)) {
                         /* Set the new value of the preference */
-                        String myName = (String) evt.getItem();
-                        theEnum.setValue(myName);
+                        theEnum.setValue(evt.getItem());
 
                         /* Note if we have any changes */
                         notifyChanges();

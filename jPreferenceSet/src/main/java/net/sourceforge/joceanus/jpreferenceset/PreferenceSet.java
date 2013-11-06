@@ -168,7 +168,7 @@ public abstract class PreferenceSet
     protected StringPreference defineFilePreference(final String pName,
                                                     final String pDefault) {
         /* Define the preference */
-        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.File);
+        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.FILE);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -186,7 +186,7 @@ public abstract class PreferenceSet
     protected StringPreference defineDirectoryPreference(final String pName,
                                                          final String pDefault) {
         /* Define the preference */
-        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.Directory);
+        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.DIRECTORY);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -797,7 +797,7 @@ public abstract class PreferenceSet
         public IntegerPreference(final String pName,
                                  final Integer pDefault) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Integer);
+            super(pName, pDefault, PreferenceType.INTEGER);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -854,7 +854,7 @@ public abstract class PreferenceSet
         public BooleanPreference(final String pName,
                                  final Boolean pDefault) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Boolean);
+            super(pName, pDefault, PreferenceType.BOOLEAN);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -921,7 +921,7 @@ public abstract class PreferenceSet
          */
         public StringPreference(final String pName,
                                 final String pDefault) {
-            this(pName, pDefault, PreferenceType.String);
+            this(pName, pDefault, PreferenceType.STRING);
         }
 
         /**
@@ -993,7 +993,7 @@ public abstract class PreferenceSet
         public DatePreference(final String pName,
                               final JDateDay pDefault) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Date);
+            super(pName, pDefault, PreferenceType.DATE);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -1064,7 +1064,7 @@ public abstract class PreferenceSet
         public ColorPreference(final String pName,
                                final Color pDefault) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Color);
+            super(pName, pDefault, PreferenceType.COLOR);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -1128,7 +1128,7 @@ public abstract class PreferenceSet
         public FontPreference(final String pName,
                               final Font pDefault) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Font);
+            super(pName, pDefault, PreferenceType.FONT);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -1227,7 +1227,7 @@ public abstract class PreferenceSet
                               final E pDefault,
                               final Class<E> pClass) {
             /* Store name */
-            super(pName, pDefault, PreferenceType.Enum);
+            super(pName, pDefault, PreferenceType.ENUM);
 
             /* Store the class */
             theClass = pClass;
@@ -1292,7 +1292,7 @@ public abstract class PreferenceSet
          * Set value.
          * @param pNewValue the new value
          */
-        public void setValue(final E pNewValue) {
+        public void setValue(final Object pNewValue) {
             /* Set the new value */
             super.setNewValue(pNewValue);
         }
@@ -1302,56 +1302,6 @@ public abstract class PreferenceSet
             /* Store the value */
             theHandle.put(getName(), theClass.cast(pNewValue).name());
         }
-    }
-
-    /**
-     * Enum class for preference types.
-     */
-    public enum PreferenceType {
-        /**
-         * String.
-         */
-        String,
-
-        /**
-         * Integer.
-         */
-        Integer,
-
-        /**
-         * Boolean.
-         */
-        Boolean,
-
-        /**
-         * Date.
-         */
-        Date,
-
-        /**
-         * File.
-         */
-        File,
-
-        /**
-         * Directory.
-         */
-        Directory,
-
-        /**
-         * Enum.
-         */
-        Enum,
-
-        /**
-         * Colour.
-         */
-        Color,
-
-        /**
-         * Font.
-         */
-        Font;
     }
 
     @Override

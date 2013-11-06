@@ -63,6 +63,11 @@ public class Server {
     private static final String LOCATION = "/rpc/soap/jirasoapservice-v2";
 
     /**
+     * Service locate error text.
+     */
+    private static final String ERROR_SERVICE = "Failed to locate service";
+
+    /**
      * The preference manager.
      */
     private final PreferenceManager thePreferenceMgr;
@@ -175,11 +180,11 @@ public class Server {
             loadPriorities();
         } catch (MalformedURLException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to locate service", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_SERVICE, e);
 
         } catch (ServiceException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to locate service", e);
+            throw new JDataException(ExceptionClass.JIRA, ERROR_SERVICE, e);
         }
     }
 

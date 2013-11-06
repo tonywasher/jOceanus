@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -76,12 +77,12 @@ public final class JSvnManager {
     /**
      * The Preference Manager.
      */
-    private final PreferenceManager thePreferenceMgr = new PreferenceManager();
+    private final PreferenceManager thePreferenceMgr;
 
     /**
      * Preferences.
      */
-    private final SubVersionPreferences thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+    private final SubVersionPreferences thePreferences;
 
     /**
      * The DataManager menuItem.
@@ -149,9 +150,22 @@ public final class JSvnManager {
     private final JSvnStatusWindow theStatusPanel;
 
     /**
-     * Constructor.
+     * The logger.
      */
-    protected JSvnManager() {
+    private final Logger theLogger;
+
+    /**
+     * Constructor.
+     * @param pLogger the logger
+     */
+    protected JSvnManager(final Logger pLogger) {
+        /* Store logger */
+        theLogger = pLogger;
+
+        /* Create the preference manager */
+        thePreferenceMgr = new PreferenceManager(theLogger);
+        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
 

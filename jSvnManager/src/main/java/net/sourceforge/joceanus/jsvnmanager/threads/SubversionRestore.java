@@ -105,7 +105,7 @@ public class SubversionRestore<T extends DataSet<T>>
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, SpreadSheet.ZIPFILE_EXT);
-        myDialog.showDialog();
+        myDialog.showDialog(theStatus.getLogger());
         File myFile = myDialog.getSelectedFile();
 
         /* If we did not select a file */
