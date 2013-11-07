@@ -45,12 +45,12 @@ import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 /**
  * The Tax Bucket class.
  */
-public final class TaxCategoryBucket
-        implements JDataContents, Comparable<TaxCategoryBucket>, OrderedIdItem<Integer> {
+public final class TaxCalcBucket
+        implements JDataContents, Comparable<TaxCalcBucket>, OrderedIdItem<Integer> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCategoryBucket.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCalcBucket.class.getName());
 
     /**
      * Local Report fields.
@@ -142,7 +142,7 @@ public final class TaxCategoryBucket
     /**
      * The parent.
      */
-    private TaxCategoryBucket theParent = null;
+    private TaxCalcBucket theParent = null;
 
     @Override
     public String formatObject() {
@@ -182,7 +182,7 @@ public final class TaxCategoryBucket
      * Obtain the parent.
      * @return the parent
      */
-    public TaxCategoryBucket getParent() {
+    public TaxCalcBucket getParent() {
         return theParent;
     }
 
@@ -278,8 +278,8 @@ public final class TaxCategoryBucket
      * @param pAnalysis the analysis
      * @param pTaxCategory the category
      */
-    private TaxCategoryBucket(final Analysis pAnalysis,
-                              final TaxCategory pTaxCategory) {
+    private TaxCalcBucket(final Analysis pAnalysis,
+                          final TaxCategory pTaxCategory) {
         /* Store the parameters */
         theTaxCategory = pTaxCategory;
         theAnalysis = pAnalysis;
@@ -295,7 +295,7 @@ public final class TaxCategoryBucket
     }
 
     @Override
-    public int compareTo(final TaxCategoryBucket pThat) {
+    public int compareTo(final TaxCalcBucket pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -317,12 +317,12 @@ public final class TaxCategoryBucket
         if (pThat == null) {
             return false;
         }
-        if (!(pThat instanceof TaxCategoryBucket)) {
+        if (!(pThat instanceof TaxCalcBucket)) {
             return false;
         }
 
         /* Compare the Tax Categories */
-        TaxCategoryBucket myThat = (TaxCategoryBucket) pThat;
+        TaxCalcBucket myThat = (TaxCalcBucket) pThat;
         return getTaxCategory().equals(myThat.getTaxCategory());
     }
 
@@ -387,7 +387,7 @@ public final class TaxCategoryBucket
      * Set parent bucket for reporting purposes.
      * @param pParent the parent bucket
      */
-    protected void setParent(final TaxCategoryBucket pParent) {
+    protected void setParent(final TaxCalcBucket pParent) {
         /* Set the value */
         theParent = pParent;
     }
@@ -445,7 +445,7 @@ public final class TaxCategoryBucket
      * Add values.
      * @param pBucket tax category bucket
      */
-    protected void addValues(final TaxCategoryBucket pBucket) {
+    protected void addValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
         JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
         myAmount.addAmount(pBucket.getMoneyAttribute(TaxAttribute.Amount));
@@ -455,7 +455,7 @@ public final class TaxCategoryBucket
      * subtract values.
      * @param pBucket tax category bucket
      */
-    protected void subtractValues(final TaxCategoryBucket pBucket) {
+    protected void subtractValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
         JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
         myAmount.subtractAmount(pBucket.getMoneyAttribute(TaxAttribute.Amount));
@@ -464,8 +464,8 @@ public final class TaxCategoryBucket
     /**
      * TaxCategoryBucketList class.
      */
-    public static class TaxCategoryBucketList
-            extends OrderedIdList<Integer, TaxCategoryBucket>
+    public static class TaxCalcBucketList
+            extends OrderedIdList<Integer, TaxCalcBucket>
             implements JDataContents {
 
         /**
@@ -634,9 +634,9 @@ public final class TaxCategoryBucket
          * @param pAnalysis the analysis
          * @param pYear the TaxYear
          */
-        public TaxCategoryBucketList(final Analysis pAnalysis,
-                                     final TaxYear pYear) {
-            super(TaxCategoryBucket.class);
+        public TaxCalcBucketList(final Analysis pAnalysis,
+                                 final TaxYear pYear) {
+            super(TaxCalcBucket.class);
             theAnalysis = pAnalysis;
             theYear = pYear;
             theData = theAnalysis.getData();
@@ -647,15 +647,15 @@ public final class TaxCategoryBucket
          * @param pClass the event category class
          * @return the bucket
          */
-        public TaxCategoryBucket getBucket(final TaxCategoryClass pClass) {
+        public TaxCalcBucket getBucket(final TaxCategoryClass pClass) {
             /* Locate the bucket in the list */
             TaxCategory myCategory = theData.getTaxCategories().findItemByClass(pClass);
-            TaxCategoryBucket myItem = findItemById(myCategory.getId());
+            TaxCalcBucket myItem = findItemById(myCategory.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new TaxCategoryBucket(theAnalysis, myCategory);
+                myItem = new TaxCalcBucket(theAnalysis, myCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -670,11 +670,11 @@ public final class TaxCategoryBucket
          */
         protected void prune() {
             /* Access the iterator */
-            Iterator<TaxCategoryBucket> myIterator = listIterator();
+            Iterator<TaxCalcBucket> myIterator = listIterator();
 
             /* Loop through the buckets */
             while (myIterator.hasNext()) {
-                TaxCategoryBucket myCurr = myIterator.next();
+                TaxCalcBucket myCurr = myIterator.next();
 
                 /* Remove the bucket if it is irrelevant */
                 if (!myCurr.isRelevant()) {

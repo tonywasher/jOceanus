@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCat
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
@@ -114,6 +115,7 @@ public class MarketAnalysis {
     protected void propagateTotals(final Analysis pAnalysis) {
         /* Access lists */
         PayeeBucketList myPayees = pAnalysis.getPayees();
+        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
         EventCategoryBucketList myCategories = pAnalysis.getEventCategories();
 
         /* If we have market income/expense */
@@ -136,6 +138,9 @@ public class MarketAnalysis {
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);
             myGrowth.addExpense(theGrowthExpense);
+
+            /* Adjust tax basis */
+            myTaxBasis.adjustMarket(theGrowthIncome, theGrowthExpense);
         }
     }
 }

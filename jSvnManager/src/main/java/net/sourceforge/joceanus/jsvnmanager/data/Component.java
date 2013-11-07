@@ -161,8 +161,8 @@ public final class Component
      * @param pParent the Parent repository
      * @param pName the component name
      */
-    private Component(final Repository pParent,
-                      final String pName) {
+    protected Component(final Repository pParent,
+                        final String pName) {
         /* Store values */
         theName = pName;
         theRepository = pParent;

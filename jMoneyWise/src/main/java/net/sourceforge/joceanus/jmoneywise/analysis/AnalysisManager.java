@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.Accoun
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
@@ -135,6 +136,7 @@ public class AnalysisManager
         AccountBucketList myAccounts = pAnalysis.getAccounts();
         PayeeBucketList myPayees = pAnalysis.getPayees();
         EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
+        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
 
         /* Analyse the accounts */
         AccountCategoryBucketList myAccountCategories = pAnalysis.getAccountCategories();
@@ -151,5 +153,8 @@ public class AnalysisManager
 
         /* Analyse the EventCategories */
         myEventCategories.produceTotals();
+
+        /* Analyse the TaxBasis */
+        myTaxBasis.produceTotals();
     }
 }

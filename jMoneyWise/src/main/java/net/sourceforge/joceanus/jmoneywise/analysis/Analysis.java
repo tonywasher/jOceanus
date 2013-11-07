@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCat
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 
@@ -103,9 +104,14 @@ public class Analysis
     private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEventCat"));
 
     /**
-     * TaxCategoryBuckets Field Id.
+     * TaxBasisBuckets Field Id.
      */
-    private static final JDataField FIELD_TAXCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxCat"));
+    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxBasis"));
+
+    /**
+     * TaxCalcBuckets Field Id.
+     */
+    private static final JDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxCalc"));
 
     /**
      * Prices Field Id.
@@ -153,7 +159,7 @@ public class Analysis
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_ACTCATS.equals(pField)) {
-            return ((theAccountCategories != null) && (theAccountCategories.size() > 0))
+            return (theAccountCategories.size() > 0)
                     ? theAccountCategories
                     : JDataFieldValue.SkipField;
         }
@@ -162,9 +168,14 @@ public class Analysis
                     ? theEventCategories
                     : JDataFieldValue.SkipField;
         }
-        if (FIELD_TAXCATS.equals(pField)) {
-            return ((theTaxCategories != null) && (theTaxCategories.size() > 0))
-                    ? theTaxCategories
+        if (FIELD_TAXBASIS.equals(pField)) {
+            return (theTaxBasis.size() > 0)
+                    ? theTaxBasis
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_TAXCALC.equals(pField)) {
+            return ((theTaxCalculations != null) && (theTaxCalculations.size() > 0))
+                    ? theTaxCalculations
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_PRICES.equals(pField)) {
@@ -238,9 +249,14 @@ public class Analysis
     private final EventCategoryBucketList theEventCategories;
 
     /**
-     * The tax category buckets.
+     * The tax basis buckets.
      */
-    private final TaxCategoryBucketList theTaxCategories;
+    private final TaxBasisBucketList theTaxBasis;
+
+    /**
+     * The tax calculations buckets.
+     */
+    private final TaxCalcBucketList theTaxCalculations;
 
     /**
      * The prices.
@@ -335,11 +351,19 @@ public class Analysis
     }
 
     /**
-     * Obtain the tax categories list.
+     * Obtain the tax basis list.
      * @return the list
      */
-    public TaxCategoryBucketList getTaxCategories() {
-        return theTaxCategories;
+    public TaxBasisBucketList getTaxBasis() {
+        return theTaxBasis;
+    }
+
+    /**
+     * Obtain the tax calculations list.
+     * @return the list
+     */
+    public TaxCalcBucketList getTaxCalculations() {
+        return theTaxCalculations;
     }
 
     /**
@@ -387,12 +411,13 @@ public class Analysis
         theAccounts = new AccountBucketList(this);
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this);
+        theTaxBasis = new TaxBasisBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
-        theTaxCategories = null;
 
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
+        theTaxCalculations = null;
 
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
@@ -430,11 +455,12 @@ public class Analysis
         theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
-        theTaxCategories = null;
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
 
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
+        theTaxCalculations = null;
     }
 
     /**
@@ -459,11 +485,12 @@ public class Analysis
         theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
-        theTaxCategories = null;
+        theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
 
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
+        theTaxCalculations = new TaxCalcBucketList(this, null);
     }
 
     /**
