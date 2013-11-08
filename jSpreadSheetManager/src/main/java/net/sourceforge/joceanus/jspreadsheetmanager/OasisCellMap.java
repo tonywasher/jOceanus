@@ -244,9 +244,10 @@ public class OasisCellMap {
         String valid = pElement.getTableContentValidationNameAttribute();
 
         /* Empty if none of the data attributes exist */
-        return ((valType == null)
-                && (valid == null)
-                && (!hasChildren) && (style == null));
+        return (valType == null)
+               && (valid == null)
+               && (!hasChildren)
+               && (style == null);
     }
 
     /**
@@ -322,7 +323,8 @@ public class OasisCellMap {
             String valType = theElement.getOfficeValueTypeAttribute();
 
             /* Empty if none of the data attributes exist */
-            return ((valType == null) && (!hasChildren));
+            return (valType == null)
+                   && (!hasChildren);
         }
 
         /**

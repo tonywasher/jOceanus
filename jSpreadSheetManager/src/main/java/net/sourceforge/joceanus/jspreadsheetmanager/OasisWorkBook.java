@@ -956,13 +956,13 @@ public class OasisWorkBook {
         String myStyleName = DataFormats.getAlternateFormatName(pValue);
 
         /* Look for existing format */
-        OdfStyle myStyle = theStyleMap.get(myStyleName);
-        if (myStyle != null) {
-            return myStyle;
+        OdfStyle myAltStyle = theStyleMap.get(myStyleName);
+        if (myAltStyle != null) {
+            return myAltStyle;
         }
 
         /* Create the New Cell Style */
-        myStyle = theStyles.newStyle(OdfStyleFamily.TableCell);
+        myAltStyle = theStyles.newStyle(OdfStyleFamily.TableCell);
 
         /* Determine the CellStyleType */
         CellStyleType myType = DataFormats.getCellStyleType(pValue);
@@ -970,16 +970,16 @@ public class OasisWorkBook {
         /* Handle the header style */
         if (myType == CellStyleType.STRING) {
             myType = CellStyleType.HEADER;
-            myStyle.setProperty(OdfTextProperties.FontWeight, FONT_BOLD);
-            myStyle.setProperty(OdfTableCellProperties.CellProtect, Boolean.TRUE.toString());
+            myAltStyle.setProperty(OdfTextProperties.FontWeight, FONT_BOLD);
+            myAltStyle.setProperty(OdfTableCellProperties.CellProtect, Boolean.TRUE.toString());
         }
 
         /* Create the New Cell Style */
-        myStyle.setStyleNameAttribute(myStyleName);
-        myStyle.setStyleParentStyleNameAttribute(STYLE_DEFPARENT);
-        myStyle.setProperty(OdfTextProperties.FontName, getStyleFont(myType));
-        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
-        myStyle.setProperty(OdfParagraphProperties.TextAlign, getStyleAlignment(myType));
+        myAltStyle.setStyleNameAttribute(myStyleName);
+        myAltStyle.setStyleParentStyleNameAttribute(STYLE_DEFPARENT);
+        myAltStyle.setProperty(OdfTextProperties.FontName, getStyleFont(myType));
+        myAltStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
+        myAltStyle.setProperty(OdfParagraphProperties.TextAlign, getStyleAlignment(myType));
 
         /* If we have a data format */
         if (DataFormats.hasDataFormat(myType)) {
@@ -987,12 +987,12 @@ public class OasisWorkBook {
             String myFormat = DataFormats.getDataFormatString(pValue);
             String myFormatName = getDataStyleName(myStyleName);
             createNumericStyle(myFormatName, myFormat, myType);
-            myStyle.setStyleDataStyleNameAttribute(myFormatName);
+            myAltStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
 
         /* Add to the map and return new style */
-        theStyleMap.put(myStyleName, myStyle);
-        return myStyle;
+        theStyleMap.put(myStyleName, myAltStyle);
+        return myAltStyle;
     }
 
     /**

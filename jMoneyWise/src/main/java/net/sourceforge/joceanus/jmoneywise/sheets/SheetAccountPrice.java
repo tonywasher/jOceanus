@@ -246,11 +246,8 @@ public class SheetAccountPrice
                         /* Access the formatted cell */
                         String myPrice = myCell.getStringValue();
 
-                        /* If the price is non-zero */
-                        if (!myPrice.equals("0.0")) {
-                            /* Add the item to the data set */
-                            myList.addOpenItem(0, myDate, myAccount, myPrice);
-                        }
+                        /* Add the item to the data set */
+                        myList.addOpenItem(0, myDate, myAccount, myPrice);
                     }
 
                     /* Report the progress */

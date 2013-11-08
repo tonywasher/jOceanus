@@ -115,7 +115,7 @@ public class OrderedListIterator<T extends Comparable<? super T>>
         OrderedNode<T> myNext = nextNode();
 
         /* Return whether we have a next node */
-        return (myNext != null);
+        return myNext != null;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class OrderedListIterator<T extends Comparable<? super T>>
         OrderedNode<T> myPrev = previousNode();
 
         /* Return whether we have a previous node */
-        return (myPrev != null);
+        return myPrev != null;
     }
 
     /**

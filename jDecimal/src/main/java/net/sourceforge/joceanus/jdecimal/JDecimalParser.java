@@ -170,13 +170,18 @@ public class JDecimalParser {
         long myValue;
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = ((myWork.length() > 0) && (myWork.charAt(0) == theMinusSign));
+        boolean isNegative = (myWork.length() > 0)
+                             && (myWork.charAt(0) == theMinusSign);
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
 
         /* Remove any grouping characters from the value */
-        while ((myPos = myWork.indexOf(theGrouping)) != -1) {
+        for (;;) {
+            myPos = myWork.indexOf(theGrouping);
+            if (myPos == -1) {
+                break;
+            }
             myWork.deleteCharAt(myPos);
         }
 
@@ -269,7 +274,8 @@ public class JDecimalParser {
         long myValue;
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = ((myWork.length() > 0) && (myWork.charAt(0) == JDecimalFormatter.CHAR_MINUS));
+        boolean isNegative = (myWork.length() > 0)
+                             && (myWork.charAt(0) == JDecimalFormatter.CHAR_MINUS);
         if (isNegative) {
             myWork.deleteCharAt(0);
         }

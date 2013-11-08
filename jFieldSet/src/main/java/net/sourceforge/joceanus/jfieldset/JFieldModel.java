@@ -114,7 +114,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
      * @return true/false
      */
     protected boolean isNull() {
-        return (theValue == null);
+        return theValue == null;
     }
 
     /**

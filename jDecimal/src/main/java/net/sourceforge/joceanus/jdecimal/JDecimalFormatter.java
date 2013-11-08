@@ -186,7 +186,7 @@ public class JDecimalFormatter {
         int myScale = pValue.scale();
 
         /* handle negative values */
-        boolean isNegative = (myValue < 0);
+        boolean isNegative = myValue < 0;
         if (isNegative) {
             myValue = -myValue;
         }
@@ -254,7 +254,7 @@ public class JDecimalFormatter {
         }
 
         /* handle negative values */
-        boolean isNegative = (myValue < 0);
+        boolean isNegative = myValue < 0;
         if (isNegative) {
             myValue = -myValue;
         }
@@ -312,7 +312,7 @@ public class JDecimalFormatter {
         StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theMoneyDecimal);
 
         /* If we have a leading minus sign */
-        boolean isNegative = (myWork.charAt(0) == theMinusSign);
+        boolean isNegative = myWork.charAt(0) == theMinusSign;
         if (isNegative) {
             /* Remove the minus sign */
             myWork = myWork.deleteCharAt(0);

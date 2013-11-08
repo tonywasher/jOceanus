@@ -92,7 +92,6 @@ public class HelpPage
         /* Local variables */
         BufferedReader myReader;
         InputStreamReader myInputReader;
-        String myLine;
 
         /* Allocate a string builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
@@ -104,7 +103,13 @@ public class HelpPage
             myReader = new BufferedReader(myInputReader);
 
             /* Read the header entry */
-            while ((myLine = myReader.readLine()) != null) {
+            for (;;) {
+                /* Read next line */
+                String myLine = myReader.readLine();
+                if (myLine == null) {
+                    break;
+                }
+
                 /* Add to the string buffer */
                 myBuilder.append(myLine);
                 myBuilder.append('\n');
@@ -146,11 +151,11 @@ public class HelpPage
 
         /* Check for equality */
         boolean isEqual = (theName == null)
-                ? (myPage.getName() != null)
+                ? myPage.getName() != null
                 : theName.equals(myPage.getName());
         if (isEqual) {
             isEqual = (theHtml == null)
-                    ? (myPage.getHtml() != null)
+                    ? myPage.getHtml() != null
                     : theHtml.equals(myPage.getHtml());
         }
         return isEqual;

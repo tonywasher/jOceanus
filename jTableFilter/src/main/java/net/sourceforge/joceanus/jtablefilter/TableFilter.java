@@ -520,7 +520,7 @@ public class TableFilter<T extends Comparable<? super T>>
         /* Loop through the updated model elements */
         for (int i = pFirstRow; i <= pEndRow; i++) {
             /* Determine whether we are currently visible */
-            boolean isCurrVisible = (theModelToView[i].theReference != ROW_FILTERED);
+            boolean isCurrVisible = theModelToView[i].theReference != ROW_FILTERED;
 
             /* Access the row */
             T myRow = theModelToView[i].theRow;
@@ -771,7 +771,7 @@ public class TableFilter<T extends Comparable<? super T>>
         @Override
         public boolean hasNext() {
             /* Determine whether we have further elements */
-            return (theSize > theIndex);
+            return theSize > theIndex;
         }
 
         @Override

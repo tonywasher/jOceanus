@@ -545,7 +545,8 @@ public class JDateDay
         if (iDiff != 0) {
             return iDiff;
         }
-        return (theDay - pThat.theDay);
+        return theDay
+               - pThat.theDay;
     }
 
     /**
@@ -622,7 +623,7 @@ public class JDateDay
                                       final JDateDay pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
-            return (pNew != null);
+            return pNew != null;
         }
 
         /* Handle case where new value is null */

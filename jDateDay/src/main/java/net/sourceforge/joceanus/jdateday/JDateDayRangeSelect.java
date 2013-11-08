@@ -568,7 +568,7 @@ public class JDateDayRangeSelect
          * @return true/false
          */
         private boolean isCustom() {
-            return (thePeriod == JDatePeriod.CUSTOM);
+            return thePeriod == JDatePeriod.CUSTOM;
         }
 
         /**
@@ -706,86 +706,103 @@ public class JDateDayRangeSelect
             isPrevOK = (theFirstDate == null)
                        || (theFirstDate.compareTo(theStartDate) != 0);
 
-            /* If we are unlimited */
+            /* Determine action for period */
             switch (thePeriod) {
                 case ALLDATES:
-                    /* Previous and next are not allowed */
-                    isPrevOK = false;
-                    isNextOK = false;
-
-                    /* Set range to complete range */
-                    theStartDate = theFirstDate;
-                    theEndDate = theFinalDate;
+                    buildFullRange();
                     break;
-
-                /* If we are custom */
                 case CUSTOM:
-                    /* Previous and next are disallowed */
-                    isPrevOK = false;
-                    isNextOK = false;
-
-                    /* If the EndDate is earlier than the startDate, reset it */
-                    if (theEndDate.compareTo(theStartDate) < 0) {
-                        theEndDate = theStartDate;
-                    }
-
-                    /* Limit the buttons */
-                    theStartButton.setLatestDateDay(theEndDate);
-                    theEndButton.setEarliestDateDay(theStartDate);
+                    buildCustomRange();
                     break;
-
-                /* else we have to calculate the date */
                 default:
-                    if (useStartButtonForPeriod) {
-                        /* Previous is only allowed if we have not hit the first date */
-                        isPrevOK = (theFirstDate == null)
-                                   || (theFirstDate.compareTo(theStartDate) != 0);
-
-                        /* Initialise the end date */
-                        theEndDate = new JDateDay(theStartDate);
-
-                        /* Adjust the date to cover the relevant period */
-                        theEndDate.adjustForwardByPeriod(thePeriod);
-                        theEndDate.adjustDay(-1);
-
-                        /* Assume that next is OK */
-                        isNextOK = true;
-
-                        /* If we have passed the final date */
-                        if ((theFinalDate != null)
-                            && (theEndDate.compareTo(theFinalDate) >= 0)) {
-                            /* Reset the end date and disable next button */
-                            theEndDate = theFinalDate;
-                            isNextOK = false;
-                        }
-                    } else {
-                        /* Next is only allowed if we have not hit the last date */
-                        isNextOK = (theFinalDate == null)
-                                   || (theFinalDate.compareTo(theEndDate) != 0);
-
-                        /* Initialise the end date */
-                        theStartDate = new JDateDay(theEndDate);
-
-                        /* Adjust the date to cover the relevant period */
-                        theStartDate.adjustBackwardByPeriod(thePeriod);
-                        theStartDate.adjustDay(1);
-
-                        /* Assume that previous is OK */
-                        isPrevOK = true;
-
-                        /* If we have passed the final date */
-                        if ((theFirstDate != null)
-                            && (theStartDate.compareTo(theFirstDate) <= 0)) {
-                            /* Reset the start date and disable previous button */
-                            theStartDate = theFirstDate;
-                            isPrevOK = false;
-                        }
-                    }
+                    buildStandardRange();
                     break;
             }
 
             /* Create the range */
             theRange = new JDateDayRange(theStartDate, theEndDate);
+        }
+
+        /**
+         * Build the full range.
+         */
+        private void buildFullRange() {
+            /* Previous and next are not allowed */
+            isPrevOK = false;
+            isNextOK = false;
+
+            /* Set range to complete range */
+            theStartDate = theFirstDate;
+            theEndDate = theFinalDate;
+        }
+
+        /**
+         * Build the custom range.
+         */
+        private void buildCustomRange() {
+            /* Previous and next are disallowed */
+            isPrevOK = false;
+            isNextOK = false;
+
+            /* If the EndDate is earlier than the startDate, reset it */
+            if (theEndDate.compareTo(theStartDate) < 0) {
+                theEndDate = theStartDate;
+            }
+
+            /* Limit the buttons */
+            theStartButton.setLatestDateDay(theEndDate);
+            theEndButton.setEarliestDateDay(theStartDate);
+        }
+
+        /**
+         * Build the standard range.
+         */
+        private void buildStandardRange() {
+            if (useStartButtonForPeriod) {
+                /* Previous is only allowed if we have not hit the first date */
+                isPrevOK = (theFirstDate == null)
+                           || (theFirstDate.compareTo(theStartDate) != 0);
+
+                /* Initialise the end date */
+                theEndDate = new JDateDay(theStartDate);
+
+                /* Adjust the date to cover the relevant period */
+                theEndDate.adjustForwardByPeriod(thePeriod);
+                theEndDate.adjustDay(-1);
+
+                /* Assume that next is OK */
+                isNextOK = true;
+
+                /* If we have passed the final date */
+                if ((theFinalDate != null)
+                    && (theEndDate.compareTo(theFinalDate) >= 0)) {
+                    /* Reset the end date and disable next button */
+                    theEndDate = theFinalDate;
+                    isNextOK = false;
+                }
+            } else {
+                /* Next is only allowed if we have not hit the last date */
+                isNextOK = (theFinalDate == null)
+                           || (theFinalDate.compareTo(theEndDate) != 0);
+
+                /* Initialise the end date */
+                theStartDate = new JDateDay(theEndDate);
+
+                /* Adjust the date to cover the relevant period */
+                theStartDate.adjustBackwardByPeriod(thePeriod);
+                theStartDate.adjustDay(1);
+
+                /* Assume that previous is OK */
+                isPrevOK = true;
+
+                /* If we have passed the final date */
+                if ((theFirstDate != null)
+                    && (theStartDate.compareTo(theFirstDate) <= 0)) {
+                    /* Reset the start date and disable previous button */
+                    theStartDate = theFirstDate;
+                    isPrevOK = false;
+                }
+            }
         }
 
         /**

@@ -264,8 +264,9 @@ public class OasisColumnMap {
         String visible = pElement.getTableVisibilityAttribute();
 
         /* Empty if none of the data attributes exist */
-        return ((defStyle == null)
-                && (style == null) && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE.toString())));
+        return (defStyle == null)
+               && (style == null)
+               && (visible.equals(TableVisibilityAttribute.DEFAULT_VALUE.toString()));
     }
 
     /**

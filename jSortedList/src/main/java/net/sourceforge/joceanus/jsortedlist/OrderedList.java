@@ -310,7 +310,7 @@ public class OrderedList<T extends Comparable<? super T>>
     @Override
     public final boolean isEmpty() {
         /* Return details */
-        return (theFirst == null);
+        return theFirst == null;
     }
 
     @Override
@@ -801,7 +801,7 @@ public class OrderedList<T extends Comparable<? super T>>
         }
 
         /* Did we make a change */
-        boolean bChanged = (theModCount != myModCount);
+        boolean bChanged = theModCount != myModCount;
         if (bChanged) {
             /* Sort the list */
             reSort();
@@ -831,7 +831,7 @@ public class OrderedList<T extends Comparable<? super T>>
         }
 
         /* Did we make a change */
-        boolean bChanged = (theModCount != myModCount);
+        boolean bChanged = theModCount != myModCount;
         if (bChanged) {
             /* Sort the list */
             reSort();
@@ -880,7 +880,7 @@ public class OrderedList<T extends Comparable<? super T>>
         }
 
         /* Return indication of change */
-        return (theModCount != myModCount);
+        return theModCount != myModCount;
     }
 
     /**
@@ -909,7 +909,7 @@ public class OrderedList<T extends Comparable<? super T>>
         }
 
         /* Return indication of change */
-        return (theModCount != myModCount);
+        return theModCount != myModCount;
     }
 
     /**

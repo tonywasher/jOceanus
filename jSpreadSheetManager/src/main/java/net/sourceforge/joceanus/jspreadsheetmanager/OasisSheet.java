@@ -248,6 +248,7 @@ public class OasisSheet
 
     @Override
     public void createFreezePane(final CellPosition pFreezeCell) {
+        /* TODO */
     }
 
     /**

@@ -49,11 +49,6 @@ public class Project {
     private static final String ERROR_ARCH = "Failed to archive version";
 
     /**
-     * Self reference.
-     */
-    private final Project theSelf = this;
-
-    /**
      * Server.
      */
     private final Server theServer;
@@ -373,7 +368,7 @@ public class Project {
             /* Loop through the versions */
             for (RemoteVersion myVersion : myVers) {
                 /* Add new version to list */
-                theVersions.add(new Version(myVersion));
+                theVersions.add(new Version(this, myVersion));
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
@@ -409,7 +404,7 @@ public class Project {
             myVersion = theService.addVersion(myToken, theId, myVersion);
 
             /* Add the Version */
-            theVersions.add(new Version(myVersion));
+            theVersions.add(new Version(this, myVersion));
         } catch (RemoteException e) {
             /* Pass the exception on */
             throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
@@ -475,6 +470,11 @@ public class Project {
      * Version class.
      */
     public final class Version {
+        /**
+         * The owning project.
+         */
+        private final Project theOwner;
+
         /**
          * The underlying remote version.
          */
@@ -555,10 +555,13 @@ public class Project {
 
         /**
          * Constructor.
+         * @param pOwner the owning project
          * @param pVers the underlying version
          */
-        private Version(final RemoteVersion pVers) {
+        private Version(final Project pOwner,
+                        final RemoteVersion pVers) {
             /* Access the details */
+            theOwner = pOwner;
             theVers = pVers;
             theId = pVers.getId();
             theName = pVers.getName();
@@ -584,7 +587,7 @@ public class Project {
                 String myToken = theServer.getAuthToken();
 
                 /* Call the service */
-                theService.archiveVersion(myToken, theSelf.getId(), theId, doArchive);
+                theService.archiveVersion(myToken, theOwner.getId(), theId, doArchive);
 
                 /* Update status */
                 isArchived = doArchive;
@@ -619,7 +622,7 @@ public class Project {
                 theVers.setReleaseDate(theReleaseDate);
 
                 /* Call the service */
-                theService.releaseVersion(myToken, theSelf.getId(), theVers);
+                theService.releaseVersion(myToken, theOwner.getId(), theVers);
             } catch (RemoteException e) {
                 /* Pass the exception on */
                 throw new JDataException(ExceptionClass.JIRA, ERROR_ARCH, e);

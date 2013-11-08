@@ -452,27 +452,27 @@ public class JDateDayExample
         /**
          * Column Names.
          */
-        private final String[] theColumns = { "Date", "Description" };
+        private static final String[] COLUMNS = { "Date", "Description" };
 
         /**
          * Data for table.
          */
-        private final Object[][] theData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" }, { DATE_THIRD, "Third Entry" },
+        private static final Object[][] DATA = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" }, { DATE_THIRD, "Third Entry" },
                 { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
 
         @Override
         public int getColumnCount() {
-            return theData[0].length;
+            return DATA[0].length;
         }
 
         @Override
         public int getRowCount() {
-            return theData.length;
+            return DATA.length;
         }
 
         @Override
         public String getColumnName(final int columnIndex) {
-            return theColumns[columnIndex];
+            return COLUMNS[columnIndex];
         }
 
         @Override
@@ -486,20 +486,20 @@ public class JDateDayExample
         @Override
         public boolean isCellEditable(final int rowIndex,
                                       final int columnIndex) {
-            return (columnIndex == 0);
+            return columnIndex == 0;
         }
 
         @Override
         public Object getValueAt(final int rowIndex,
                                  final int columnIndex) {
-            return theData[rowIndex][columnIndex];
+            return DATA[rowIndex][columnIndex];
         }
 
         @Override
         public void setValueAt(final Object pValue,
                                final int rowIndex,
                                final int columnIndex) {
-            theData[rowIndex][columnIndex] = pValue;
+            DATA[rowIndex][columnIndex] = pValue;
         }
     }
 

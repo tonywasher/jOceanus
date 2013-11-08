@@ -233,7 +233,7 @@ public class JDateDayRange
                                       final JDateDayRange pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
-            return (pNew != null);
+            return pNew != null;
         }
 
         /* Handle case where new value is null */

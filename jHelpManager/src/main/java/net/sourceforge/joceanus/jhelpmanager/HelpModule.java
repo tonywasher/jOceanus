@@ -222,11 +222,7 @@ public abstract class HelpModule {
             }
 
             /* Close the stream */
-            try {
-                myStream.close();
-            } catch (IOException e) {
-                theLogger.log(Level.SEVERE, ERROR_STREAM, e);
-            }
+            myStream.close();
 
             /* Catch exceptions */
         } catch (SAXException e) {

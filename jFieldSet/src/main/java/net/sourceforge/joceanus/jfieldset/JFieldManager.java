@@ -410,13 +410,13 @@ public class JFieldManager {
         /* Switch on the state */
         switch (pState) {
             case CHANGED:
-                return (isFixed
+                return isFixed
                         ? FONT_NUMCHANGED
-                        : FONT_CHANGED);
+                        : FONT_CHANGED;
             default:
-                return (isFixed
+                return isFixed
                         ? FONT_NUMERIC
-                        : FONT_STANDARD);
+                        : FONT_STANDARD;
         }
     }
 

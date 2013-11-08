@@ -92,7 +92,7 @@ public class ActionDetailEvent
                              final Object pDetails) {
         /* Call super-constructor */
         super(pSource, pId, (pDetails instanceof String)
-                ? ((String) pDetails)
+                ? (String) pDetails
                 : null);
 
         /* Set the details */

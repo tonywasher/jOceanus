@@ -272,7 +272,7 @@ public final class JFieldData {
     protected <X extends JFieldSetItem> void determineData(final JFieldElement<X> pElement,
                                                            final X pItem) {
         /* Determine whether we have a null item */
-        boolean isNull = (pItem == null);
+        boolean isNull = pItem == null;
 
         /* Obtain the state */
         JDataField myField = pElement.getField();

@@ -105,8 +105,9 @@ public class ExcelCell
                     case HSSFCell.CELL_TYPE_BOOLEAN:
                         return myValue.getBooleanValue();
                     default:
-                        return null;
+                        break;
                 }
+                return null;
             default:
                 return null;
         }
@@ -135,8 +136,9 @@ public class ExcelCell
                         Double myDouble = myCellValue.getNumberValue();
                         return myDouble.intValue();
                     default:
-                        return null;
+                        break;
                 }
+                return null;
             default:
                 return null;
         }
@@ -159,8 +161,9 @@ public class ExcelCell
                     case HSSFCell.CELL_TYPE_BOOLEAN:
                         return myValue.formatAsString();
                     default:
-                        return null;
+                        break;
                 }
+                return null;
 
             case HSSFCell.CELL_TYPE_STRING:
             default:

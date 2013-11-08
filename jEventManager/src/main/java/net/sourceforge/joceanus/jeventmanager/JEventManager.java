@@ -48,7 +48,7 @@ public class JEventManager {
     /**
      * The list of registrations.
      */
-    private volatile List<JEventRegistration> theRegistrations = null;
+    private volatile List<JEventRegistration<?>> theRegistrations = null;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ public class JEventManager {
         theOwner = pOwner;
 
         /* Allocate the list */
-        theRegistrations = new ArrayList<JEventRegistration>();
+        theRegistrations = new ArrayList<JEventRegistration<?>>();
     }
 
     /**
@@ -68,7 +68,7 @@ public class JEventManager {
      */
     public void addChangeListener(final ChangeListener pListener) {
         /* Create the registration */
-        JEventRegistration myReg = new ChangeRegistration(pListener);
+        JEventRegistration<ChangeEvent> myReg = new ChangeRegistration(pListener);
 
         /* Add it to the list */
         adjustListenerList(myReg, true);
@@ -80,7 +80,7 @@ public class JEventManager {
      */
     public void addActionListener(final ActionListener pListener) {
         /* Create the registration */
-        JEventRegistration myReg = new ActionRegistration(pListener);
+        JEventRegistration<ActionEvent> myReg = new ActionRegistration(pListener);
 
         /* Add it to the list */
         adjustListenerList(myReg, true);
@@ -92,7 +92,7 @@ public class JEventManager {
      */
     public void removeChangeListener(final ChangeListener pListener) {
         /* Create the registration */
-        JEventRegistration myReg = new ChangeRegistration(pListener);
+        JEventRegistration<ChangeEvent> myReg = new ChangeRegistration(pListener);
 
         /* Remove it from the list */
         adjustListenerList(myReg, false);
@@ -104,7 +104,7 @@ public class JEventManager {
      */
     public void removeActionListener(final ActionListener pListener) {
         /* Create the registration */
-        JEventRegistration myReg = new ActionRegistration(pListener);
+        JEventRegistration<ActionEvent> myReg = new ActionRegistration(pListener);
 
         /* Remove it from the list */
         adjustListenerList(myReg, false);
@@ -115,7 +115,7 @@ public class JEventManager {
      * @param pRegistration the relevant registration
      * @param isMember should this registration be in the list
      */
-    private synchronized void adjustListenerList(final JEventRegistration pRegistration,
+    private synchronized void adjustListenerList(final JEventRegistration<?> pRegistration,
                                                  final boolean isMember) {
         /* If the listener is already in the correct state, return */
         if (theRegistrations.contains(pRegistration) == isMember) {
@@ -123,7 +123,7 @@ public class JEventManager {
         }
 
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<JEventRegistration> myNew = new ArrayList<JEventRegistration>(theRegistrations);
+        List<JEventRegistration<?>> myNew = new ArrayList<JEventRegistration<?>>(theRegistrations);
 
         /* Adjust the list */
         if (isMember) {
@@ -153,13 +153,13 @@ public class JEventManager {
         ChangeEvent myEvent = new ChangeEvent(pOwner);
 
         /* Obtain a reference to the registrations */
-        List<JEventRegistration> myList = theRegistrations;
+        List<JEventRegistration<?>> myList = theRegistrations;
 
         /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<JEventRegistration> myIterator = myList.listIterator(myList.size());
+        ListIterator<JEventRegistration<?>> myIterator = myList.listIterator(myList.size());
         while (myIterator.hasPrevious()) {
             /* Access the registration */
-            JEventRegistration myReg = myIterator.previous();
+            JEventRegistration<?> myReg = myIterator.previous();
 
             /* If this is a change registration */
             if (myReg instanceof ChangeRegistration) {
@@ -215,13 +215,13 @@ public class JEventManager {
      */
     private void fireActionEvent(final ActionEvent pEvent) {
         /* Obtain a reference to the registrations */
-        List<JEventRegistration> myList = theRegistrations;
+        List<JEventRegistration<?>> myList = theRegistrations;
 
         /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<JEventRegistration> myIterator = myList.listIterator(myList.size());
+        ListIterator<JEventRegistration<?>> myIterator = myList.listIterator(myList.size());
         while (myIterator.hasPrevious()) {
             /* Access the registration */
-            JEventRegistration myReg = myIterator.previous();
+            JEventRegistration<?> myReg = myIterator.previous();
 
             /* If this is an action registration */
             if (myReg instanceof ActionRegistration) {

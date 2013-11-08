@@ -227,7 +227,7 @@ public class JDecimal
      * @return <code>true</code> if the value is non-zero, <code>false</code> otherwise.
      */
     public boolean isNonZero() {
-        return (theValue != 0);
+        return theValue != 0;
     }
 
     /**
@@ -235,7 +235,7 @@ public class JDecimal
      * @return <code>true</code> if the value is zero, <code>false</code> otherwise.
      */
     public boolean isZero() {
-        return (theValue == 0);
+        return theValue == 0;
     }
 
     /**
@@ -243,7 +243,7 @@ public class JDecimal
      * @return <code>true</code> if the value is non-negative, <code>false</code> otherwise.
      */
     public boolean isPositive() {
-        return (theValue >= 0);
+        return theValue >= 0;
     }
 
     /**
@@ -959,7 +959,8 @@ public class JDecimal
         JDecimal myThat = (JDecimal) pThat;
 
         /* Check value and scale */
-        return ((theValue == myThat.theValue) && (theScale == myThat.theScale));
+        return (theValue == myThat.theValue)
+               && (theScale == myThat.theScale);
     }
 
     @Override

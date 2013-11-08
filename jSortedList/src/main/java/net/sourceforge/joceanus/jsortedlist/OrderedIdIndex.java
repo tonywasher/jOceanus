@@ -93,7 +93,7 @@ public class OrderedIdIndex<I, T extends Comparable<? super T> & OrderedIdItem<I
      */
     protected boolean isIdPresent(final I pId) {
         /* Lookup the node in the map */
-        return (findItemById(pId) != null);
+        return findItemById(pId) != null;
     }
 
     /**

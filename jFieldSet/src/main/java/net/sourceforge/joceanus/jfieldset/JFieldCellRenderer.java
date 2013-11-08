@@ -220,7 +220,8 @@ public final class JFieldCellRenderer {
                                                         final int pRowIndex,
                                                         final int pColIndex) {
             /* Pass call on */
-            setSelected((pValue != null && ((Boolean) pValue).booleanValue()));
+            setSelected((pValue != null)
+                        && ((Boolean) pValue).booleanValue());
 
             /* Declare the Cell position */
             theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);

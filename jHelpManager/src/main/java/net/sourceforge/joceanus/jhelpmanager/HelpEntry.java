@@ -56,6 +56,11 @@ public class HelpEntry {
     protected static final String ATTR_NAME = "name";
 
     /**
+     * Empty string.
+     */
+    private static final String STR_EMPTY = "";
+
+    /**
      * Title of the entry.
      */
     private String theTitle = null;
@@ -205,13 +210,13 @@ public class HelpEntry {
 
         /* Access the title of the element and default it if required */
         theTitle = pElement.getAttribute(ATTR_TITLE);
-        if (theTitle.equals("")) {
+        if (STR_EMPTY.equals(theTitle)) {
             theTitle = theName;
         }
 
         /* Access the filename for the element and default it if required */
         theFileName = pElement.getAttribute(ATTR_FILENAME);
-        if (theFileName.equals("")) {
+        if (STR_EMPTY.equals(theFileName)) {
             theFileName = null;
         }
 

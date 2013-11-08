@@ -30,13 +30,20 @@ import javax.swing.event.ChangeListener;
 
 /**
  * Registration structure for event listeners.
+ * @param <T> The event for the registration
  */
-public abstract class JEventRegistration {
+public abstract class JEventRegistration<T> {
+    /**
+     * Process the relevant event.
+     * @param pEvent the event.
+     */
+    protected abstract void processEvent(final T pEvent);
+
     /**
      * ActionRegistration class.
      */
     protected static class ActionRegistration
-            extends JEventRegistration {
+            extends JEventRegistration<ActionEvent> {
         /**
          * Action listener.
          */
@@ -50,10 +57,7 @@ public abstract class JEventRegistration {
             theListener = pListener;
         }
 
-        /**
-         * Process the relevant event.
-         * @param pEvent the event.
-         */
+        @Override
         protected void processEvent(final ActionEvent pEvent) {
             theListener.actionPerformed(pEvent);
         }
@@ -72,7 +76,7 @@ public abstract class JEventRegistration {
             ActionRegistration myReg = (ActionRegistration) o;
 
             /* Compare fields */
-            return (theListener == myReg.theListener);
+            return theListener == myReg.theListener;
         }
 
         @Override
@@ -85,7 +89,7 @@ public abstract class JEventRegistration {
      * ChangeRegistration class.
      */
     protected static class ChangeRegistration
-            extends JEventRegistration {
+            extends JEventRegistration<ChangeEvent> {
         /**
          * Change listener.
          */
@@ -99,10 +103,7 @@ public abstract class JEventRegistration {
             theListener = pListener;
         }
 
-        /**
-         * Process the relevant event.
-         * @param pEvent the event.
-         */
+        @Override
         protected void processEvent(final ChangeEvent pEvent) {
             theListener.stateChanged(pEvent);
         }
@@ -121,7 +122,7 @@ public abstract class JEventRegistration {
             ChangeRegistration myReg = (ChangeRegistration) o;
 
             /* Compare fields */
-            return (theListener == myReg.theListener);
+            return theListener == myReg.theListener;
         }
 
         @Override

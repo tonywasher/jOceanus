@@ -592,7 +592,7 @@ public final class DataConverter {
     public static String byteArrayToBase64(final byte[] pBytes) {
         /* Determine input length and allocate output buffer */
         int myLen = pBytes.length;
-        StringBuffer myBuilder = new StringBuffer(myLen << 1);
+        StringBuilder myBuilder = new StringBuilder(myLen << 1);
         byte[] myTriplet = new byte[BASE64_TRIPLE];
 
         /* Loop through the input bytes */

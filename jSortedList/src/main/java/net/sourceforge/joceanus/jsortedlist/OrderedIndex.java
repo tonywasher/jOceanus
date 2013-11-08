@@ -372,6 +372,7 @@ public class OrderedIndex<T extends Comparable<? super T>> {
      * @param pNode the Node
      */
     protected void registerLink(final OrderedNode<T> pNode) {
+        /* Overridden if needed */
     }
 
     /**
@@ -379,6 +380,7 @@ public class OrderedIndex<T extends Comparable<? super T>> {
      * @param pNode the Node
      */
     protected void deRegisterLink(final OrderedNode<T> pNode) {
+        /* Overridden if needed */
     }
 
     /**

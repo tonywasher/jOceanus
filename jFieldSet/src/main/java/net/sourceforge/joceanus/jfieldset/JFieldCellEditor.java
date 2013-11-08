@@ -53,6 +53,11 @@ import net.sourceforge.joceanus.jdecimal.JDecimalParser;
  */
 public class JFieldCellEditor {
     /**
+     * Empty string.
+     */
+    private static final String STR_EMPTY = "";
+
+    /**
      * ComboBoxSelector interface.
      */
     public interface ComboBoxSelector {
@@ -97,7 +102,7 @@ public class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             theField.setText(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
-                    ? ""
+                    ? STR_EMPTY
                     : (String) pValue);
             return theField;
         }
@@ -105,7 +110,7 @@ public class JFieldCellEditor {
         @Override
         public Object getCellEditorValue() {
             String s = theField.getText();
-            if (!s.equals("")) {
+            if (!STR_EMPTY.equals(s)) {
                 return s;
             }
             return null;
@@ -129,6 +134,7 @@ public class JFieldCellEditor {
 
             @Override
             public void focusGained(final FocusEvent e) {
+                /* Not needed */
             }
 
             @Override
@@ -172,7 +178,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return Integer.valueOf((String) o);
                 } catch (IllegalArgumentException e) {
@@ -330,10 +336,12 @@ public class JFieldCellEditor {
                 implements PopupMenuListener {
             @Override
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
+                /* Not needed */
             }
 
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
+                /* Not needed */
             }
 
             @Override
@@ -505,7 +513,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parseRateValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -543,7 +551,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parseMoneyValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -581,7 +589,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parseUnitsValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -619,7 +627,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parseDilutionValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -657,7 +665,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parsePriceValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -695,7 +703,7 @@ public class JFieldCellEditor {
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String)
-                && (!o.equals(""))) {
+                && (!STR_EMPTY.equals(o))) {
                 try {
                     return theParser.parseDilutedPriceValue((String) o);
                 } catch (IllegalArgumentException e) {

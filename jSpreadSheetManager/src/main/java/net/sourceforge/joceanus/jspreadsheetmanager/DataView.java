@@ -244,7 +244,8 @@ public class DataView
 
             /* Check that the row is within the view */
             iIndex -= theBaseRow;
-            return ((iIndex >= 0) && (iIndex < theView.getRowCount()));
+            return (iIndex >= 0)
+                   && (iIndex < theView.getRowCount());
         }
 
         @Override
