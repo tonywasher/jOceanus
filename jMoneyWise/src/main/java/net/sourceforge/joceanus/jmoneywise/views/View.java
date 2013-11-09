@@ -164,7 +164,7 @@ public class View
         DataAnalysis myAnalysis = new DataAnalysis(this, pData);
 
         /* Create the alternative analysis */
-        theAnalyser = new DataAnalyser(pData);
+        theAnalyser = new DataAnalyser(pData, getPreferenceMgr());
 
         /* Access the top level debug entry for this analysis */
         JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS2);

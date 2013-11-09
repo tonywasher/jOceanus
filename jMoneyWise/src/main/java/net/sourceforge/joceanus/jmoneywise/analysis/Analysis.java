@@ -46,6 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * Data Analysis.
@@ -214,6 +217,11 @@ public class Analysis
     private final FinanceData theData;
 
     /**
+     * The Preference Manager.
+     */
+    private final PreferenceManager thePreferences;
+
+    /**
      * The DataRange.
      */
     private final JDateDayRange theDateRange;
@@ -284,6 +292,14 @@ public class Analysis
      */
     public FinanceData getData() {
         return theData;
+    }
+
+    /**
+     * Obtain the preference manager.
+     * @return the data
+     */
+    public PreferenceManager getPreferenceMgr() {
+        return thePreferences;
     }
 
     /**
@@ -401,10 +417,13 @@ public class Analysis
     /**
      * Constructor for a full analysis.
      * @param pData the data to analyse events for
+     * @param pPreferenceMgr the preference manager
      */
-    protected Analysis(final FinanceData pData) {
+    protected Analysis(final FinanceData pData,
+                       final PreferenceManager pPreferenceMgr) {
         /* Store the data */
         theData = pData;
+        thePreferences = pPreferenceMgr;
         theDateRange = theData.getDateRange();
 
         /* Create a new set of buckets */
@@ -442,6 +461,7 @@ public class Analysis
                        final JDateDay pDate) {
         /* Store the data */
         theData = pSource.getData();
+        thePreferences = pSource.getPreferenceMgr();
         theDateRange = new JDateDayRange(null, pDate);
 
         /* Access the underlying maps/lists */
@@ -472,12 +492,13 @@ public class Analysis
                        final JDateDayRange pRange) {
         /* Store the data */
         theData = pSource.getData();
+        thePreferences = pSource.getPreferenceMgr();
         theDateRange = pRange;
 
         /* Access the underlying maps/lists */
         thePrices = pSource.getPrices();
         theRates = pSource.getRates();
-        theCharges = pSource.getCharges();
+        theCharges = new ChargeableEventList(pSource.getCharges(), pRange);
         theDilutions = pSource.getDilutions();
 
         /* Create a new set of buckets */
@@ -490,7 +511,15 @@ public class Analysis
         /* Create totalling buckets */
         thePortfolios = new PortfolioBucketList(this);
         theAccountCategories = new AccountCategoryBucketList(this);
-        theTaxCalculations = new TaxCalcBucketList(this, null);
+
+        /* Check to see whether this range matches a tax year */
+        TaxYearList myTaxYears = theData.getTaxYears();
+        TaxYear myTaxYear = myTaxYears.matchRange(theDateRange);
+
+        /* Allocate tax calculations if required */
+        theTaxCalculations = (myTaxYear != null)
+                ? new TaxCalcBucketList(this, myTaxYear)
+                : null;
     }
 
     /**

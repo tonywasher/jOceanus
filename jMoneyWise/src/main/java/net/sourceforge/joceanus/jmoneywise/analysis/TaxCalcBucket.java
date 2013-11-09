@@ -582,6 +582,11 @@ public final class TaxCalcBucket
         private Boolean hasReducedAllow = Boolean.FALSE;
 
         /**
+         * has tax been calculated?
+         */
+        private boolean taxCalculated = false;
+
+        /**
          * Obtain the user age.
          * @return the age
          */
@@ -680,6 +685,21 @@ public final class TaxCalcBucket
                 if (!myCurr.isRelevant()) {
                     myIterator.remove();
                 }
+            }
+        }
+
+        /**
+         * calculate tax.
+         */
+        public void calculateTax() {
+            /* If tax has not yet been calculated */
+            if (!taxCalculated) {
+                /* Create a new TaxAnalysis */
+                TaxAnalysis myTaxAnalysis = new TaxAnalysis(theAnalysis);
+
+                /* Calculate the tax and record the fact */
+                myTaxAnalysis.calculateTax();
+                taxCalculated = true;
             }
         }
     }

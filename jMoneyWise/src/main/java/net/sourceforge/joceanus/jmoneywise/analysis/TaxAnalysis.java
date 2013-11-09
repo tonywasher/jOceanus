@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 
 /**
- * Class to further analyse an analysis, primarily to calculate tax liability.
+ * Class to analyse tax liability.
  * @author Tony Washer
  */
-public class MetaAnalysis {
+public class TaxAnalysis {
     /**
      * Low Age Limit.
      */
@@ -74,11 +74,6 @@ public class MetaAnalysis {
     private final ChargeableEventList theCharges;
 
     /**
-     * The date range of the analysis.
-     */
-    // private final JDateDayRange theDateRange;
-
-    /**
      * The TaxYear of the analysis.
      */
     private final TaxYear theYear;
@@ -106,7 +101,7 @@ public class MetaAnalysis {
     /**
      * Taxation Preferences.
      */
-    public static class TaxationPreferences
+    public static class TaxPreferences
             extends PreferenceSet {
         /**
          * Registry name for BirthDate.
@@ -127,7 +122,7 @@ public class MetaAnalysis {
          * Constructor.
          * @throws JDataException on error
          */
-        public TaxationPreferences() throws JDataException {
+        public TaxPreferences() throws JDataException {
             super();
         }
 
@@ -151,10 +146,9 @@ public class MetaAnalysis {
      * Constructor.
      * @param pAnalysis the analysis
      */
-    protected MetaAnalysis(final Analysis pAnalysis) {
+    protected TaxAnalysis(final Analysis pAnalysis) {
         /* Store the analysis */
         theAnalysis = pAnalysis;
-        // theDateRange = theAnalysis.getDateRange();
         theCharges = theAnalysis.getCharges();
 
         /* Determine tax details */
@@ -166,12 +160,14 @@ public class MetaAnalysis {
 
     /**
      * Calculate tax.
-     * @param pManager the preference manager
      */
-    protected void calculateTax(final PreferenceManager pManager) {
+    protected void calculateTax() {
         /* Access Tax Categories */
         TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+
+        /* Access preference manager */
+        PreferenceManager myManager = theAnalysis.getPreferenceMgr();
 
         /* Calculate the gross income */
         calculateGrossIncome();
@@ -179,7 +175,7 @@ public class MetaAnalysis {
         JMoney myTax = new JMoney();
 
         /* Calculate the allowances and tax bands */
-        TaxBands myBands = calculateAllowances(pManager);
+        TaxBands myBands = calculateAllowances(myManager);
 
         /* Calculate the salary taxation */
         TaxCalcBucket myBucket = calculateSalaryTax(myBands);
@@ -307,10 +303,10 @@ public class MetaAnalysis {
         JMoney myAdjust;
 
         /* Access the taxation properties */
-        TaxationPreferences myPreferences = pManager.getPreferenceSet(TaxationPreferences.class);
+        TaxPreferences myPreferences = pManager.getPreferenceSet(TaxPreferences.class);
 
         /* Determine the relevant age for this tax year */
-        theAge = myPreferences.getDateValue(TaxationPreferences.NAME_BIRTHDATE).ageOn(theYear.getTaxYear());
+        theAge = myPreferences.getDateValue(TaxPreferences.NAME_BIRTHDATE).ageOn(theYear.getTaxYear());
 
         /* Determine the relevant allowance */
         if (theAge >= LIMIT_AGE_HI) {
@@ -419,10 +415,11 @@ public class MetaAnalysis {
     private TaxCalcBucket calculateSalaryTax(final TaxBands pBands) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Salary */
-        TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossSalary);
-        JMoney mySalary = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossSalary);
+        JMoney mySalary = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -577,10 +574,11 @@ public class MetaAnalysis {
     private TaxCalcBucket calculateRentalTax(final TaxBands pBands) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Rental */
-        TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossRental);
-        JMoney myRental = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossRental);
+        JMoney myRental = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -757,6 +755,7 @@ public class MetaAnalysis {
     private TaxCalcBucket calculateInterestTax(final TaxBands pBands) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* If we do not have a Low salary band */
         if (!theYear.hasLoSalaryBand()) {
@@ -765,8 +764,8 @@ public class MetaAnalysis {
         }
 
         /* Access Interest */
-        TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossInterest);
-        JMoney myInterest = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossInterest);
+        JMoney myInterest = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -914,16 +913,17 @@ public class MetaAnalysis {
     private TaxCalcBucket calculateDividendsTax(final TaxBands pBands) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access Dividends */
-        TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossDividend);
-        JMoney myDividends = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossDividend);
+        JMoney myDividends = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Unit Trust Dividends */
-        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossUTDividend);
-        myDividends.addAmount(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossUTDividend);
+        myDividends.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
 
         /* Store the total into the TaxDueDividends Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueDividend);
@@ -1227,10 +1227,11 @@ public class MetaAnalysis {
     private TaxCalcBucket calculateCapitalGainsTax(final TaxBands pBands) {
         /* Access Tax Calculations */
         TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
 
         /* Access base bucket */
-        TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossCapitalGains);
-        JMoney myCapital = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+        TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossCapitalGains);
+        JMoney myCapital = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
 
         /* Store the total into the TaxDueCapital Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueCapitalGains);

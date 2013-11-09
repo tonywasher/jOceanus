@@ -115,11 +115,11 @@ public class ReportBuilderAlt {
                     myReport = new PortfolioAlt(theManager);
                     break;
                 case TaxationBasis:
-                    // myReport = new TaxationBasis(theManager);
-                    // break;
+                    myReport = new TaxationBasisAlt(theManager);
+                    break;
                 case TaxCalculation:
-                    // myReport = new TaxCalculation(theManager);
-                    // break;
+                    myReport = new TaxCalcAlt(theManager);
+                    break;
                 default:
                     return null;
             }

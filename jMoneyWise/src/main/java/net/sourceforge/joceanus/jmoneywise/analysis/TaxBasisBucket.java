@@ -70,6 +70,16 @@ public final class TaxBasisBucket
     private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
+     * Base Field Id.
+     */
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
+
+    /**
+     * History Field Id.
+     */
+    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
+
+    /**
      * Totals bucket name.
      */
     private static final String NAME_TOTALS = NLS_BUNDLE.getString("NameTotals");
@@ -91,6 +101,12 @@ public final class TaxBasisBucket
         }
         if (FIELD_TAXCAT.equals(pField)) {
             return theTaxCategory;
+        }
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
+        }
+        if (FIELD_BASE.equals(pField)) {
+            return theBaseValues;
         }
 
         /* Handle Attribute fields */
@@ -136,6 +152,11 @@ public final class TaxBasisBucket
     @Override
     public String formatObject() {
         return getName();
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
     }
 
     @Override
@@ -449,15 +470,15 @@ public final class TaxBasisBucket
         JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.Net);
         myNet = new JMoney(myNet);
 
-        /* If this is an expense */
-        if (myActTran.isExpense()) {
-            /* Adjust the gross and net */
-            myGross.addAmount(myAmount);
-            myNet.addAmount(myAmount);
-        } else {
+        /* If this is an income */
+        if (myActTran.isIncome()) {
             /* Adjust the gross and net */
             myGross.subtractAmount(myAmount);
             myNet.subtractAmount(myAmount);
+        } else {
+            /* Adjust the gross and net */
+            myGross.addAmount(myAmount);
+            myNet.addAmount(myAmount);
         }
 
         /* Set the values */
@@ -894,6 +915,25 @@ public final class TaxBasisBucket
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pEvent, pIncome);
+        }
+
+        /**
+         * Adjust autoExpense.
+         * @param pEvent the event
+         * @param isExpense true/false
+         */
+        protected void adjustAutoExpense(final Event pEvent,
+                                         final boolean isExpense) {
+            /* Determine value */
+            JMoney myAmount = pEvent.getAmount();
+            if (!isExpense) {
+                myAmount = new JMoney(myAmount);
+                myAmount.negate();
+            }
+
+            /* Access the bucket and adjust it */
+            TaxBasisBucket myBucket = getBucket(TaxCategoryClass.Expense);
+            myBucket.adjustValue(pEvent, myAmount);
         }
 
         /**

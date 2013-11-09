@@ -489,19 +489,41 @@ public abstract class TaxYearBase
          * @return The TaxYear if present (or null)
          */
         public T findTaxYearForDate(final JDateDay pDate) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-            T myCurr = null;
-
             /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
+                T myCurr = myIterator.next();
 
                 /* Access the range for this tax year */
                 JDateDayRange myRange = myCurr.getDateRange();
 
                 /* Determine whether the date is owned by the tax year */
                 int iDiff = myRange.compareTo(pDate);
+                if (iDiff == 0) {
+                    return myCurr;
+                }
+            }
+
+            /* Return to caller */
+            return null;
+        }
+
+        /**
+         * Match a range.
+         * @param pRange the date range
+         * @return the matching TaxYear or null
+         */
+        public T matchRange(final JDateDayRange pRange) {
+            /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+
+                /* Access the range for this tax year */
+                JDateDayRange myRange = myCurr.getDateRange();
+
+                /* Determine whether the range matches the tax year */
+                int iDiff = myRange.compareTo(pRange);
                 if (iDiff == 0) {
                     return myCurr;
                 }

@@ -543,6 +543,10 @@ public final class AccountCategoryBucket
         protected void analysePortfolios(final PortfolioBucketList pPortfolios) {
             /* Skip if there are no portfolios */
             if (pPortfolios.size() == 0) {
+                /* Calculate delta first */
+                if (theTotals != null) {
+                    theTotals.calculateDelta();
+                }
                 return;
             }
 

@@ -1084,6 +1084,9 @@ public final class EventCategoryBucket
             if (myTaxCredit != null) {
                 theTaxCredit.addExpense(pEvent, myTaxCredit);
                 myGains.addAmount(myTaxCredit);
+
+                /* Adjust tax basis */
+                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.TaxPaid, myTaxCredit);
             }
 
             /* Adjust tax basis */

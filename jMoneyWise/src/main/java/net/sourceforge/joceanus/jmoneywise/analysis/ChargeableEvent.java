@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
@@ -310,6 +311,34 @@ public final class ChargeableEvent
          */
         public ChargeableEventList() {
             super(ChargeableEvent.class);
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source list.
+         * @param pRange the range of events to copy
+         */
+        public ChargeableEventList(final ChargeableEventList pSource,
+                                   final JDateDayRange pRange) {
+            /* Call super class */
+            super(ChargeableEvent.class);
+
+            /* Loop through the source */
+            Iterator<ChargeableEvent> myIterator = pSource.iterator();
+            while (myIterator.hasNext()) {
+                ChargeableEvent myEvent = myIterator.next();
+
+                /* Check the range */
+                int iDiff = pRange.compareTo(myEvent.getDate());
+                if (iDiff > 0) {
+                    continue;
+                } else if (iDiff < 0) {
+                    break;
+                }
+
+                /* Add to the list */
+                append(myEvent);
+            }
         }
 
         /**

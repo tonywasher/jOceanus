@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
@@ -56,6 +57,7 @@ import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
  * Class to analyse data.
@@ -149,12 +151,17 @@ public class DataAnalyser
     /**
      * The event category buckets.
      */
-    private EventCategoryBucketList theCategoryBuckets;
+    private final EventCategoryBucketList theCategoryBuckets;
+
+    /**
+     * The taxBasis buckets.
+     */
+    private final TaxBasisBucketList theTaxBasisBuckets;
 
     /**
      * The taxMan account.
      */
-    private PayeeBucket theTaxMan;
+    private final PayeeBucket theTaxMan;
 
     /**
      * The dilutions.
@@ -172,9 +179,11 @@ public class DataAnalyser
     /**
      * Constructor for a full year set of accounts.
      * @param pData the Data to analyse
+     * @param pPreferenceMgr the preference manager
      * @throws JDataException on error
      */
-    public DataAnalyser(final FinanceData pData) throws JDataException {
+    public DataAnalyser(final FinanceData pData,
+                        final PreferenceManager pPreferenceMgr) throws JDataException {
         /* Store the parameters */
         theData = pData;
 
@@ -183,7 +192,7 @@ public class DataAnalyser
         EventList myEvents = theData.getEvents();
 
         /* Create a new analysis */
-        theAnalysis = new Analysis(theData);
+        theAnalysis = new Analysis(theData, pPreferenceMgr);
         theManager = new AnalysisManager(theAnalysis);
 
         /* Access details from the analysis */
@@ -191,6 +200,7 @@ public class DataAnalyser
         theSecurityBuckets = theAnalysis.getSecurities();
         thePayeeBuckets = theAnalysis.getPayees();
         theCategoryBuckets = theAnalysis.getEventCategories();
+        theTaxBasisBuckets = theAnalysis.getTaxBasis();
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(AccountCategoryClass.TaxMan);
 
@@ -302,6 +312,7 @@ public class DataAnalyser
                 /* Subtract expense from Category bucket */
                 EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.subtractExpense(pEvent, myAmount);
+                theTaxBasisBuckets.adjustAutoExpense(pEvent, false);
 
                 /* else handle normally */
             } else {
@@ -332,6 +343,8 @@ public class DataAnalyser
                 /* Adjust the relevant category bucket */
                 EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.addExpense(pEvent, myAmount);
+                theTaxBasisBuckets.adjustAutoExpense(pEvent, true);
+
                 /* else handle normally */
             } else {
                 /* Determine the type of the credit account */

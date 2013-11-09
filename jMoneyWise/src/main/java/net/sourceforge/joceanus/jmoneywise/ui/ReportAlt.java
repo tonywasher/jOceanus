@@ -294,20 +294,12 @@ public class ReportAlt
             case BalanceSheet:
             case CashFlow:
             case IncomeExpense:
+            case TaxationBasis:
+            case TaxCalculation:
                 myAnalysis = myManager.getAnalysis(myYear.getDateRange());
                 myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
 
-            case TaxationBasis:
-                // myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                // myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxationBasis);
-                // break;
-
-            case TaxCalculation:
-                // myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                // myAnalysis.calculateTax();
-                // myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxCalculation);
-                // break;
             default:
                 return;
         }
