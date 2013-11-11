@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -117,7 +117,7 @@ public class EventInfoSet
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -188,7 +188,7 @@ public class EventInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         EventInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NotAllowed
+                ? JDataFieldRequired.NOTALLOWED
                 : isClassRequired(myClass);
     }
 
@@ -206,7 +206,7 @@ public class EventInfoSet
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
-            return JDataFieldRequired.NotAllowed;
+            return JDataFieldRequired.NOTALLOWED;
         }
         EventCategoryClass myClass = myCategory.getCategoryTypeClass();
 
@@ -215,82 +215,82 @@ public class EventInfoSet
         /* Reference and comments are always available */
             case Reference:
             case Comments:
-                return JDataFieldRequired.CanExist;
+                return JDataFieldRequired.CANEXIST;
 
                 /* NatInsurance and benefit can only occur on salary */
             case NatInsurance:
             case DeemedBenefit:
                 return (myClass == EventCategoryClass.TaxedIncome)
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
             case CreditDate:
                 return (myClass == EventCategoryClass.Transfer)
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
             case CharityDonation:
                 return (myClass == EventCategoryClass.Interest)
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Tax Credit */
             case TaxCredit:
                 switch (myClass) {
                     case TaxedIncome:
                     case BenefitIncome:
-                        return JDataFieldRequired.MustExist;
+                        return JDataFieldRequired.MUSTEXIST;
                     case GrantIncome:
-                        return JDataFieldRequired.CanExist;
+                        return JDataFieldRequired.CANEXIST;
                     case Interest:
                         return ((myDebit.isTaxFree()) || (myDebit.isGrossInterest()))
-                                ? JDataFieldRequired.NotAllowed
-                                : JDataFieldRequired.MustExist;
+                                ? JDataFieldRequired.NOTALLOWED
+                                : JDataFieldRequired.MUSTEXIST;
                     case Dividend:
                         return (myDebit.isTaxFree())
-                                ? JDataFieldRequired.NotAllowed
-                                : JDataFieldRequired.MustExist;
+                                ? JDataFieldRequired.NOTALLOWED
+                                : JDataFieldRequired.MUSTEXIST;
                     case Transfer:
                         return myDebit.isCategoryClass(AccountCategoryClass.LifeBond)
-                                ? JDataFieldRequired.MustExist
-                                : JDataFieldRequired.NotAllowed;
+                                ? JDataFieldRequired.MUSTEXIST
+                                : JDataFieldRequired.NOTALLOWED;
                     default:
-                        return JDataFieldRequired.NotAllowed;
+                        return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Handle debit units */
             case DebitUnits:
                 if (!myDebit.hasUnits()) {
-                    return JDataFieldRequired.NotAllowed;
+                    return JDataFieldRequired.NOTALLOWED;
                 }
                 switch (myClass) {
                     case Transfer:
                     case StockAdjust:
                     case StockDeMerger:
-                        return JDataFieldRequired.CanExist;
+                        return JDataFieldRequired.CANEXIST;
                     default:
-                        return JDataFieldRequired.NotAllowed;
+                        return JDataFieldRequired.NOTALLOWED;
                 }
 
             case CreditUnits:
                 if (!myCredit.hasUnits()) {
-                    return JDataFieldRequired.NotAllowed;
+                    return JDataFieldRequired.NOTALLOWED;
                 }
                 switch (myClass) {
                     case StockRightsTaken:
                     case StockDeMerger:
                     case StockTakeOver:
                     case StockSplit:
-                        return JDataFieldRequired.MustExist;
+                        return JDataFieldRequired.MUSTEXIST;
                     case Transfer:
                     case Inherited:
                     case StockAdjust:
                     case Dividend:
-                        return JDataFieldRequired.CanExist;
+                        return JDataFieldRequired.CANEXIST;
                     default:
-                        return JDataFieldRequired.NotAllowed;
+                        return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Dilution is only required for stock split/rights/deMerger */
@@ -300,32 +300,32 @@ public class EventInfoSet
                     case StockRightsWaived:
                     case StockRightsTaken:
                     case StockDeMerger:
-                        return JDataFieldRequired.MustExist;
+                        return JDataFieldRequired.MUSTEXIST;
                     default:
-                        return JDataFieldRequired.NotAllowed;
+                        return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Qualify Years is needed only for Taxable Gain */
             case QualifyYears:
                 return ((myClass == EventCategoryClass.Transfer) && (myDebit.isCategoryClass(AccountCategoryClass.LifeBond)))
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Qualify Years is possible only for StockTakeOver */
             case ThirdParty:
                 switch (myClass) {
                     case StockTakeOver:
                         return myEvent.getAmount().isNonZero()
-                                ? JDataFieldRequired.MustExist
-                                : JDataFieldRequired.NotAllowed;
+                                ? JDataFieldRequired.MUSTEXIST
+                                : JDataFieldRequired.NOTALLOWED;
                     default:
-                        return JDataFieldRequired.NotAllowed;
+                        return JDataFieldRequired.NOTALLOWED;
                 }
 
             default:
             case Pension:
             case CreditAmount:
-                return JDataFieldRequired.NotAllowed;
+                return JDataFieldRequired.NOTALLOWED;
         }
     }
 
@@ -349,14 +349,14 @@ public class EventInfoSet
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MustExist) {
+                if (myState == JDataFieldRequired.MUSTEXIST) {
                     myEvent.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NotAllowed) {
+            if (myState == JDataFieldRequired.NOTALLOWED) {
                 myEvent.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

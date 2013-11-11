@@ -215,8 +215,8 @@ public final class QCategory
         protected boolean outputCategories(final ThreadStatus<FinanceData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
-            if ((theParents.size() == 0)
-                && (theCategories.size() == 0)) {
+            if ((theParents.isEmpty())
+                && (theCategories.isEmpty())) {
                 return true;
             }
 

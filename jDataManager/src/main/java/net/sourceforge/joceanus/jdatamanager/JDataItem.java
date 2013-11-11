@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -130,6 +132,11 @@ public class JDataItem {
     private JDataHTML theFormatter = null;
 
     /**
+     * Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * Get the panel.
      * @return the panel
      */
@@ -140,10 +147,13 @@ public class JDataItem {
     /**
      * Constructor.
      * @param pFormatter the formatter
+     * @param pLogger the logger
      */
-    protected JDataItem(final JDataHTML pFormatter) {
+    protected JDataItem(final JDataHTML pFormatter,
+                        final Logger pLogger) {
         /* Record the formatter */
         theFormatter = pFormatter;
+        theLogger = pLogger;
 
         /* Create the slider */
         theSlider = new JSlider(SwingConstants.HORIZONTAL);
@@ -337,7 +347,7 @@ public class JDataItem {
         int myPos = theDetail.getIndex();
 
         /* Show/hide movement buttons */
-        boolean doShowSlider = (mySize > 1);
+        boolean doShowSlider = mySize > 1;
         theNext.setVisible(doShowSlider);
         thePrev.setVisible(doShowSlider);
         theSlider.setVisible(doShowSlider);
@@ -457,7 +467,7 @@ public class JDataItem {
                             theEditor.setPage(pEvent.getURL());
                         }
                     } catch (IOException e) {
-                        url = null;
+                        theLogger.log(Level.SEVERE, "Failed to access link", e);
                     }
                 }
             }

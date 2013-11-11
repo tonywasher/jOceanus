@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jeventmanager.JEventObject;
 
 /**
@@ -69,7 +69,7 @@ public class PreferenceManager
 
         /* Return the value */
         return (mySet == null)
-                ? JDataFieldValue.UnknownField
+                ? JDataFieldValue.UNKNOWN
                 : mySet;
     }
 

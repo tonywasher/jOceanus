@@ -97,21 +97,6 @@ public final class JDataObject {
     }
 
     /**
-     * Special values for return by getFieldValue.
-     */
-    public enum JDataFieldValue {
-        /**
-         * Field not known.
-         */
-        UnknownField,
-
-        /**
-         * Field to be skipped.
-         */
-        SkipField;
-    }
-
-    /**
      * Difference class.
      */
     public static class JDataDifference {

@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
@@ -103,7 +103,7 @@ public class TaxInfoSet
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -156,7 +156,7 @@ public class TaxInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         TaxYearInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NotAllowed
+                ? JDataFieldRequired.NOTALLOWED
                 : isClassRequired(myClass);
     }
 
@@ -172,7 +172,7 @@ public class TaxInfoSet
 
         /* If we have no TaxRegime, no class is allowed */
         if (myRegime == null) {
-            return JDataFieldRequired.NotAllowed;
+            return JDataFieldRequired.NOTALLOWED;
         }
 
         /* Switch on class */
@@ -184,24 +184,24 @@ public class TaxInfoSet
             case AdditionalTaxRate:
             case AdditionalDividendTaxRate:
                 return myRegime.hasAdditionalTaxBand()
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle CapitalIncome Tax Details */
             case CapitalTaxRate:
                 return myRegime.hasCapitalGainsAsIncome()
-                        ? JDataFieldRequired.NotAllowed
-                        : JDataFieldRequired.MustExist;
+                        ? JDataFieldRequired.NOTALLOWED
+                        : JDataFieldRequired.MUSTEXIST;
 
                 /* Handle CapitalIncome Tax Details */
             case HiCapitalTaxRate:
                 return myRegime.hasCapitalGainsAsIncome()
-                        ? JDataFieldRequired.NotAllowed
-                        : JDataFieldRequired.CanExist;
+                        ? JDataFieldRequired.NOTALLOWED
+                        : JDataFieldRequired.CANEXIST;
 
                 /* Handle all other fields */
             default:
-                return JDataFieldRequired.MustExist;
+                return JDataFieldRequired.MUSTEXIST;
         }
     }
 
@@ -225,14 +225,14 @@ public class TaxInfoSet
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MustExist) {
+                if (myState == JDataFieldRequired.MUSTEXIST) {
                     myTaxYear.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NotAllowed) {
+            if (myState == JDataFieldRequired.NOTALLOWED) {
                 myTaxYear.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

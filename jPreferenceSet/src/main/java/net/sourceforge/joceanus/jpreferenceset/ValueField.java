@@ -431,7 +431,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -490,7 +490,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -561,7 +561,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -632,7 +632,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -703,7 +703,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -774,7 +774,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -845,7 +845,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 
@@ -919,7 +919,7 @@ public class ValueField
         @Override
         protected boolean isNewValue(final Object pValue) {
             /* Determine whether the value has changed */
-            return (!Difference.isEqual(getValue(), pValue));
+            return !Difference.isEqual(getValue(), pValue);
         }
     }
 }

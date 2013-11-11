@@ -466,16 +466,16 @@ public class JDataFields {
         /**
          * Must exist.
          */
-        MustExist,
+        MUSTEXIST,
 
         /**
          * Can exist.
          */
-        CanExist,
+        CANEXIST,
 
         /**
          * Not Allowed.
          */
-        NotAllowed;
+        NOTALLOWED;
     }
 }

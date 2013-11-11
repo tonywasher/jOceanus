@@ -278,7 +278,8 @@ public final class QAccount
      */
     protected boolean isActive() {
         /* Check size of list */
-        return ((theEvents.size() > 0) || (theAccount.getOpeningBalance() != null));
+        return (!theEvents.isEmpty())
+               || (theAccount.getOpeningBalance() != null);
     }
 
     /**

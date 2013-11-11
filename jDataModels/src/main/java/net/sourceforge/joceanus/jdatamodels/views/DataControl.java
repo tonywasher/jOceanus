@@ -174,13 +174,13 @@ public abstract class DataControl<T extends DataSet<T>>
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 
-        /* Create the data manager */
-        theDataMgr = new JDataManager();
-        initDataMgr();
-
         /* Create the Preference manager */
         theLogger = pLogger;
         thePreferenceMgr = new PreferenceManager(theLogger);
+
+        /* Create the data manager */
+        theDataMgr = new JDataManager(theLogger);
+        initDataMgr();
 
         /* Access the Security Preferences */
         SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);

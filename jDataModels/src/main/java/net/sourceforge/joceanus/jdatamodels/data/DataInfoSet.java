@@ -32,10 +32,10 @@ import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
@@ -86,7 +86,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         if (FIELD_VALUES.equals(pField)) {
             return theMap;
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -238,8 +238,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         /* Return change details */
         return (myInfo != null)
                && myInfo.hasHistory()
-                ? Difference.Different
-                : Difference.Identical;
+                ? Difference.DIFFERENT
+                : Difference.IDENTICAL;
     }
 
     /**
@@ -251,7 +251,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     public void setValue(final E pInfoClass,
                          final Object pValue) throws JDataException {
         /* Determine whether this is a deletion */
-        boolean bDelete = (pValue == null);
+        boolean bDelete = pValue == null;
 
         /* Obtain the Map value */
         T myValue = theMap.get(pInfoClass);
@@ -384,9 +384,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @return <code>true</code> if changes were made, <code>false</code> otherwise
      */
     public boolean checkForHistory() {
-        boolean bChanges = false;
-
         /* Loop through each existing value */
+        boolean bChanges = false;
         for (T myValue : theMap.values()) {
             /* If this is a newly created item */
             if (!myValue.hasHistory()) {
@@ -433,7 +432,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         int myVersion = theOwner.getValueSetVersion();
 
         /* We are restoring an edit version if delete was in this session */
-        boolean bEditRestore = (myVersion > 0);
+        boolean bEditRestore = myVersion > 0;
         if (!bEditRestore) {
             /* Access underlying version if not editRestore */
             myVersion = theOwner.getBase().getValueSetVersion();

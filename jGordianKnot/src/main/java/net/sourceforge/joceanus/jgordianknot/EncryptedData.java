@@ -361,12 +361,12 @@ public final class EncryptedData {
         public Difference differs(final Object pThat) {
             /* Reject if null */
             if (pThat == null) {
-                return Difference.Different;
+                return Difference.DIFFERENT;
             }
 
             /* Reject if wrong class */
             if (getClass() != pThat.getClass()) {
-                return Difference.Different;
+                return Difference.DIFFERENT;
             }
 
             /* Access as correct class */
@@ -374,16 +374,16 @@ public final class EncryptedData {
 
             /* Compare Unencrypted value */
             if (Difference.getDifference(getValue(), myField.getValue()).isDifferent()) {
-                return Difference.Different;
+                return Difference.DIFFERENT;
             }
 
             /* Compare Encrypted value */
             if (!Arrays.equals(getBytes(), myField.getBytes())) {
-                return Difference.Security;
+                return Difference.SECURITY;
             }
 
             /* Item is the Same */
-            return Difference.Identical;
+            return Difference.IDENTICAL;
         }
     }
 

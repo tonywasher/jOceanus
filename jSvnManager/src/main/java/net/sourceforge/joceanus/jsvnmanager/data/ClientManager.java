@@ -74,7 +74,7 @@ public class ClientManager {
      */
     public SVNClientManager getClientMgr() {
         /* If we have an already allocated client manager in the pool */
-        if (thePool.size() > 0) {
+        if (!thePool.isEmpty()) {
             /* Access the most recent item and remove it from the pool */
             SVNClientManager myMgr = thePool.get(thePool.size() - 1);
             thePool.remove(myMgr);

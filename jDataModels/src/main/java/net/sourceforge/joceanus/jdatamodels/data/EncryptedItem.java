@@ -234,13 +234,13 @@ public abstract class EncryptedItem
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)
-                    ? Difference.Different
-                    : Difference.Identical;
+                    ? Difference.DIFFERENT
+                    : Difference.IDENTICAL;
         }
 
         /* Handle case where new value is null */
         if (pNew == null) {
-            return Difference.Different;
+            return Difference.DIFFERENT;
         }
 
         /* Handle Standard cases */

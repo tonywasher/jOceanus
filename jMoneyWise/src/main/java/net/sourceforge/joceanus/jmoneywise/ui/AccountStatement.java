@@ -814,18 +814,18 @@ public class AccountStatement
                 case COLUMN_CREDIT:
                     if ((pLine == null)
                         || (pLine.isCredit())) {
-                        return ((theStateType == StatementType.Units)
+                        return (theStateType == StatementType.Units)
                                 ? EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits)
-                                : Event.FIELD_AMOUNT);
+                                : Event.FIELD_AMOUNT;
                     } else {
                         return null;
                     }
                 case COLUMN_DEBIT:
                     if ((pLine == null)
                         || (!pLine.isCredit())) {
-                        return ((theStateType == StatementType.Units)
+                        return (theStateType == StatementType.Units)
                                 ? EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits)
-                                : Event.FIELD_AMOUNT);
+                                : Event.FIELD_AMOUNT;
                     } else {
                         return null;
                     }
@@ -856,9 +856,10 @@ public class AccountStatement
                 case COLUMN_DATE:
                     return true;
                 case COLUMN_CATEGORY:
-                    return (pLine.getDate() != null);
+                    return pLine.getDate() != null;
                 case COLUMN_DESC:
-                    return ((pLine.getDate() != null) && (pLine.getCategory() != null));
+                    return (pLine.getDate() != null)
+                           && (pLine.getCategory() != null);
                 default:
                     if ((pLine.getDate() == null)
                         || (pLine.getComments() == null)
@@ -1168,9 +1169,10 @@ public class AccountStatement
                 }
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = ((myCat != null) && ((myLine.isInterest()) || (myLine.isDividend())));
-                if ((isTaxable)
-                    && ((myTax == null) || (!myTax.isNonZero()))) {
+                boolean isTaxable = (myCat != null)
+                                    && (myLine.isInterest() || myLine.isDividend());
+                if (isTaxable
+                    && ((myTax == null) || !myTax.isNonZero())) {
                     enableCalcTax = true;
                 }
             }

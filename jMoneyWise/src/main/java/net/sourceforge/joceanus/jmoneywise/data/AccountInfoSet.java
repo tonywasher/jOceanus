@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -191,7 +191,7 @@ public class AccountInfoSet
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -280,7 +280,7 @@ public class AccountInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NotAllowed
+                ? JDataFieldRequired.NOTALLOWED
                 : isClassRequired(myClass);
     }
 
@@ -296,7 +296,7 @@ public class AccountInfoSet
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
-            return JDataFieldRequired.NotAllowed;
+            return JDataFieldRequired.NOTALLOWED;
         }
         AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
 
@@ -308,7 +308,7 @@ public class AccountInfoSet
             case Account:
             case Reference:
             case Comments:
-                return JDataFieldRequired.CanExist;
+                return JDataFieldRequired.CANEXIST;
 
                 /* Handle Institution Details */
             case WebSite:
@@ -316,60 +316,60 @@ public class AccountInfoSet
             case UserId:
             case Password:
                 return myClass.isNonAsset()
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Parent */
             case Parent:
                 return myClass.isChild()
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Alias */
             case Alias:
                 return myClass.canAlias()
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Portfolio */
             case Portfolio:
                 return (myClass.hasUnits())
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Holding */
             case Holding:
                 return (myClass == AccountCategoryClass.Portfolio)
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Maturity */
             case Maturity:
                 return (myClass == AccountCategoryClass.Bond)
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Symbol */
             case Symbol:
                 return (myClass.hasUnits() && (myAccount.getAlias() == null))
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle OpeningBalance */
             case OpeningBalance:
                 return myClass.isSavings()
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle AutoExpense */
             case AutoExpense:
                 return myClass.isCash()
-                        ? JDataFieldRequired.CanExist
-                        : JDataFieldRequired.NotAllowed;
+                        ? JDataFieldRequired.CANEXIST
+                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle all other fields */
             default:
-                return JDataFieldRequired.MustExist;
+                return JDataFieldRequired.MUSTEXIST;
         }
     }
 
@@ -393,14 +393,14 @@ public class AccountInfoSet
             /* If the field is missing */
             if (!isExisting) {
                 /* Handle required field missing */
-                if (myState == JDataFieldRequired.MustExist) {
+                if (myState == JDataFieldRequired.MUSTEXIST) {
                     myAccount.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
-            if (myState == JDataFieldRequired.NotAllowed) {
+            if (myState == JDataFieldRequired.NOTALLOWED) {
                 myAccount.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }

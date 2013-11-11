@@ -188,7 +188,7 @@ public final class DataConverter {
         StringBuilder myValue = new StringBuilder();
 
         /* handle negative values */
-        boolean isNegative = (myLong < 0);
+        boolean isNegative = myLong < 0;
         if (isNegative) {
             myLong = -myLong;
         }
@@ -328,7 +328,8 @@ public final class DataConverter {
         long myValue = 0;
 
         /* handle negative values */
-        boolean isNegative = ((myLen > 0) && (myHexString.charAt(0) == '-'));
+        boolean isNegative = (myLen > 0)
+                             && (myHexString.charAt(0) == '-');
         if (isNegative) {
             myHexString = myHexString.substring(1);
             myLen--;
@@ -619,7 +620,8 @@ public final class DataConverter {
         }
 
         /* Handle short input */
-        int myXtra = (myLen % myTriplet.length);
+        int myXtra = myLen
+                     % myTriplet.length;
         if (myXtra > 0) {
             /* Determine padding length */
             myXtra = myTriplet.length
@@ -671,20 +673,18 @@ public final class DataConverter {
             int c0 = BASE64_DECODE[myBase64[myIn++]];
             int c1 = BASE64_DECODE[myBase64[myIn++]];
             myOutput[myOut++] = (byte) (((c0 << BASE64_SHIFT1) | (c1 >> BASE64_SHIFT2)) & BYTE_MASK);
-            if (myOut >= myOutLen) {
-                break;
-            }
 
             /* Build second byte */
-            int c2 = BASE64_DECODE[myBase64[myIn++]];
-            myOutput[myOut++] = (byte) (((c1 << BASE64_SHIFT2) | (c2 >> BASE64_SHIFT1)) & BYTE_MASK);
-            if (myOut >= myOutLen) {
-                break;
-            }
+            if (myOut < myOutLen) {
+                int c2 = BASE64_DECODE[myBase64[myIn++]];
+                myOutput[myOut++] = (byte) (((c1 << BASE64_SHIFT2) | (c2 >> BASE64_SHIFT1)) & BYTE_MASK);
 
-            /* Build third byte */
-            int c3 = BASE64_DECODE[myBase64[myIn++]];
-            myOutput[myOut++] = (byte) (((c2 << BASE64_SHIFT3) | c3) & BYTE_MASK);
+                /* Build third byte */
+                if (myOut < myOutLen) {
+                    int c3 = BASE64_DECODE[myBase64[myIn++]];
+                    myOutput[myOut++] = (byte) (((c2 << BASE64_SHIFT3) | c3) & BYTE_MASK);
+                }
+            }
         }
         return myOutput;
     }

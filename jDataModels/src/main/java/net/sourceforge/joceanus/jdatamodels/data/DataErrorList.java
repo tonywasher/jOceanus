@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 /**
  * Report-able object list.
@@ -76,7 +76,7 @@ public class DataErrorList<T extends JDataContents>
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**

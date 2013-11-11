@@ -178,7 +178,7 @@ public final class QClass
         protected boolean outputClasses(final ThreadStatus<FinanceData> pStatus,
                                         final OutputStreamWriter pStream) throws IOException {
             /* If we have no classes */
-            if (theClasses.size() == 0) {
+            if (theClasses.isEmpty()) {
                 return true;
             }
 

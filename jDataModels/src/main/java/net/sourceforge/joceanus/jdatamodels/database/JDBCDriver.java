@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.database;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.ColumnType;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
 
@@ -38,6 +40,28 @@ public enum JDBCDriver {
      * PostgreSQL.
      */
     PostgreSQL;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDBCDriver.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
      * Buffer length.
@@ -128,37 +152,37 @@ public enum JDBCDriver {
     public String getDatabaseType(final ColumnType pType) {
         boolean isSQLServer = this.equals(SQLServer);
         switch (pType) {
-            case Boolean:
+            case BOOLEAN:
                 return (isSQLServer)
                         ? "bit"
                         : "boolean";
-            case Short:
+            case SHORT:
                 return "smallint";
-            case Integer:
+            case INTEGER:
                 return "int";
-            case Long:
+            case LONG:
                 return "bigint";
-            case Float:
+            case FLOAT:
                 return "real";
-            case Double:
+            case DOUBLE:
                 return (isSQLServer)
                         ? "float"
                         : "double precision";
-            case Date:
+            case DATE:
                 return "date";
-            case Money:
+            case MONEY:
                 return (isSQLServer)
                         ? "money"
                         : "numeric(18,2)";
-            case Decimal:
+            case DECIMAL:
                 return (isSQLServer)
                         ? "decimal"
                         : "numeric";
-            case Binary:
+            case BINARY:
                 return (isSQLServer)
                         ? "varbinary"
                         : "bytea";
-            case String:
+            case STRING:
             default:
                 return "varchar";
         }

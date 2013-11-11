@@ -27,7 +27,6 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 
 /**
@@ -137,8 +136,8 @@ public class ValueSetDelta
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
             return (theOldSet.isDeletion() == theNewSet.isDeletion())
-                    ? JDataFieldValue.SkipField
-                    : new JDataDifference(theOldSet.isDeletion(), Difference.Different);
+                    ? JDataFieldValue.SKIP
+                    : new JDataDifference(theOldSet.isDeletion(), Difference.DIFFERENT);
         }
 
         /* Adjust index */

@@ -63,7 +63,7 @@ public class BucketHistory<T extends BucketValues<T, ?>>
      * @return true/false
      */
     protected boolean isIdle() {
-        return (size() == 0);
+        return isEmpty();
     }
 
     /**

@@ -366,7 +366,6 @@ public class PreferenceSetPanel
                     theLabel = null;
                     break;
                 default:
-                    /* Create the label */
                     theLabel = new JLabel(thePreference.getDisplay()
                                           + ":");
                     theLabel.setHorizontalAlignment(SwingConstants.RIGHT);

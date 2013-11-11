@@ -99,7 +99,7 @@ public class ErrorPanel
      * @return true/false
      */
     public boolean hasError() {
-        return (theErrors.size() > 0);
+        return (!theErrors.isEmpty());
     }
 
     /**
@@ -176,7 +176,7 @@ public class ErrorPanel
         }
 
         /* If we have some exceptions */
-        if (pExceptions.size() > 0) {
+        if (!pExceptions.isEmpty()) {
             /* Show the debug */
             theDataError.showEntry();
 

@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jfieldset;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimalFormatter;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
@@ -149,7 +149,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         Object myValue = pItem.getFieldValue(theField);
 
         /* If we are skipping the field */
-        if (myValue == JDataFieldValue.SkipField) {
+        if (myValue == JDataFieldValue.SKIP) {
             /* Set to null */
             myValue = null;
         }

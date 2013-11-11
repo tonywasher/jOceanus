@@ -1266,13 +1266,14 @@ public class TaxAnalysis {
         if (!isFinished) {
             /* Access the BasicGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CapitalBasicRate);
-            myTaxBucket.setRate((myRegime.hasCapitalGainsAsIncome()
+            myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
                     ? theYear.getBasicTaxRate()
-                    : theYear.getCapTaxRate()));
+                    : theYear.getCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Determine whether we need to use basic tax band */
-            boolean bUseBasicBand = ((myRegime.hasCapitalGainsAsIncome()) || (theYear.getHiCapTaxRate() != null));
+            boolean bUseBasicBand = (myRegime.hasCapitalGainsAsIncome())
+                                    || (theYear.getHiCapTaxRate() != null);
 
             /* If the gains is greater than the Basic Tax Band and we have no higher rate */
             if ((myCapital.compareTo(pBands.theBasicBand) > 0)
@@ -1301,9 +1302,9 @@ public class TaxAnalysis {
         if (!isFinished) {
             /* Access the HiGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CapitalHiRate);
-            myTaxBucket.setRate((myRegime.hasCapitalGainsAsIncome()
+            myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
                     ? theYear.getHiTaxRate()
-                    : theYear.getHiCapTaxRate()));
+                    : theYear.getHiCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Set the tax bucket and add the tax */

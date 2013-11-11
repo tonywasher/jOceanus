@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.ItemValidation;
 import net.sourceforge.joceanus.jdatamanager.ItemValidation.ErrorElement;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamanager.ValueSetHistory;
@@ -244,7 +244,7 @@ public abstract class DataItem
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
@@ -256,31 +256,31 @@ public abstract class DataItem
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted()
                     ? Boolean.TRUE
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null)
                     ? theValueSet.getVersion()
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HEADER.equals(pField)) {
             return (isHeader)
                     ? isHeader
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory()
                     ? theHistory
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return hasErrors()
                     ? theErrors
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Not recognised */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -639,7 +639,7 @@ public abstract class DataItem
     public Difference fieldChanged(final JDataField pField) {
         return ((pField != null) && (pField.isValueSetField()))
                 ? theHistory.fieldChanged(pField)
-                : Difference.Identical;
+                : Difference.IDENTICAL;
     }
 
     /**
@@ -647,7 +647,7 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return (theEdit == EditState.ERROR);
+        return theEdit == EditState.ERROR;
     }
 
     /**
@@ -655,7 +655,7 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
-        return (theEdit != EditState.CLEAN);
+        return theEdit != EditState.CLEAN;
     }
 
     /**
@@ -663,7 +663,8 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return ((theEdit == EditState.CLEAN) || (theEdit == EditState.VALID));
+        return (theEdit == EditState.CLEAN)
+               || (theEdit == EditState.VALID);
     }
 
     /**
@@ -964,7 +965,8 @@ public abstract class DataItem
      * @return the order
      */
     protected int compareId(final DataItem pThat) {
-        return (theId - pThat.theId);
+        return theId
+               - pThat.theId;
     }
 
     /**

@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
@@ -99,7 +99,7 @@ public class TaxYear
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                     ? theInfoSet
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
@@ -650,7 +650,7 @@ public class TaxYear
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
-                    : Difference.Identical;
+                    : Difference.IDENTICAL;
         }
 
         /* Check super fields */

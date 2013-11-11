@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
@@ -116,12 +116,12 @@ public final class TaxBasisBucket
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
                         ? myValue
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -254,7 +254,7 @@ public final class TaxBasisBucket
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -637,8 +637,9 @@ public final class TaxBasisBucket
             JMoney myGross = getMoneyValue(TaxBasisAttribute.Gross);
             JMoney myNet = getMoneyValue(TaxBasisAttribute.Net);
             JMoney myTax = getMoneyValue(TaxBasisAttribute.TaxCredit);
-            return ((myGross.isNonZero())
-                    || (myNet.isNonZero()) || (myTax.isNonZero()));
+            return (myGross.isNonZero())
+                   || (myNet.isNonZero())
+                   || (myTax.isNonZero());
         }
     }
 
@@ -693,7 +694,7 @@ public final class TaxBasisBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

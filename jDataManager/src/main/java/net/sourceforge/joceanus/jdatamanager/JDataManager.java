@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jdatamanager;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -86,6 +87,11 @@ public class JDataManager {
     private int theNextIndex = 0;
 
     /**
+     * Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * Get tree model.
      * @return the model
      */
@@ -126,9 +132,21 @@ public class JDataManager {
     }
 
     /**
-     * Constructor.
+     * Get Logger.
+     * @return the logger
      */
-    public JDataManager() {
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
+     * Constructor.
+     * @param pLogger the logger
+     */
+    public JDataManager(final Logger pLogger) {
+        /* Store logger */
+        theLogger = pLogger;
+
         /* Create the root node */
         theRoot = new JDataEntry(WINDOW_TITLE);
 
@@ -480,7 +498,7 @@ public class JDataManager {
                         List<?> myList = (List<?>) myValue;
 
                         /* If the list is not empty */
-                        if (myList.size() > 0) {
+                        if (!myList.isEmpty()) {
                             /* Add as a child */
                             addChildEntry(this, myField.getName(), myValue);
                         }

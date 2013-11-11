@@ -255,7 +255,7 @@ public class SheetEvent
     @Override
     protected void insertOpenItem(final Event pItem) throws JDataException {
         /* Determine whether we are a child event */
-        boolean isChild = (pItem.getParent() != null);
+        boolean isChild = pItem.getParent() != null;
 
         /* Access debit/credit names */
         String myDebit = pItem.getDebitName();

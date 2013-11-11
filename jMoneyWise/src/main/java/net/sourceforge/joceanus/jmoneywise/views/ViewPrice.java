@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
@@ -251,9 +251,9 @@ public class ViewPrice
                 return theAccount;
             }
             if (FIELD_DILUTIONS.equals(pField)) {
-                return (theDilutions.size() > 0)
-                        ? theDilutions
-                        : JDataFieldValue.SkipField;
+                return (theDilutions.isEmpty())
+                        ? JDataFieldValue.SKIP
+                        : theDilutions;
             }
             return super.getFieldValue(pField);
         }

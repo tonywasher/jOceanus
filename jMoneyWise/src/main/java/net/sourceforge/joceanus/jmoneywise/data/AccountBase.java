@@ -680,7 +680,7 @@ public abstract class AccountBase
      */
     public boolean isCategoryClass(final AccountCategoryClass pClass) {
         /* Check for match */
-        return (getAccountCategoryClass() == pClass);
+        return getAccountCategoryClass() == pClass;
     }
 
     /**

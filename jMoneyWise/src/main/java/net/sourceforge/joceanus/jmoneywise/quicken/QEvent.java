@@ -428,6 +428,14 @@ public class QEvent
         }
 
         /**
+         * is the list empty?
+         * @return true/false
+         */
+        protected boolean isEmpty() {
+            return theEvents.isEmpty();
+        }
+
+        /**
          * Constructor.
          * @param pAnalysis the analysis
          * @param pAccount the list owner

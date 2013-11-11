@@ -72,7 +72,7 @@ public final class JSvnManager {
     /**
      * The Data Manager.
      */
-    private final JDataManager theDataMgr = new JDataManager();
+    private final JDataManager theDataMgr;
 
     /**
      * The Preference Manager.
@@ -161,6 +161,9 @@ public final class JSvnManager {
     protected JSvnManager(final Logger pLogger) {
         /* Store logger */
         theLogger = pLogger;
+
+        /* Create the data manager */
+        theDataMgr = new JDataManager(theLogger);
 
         /* Create the preference manager */
         thePreferenceMgr = new PreferenceManager(theLogger);
@@ -442,10 +445,8 @@ public final class JSvnManager {
                 }
 
                 /* Dispose of the frame */
+                theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 theFrame.dispose();
-
-                /* Exit the application */
-                System.exit(0);
 
                 /* else if this is the Data Window shutting down */
             } else if (o.equals(theDataWdw)) {

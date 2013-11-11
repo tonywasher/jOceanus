@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -98,23 +98,23 @@ public class EventFilter
             return theEventCategories;
         }
         if (FIELD_FILTERACCOUNTS.equals(pField)) {
-            return (theAccounts.size() > 0)
-                    ? theAccounts
-                    : JDataFieldValue.SkipField;
+            return (theAccounts.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theAccounts;
         }
         if (FIELD_FILTEREDPAYEES.equals(pField)) {
-            return (thePayees.size() > 0)
-                    ? thePayees
-                    : JDataFieldValue.SkipField;
+            return (thePayees.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePayees;
         }
         if (FIELD_FILTEREDEVENTCATEGORIES.equals(pField)) {
-            return (theEventCategories.size() > 0)
-                    ? theEventCategories
-                    : JDataFieldValue.SkipField;
+            return (theEventCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventCategories;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -663,7 +663,7 @@ public class EventFilter
      */
     private boolean filterOnAccount(final Account pAccount) {
         /* Check for presence of Account in list */
-        return (theFilteredAccounts.findItemById(pAccount.getId()) == null);
+        return theFilteredAccounts.findItemById(pAccount.getId()) == null;
     }
 
     /**
@@ -716,7 +716,8 @@ public class EventFilter
         /* If we are filtering on TaxMan */
         if (filterOnTaxManPayee) {
             /* Allow if there is tax credit or national insurance */
-            return ((pEvent.getTaxCredit() == null) && (pEvent.getNatInsurance() == null));
+            return (pEvent.getTaxCredit() == null)
+                   && (pEvent.getNatInsurance() == null);
         }
 
         /* Has not met any rules so filter it */
@@ -730,7 +731,7 @@ public class EventFilter
      */
     private boolean filterOnPayee(final Account pPayee) {
         /* Check for presence of Payee in list */
-        return (theFilteredPayees.findItemById(pPayee.getId()) == null);
+        return theFilteredPayees.findItemById(pPayee.getId()) == null;
     }
 
     /**
@@ -805,6 +806,6 @@ public class EventFilter
      */
     private boolean filterOnEventCategory(final EventCategory pCategory) {
         /* Check for presence of Category in list */
-        return (theFilteredEventCategories.findItemById(pCategory.getId()) == null);
+        return theFilteredEventCategories.findItemById(pCategory.getId()) == null;
     }
 }

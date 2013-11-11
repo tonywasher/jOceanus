@@ -27,10 +27,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -161,12 +161,12 @@ public final class InvestmentAnalysis
         }
         if (FIELD_EVENT.equals(pField)) {
             return (theEvent == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theEvent;
         }
         if (FIELD_CATEGORY.equals(pField)) {
             return (theEvent == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : getCategory();
         }
 
@@ -177,7 +177,7 @@ public final class InvestmentAnalysis
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -192,7 +192,7 @@ public final class InvestmentAnalysis
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -468,7 +468,7 @@ public final class InvestmentAnalysis
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

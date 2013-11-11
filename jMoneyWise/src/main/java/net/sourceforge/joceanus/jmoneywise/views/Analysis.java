@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -101,39 +101,39 @@ public class Analysis
         if (FIELD_ACCOUNTS.equals(pField)) {
             return (theAccounts.size() > 0)
                     ? theAccounts
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ACTCATS.equals(pField)) {
             return (theAccountCategories.size() > 0)
                     ? theAccountCategories
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_EVTCATS.equals(pField)) {
             return (theEventCategories.size() > 0)
                     ? theEventCategories
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_TAXCATS.equals(pField)) {
             return ((theTaxCategories != null) && (theTaxCategories.size() > 0))
                     ? theTaxCategories
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_CHARGES.equals(pField)) {
             return (theCharges.size() > 0)
                     ? theCharges
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_DATERANGE.equals(pField)) {
             return theDateRange;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return (theAccount == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theAccount;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override

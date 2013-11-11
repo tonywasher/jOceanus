@@ -241,10 +241,11 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNewStage("Writing classes")) && (pStatus.setNumSteps(theClasses.size())));
+        boolean bContinue = (pStatus.setNewStage("Writing classes"))
+                            && (pStatus.setNumSteps(theClasses.size()));
 
         /* Skip step if we have no classes */
-        if (theClasses.size() == 0) {
+        if (theClasses.isEmpty()) {
             return true;
         }
 
@@ -296,7 +297,8 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNewStage("Writing categories")) && (pStatus.setNumSteps(theCategories.size())));
+        boolean bContinue = (pStatus.setNewStage("Writing categories"))
+                            && (pStatus.setNumSteps(theCategories.size()));
 
         /* Format Item Type header */
         QIFRecord.formatItemType(QIFEventCategory.QIF_ITEM, myBuilder);
@@ -346,7 +348,8 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNewStage("Writing accounts")) && (pStatus.setNumSteps(theAccounts.size())));
+        boolean bContinue = (pStatus.setNewStage("Writing accounts"))
+                            && (pStatus.setNumSteps(theAccounts.size()));
 
         /* Set AutoSwitch and header */
         QIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);
@@ -397,10 +400,11 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNewStage("Writing securities")) && (pStatus.setNumSteps(theSecurities.size())));
+        boolean bContinue = (pStatus.setNewStage("Writing securities"))
+                            && (pStatus.setNumSteps(theSecurities.size()));
 
         /* Skip step if we have no securities */
-        if (theSecurities.size() == 0) {
+        if (theSecurities.isEmpty()) {
             return true;
         }
 
@@ -465,10 +469,11 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNewStage("Writing prices")) && (pStatus.setNumSteps(thePrices.size())));
+        boolean bContinue = (pStatus.setNewStage("Writing prices"))
+                            && (pStatus.setNumSteps(thePrices.size()));
 
         /* Skip step if we have no prices */
-        if (thePrices.size() == 0) {
+        if (thePrices.isEmpty()) {
             return true;
         }
 

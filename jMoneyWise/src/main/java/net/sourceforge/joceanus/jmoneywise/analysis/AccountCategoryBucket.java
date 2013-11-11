@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
@@ -123,12 +123,12 @@ public final class AccountCategoryBucket
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
                         ? myValue
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -209,7 +209,7 @@ public final class AccountCategoryBucket
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -443,7 +443,7 @@ public final class AccountCategoryBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -542,7 +542,7 @@ public final class AccountCategoryBucket
          */
         protected void analysePortfolios(final PortfolioBucketList pPortfolios) {
             /* Skip if there are no portfolios */
-            if (pPortfolios.size() == 0) {
+            if (pPortfolios.isEmpty()) {
                 /* Calculate delta first */
                 if (theTotals != null) {
                     theTotals.calculateDelta();

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jdatamanager;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 /**
  * Exception extension class. Provides capability of attaching ExceptionClass and Causing object to exception.
@@ -94,7 +93,7 @@ public class JDataException
                 return myWrapped.getCause();
             }
             if (FIELD_OBJECT.equals(pField)) {
-                return JDataFieldValue.SkipField;
+                return JDataFieldValue.SKIP;
             }
             if (FIELD_STACK.equals(pField)) {
                 return myWrapped.getStackTrace();
@@ -113,7 +112,7 @@ public class JDataException
             }
             if (FIELD_OBJECT.equals(pField)) {
                 return (theObject == null)
-                        ? JDataFieldValue.SkipField
+                        ? JDataFieldValue.SKIP
                         : theObject;
             }
             if (FIELD_STACK.equals(pField)) {
@@ -125,7 +124,7 @@ public class JDataException
         if (FIELD_ORIGIN.equals(pField)) {
             Throwable myResult = this;
             if (myResult.getCause() == null) {
-                return JDataFieldValue.SkipField;
+                return JDataFieldValue.SKIP;
             }
             while (myResult.getCause() != null) {
                 myResult = myResult.getCause();
@@ -134,7 +133,7 @@ public class JDataException
         }
 
         /* Unknown field */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -147,12 +146,12 @@ public class JDataException
     /**
      * The class of this exception.
      */
-    private ExceptionClass theClass = null;
+    private final ExceptionClass theClass;
 
     /**
      * The associated object.
      */
-    private Object theObject = null;
+    private final Object theObject;
 
     /**
      * Get the class of the exception.
@@ -177,6 +176,7 @@ public class JDataException
     protected JDataException(final Throwable c) {
         super(c);
         theClass = ExceptionClass.WRAPPED;
+        theObject = null;
     }
 
     /**
@@ -188,6 +188,7 @@ public class JDataException
                           final String s) {
         super(s);
         theClass = ec;
+        theObject = null;
         fillInStackTrace();
     }
 
@@ -202,6 +203,7 @@ public class JDataException
                           final Throwable c) {
         super(s, c);
         theClass = ec;
+        theObject = null;
     }
 
     /**

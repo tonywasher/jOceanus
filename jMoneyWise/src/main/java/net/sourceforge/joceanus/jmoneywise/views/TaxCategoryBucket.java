@@ -26,10 +26,10 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRate;
@@ -96,7 +96,7 @@ public final class TaxCategoryBucket
         if (FIELD_PARENT.equals(pField)) {
             return (theParent != null)
                     ? theParent
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -106,12 +106,12 @@ public final class TaxCategoryBucket
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
                         ? myValue
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -212,7 +212,7 @@ public final class TaxCategoryBucket
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -528,14 +528,14 @@ public final class TaxCategoryBucket
             if (FIELD_GAINS.equals(pField)) {
                 return (hasGainsSlices)
                         ? hasGainsSlices
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             if (FIELD_ALLOW.equals(pField)) {
                 return (hasReducedAllow)
                         ? hasReducedAllow
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

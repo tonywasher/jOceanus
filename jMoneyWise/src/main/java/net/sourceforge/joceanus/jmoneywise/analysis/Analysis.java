@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -142,68 +142,68 @@ public class Analysis
             return theDateRange;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
-            return (theAccounts.size() > 0)
-                    ? theAccounts
-                    : JDataFieldValue.SkipField;
+            return (theAccounts.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theAccounts;
         }
         if (FIELD_SECURITIES.equals(pField)) {
-            return (theSecurities.size() > 0)
-                    ? theSecurities
-                    : JDataFieldValue.SkipField;
+            return (theSecurities.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theSecurities;
         }
         if (FIELD_PAYEES.equals(pField)) {
-            return (thePayees.size() > 0)
-                    ? thePayees
-                    : JDataFieldValue.SkipField;
+            return (thePayees.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePayees;
         }
         if (FIELD_PORTFOLIOS.equals(pField)) {
-            return (thePortfolios.size() > 0)
-                    ? thePortfolios
-                    : JDataFieldValue.SkipField;
+            return (thePortfolios.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePortfolios;
         }
         if (FIELD_ACTCATS.equals(pField)) {
-            return (theAccountCategories.size() > 0)
-                    ? theAccountCategories
-                    : JDataFieldValue.SkipField;
+            return (theAccountCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theAccountCategories;
         }
         if (FIELD_EVTCATS.equals(pField)) {
-            return (theEventCategories.size() > 0)
-                    ? theEventCategories
-                    : JDataFieldValue.SkipField;
+            return (theEventCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventCategories;
         }
         if (FIELD_TAXBASIS.equals(pField)) {
-            return (theTaxBasis.size() > 0)
-                    ? theTaxBasis
-                    : JDataFieldValue.SkipField;
+            return (theTaxBasis.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxBasis;
         }
         if (FIELD_TAXCALC.equals(pField)) {
-            return ((theTaxCalculations != null) && (theTaxCalculations.size() > 0))
+            return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
                     ? theTaxCalculations
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_PRICES.equals(pField)) {
-            return (thePrices.size() > 0)
-                    ? thePrices
-                    : JDataFieldValue.SkipField;
+            return (thePrices.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePrices;
         }
         if (FIELD_RATES.equals(pField)) {
-            return (theRates.size() > 0)
-                    ? theRates
-                    : JDataFieldValue.SkipField;
+            return (theRates.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theRates;
         }
         if (FIELD_CHARGES.equals(pField)) {
-            return (theCharges.size() > 0)
-                    ? theCharges
-                    : JDataFieldValue.SkipField;
+            return (theCharges.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theCharges;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
-            return (theDilutions.size() > 0)
-                    ? theDilutions
-                    : JDataFieldValue.SkipField;
+            return (theDilutions.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theDilutions;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -315,7 +315,7 @@ public class Analysis
      * @return true/false
      */
     public boolean isRangedAnalysis() {
-        return (theDateRange.getStart() == null);
+        return theDateRange.getStart() == null;
     }
 
     /**

@@ -76,9 +76,6 @@ public class JDataWindow
      */
     public JDataWindow(final JFrame pParent,
                        final JDataManager pManager) {
-        JSplitPane mySplit;
-        JScrollPane myTreeScroll;
-
         /* Store the parameters */
         JDataManager myDataMgr = pManager;
         theTree = new JTree(myDataMgr.getModel());
@@ -105,13 +102,13 @@ public class JDataWindow
         theTree.addTreeSelectionListener(this);
 
         /* Create a scroll-pane for the tree */
-        myTreeScroll = new JScrollPane(theTree);
+        JScrollPane myTreeScroll = new JScrollPane(theTree);
 
         /* Create the item panel */
-        theItemPane = new JDataItem(pManager.getHTMLFormatter());
+        theItemPane = new JDataItem(pManager.getHTMLFormatter(), pManager.getLogger());
 
         /* Create the split pane */
-        mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());
+        JSplitPane mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());
         mySplit.setOneTouchExpandable(true);
         mySplit.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 

@@ -27,7 +27,6 @@ import java.util.Stack;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 /**
  * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of values and refers to a {@link ValueSet} object which
@@ -64,7 +63,7 @@ public class ValueSetHistory
         int mySize = theDeltas.size();
         if ((myIndex < 0)
             || (myIndex >= mySize)) {
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /* Access the delta */
@@ -194,7 +193,7 @@ public class ValueSetHistory
      * @return whether there are entries in the history list
      */
     public boolean hasHistory() {
-        return (!theStack.empty());
+        return !theStack.empty();
     }
 
     /**
@@ -242,10 +241,10 @@ public class ValueSetHistory
     public Difference fieldChanged(final JDataField pField) {
         /* Handle irrelevant cases */
         if (!pField.isValueSetField()) {
-            return Difference.Identical;
+            return Difference.IDENTICAL;
         }
         if (!pField.isEqualityField()) {
-            return Difference.Identical;
+            return Difference.IDENTICAL;
         }
 
         /* Call the function from the interface */

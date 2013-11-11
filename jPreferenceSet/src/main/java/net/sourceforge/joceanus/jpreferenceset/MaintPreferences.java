@@ -291,7 +291,8 @@ public class MaintPreferences
      * @return true/false
      */
     public boolean hasUpdates() {
-        return ((theActive != null) && (theActive.hasChanges()));
+        return (theActive != null)
+               && (theActive.hasChanges());
     }
 
     /**

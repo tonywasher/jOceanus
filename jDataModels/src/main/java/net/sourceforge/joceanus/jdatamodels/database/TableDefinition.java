@@ -136,7 +136,7 @@ public class TableDefinition {
      * @return true/false
      */
     protected boolean isIndexed() {
-        return theSortList.size() > 0;
+        return !theSortList.isEmpty();
     }
 
     /**

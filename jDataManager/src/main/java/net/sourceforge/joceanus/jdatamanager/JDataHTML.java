@@ -31,7 +31,6 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 
 /**
@@ -245,16 +244,16 @@ public final class JDataHTML {
         /* Switch on object type */
         Object o = pObject;
         switch (getDataType(o)) {
-            case Exception:
+            case EXCEPTION:
                 o = new JDataException((Throwable) o);
                 return formatHTMLDetail(pDetail, o);
-            case Contents:
+            case CONTENTS:
                 return formatHTMLDetail(pDetail, o);
-            case Map:
+            case MAP:
                 return formatHTMLMap(pDetail, o);
-            case StackTrace:
+            case STACKTRACE:
                 return formatHTMLStack(o);
-            case None:
+            case NONE:
             default:
                 return null;
         }
@@ -268,24 +267,24 @@ public final class JDataHTML {
     private static JDataType getDataType(final Object pObject) {
         /* Determine which objects are supported */
         if (pObject == null) {
-            return JDataType.None;
+            return JDataType.NONE;
         }
         if (JDataContents.class.isInstance(pObject)) {
-            return JDataType.Contents;
+            return JDataType.CONTENTS;
         }
         if (Map.class.isInstance(pObject)) {
-            return JDataType.Map;
+            return JDataType.MAP;
         }
         if (Throwable.class.isInstance(pObject)) {
-            return JDataType.Exception;
+            return JDataType.EXCEPTION;
         }
         if (StackTraceElement[].class.isInstance(pObject)) {
-            return JDataType.StackTrace;
+            return JDataType.STACKTRACE;
         }
         if (JDataDifference.class.isInstance(pObject)) {
             return getDataType(((JDataDifference) pObject).getObject());
         }
-        return JDataType.None;
+        return JDataType.NONE;
     }
 
     /**
@@ -335,14 +334,14 @@ public final class JDataHTML {
             if ((myField.isValueSetField())
                 && (myValues != null)) {
                 myValue = myValueCtl.skipField(myField)
-                        ? JDataFieldValue.SkipField
+                        ? JDataFieldValue.SKIP
                         : myValues.getValue(myField);
             } else {
                 myValue = myDetail.getFieldValue(myField);
             }
 
             /* Skip value if required */
-            if (myValue == JDataFieldValue.SkipField) {
+            if (myValue == JDataFieldValue.SKIP) {
                 continue;
             }
 
@@ -414,7 +413,7 @@ public final class JDataHTML {
         }
 
         /* If this needs a linkage */
-        if (getDataType(pValue) != JDataType.None) {
+        if (getDataType(pValue) != JDataType.NONE) {
             /* Adjust for linkage */
             myFormat = pDetail.addDataLink(pValue, myFormat);
 
@@ -489,7 +488,7 @@ public final class JDataHTML {
 
             /* Format the key */
             myFormat = theFormatter.formatObject(myKey);
-            if (getDataType(myKey) != JDataType.None) {
+            if (getDataType(myKey) != JDataType.NONE) {
                 myFormat = pDetail.addDataLink(myKey, myFormat);
             }
             myEntries.append("<td>");
@@ -498,7 +497,7 @@ public final class JDataHTML {
 
             /* Format the value */
             myFormat = theFormatter.formatObject(myValue);
-            if (getDataType(myValue) != JDataType.None) {
+            if (getDataType(myValue) != JDataType.NONE) {
                 myFormat = pDetail.addDataLink(myValue, myFormat);
             }
             myEntries.append(myFormat);
@@ -570,26 +569,26 @@ public final class JDataHTML {
         /**
          * Contents.
          */
-        Contents,
+        CONTENTS,
 
         /**
          * Map.
          */
-        Map,
+        MAP,
 
         /**
          * Exception.
          */
-        Exception,
+        EXCEPTION,
 
         /**
          * StackTrace.
          */
-        StackTrace,
+        STACKTRACE,
 
         /**
          * None.
          */
-        None;
+        NONE;
     }
 }

@@ -215,7 +215,7 @@ public class SheetPattern
     @Override
     protected void insertOpenItem(final Pattern pItem) throws JDataException {
         /* Determine whether we are a child event */
-        boolean isChild = (pItem.getParent() == null);
+        boolean isChild = pItem.getParent() == null;
 
         /* Access debit/credit names */
         String myDebit = pItem.getDebitName();

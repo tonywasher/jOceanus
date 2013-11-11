@@ -23,10 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -103,44 +103,44 @@ public class IncomeBreakdown
         if (FIELD_SALARY.equals(pField)) {
             return (theSalary.size() > 0)
                     ? theSalary
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_RENTAL.equals(pField)) {
             return (theRental.size() > 0)
                     ? theRental
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_INTEREST.equals(pField)) {
             return (theTaxedInterest.size() > 0)
                     ? theTaxedInterest
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_GRINTEREST.equals(pField)) {
             return (theGrossInterest.size() > 0)
                     ? theGrossInterest
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_TFINTEREST.equals(pField)) {
             return (theTaxFreeInterest.size() > 0)
                     ? theTaxFreeInterest
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_DIVIDEND.equals(pField)) {
             return (theTaxedDividend.size() > 0)
                     ? theTaxedDividend
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_TFDIVIDEND.equals(pField)) {
             return (theTaxFreeDividend.size() > 0)
                     ? theTaxFreeDividend
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_UTDIVIDEND.equals(pField)) {
             return (theUnitTrustDividend.size() > 0)
                     ? theUnitTrustDividend
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.SKIP;
     }
 
     @Override
@@ -360,7 +360,7 @@ public class IncomeBreakdown
             if (FIELD_TAX.equals(pField)) {
                 return theTaxCredit;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         @Override
@@ -473,16 +473,16 @@ public class IncomeBreakdown
             if (FIELD_EVENTS.equals(pField)) {
                 return (theEvents.size() > 0)
                         ? theEvents
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             if (FIELD_CHILDREN.equals(pField)) {
                 return (theChildren.size() > 0)
                         ? theChildren
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -719,7 +719,7 @@ public class IncomeBreakdown
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

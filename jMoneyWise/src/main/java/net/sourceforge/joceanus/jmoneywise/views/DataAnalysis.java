@@ -27,11 +27,11 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
@@ -110,32 +110,32 @@ public class DataAnalysis
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return (theAnalysis == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theAnalysis;
         }
         if (FIELD_YEARS.equals(pField)) {
             return (theYears == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theYears;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return (theAccount == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theAccount;
         }
         if (FIELD_RANGE.equals(pField)) {
             return (theDateRange == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theDateRange;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
             return (theDilutions == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theDilutions;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -700,7 +700,7 @@ public class DataAnalysis
             if (FIELD_BREAKDOWN.equals(pField)) {
                 return theBreakdown;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         @Override
@@ -921,7 +921,7 @@ public class DataAnalysis
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

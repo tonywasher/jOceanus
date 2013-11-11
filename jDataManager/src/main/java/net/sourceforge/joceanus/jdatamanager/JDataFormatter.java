@@ -165,7 +165,7 @@ public class JDataFormatter {
             return (String) pValue;
         }
         if (myClass == Boolean.class) {
-            return (((Boolean) pValue))
+            return ((Boolean) pValue)
                     ? "true"
                     : "false";
         }

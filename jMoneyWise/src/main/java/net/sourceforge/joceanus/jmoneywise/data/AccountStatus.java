@@ -26,10 +26,10 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 
@@ -129,69 +129,69 @@ public class AccountStatus
         if (FIELD_CLOSEDATE.equals(pField)) {
             return (theCloseDate != null)
                     ? theCloseDate
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_EVTFIRST.equals(pField)) {
             return (theEarliest != null)
                     ? theEarliest
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_EVTLAST.equals(pField)) {
             return (theLatest != null)
                     ? theLatest
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_INITPRC.equals(pField)) {
             return (theInitPrice != null)
                     ? theInitPrice
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HASLOANS.equals(pField)) {
             return hasLoans
                     ? hasLoans
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HASRATES.equals(pField)) {
             return hasRates
                     ? hasRates
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HASPRICE.equals(pField)) {
             return hasPrices
                     ? hasPrices
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_HASPATT.equals(pField)) {
             return hasPatterns
                     ? hasPatterns
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ISPARENT.equals(pField)) {
             return isParent
                     ? isParent
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ISALIASD.equals(pField)) {
             return isAliasedTo
                     ? isAliasedTo
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ISPORTFOLIO.equals(pField)) {
             return isPortfolio
                     ? isPortfolio
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ISHOLDING.equals(pField)) {
             return isHolding
                     ? isHolding
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
             return isCloseable;
         }
 
         /* Reject field */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**

@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
@@ -144,12 +144,12 @@ public final class PayeeBucket
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
                         ? myValue
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -256,7 +256,7 @@ public final class PayeeBucket
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -732,7 +732,8 @@ public final class PayeeBucket
         public boolean isActive() {
             JMoney myIncome = getMoneyValue(PayeeAttribute.Income);
             JMoney myExpense = getMoneyValue(PayeeAttribute.Expense);
-            return ((myIncome.isNonZero()) || (myExpense.isNonZero()));
+            return (myIncome.isNonZero())
+                   || (myExpense.isNonZero());
         }
     }
 
@@ -787,7 +788,7 @@ public final class PayeeBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

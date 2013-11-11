@@ -137,7 +137,7 @@ public class JDataDetail {
      */
     protected final boolean isList() {
         return isList
-               && (theList.size() > 0);
+               && !theList.isEmpty();
     }
 
     /**
@@ -389,7 +389,7 @@ public class JDataDetail {
                               final String pText) {
         /* If the item is a JDataDifference */
         Object myItem = pItem;
-        Difference myDifference = Difference.Identical;
+        Difference myDifference = Difference.IDENTICAL;
         if (myItem instanceof JDataDifference) {
             /* Access the difference */
             JDataDifference myDiffer = (JDataDifference) pItem;

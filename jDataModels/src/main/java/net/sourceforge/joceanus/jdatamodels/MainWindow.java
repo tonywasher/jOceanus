@@ -603,10 +603,8 @@ public abstract class MainWindow<T extends DataSet<T>>
                 }
 
                 /* Dispose of the frame */
+                theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 theFrame.dispose();
-
-                /* Exit the application */
-                System.exit(0);
 
                 /* else if this is the Data Window shutting down */
             } else if (o.equals(theDataWdw)) {
@@ -716,7 +714,7 @@ public abstract class MainWindow<T extends DataSet<T>>
         /* Determine whether we have any updates */
         boolean hasUpdates = hasUpdates();
         boolean hasChanges = hasChanges();
-        boolean hasControl = (getView().getData().getControl() != null);
+        boolean hasControl = getView().getData().getControl() != null;
 
         /* Note whether we have a worker thread */
         boolean hasWorker = hasWorker();
@@ -792,7 +790,7 @@ public abstract class MainWindow<T extends DataSet<T>>
      * @return true/false
      */
     protected final boolean hasWorker() {
-        return (theThread != null);
+        return theThread != null;
     }
 
     /**

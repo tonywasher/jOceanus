@@ -28,10 +28,10 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
@@ -138,7 +138,7 @@ public class Statement
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -385,9 +385,9 @@ public class Statement
         public Object getFieldValue(final JDataField pField) {
             /* Handle standard fields */
             if (FIELD_EVENTGROUPS.equals(pField)) {
-                return theGroups.size() > 0
-                        ? theGroups
-                        : JDataFieldValue.SkipField;
+                return theGroups.isEmpty()
+                        ? JDataFieldValue.SKIP
+                        : theGroups;
             }
 
             /* Pass onwards */
@@ -560,10 +560,10 @@ public class Statement
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return JDataFieldValue.SkipField;
+                return JDataFieldValue.SKIP;
             }
             if (FIELD_PARTNER.equals(pField)) {
-                return JDataFieldValue.SkipField;
+                return JDataFieldValue.SKIP;
             }
             if (FIELD_BALANCE.equals(pField)) {
                 return theBalance;

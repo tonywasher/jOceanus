@@ -310,7 +310,7 @@ public final class QSecurity
         protected boolean outputSecurities(final ThreadStatus<FinanceData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* Ignore if there are no securities */
-            if (theSecurities.size() == 0) {
+            if (theSecurities.isEmpty()) {
                 return true;
             }
 

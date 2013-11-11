@@ -311,7 +311,8 @@ public class AccountPrices
     @Override
     protected boolean isRowDeletable(final ViewPrice pRow) {
         /* If the row is not deleted, we can delete if the list size is greater than one */
-        return ((!pRow.isDeleted()) && (thePrices.size() > 1));
+        return (!pRow.isDeleted())
+               && (thePrices.size() > 1);
     }
 
     /**
@@ -428,7 +429,7 @@ public class AccountPrices
 
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    return (theRange != null);
+                    return theRange != null;
                 case COLUMN_PRICE:
                     return true;
                 case COLUMN_DILUTION:

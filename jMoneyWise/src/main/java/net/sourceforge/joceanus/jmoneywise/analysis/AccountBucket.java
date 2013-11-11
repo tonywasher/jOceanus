@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
@@ -167,12 +167,12 @@ public final class AccountBucket
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
                         ? myValue
-                        : JDataFieldValue.SkipField;
+                        : JDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -293,7 +293,7 @@ public final class AccountBucket
         /* Return the value */
         return (myValue != null)
                 ? myValue
-                : JDataFieldValue.SkipField;
+                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -672,7 +672,7 @@ public final class AccountBucket
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

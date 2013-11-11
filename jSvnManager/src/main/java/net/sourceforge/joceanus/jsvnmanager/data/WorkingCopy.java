@@ -28,10 +28,10 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jsvnmanager.data.UpdateStatus.UpdateStatusList;
@@ -103,7 +103,7 @@ public final class WorkingCopy
         /* Handle standard fields */
         if (FIELD_ALIAS.equals(pField)) {
             return getComponentName().equals(theAlias)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theAlias;
         }
         if (FIELD_BRAN.equals(pField)) {
@@ -119,13 +119,13 @@ public final class WorkingCopy
             return theRevision;
         }
         if (FIELD_UPDATES.equals(pField)) {
-            return (theUpdates.size() == 0)
-                    ? JDataFieldValue.SkipField
+            return (theUpdates.isEmpty())
+                    ? JDataFieldValue.SKIP
                     : theUpdates;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -423,7 +423,7 @@ public final class WorkingCopy
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

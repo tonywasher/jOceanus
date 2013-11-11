@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jeventmanager.JEventObject;
 import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
@@ -1348,7 +1348,7 @@ public abstract class PreferenceSet
 
         /* Return the value */
         return (myPref == null)
-                ? JDataFieldValue.UnknownField
+                ? JDataFieldValue.UNKNOWN
                 : myPref.getValue();
     }
 }

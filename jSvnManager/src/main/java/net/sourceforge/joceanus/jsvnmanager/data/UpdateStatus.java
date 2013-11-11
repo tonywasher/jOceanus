@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jsvnmanager.data;
 import java.io.File;
 import java.util.ArrayList;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
@@ -97,7 +97,7 @@ public class UpdateStatus
             SVNStatusType myStatus = theStatus.getPropertiesStatus();
             return (myStatus != SVNStatusType.STATUS_NORMAL)
                     ? myStatus.toString()
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_KIND.equals(pField)) {
             return theStatus.getKind().toString();
@@ -105,16 +105,16 @@ public class UpdateStatus
         if (FIELD_COPYFROM.equals(pField)) {
             return theStatus.isCopied()
                     ? theStatus.getCopyFromURL()
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
         if (FIELD_COPYREV.equals(pField)) {
             return theStatus.isCopied()
                     ? theStatus.getCopyFromRevision().getNumber()
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -187,7 +187,7 @@ public class UpdateStatus
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
     }
 }

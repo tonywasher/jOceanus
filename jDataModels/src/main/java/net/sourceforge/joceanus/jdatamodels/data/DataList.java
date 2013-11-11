@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 
@@ -135,7 +135,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             return size();
         }
         if (FIELD_GRANULARITY.equals(pField)) {
-            return (1 << theGranularity);
+            return 1 << theGranularity;
         }
         if (FIELD_STYLE.equals(pField)) {
             return theStyle;
@@ -154,16 +154,16 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                    ? JDataFieldValue.SkipField
+                    ? JDataFieldValue.SKIP
                     : theBase;
         }
         if (FIELD_ERRORS.equals(pField)) {
-            return JDataFieldValue.SkipField;
+            return JDataFieldValue.SKIP;
         }
         if (FIELD_CLASS.equals(pField)) {
             return getBaseClass().getSimpleName();
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return (theEdit == EditState.ERROR);
+        return theEdit == EditState.ERROR;
     }
 
     /**
@@ -313,7 +313,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
-        return (theEdit != EditState.CLEAN);
+        return theEdit != EditState.CLEAN;
     }
 
     /**
@@ -321,7 +321,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return ((theEdit == EditState.CLEAN) || (theEdit == EditState.VALID));
+        return (theEdit == EditState.CLEAN)
+               || (theEdit == EditState.VALID);
     }
 
     /**
@@ -447,8 +448,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     protected void populateList(final DataList<T> pList) throws JDataException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
-        boolean isUpdate = (myStyle == ListStyle.UPDATE);
-        boolean isClone = (myStyle == ListStyle.CLONE);
+        boolean isUpdate = myStyle == ListStyle.UPDATE;
+        boolean isClone = myStyle == ListStyle.CLONE;
 
         /* Create an iterator for all items in the list */
         Iterator<? extends DataItem> myIterator = iterator();

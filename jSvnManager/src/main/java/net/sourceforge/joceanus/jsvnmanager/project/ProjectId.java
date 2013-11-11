@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jsvnmanager.project;
 import java.util.ArrayList;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -92,7 +92,7 @@ public final class ProjectId
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -350,7 +350,7 @@ public final class ProjectId
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
     }
 

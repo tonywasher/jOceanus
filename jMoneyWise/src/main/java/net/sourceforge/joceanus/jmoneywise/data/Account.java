@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
@@ -137,7 +137,7 @@ public class Account
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                     ? theInfoSet
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Handle status */
@@ -426,7 +426,7 @@ public class Account
      * @return true/false
      */
     public boolean isAlias() {
-        return (getAlias() != null);
+        return getAlias() != null;
     }
 
     /**
@@ -442,8 +442,9 @@ public class Account
      * @return true/false
      */
     public boolean isDeletable() {
-        return (theStatus.isDeletable(getState())
-                && (!isDeleted()) && (!getAccountCategoryClass().isSingular()));
+        return theStatus.isDeletable(getState())
+               && (!isDeleted())
+               && (!getAccountCategoryClass().isSingular());
     }
 
     @Override
@@ -540,7 +541,7 @@ public class Account
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
-                    : Difference.Identical;
+                    : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -1055,7 +1056,7 @@ public class Account
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null)
-                        ? JDataFieldValue.SkipField
+                        ? JDataFieldValue.SKIP
                         : theAccount;
             }
             return super.getFieldValue(pField);

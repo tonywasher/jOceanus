@@ -28,10 +28,10 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jsvnmanager.data.Tag.TagList;
@@ -153,17 +153,17 @@ public final class Branch
             return getBranchName();
         }
         if (FIELD_TAGS.equals(pField)) {
-            return theTags.size() > 0
-                    ? theTags
-                    : JDataFieldValue.SkipField;
+            return theTags.isEmpty()
+                    ? JDataFieldValue.SKIP
+                    : theTags;
         }
         if (FIELD_PROJECT.equals(pField)) {
             return theProject;
         }
         if (FIELD_DEPENDS.equals(pField)) {
-            return (theDependencies.size() > 0)
-                    ? theDependencies
-                    : JDataFieldValue.SkipField;
+            return (theDependencies.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theDependencies;
         }
         if (FIELD_NUMEL.equals(pField)) {
             return theNumElements;
@@ -175,11 +175,11 @@ public final class Branch
             long myRev = theTags.getLastRevision();
             return (myRev < theLastRevision)
                     ? myRev
-                    : JDataFieldValue.SkipField;
+                    : JDataFieldValue.SKIP;
         }
 
         /* Unknown */
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -663,7 +663,7 @@ public final class Branch
         }
 
         /* If we have no dependencies */
-        if (theDependencies.size() == 0) {
+        if (theDependencies.isEmpty()) {
             /* Set as merged and return */
             theProjectStatus = ProjectStatus.FINAL;
             return;
@@ -814,7 +814,7 @@ public final class Branch
             }
 
             /* Unknown */
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

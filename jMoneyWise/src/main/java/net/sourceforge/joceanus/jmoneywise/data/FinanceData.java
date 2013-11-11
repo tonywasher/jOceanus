@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
@@ -198,119 +198,119 @@ public class FinanceData
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ACTCATTYPES.equals(pField)) {
-            return (theActCatTypes.size() > 0)
-                    ? theActCatTypes
-                    : JDataFieldValue.SkipField;
+            return (theActCatTypes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theActCatTypes;
         }
         if (FIELD_EVTCATTYPES.equals(pField)) {
-            return (theEvtCatTypes.size() > 0)
-                    ? theEvtCatTypes
-                    : JDataFieldValue.SkipField;
+            return (theEvtCatTypes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEvtCatTypes;
         }
         if (FIELD_TAXCATEGORIES.equals(pField)) {
-            return (theTaxCategories.size() > 0)
-                    ? theTaxCategories
-                    : JDataFieldValue.SkipField;
+            return (theTaxCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxCategories;
         }
         if (FIELD_CURRENCIES.equals(pField)) {
-            return (theCurrencies.size() > 0)
-                    ? theCurrencies
-                    : JDataFieldValue.SkipField;
+            return (theCurrencies.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theCurrencies;
         }
         if (FIELD_TAXREGS.equals(pField)) {
-            return (theTaxRegimes.size() > 0)
-                    ? theTaxRegimes
-                    : JDataFieldValue.SkipField;
+            return (theTaxRegimes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxRegimes;
         }
         if (FIELD_FREQS.equals(pField)) {
-            return (theFrequencys.size() > 0)
-                    ? theFrequencys
-                    : JDataFieldValue.SkipField;
+            return (theFrequencys.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theFrequencys;
         }
         if (FIELD_TAXINFOTYPES.equals(pField)) {
-            return (theTaxInfoTypes.size() > 0)
-                    ? theTaxInfoTypes
-                    : JDataFieldValue.SkipField;
+            return (theTaxInfoTypes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxInfoTypes;
         }
         if (FIELD_ACTINFOTYPES.equals(pField)) {
-            return (theActInfoTypes.size() > 0)
-                    ? theActInfoTypes
-                    : JDataFieldValue.SkipField;
+            return (theActInfoTypes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theActInfoTypes;
         }
         if (FIELD_EVTINFOTYPES.equals(pField)) {
-            return (theEventInfoTypes.size() > 0)
-                    ? theEventInfoTypes
-                    : JDataFieldValue.SkipField;
+            return (theEventInfoTypes.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventInfoTypes;
         }
         if (FIELD_EVENTCLASSES.equals(pField)) {
-            return (theEventClasses.size() > 0)
-                    ? theEventClasses
-                    : JDataFieldValue.SkipField;
+            return (theEventClasses.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventClasses;
         }
         if (FIELD_ACTCATEGORIES.equals(pField)) {
-            return (theActCategories.size() > 0)
-                    ? theActCategories
-                    : JDataFieldValue.SkipField;
+            return (theActCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theActCategories;
         }
         if (FIELD_EVTCATEGORIES.equals(pField)) {
-            return (theEvtCategories.size() > 0)
-                    ? theEvtCategories
-                    : JDataFieldValue.SkipField;
+            return (theEvtCategories.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEvtCategories;
         }
         if (FIELD_TAXYEARS.equals(pField)) {
-            return (theTaxYears.size() > 0)
-                    ? theTaxYears
-                    : JDataFieldValue.SkipField;
+            return (theTaxYears.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxYears;
         }
         if (FIELD_TAXINFO.equals(pField)) {
-            return (theTaxInfo.size() > 0)
-                    ? theTaxInfo
-                    : JDataFieldValue.SkipField;
+            return (theTaxInfo.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theTaxInfo;
         }
         if (FIELD_XCHGRATES.equals(pField)) {
-            return (theExchangeRates.size() > 0)
-                    ? theExchangeRates
-                    : JDataFieldValue.SkipField;
+            return (theExchangeRates.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theExchangeRates;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
-            return (theAccounts.size() > 0)
-                    ? theAccounts
-                    : JDataFieldValue.SkipField;
+            return (theAccounts.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theAccounts;
         }
         if (FIELD_ACCOUNTINFO.equals(pField)) {
-            return (theAccountInfo.size() > 0)
-                    ? theAccountInfo
-                    : JDataFieldValue.SkipField;
+            return (theAccountInfo.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theAccountInfo;
         }
         if (FIELD_RATES.equals(pField)) {
-            return (theRates.size() > 0)
-                    ? theRates
-                    : JDataFieldValue.SkipField;
+            return (theRates.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theRates;
         }
         if (FIELD_PRICES.equals(pField)) {
-            return (thePrices.size() > 0)
-                    ? thePrices
-                    : JDataFieldValue.SkipField;
+            return (thePrices.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePrices;
         }
         if (FIELD_PATTERNS.equals(pField)) {
-            return (thePatterns.size() > 0)
-                    ? thePatterns
-                    : JDataFieldValue.SkipField;
+            return (thePatterns.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : thePatterns;
         }
         if (FIELD_EVENTS.equals(pField)) {
-            return (theEvents.size() > 0)
-                    ? theEvents
-                    : JDataFieldValue.SkipField;
+            return (theEvents.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEvents;
         }
         if (FIELD_EVENTINFO.equals(pField)) {
-            return (theEventInfo.size() > 0)
-                    ? theEventInfo
-                    : JDataFieldValue.SkipField;
+            return (theEventInfo.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventInfo;
         }
         if (FIELD_EVTCLSLINKS.equals(pField)) {
-            return (theEventClassLinks.size() > 0)
-                    ? theEventClassLinks
-                    : JDataFieldValue.SkipField;
+            return (theEventClassLinks.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theEventClassLinks;
         }
         return super.getFieldValue(pField);
     }

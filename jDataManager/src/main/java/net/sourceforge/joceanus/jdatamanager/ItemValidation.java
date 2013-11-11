@@ -28,7 +28,6 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 
 /**
  * Provides the implementation of a error buffer for an object that implements JDataContents. Each element represents an error that relates to a field.
@@ -69,7 +68,7 @@ public class ItemValidation
         int iIndex = pField.getIndex();
         if ((iIndex < 0)
             || iIndex >= theErrors.size()) {
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /* Access the element */
@@ -96,9 +95,9 @@ public class ItemValidation
      * @return the first error or <code>null</code>
      */
     public ErrorElement getFirst() {
-        return (theErrors.size() > 0)
-                ? theErrors.get(0)
-                : null;
+        return (theErrors.isEmpty())
+                ? null
+                : theErrors.get(0);
     }
 
     /**

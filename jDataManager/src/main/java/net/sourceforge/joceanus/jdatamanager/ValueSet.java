@@ -327,7 +327,7 @@ public class ValueSet {
         /* Check for deletion flag and # of values */
         if ((isDeletion != pOriginal.isDeletion)
             || (theNumValues != pOriginal.theNumValues)) {
-            return Difference.Different;
+            return Difference.DIFFERENT;
         }
 
         /* Loop through the values */
@@ -343,18 +343,18 @@ public class ValueSet {
             /* Check the field */
             int iIndex = myField.getIndex();
             Difference myDiff = Difference.getDifference(theValues[iIndex], myObj[iIndex]);
-            if (myDiff == Difference.Different) {
+            if (myDiff == Difference.DIFFERENT) {
                 return myDiff;
             }
-            if (myDiff == Difference.Security) {
+            if (myDiff == Difference.SECURITY) {
                 isSecureDiff = true;
             }
         }
 
         /* Determine the difference */
         return (isSecureDiff)
-                ? Difference.Security
-                : Difference.Identical;
+                ? Difference.SECURITY
+                : Difference.IDENTICAL;
     }
 
     /**
@@ -371,7 +371,7 @@ public class ValueSet {
         if ((pField == null)
             || (!pField.isEqualityField())
             || (!pField.isValueSetField())) {
-            return Difference.Identical;
+            return Difference.IDENTICAL;
         }
 
         /* Determine the difference */

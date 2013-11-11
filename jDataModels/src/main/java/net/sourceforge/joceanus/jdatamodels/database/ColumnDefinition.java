@@ -266,7 +266,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Integer));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.INTEGER));
         }
 
         /**
@@ -520,7 +520,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Short));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.SHORT));
         }
 
         /**
@@ -582,7 +582,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Long));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.LONG));
         }
 
         /**
@@ -644,7 +644,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Float));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.FLOAT));
         }
 
         /**
@@ -706,7 +706,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Double));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DOUBLE));
         }
 
         /**
@@ -768,7 +768,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Date));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DATE));
         }
 
         /**
@@ -830,7 +830,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Boolean));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.BOOLEAN));
         }
 
         /**
@@ -900,7 +900,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.String));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.STRING));
             pBuilder.append("(");
             pBuilder.append(theLength);
             pBuilder.append(')');
@@ -955,7 +955,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Money));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.MONEY));
         }
 
         /**
@@ -1015,7 +1015,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
             pBuilder.append("(18,4)");
         }
 
@@ -1076,7 +1076,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
             pBuilder.append("(18,4)");
         }
 
@@ -1126,7 +1126,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
             pBuilder.append("(18,4)");
         }
 
@@ -1176,7 +1176,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
             pBuilder.append("(18,6)");
         }
 
@@ -1226,7 +1226,7 @@ public abstract class ColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
             pBuilder.append("(18,6)");
         }
 
@@ -1285,7 +1285,7 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             JDBCDriver myDriver = getDriver();
-            pBuilder.append(myDriver.getDatabaseType(ColumnType.Binary));
+            pBuilder.append(myDriver.getDatabaseType(ColumnType.BINARY));
             if (myDriver.defineBinaryLength()) {
                 pBuilder.append("(");
                 pBuilder.append(theLength);
@@ -1330,56 +1330,56 @@ public abstract class ColumnDefinition {
         /**
          * Boolean.
          */
-        Boolean,
+        BOOLEAN,
 
         /**
          * Short.
          */
-        Short,
+        SHORT,
 
         /**
          * Integer.
          */
-        Integer,
+        INTEGER,
 
         /**
          * Long.
          */
-        Long,
+        LONG,
 
         /**
          * Float.
          */
-        Float,
+        FLOAT,
 
         /**
          * Double.
          */
-        Double,
+        DOUBLE,
 
         /**
          * String.
          */
-        String,
+        STRING,
 
         /**
          * Date.
          */
-        Date,
+        DATE,
 
         /**
          * Money.
          */
-        Money,
+        MONEY,
 
         /**
          * Decimal.
          */
-        Decimal,
+        DECIMAL,
 
         /**
          * Binary.
          */
-        Binary;
+        BINARY;
     }
 }

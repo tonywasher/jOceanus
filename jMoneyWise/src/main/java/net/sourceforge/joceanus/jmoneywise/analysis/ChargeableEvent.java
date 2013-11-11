@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -96,7 +96,7 @@ public final class ChargeableEvent
         if (FIELD_EVENT.equals(pField)) {
             return theEvent;
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -303,7 +303,7 @@ public final class ChargeableEvent
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return JDataFieldValue.UnknownField;
+            return JDataFieldValue.UNKNOWN;
         }
 
         /**

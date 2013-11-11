@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jdatamanager;
 
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDiffers;
 
@@ -34,17 +35,39 @@ public enum Difference {
     /**
      * Identical.
      */
-    Identical,
+    IDENTICAL,
 
     /**
      * Value Changed.
      */
-    Different,
+    DIFFERENT,
 
     /**
      * Security Changed.
      */
-    Security;
+    SECURITY;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Difference.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
      * Is there differences?
@@ -52,7 +75,7 @@ public enum Difference {
      */
     public boolean isDifferent() {
         switch (this) {
-            case Identical:
+            case IDENTICAL:
                 return false;
             default:
                 return true;
@@ -73,7 +96,7 @@ public enum Difference {
      */
     public boolean isValueChanged() {
         switch (this) {
-            case Different:
+            case DIFFERENT:
                 return true;
             default:
                 return false;
@@ -86,7 +109,7 @@ public enum Difference {
      */
     public boolean isSecurityChanged() {
         switch (this) {
-            case Security:
+            case SECURITY:
                 return false;
             default:
                 return true;
@@ -100,10 +123,10 @@ public enum Difference {
      */
     public Difference combine(final Difference pThat) {
         switch (this) {
-            case Identical:
+            case IDENTICAL:
                 return pThat;
-            case Security:
-                return (pThat == Different)
+            case SECURITY:
+                return (pThat == DIFFERENT)
                         ? pThat
                         : this;
             default:
@@ -121,18 +144,18 @@ public enum Difference {
                                            final Object pNew) {
         /* Handle identity */
         if (pCurr == pNew) {
-            return Identical;
+            return IDENTICAL;
         }
 
         /* Neither value can be null */
         if ((pCurr == null)
             || (pNew == null)) {
-            return Different;
+            return DIFFERENT;
         }
 
         /* Handle class differences */
         if (pCurr.getClass() != pNew.getClass()) {
-            return Different;
+            return DIFFERENT;
         }
 
         /* Handle differs support */
@@ -142,8 +165,8 @@ public enum Difference {
 
         /* Handle Standard cases */
         return (pCurr.equals(pNew))
-                ? Identical
-                : Different;
+                ? IDENTICAL
+                : DIFFERENT;
     }
 
     /**

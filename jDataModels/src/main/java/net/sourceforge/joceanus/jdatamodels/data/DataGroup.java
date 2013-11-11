@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 
 /**
@@ -57,7 +57,7 @@ public abstract class DataGroup<T extends DataItem & Comparable<? super T>>
         if (FIELD_PARENT.equals(pField)) {
             return theParent;
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override

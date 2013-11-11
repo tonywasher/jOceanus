@@ -29,11 +29,11 @@ import java.util.ListIterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
@@ -121,21 +121,21 @@ public abstract class DataSet<T extends DataSet<T>>
             return theSecurity;
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
-            return (theControlKeys.size() > 0)
-                    ? theControlKeys
-                    : JDataFieldValue.SkipField;
+            return (theControlKeys.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theControlKeys;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
-            return (theDataKeys.size() > 0)
-                    ? theDataKeys
-                    : JDataFieldValue.SkipField;
+            return (theDataKeys.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theDataKeys;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
-            return (theControlData.size() > 0)
-                    ? theControlData
-                    : JDataFieldValue.SkipField;
+            return (theControlData.isEmpty())
+                    ? JDataFieldValue.SKIP
+                    : theControlData;
         }
-        return JDataFieldValue.UnknownField;
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
