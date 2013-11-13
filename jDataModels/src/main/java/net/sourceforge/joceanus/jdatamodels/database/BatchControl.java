@@ -101,7 +101,7 @@ public class BatchControl {
      * @return true/false is the batch active
      */
     protected boolean isActive() {
-        return (theItems >= 0);
+        return theItems >= 0;
     }
 
     /**
@@ -261,7 +261,8 @@ public class BatchControl {
 
             /* If we have to worry about batch space */
             /* Adjust batch and note if we are finished */
-            return ((theCapacity > 0) && (--theItems == 0));
+            return (theCapacity > 0)
+                   && (--theItems == 0);
         }
     }
 }

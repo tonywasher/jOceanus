@@ -48,6 +48,11 @@ public class JDateDay
     protected static final int SHIFT_ID_YEAR = 9;
 
     /**
+     * The Number of months in a Quarter.
+     */
+    protected static final int MONTHS_IN_QUARTER = 3;
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDay.class.getName());
@@ -446,6 +451,29 @@ public class JDateDay
     }
 
     /**
+     * Adjust the date to the start of the period.
+     * @param pPeriod the period to adjust by
+     */
+    public void startPeriod(final JDatePeriod pPeriod) {
+        switch (pPeriod) {
+            case CALENDARMONTH:
+                startCalendarMonth();
+                break;
+            case CALENDARQUARTER:
+                startCalendarQuarter();
+                break;
+            case CALENDARYEAR:
+                startCalendarYear();
+                break;
+            case FISCALYEAR:
+                startFiscalYear();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * Adjust the date to the end of the following month.
      */
     public void endNextMonth() {
@@ -459,19 +487,81 @@ public class JDateDay
     }
 
     /**
+     * Adjust the date to the start of the month.
+     */
+    public void startCalendarMonth() {
+        /* Move to the first of the current month */
+        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+        obtainValues();
+    }
+
+    /**
+     * Adjust the date to the start of the quarter.
+     */
+    public void startCalendarQuarter() {
+        /* Determine the month in quarter */
+        int myMiQ = theMonth
+                    % MONTHS_IN_QUARTER;
+
+        /* Move to the first of the current month */
+        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+
+        /* Move to the first of the quarter */
+        theDate.add(Calendar.MONTH, -myMiQ);
+        obtainValues();
+    }
+
+    /**
+     * Adjust the date to the start of the year.
+     */
+    public void startCalendarYear() {
+        /* Move to the first of the current year */
+        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+        theDate.add(Calendar.MONTH, -theMonth);
+        obtainValues();
+    }
+
+    /**
+     * Adjust the date to the start of the fiscal year.
+     */
+    public void startFiscalYear() {
+        /* Determine Fiscal year type */
+        JFiscalYear myFiscal = JFiscalYear.determineFiscalYear(theLocale);
+        int myMonth = myFiscal.getFirstMonth();
+        int myDay = myFiscal.getFirstDay();
+
+        /* Determine which year we are in */
+        if ((theMonth < myMonth)
+            || ((theMonth == myMonth) && (theDay < myDay))) {
+            theDate.add(Calendar.YEAR, -1);
+        }
+
+        /* Move to the first of the current year */
+        theDate.set(Calendar.DAY_OF_MONTH, myDay);
+        theDate.set(Calendar.MONTH, myMonth);
+        obtainValues();
+    }
+
+    /**
      * Calculate the age that someone born on this date will be on a given date.
      * @param pDate the date for which to calculate the age
      * @return the age on that date
      */
     public int ageOn(final JDateDay pDate) {
-        int myAge = -1;
-
         /* Calculate the initial age assuming same date in year */
-        myAge = pDate.theDate.get(Calendar.YEAR);
+        int myAge = pDate.theDate.get(Calendar.YEAR);
         myAge -= theDate.get(Calendar.YEAR);
 
-        /* If we are a later day in the year subtract 1 year */
-        if (theDate.get(Calendar.DAY_OF_YEAR) > pDate.theDate.get(Calendar.DAY_OF_YEAR)) {
+        /* Check whether we are later in the year */
+        int myDelta = theDate.get(Calendar.MONTH)
+                      - pDate.theDate.get(Calendar.MONTH);
+        if (myDelta == 0) {
+            myDelta = theDate.get(Calendar.DAY_OF_MONTH)
+                      - pDate.theDate.get(Calendar.DAY_OF_MONTH);
+        }
+
+        /* If so then subtract one from the year */
+        if (myDelta > 0) {
             myAge--;
         }
 

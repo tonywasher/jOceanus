@@ -517,7 +517,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         CellPosition myFirst = new CellPosition(0, theBaseRow);
         CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
         theWorkSheet.declareRange(theRangeName, myFirst, myLast);
-        // writeString(pNumCols-1, "EndOfData");
     }
 
     /**

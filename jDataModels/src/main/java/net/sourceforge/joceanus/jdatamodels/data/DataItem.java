@@ -996,7 +996,7 @@ public abstract class DataItem
      */
     public boolean applyChanges(final DataItem pElement) {
         return false;
-    };
+    }
 
     /**
      * Validate the element Dirty items become valid.

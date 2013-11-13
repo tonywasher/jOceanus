@@ -61,9 +61,24 @@ public enum JDatePeriod {
     ONEYEAR(Calendar.YEAR, 1),
 
     /**
-     * Financial Year.
+     * Calendar Month.
      */
-    // FinancialYear(Calendar.YEAR, 1),
+    CALENDARMONTH(Calendar.MONTH, 1),
+
+    /**
+     * Calendar Quarter.
+     */
+    CALENDARQUARTER(Calendar.MONTH, 3),
+
+    /**
+     * Calendar Year.
+     */
+    CALENDARYEAR(Calendar.YEAR, 1),
+
+    /**
+     * Fiscal Year.
+     */
+    FISCALYEAR(Calendar.YEAR, 1),
 
     /**
      * Custom.
@@ -136,5 +151,29 @@ public enum JDatePeriod {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Is period next/previous available?
+     * @return true/false
+     */
+    public boolean adjustPeriod() {
+        return theField != -1;
+    }
+
+    /**
+     * Is period a containing period?
+     * @return true/false
+     */
+    public boolean isContaining() {
+        switch (this) {
+            case CALENDARMONTH:
+            case CALENDARQUARTER:
+            case CALENDARYEAR:
+            case FISCALYEAR:
+                return true;
+            default:
+                return false;
+        }
     }
 }

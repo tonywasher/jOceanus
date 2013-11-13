@@ -105,7 +105,7 @@ public class DatabasePreferences
     /**
      * Default Database driver string.
      */
-    private static final JDBCDriver DEFAULT_DBDRIVER = JDBCDriver.PostgreSQL;
+    private static final JDBCDriver DEFAULT_DBDRIVER = JDBCDriver.POSTGRESQL;
 
     /**
      * Default Database connection string.

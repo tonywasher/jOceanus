@@ -347,7 +347,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      */
     public boolean isLocked() {
         /* Store list and select correct mode */
-        return ((theList == null) || theList.isLocked());
+        return (theList == null)
+               || theList.isLocked();
     }
 
     /**
@@ -402,13 +403,12 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
         T[] myRows = (T[]) Array.newInstance(getDataClass(), mySelected.length);
 
         /* Loop through the selection indices */
-        for (int i = 0, j = 0; i < mySelected.length; i++) {
+        for (int i = 0; i < mySelected.length; i++) {
             /* Access the index and adjust for header */
             int myIndex = convertRowIndexToModel(mySelected[i]);
 
             /* Store the row */
-            myRows[j] = theList.get(myIndex);
-            j++;
+            myRows[i] = theList.get(myIndex);
         }
 
         /* Return the rows */
@@ -502,7 +502,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      */
     protected boolean isRowDeletable(final T pRow) {
         /* Not deletable if already deleted */
-        return (!pRow.isDeleted());
+        return !pRow.isDeleted();
     }
 
     /**
@@ -560,7 +560,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      */
     protected boolean isRowDuplicatable(final T pRow) {
         /* Not duplicatable if already deleted */
-        return (!pRow.isDeleted());
+        return !pRow.isDeleted();
     }
 
     /**

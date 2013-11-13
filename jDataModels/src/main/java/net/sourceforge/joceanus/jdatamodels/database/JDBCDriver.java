@@ -34,12 +34,12 @@ public enum JDBCDriver {
     /**
      * SQLServer.
      */
-    SQLServer,
+    SQLSERVER,
 
     /**
      * PostgreSQL.
      */
-    PostgreSQL;
+    POSTGRESQL;
 
     /**
      * Resource Bundle.
@@ -74,9 +74,9 @@ public enum JDBCDriver {
      */
     public String getDriver() {
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 return "org.postgresql.Driver";
         }
@@ -88,9 +88,9 @@ public enum JDBCDriver {
      */
     public boolean useIntegratedSecurity() {
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 return true;
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 return false;
         }
@@ -102,9 +102,9 @@ public enum JDBCDriver {
      */
     public String getPrefix() {
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 return "jdbc:sqlserver://";
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 return "jdbc:postgresql://";
         }
@@ -120,7 +120,7 @@ public enum JDBCDriver {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 /* Build the connection string */
                 myBuilder.append(getPrefix());
                 myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBSERVER));
@@ -130,7 +130,7 @@ public enum JDBCDriver {
                 myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBNAME));
                 myBuilder.append(";integratedSecurity=true");
                 break;
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 /* Build the connection string */
                 myBuilder.append(getPrefix());
@@ -150,7 +150,7 @@ public enum JDBCDriver {
      * @return the database column type
      */
     public String getDatabaseType(final ColumnType pType) {
-        boolean isSQLServer = this.equals(SQLServer);
+        boolean isSQLServer = this.equals(SQLSERVER);
         switch (pType) {
             case BOOLEAN:
                 return (isSQLServer)
@@ -196,7 +196,7 @@ public enum JDBCDriver {
     public String getDropTableCommand(final String pName) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.tables where name = '");
                 myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(pName);
@@ -204,7 +204,7 @@ public enum JDBCDriver {
                 myBuilder.append("') drop table ");
                 myBuilder.append(pName);
                 break;
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 myBuilder.append("drop table if exists ");
                 myBuilder.append(TableDefinition.QUOTE_STRING);
@@ -225,7 +225,7 @@ public enum JDBCDriver {
     public String getDropIndexCommand(final String pName) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.indexes where name = '");
                 myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(TableDefinition.PREFIX_INDEX);
@@ -237,7 +237,7 @@ public enum JDBCDriver {
                 myBuilder.append(pName);
                 myBuilder.append(TableDefinition.QUOTE_STRING);
                 break;
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 myBuilder.append("drop index if exists ");
                 myBuilder.append(TableDefinition.QUOTE_STRING);
@@ -257,9 +257,9 @@ public enum JDBCDriver {
      */
     public boolean defineBinaryLength() {
         switch (this) {
-            case SQLServer:
+            case SQLSERVER:
                 return true;
-            case PostgreSQL:
+            case POSTGRESQL:
             default:
                 return false;
         }

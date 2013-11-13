@@ -97,7 +97,7 @@ public class JDateDayExample
     /**
      * Scroll Height.
      */
-    private static final int SCROLL_HEIGHT = 90;
+    private static final int SCROLL_HEIGHT = 120;
 
     /**
      * Neutral Weight.
@@ -387,6 +387,7 @@ public class JDateDayExample
         myConstraints.gridx = 0;
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 2;
+        myConstraints.fill = GridBagConstraints.HORIZONTAL;
         myOptions.add(theRangeSelect, myConstraints);
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
@@ -418,13 +419,18 @@ public class JDateDayExample
         myConstraints.weightx = WEIGHT_NEUTRAL;
         myPanel.add(myStyle, myConstraints);
 
+        JScrollPane myScroll = new JScrollPane(theTable);
+        Dimension mySize = new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT);
+        myScroll.setMinimumSize(mySize);
+        myScroll.setMaximumSize(mySize);
+        theTable.setPreferredScrollableViewportSize(mySize);
+
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 1;
         myConstraints.gridwidth = 2;
-        myConstraints.fill = GridBagConstraints.HORIZONTAL;
-        myPanel.add(new JScrollPane(theTable), myConstraints);
-        theTable.setPreferredScrollableViewportSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
+        myConstraints.fill = GridBagConstraints.BOTH;
+        myPanel.add(myScroll, myConstraints);
 
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;

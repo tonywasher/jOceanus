@@ -99,7 +99,7 @@ public class ErrorPanel
      * @return true/false
      */
     public boolean hasError() {
-        return (!theErrors.isEmpty());
+        return !theErrors.isEmpty();
     }
 
     /**

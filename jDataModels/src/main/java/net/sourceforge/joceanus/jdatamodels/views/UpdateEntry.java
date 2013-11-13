@@ -65,7 +65,7 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
      * @return true/false
      */
     public boolean isClass(final Class<?> pClass) {
-        return (theClass.equals(pClass));
+        return theClass.equals(pClass);
     }
 
     /**

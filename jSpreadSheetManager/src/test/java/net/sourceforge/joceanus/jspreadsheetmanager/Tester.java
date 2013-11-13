@@ -25,7 +25,6 @@ public class Tester {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
-
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
