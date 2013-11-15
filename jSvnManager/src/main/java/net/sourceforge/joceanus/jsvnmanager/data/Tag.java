@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jsvnmanager.data;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -289,6 +290,7 @@ public final class Tag
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
+            theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
     }
@@ -332,7 +334,7 @@ public final class Tag
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof Tag)) {
+        if (pThat instanceof Tag) {
             return false;
         }
         Tag myThat = (Tag) pThat;

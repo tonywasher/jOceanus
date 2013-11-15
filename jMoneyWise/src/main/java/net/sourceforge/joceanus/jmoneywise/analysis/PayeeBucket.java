@@ -226,6 +226,26 @@ public final class PayeeBucket
     }
 
     /**
+     * Obtain values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public PayeeValues getValuesForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getValuesForEvent(pEvent);
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public PayeeValues getDeltaForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getDeltaForEvent(pEvent);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */
@@ -703,19 +723,9 @@ public final class PayeeBucket
 
         @Override
         protected void adjustToBaseValues(final PayeeValues pBase) {
-            /* Adjust income values */
-            JMoney myValue = getMoneyValue(PayeeAttribute.Income);
-            myValue = new JMoney(myValue);
-            JMoney myBaseValue = pBase.getMoneyValue(PayeeAttribute.Income);
-            myValue.subtractAmount(myBaseValue);
-            put(PayeeAttribute.Income, myValue);
-
-            /* Adjust expense values */
-            myValue = getMoneyValue(PayeeAttribute.Expense);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(PayeeAttribute.Expense);
-            myValue.subtractAmount(myBaseValue);
-            put(PayeeAttribute.Expense, myValue);
+            /* Adjust income/expense values */
+            adjustMoneyToBase(pBase, PayeeAttribute.Income);
+            adjustMoneyToBase(pBase, PayeeAttribute.Expense);
         }
 
         @Override

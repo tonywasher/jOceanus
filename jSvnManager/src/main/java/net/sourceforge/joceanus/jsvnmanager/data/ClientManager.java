@@ -140,11 +140,13 @@ public class ClientManager {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
+            /* Note needed */
         }
 
         @Override
         public void handleEvent(final SVNEvent pEvent,
                                 final double pProgress) throws SVNException {
+            /* Note needed */
         }
     }
 }

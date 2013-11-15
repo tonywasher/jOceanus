@@ -70,7 +70,7 @@ public enum JFiscalYear {
     private final int theMonth;
 
     /**
-     * Obtain the day
+     * Obtain the day.
      * @return the day
      */
     public int getFirstDay() {
@@ -78,7 +78,7 @@ public enum JFiscalYear {
     }
 
     /**
-     * Obtain the month
+     * Obtain the month.
      * @return the month
      */
     public int getFirstMonth() {
@@ -87,8 +87,6 @@ public enum JFiscalYear {
 
     /**
      * Constructor.
-     * @param pDay the first day of fiscal year
-     * @param pMonth the first month of fiscal year
      */
     private JFiscalYear() {
         this(Calendar.JANUARY);

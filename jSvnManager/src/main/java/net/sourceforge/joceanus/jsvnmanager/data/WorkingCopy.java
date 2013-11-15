@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jsvnmanager.data;
 import java.io.File;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -233,10 +234,13 @@ public final class WorkingCopy
         theRevision = pRevision.getNumber();
         theUpdates = new UpdateStatusList();
 
+        /* Access the logger */
+        Logger myLogger = pBranch.getRepository().getLogger();
+
         /* Determine the location of the project definition */
         File myPom = ProjectDefinition.getProjectDefFile(theLocation);
         if (myPom != null) {
-            theProject = ProjectDefinition.parseProjectFile(myPom);
+            theProject = ProjectDefinition.parseProjectFile(myLogger, myPom);
         }
     }
 
@@ -313,7 +317,7 @@ public final class WorkingCopy
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof WorkingCopy)) {
+        if (pThat instanceof WorkingCopy) {
             return false;
         }
         WorkingCopy myThat = (WorkingCopy) pThat;

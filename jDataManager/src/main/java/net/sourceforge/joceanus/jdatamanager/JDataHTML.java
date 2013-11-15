@@ -39,6 +39,11 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
  */
 public final class JDataHTML {
     /**
+     * Maximum Map entry count.
+     */
+    private static final int MAP_MAXENTRIES = 50;
+
+    /**
      * Colour for standard elements.
      */
     public static final Color COLOR_STANDARD = Color.black;
@@ -59,6 +64,66 @@ public final class JDataHTML {
     public static final Color COLOR_CHGLINK = Color.green;
 
     /**
+     * Start table html.
+     */
+    private static final String HTML_TABSTART = "<table><thead>";
+
+    /**
+     * Start table body html.
+     */
+    private static final String HTML_TABBODY = "</thead><tbody>";
+
+    /**
+     * End table html.
+     */
+    private static final String HTML_TABEND = "</tbody></table>";
+
+    /**
+     * Font italic css.
+     */
+    private static final String CSS_ITALIC = " { font-style: italic; color: ";
+
+    /**
+     * Start table row html.
+     */
+    private static final String HTML_ROWSTART = "<tr>";
+
+    /**
+     * Start table class row html.
+     */
+    private static final String HTML_ROWCLSSTART = "<tr class=\"";
+
+    /**
+     * End table class row html.
+     */
+    private static final String HTML_ROWCLSEND = "\">";
+
+    /**
+     * End table row html.
+     */
+    private static final String HTML_ROWEND = "</tr>";
+
+    /**
+     * Start table header cell html.
+     */
+    private static final String HTML_HDRCELLSTART = "<th>";
+
+    /**
+     * End table header cell html.
+     */
+    private static final String HTML_HDRCELLEND = "</th>";
+
+    /**
+     * Start table cell html.
+     */
+    private static final String HTML_CELLSTART = "<td>";
+
+    /**
+     * End table cell html.
+     */
+    private static final String HTML_CELLEND = "</td>";
+
+    /**
      * Name of odd table row class.
      */
     private static final String CLASS_ODDROW = "oddrow";
@@ -77,6 +142,21 @@ public final class JDataHTML {
      * Name of security changed cell class.
      */
     private static final String CLASS_SECCHANGED = "security";
+
+    /**
+     * Value header.
+     */
+    private static final String HDR_VALUE = "Value";
+
+    /**
+     * Forward link.
+     */
+    private static final String LINK_NEXT = "Next";
+
+    /**
+     * Backward link.
+     */
+    private static final String LINK_PREV = "Previous";
 
     /**
      * Buffer length.
@@ -185,7 +265,7 @@ public final class JDataHTML {
         /* Define alternate colour and style for changed elements */
         myBuilder.append(".");
         myBuilder.append(CLASS_CHANGED);
-        myBuilder.append(" { font-style: italic; color: ");
+        myBuilder.append(CSS_ITALIC);
         myBuilder.append(DataConverter.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
@@ -217,7 +297,7 @@ public final class JDataHTML {
         /* Set changed link definition */
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
-        myBuilder.append(" { font-style: italic; color: ");
+        myBuilder.append(CSS_ITALIC);
         myBuilder.append(DataConverter.colorToHexString(theColorChgLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
@@ -251,6 +331,8 @@ public final class JDataHTML {
                 return formatHTMLDetail(pDetail, o);
             case MAP:
                 return formatHTMLMap(pDetail, o);
+            case MAPSECTION:
+                return formatHTMLMapSection(pDetail, o);
             case STACKTRACE:
                 return formatHTMLStack(o);
             case NONE:
@@ -274,6 +356,9 @@ public final class JDataHTML {
         }
         if (Map.class.isInstance(pObject)) {
             return JDataType.MAP;
+        }
+        if (MapSection.class.isInstance(pObject)) {
+            return JDataType.MAPSECTION;
         }
         if (Throwable.class.isInstance(pObject)) {
             return JDataType.EXCEPTION;
@@ -346,18 +431,21 @@ public final class JDataHTML {
             }
 
             /* Start the field */
-            myEntries.append("<tr class=\"");
+            myEntries.append(HTML_ROWCLSSTART);
             myEntries.append(isOdd
                     ? CLASS_ODDROW
                     : CLASS_EVENROW);
-            myEntries.append("\"><td>");
+            myEntries.append(HTML_ROWCLSEND);
+            myEntries.append(HTML_CELLSTART);
             myEntries.append(myField.getName());
-            myEntries.append("</td><td>");
+            myEntries.append(HTML_CELLEND);
+            myEntries.append(HTML_CELLSTART);
 
             /* Format the value */
             String myFormat = formatHTMLValue(pDetail, myValue);
             myEntries.append(myFormat);
-            myEntries.append("</td></tr>");
+            myEntries.append(HTML_CELLEND);
+            myEntries.append(HTML_ROWEND);
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -367,15 +455,22 @@ public final class JDataHTML {
         myResults.setLength(0);
         myResults.append("<h2 align=\"center\">");
         myResults.append(myFields.getName());
-        myResults.append("<table><thead>");
-        myResults.append("<tr><th>Field</th><th>Value</th></tr>");
-        myResults.append("</thead><tbody>");
+        myResults.append(HTML_TABSTART);
+        myResults.append(HTML_ROWSTART);
+        myResults.append(HTML_HDRCELLSTART);
+        myResults.append("Field");
+        myResults.append(HTML_HDRCELLEND);
+        myResults.append(HTML_HDRCELLSTART);
+        myResults.append(HDR_VALUE);
+        myResults.append(HTML_HDRCELLEND);
+        myResults.append(HTML_ROWEND);
+        myResults.append(HTML_TABBODY);
 
         /* Add in the entries */
         myResults.append(myEntries);
 
         /* Terminate the table */
-        myResults.append("</tbody></table>");
+        myResults.append(HTML_TABEND);
 
         /* Return the formatted item */
         return myResults;
@@ -451,7 +546,7 @@ public final class JDataHTML {
         myBuffer.append(pDifference.isValueChanged()
                 ? CLASS_CHANGED
                 : CLASS_SECCHANGED);
-        myBuffer.append("\">");
+        myBuffer.append(HTML_ROWCLSEND);
 
         /* Add value and reformat */
         myBuffer.append(pText);
@@ -467,58 +562,183 @@ public final class JDataHTML {
      */
     private StringBuilder formatHTMLMap(final JDataDetail pDetail,
                                         final Object pMap) {
+        /* Access the map */
         Map<?, ?> myMap = Map.class.cast(pMap);
-        StringBuilder myResults = new StringBuilder(BUFFER_LEN);
-        StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
-        String myFormat;
+
+        /* If we have too many entries */
+        if (myMap.size() > (MAP_MAXENTRIES << 1)) {
+            /* Build as first section of multiMap */
+            return formatHTMLMapSection(pDetail, new MapSection(myMap, 0));
+        }
 
         /* Loop through the fields */
+        StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
         boolean isOdd = true;
         for (Map.Entry<?, ?> myEntry : myMap.entrySet()) {
             /* Access the key and value */
-            Object myKey = myEntry.getKey();
-            Object myValue = myEntry.getValue();
-
-            /* Format the row */
-            myEntries.append("<tr class=\"");
-            myEntries.append(isOdd
-                    ? CLASS_ODDROW
-                    : CLASS_EVENROW);
-            myEntries.append("\">");
-
-            /* Format the key */
-            myFormat = theFormatter.formatObject(myKey);
-            if (getDataType(myKey) != JDataType.NONE) {
-                myFormat = pDetail.addDataLink(myKey, myFormat);
-            }
-            myEntries.append("<td>");
-            myEntries.append(myFormat);
-            myEntries.append("</td><td>");
-
-            /* Format the value */
-            myFormat = theFormatter.formatObject(myValue);
-            if (getDataType(myValue) != JDataType.NONE) {
-                myFormat = pDetail.addDataLink(myValue, myFormat);
-            }
-            myEntries.append(myFormat);
-            myEntries.append("</td></tr>");
+            StringBuilder myBuild = formatHTMLMapEntry(pDetail, myEntry, isOdd);
+            myEntries.append(myBuild);
 
             /* Flip row type */
             isOdd = !isOdd;
         }
 
+        /* Return the formatted item */
+        return buildHTMLMap(myEntries);
+    }
+
+    /**
+     * Build HTML table describing map.
+     * @param pEntries the map entries
+     * @return the HTML table
+     */
+    private StringBuilder buildHTMLMap(final StringBuilder pEntries) {
+
         /* Initialise the string with an item name */
+        StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         myResults.append("<h2 align=\"center\">Map Elements");
-        myResults.append("<table><thead>");
-        myResults.append("<tr><th>Key</th><th>Value</th></tr></thead><tbody>");
+        myResults.append(HTML_TABSTART);
+        myResults.append(HTML_ROWSTART);
+        myResults.append(HTML_HDRCELLSTART);
+        myResults.append("Key");
+        myResults.append(HTML_HDRCELLEND);
+        myResults.append(HTML_HDRCELLSTART);
+        myResults.append(HDR_VALUE);
+        myResults.append(HTML_HDRCELLEND);
+        myResults.append(HTML_ROWEND);
+        myResults.append(HTML_TABBODY);
 
         /* Add in the entries */
-        myResults.append(myEntries);
+        myResults.append(pEntries);
 
         /* Terminate the table */
-        myResults.append("</tbody></table>");
+        myResults.append(HTML_TABEND);
 
         /* Return the formatted item */
+        return myResults;
+    }
+
+    /**
+     * Format map entry.
+     * @param pDetail linking detail
+     * @param pEntry the map entry to describe
+     * @param isOdd is this and odd row true/false
+     * @return the HTML table
+     */
+    private StringBuilder formatHTMLMapEntry(final JDataDetail pDetail,
+                                             final Object pEntry,
+                                             final boolean isOdd) {
+        Map.Entry<?, ?> myEntry = Map.Entry.class.cast(pEntry);
+        StringBuilder myBuild = new StringBuilder(BUFFER_LEN);
+
+        /* Access the key and value */
+        Object myKey = myEntry.getKey();
+        Object myValue = myEntry.getValue();
+
+        /* Format the row */
+        myBuild.append(HTML_ROWCLSSTART);
+        myBuild.append(isOdd
+                ? CLASS_ODDROW
+                : CLASS_EVENROW);
+        myBuild.append(HTML_ROWCLSEND);
+
+        /* Format the key */
+        String myFormat = theFormatter.formatObject(myKey);
+        if (getDataType(myKey) != JDataType.NONE) {
+            myFormat = pDetail.addDataLink(myKey, myFormat);
+        }
+        myBuild.append(HTML_CELLSTART);
+        myBuild.append(myFormat);
+        myBuild.append(HTML_CELLEND);
+        myBuild.append(HTML_CELLSTART);
+
+        /* Format the value */
+        myFormat = theFormatter.formatObject(myValue);
+        if (getDataType(myValue) != JDataType.NONE) {
+            myFormat = pDetail.addDataLink(myValue, myFormat);
+        }
+        myBuild.append(myFormat);
+        myBuild.append(HTML_CELLEND);
+        myBuild.append(HTML_ROWEND);
+
+        /* Return the formatted item */
+        return myBuild;
+    }
+
+    /**
+     * Build HTML table describing map.
+     * @param pDetail linking detail
+     * @param pSection the map section to describe
+     * @return the HTML table
+     */
+    private StringBuilder formatHTMLMapSection(final JDataDetail pDetail,
+                                               final Object pSection) {
+        StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
+
+        /* Access iterator for map */
+        MapSection mySection = MapSection.class.cast(pSection);
+        Map<?, ?> myMap = mySection.getMap();
+        int myPart = mySection.getPart();
+        Iterator<?> myIterator = myMap.entrySet().iterator();
+
+        /* If the section is not the first */
+        boolean hasPrev = myPart > 0;
+        if (hasPrev) {
+            /* Skip leading entries */
+            int myStart = myPart
+                          * MAP_MAXENTRIES;
+            while (myIterator.hasNext()
+                   && (myStart-- > 0)) {
+                myIterator.next();
+            }
+        }
+
+        /* Loop up to the limit */
+        boolean isOdd = true;
+        int myCount = MAP_MAXENTRIES;
+        while (myIterator.hasNext()
+               && (myCount-- > 0)) {
+            /* Access the key and value */
+            Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+
+            /* Access the key and value */
+            StringBuilder myBuild = formatHTMLMapEntry(pDetail, myEntry, isOdd);
+            myEntries.append(myBuild);
+
+            /* Flip row type */
+            isOdd = !isOdd;
+        }
+
+        /* Determine whether there are further parts */
+        boolean hasMore = myIterator.hasNext();
+
+        /* Create the StringBuilder */
+        StringBuilder myResults = new StringBuilder(BUFFER_LEN);
+
+        /* Build the links */
+        myResults.append("<table border=\"1\" width=\"90%\" align=\"center\">");
+        myResults.append("<thead><th>Sections</th>");
+
+        /* Handle Backward Link */
+        if (hasPrev) {
+            myResults.append(HTML_HDRCELLSTART);
+            myResults.append(pDetail.addDataLink(new MapSection(myMap, myPart - 1), LINK_PREV));
+            myResults.append(HTML_HDRCELLEND);
+        }
+
+        /* Handle Forward Link */
+        if (hasMore) {
+            myResults.append(HTML_HDRCELLSTART);
+            myResults.append(pDetail.addDataLink(new MapSection(myMap, myPart + 1), LINK_NEXT));
+            myResults.append(HTML_HDRCELLEND);
+        }
+
+        /* Complete the table */
+        myResults.append(HTML_TABBODY);
+        myResults.append(HTML_TABEND);
+
+        /* Return the formatted item */
+        myResults.append(buildHTMLMap(myEntries));
         return myResults;
     }
 
@@ -533,33 +753,81 @@ public final class JDataHTML {
 
         /* Add the stack trace */
         myResults.append("<h2 align=\"center\">Stack Trace");
-        myResults.append("<table><thead>");
-        myResults.append("<tr><th>Stack Trace</th></tr></thead><tbody>");
+        myResults.append(HTML_TABSTART);
+        myResults.append(HTML_ROWSTART);
+        myResults.append(HTML_HDRCELLSTART);
+        myResults.append("Stack Trace");
+        myResults.append(HTML_HDRCELLEND);
+        myResults.append(HTML_ROWEND);
+        myResults.append(HTML_TABBODY);
 
         /* Loop through the elements */
         boolean isOdd = true;
         for (StackTraceElement st : myArray) {
             /* Format the row */
-            myResults.append("<tr class=\"");
+            myResults.append(HTML_ROWCLSSTART);
             myResults.append(isOdd
                     ? CLASS_ODDROW
                     : CLASS_EVENROW);
-            myResults.append("\">");
+            myResults.append(HTML_ROWCLSEND);
 
             /* Add the stack trace */
-            myResults.append("<td>");
+            myResults.append(HTML_CELLSTART);
             myResults.append(st.toString());
-            myResults.append("</td></tr>");
+            myResults.append(HTML_CELLEND);
+            myResults.append(HTML_ROWEND);
 
             /* Flip row type */
             isOdd = !isOdd;
         }
 
         /* Terminate the table */
-        myResults.append("</tbody></table>");
+        myResults.append(HTML_TABEND);
 
         /* Return the formatted item */
         return myResults;
+    }
+
+    /**
+     * Map section class.
+     */
+    private static final class MapSection {
+        /**
+         * The map.
+         */
+        private final Map<?, ?> theMap;
+
+        /**
+         * The Part.
+         */
+        private final int thePart;
+
+        /**
+         * Obtain the map.
+         * @return the map
+         */
+        private Map<?, ?> getMap() {
+            return theMap;
+        }
+
+        /**
+         * Obtain the part.
+         * @return the part#
+         */
+        private int getPart() {
+            return thePart;
+        }
+
+        /**
+         * Constructor.
+         * @param pMap the Map
+         * @param pPart the part#
+         */
+        private MapSection(final Map<?, ?> pMap,
+                           final int pPart) {
+            theMap = pMap;
+            thePart = pPart;
+        }
     }
 
     /**
@@ -575,6 +843,11 @@ public final class JDataHTML {
          * Map.
          */
         MAP,
+
+        /**
+         * Map Section.
+         */
+        MAPSECTION,
 
         /**
          * Exception.

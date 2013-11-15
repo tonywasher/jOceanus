@@ -38,6 +38,11 @@ public class JDataDetail {
     private static final int BUFFER_LEN = 1000;
 
     /**
+     * anchor link.
+     */
+    private static final String HTML_LINK = "<th><a href=\"#";
+
+    /**
      * Forward link.
      */
     private static final String LINK_FORWARD = "Forward";
@@ -313,14 +318,14 @@ public class JDataDetail {
 
         /* Handle Backward Link */
         if (theBackward != null) {
-            myBuilder.append("<th><a href=\"#");
+            myBuilder.append(HTML_LINK);
             myBuilder.append(LINK_BACKWARD);
             myBuilder.append("\">Backwards</a></th>");
         }
 
         /* Handle Forward Link */
         if (theForward != null) {
-            myBuilder.append("<th><a href=\"#");
+            myBuilder.append(HTML_LINK);
             myBuilder.append(LINK_FORWARD);
             myBuilder.append("\">Forwards</a></th>");
         }

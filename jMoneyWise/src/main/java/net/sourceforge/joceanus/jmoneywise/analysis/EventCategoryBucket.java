@@ -235,6 +235,26 @@ public final class EventCategoryBucket
     }
 
     /**
+     * Obtain values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public CategoryValues getValuesForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getValuesForEvent(pEvent);
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public CategoryValues getDeltaForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getDeltaForEvent(pEvent);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */
@@ -674,19 +694,9 @@ public final class EventCategoryBucket
 
         @Override
         protected void adjustToBaseValues(final CategoryValues pBase) {
-            /* Adjust income values */
-            JMoney myValue = getMoneyValue(EventAttribute.Income);
-            myValue = new JMoney(myValue);
-            JMoney myBaseValue = pBase.getMoneyValue(EventAttribute.Income);
-            myValue.subtractAmount(myBaseValue);
-            put(EventAttribute.Income, myValue);
-
-            /* Adjust expense values */
-            myValue = getMoneyValue(EventAttribute.Expense);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(EventAttribute.Expense);
-            myValue.subtractAmount(myBaseValue);
-            put(EventAttribute.Expense, myValue);
+            /* Adjust income/expense values */
+            adjustMoneyToBase(pBase, EventAttribute.Income);
+            adjustMoneyToBase(pBase, EventAttribute.Expense);
         }
 
         @Override

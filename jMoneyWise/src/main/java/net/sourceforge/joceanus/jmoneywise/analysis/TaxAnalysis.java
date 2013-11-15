@@ -179,33 +179,33 @@ public class TaxAnalysis {
 
         /* Calculate the salary taxation */
         TaxCalcBucket myBucket = calculateSalaryTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Calculate the rental taxation */
         myBucket = calculateRentalTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Calculate the interest taxation */
         myBucket = calculateInterestTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Calculate the dividends taxation */
         myBucket = calculateDividendsTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Calculate the taxable gains taxation */
         myBucket = calculateTaxableGainsTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Calculate the capital gains taxation */
         myBucket = calculateCapitalGainsTax(myBands);
-        myIncome.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Amount));
-        myTax.addAmount(myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+        myIncome.addAmount(myBucket.getMoneyValue(TaxAttribute.Amount));
+        myTax.addAmount(myBucket.getMoneyValue(TaxAttribute.Taxation));
 
         /* Build the TotalTaxBucket */
         myBucket = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
@@ -325,7 +325,7 @@ public class TaxAnalysis {
 
         /* Access the gross income */
         TaxCalcBucket myBucket = myList.getBucket(TaxCategoryClass.GrossIncome);
-        JMoney myGrossIncome = myBucket.getMoneyAttribute(TaxAttribute.Amount);
+        JMoney myGrossIncome = myBucket.getMoneyValue(TaxAttribute.Amount);
         myBucket.setParent(myParentBucket);
 
         /* If we are using age allowance and the gross income is above the Age Allowance Limit */
@@ -1144,7 +1144,7 @@ public class TaxAnalysis {
                 myTaxBucket.setAmount(pBands.theBasicBand);
 
                 /* Remember this taxation amount to remove from HiTax bucket */
-                JMoney myHiTax = new JMoney(myTaxBucket.getMoneyAttribute(TaxAttribute.Amount));
+                JMoney myHiTax = new JMoney(myTaxBucket.getMoneyValue(TaxAttribute.Amount));
                 myHiTax.negate();
 
                 /* Access the HiSliceBucket */
@@ -1201,7 +1201,7 @@ public class TaxAnalysis {
 
             /* Re-access the gains */
             TaxCalcBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossTaxableGains);
-            myGains = new JMoney(mySrcBucket.getMoneyAttribute(TaxAttribute.Amount));
+            myGains = new JMoney(mySrcBucket.getMoneyValue(TaxAttribute.Amount));
 
             /* Subtract the gains from the tax bands */
             myGains.subtractAmount(pBands.theBasicBand);

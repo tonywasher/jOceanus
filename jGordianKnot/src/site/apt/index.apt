@@ -6,8 +6,9 @@ JGordianKnot Project
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
   
   Encryption is performed using a set of keys called a <<CipherSet>> (one key for each supported algorithm). A subset of
-the keys is selected at random from the CipherSet and the plaintext is encrypted by each key in turn. The types of
-the keys used are encoded into output ciphertext along with the randomly chosen initialisation vector.
+the keys is selected at random (using a SecureRandom instance) from the CipherSet, and the plaintext is encrypted 
+by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
+initialisation vector.
 
   A CipherSet may be defined by a <<PasswordHash>>. This PasswordHash is build from a randomly selected set of three
 MessageDigest algorithms using an interleaved variant of PBKDF2. As the three hashes are calculated from the password,
@@ -46,6 +47,8 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * RIPEMD320
 
     * SHA512
+
+    * SHA3
 
   The following Elliptic Curves are supported (see BouncyCastle documentation for details)
 

@@ -127,8 +127,8 @@ public class TaxCalcAlt
             /* Format the line */
             theBuilder.startRow(myTable);
             theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Taxation));
 
             /* Format the detail */
             makeTaxReport(myTable, myBucket);
@@ -138,8 +138,8 @@ public class TaxCalcAlt
         myTax = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Taxation));
 
         /* Access the Tax Paid bucket */
         TaxBasisBucket myTaxPaid = myBasis.getBucket(TaxCategoryClass.TaxPaid);
@@ -152,8 +152,8 @@ public class TaxCalcAlt
         myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Taxation));
 
         /* If we need a tax slice report */
         if (myList.hasGainsSlices()) {
@@ -280,7 +280,7 @@ public class TaxCalcAlt
         TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "Personal Allowance");
-        theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
 
         /* if we have adjusted the allowance */
         if (myList.hasReducedAllow()) {
@@ -288,12 +288,12 @@ public class TaxCalcAlt
             myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "Gross Taxable Income");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
 
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
             theBuilder.makeTitleCell(myTable, "Adjusted Allowance");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         }
 
         /* Access the Low Tax Band */
@@ -314,7 +314,7 @@ public class TaxCalcAlt
             myTax = myList.getBucket(TaxCategoryClass.HiTaxBand);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "High Tax Band");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         }
     }
 
@@ -354,9 +354,9 @@ public class TaxCalcAlt
             /* Format the detail */
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myTable, myBucket.getRateAttribute(TaxAttribute.Rate));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getRateValue(TaxAttribute.Rate));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Taxation));
         }
 
         /* Embed the table correctly */

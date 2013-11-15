@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -137,11 +139,13 @@ public class ProjectDefinition
 
     /**
      * Parse disk POM file.
+     * @param pLogger the logger
      * @param pFile file to load
      * @return project definition.
      * @throws JDataException on error
      */
-    public static ProjectDefinition parseProjectFile(final File pFile) throws JDataException {
+    public static ProjectDefinition parseProjectFile(final Logger pLogger,
+                                                     final File pFile) throws JDataException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer = null;
 
@@ -170,7 +174,7 @@ public class ProjectDefinition
                 try {
                     myInBuffer.close();
                 } catch (IOException i) {
-                    myInBuffer = null;
+                    pLogger.log(Level.SEVERE, "Close failure", i);
                 }
             }
         }

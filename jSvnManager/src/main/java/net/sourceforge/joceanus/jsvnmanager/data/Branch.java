@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jsvnmanager.data;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -463,6 +464,7 @@ public final class Branch
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
+            theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
     }
@@ -518,7 +520,7 @@ public final class Branch
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof Branch)) {
+        if (pThat instanceof Branch) {
             return false;
         }
         Branch myThat = (Branch) pThat;

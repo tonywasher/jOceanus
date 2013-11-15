@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdecimal;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -71,42 +68,12 @@ public class JDecimalFormatter {
     /**
      * The locale.
      */
-    private Locale theLocale;
+    protected static final JDecimalLocale LOCALE_DEFAULT = new JDecimalLocale();
 
     /**
-     * The grouping size.
+     * The locale.
      */
-    private int theGroupingSize;
-
-    /**
-     * The grouping separator.
-     */
-    private String theGrouping;
-
-    /**
-     * The minus sign.
-     */
-    private char theMinusSign;
-
-    /**
-     * The perCent symbol.
-     */
-    private char thePerCent;
-
-    /**
-     * The perMille symbol.
-     */
-    private char thePerMille;
-
-    /**
-     * The decimal separator.
-     */
-    private String theDecimal;
-
-    /**
-     * The money decimal separator.
-     */
-    private String theMoneyDecimal;
+    private JDecimalLocale theLocale;
 
     /**
      * Do we use accounting format for monetary values?
@@ -141,20 +108,7 @@ public class JDecimalFormatter {
      */
     public final void setLocale(final Locale pLocale) {
         /* Store the locale */
-        theLocale = pLocale;
-
-        /* Access decimal formats */
-        DecimalFormatSymbols mySymbols = new DecimalFormatSymbols(pLocale);
-        DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
-        theGroupingSize = myFormat.getGroupingSize();
-
-        /* Access various interesting formats */
-        theMinusSign = mySymbols.getMinusSign();
-        theGrouping = Character.toString(mySymbols.getGroupingSeparator());
-        thePerCent = mySymbols.getPercent();
-        thePerMille = mySymbols.getPerMill();
-        theDecimal = Character.toString(mySymbols.getDecimalSeparator());
-        theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());
+        theLocale = new JDecimalLocale(pLocale);
     }
 
     /**
@@ -279,16 +233,18 @@ public class JDecimalFormatter {
         }
 
         /* Loop while we need to add grouping */
-        while (myLen > theGroupingSize) {
+        int myGroupingSize = theLocale.getGroupingSize();
+        String myGrouping = theLocale.getGrouping();
+        while (myLen > myGroupingSize) {
             /* Insert grouping character and remove grouping size from length */
             myString.insert(myLen
-                            - theGroupingSize, theGrouping);
-            myLen -= theGroupingSize;
+                            - myGroupingSize, myGrouping);
+            myLen -= myGroupingSize;
         }
 
         /* Add minus sign if required */
         if (isNegative) {
-            myString.insert(0, theMinusSign);
+            myString.insert(0, theLocale.getMinusSign());
         }
 
         /* Return the string */
@@ -309,10 +265,11 @@ public class JDecimalFormatter {
         }
 
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theMoneyDecimal);
+        StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theLocale.getMoneyDecimal());
 
         /* If we have a leading minus sign */
-        boolean isNegative = myWork.charAt(0) == theMinusSign;
+        char myMinus = theLocale.getMinusSign();
+        boolean isNegative = myWork.charAt(0) == myMinus;
         if (isNegative) {
             /* Remove the minus sign */
             myWork = myWork.deleteCharAt(0);
@@ -326,11 +283,11 @@ public class JDecimalFormatter {
 
         /* Add the currency symbol */
         Currency myCurrency = pMoney.getCurrency();
-        myWork.insert(0, myCurrency.getSymbol(theLocale));
+        myWork.insert(0, theLocale.getSymbol(myCurrency));
 
         /* Re-Add the minus sign */
         if (isNegative) {
-            myWork.insert(0, theMinusSign);
+            myWork.insert(0, myMinus);
         }
 
         /* return the formatted value */
@@ -365,10 +322,10 @@ public class JDecimalFormatter {
     public String formatRate(final JRate pRate) {
         /* Format the basic value */
         StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                                                                    - JDecimalParser.ADJUST_PERCENT, theDecimal);
+                                                                    - JDecimalParser.ADJUST_PERCENT, theLocale.getDecimal());
 
         /* Append the perCent sign */
-        myWork.append(thePerCent);
+        myWork.append(theLocale.getPerCent());
 
         /* return the formatted value */
         return myWork.toString();
@@ -382,10 +339,10 @@ public class JDecimalFormatter {
     public String formatRatePerMille(final JRate pRate) {
         /* Format the basic value */
         StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                                                                    - JDecimalParser.ADJUST_PERMILLE, theDecimal);
+                                                                    - JDecimalParser.ADJUST_PERMILLE, theLocale.getDecimal());
 
         /* Append the perMille sign */
-        myWork.append(thePerMille);
+        myWork.append(theLocale.getPerMille());
 
         /* return the formatted value */
         return myWork.toString();
@@ -445,7 +402,7 @@ public class JDecimalFormatter {
      */
     private String formatBasicDecimal(final JDecimal pDecimal) {
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pDecimal.unscaledValue(), pDecimal.scale(), theDecimal);
+        StringBuilder myWork = formatDecimal(pDecimal.unscaledValue(), pDecimal.scale(), theLocale.getDecimal());
 
         /* return the formatted value */
         return myWork.toString();
@@ -492,7 +449,7 @@ public class JDecimalFormatter {
         }
 
         /* Add the currency symbol */
-        myWork.insert(0, pCurrency.getSymbol(theLocale));
+        myWork.insert(0, theLocale.getSymbol(pCurrency));
 
         /* Return the string */
         return myWork.toString();

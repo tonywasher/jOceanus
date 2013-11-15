@@ -53,6 +53,11 @@ public class BucketHistory<T extends BucketValues<T, ?>>
      */
     private final T theBaseValues;
 
+    /**
+     * Last values.
+     */
+    private BucketSnapShot<T> theLastValues = null;
+
     @Override
     public String formatObject() {
         return getClass().getSimpleName();
@@ -177,8 +182,9 @@ public class BucketHistory<T extends BucketValues<T, ?>>
         /* If we broke the loop because we found an event */
         if (myLatest != null) {
             /* Add to the map */
-            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myLatest, theBaseValues);
+            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myLatest, theBaseValues, theLastValues);
             put(myLatest.getId(), myNewEvent);
+            theLastValues = myNewEvent;
         }
 
         /* Continue the loop */
@@ -192,8 +198,9 @@ public class BucketHistory<T extends BucketValues<T, ?>>
             }
 
             /* Add to the map */
-            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myEvent, theBaseValues);
+            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myEvent, theBaseValues, theLastValues);
             put(myEntry.getKey(), myNewEvent);
+            theLastValues = myNewEvent;
 
             /* Store latest value */
             myLatest = myEvent;
@@ -214,8 +221,9 @@ public class BucketHistory<T extends BucketValues<T, ?>>
     protected T registerEvent(final Event pEvent,
                               final T pValues) {
         /* Allocate the event and add to map */
-        BucketSnapShot<T> myEvent = new BucketSnapShot<T>(pEvent, pValues);
+        BucketSnapShot<T> myEvent = new BucketSnapShot<T>(pEvent, pValues, theLastValues);
         put(pEvent.getId(), myEvent);
+        theLastValues = myEvent;
 
         /* Return the values */
         return myEvent.getSnapShot();
@@ -232,5 +240,18 @@ public class BucketHistory<T extends BucketValues<T, ?>>
         return (myEvent == null)
                 ? null
                 : myEvent.getSnapShot();
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public T getDeltaForEvent(final Event pEvent) {
+        /* Locate the event in the map */
+        BucketSnapShot<T> myEvent = get(pEvent.getId());
+        return (myEvent == null)
+                ? null
+                : myEvent.getDelta();
     }
 }

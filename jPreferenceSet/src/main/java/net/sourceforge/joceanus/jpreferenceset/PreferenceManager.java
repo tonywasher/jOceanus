@@ -95,7 +95,7 @@ public class PreferenceManager
      * Obtain logger.
      * @return the logger
      */
-    protected Logger getLogger() {
+    public Logger getLogger() {
         return theLogger;
     }
 

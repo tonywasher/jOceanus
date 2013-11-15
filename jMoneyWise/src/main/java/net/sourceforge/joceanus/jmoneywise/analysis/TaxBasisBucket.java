@@ -216,6 +216,26 @@ public final class TaxBasisBucket
     }
 
     /**
+     * Obtain values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public TaxBasisValues getValuesForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getValuesForEvent(pEvent);
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public TaxBasisValues getDeltaForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getDeltaForEvent(pEvent);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */
@@ -599,26 +619,10 @@ public final class TaxBasisBucket
 
         @Override
         protected void adjustToBaseValues(final TaxBasisValues pBase) {
-            /* Adjust gross values */
-            JMoney myValue = getMoneyValue(TaxBasisAttribute.Gross);
-            myValue = new JMoney(myValue);
-            JMoney myBaseValue = pBase.getMoneyValue(TaxBasisAttribute.Gross);
-            myValue.subtractAmount(myBaseValue);
-            put(TaxBasisAttribute.Gross, myValue);
-
-            /* Adjust net values */
-            myValue = getMoneyValue(TaxBasisAttribute.Net);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(TaxBasisAttribute.Net);
-            myValue.subtractAmount(myBaseValue);
-            put(TaxBasisAttribute.Net, myValue);
-
-            /* Adjust tax credit values */
-            myValue = getMoneyValue(TaxBasisAttribute.TaxCredit);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(TaxBasisAttribute.TaxCredit);
-            myValue.subtractAmount(myBaseValue);
-            put(TaxBasisAttribute.TaxCredit, myValue);
+            /* Adjust gross/net/tax values */
+            adjustMoneyToBase(pBase, TaxBasisAttribute.Gross);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.Net);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.TaxCredit);
         }
 
         @Override

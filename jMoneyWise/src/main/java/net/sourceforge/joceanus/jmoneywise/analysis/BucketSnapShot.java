@@ -53,6 +53,11 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
     private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
 
     /**
+     * Event Id.
+     */
+    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
+
+    /**
      * Date Id.
      */
     private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDate"));
@@ -61,6 +66,11 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * Values Id.
      */
     private static final JDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataValues"));
+
+    /**
+     * Previous Values Id.
+     */
+    private static final JDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevious"));
 
     @Override
     public String formatObject() {
@@ -77,11 +87,17 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
         if (FIELD_ID.equals(pField)) {
             return theId;
         }
+        if (FIELD_EVENT.equals(pField)) {
+            return theEvent;
+        }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
         }
         if (FIELD_VALUES.equals(pField)) {
             return theSnapShot;
+        }
+        if (FIELD_PREVIOUS.equals(pField)) {
+            return thePrevious;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -90,6 +106,11 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * The id of the event.
      */
     private final Integer theId;
+
+    /**
+     * The event.
+     */
+    private final Event theEvent;
 
     /**
      * The date.
@@ -102,11 +123,24 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
     private final T theSnapShot;
 
     /**
+     * Previous SnapShot Values.
+     */
+    private final T thePrevious;
+
+    /**
      * Obtain id.
      * @return the id
      */
     protected Integer getId() {
         return theId;
+    }
+
+    /**
+     * Obtain event.
+     * @return the event
+     */
+    protected Event getEvent() {
+        return theEvent;
     }
 
     /**
@@ -137,30 +171,59 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * Constructor.
      * @param pEvent the event
      * @param pValues the values
+     * @param pPrevious the previous snapShot
      */
     protected BucketSnapShot(final Event pEvent,
-                             final T pValues) {
+                             final T pValues,
+                             final BucketSnapShot<T> pPrevious) {
         /* Store event details */
         theId = pEvent.getId();
+        theEvent = pEvent;
         theDate = pEvent.getDate();
 
         /* Store the snapshot map */
         theSnapShot = pValues.getSnapShot();
+        thePrevious = (pPrevious == null)
+                ? null
+                : pPrevious.getSnapShot();
     }
 
     /**
      * Constructor.
      * @param pSnapShot the snapShot
      * @param pBaseValues the base values
+     * @param pPrevious the previous snapShot
      */
     protected BucketSnapShot(final BucketSnapShot<T> pSnapShot,
-                             final T pBaseValues) {
+                             final T pBaseValues,
+                             final BucketSnapShot<T> pPrevious) {
         /* Store event details */
         theId = pSnapShot.getId();
+        theEvent = pSnapShot.getEvent();
         theDate = pSnapShot.getDate();
 
         /* Store the snapshot map */
         theSnapShot = pSnapShot.getNewSnapShot();
         theSnapShot.adjustToBaseValues(pBaseValues);
+        thePrevious = (pPrevious == null)
+                ? null
+                : pPrevious.getSnapShot();
+    }
+
+    /**
+     * Obtain delta snapShot.
+     * @return the delta snapShot
+     */
+    protected T getDelta() {
+        /* If we have a previous event */
+        if (thePrevious != null) {
+            /* Allocate new snapShot and adjust */
+            T myDelta = theSnapShot.getSnapShot();
+            myDelta.adjustToBaseValues(thePrevious);
+            return myDelta;
+        }
+
+        /* Return the snapShot unchanged */
+        return theSnapShot;
     }
 }

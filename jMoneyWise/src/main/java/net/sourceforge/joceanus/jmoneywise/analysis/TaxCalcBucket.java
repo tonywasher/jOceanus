@@ -212,7 +212,7 @@ public final class TaxCalcBucket
      */
     private Object getAttributeValue(final TaxAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getAttribute(pAttr);
+        Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -237,10 +237,10 @@ public final class TaxCalcBucket
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    private <X extends JDecimal> X getAttribute(final TaxAttribute pAttr,
-                                                final Class<X> pClass) {
+    private <X extends JDecimal> X getValue(final TaxAttribute pAttr,
+                                            final Class<X> pClass) {
         /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
+        return pClass.cast(getValue(pAttr));
     }
 
     /**
@@ -248,7 +248,7 @@ public final class TaxCalcBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getAttribute(final TaxAttribute pAttr) {
+    private Object getValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
         return theAttributes.get(pAttr);
     }
@@ -258,9 +258,9 @@ public final class TaxCalcBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JMoney getMoneyAttribute(final TaxAttribute pAttr) {
+    public JMoney getMoneyValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
-        return getAttribute(pAttr, JMoney.class);
+        return getValue(pAttr, JMoney.class);
     }
 
     /**
@@ -268,9 +268,9 @@ public final class TaxCalcBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public JRate getRateAttribute(final TaxAttribute pAttr) {
+    public JRate getRateValue(final TaxAttribute pAttr) {
         /* Obtain the attribute */
-        return getAttribute(pAttr, JRate.class);
+        return getValue(pAttr, JRate.class);
     }
 
     /**
@@ -345,8 +345,8 @@ public final class TaxCalcBucket
      */
     protected boolean isRelevant() {
         /* Check for non-zero amount */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        JMoney myTax = getMoneyAttribute(TaxAttribute.Taxation);
+        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
+        JMoney myTax = getMoneyValue(TaxAttribute.Taxation);
         return myAmount.isNonZero()
                || ((myTax != null) && (myTax.isNonZero()));
     }
@@ -358,7 +358,7 @@ public final class TaxCalcBucket
      */
     protected JMoney setAmount(final JMoney pAmount) {
         /* Access the rate */
-        JRate myRate = getRateAttribute(TaxAttribute.Rate);
+        JRate myRate = getRateValue(TaxAttribute.Rate);
 
         /* Set the value */
         JMoney myAmount = new JMoney(pAmount);
@@ -402,53 +402,13 @@ public final class TaxCalcBucket
     }
 
     /**
-     * Add income.
-     * @param pBucket event category bucket
-     */
-    protected void addIncome(final EventCategoryBucket pBucket) {
-        /* Adjust the value */
-        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        // myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
-    }
-
-    /**
-     * Subtract income.
-     * @param pBucket event category bucket
-     */
-    protected void subtractIncome(final EventCategoryBucket pBucket) {
-        /* Adjust the value */
-        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        // myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
-    }
-
-    /**
-     * Add expense.
-     * @param pBucket event category bucket
-     */
-    protected void addExpense(final EventCategoryBucket pBucket) {
-        /* Adjust the value */
-        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        // myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
-    }
-
-    /**
-     * Subtract expense.
-     * @param pBucket event category bucket
-     */
-    protected void subtractExpense(final EventCategoryBucket pBucket) {
-        /* Adjust the value */
-        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        // myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
-    }
-
-    /**
      * Add values.
      * @param pBucket tax category bucket
      */
     protected void addValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.addAmount(pBucket.getMoneyAttribute(TaxAttribute.Amount));
+        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
+        myAmount.addAmount(pBucket.getMoneyValue(TaxAttribute.Amount));
     }
 
     /**
@@ -457,8 +417,8 @@ public final class TaxCalcBucket
      */
     protected void subtractValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.subtractAmount(pBucket.getMoneyAttribute(TaxAttribute.Amount));
+        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
+        myAmount.subtractAmount(pBucket.getMoneyValue(TaxAttribute.Amount));
     }
 
     /**

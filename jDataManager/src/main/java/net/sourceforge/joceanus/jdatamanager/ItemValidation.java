@@ -159,7 +159,7 @@ public class ItemValidation
         /* If we have errors */
         if (myErrors.length() > 0) {
             /* Complete the format and return it */
-            myErrors.append("</html");
+            endErrors(myErrors);
             return myErrors.toString();
         }
 
@@ -204,7 +204,7 @@ public class ItemValidation
         /* If we have errors */
         if (myErrors.length() > 0) {
             /* Complete the format and return it */
-            myErrors.append("</html");
+            endErrors(myErrors);
             return myErrors.toString();
         }
 
@@ -226,6 +226,14 @@ public class ItemValidation
 
         /* Add error text */
         pBuilder.append(pError);
+    }
+
+    /**
+     * End error text.
+     * @param pErrors the error builder
+     */
+    public void endErrors(final StringBuilder pErrors) {
+        pErrors.append("</html>");
     }
 
     /**

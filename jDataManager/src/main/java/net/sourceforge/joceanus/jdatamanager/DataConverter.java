@@ -38,6 +38,16 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  */
 public final class DataConverter {
     /**
+     * Invalid hexadecimal length string.
+     */
+    private static final String ERROR_HEXLEN = "Invalid HexString Length: ";
+
+    /**
+     * Invalid hexadecimal error string.
+     */
+    private static final String ERROR_HEXDIGIT = "Non Hexadecimal Value: ";
+
+    /**
      * Base64 Encoding array.
      */
     private static final char[] BASE64_ENCODE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
@@ -269,7 +279,7 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: "
+            throw new JDataException(ExceptionClass.DATA, ERROR_HEXLEN
                                                           + pHexString);
         }
 
@@ -284,7 +294,7 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
                                                               + pHexString);
             }
 
@@ -297,7 +307,7 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
                                                               + pHexString);
             }
 
@@ -337,7 +347,7 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: "
+            throw new JDataException(ExceptionClass.DATA, ERROR_HEXLEN
                                                           + pHexString);
         }
 
@@ -349,7 +359,7 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
                                                               + pHexString);
             }
 

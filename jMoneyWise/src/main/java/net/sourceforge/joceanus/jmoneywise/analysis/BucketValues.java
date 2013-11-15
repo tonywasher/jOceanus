@@ -79,6 +79,21 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     }
 
     /**
+     * Adjust money value relative to base.
+     * @param pBase the base values.
+     * @param pAttr the attribute to reBase.
+     */
+    protected void adjustMoneyToBase(final T pBase,
+                                     final E pAttr) {
+        /* Adjust spend values */
+        JMoney myValue = getMoneyValue(pAttr);
+        myValue = new JMoney(myValue);
+        JMoney myBaseValue = pBase.getMoneyValue(pAttr);
+        myValue.subtractAmount(myBaseValue);
+        put(pAttr, myValue);
+    }
+
+    /**
      * Reset base values.
      */
     protected void resetBaseValues() {

@@ -263,6 +263,26 @@ public final class AccountBucket
     }
 
     /**
+     * Obtain values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public AccountValues getValuesForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getValuesForEvent(pEvent);
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public AccountValues getDeltaForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getDeltaForEvent(pEvent);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */
@@ -606,11 +626,7 @@ public final class AccountBucket
         @Override
         protected void adjustToBaseValues(final AccountValues pBase) {
             /* Adjust spend values */
-            JMoney myValue = getMoneyValue(AccountAttribute.Spend);
-            myValue = new JMoney(myValue);
-            JMoney myBaseValue = pBase.getMoneyValue(AccountAttribute.Spend);
-            myValue.subtractAmount(myBaseValue);
-            put(AccountAttribute.Spend, myValue);
+            adjustMoneyToBase(pBase, AccountAttribute.Spend);
         }
 
         @Override

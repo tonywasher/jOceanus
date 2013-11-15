@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -319,7 +320,7 @@ public class Backup {
 
                 /* Ignore errors */
             } catch (Exception ex) {
-                myStream = null;
+                thePreferenceMgr.getLogger().log(Level.SEVERE, "Close failure", ex);
             }
 
             /* Delete the file on error */
@@ -411,6 +412,7 @@ public class Backup {
         @Override
         public void handleEvent(final SVNEvent arg0,
                                 final double arg1) throws SVNException {
+            /* Not needed */
         }
     }
 }

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jsvnmanager.data;
 
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -256,6 +257,7 @@ public final class Component
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
+            theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
     }
@@ -293,7 +295,7 @@ public final class Component
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof Component)) {
+        if (pThat instanceof Component) {
             return false;
         }
         Component myThat = (Component) pThat;

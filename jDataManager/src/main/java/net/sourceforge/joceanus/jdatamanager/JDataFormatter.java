@@ -49,6 +49,11 @@ import net.sourceforge.joceanus.jdecimal.JUnits;
  */
 public class JDataFormatter {
     /**
+     * Invalid class error.
+     */
+    private static final String ERROR_CLASS = "Invalid Class: ";
+
+    /**
      * The Decimal formatter.
      */
     private final JDecimalFormatter theDecimalFormatter;
@@ -307,7 +312,7 @@ public class JDataFormatter {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
-        throw new IllegalArgumentException("Invalid class - "
+        throw new IllegalArgumentException(ERROR_CLASS
                                            + pClass.getSimpleName());
     }
 
@@ -345,7 +350,7 @@ public class JDataFormatter {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
-        throw new IllegalArgumentException("Invalid class - "
+        throw new IllegalArgumentException(ERROR_CLASS
                                            + pClass.getSimpleName());
     }
 
@@ -369,7 +374,7 @@ public class JDataFormatter {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }
-        throw new IllegalArgumentException("Invalid class - "
+        throw new IllegalArgumentException(ERROR_CLASS
                                            + pClass.getSimpleName());
     }
 }

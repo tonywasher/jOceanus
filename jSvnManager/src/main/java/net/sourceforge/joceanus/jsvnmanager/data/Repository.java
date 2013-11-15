@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -143,6 +145,11 @@ public class Repository
     }
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * The Preference Manager.
      */
     private final PreferenceManager thePreferenceMgr;
@@ -199,6 +206,14 @@ public class Repository
     }
 
     /**
+     * Obtain logger.
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
      * Obtain the preference manager.
      * @return the preference manager
      */
@@ -248,6 +263,7 @@ public class Repository
                       final ReportStatus pReport) throws JDataException {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
+        theLogger = thePreferenceMgr.getLogger();
 
         /* Allocate the maps */
         theBranchMap = new HashMap<ProjectId, Branch>();
@@ -338,7 +354,7 @@ public class Repository
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof Repository)) {
+        if (pThat instanceof Repository) {
             return false;
         }
         Repository myThat = (Repository) pThat;
@@ -487,7 +503,7 @@ public class Repository
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    myInput = null;
+                    theLogger.log(Level.SEVERE, "Close Failure", e);
                 }
             }
         }

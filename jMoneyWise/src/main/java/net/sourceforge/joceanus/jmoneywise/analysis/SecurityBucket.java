@@ -263,6 +263,26 @@ public final class SecurityBucket
     }
 
     /**
+     * Obtain values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public SecurityValues getValuesForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getValuesForEvent(pEvent);
+    }
+
+    /**
+     * Obtain delta values for event.
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public SecurityValues getDeltaForEvent(final Event pEvent) {
+        /* Obtain values for event */
+        return theHistory.getDeltaForEvent(pEvent);
+    }
+
+    /**
      * Obtain the history map.
      * @return the history map
      */
@@ -629,26 +649,10 @@ public final class SecurityBucket
 
         @Override
         protected void adjustToBaseValues(final SecurityValues pBase) {
-            /* Adjust invested values */
-            JMoney myValue = getMoneyValue(SecurityAttribute.Invested);
-            myValue = new JMoney(myValue);
-            JMoney myBaseValue = pBase.getMoneyValue(SecurityAttribute.Invested);
-            myValue.subtractAmount(myBaseValue);
-            put(SecurityAttribute.Invested, myValue);
-
-            /* Adjust gains values */
-            myValue = getMoneyValue(SecurityAttribute.Gains);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(SecurityAttribute.Gains);
-            myValue.subtractAmount(myBaseValue);
-            put(SecurityAttribute.Gains, myValue);
-
-            /* Adjust dividend values */
-            myValue = getMoneyValue(SecurityAttribute.Dividend);
-            myValue = new JMoney(myValue);
-            myBaseValue = pBase.getMoneyValue(SecurityAttribute.Dividend);
-            myValue.subtractAmount(myBaseValue);
-            put(SecurityAttribute.Dividend, myValue);
+            /* Adjust invested/gains values */
+            adjustMoneyToBase(pBase, SecurityAttribute.Invested);
+            adjustMoneyToBase(pBase, SecurityAttribute.Gains);
+            adjustMoneyToBase(pBase, SecurityAttribute.Dividend);
         }
 
         @Override
