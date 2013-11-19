@@ -28,6 +28,9 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -353,10 +356,10 @@ public class EventFilter
     }
 
     /**
-     * Set filter for a TaxCategoryBucket.
-     * @param pBucket the TaxCategory Bucket.
+     * Set filter for a TaxBasisBucket.
+     * @param pBucket the TaxBasis Bucket.
      */
-    public void setFilter(final TaxCategoryBucket pBucket) {
+    public void setFilter(final TaxBasisBucket pBucket) {
         /* Clear selection by event categories/accounts */
         theFilteredEventCategories = null;
         theFilteredPayees = null;

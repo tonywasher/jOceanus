@@ -28,12 +28,12 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.EventFilter;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * Taxation Basis report builder.
  */
 public class TaxationBasis
-        extends BasicReport<TaxCategoryBucket, TaxCategoryBucket> {
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
@@ -82,8 +82,11 @@ public class TaxationBasis
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
-        TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
+        TaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();
         JDateDayRange myRange = theAnalysis.getDateRange();
+
+        /* Obtain the totals bucket */
+        TaxBasisBucket myTotals = myTaxBasis.getTotals();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -92,45 +95,46 @@ public class TaxationBasis
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);
 
-        /* Loop through the Category Summary Buckets */
-        Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
-        while (myTaxIterator.hasNext()) {
-            TaxCategoryBucket myBucket = myTaxIterator.next();
+        /* Loop through the TaxBasis Buckets */
+        Iterator<TaxBasisBucket> myIterator = myTaxBasis.iterator();
+        while (myIterator.hasNext()) {
+            TaxBasisBucket myBucket = myIterator.next();
 
-            /* Skip the non-summary elements */
-            switch (myBucket.getCategorySection()) {
-                case CATSUMM:
-                case CATTOTAL:
-                    /* Access the amount */
-                    JMoney myAmount = myBucket.getMoneyAttribute(TaxAttribute.Amount);
+            /* Access the amount */
+            TaxBasisValues myValues = myBucket.getValues();
+            JMoney myAmount = myValues.getMoneyValue(TaxBasisAttribute.Gross);
 
-                    /* If we have a non-zero value */
-                    if (myAmount.isNonZero()) {
-                        /* Access bucket name */
-                        String myName = myBucket.getName();
+            /* If we have a non-zero value */
+            if (myAmount.isNonZero()) {
+                /* Access bucket name */
+                String myName = myBucket.getName();
 
-                        /* Format the detail */
-                        theBuilder.startRow(myTable);
-                        theBuilder.makeFilterLinkCell(myTable, myName);
-                        theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+                /* Format the detail */
+                theBuilder.startRow(myTable);
+                theBuilder.makeFilterLinkCell(myTable, myName);
+                theBuilder.makeValueCell(myTable, myAmount);
 
-                        /* Record the filter */
-                        setFilterForId(myName, myBucket);
-                    }
-                    break;
-                default:
-                    break;
+                /* Record the filter */
+                setFilterForId(myName, myBucket);
             }
         }
+
+        /* Access values */
+        TaxBasisValues myValues = myTotals.getValues();
+
+        /* Format the total */
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.Gross));
 
         /* Return the document */
         return theBuilder.getDocument();
     }
 
     @Override
-    protected void processFilter(final TaxCategoryBucket pSource) {
+    protected void processFilter(final Object pSource) {
         /* Create the new filter */
-        EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        myFilter.setFilter(pSource);
+        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
+        // myFilter.setFilter(pSource);
     }
 }

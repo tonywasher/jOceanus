@@ -796,7 +796,7 @@ public final class SecurityBucket
          * @param pAccount the account
          * @return the bucket
          */
-        protected SecurityBucket getBucket(final Account pAccount) {
+        public SecurityBucket getBucket(final Account pAccount) {
             /* Locate the bucket in the list */
             SecurityBucket myItem = findItemById(pAccount.getId());
 

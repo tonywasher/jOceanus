@@ -26,18 +26,19 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
+import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.ChargeableEvent;
-import net.sourceforge.joceanus.jmoneywise.views.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,7 +47,7 @@ import org.w3c.dom.Element;
  * TaxCalculation report builder.
  */
 public class TaxCalculation
-        extends BasicReport<TaxCategoryBucket, Object> {
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
@@ -92,18 +93,18 @@ public class TaxCalculation
         /* Store the analysis */
         theAnalysis = pAnalysis;
 
-        /* Obtain the TaxYear parameters */
-        FinanceData myData = pAnalysis.getData();
-        JDateDay myDate = pAnalysis.getDateRange().getEnd();
-        TaxYear myYear = myData.getTaxYears().findTaxYearForDate(myDate);
-
         /* Access the bucket lists */
-        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
-        TaxCategoryBucket myTax;
+        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
+        TaxBasisBucketList myBasis = theAnalysis.getTaxBasis();
+        TaxYear myYear = myList.getTaxYear();
+        TaxCalcBucket myTax;
+
+        /* Make sure that the tax is calculated */
+        myList.calculateTax();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getTaxYear()));
 
         /* Format the header */
         theBuilder.makeSubTitle(myBody, "Taxation Summary");
@@ -113,10 +114,10 @@ public class TaxCalculation
         theBuilder.makeTitleCell(myTable, "Total Income");
         theBuilder.makeTitleCell(myTable, "Taxation Due");
 
-        /* Loop through the Tax Summary Buckets */
-        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
+        /* Loop through the Tax Calculation Buckets */
+        Iterator<TaxCalcBucket> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
-            TaxCategoryBucket myBucket = myIterator.next();
+            TaxCalcBucket myBucket = myIterator.next();
 
             /* Skip the non-summary elements */
             if (myBucket.getCategorySection() != TaxCategorySection.TAXSUMM) {
@@ -126,8 +127,8 @@ public class TaxCalculation
             /* Format the line */
             theBuilder.startRow(myTable);
             theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Taxation));
 
             /* Format the detail */
             makeTaxReport(myTable, myBucket);
@@ -137,22 +138,22 @@ public class TaxCalculation
         myTax = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Taxation));
 
         /* Access the Tax Paid bucket */
-        myTax = myList.getBucket(TaxCategoryClass.TaxPaid);
+        TaxBasisBucket myTaxPaid = myBasis.getBucket(TaxCategoryClass.TaxPaid);
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, myTax.getName());
+        theBuilder.makeTotalCell(myTable, myTaxPaid.getName());
         theBuilder.makeTotalCell(myTable);
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTaxPaid.getMoneyValue(TaxBasisAttribute.Gross));
 
         /* Access the Tax Profit bucket */
         myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Taxation));
 
         /* If we need a tax slice report */
         if (myList.hasGainsSlices()) {
@@ -176,7 +177,7 @@ public class TaxCalculation
         boolean hasAdditionalBand = pYear.hasAdditionalTaxBand();
 
         /* Access the bucket lists */
-        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
 
         /* Format the tax parameters */
         theBuilder.makeTitle(pBody, "Taxation Parameters");
@@ -276,10 +277,10 @@ public class TaxCalculation
         theBuilder.makeValueCell(myTable, myList.getAge());
 
         /* Access the original allowance */
-        TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
+        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "Personal Allowance");
-        theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
 
         /* if we have adjusted the allowance */
         if (myList.hasReducedAllow()) {
@@ -287,12 +288,12 @@ public class TaxCalculation
             myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "Gross Taxable Income");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
 
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
             theBuilder.makeTitleCell(myTable, "Adjusted Allowance");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         }
 
         /* Access the Low Tax Band */
@@ -313,7 +314,7 @@ public class TaxCalculation
             myTax = myList.getBucket(TaxCategoryClass.HiTaxBand);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "High Tax Band");
-            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         }
     }
 
@@ -323,9 +324,9 @@ public class TaxCalculation
      * @param pSummary the tax summary
      */
     public void makeTaxReport(final HTMLTable pParent,
-                              final TaxCategoryBucket pSummary) {
+                              final TaxCalcBucket pSummary) {
         /* Access the bucket lists */
-        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
 
         /* Format the detail */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -336,9 +337,9 @@ public class TaxCalculation
         theBuilder.makeTitleCell(myTable, "Taxation Due");
 
         /* Loop through the Transaction Detail Buckets */
-        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
+        Iterator<TaxCalcBucket> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
-            TaxCategoryBucket myBucket = myIterator.next();
+            TaxCalcBucket myBucket = myIterator.next();
 
             /* Skip non-detail buckets */
             if (myBucket.getCategorySection() != TaxCategorySection.TAXDETAIL) {
@@ -353,9 +354,9 @@ public class TaxCalculation
             /* Format the detail */
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, myBucket.getName());
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myTable, myBucket.getRateAttribute(TaxAttribute.Rate));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getRateValue(TaxAttribute.Rate));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyValue(TaxAttribute.Taxation));
         }
 
         /* Embed the table correctly */
@@ -368,7 +369,7 @@ public class TaxCalculation
      */
     public void makeTaxSliceReport(final Element pBody) {
         /* Access the bucket lists */
-        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+        TaxCalcBucketList myList = theAnalysis.getTaxCalculations();
         ChargeableEventList myCharges = theAnalysis.getCharges();
 
         /* Format the detail */
@@ -411,7 +412,7 @@ public class TaxCalculation
         theBuilder.makeTotalCell(myTable, myCharges.getTaxTotal());
 
         /* Access the Summary Tax Due Slice */
-        TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.TaxDueSlice);
+        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.TaxDueSlice);
 
         /* Add the Slice taxation details */
         makeTaxReport(myTable, myTax);

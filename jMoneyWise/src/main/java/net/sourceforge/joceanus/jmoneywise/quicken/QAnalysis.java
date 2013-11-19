@@ -32,6 +32,9 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
@@ -49,8 +52,6 @@ import net.sourceforge.joceanus.jmoneywise.quicken.QClass.QClassList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QSecurity.QSecurityList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.InvestmentAnalysis;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
@@ -300,7 +301,8 @@ public class QAnalysis
                                final JDateDay pLastEvent) {
         /* Store data and analysis */
         theData = pView.getData();
-        theAnalysis = pView.getAnalysis().getAnalysis();
+        AnalysisManager myManager = pView.getAnalysisManager();
+        theAnalysis = myManager.getAnalysis(pLastEvent);
 
         /* Access lists */
         EventList myEvents = theData.getEvents();
@@ -598,15 +600,13 @@ public class QAnalysis
     }
 
     /**
-     * Obtain Investment Analysis for Investment Event.
-     * @param pEvent the event
-     * @param pSecurity the security for the event
-     * @return the analysis
+     * Obtain SecurityBucket for Security.
+     * @param pSecurity the security
+     * @return the bucket
      */
-    protected InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
-                                                       final Account pSecurity) {
+    protected SecurityBucket getSecurityBucket(final Account pSecurity) {
         /* Locate the security bucket */
-        return theAnalysis.getInvestmentAnalysis(pEvent, pSecurity);
+        return theAnalysis.getSecurities().getBucket(pSecurity);
     }
 
     /**

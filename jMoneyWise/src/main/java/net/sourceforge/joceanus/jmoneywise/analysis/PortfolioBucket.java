@@ -234,6 +234,9 @@ public final class PortfolioBucket
         /* Create profit fields for the portfolio */
         theValues.setValue(SecurityAttribute.Profit, new JMoney());
         theBaseValues.setValue(SecurityAttribute.Profit, new JMoney());
+
+        /* Create market fields for the portfolio */
+        theValues.setValue(SecurityAttribute.Market, new JMoney());
     }
 
     @Override
@@ -332,6 +335,13 @@ public final class PortfolioBucket
         myValue = pTotals.getMoneyValue(SecurityAttribute.Dividend);
         mySrcValue = pSource.getMoneyValue(SecurityAttribute.Dividend);
         myValue.addAmount(mySrcValue);
+
+        /* Add market values */
+        myValue = pTotals.getMoneyValue(SecurityAttribute.Market);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Market);
+        if (mySrcValue != null) {
+            myValue.addAmount(mySrcValue);
+        }
 
         /* Add profit values */
         myValue = pTotals.getMoneyValue(SecurityAttribute.Profit);

@@ -35,10 +35,10 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilutedPrice;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JPrice;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
-import net.sourceforge.joceanus.jmoneywise.views.DilutionEvent.DilutionEventList;
 
 /**
  * Extension of AccountPrice to cater for diluted prices.

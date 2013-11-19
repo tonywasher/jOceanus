@@ -39,18 +39,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayButton;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jdateday.JDatePeriod;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
-import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis;
-import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis.AnalysisYear;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 
 /**
  * Report selection panel.
@@ -94,16 +89,6 @@ public class ReportSelect
     private static final String NLS_REPORT = NLS_BUNDLE.getString("SelectReport");
 
     /**
-     * Text for Year Label.
-     */
-    private static final String NLS_YEAR = NLS_BUNDLE.getString("SelectYear");
-
-    /**
-     * Text for Date Label.
-     */
-    private static final String NLS_DATE = NLS_BUNDLE.getString("SelectDate");
-
-    /**
      * Text for Print Button.
      */
     private static final String NLS_PRINT = NLS_BUNDLE.getString("PrintButton");
@@ -119,29 +104,14 @@ public class ReportSelect
     private final transient View theView;
 
     /**
-     * Date button.
-     */
-    private final JDateDayButton theDateButton;
-
-    /**
      * Reports comboBox.
      */
     private final JComboBox<ReportType> theReportBox;
 
     /**
-     * Years comboBox.
+     * Range select.
      */
-    private final JComboBox<TaxYear> theYearsBox;
-
-    /**
-     * Years label.
-     */
-    private JLabel theYearLabel = null;
-
-    /**
-     * Date label.
-     */
-    private JLabel theDateLabel = null;
+    private final JDateDayRangeSelect theRangeSelect;
 
     /**
      * Print button.
@@ -172,19 +142,11 @@ public class ReportSelect
     }
 
     /**
-     * Obtain the selected taxYear.
-     * @return the tax year
+     * Obtain the selected date range.
+     * @return the date range
      */
-    public TaxYear getTaxYear() {
-        return theState.getYear();
-    }
-
-    /**
-     * Obtain the report date.
-     * @return the report date.
-     */
-    public JDateDay getReportDate() {
-        return theState.getDate();
+    public JDateDayRange getDateRange() {
+        return theState.getRange();
     }
 
     /**
@@ -197,17 +159,17 @@ public class ReportSelect
         /* Store table and view details */
         theView = pView;
 
-        /* Create the boxes */
+        /* Create the report box */
         theReportBox = new JComboBox<ReportType>();
-        theYearsBox = new JComboBox<TaxYear>();
         theReportBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
-        theYearsBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 
-        /* Create the DateButton */
-        theDateButton = new JDateDayButton();
+        /* Create the Range Select and disable its border */
+        theRangeSelect = new JDateDayRangeSelect();
+        theRangeSelect.setBorder(BorderFactory.createEmptyBorder());
 
         /* Create initial state */
         theState = new ReportState();
+        theState.setRange(theRangeSelect);
 
         /* Initialise the data from the view */
         refreshData(null);
@@ -220,12 +182,10 @@ public class ReportSelect
         theReportBox.addItem(ReportType.TaxationBasis);
         theReportBox.addItem(ReportType.TaxCalculation);
         theReportBox.addItem(ReportType.Portfolio);
-        theReportBox.setSelectedItem(ReportType.NetWorth);
+        theReportBox.addItem(ReportType.MarketGrowth);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
-        theYearLabel = new JLabel(NLS_YEAR);
-        theDateLabel = new JLabel(NLS_DATE);
 
         /* Create the print button */
         thePrintButton = new JButton(NLS_PRINT);
@@ -241,81 +201,32 @@ public class ReportSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theReportBox);
         add(Box.createHorizontalGlue());
-        add(theYearLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theYearsBox);
-        add(theDateLabel);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theDateButton);
+        add(theRangeSelect);
         add(Box.createHorizontalGlue());
         add(thePrintButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Apply the current state */
-        theState.applyState();
+        theState.setType(ReportType.NetWorth);
 
         /* Add the listener for item changes */
         theReportBox.addItemListener(myListener);
-        theYearsBox.addItemListener(myListener);
-        theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
+        theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
     }
 
     /**
      * Refresh data.
      * @param pAnalysis the analysis.
      */
-    public final void refreshData(final DataAnalysis pAnalysis) {
-        /* Access the data */
-        FinanceData myData = theView.getData();
+    public final void refreshData(final AnalysisManager pAnalysis) {
+        /* Access the range */
         JDateDayRange myRange = theView.getRange();
-        TaxYear myTaxYear = theState.getYear();
-
-        /* Access tax Years */
-        TaxYearList myYears = myData.getTaxYears();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
-        /* Set the range for the Date Spinner */
+        /* Set the range for the DateButton and RangeSelect */
         setRange(myRange);
-
-        /* If we have years already populated */
-        if (theYearsBox.getItemCount() > 0) {
-            /* If we have a selected year */
-            if (myTaxYear != null) {
-                /* Find it in the new list */
-                myTaxYear = myYears.findTaxYearForDate(myTaxYear.getTaxYear());
-            }
-
-            /* Remove the types */
-            theYearsBox.removeAllItems();
-        }
-
-        /* If we have an analysis */
-        if (pAnalysis != null) {
-            /* Access the iterator */
-            OrderedListIterator<AnalysisYear> myIterator = pAnalysis.getAnalysisYears().listIterator();
-
-            /* Add the Year values to the years box in reverse order */
-            while (myIterator.hasPrevious()) {
-                AnalysisYear myYear = myIterator.previous();
-
-                /* Add the item to the list */
-                theYearsBox.addItem(myYear.getTaxYear());
-            }
-
-            /* If we have a selected year */
-            if (myTaxYear != null) {
-                /* Select it in the new list */
-                theYearsBox.setSelectedItem(myTaxYear);
-
-                /* Else we have no year currently selected */
-            } else if (theYearsBox.getItemCount() > 0) {
-                /* Select the first year */
-                theYearsBox.setSelectedIndex(0);
-                theState.setYear(myIterator.peekLast().getTaxYear());
-            }
-        }
 
         /* Note that we have finished refreshing data */
         refreshingData = false;
@@ -326,16 +237,8 @@ public class ReportSelect
      * @param pRange the date range
      */
     public final void setRange(final JDateDayRange pRange) {
-        JDateDay myStart = (pRange == null)
-                ? null
-                : pRange.getStart();
-        JDateDay myEnd = (pRange == null)
-                ? null
-                : pRange.getEnd();
-
         /* Set up range */
-        theDateButton.setEarliestDateDay(myStart);
-        theDateButton.setLatestDateDay(myEnd);
+        theRangeSelect.setOverallRange(pRange);
     }
 
     /**
@@ -359,19 +262,7 @@ public class ReportSelect
 
     @Override
     public void setEnabled(final boolean bEnable) {
-        ReportType myType = theState.getType();
-
-        boolean isDate = myType.isPointInTime();
-        boolean isNull = (myType == null);
-        boolean isYear = (!isNull && !isDate);
-
-        theDateButton.setVisible(isDate);
-        theDateLabel.setVisible(isDate);
-        theYearsBox.setVisible(isYear);
-        theYearLabel.setVisible(isYear);
-
-        theYearsBox.setEnabled(bEnable);
-        theDateButton.setEnabled(bEnable);
+        theRangeSelect.setEnabled(bEnable);
         theReportBox.setEnabled(bEnable);
         thePrintButton.setEnabled(bEnable);
     }
@@ -394,9 +285,11 @@ public class ReportSelect
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
-            /* if this date relates to the Date button */
-            if ((theDateButton.equals(evt.getSource()))
-                && (theState.setDate(theDateButton))) {
+            Object o = evt.getSource();
+
+            /* if this date relates to the Range Select */
+            if ((theRangeSelect.equals(o))
+                && (theState.setRange(theRangeSelect))) {
                 /* Notify that the state has changed */
                 fireStateChanged();
             }
@@ -411,17 +304,9 @@ public class ReportSelect
                 return;
             }
 
-            /* If this event relates to the years box */
-            if ((theYearsBox.equals(o))
+            /* If this event relates to the report box */
+            if ((theReportBox.equals(o))
                 && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                TaxYear myYear = (TaxYear) evt.getItem();
-                if (theState.setYear(myYear)) {
-                    fireStateChanged();
-                }
-
-                /* If this event relates to the report box */
-            } else if ((theReportBox.equals(o))
-                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Determine the new report */
                 ReportType myType = (ReportType) evt.getItem();
                 if (theState.setType(myType)) {
@@ -436,14 +321,9 @@ public class ReportSelect
      */
     private final class ReportState {
         /**
-         * The selected date.
+         * The selected range.
          */
-        private JDateDay theDate = null;
-
-        /**
-         * The selected tax year.
-         */
-        private TaxYear theYear = null;
+        private JDateDayRange theRange = null;
 
         /**
          * The selected report type.
@@ -451,19 +331,11 @@ public class ReportSelect
         private ReportType theType = null;
 
         /**
-         * Obtain the selected date.
-         * @return the date
+         * Obtain the selected range.
+         * @return the range
          */
-        private JDateDay getDate() {
-            return theDate;
-        }
-
-        /**
-         * Obtain the selected tax year.
-         * @return the tax year
-         */
-        private TaxYear getYear() {
-            return theYear;
+        private JDateDayRange getRange() {
+            return theRange;
         }
 
         /**
@@ -478,9 +350,6 @@ public class ReportSelect
          * Constructor.
          */
         private ReportState() {
-            theDate = new JDateDay();
-            theYear = null;
-            theType = ReportType.NetWorth;
         }
 
         /**
@@ -488,34 +357,20 @@ public class ReportSelect
          * @param pState state to copy from
          */
         private ReportState(final ReportState pState) {
-            theDate = new JDateDay(pState.getDate());
-            theYear = pState.getYear();
+            theRange = pState.getRange();
             theType = pState.getType();
         }
 
         /**
-         * Set new Date.
-         * @param pButton the Button with the new date
+         * Set new Range.
+         * @param pSelect the Panel with the new range
          * @return true/false did a change occur
          */
-        private boolean setDate(final JDateDayButton pButton) {
+        private boolean setRange(final JDateDayRangeSelect pSelect) {
             /* Adjust the date and build the new range */
-            JDateDay myDate = new JDateDay(pButton.getSelectedDate());
-            if (!Difference.isEqual(myDate, theDate)) {
-                theDate = myDate;
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Set new Tax Year.
-         * @param pYear the new Tax Year
-         * @return true/false did a change occur
-         */
-        private boolean setYear(final TaxYear pYear) {
-            if (!Difference.isEqual(pYear, theYear)) {
-                theYear = pYear;
+            JDateDayRange myRange = new JDateDayRange(pSelect.getRange());
+            if (!Difference.isEqual(myRange, theRange)) {
+                theRange = myRange;
                 return true;
             }
             return false;
@@ -527,9 +382,28 @@ public class ReportSelect
          * @return true/false did a change occur
          */
         private boolean setType(final ReportType pType) {
-            if (!theType.equals(pType)) {
-                /* Set the new type and apply State */
+            if (!pType.equals(theType)) {
+                /* Are we currently point in time */
+                boolean isPointInTime = (theType != null)
+                                        && (theType.isPointInTime());
+
+                /* Store the new type */
                 theType = pType;
+
+                /* If we need to switch point in time */
+                if (theType.isPointInTime() != isPointInTime) {
+                    /* Switch it appropriately */
+                    theRangeSelect.setPeriod(isPointInTime
+                            ? JDatePeriod.FISCALYEAR
+                            : JDatePeriod.DATESUPTO);
+
+                    /* else if we are switching to tax calculation */
+                } else if (theType == ReportType.TaxCalculation) {
+                    /* Switch explicitly to Fiscal Year */
+                    theRangeSelect.setPeriod(JDatePeriod.FISCALYEAR);
+                }
+
+                /* Apply the state */
                 applyState();
                 return true;
             }
@@ -542,8 +416,6 @@ public class ReportSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theDateButton.setSelectedDateDay(theDate);
-            theYearsBox.setSelectedItem(theYear);
         }
     }
 }

@@ -28,17 +28,23 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +53,7 @@ import org.w3c.dom.Element;
  * NetWorth report builder.
  */
 public class NetWorth
-        extends BasicReport<AccountCategoryBucket, AccountBucket> {
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
@@ -125,7 +131,7 @@ public class NetWorth
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
 
         /* Obtain the totals bucket */
-        AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
+        AccountCategoryBucket myTotals = myCategories.getTotals();
         JDateDay myDate = theAnalysis.getDateRange().getEnd();
 
         /* Start the report */
@@ -141,23 +147,35 @@ public class NetWorth
             AccountCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
-            if (myBucket.getCategoryType() != CategoryType.SubTotal) {
+            if (!myBucket.getCategoryType().isSubTotal()) {
                 continue;
             }
+
+            /* Access values */
+            AccountValues myValues = myBucket.getValues();
 
             /* Format the Category Total */
             theBuilder.startRow(myTable);
             theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
 
-            /* Add the category report */
-            makeCategoryReport(myTable, myBucket);
+            /* If this is the portfolio category */
+            if (myBucket.getAccountCategory().isCategoryClass(AccountCategoryClass.Portfolio)) {
+                /* Add the portfolio report */
+                makePortfolioReport(myTable, myBucket);
+            } else {
+                /* Add the category report */
+                makeCategoryReport(myTable, myBucket);
+            }
         }
+
+        /* Access values */
+        AccountValues myValues = myTotals.getValues();
 
         /* Build the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -188,18 +206,53 @@ public class NetWorth
                 continue;
             }
 
-            /* Skip irrelevant records */
-            if (myBucket.getIntegerAttribute(AccountAttribute.Children) == 0) {
-                continue;
-            }
-
             /* Access bucket name */
             String myName = myBucket.getName();
+
+            /* Access values */
+            AccountValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+
+            /* Note the delayed subTable */
+            setDelayedTable(myName, myTable, myBucket);
+        }
+
+        /* Embed the table correctly */
+        theBuilder.embedTable(myTable, pCategory.getName());
+    }
+
+    /**
+     * Build a category report.
+     * @param pParent the table parent
+     * @param pCategory the category bucket
+     */
+    private void makePortfolioReport(final HTMLTable pParent,
+                                     final AccountCategoryBucket pCategory) {
+        /* Access the portfolios */
+        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+
+        /* Create an embedded table */
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Loop through the Portfolio Buckets */
+        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        while (myIterator.hasNext()) {
+            PortfolioBucket myBucket = myIterator.next();
+
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
+            /* Access values */
+            SecurityValues myValues = myBucket.getValues();
+
+            /* Create the SubCategory row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeDelayLinkCell(myTable, myName);
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -211,23 +264,38 @@ public class NetWorth
 
     @Override
     protected HTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+        Object mySource = pTable.getSource();
+        if (mySource instanceof AccountCategoryBucket) {
+            AccountCategoryBucket mySourceBucket = (AccountCategoryBucket) mySource;
+            return createDelayedCategory(pTable.getParent(), mySourceBucket);
+        } else if (mySource instanceof PortfolioBucket) {
+            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
+        }
+
+        /* Return the null table */
+        return null;
+    }
+
+    /**
+     * Create a delayed category table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private HTMLTable createDelayedCategory(final HTMLTable pParent,
+                                            final AccountCategoryBucket pSource) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
-        AccountCategoryBucket mySource = pTable.getSource();
-        AccountCategory myCategory = mySource.getAccountCategory();
+        AccountCategory myCategory = pSource.getAccountCategory();
         AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Create a new table */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Build the headers */
-        if (myClass.hasUnits()) {
-            theBuilder.startRow(myTable);
-            theBuilder.makeTitleCell(myTable, TEXT_ASSET);
-            theBuilder.makeTitleCell(myTable, TEXT_UNITS);
-            theBuilder.makeTitleCell(myTable, TEXT_PRICE);
-            theBuilder.makeTitleCell(myTable, TEXT_VALUE);
-        } else if (!myClass.isLoan()) {
+        if (!myClass.isLoan()) {
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, TEXT_ACCOUNT);
             theBuilder.makeTitleCell(myTable, TEXT_RATE);
@@ -245,26 +313,78 @@ public class NetWorth
                 continue;
             }
 
-            /* Skip irrelevant records */
-            if (myCategory.getCategoryTypeClass().hasUnits()
-                && !myBucket.isRelevant()) {
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
+            /* Access values */
+            AccountValues myValues = myBucket.getValues();
+
+            /* Create the detail row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myName);
+            if (!myClass.isLoan()) {
+                theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.Rate));
+                theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.Maturity));
+            }
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+
+            /* Record the filter */
+            setFilterForId(myName, myBucket);
+        }
+
+        /* Return the table */
+        return myTable;
+    }
+
+    /**
+     * Create a delayed portfolio table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
+                                             final PortfolioBucket pSource) {
+        /* Access the securities and portfolio */
+        SecurityBucketList mySecurities = theAnalysis.getSecurities();
+        Account myPortfolio = pSource.getPortfolio();
+
+        /* Create a new table */
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Build the headers */
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_ASSET);
+        theBuilder.makeTitleCell(myTable, TEXT_UNITS);
+        theBuilder.makeTitleCell(myTable, TEXT_PRICE);
+        theBuilder.makeTitleCell(myTable, TEXT_VALUE);
+
+        /* Loop through the Security Buckets */
+        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        while (myIterator.hasNext()) {
+            SecurityBucket myBucket = myIterator.next();
+
+            /* Skip record if incorrect portfolio */
+            if (!Difference.isEqual(myBucket.getPortfolio(), myPortfolio)) {
+                continue;
+            }
+
+            /* Skip inactive securities */
+            if (!myBucket.isActive()) {
                 continue;
             }
 
             /* Access bucket name */
             String myName = myBucket.getName();
 
+            /* Access values */
+            SecurityValues myValues = myBucket.getValues();
+
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            if (myClass.hasUnits()) {
-                theBuilder.makeValueCell(myTable, myBucket.getUnitsAttribute(AccountAttribute.Units));
-                theBuilder.makeValueCell(myTable, myBucket.getPriceAttribute(AccountAttribute.Price));
-            } else if (!myClass.isLoan()) {
-                theBuilder.makeValueCell(myTable, myBucket.getRateAttribute(AccountAttribute.Rate));
-                theBuilder.makeValueCell(myTable, myBucket.getDateAttribute(AccountAttribute.Maturity));
-            }
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.Units));
+            theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.Price));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -275,9 +395,9 @@ public class NetWorth
     }
 
     @Override
-    protected void processFilter(final AccountBucket pSource) {
+    protected void processFilter(final Object pSource) {
         /* Create the new filter */
-        EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        myFilter.setFilter(pSource);
+        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
+        // myFilter.setFilter(pSource);
     }
 }

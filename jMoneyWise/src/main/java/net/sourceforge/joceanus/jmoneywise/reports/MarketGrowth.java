@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -42,14 +42,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Portfolio (Market) report builder.
+ * MarketGrowth report builder.
  */
-public class PortfolioAlt
-        extends BasicReportAlt {
+public class MarketGrowth
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MarketGrowth.class.getName());
 
     /**
      * The Title text.
@@ -57,49 +57,24 @@ public class PortfolioAlt
     private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
 
     /**
-     * The Cost text.
-     */
-    private static final String TEXT_COST = NLS_BUNDLE.getString("ReportCost");
-
-    /**
      * The Value text.
      */
     private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
 
     /**
-     * The Gains text.
+     * The Invested text.
      */
-    private static final String TEXT_GAINS = NLS_BUNDLE.getString("ReportGains");
+    private static final String TEXT_INVEST = NLS_BUNDLE.getString("ReportInvest");
 
     /**
-     * The Date text.
+     * The Base text.
      */
-    // private static final String TEXT_DATE = NLS_BUNDLE.getString("ReportDate");
+    private static final String TEXT_BASE = NLS_BUNDLE.getString("ReportBase");
 
     /**
-     * The Category text.
+     * The Growth text.
      */
-    // private static final String TEXT_CAT = NLS_BUNDLE.getString("ReportCat");
-
-    /**
-     * The Delta Units text.
-     */
-    // private static final String TEXT_DUNIT = NLS_BUNDLE.getString("ReportDUnits");
-
-    /**
-     * The Delta Cost text.
-     */
-    // private static final String TEXT_DCOST = NLS_BUNDLE.getString("ReportDCost");
-
-    /**
-     * The Delta Gains text.
-     */
-    // private static final String TEXT_DGAIN = NLS_BUNDLE.getString("ReportDGains");
-
-    /**
-     * The Dividend text.
-     */
-    private static final String TEXT_DIVIDEND = NLS_BUNDLE.getString("ReportDividend");
+    private static final String TEXT_GROWTH = NLS_BUNDLE.getString("ReportGrowth");
 
     /**
      * HTML builder.
@@ -120,7 +95,7 @@ public class PortfolioAlt
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected PortfolioAlt(final ReportManagerAlt pManager) {
+    protected MarketGrowth(final ReportManager pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -134,21 +109,20 @@ public class PortfolioAlt
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
-        JDateDay myDate = theAnalysis.getDateRange().getEnd();
+        JDateDayRange myRange = theAnalysis.getDateRange();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
-        theBuilder.makeTitleCell(myTable, TEXT_COST);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
-        theBuilder.makeTitleCell(myTable, TEXT_GAINS);
-        theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);
-        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, TEXT_INVEST);
+        theBuilder.makeTitleCell(myTable, TEXT_BASE);
+        theBuilder.makeTitleCell(myTable, TEXT_GROWTH);
 
         /* Loop through the Portfolio Buckets */
         Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
@@ -160,15 +134,15 @@ public class PortfolioAlt
 
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
+            SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
+            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -176,15 +150,15 @@ public class PortfolioAlt
 
         /* Access values */
         SecurityValues myValues = myTotals.getValues();
+        SecurityValues myBaseValues = myTotals.getBaseValues();
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
+        theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -233,15 +207,15 @@ public class PortfolioAlt
 
             /* Access values */
             SecurityValues myValues = myBucket.getValues();
+            SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
+            theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

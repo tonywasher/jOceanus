@@ -38,6 +38,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -45,8 +47,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.BaseEventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventGroup;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.joceanus.jtablefilter.TableFilter;
 
 /**
@@ -189,7 +189,7 @@ public class Statement
     /**
      * The analysis.
      */
-    private DataAnalysis theAnalysis = null;
+    private Analysis theAnalysis = null;
 
     /**
      * The lines.
@@ -294,8 +294,8 @@ public class Statement
         theRange = pRange;
         theLines = new StatementLines(this);
 
-        /* Create an analysis for this statement */
-        theAnalysis = new DataAnalysis(theView.getData(), this);
+        /* Access analysis for this statement */
+        // theAnalysis = new DataAnalysis(theView.getData(), this);
     }
 
     /**
@@ -307,16 +307,16 @@ public class Statement
         theBucket = pAccount;
 
         /* If the bucket has a balance */
-        if (hasBalance()) {
-            /* Set starting balance */
-            theStartBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
-        }
+        // if (hasBalance()) {
+        /* Set starting balance */
+        // theStartBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
+        // }
 
         /* If the bucket has units */
-        if (hasUnits()) {
-            /* Set starting units */
-            theStartUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
-        }
+        // if (hasUnits()) {
+        /* Set starting units */
+        // theStartUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
+        // }
     }
 
     /**
@@ -324,16 +324,16 @@ public class Statement
      */
     protected void setEndBalances() {
         /* If the bucket has a balance */
-        if (hasBalance()) {
-            /* Set ending balance */
-            theEndBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
-        }
+        // if (hasBalance()) {
+        /* Set ending balance */
+        // theEndBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
+        // }
 
         /* If the bucket has units */
-        if (hasUnits()) {
-            /* Set ending units */
-            theEndUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
-        }
+        // if (hasUnits()) {
+        /* Set ending units */
+        // theEndUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
+        // }
     }
 
     /**
@@ -342,7 +342,7 @@ public class Statement
      */
     public void resetBalances() throws JDataException {
         /* Reset the balances */
-        theAnalysis.resetStatementBalance(this);
+        // theAnalysis.resetStatementBalance(this);
     }
 
     /**
@@ -350,7 +350,7 @@ public class Statement
      * @return TRUE/FALSE
      */
     public boolean hasBalance() {
-        return (theBucket.getCategoryType().hasBalances());
+        return true; // (theBucket.getCategoryType().hasBalances());
     }
 
     /**
@@ -358,7 +358,7 @@ public class Statement
      * @return TRUE/FALSE
      */
     public boolean hasUnits() {
-        return (theBucket.getCategoryType() == CategoryType.Priced);
+        return false; // (theBucket.getCategoryType() == CategoryType.Priced);
     }
 
     /**
@@ -759,16 +759,16 @@ public class Statement
          */
         protected void setBalances() {
             /* If the bucket has a balance */
-            if (theStatement.hasBalance()) {
-                /* Set current balance */
-                theBalance = new JMoney(getBucket().getMoneyAttribute(AccountAttribute.Valuation));
-            }
+            // if (theStatement.hasBalance()) {
+            /* Set current balance */
+            // theBalance = new JMoney(getBucket().getMoneyAttribute(AccountAttribute.Valuation));
+            // }
 
             /* If the bucket has units */
-            if (theStatement.hasUnits()) {
-                /* Set current units */
-                theBalUnits = new JUnits(getBucket().getUnitsAttribute(AccountAttribute.Units));
-            }
+            // if (theStatement.hasUnits()) {
+            /* Set current units */
+            // theBalUnits = new JUnits(getBucket().getUnitsAttribute(AccountAttribute.Units));
+            // }
         }
 
         /**

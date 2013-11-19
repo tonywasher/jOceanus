@@ -69,7 +69,7 @@ public class ReportManager {
     /**
      * The Current report.
      */
-    private BasicReport<?, ?> theReport = null;
+    private BasicReport theReport = null;
 
     /**
      * The Current text.
@@ -116,7 +116,7 @@ public class ReportManager {
      * Set Report.
      * @param pReport the document
      */
-    public void setReport(final BasicReport<?, ?> pReport) {
+    public void setReport(final BasicReport pReport) {
         /* Store the report */
         theReport = pReport;
 

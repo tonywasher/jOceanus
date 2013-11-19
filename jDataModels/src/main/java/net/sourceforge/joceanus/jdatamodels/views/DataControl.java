@@ -83,17 +83,12 @@ public abstract class DataControl<T extends DataSet<T>>
     public static final String DATA_ANALYSIS = NLS_BUNDLE.getString("DataAnalysis");
 
     /**
-     * Analysis Name.
-     */
-    public static final String DATA_ANALYSIS2 = NLS_BUNDLE.getString("DataAnalysis2");
-
-    /**
-     * Debug View Name.
+     * Debug Edit Name.
      */
     public static final String DATA_EDIT = NLS_BUNDLE.getString("DataEditViews");
 
     /**
-     * Debug View Name.
+     * Debug Maintenance Name.
      */
     public static final String DATA_MAINT = NLS_BUNDLE.getString("DataMaint");
 
@@ -345,7 +340,6 @@ public abstract class DataControl<T extends DataSet<T>>
         JDataEntry myData = getDataEntry(DATA_DATASET);
         JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
         JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
-        JDataEntry myAnalysis2 = getDataEntry(DATA_ANALYSIS2);
         JDataEntry myEdit = getDataEntry(DATA_EDIT);
         JDataEntry myMaint = getDataEntry(DATA_MAINT);
         JDataEntry myError = getDataEntry(DATA_ERROR);
@@ -358,7 +352,6 @@ public abstract class DataControl<T extends DataSet<T>>
         myData.addAsChildOf(myViews);
         myUpdates.addAsChildOf(myViews);
         myAnalysis.addAsChildOf(myViews);
-        myAnalysis2.addAsChildOf(myViews);
 
         /* Hide the Error Entry */
         myError.hideEntry();

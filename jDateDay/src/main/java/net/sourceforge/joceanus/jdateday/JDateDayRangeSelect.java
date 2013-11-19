@@ -122,6 +122,11 @@ public class JDateDayRangeSelect
     private final JDateDayButton theEndButton;
 
     /**
+     * The Period Label.
+     */
+    private final JLabel thePeriodLabel;
+
+    /**
      * The Start Label.
      */
     private final JLabel theStartLabel;
@@ -237,13 +242,16 @@ public class JDateDayRangeSelect
 
         /* Add the PeriodTypes to the period box */
         for (JDatePeriod myPeriod : JDatePeriod.values()) {
-            thePeriodBox.addItem(myPeriod);
+            /* Add as long as it is not the datesUpTo period */
+            if (!myPeriod.datesUpTo()) {
+                thePeriodBox.addItem(myPeriod);
+            }
         }
 
         /* Create the labels */
         theStartLabel = new JLabel(NLS_START);
         theEndLabel = new JLabel(NLS_END);
-        JLabel myPeriodLabel = new JLabel(NLS_PERIOD);
+        thePeriodLabel = new JLabel(NLS_PERIOD);
 
         /* Create the buttons */
         theNextButton = new JButton(NLS_NEXT);
@@ -256,7 +264,7 @@ public class JDateDayRangeSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(thePrevButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(myPeriodLabel);
+        add(thePeriodLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(thePeriodBox);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -336,6 +344,26 @@ public class JDateDayRangeSelect
     }
 
     /**
+     * Set period.
+     * @param pPeriod the period to select.
+     */
+    public void setPeriod(final JDatePeriod pPeriod) {
+        /* Apply period and build the range */
+        theState.setPeriod(pPeriod);
+        notifyChangedRange();
+    }
+
+    /**
+     * Lock period.
+     * @param isLocked true/false.
+     */
+    public void lockPeriod(final boolean isLocked) {
+        /* Apply period and build the range */
+        theState.lockPeriod(isLocked);
+        theState.applyState();
+    }
+
+    /**
      * Copy date selection from other box.
      * @param pSource the source box
      */
@@ -376,7 +404,13 @@ public class JDateDayRangeSelect
 
     @Override
     public void setEnabled(final boolean pEnable) {
-        /* Lock/Unlock the selection */
+        /* Determine state */
+        boolean isAdjust = theState.isAdjustable();
+        boolean isCustom = theState.isCustom();
+        boolean isUpTo = theState.isUpTo();
+        boolean isFull = theState.isFull();
+
+        /* Lock/Unlock the components */
         theStartButton.setEnabled(pEnable);
         theEndButton.setEnabled(pEnable);
         thePeriodBox.setEnabled(pEnable);
@@ -385,25 +419,46 @@ public class JDateDayRangeSelect
         thePrevButton.setEnabled(pEnable
                                  && theState.isPrevOK());
 
-        /* Handle custom changes */
-        boolean isAdjust = theState.isAdjustable();
-        boolean isCustom = theState.isCustom();
-        boolean isFull = theState.isFull();
+        /* Hide Next/Previous if necessary */
         theNextButton.setVisible(isAdjust);
         thePrevButton.setVisible(isAdjust);
+
+        /* Hide Period label and box for UpTo range */
+        thePeriodLabel.setVisible(!isUpTo);
+        thePeriodBox.setVisible(!isUpTo);
+
+        /* If we are using start button for period */
         if (useStartButtonForPeriod) {
-            theStartLabel.setVisible(!isFull);
-            theStartButton.setVisible(!isFull);
+            /* End label and button is only visible for custom range */
             theEndLabel.setVisible(isCustom);
             theEndButton.setVisible(isCustom);
+
+            /* Start label is hidden for Full and UpTo range */
+            theStartLabel.setVisible(!isFull
+                                     && !isUpTo);
+
+            /* Start button is visible unless it is Full range */
+            theStartButton.setVisible(!isFull);
+
+            /* Set correct text for label */
             theStartLabel.setText(theState.isContaining()
                     ? NLS_CONTAIN
                     : NLS_START);
+
+            /* else we are using end button for period */
         } else {
+            /* Start label and button is only visible for custom range */
             theStartLabel.setVisible(isCustom);
             theStartButton.setVisible(isCustom);
-            theEndLabel.setVisible(!isFull);
+
+            /* End label is hidden for Full and UpTo range */
+            theEndLabel.setVisible(!isFull
+                                   && !isUpTo);
+
+            /* Start button is visible unless it is Full range */
             theEndButton.setVisible(!isFull);
+
+            /* Set correct text for label */
             theEndLabel.setText(theState.isContaining()
                     ? NLS_CONTAIN
                     : NLS_END);
@@ -518,6 +573,11 @@ public class JDateDayRangeSelect
         private JDatePeriod thePeriod = null;
 
         /**
+         * Is the period locked?
+         */
+        private boolean isLocked = false;
+
+        /**
          * The calculated Range.
          */
         private JDateDayRange theRange = null;
@@ -578,6 +638,22 @@ public class JDateDayRangeSelect
          */
         private boolean isPrevOK() {
             return isPrevOK;
+        }
+
+        /**
+         * Is the period locked?
+         * @return true/false
+         */
+        private boolean isLocked() {
+            return isLocked;
+        }
+
+        /**
+         * Is this an UpTo range.
+         * @return true/false
+         */
+        private boolean isUpTo() {
+            return thePeriod == JDatePeriod.DATESUPTO;
         }
 
         /**
@@ -660,7 +736,16 @@ public class JDateDayRangeSelect
                     ? null
                     : new JDateDay(myEnd);
             thePeriod = pState.getPeriod();
+            isLocked = pState.isLocked();
             buildRange();
+        }
+
+        /**
+         * Lock the period.
+         * @param pLocked true/false
+         */
+        private void lockPeriod(final boolean pLocked) {
+            isLocked = pLocked;
         }
 
         /**
@@ -755,6 +840,9 @@ public class JDateDayRangeSelect
                 case CUSTOM:
                     buildCustomRange();
                     break;
+                case DATESUPTO:
+                    buildUpToRange();
+                    break;
                 case CALENDARMONTH:
                 case CALENDARQUARTER:
                 case CALENDARYEAR:
@@ -798,6 +886,26 @@ public class JDateDayRangeSelect
 
             /* Create the range */
             theRange = new JDateDayRange(theStartDate, theEndDate);
+        }
+
+        /**
+         * Build the upTo range.
+         */
+        private void buildUpToRange() {
+            /* Previous and next are disallowed */
+            isPrevOK = false;
+            isNextOK = false;
+
+            /* Limit the buttons */
+            theStartButton.setEarliestDateDay(theFirstDate);
+            theStartButton.setLatestDateDay(theFinalDate);
+            theEndButton.setEarliestDateDay(theStartDate);
+            theEndButton.setLatestDateDay(theFinalDate);
+
+            /* Create the range */
+            theRange = new JDateDayRange(theStartDate, (useStartButtonForPeriod)
+                    ? theStartDate
+                    : theEndDate);
         }
 
         /**

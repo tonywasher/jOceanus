@@ -27,15 +27,12 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,7 +41,7 @@ import org.w3c.dom.Element;
  * CashFlow report builder.
  */
 public class CashFlow
-        extends BasicReport<AccountBucket, AccountBucket> {
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
@@ -84,12 +81,11 @@ public class CashFlow
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
-        AccountBucketList myList = theAnalysis.getAccounts();
-        AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
+        PayeeBucketList myPayees = theAnalysis.getPayees();
         JDateDayRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
+        PayeeBucket myTotals = myPayees.getTotals();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -103,47 +99,46 @@ public class CashFlow
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_EXPENSE);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
-        /* Create the bucket iterator */
-        Iterator<AccountBucket> myIterator = myList.iterator();
-
-        /* Loop through the Detail Buckets */
+        /* Loop through the Payee Buckets */
+        Iterator<PayeeBucket> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            AccountBucket myBucket = myIterator.next();
-
-            /* Skip bucket if this is not a payee account */
-            if (myBucket.getCategoryType() != CategoryType.Payee) {
-                continue;
-            }
+            PayeeBucket myBucket = myIterator.next();
 
             /* Access bucket name */
             String myName = myBucket.getName();
 
+            /* Access values */
+            PayeeValues myValues = myBucket.getValues();
+
             /* Format the detail */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Income));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Expense));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.IncomeDelta));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Income));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Expense));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Delta));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
         }
 
+        /* Access values */
+        PayeeValues myValues = myTotals.getValues();
+
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Income));
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Expense));
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.IncomeDelta));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Income));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Expense));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Delta));
 
         /* Return the document */
         return theBuilder.getDocument();
     }
 
     @Override
-    protected void processFilter(final AccountBucket pSource) {
+    protected void processFilter(final Object pSource) {
         /* Create the new filter */
-        EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        myFilter.setFilter(pSource);
+        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
+        // myFilter.setFilter(pSource);
     }
 }

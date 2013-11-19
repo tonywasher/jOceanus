@@ -25,19 +25,18 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
-import net.sourceforge.joceanus.jmoneywise.views.InvestmentAnalysis;
-import net.sourceforge.joceanus.jmoneywise.views.InvestmentAnalysis.InvestmentAnalysisList;
-import net.sourceforge.joceanus.jmoneywise.views.InvestmentAnalysis.InvestmentAttribute;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,7 +45,7 @@ import org.w3c.dom.Element;
  * Portfolio (Market) report builder.
  */
 public class Portfolio
-        extends BasicReport<AccountBucket, Object> {
+        extends BasicReport {
     /**
      * Resource Bundle.
      */
@@ -73,34 +72,9 @@ public class Portfolio
     private static final String TEXT_GAINS = NLS_BUNDLE.getString("ReportGains");
 
     /**
-     * The Date text.
-     */
-    private static final String TEXT_DATE = NLS_BUNDLE.getString("ReportDate");
-
-    /**
-     * The Category text.
-     */
-    private static final String TEXT_CAT = NLS_BUNDLE.getString("ReportCat");
-
-    /**
-     * The Delta Units text.
-     */
-    private static final String TEXT_DUNIT = NLS_BUNDLE.getString("ReportDUnits");
-
-    /**
-     * The Delta Cost text.
-     */
-    private static final String TEXT_DCOST = NLS_BUNDLE.getString("ReportDCost");
-
-    /**
-     * The Delta Gains text.
-     */
-    private static final String TEXT_DGAIN = NLS_BUNDLE.getString("ReportDGains");
-
-    /**
      * The Dividend text.
      */
-    private static final String TEXT_DIV = NLS_BUNDLE.getString("ReportDividend");
+    private static final String TEXT_DIVIDEND = NLS_BUNDLE.getString("ReportDividend");
 
     /**
      * HTML builder.
@@ -131,11 +105,10 @@ public class Portfolio
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
-        AccountBucketList myAccounts = theAnalysis.getAccounts();
-        AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
+        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
 
         /* Access the totals */
-        AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
+        PortfolioBucket myTotals = myPortfolios.getTotals();
         JDateDay myDate = theAnalysis.getDateRange().getEnd();
 
         /* Start the report */
@@ -149,40 +122,44 @@ public class Portfolio
         theBuilder.makeTitleCell(myTable, TEXT_COST);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
+        theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
-        /* Loop through the Account Buckets */
-        Iterator<AccountBucket> myIterator = myAccounts.iterator();
+        /* Loop through the Portfolio Buckets */
+        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            AccountBucket myBucket = myIterator.next();
-
-            /* Only process priced asset types */
-            if (myBucket.getCategoryType() != CategoryType.Priced) {
-                continue;
-            }
+            PortfolioBucket myBucket = myIterator.next();
 
             /* Access bucket name */
             String myName = myBucket.getName();
 
+            /* Access values */
+            SecurityValues myValues = myBucket.getValues();
+
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Cost));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.MarketValue));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Gained));
-            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Profit));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
         }
 
+        /* Access values */
+        SecurityValues myValues = myTotals.getValues();
+
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Cost));
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.MarketValue));
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Gained));
-        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Profit));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -190,44 +167,69 @@ public class Portfolio
 
     @Override
     protected HTMLTable createDelayedTable(final DelayedTable pTable) {
-        /* Access the investment analyses */
-        AccountBucket myAsset = pTable.getSource();
-        InvestmentAnalysisList myList = myAsset.getInvestmentAnalyses();
+        /* Access the source */
+        Object mySource = pTable.getSource();
+        if (mySource instanceof PortfolioBucket) {
+            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
+        }
 
-        /* Create an embedded table */
-        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
+        /* Return the null table */
+        return null;
+    }
 
-        /* Format the header */
-        theBuilder.startRow(myTable);
-        theBuilder.makeTitleCell(myTable, TEXT_DATE);
-        theBuilder.makeTitleCell(myTable, TEXT_CAT);
-        theBuilder.makeTitleCell(myTable, TEXT_DUNIT);
-        theBuilder.makeTitleCell(myTable, TEXT_DCOST);
-        theBuilder.makeTitleCell(myTable, TEXT_DGAIN);
-        theBuilder.makeTitleCell(myTable, TEXT_DIV);
+    /**
+     * Create a delayed portfolio table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
+                                             final PortfolioBucket pSource) {
+        /* Access the securities and portfolio */
+        SecurityBucketList mySecurities = theAnalysis.getSecurities();
+        Account myPortfolio = pSource.getPortfolio();
 
-        /* Loop through the Analyses */
-        Iterator<InvestmentAnalysis> myIterator = myList.iterator();
+        /* Create a new table */
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+
+        /* Loop through the Security Buckets */
+        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            InvestmentAnalysis myAnalysis = myIterator.next();
+            SecurityBucket myBucket = myIterator.next();
 
-            /* Skip record if this is not based on an event (at present) */
-            if (myAnalysis.getEvent() == null) {
+            /* Skip record if incorrect category */
+            if (!Difference.isEqual(myBucket.getPortfolio(), myPortfolio)) {
                 continue;
             }
 
-            /* Format the detail */
-            String myDate = theFormatter.formatObject(myAnalysis.getDate());
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
+            /* Access values */
+            SecurityValues myValues = myBucket.getValues();
+
+            /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeValueCell(myTable, myDate);
-            theBuilder.makeValueCell(myTable, myAnalysis.getCategory());
-            theBuilder.makeValueCell(myTable, myAnalysis.getUnitsAttribute(InvestmentAttribute.DeltaUnits));
-            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaCost));
-            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaGains));
-            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaDividend));
+            theBuilder.makeFilterLinkCell(myTable, myName);
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+
+            /* Record the filter */
+            setFilterForId(myName, myBucket);
         }
 
         /* Return the table */
         return myTable;
+    }
+
+    @Override
+    protected void processFilter(final Object pSource) {
+        /* Create the new filter */
+        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
+        // myFilter.setFilter(pSource);
     }
 }

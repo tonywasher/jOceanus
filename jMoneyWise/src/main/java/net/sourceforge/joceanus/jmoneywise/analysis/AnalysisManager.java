@@ -61,6 +61,22 @@ public class AnalysisManager
     private final transient JDateDay theFirstDate;
 
     /**
+     * Is the analysis manager idle?
+     * @return true/false
+     */
+    public boolean isIdle() {
+        return theFirstDate == null;
+    }
+
+    /**
+     * Obtain the base analysis.
+     * @return the base analysis
+     */
+    public Analysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
      * Constructor.
      * @param pAnalysis the new analysis
      */

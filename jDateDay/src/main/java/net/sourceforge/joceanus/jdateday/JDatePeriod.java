@@ -81,6 +81,11 @@ public enum JDatePeriod {
     FISCALYEAR(Calendar.YEAR, 1),
 
     /**
+     * Dates Up to.
+     */
+    DATESUPTO(-1, -1),
+
+    /**
      * Custom.
      */
     CUSTOM(-1, -1),
@@ -159,6 +164,14 @@ public enum JDatePeriod {
      */
     public boolean adjustPeriod() {
         return theField != -1;
+    }
+
+    /**
+     * Is period DatesUpTo?
+     * @return true/false
+     */
+    public boolean datesUpTo() {
+        return this == DATESUPTO;
     }
 
     /**

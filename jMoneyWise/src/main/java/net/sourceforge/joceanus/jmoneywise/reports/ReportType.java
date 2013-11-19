@@ -62,16 +62,6 @@ public enum ReportType {
     MarketGrowth,
 
     /**
-     * CostBasis.
-     */
-    CostBasis,
-
-    /**
-     * Capital Gains.
-     */
-    CapitalGains,
-
-    /**
      * Market Report.
      */
     Portfolio("Market");

@@ -24,18 +24,16 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
 import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
 import org.w3c.dom.Document;
 
 /**
  * Interface provided by report builders.
- * @param <T> the delayed table type
- * @param <F> the filter type
  */
-public abstract class BasicReport<T, F> {
+public abstract class BasicReport {
     /**
      * The delayed map.
      */
@@ -44,7 +42,7 @@ public abstract class BasicReport<T, F> {
     /**
      * The filter element map.
      */
-    private final Map<String, F> theFilterMap;
+    private final Map<String, Object> theFilterMap;
 
     /**
      * Constructor.
@@ -52,7 +50,7 @@ public abstract class BasicReport<T, F> {
     protected BasicReport() {
         /* Allocate the hashMaps */
         theDelayedMap = new NestedHashMap<String, DelayedTable>();
-        theFilterMap = new NestedHashMap<String, F>();
+        theFilterMap = new NestedHashMap<String, Object>();
     }
 
     /**
@@ -66,7 +64,7 @@ public abstract class BasicReport<T, F> {
      * Process a filter.
      * @param pSource the filter source
      */
-    protected void processFilter(final F pSource) {
+    protected void processFilter(final Object pSource) {
     }
 
     /**
@@ -75,7 +73,7 @@ public abstract class BasicReport<T, F> {
      */
     protected void processFilterReference(final String pReference) {
         /* Lookup the filter */
-        F mySource = theFilterMap.get(pReference);
+        Object mySource = theFilterMap.get(pReference);
         if (mySource != null) {
             /* Process the filter */
             processFilter(mySource);
@@ -133,7 +131,7 @@ public abstract class BasicReport<T, F> {
      * @param pSelect the selection object
      */
     protected void setFilterForId(final String pId,
-                                  final F pSelect) {
+                                  final Object pSelect) {
         /* Record into filter map */
         theFilterMap.put(HTMLBuilder.REF_FILTER
                          + pId, pSelect);
@@ -147,7 +145,7 @@ public abstract class BasicReport<T, F> {
      */
     protected void setDelayedTable(final String pId,
                                    final HTMLTable pParent,
-                                   final T pSource) {
+                                   final Object pSource) {
         /* Create the delayed table reference */
         DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
 
@@ -173,7 +171,7 @@ public abstract class BasicReport<T, F> {
         /**
          * The table source.
          */
-        private final T theSource;
+        private final Object theSource;
 
         /**
          * Obtain the id.
@@ -195,7 +193,7 @@ public abstract class BasicReport<T, F> {
          * Obtain the source.
          * @return the source
          */
-        public T getSource() {
+        public Object getSource() {
             return theSource;
         }
 
@@ -207,7 +205,7 @@ public abstract class BasicReport<T, F> {
          */
         private DelayedTable(final String pId,
                              final HTMLTable pParent,
-                             final T pSource) {
+                             final Object pSource) {
             /* Store details */
             theId = pId;
             theParent = pParent;

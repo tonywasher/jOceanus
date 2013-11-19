@@ -72,6 +72,9 @@ public class AnalysisMaps {
 
                 /* Add to the map */
                 addPriceToMap(myPrice);
+
+                /* Touch underlying items */
+                myPrice.touchUnderlyingItems();
             }
         }
 
@@ -267,10 +270,13 @@ public class AnalysisMaps {
             /* Loop through the rates */
             Iterator<AccountRate> myIterator = pData.getRates().iterator();
             while (myIterator.hasNext()) {
-                AccountRate myPrice = myIterator.next();
+                AccountRate myRate = myIterator.next();
 
                 /* Add to the map */
-                addRateToMap(myPrice);
+                addRateToMap(myRate);
+
+                /* Touch underlying items */
+                myRate.touchUnderlyingItems();
             }
         }
 

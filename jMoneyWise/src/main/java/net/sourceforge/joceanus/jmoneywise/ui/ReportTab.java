@@ -45,17 +45,16 @@ import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
-import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis;
-import net.sourceforge.joceanus.jmoneywise.views.DataAnalysis.AnalysisYear;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 import org.w3c.dom.Document;
@@ -96,9 +95,9 @@ public class ReportTab
     private final ReportSelect theSelect;
 
     /**
-     * The Analysis.
+     * The Analysis Manager.
      */
-    private transient DataAnalysis theAnalysis = null;
+    private transient AnalysisManager theAnalysisMgr = null;
 
     /**
      * The Report entry.
@@ -226,8 +225,8 @@ public class ReportTab
             theSpotEntry.hideEntry();
 
             /* Refresh the data */
-            theAnalysis = theView.getAnalysis();
-            theSelect.refreshData(theAnalysis);
+            theAnalysisMgr = theView.getAnalysisManager();
+            theSelect.refreshData(theAnalysisMgr);
             buildReport();
 
             /* Create SavePoint */
@@ -263,67 +262,47 @@ public class ReportTab
      * @throws JDataException on error
      */
     private void buildReport() throws JDataException {
-        AnalysisYear myAnalysis;
-        DataAnalysis mySnapshot;
-        Document myDoc;
 
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
-        JDateDay myDate = theSelect.getReportDate();
-        TaxYear myYear = theSelect.getTaxYear();
+        JDateDayRange myRange = theSelect.getDateRange();
+        AnalysisManager myManager = theView.getAnalysisManager();
+        Document myDoc;
+        Analysis myAnalysis;
 
-        /* set lockdown of selection */
+        /* set lockDown of selection */
         theSelect.setEnabled(true);
 
-        /* Skip if year is null */
-        if (myYear == null) {
+        /* Skip if we have no analysis */
+        if (myManager.isIdle()) {
             return;
         }
 
         /* Switch on report type */
         switch (myReportType) {
             case NetWorth:
-                mySnapshot = new DataAnalysis(theView.getData(), myDate);
-                myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.NetWorth);
-                theSpotEntry.setObject(mySnapshot);
-                theSpotEntry.showEntry();
+            case Portfolio:
+                myAnalysis = myManager.getAnalysis(myRange.getEnd());
+                myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
 
             case BalanceSheet:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.BalanceSheet);
-                break;
-
             case CashFlow:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.CashFlow);
-                break;
-
             case IncomeExpense:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.IncomeExpense);
-                break;
-
+            case MarketGrowth:
             case TaxationBasis:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxationBasis);
-                break;
-
             case TaxCalculation:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myAnalysis.calculateTax();
-                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxCalculation);
+                myAnalysis = myManager.getAnalysis(myRange);
+                myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
 
-            case Portfolio:
-                mySnapshot = new DataAnalysis(theView.getData(), myDate);
-                myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.Portfolio);
-                theSpotEntry.setObject(mySnapshot);
-                theSpotEntry.showEntry();
-                break;
             default:
                 return;
         }
+
+        /* Declare to debugger */
+        theSpotEntry.setObject(myAnalysis);
+        theSpotEntry.showEntry();
 
         /* Declare the document */
         theManager.setDocument(myDoc);

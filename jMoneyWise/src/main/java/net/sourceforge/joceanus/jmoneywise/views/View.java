@@ -31,12 +31,13 @@ import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.FinanceDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet;
-import net.sourceforge.joceanus.jmoneywise.views.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
@@ -54,11 +55,6 @@ public class View
      * The Date range for the view.
      */
     private JDateDayRange theRange = null;
-
-    /**
-     * The data analysis.
-     */
-    private DataAnalysis theAnalysis = null;
 
     /**
      * The alternate analysis.
@@ -79,19 +75,19 @@ public class View
     }
 
     /**
-     * Obtain the analysis.
-     * @return the analysis.
-     */
-    public DataAnalysis getAnalysis() {
-        return theAnalysis;
-    }
-
-    /**
      * Obtain the analyser.
      * @return the analyser.
      */
     public DataAnalyser getAnalyser() {
         return theAnalyser;
+    }
+
+    /**
+     * Obtain the analysis manager.
+     * @return the analyser.
+     */
+    public AnalysisManager getAnalysisManager() {
+        return theAnalyser.getAnalysisManager();
     }
 
     /**
@@ -156,34 +152,25 @@ public class View
      * @return the analysis
      * @throws JDataException on error
      */
-    public final DataAnalysis analyseData(final FinanceData pData) throws JDataException {
+    public final DataAnalyser analyseData(final FinanceData pData) throws JDataException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 
-        /* Create the analysis */
-        DataAnalysis myAnalysis = new DataAnalysis(this, pData);
-
         /* Create the alternative analysis */
-        theAnalyser = new DataAnalyser(pData, getPreferenceMgr());
+        DataAnalyser myAnalyser = new DataAnalyser(pData, getPreferenceMgr());
 
         /* Access the top level debug entry for this analysis */
-        JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS2);
-        mySection.setObject(theAnalyser);
-
-        /* Access the most recent metaAnalysis */
-        MetaAnalysis myMetaAnalysis = myAnalysis.getMetaAnalysis();
+        JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
+        mySection.setObject(myAnalyser);
 
         /* If it exists */
-        if (myMetaAnalysis != null) {
-            /* Mark active accounts according to the analysis */
-            myMetaAnalysis.markActiveAccounts();
-        }
+        myAnalyser.markActiveAccounts();
 
         /* Complete the analysis */
         pData.completeAnalysis();
 
-        /* Return the analysis */
-        return myAnalysis;
+        /* Return the analyser */
+        return myAnalyser;
     }
 
     @Override
@@ -202,10 +189,14 @@ public class View
         /* Protect against exceptions */
         try {
             /* Analyse the data */
-            theAnalysis = analyseData(theData);
+            theAnalyser = analyseData(theData);
+
+            /* Update the Data entry */
+            JDataEntry myData = getDataEntry(DATA_ANALYSIS);
+            myData.setObject(theAnalyser);
 
             /* Access the dilutions */
-            theDilutions = theAnalysis.getDilutions();
+            theDilutions = theAnalyser.getDilutions();
 
             /* Derive the update Set */
             deriveUpdates();
@@ -218,7 +209,7 @@ public class View
         }
 
         /* Return whether there was success */
-        return (getErrors().size() == 0);
+        return !getErrors().isEmpty();
     }
 
     /**

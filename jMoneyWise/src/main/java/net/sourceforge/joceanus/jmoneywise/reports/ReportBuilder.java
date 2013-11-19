@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jmoneywise.views.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 
 import org.w3c.dom.Document;
 
@@ -69,7 +69,7 @@ public class ReportBuilder {
     /**
      * Map of allocated reports.
      */
-    private final Map<ReportType, BasicReport<?, ?>> theReportMap;
+    private final Map<ReportType, BasicReport> theReportMap;
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class ReportBuilder {
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<ReportType, BasicReport<?, ?>>(ReportType.class);
+        theReportMap = new EnumMap<ReportType, BasicReport>(ReportType.class);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ReportBuilder {
     public Document createReport(final Analysis pAnalysis,
                                  final ReportType pType) {
         /* Access existing report */
-        BasicReport<?, ?> myReport = theReportMap.get(pType);
+        BasicReport myReport = theReportMap.get(pType);
 
         /* If we have not previously allocated this report */
         if (myReport == null) {
@@ -111,14 +111,17 @@ public class ReportBuilder {
                 case IncomeExpense:
                     myReport = new IncomeExpense(theManager);
                     break;
+                case Portfolio:
+                    myReport = new Portfolio(theManager);
+                    break;
+                case MarketGrowth:
+                    myReport = new MarketGrowth(theManager);
+                    break;
                 case TaxationBasis:
                     myReport = new TaxationBasis(theManager);
                     break;
                 case TaxCalculation:
                     myReport = new TaxCalculation(theManager);
-                    break;
-                case Portfolio:
-                    myReport = new Portfolio(theManager);
                     break;
                 default:
                     return null;

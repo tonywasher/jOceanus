@@ -30,12 +30,12 @@ import java.util.List;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
-import net.sourceforge.joceanus.jmoneywise.views.InvestmentAnalysis;
 
 /**
  * Quicken Standard event.
@@ -361,15 +361,13 @@ public class QEvent
     }
 
     /**
-     * Obtain Investment Analysis for Investment Event.
-     * @param pEvent the event
-     * @param pSecurity the security for the event
-     * @return the analysis
+     * Obtain SecurityBucket for security.
+     * @param pSecurity the security
+     * @return the bucket
      */
-    protected InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
-                                                       final Account pSecurity) {
+    protected SecurityBucket getSecurityBucket(final Account pSecurity) {
         /* Locate the security bucket */
-        return theAnalysis.getInvestmentAnalysis(pEvent, pSecurity);
+        return theAnalysis.getSecurityBucket(pSecurity);
     }
 
     /**

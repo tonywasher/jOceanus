@@ -933,10 +933,8 @@ public class FinanceData
         theEvtCategories.touchUnderlyingItems();
         theExchangeRates.touchUnderlyingItems();
 
-        /* Touch items that are referenced by rates/prices/patterns */
+        /* Touch items that are referenced by accounts/patterns */
         theAccounts.touchUnderlyingItems();
-        theRates.touchUnderlyingItems();
-        thePrices.touchUnderlyingItems();
         thePatterns.touchUnderlyingItems();
     }
 

@@ -177,6 +177,14 @@ public class DataAnalyser
     }
 
     /**
+     * Obtain the dilutions.
+     * @return the dilutions
+     */
+    public DilutionEventList getDilutions() {
+        return theDilutions;
+    }
+
+    /**
      * Constructor for a full year set of accounts.
      * @param pData the Data to analyse
      * @param pPreferenceMgr the preference manager
@@ -233,6 +241,16 @@ public class DataAnalyser
                 myDate = myTax.getTaxYear();
             }
 
+            /* Touch underlying items */
+            myCurr.touchUnderlyingItems();
+
+            /* If the event has a parent */
+            Event myParent = myCurr.getParent();
+            if (myParent != null) {
+                /* Register child against parent */
+                myEvents.registerChild(myCurr);
+            }
+
             /* If the event has a dilution factor */
             if (myCurr.getDilution() != null) {
                 /* Add to the dilution event list */
@@ -241,10 +259,61 @@ public class DataAnalyser
 
             /* Process the event in the report set */
             processEvent(myCurr);
+
+            /* Touch tax year */
+            myTax.touchItem(myCurr);
         }
 
         /* Analyse the basic ranged analysis */
         theManager.analyseBase();
+    }
+
+    /**
+     * Mark active accounts.
+     * @throws JDataException on error
+     */
+    public void markActiveAccounts() throws JDataException {
+        /* Access the iterator */
+        AccountBucketList myAccounts = theAnalysis.getAccounts();
+        SecurityBucketList mySecurities = theAnalysis.getSecurities();
+
+        /* Loop through the items to find the match */
+        Iterator<AccountBucket> myActIterator = myAccounts.listIterator();
+        while (myActIterator.hasNext()) {
+            AccountBucket myCurr = myActIterator.next();
+            Account myAccount = myCurr.getAccount();
+
+            /* If we are closed */
+            if (myAccount.isClosed()) {
+                /* Ensure that we have correct closed/maturity dates */
+                myAccount.adjustDates();
+            }
+
+            /* If we are active */
+            if (myCurr.isActive()) {
+                /* Set the account as non-close-able */
+                myAccount.setNonCloseable();
+            }
+        }
+
+        /* Loop through the items to find the match */
+        Iterator<SecurityBucket> mySecIterator = mySecurities.listIterator();
+        while (mySecIterator.hasNext()) {
+            SecurityBucket myCurr = mySecIterator.next();
+            Account mySecurity = myCurr.getSecurity();
+
+            /* If we are closed */
+            if (mySecurity.isClosed()) {
+                /* Ensure that we have correct closed/maturity dates */
+                mySecurity.adjustDates();
+            }
+
+            /* If we are active */
+            if (myCurr.isActive()) {
+                /* Set the security as non-closeable */
+                mySecurity.setNonCloseable();
+            }
+        }
     }
 
     /**
