@@ -10,8 +10,8 @@
   <description>Implementation of a DateDay</description>
    <dependencies>
     <dependency>
-      <groupId>net.sourceforge.JDateButton</groupId>
-      <artifactId>JDateButton</artifactId>
+      <groupId>net.sourceforge.jdatebutton</groupId>
+      <artifactId>jdatebutton</artifactId>
       <version>${JDateButtonVersion}</version>
     </dependency>
     <dependency>

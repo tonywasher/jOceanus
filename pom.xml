@@ -73,7 +73,7 @@
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <appLibDir/>
-    <JDateButtonVersion>v1.2.0-SNAPSHOT</JDateButtonVersion>
+    <JDateButtonVersion>v1.2.0-b1</JDateButtonVersion>
     <BouncyCastleVersion>1.49</BouncyCastleVersion>
     <SvnKitVersion>1.7.11</SvnKitVersion>
     <ApacheMavenVersion>3.1.1</ApacheMavenVersion>

@@ -72,7 +72,7 @@
   </dependencies>
   <properties>
     <svnComponent>jDataModels</svnComponent>
-    <svnComponent>jdatamodels</svnComponent>
+    <svnPackage>jdatamodels</svnPackage>
     <packageName>${packageKey}.${svnPackage}</packageName>
   </properties>
   <build>
