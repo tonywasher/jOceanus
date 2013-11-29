@@ -99,28 +99,28 @@ public class ReportBuilder {
         if (myReport == null) {
             /* Switch on the report type */
             switch (pType) {
-                case NetWorth:
+                case NETWORTH:
                     myReport = new NetWorth(theManager);
                     break;
-                case BalanceSheet:
+                case BALANCESHEET:
                     myReport = new BalanceSheet(theManager);
                     break;
-                case CashFlow:
+                case CASHFLOW:
                     myReport = new CashFlow(theManager);
                     break;
-                case IncomeExpense:
+                case INCOMEEXPENSE:
                     myReport = new IncomeExpense(theManager);
                     break;
-                case Portfolio:
+                case PORTFOLIO:
                     myReport = new Portfolio(theManager);
                     break;
-                case MarketGrowth:
+                case MARKETGROWTH:
                     myReport = new MarketGrowth(theManager);
                     break;
-                case TaxationBasis:
+                case TAXBASIS:
                     myReport = new TaxationBasis(theManager);
                     break;
-                case TaxCalculation:
+                case TAXCALC:
                     myReport = new TaxCalculation(theManager);
                     break;
                 default:

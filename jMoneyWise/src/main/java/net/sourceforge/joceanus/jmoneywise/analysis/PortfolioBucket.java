@@ -33,8 +33,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
@@ -228,15 +226,15 @@ public final class PortfolioBucket
         theBaseValues = new SecurityValues();
 
         /* Create valuation fields for the portfolio */
-        theValues.setValue(SecurityAttribute.Valuation, new JMoney());
-        theBaseValues.setValue(SecurityAttribute.Valuation, new JMoney());
+        theValues.setValue(SecurityAttribute.VALUATION, new JMoney());
+        theBaseValues.setValue(SecurityAttribute.VALUATION, new JMoney());
 
         /* Create profit fields for the portfolio */
-        theValues.setValue(SecurityAttribute.Profit, new JMoney());
-        theBaseValues.setValue(SecurityAttribute.Profit, new JMoney());
+        theValues.setValue(SecurityAttribute.PROFIT, new JMoney());
+        theBaseValues.setValue(SecurityAttribute.PROFIT, new JMoney());
 
         /* Create market fields for the portfolio */
-        theValues.setValue(SecurityAttribute.Market, new JMoney());
+        theValues.setValue(SecurityAttribute.MARKET, new JMoney());
     }
 
     @Override
@@ -281,15 +279,15 @@ public final class PortfolioBucket
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(SecurityAttribute.Delta, myValue);
+        setValue(SecurityAttribute.DELTA, myValue);
     }
 
     /**
@@ -312,40 +310,40 @@ public final class PortfolioBucket
     private static void addValues(final SecurityValues pTotals,
                                   final SecurityValues pSource) {
         /* Add valuation values */
-        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.Valuation);
-        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
+        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
 
         /* Add invested values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Invested);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Invested);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.INVESTED);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.INVESTED);
         myValue.addAmount(mySrcValue);
 
         /* Add cost values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Cost);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Cost);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.COST);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.COST);
         myValue.addAmount(mySrcValue);
 
         /* Add gains values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Gains);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Gains);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.GAINS);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.GAINS);
         myValue.addAmount(mySrcValue);
 
         /* Add dividends values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Dividend);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Dividend);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.DIVIDEND);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.DIVIDEND);
         myValue.addAmount(mySrcValue);
 
         /* Add market values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Market);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Market);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.MARKET);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.MARKET);
         if (mySrcValue != null) {
             myValue.addAmount(mySrcValue);
         }
 
         /* Add profit values */
-        myValue = pTotals.getMoneyValue(SecurityAttribute.Profit);
-        mySrcValue = pSource.getMoneyValue(SecurityAttribute.Profit);
+        myValue = pTotals.getMoneyValue(SecurityAttribute.PROFIT);
+        mySrcValue = pSource.getMoneyValue(SecurityAttribute.PROFIT);
         if (mySrcValue != null) {
             myValue.addAmount(mySrcValue);
         }

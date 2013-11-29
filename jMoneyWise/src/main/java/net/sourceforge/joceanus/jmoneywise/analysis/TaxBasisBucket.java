@@ -413,9 +413,9 @@ public final class TaxBasisBucket
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
         /* Access the counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.Gross);
+        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.Net);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
         myNet = new JMoney(myNet);
 
         /* If this is an expense */
@@ -432,10 +432,10 @@ public final class TaxBasisBucket
             if ((myTaxCredit != null)
                 && (myTaxCredit.isNonZero())) {
                 /* Adjust the tax */
-                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TaxCredit);
+                JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
                 myTax = new JMoney(myTax);
                 myTax.addAmount(myTaxCredit);
-                setValue(TaxBasisAttribute.TaxCredit, myTax);
+                setValue(TaxBasisAttribute.TAXCREDIT, myTax);
 
                 /* Adjust the gross */
                 myGross.addAmount(myTaxCredit);
@@ -464,8 +464,8 @@ public final class TaxBasisBucket
         }
 
         /* Set the values */
-        setValue(TaxBasisAttribute.Gross, myGross);
-        setValue(TaxBasisAttribute.Net, myNet);
+        setValue(TaxBasisAttribute.GROSS, myGross);
+        setValue(TaxBasisAttribute.NET, myNet);
 
         /* Register the event */
         theHistory.registerEvent(pEvent, theValues);
@@ -485,9 +485,9 @@ public final class TaxBasisBucket
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
         /* Access the counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.Gross);
+        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.Net);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
         myNet = new JMoney(myNet);
 
         /* If this is an income */
@@ -502,8 +502,8 @@ public final class TaxBasisBucket
         }
 
         /* Set the values */
-        setValue(TaxBasisAttribute.Gross, myGross);
-        setValue(TaxBasisAttribute.Net, myNet);
+        setValue(TaxBasisAttribute.GROSS, myGross);
+        setValue(TaxBasisAttribute.NET, myNet);
 
         /* Register the event */
         theHistory.registerEvent(pEvent, theValues);
@@ -529,9 +529,9 @@ public final class TaxBasisBucket
      */
     private void adjustValue(final JMoney pValue) {
         /* Access the counters */
-        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.Gross);
+        JMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new JMoney(myGross);
-        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.Net);
+        JMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NET);
         myNet = new JMoney(myNet);
 
         /* Adjust the gross and net */
@@ -539,8 +539,8 @@ public final class TaxBasisBucket
         myNet.addAmount(pValue);
 
         /* Set the values */
-        setValue(TaxBasisAttribute.Gross, myGross);
-        setValue(TaxBasisAttribute.Net, myNet);
+        setValue(TaxBasisAttribute.GROSS, myGross);
+        setValue(TaxBasisAttribute.NET, myNet);
     }
 
     /**
@@ -549,8 +549,8 @@ public final class TaxBasisBucket
      */
     protected void addValues(final TaxBasisBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.Gross);
-        myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myAmount.addAmount(pBucket.getMoneyValue(TaxBasisAttribute.GROSS));
     }
 
     /**
@@ -559,8 +559,8 @@ public final class TaxBasisBucket
      */
     protected void subtractValues(final TaxBasisBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.Gross);
-        myAmount.subtractAmount(pBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myAmount = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myAmount.subtractAmount(pBucket.getMoneyValue(TaxBasisAttribute.GROSS));
     }
 
     /**
@@ -598,9 +598,9 @@ public final class TaxBasisBucket
             super(TaxBasisAttribute.class);
 
             /* Create all possible values */
-            put(TaxBasisAttribute.Gross, new JMoney());
-            put(TaxBasisAttribute.Net, new JMoney());
-            put(TaxBasisAttribute.TaxCredit, new JMoney());
+            put(TaxBasisAttribute.GROSS, new JMoney());
+            put(TaxBasisAttribute.NET, new JMoney());
+            put(TaxBasisAttribute.TAXCREDIT, new JMoney());
         }
 
         /**
@@ -620,17 +620,17 @@ public final class TaxBasisBucket
         @Override
         protected void adjustToBaseValues(final TaxBasisValues pBase) {
             /* Adjust gross/net/tax values */
-            adjustMoneyToBase(pBase, TaxBasisAttribute.Gross);
-            adjustMoneyToBase(pBase, TaxBasisAttribute.Net);
-            adjustMoneyToBase(pBase, TaxBasisAttribute.TaxCredit);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.GROSS);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.NET);
+            adjustMoneyToBase(pBase, TaxBasisAttribute.TAXCREDIT);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset Income and expense values */
-            put(TaxBasisAttribute.Gross, new JMoney());
-            put(TaxBasisAttribute.Net, new JMoney());
-            put(TaxBasisAttribute.TaxCredit, new JMoney());
+            put(TaxBasisAttribute.GROSS, new JMoney());
+            put(TaxBasisAttribute.NET, new JMoney());
+            put(TaxBasisAttribute.TAXCREDIT, new JMoney());
         }
 
         /**
@@ -638,9 +638,9 @@ public final class TaxBasisBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myGross = getMoneyValue(TaxBasisAttribute.Gross);
-            JMoney myNet = getMoneyValue(TaxBasisAttribute.Net);
-            JMoney myTax = getMoneyValue(TaxBasisAttribute.TaxCredit);
+            JMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
+            JMoney myNet = getMoneyValue(TaxBasisAttribute.NET);
+            JMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
             return (myGross.isNonZero())
                    || (myNet.isNonZero())
                    || (myTax.isNonZero());
@@ -1010,25 +1010,5 @@ public final class TaxBasisBucket
                 }
             }
         }
-    }
-
-    /**
-     * TaxBasisAttribute enumeration.
-     */
-    public enum TaxBasisAttribute {
-        /**
-         * Gross Amount.
-         */
-        Gross,
-
-        /**
-         * Net Amount.
-         */
-        Net,
-
-        /**
-         * TaxCredit.
-         */
-        TaxCredit;
     }
 }

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
@@ -66,8 +65,8 @@ public class MarketAnalysis {
 
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
-        JMoney myMarket = myValues.getMoneyValue(SecurityAttribute.Market);
-        JMoney myGains = myValues.getMoneyValue(SecurityAttribute.Gains);
+        JMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKET);
+        JMoney myGains = myValues.getMoneyValue(SecurityAttribute.GAINS);
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {

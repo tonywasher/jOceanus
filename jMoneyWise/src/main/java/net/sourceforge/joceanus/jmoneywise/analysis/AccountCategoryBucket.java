@@ -32,11 +32,9 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
@@ -319,15 +317,15 @@ public final class AccountCategoryBucket
      */
     private void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.Delta, myValue);
+        setValue(AccountAttribute.DELTA, myValue);
     }
 
     /**
@@ -374,8 +372,8 @@ public final class AccountCategoryBucket
     private static void addValues(final AccountValues pTotals,
                                   final AccountValues pSource) {
         /* Add base values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
-        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -387,8 +385,8 @@ public final class AccountCategoryBucket
     private static void addValues(final AccountValues pTotals,
                                   final SecurityValues pSource) {
         /* Add base values */
-        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
-        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        JMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 

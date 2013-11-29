@@ -20,61 +20,38 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.DataType;
+
 /**
- * Report Types.
+ * TaxBasisAttribute enumeration.
  */
-public enum ReportType {
+public enum TaxBasisAttribute implements BucketAttribute {
     /**
-     * Net Worth Report.
+     * Gross Amount.
      */
-    NETWORTH,
+    GROSS,
 
     /**
-     * BalanceSheet Report.
+     * Net Amount.
      */
-    BALANCESHEET,
+    NET,
 
     /**
-     * CashFlow Report.
+     * TaxCredit.
      */
-    CASHFLOW,
-
-    /**
-     * Income/Expense Report.
-     */
-    INCOMEEXPENSE,
-
-    /**
-     * Taxation Basis Report.
-     */
-    TAXBASIS,
-
-    /**
-     * Tax Calculation Report.
-     */
-    TAXCALC,
-
-    /**
-     * Market Growth.
-     */
-    MARKETGROWTH,
-
-    /**
-     * Market Report.
-     */
-    PORTFOLIO;
+    TAXCREDIT;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportType.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxBasisAttribute.class.getName());
 
     /**
-     * Report Name.
+     * The String name.
      */
     private String theName;
 
@@ -90,17 +67,13 @@ public enum ReportType {
         return theName;
     }
 
-    /**
-     * is this a Point in time report?
-     * @return true/false
-     */
-    public boolean isPointInTime() {
-        switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
-                return true;
-            default:
-                return false;
-        }
+    @Override
+    public boolean isCounter() {
+        return true;
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DataType.MONEY;
     }
 }

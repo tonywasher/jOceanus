@@ -156,14 +156,14 @@ public class MainTab
     private Register theRegister = null;
 
     /**
-     * The Account panel.
-     */
-    private AccountTab theAccountCtl = null;
-
-    /**
      * The report panel.
      */
     private ReportTab theReportTab = null;
+
+    /**
+     * The analysis panel.
+     */
+    private AnalysisStatement theStatement = null;
 
     /**
      * The SpotPricesPanel.
@@ -259,13 +259,13 @@ public class MainTab
         theRegister = new Register(theView, theComboList);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
-        /* Create the accounts control and add to tabbed pane */
-        theAccountCtl = new AccountTab(theView, theComboList);
-        theTabs.addTab(TITLE_ACCOUNT, theAccountCtl);
-
         /* Create the Report Tab */
         theReportTab = new ReportTab(theView);
         theTabs.addTab(TITLE_REPORT, theReportTab);
+
+        /* Create the Analysis Tab */
+        theStatement = new AnalysisStatement(theView);
+        theTabs.addTab(TITLE_ACCOUNT, theStatement);
 
         /* Create the SpotView Tab */
         theSpotView = new PricePoint(theView);
@@ -280,11 +280,9 @@ public class MainTab
         theView.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
         theRegister.addChangeListener(myListener);
-        theAccountCtl.addChangeListener(myListener);
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
         theRegister.addActionListener(myListener);
-        theAccountCtl.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
 
@@ -326,7 +324,6 @@ public class MainTab
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
         return theRegister.hasUpdates()
-               || theAccountCtl.hasUpdates()
                || theSpotView.hasUpdates()
                || theMaint.hasUpdates();
     }
@@ -421,7 +418,7 @@ public class MainTab
     private void selectAccount(final Account pAccount,
                                final JDateDayRangeSelect pSource) {
         /* Pass through to the Account control */
-        theAccountCtl.selectAccount(pAccount, pSource);
+        // theAccountCtl.selectAccount(pAccount, pSource);
 
         /* Goto the Accounts tab */
         gotoNamedTab(TITLE_ACCOUNT);
@@ -457,7 +454,7 @@ public class MainTab
      */
     private void addPattern(final Event pEvent) {
         /* Add the pattern */
-        theAccountCtl.addPattern(pEvent);
+        // theAccountCtl.addPattern(pEvent);
 
         /* Change focus to the account */
         gotoNamedTab(TITLE_ACCOUNT);
@@ -498,15 +495,6 @@ public class MainTab
         boolean showTab = (!hasWorker && (!hasUpdates || theRegister.hasUpdates()));
 
         /* Enable/Disable the extract tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, showTab);
-        }
-
-        /* Access the AccountCtl panel and determine its status */
-        iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
-        showTab = (!hasWorker && (!hasUpdates || theAccountCtl.hasUpdates()));
-
-        /* Enable/Disable the account control tab */
         if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
         }
@@ -557,10 +545,10 @@ public class MainTab
             /* Determine focus of register */
             theRegister.determineFocus();
 
-            /* If the selected component is account */
-        } else if (myComponent.equals(theAccountCtl)) {
-            /* Determine focus of accounts */
-            theAccountCtl.determineFocus();
+            /* If the selected component is Statement */
+        } else if (myComponent.equals(theStatement)) {
+            /* Determine focus of Statement */
+            theStatement.determineFocus();
 
             /* If the selected component is SpotView */
         } else if (myComponent.equals(theSpotView.getPanel())) {
@@ -606,7 +594,6 @@ public class MainTab
 
                 /* else if it is one of the sub-panels */
             } else if (theRegister.equals(o)
-                       || theAccountCtl.equals(o)
                        || theMaint.equals(o)
                        || theSpotView.equals(o)) {
                 /* Set the visibility */

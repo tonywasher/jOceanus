@@ -405,7 +405,7 @@ public final class PayeeBucket
      * @return the new income value
      */
     private JMoney getNewIncome() {
-        JMoney myIncome = theValues.getMoneyValue(PayeeAttribute.Income);
+        JMoney myIncome = theValues.getMoneyValue(PayeeAttribute.INCOME);
         return new JMoney(myIncome);
     }
 
@@ -414,7 +414,7 @@ public final class PayeeBucket
      * @return the new expense value
      */
     private JMoney getNewExpense() {
-        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.Expense);
+        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.EXPENSE);
         return new JMoney(myExpense);
     }
 
@@ -483,10 +483,10 @@ public final class PayeeBucket
 
         /* Set new values */
         if (myIncome != null) {
-            setValue(PayeeAttribute.Income, myIncome);
+            setValue(PayeeAttribute.INCOME, myIncome);
         }
         if (myExpense != null) {
-            setValue(PayeeAttribute.Expense, myExpense);
+            setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
         /* Register the event in the history */
@@ -504,7 +504,7 @@ public final class PayeeBucket
             /* Update the expense */
             JMoney myExpense = getNewExpense();
             myExpense.addAmount(myAmount);
-            setValue(PayeeAttribute.Expense, myExpense);
+            setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
         /* Register the event in the history */
@@ -522,7 +522,7 @@ public final class PayeeBucket
             /* Update the expense */
             JMoney myIncome = getNewIncome();
             myIncome.addAmount(myAmount);
-            setValue(PayeeAttribute.Income, myIncome);
+            setValue(PayeeAttribute.INCOME, myIncome);
         }
 
         /* Register the event in the history */
@@ -555,7 +555,7 @@ public final class PayeeBucket
 
         /* Set new values */
         if (myExpense != null) {
-            setValue(PayeeAttribute.Expense, myExpense);
+            setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
         /* Register the event in the history */
@@ -571,7 +571,7 @@ public final class PayeeBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.addAmount(pValue);
-            setValue(PayeeAttribute.Income, myIncome);
+            setValue(PayeeAttribute.INCOME, myIncome);
         }
     }
 
@@ -584,7 +584,7 @@ public final class PayeeBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.subtractAmount(pValue);
-            setValue(PayeeAttribute.Income, myIncome);
+            setValue(PayeeAttribute.INCOME, myIncome);
         }
     }
 
@@ -611,7 +611,7 @@ public final class PayeeBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.addAmount(pValue);
-            setValue(PayeeAttribute.Expense, myExpense);
+            setValue(PayeeAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -638,7 +638,7 @@ public final class PayeeBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.subtractAmount(pValue);
-            setValue(PayeeAttribute.Expense, myExpense);
+            setValue(PayeeAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -651,13 +651,13 @@ public final class PayeeBucket
         PayeeValues mySource = pSource.getValues();
 
         /* Add income values */
-        JMoney myValue = theValues.getMoneyValue(PayeeAttribute.Income);
-        JMoney mySrcValue = mySource.getMoneyValue(PayeeAttribute.Income);
+        JMoney myValue = theValues.getMoneyValue(PayeeAttribute.INCOME);
+        JMoney mySrcValue = mySource.getMoneyValue(PayeeAttribute.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
-        myValue = theValues.getMoneyValue(PayeeAttribute.Expense);
-        mySrcValue = mySource.getMoneyValue(PayeeAttribute.Expense);
+        myValue = theValues.getMoneyValue(PayeeAttribute.EXPENSE);
+        mySrcValue = mySource.getMoneyValue(PayeeAttribute.EXPENSE);
         myValue.addAmount(mySrcValue);
     }
 
@@ -669,11 +669,11 @@ public final class PayeeBucket
         JMoney myDelta = getNewIncome();
 
         /* Subtract the expense value */
-        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.Expense);
+        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.EXPENSE);
         myDelta.subtractAmount(myExpense);
 
         /* Set the delta */
-        setValue(PayeeAttribute.Delta, myDelta);
+        setValue(PayeeAttribute.DELTA, myDelta);
     }
 
     /**
@@ -703,8 +703,8 @@ public final class PayeeBucket
             super(PayeeAttribute.class);
 
             /* Initialise income/expense to zero */
-            put(PayeeAttribute.Income, new JMoney());
-            put(PayeeAttribute.Expense, new JMoney());
+            put(PayeeAttribute.INCOME, new JMoney());
+            put(PayeeAttribute.EXPENSE, new JMoney());
         }
 
         /**
@@ -724,15 +724,15 @@ public final class PayeeBucket
         @Override
         protected void adjustToBaseValues(final PayeeValues pBase) {
             /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, PayeeAttribute.Income);
-            adjustMoneyToBase(pBase, PayeeAttribute.Expense);
+            adjustMoneyToBase(pBase, PayeeAttribute.INCOME);
+            adjustMoneyToBase(pBase, PayeeAttribute.EXPENSE);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset Income and expense values */
-            put(PayeeAttribute.Income, new JMoney());
-            put(PayeeAttribute.Expense, new JMoney());
+            put(PayeeAttribute.INCOME, new JMoney());
+            put(PayeeAttribute.EXPENSE, new JMoney());
         }
 
         /**
@@ -740,8 +740,8 @@ public final class PayeeBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myIncome = getMoneyValue(PayeeAttribute.Income);
-            JMoney myExpense = getMoneyValue(PayeeAttribute.Expense);
+            JMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
+            JMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
             return (myIncome.isNonZero())
                    || (myExpense.isNonZero());
         }
@@ -969,25 +969,5 @@ public final class PayeeBucket
                 theTotals.calculateDelta();
             }
         }
-    }
-
-    /**
-     * PayeeAttribute enumeration.
-     */
-    public enum PayeeAttribute {
-        /**
-         * Income.
-         */
-        Income,
-
-        /**
-         * Expense.
-         */
-        Expense,
-
-        /**
-         * Delta.
-         */
-        Delta;
     }
 }

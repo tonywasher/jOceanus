@@ -20,58 +20,50 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
+
 /**
- * Report Types.
+ * Analysis Types.
  */
-public enum ReportType {
+public enum AnalysisType {
     /**
-     * Net Worth Report.
+     * Account.
      */
-    NETWORTH,
+    ACCOUNT,
 
     /**
-     * BalanceSheet Report.
+     * Security.
      */
-    BALANCESHEET,
+    SECURITY,
 
     /**
-     * CashFlow Report.
+     * Payee.
      */
-    CASHFLOW,
+    PAYEE,
 
     /**
-     * Income/Expense Report.
+     * EventCategory.
      */
-    INCOMEEXPENSE,
+    CATEGORY,
 
     /**
-     * Taxation Basis Report.
+     * TaxBasis.
      */
-    TAXBASIS,
-
-    /**
-     * Tax Calculation Report.
-     */
-    TAXCALC,
-
-    /**
-     * Market Growth.
-     */
-    MARKETGROWTH,
-
-    /**
-     * Market Report.
-     */
-    PORTFOLIO;
+    TAXBASIS;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportType.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisType.class.getName());
 
     /**
      * Report Name.
@@ -91,16 +83,34 @@ public enum ReportType {
     }
 
     /**
-     * is this a Point in time report?
-     * @return true/false
+     * Obtain default value.
+     * @return the default
      */
-    public boolean isPointInTime() {
+    public BucketAttribute getDefaultValue() {
+        BucketAttribute[] myValues = getValues();
+        return (myValues == null)
+                ? null
+                : myValues[0];
+    }
+
+    /**
+     * Obtain values.
+     * @return values
+     */
+    public BucketAttribute[] getValues() {
         switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
-                return true;
+            case ACCOUNT:
+                return AccountAttribute.values();
+            case SECURITY:
+                return SecurityAttribute.values();
+            case PAYEE:
+                return PayeeAttribute.values();
+            case CATEGORY:
+                return EventAttribute.values();
+            case TAXBASIS:
+                return TaxBasisAttribute.values();
             default:
-                return false;
+                return null;
         }
     }
 }

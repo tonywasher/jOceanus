@@ -56,7 +56,7 @@ public class BucketHistory<T extends BucketValues<T, ?>>
     /**
      * Last values.
      */
-    private BucketSnapShot<T> theLastValues = null;
+    private transient BucketSnapShot<T> theLastValues = null;
 
     @Override
     public String formatObject() {

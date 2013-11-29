@@ -20,61 +20,73 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.DataType;
+
 /**
- * Report Types.
+ * SecurityAttribute enumeration.
  */
-public enum ReportType {
+public enum SecurityAttribute implements BucketAttribute {
     /**
-     * Net Worth Report.
+     * Valuation.
      */
-    NETWORTH,
+    VALUATION,
 
     /**
-     * BalanceSheet Report.
+     * Valuation Delta.
      */
-    BALANCESHEET,
+    DELTA,
 
     /**
-     * CashFlow Report.
+     * Units.
      */
-    CASHFLOW,
+    UNITS,
 
     /**
-     * Income/Expense Report.
+     * Cost.
      */
-    INCOMEEXPENSE,
+    COST,
 
     /**
-     * Taxation Basis Report.
+     * Gains.
      */
-    TAXBASIS,
+    GAINS,
 
     /**
-     * Tax Calculation Report.
+     * Invested.
      */
-    TAXCALC,
+    INVESTED,
 
     /**
-     * Market Growth.
+     * Dividend.
      */
-    MARKETGROWTH,
+    DIVIDEND,
 
     /**
-     * Market Report.
+     * Market.
      */
-    PORTFOLIO;
+    MARKET,
+
+    /**
+     * Profit.
+     */
+    PROFIT,
+
+    /**
+     * Price.
+     */
+    PRICE;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportType.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityAttribute.class.getName());
 
     /**
-     * Report Name.
+     * The String name.
      */
     private String theName;
 
@@ -90,17 +102,42 @@ public enum ReportType {
         return theName;
     }
 
-    /**
-     * is this a Point in time report?
-     * @return true/false
-     */
-    public boolean isPointInTime() {
+    @Override
+    public boolean isCounter() {
         switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
+            case UNITS:
+            case COST:
+            case GAINS:
+            case DIVIDEND:
+            case INVESTED:
                 return true;
+            case MARKET:
+            case PROFIT:
+            case VALUATION:
+            case PRICE:
+            case DELTA:
             default:
                 return false;
+        }
+    }
+
+    @Override
+    public DataType getDataType() {
+        switch (this) {
+            case UNITS:
+                return DataType.UNITS;
+            case PRICE:
+                return DataType.PRICE;
+            case VALUATION:
+            case DELTA:
+            case COST:
+            case GAINS:
+            case INVESTED:
+            case DIVIDEND:
+            case MARKET:
+            case PROFIT:
+            default:
+                return DataType.MONEY;
         }
     }
 }

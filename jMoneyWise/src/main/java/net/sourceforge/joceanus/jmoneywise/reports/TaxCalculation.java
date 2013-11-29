@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
@@ -146,7 +146,7 @@ public class TaxCalculation
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTaxPaid.getName());
         theBuilder.makeTotalCell(myTable);
-        theBuilder.makeTotalCell(myTable, myTaxPaid.getMoneyValue(TaxBasisAttribute.Gross));
+        theBuilder.makeTotalCell(myTable, myTaxPaid.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the Tax Profit bucket */
         myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);

@@ -175,14 +175,14 @@ public class ReportSelect
         refreshData(null);
 
         /* Add the ReportTypes to the report box */
-        theReportBox.addItem(ReportType.NetWorth);
-        theReportBox.addItem(ReportType.BalanceSheet);
-        theReportBox.addItem(ReportType.CashFlow);
-        theReportBox.addItem(ReportType.IncomeExpense);
-        theReportBox.addItem(ReportType.TaxationBasis);
-        theReportBox.addItem(ReportType.TaxCalculation);
-        theReportBox.addItem(ReportType.Portfolio);
-        theReportBox.addItem(ReportType.MarketGrowth);
+        theReportBox.addItem(ReportType.NETWORTH);
+        theReportBox.addItem(ReportType.BALANCESHEET);
+        theReportBox.addItem(ReportType.CASHFLOW);
+        theReportBox.addItem(ReportType.INCOMEEXPENSE);
+        theReportBox.addItem(ReportType.TAXBASIS);
+        theReportBox.addItem(ReportType.TAXCALC);
+        theReportBox.addItem(ReportType.PORTFOLIO);
+        theReportBox.addItem(ReportType.MARKETGROWTH);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
@@ -207,7 +207,7 @@ public class ReportSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Apply the current state */
-        theState.setType(ReportType.NetWorth);
+        theState.setType(ReportType.NETWORTH);
 
         /* Add the listener for item changes */
         theReportBox.addItemListener(myListener);
@@ -398,7 +398,7 @@ public class ReportSelect
                             : JDatePeriod.DATESUPTO);
 
                     /* else if we are switching to tax calculation */
-                } else if (theType == ReportType.TaxCalculation) {
+                } else if (theType == ReportType.TAXCALC) {
                     /* Switch explicitly to Fiscal Year */
                     theRangeSelect.setPeriod(JDatePeriod.FISCALYEAR);
                 }

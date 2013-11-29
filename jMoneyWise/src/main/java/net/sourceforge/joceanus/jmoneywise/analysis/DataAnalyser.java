@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMa
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -722,12 +721,12 @@ public class DataAnalyser
 
         /* Assume the the cost reduction is the full value */
         JMoney myReduction = new JMoney(myAmount);
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* If we are reducing units in the account */
         if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.Units);
+            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
             myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
@@ -809,12 +808,12 @@ public class DataAnalyser
 
         /* Assume the the cost reduction is the full value */
         JMoney myReduction = new JMoney(myAmount);
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* If we are reducing units in the account */
         if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.Units);
+            JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
             myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
@@ -899,14 +898,14 @@ public class DataAnalyser
         myAsset.adjustInvested(myDelta);
 
         /* Access the current cost */
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
         AccountPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
         JPrice myPrice = myActPrice.getPrice();
 
         /* Determine value of this stock at the current time */
-        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
         JMoney myValue = myUnits.valueAtPrice(myPrice);
 
         /* Calculate the portion of the value that creates a large transaction */
@@ -958,8 +957,8 @@ public class DataAnalyser
         myValues = myAsset.registerEvent(pEvent);
 
         /* Record additional details to the registered event values */
-        myValues.setValue(SecurityAttribute.Price, myPrice);
-        myValues.setValue(SecurityAttribute.Valuation, myValue);
+        myValues.setValue(SecurityAttribute.PRICE, myPrice);
+        myValues.setValue(SecurityAttribute.VALUATION, myValue);
 
         /* Adjust the credit account bucket */
         AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
@@ -985,7 +984,7 @@ public class DataAnalyser
         SecurityValues myValues = myAsset.getValues();
 
         /* Calculate the diluted value of the Debit account */
-        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
         JMoney myNewCost = myCost.getDilutedMoney(myDilution);
 
         /* Calculate the delta to the cost */
@@ -1074,7 +1073,7 @@ public class DataAnalyser
         JMoney myStockValue = myDeltaUnits.valueAtPrice(myPrice);
 
         /* Determine the residual cost of the old stock */
-        JMoney myStockCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myStockCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Adjust cost/units/invested of the credit account */
         myCreditAsset.adjustCost(myStockCost);
@@ -1083,17 +1082,17 @@ public class DataAnalyser
 
         /* Register the event */
         myCreditValues = myCreditAsset.registerEvent(pEvent);
-        myCreditValues.setValue(SecurityAttribute.Price, myPrice);
-        myCreditValues.setValue(SecurityAttribute.Valuation, myStockValue);
+        myCreditValues.setValue(SecurityAttribute.PRICE, myPrice);
+        myCreditValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
         /* Drive debit cost down to zero */
-        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
         JMoney myDeltaCost = new JMoney(myCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCost(myDeltaCost);
 
         /* Drive debit units down to zero */
-        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
         myDeltaUnits = new JUnits(myUnits);
         myDeltaUnits.negate();
         myDebitAsset.adjustUnits(myDeltaUnits);
@@ -1132,7 +1131,7 @@ public class DataAnalyser
         JPrice myCreditPrice = myPriceMap.getPriceForDate(myCredit, myDate);
 
         /* Determine value of the base stock */
-        JUnits myBaseUnits = myDebitValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myBaseUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
         JMoney myBaseValue = myBaseUnits.valueAtPrice(myDebitPrice);
 
         /* Determine value of the stock part of the takeover */
@@ -1140,7 +1139,7 @@ public class DataAnalyser
         JMoney myStockValue = myDeltaUnits.valueAtPrice(myCreditPrice);
 
         /* Access the current debit cost */
-        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.COST);
         JMoney myCostXfer;
 
         /* Calculate the portion of the value that creates a large transaction */
@@ -1190,8 +1189,8 @@ public class DataAnalyser
 
         /* Register the event */
         myCreditValues = myCreditAsset.registerEvent(pEvent);
-        myCreditValues.setValue(SecurityAttribute.Price, myCreditPrice);
-        myCreditValues.setValue(SecurityAttribute.Valuation, myStockValue);
+        myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
+        myCreditValues.setValue(SecurityAttribute.VALUATION, myStockValue);
 
         /* Drive debit cost down to zero */
         JMoney myDeltaCost = new JMoney(myCost);
@@ -1199,7 +1198,7 @@ public class DataAnalyser
         myDebitAsset.adjustCost(myDeltaCost);
 
         /* Drive debit units down to zero */
-        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
         myDeltaUnits = new JUnits(myUnits);
         myDeltaUnits.negate();
         myDebitAsset.adjustUnits(myDeltaUnits);
@@ -1212,8 +1211,8 @@ public class DataAnalyser
 
         /* Register the event */
         myDebitValues = myDebitAsset.registerEvent(pEvent);
-        myDebitValues.setValue(SecurityAttribute.Price, myDebitPrice);
-        myCreditValues.setValue(SecurityAttribute.Valuation, myBaseValue);
+        myDebitValues.setValue(SecurityAttribute.PRICE, myDebitPrice);
+        myCreditValues.setValue(SecurityAttribute.VALUATION, myBaseValue);
 
         /* Adjust the ThirdParty account bucket */
         AccountBucket myBucket = theAccountBuckets.getBucket(myThirdParty);

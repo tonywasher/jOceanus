@@ -453,10 +453,10 @@ public final class AccountBucket
      */
     protected void setOpeningBalance(final JMoney pBalance) {
         JMoney myValue = getNewValuation();
-        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(pBalance);
         myBaseValue.addAmount(pBalance);
-        setValue(AccountAttribute.Valuation, myValue);
+        setValue(AccountAttribute.VALUATION, myValue);
     }
 
     /**
@@ -464,7 +464,7 @@ public final class AccountBucket
      * @return the new valuation value
      */
     private JMoney getNewValuation() {
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
         return new JMoney(myValue);
     }
 
@@ -473,7 +473,7 @@ public final class AccountBucket
      * @return the new spend value
      */
     private JMoney getNewSpend() {
-        JMoney mySpend = theValues.getMoneyValue(AccountAttribute.Spend);
+        JMoney mySpend = theValues.getMoneyValue(AccountAttribute.SPEND);
         return new JMoney(mySpend);
     }
 
@@ -490,14 +490,14 @@ public final class AccountBucket
             /* Adjust valuation */
             JMoney myValuation = getNewValuation();
             myValuation.subtractAmount(myAmount);
-            setValue(AccountAttribute.Valuation, myValuation);
+            setValue(AccountAttribute.VALUATION, myValuation);
 
             /* If this is a credit card */
             if (isCreditCard) {
                 /* Adjust spend */
                 JMoney mySpend = getNewSpend();
                 mySpend.addAmount(myAmount);
-                setValue(AccountAttribute.Spend, mySpend);
+                setValue(AccountAttribute.SPEND, mySpend);
             }
         }
 
@@ -518,7 +518,7 @@ public final class AccountBucket
             /* Adjust valuation */
             JMoney myValuation = getNewValuation();
             myValuation.addAmount(pEvent.getAmount());
-            setValue(AccountAttribute.Valuation, myValuation);
+            setValue(AccountAttribute.VALUATION, myValuation);
         }
 
         /* Register the event in the history */
@@ -552,11 +552,11 @@ public final class AccountBucket
             }
 
             /* Store the rate */
-            setValue(AccountAttribute.Rate, myRate.getRate());
+            setValue(AccountAttribute.RATE, myRate.getRate());
         }
 
         /* Store the maturity */
-        setValue(AccountAttribute.Maturity, myDate);
+        setValue(AccountAttribute.MATURITY, myDate);
     }
 
     /**
@@ -564,15 +564,15 @@ public final class AccountBucket
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setValue(AccountAttribute.Delta, myValue);
+        setValue(AccountAttribute.DELTA, myValue);
 
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
@@ -605,8 +605,8 @@ public final class AccountBucket
             super(AccountAttribute.class);
 
             /* Initialise valuation and spend to zero */
-            put(AccountAttribute.Valuation, new JMoney());
-            put(AccountAttribute.Spend, new JMoney());
+            put(AccountAttribute.VALUATION, new JMoney());
+            put(AccountAttribute.SPEND, new JMoney());
         }
 
         /**
@@ -626,13 +626,13 @@ public final class AccountBucket
         @Override
         protected void adjustToBaseValues(final AccountValues pBase) {
             /* Adjust spend values */
-            adjustMoneyToBase(pBase, AccountAttribute.Spend);
+            adjustMoneyToBase(pBase, AccountAttribute.SPEND);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset spend values */
-            put(AccountAttribute.Spend, new JMoney());
+            put(AccountAttribute.SPEND, new JMoney());
         }
 
         /**
@@ -640,7 +640,7 @@ public final class AccountBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myValuation = getMoneyValue(AccountAttribute.Valuation);
+            JMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
             return (myValuation != null)
                    && (myValuation.isNonZero());
         }
@@ -787,35 +787,5 @@ public final class AccountBucket
             /* Return the bucket */
             return myItem;
         }
-    }
-
-    /**
-     * AccountAttribute enumeration.
-     */
-    public enum AccountAttribute {
-        /**
-         * Valuation.
-         */
-        Valuation,
-
-        /**
-         * Rate.
-         */
-        Rate,
-
-        /**
-         * Valuation Delta.
-         */
-        Delta,
-
-        /**
-         * Maturity.
-         */
-        Maturity,
-
-        /**
-         * Spend.
-         */
-        Spend;
     }
 }

@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
@@ -122,9 +122,9 @@ public class IncomeExpense
             /* Format the Category Total */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Income));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Expense));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Delta));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -136,9 +136,9 @@ public class IncomeExpense
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Income));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Expense));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Delta));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -192,9 +192,9 @@ public class IncomeExpense
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Income));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Expense));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.Delta));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.INCOME));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.EXPENSE));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(EventAttribute.DELTA));
 
             /* Record the selection */
             setFilterForId(myName, myBucket);

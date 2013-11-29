@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
@@ -139,11 +139,11 @@ public class Portfolio
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -155,11 +155,11 @@ public class Portfolio
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -212,11 +212,11 @@ public class Portfolio
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Cost));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Gains));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Dividend));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Profit));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.COST));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.GAINS));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.PROFIT));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

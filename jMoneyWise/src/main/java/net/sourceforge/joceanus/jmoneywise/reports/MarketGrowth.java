@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
@@ -139,10 +139,10 @@ public class MarketGrowth
             /* Format the Asset */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
-            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
+            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -155,10 +155,10 @@ public class MarketGrowth
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
-        theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
+        theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -212,10 +212,10 @@ public class MarketGrowth
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Invested));
-            theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.Valuation));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Market));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.INVESTED));
+            theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.MARKET));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

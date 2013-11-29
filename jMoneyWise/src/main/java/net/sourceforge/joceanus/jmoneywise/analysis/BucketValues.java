@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jdecimal.JUnits;
  * @param <T> the values class
  * @param <E> the enum class
  */
-public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E>>
+public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
         extends EnumMap<E, Object>
         implements JDataFormat {
     /**

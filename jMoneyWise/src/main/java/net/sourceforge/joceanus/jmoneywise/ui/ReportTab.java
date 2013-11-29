@@ -280,18 +280,18 @@ public class ReportTab
 
         /* Switch on report type */
         switch (myReportType) {
-            case NetWorth:
-            case Portfolio:
+            case NETWORTH:
+            case PORTFOLIO:
                 myAnalysis = myManager.getAnalysis(myRange.getEnd());
                 myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
 
-            case BalanceSheet:
-            case CashFlow:
-            case IncomeExpense:
-            case MarketGrowth:
-            case TaxationBasis:
-            case TaxCalculation:
+            case BALANCESHEET:
+            case CASHFLOW:
+            case INCOMEEXPENSE:
+            case MARKETGROWTH:
+            case TAXBASIS:
+            case TAXCALC:
                 myAnalysis = myManager.getAnalysis(myRange);
                 myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;

@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
@@ -113,9 +113,9 @@ public class CashFlow
             /* Format the detail */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Income));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Expense));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.Delta));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(PayeeAttribute.DELTA));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -127,9 +127,9 @@ public class CashFlow
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Income));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Expense));
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.Delta));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.INCOME));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.EXPENSE));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(PayeeAttribute.DELTA));
 
         /* Return the document */
         return theBuilder.getDocument();

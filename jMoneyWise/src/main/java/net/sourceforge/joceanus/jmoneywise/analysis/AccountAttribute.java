@@ -20,61 +20,48 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.reports;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.DataType;
+
 /**
- * Report Types.
+ * AccountAttribute enumeration.
  */
-public enum ReportType {
+public enum AccountAttribute implements BucketAttribute {
     /**
-     * Net Worth Report.
+     * Valuation.
      */
-    NETWORTH,
+    VALUATION,
 
     /**
-     * BalanceSheet Report.
+     * Rate.
      */
-    BALANCESHEET,
+    RATE,
 
     /**
-     * CashFlow Report.
+     * Valuation Delta.
      */
-    CASHFLOW,
+    DELTA,
 
     /**
-     * Income/Expense Report.
+     * Maturity.
      */
-    INCOMEEXPENSE,
+    MATURITY,
 
     /**
-     * Taxation Basis Report.
+     * Spend.
      */
-    TAXBASIS,
-
-    /**
-     * Tax Calculation Report.
-     */
-    TAXCALC,
-
-    /**
-     * Market Growth.
-     */
-    MARKETGROWTH,
-
-    /**
-     * Market Report.
-     */
-    PORTFOLIO;
+    SPEND;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportType.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountAttribute.class.getName());
 
     /**
-     * Report Name.
+     * The String name.
      */
     private String theName;
 
@@ -90,17 +77,32 @@ public enum ReportType {
         return theName;
     }
 
-    /**
-     * is this a Point in time report?
-     * @return true/false
-     */
-    public boolean isPointInTime() {
+    @Override
+    public boolean isCounter() {
         switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
+            case VALUATION:
+            case SPEND:
                 return true;
+            case RATE:
+            case MATURITY:
+            case DELTA:
             default:
                 return false;
+        }
+    }
+
+    @Override
+    public DataType getDataType() {
+        switch (this) {
+            case RATE:
+                return DataType.RATE;
+            case MATURITY:
+                return DataType.DATEDAY;
+            case VALUATION:
+            case DELTA:
+            case SPEND:
+            default:
+                return DataType.MONEY;
         }
     }
 }

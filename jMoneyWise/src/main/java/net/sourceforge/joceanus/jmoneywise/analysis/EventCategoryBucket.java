@@ -424,7 +424,7 @@ public final class EventCategoryBucket
      * @return the new income value
      */
     private JMoney getNewIncome() {
-        JMoney myIncome = theValues.getMoneyValue(EventAttribute.Income);
+        JMoney myIncome = theValues.getMoneyValue(EventAttribute.INCOME);
         return new JMoney(myIncome);
     }
 
@@ -433,7 +433,7 @@ public final class EventCategoryBucket
      * @return the new expense value
      */
     private JMoney getNewExpense() {
-        JMoney myExpense = theValues.getMoneyValue(EventAttribute.Expense);
+        JMoney myExpense = theValues.getMoneyValue(EventAttribute.EXPENSE);
         return new JMoney(myExpense);
     }
 
@@ -460,7 +460,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.addAmount(pValue);
-            setValue(EventAttribute.Income, myIncome);
+            setValue(EventAttribute.INCOME, myIncome);
         }
     }
 
@@ -473,7 +473,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myIncome = getNewIncome();
             myIncome.subtractAmount(pValue);
-            setValue(EventAttribute.Income, myIncome);
+            setValue(EventAttribute.INCOME, myIncome);
         }
     }
 
@@ -500,7 +500,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.addAmount(pValue);
-            setValue(EventAttribute.Expense, myExpense);
+            setValue(EventAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -527,7 +527,7 @@ public final class EventCategoryBucket
         if (pValue.isNonZero()) {
             JMoney myExpense = getNewExpense();
             myExpense.subtractAmount(pValue);
-            setValue(EventAttribute.Expense, myExpense);
+            setValue(EventAttribute.EXPENSE, myExpense);
         }
     }
 
@@ -553,11 +553,11 @@ public final class EventCategoryBucket
                 if (myActTran.isIncome()) {
                     JMoney myIncome = getNewIncome();
                     myIncome.addAmount(myAmount);
-                    setValue(EventAttribute.Income, myIncome);
+                    setValue(EventAttribute.INCOME, myIncome);
                 } else {
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
-                    setValue(EventAttribute.Expense, myExpense);
+                    setValue(EventAttribute.EXPENSE, myExpense);
                     isIncome = false;
                 }
             }
@@ -570,7 +570,7 @@ public final class EventCategoryBucket
                 if (myActTran.isExpense()) {
                     JMoney myExpense = getNewExpense();
                     myExpense.addAmount(myAmount);
-                    setValue(EventAttribute.Expense, myExpense);
+                    setValue(EventAttribute.EXPENSE, myExpense);
                     isIncome = false;
                 } else {
                     JMoney myIncome = getNewIncome();
@@ -601,7 +601,7 @@ public final class EventCategoryBucket
                     }
 
                     /* Store the value */
-                    setValue(EventAttribute.Income, myIncome);
+                    setValue(EventAttribute.INCOME, myIncome);
                 }
             }
         }
@@ -621,11 +621,11 @@ public final class EventCategoryBucket
         JMoney myDelta = getNewIncome();
 
         /* Subtract the expense value */
-        JMoney myExpense = theValues.getMoneyValue(EventAttribute.Expense);
+        JMoney myExpense = theValues.getMoneyValue(EventAttribute.EXPENSE);
         myDelta.subtractAmount(myExpense);
 
         /* Set the delta */
-        setValue(EventAttribute.Delta, myDelta);
+        setValue(EventAttribute.DELTA, myDelta);
     }
 
     /**
@@ -646,13 +646,13 @@ public final class EventCategoryBucket
         CategoryValues mySource = pSource.getValues();
 
         /* Add income values */
-        JMoney myValue = theValues.getMoneyValue(EventAttribute.Income);
-        JMoney mySrcValue = mySource.getMoneyValue(EventAttribute.Income);
+        JMoney myValue = theValues.getMoneyValue(EventAttribute.INCOME);
+        JMoney mySrcValue = mySource.getMoneyValue(EventAttribute.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
-        myValue = theValues.getMoneyValue(EventAttribute.Expense);
-        mySrcValue = mySource.getMoneyValue(EventAttribute.Expense);
+        myValue = theValues.getMoneyValue(EventAttribute.EXPENSE);
+        mySrcValue = mySource.getMoneyValue(EventAttribute.EXPENSE);
         myValue.addAmount(mySrcValue);
     }
 
@@ -674,8 +674,8 @@ public final class EventCategoryBucket
             super(EventAttribute.class);
 
             /* Create all possible values */
-            put(EventAttribute.Income, new JMoney());
-            put(EventAttribute.Expense, new JMoney());
+            put(EventAttribute.INCOME, new JMoney());
+            put(EventAttribute.EXPENSE, new JMoney());
         }
 
         /**
@@ -695,15 +695,15 @@ public final class EventCategoryBucket
         @Override
         protected void adjustToBaseValues(final CategoryValues pBase) {
             /* Adjust income/expense values */
-            adjustMoneyToBase(pBase, EventAttribute.Income);
-            adjustMoneyToBase(pBase, EventAttribute.Expense);
+            adjustMoneyToBase(pBase, EventAttribute.INCOME);
+            adjustMoneyToBase(pBase, EventAttribute.EXPENSE);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset Income and expense values */
-            put(EventAttribute.Income, new JMoney());
-            put(EventAttribute.Expense, new JMoney());
+            put(EventAttribute.INCOME, new JMoney());
+            put(EventAttribute.EXPENSE, new JMoney());
         }
 
         /**
@@ -711,8 +711,8 @@ public final class EventCategoryBucket
          * @return true/false
          */
         public boolean isActive() {
-            JMoney myIncome = getMoneyValue(EventAttribute.Income);
-            JMoney myExpense = getMoneyValue(EventAttribute.Expense);
+            JMoney myIncome = getMoneyValue(EventAttribute.INCOME);
+            JMoney myExpense = getMoneyValue(EventAttribute.EXPENSE);
             return (myIncome.isNonZero())
                    || (myExpense.isNonZero());
         }
@@ -1161,25 +1161,5 @@ public final class EventCategoryBucket
                 theTotals.calculateDelta();
             }
         }
-    }
-
-    /**
-     * EventAttribute enumeration.
-     */
-    public enum EventAttribute {
-        /**
-         * Income.
-         */
-        Income,
-
-        /**
-         * Expense.
-         */
-        Expense,
-
-        /**
-         * IncomeDelta.
-         */
-        Delta;
     }
 }

@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
@@ -216,7 +215,7 @@ public class TaxAnalysis {
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.TaxPaid);
 
         /* Calculate the tax profit */
-        myTax.subtractAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.Gross));
+        myTax.subtractAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Build the TaxProfitBucket */
         myBucket = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
@@ -243,11 +242,11 @@ public class TaxAnalysis {
 
         /* Access the salary bucket and add to income */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossSalary);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the rental bucket */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossRental);
-        JMoney myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getRentalAllowance()) > 0) {
@@ -258,23 +257,23 @@ public class TaxAnalysis {
 
         /* Access the interest bucket and add to income */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossInterest);
-        myIncome.addAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.Gross));
+        myIncome.addAmount(mySrcBucket.getValues().getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the dividends bucket and add to income */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossDividend);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the unit trust dividends bucket and add to income */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossUTDividend);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the taxable gains bucket and add to income */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossTaxableGains);
-        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myIncome.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the capital gains bucket */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossCapitalGains);
-        myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myChargeable = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getCapitalAllow()) > 0) {
@@ -419,7 +418,7 @@ public class TaxAnalysis {
 
         /* Access Salary */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossSalary);
-        JMoney mySalary = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney mySalary = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -578,7 +577,7 @@ public class TaxAnalysis {
 
         /* Access Rental */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossRental);
-        JMoney myRental = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myRental = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -765,7 +764,7 @@ public class TaxAnalysis {
 
         /* Access Interest */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossInterest);
-        JMoney myInterest = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myInterest = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
@@ -917,13 +916,13 @@ public class TaxAnalysis {
 
         /* Access Dividends */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossDividend);
-        JMoney myDividends = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myDividends = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Unit Trust Dividends */
         mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossUTDividend);
-        myDividends.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        myDividends.addAmount(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueDividends Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueDividend);
@@ -1231,7 +1230,7 @@ public class TaxAnalysis {
 
         /* Access base bucket */
         TaxBasisBucket mySrcBucket = myBasis.getBucket(TaxCategoryClass.GrossCapitalGains);
-        JMoney myCapital = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.Gross));
+        JMoney myCapital = new JMoney(mySrcBucket.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Store the total into the TaxDueCapital Bucket */
         TaxCalcBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueCapitalGains);

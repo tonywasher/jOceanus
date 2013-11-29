@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -184,7 +185,7 @@ public class JDataItem {
         /* Create the list panel */
         theListPanel = new JPanel();
         theListPanel.setLayout(new BoxLayout(theListPanel, BoxLayout.X_AXIS));
-        theListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("List Control"));
+        theListPanel.setBorder(BorderFactory.createTitledBorder("List Control"));
 
         /* Add components */
         theListPanel.add(theToggle);

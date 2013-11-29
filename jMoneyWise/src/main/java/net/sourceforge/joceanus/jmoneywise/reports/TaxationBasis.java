@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
@@ -102,7 +102,7 @@ public class TaxationBasis
 
             /* Access the amount */
             TaxBasisValues myValues = myBucket.getValues();
-            JMoney myAmount = myValues.getMoneyValue(TaxBasisAttribute.Gross);
+            JMoney myAmount = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
 
             /* If we have a non-zero value */
             if (myAmount.isNonZero()) {
@@ -125,7 +125,7 @@ public class TaxationBasis
         /* Format the total */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.Gross));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Return the document */
         return theBuilder.getDocument();

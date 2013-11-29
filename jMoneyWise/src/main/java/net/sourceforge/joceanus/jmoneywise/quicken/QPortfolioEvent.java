@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
@@ -719,7 +719,7 @@ public class QPortfolioEvent
         SecurityValues myDelta = myBucket.getDeltaForEvent(myEvent);
 
         /* Obtain the delta cost */
-        JMoney myDeltaCost = myDelta.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myDeltaCost = myDelta.getMoneyValue(SecurityAttribute.COST);
         myDeltaCost = new JMoney(myDeltaCost);
         myDeltaCost.negate();
 
@@ -852,7 +852,7 @@ public class QPortfolioEvent
         SecurityValues myDeltaCredit = myCreditBucket.getDeltaForEvent(myEvent);
 
         /* Obtain total payment value for sale stock */
-        JMoney myStockValue = myDeltaCredit.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myStockValue = myDeltaCredit.getMoneyValue(SecurityAttribute.COST);
         JMoney mySaleValue = new JMoney(myStockValue);
         mySaleValue.addAmount(myAmount);
 
@@ -864,7 +864,7 @@ public class QPortfolioEvent
         addStringLine(QPortfolioLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
-        myValue = new JDecimal(myDeltaDebit.getUnitsValue(SecurityAttribute.Units));
+        myValue = new JDecimal(myDeltaDebit.getUnitsValue(SecurityAttribute.UNITS));
         myValue.negate();
         addDecimalLine(QPortfolioLineType.Quantity, myValue);
 

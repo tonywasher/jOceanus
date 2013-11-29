@@ -28,8 +28,8 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket;
@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.Accoun
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
@@ -157,7 +157,7 @@ public class NetWorth
             /* Format the Category Total */
             theBuilder.startRow(myTable);
             theBuilder.makeTableLinkCell(myTable, myBucket.getName());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
 
             /* If this is the portfolio category */
             if (myBucket.getAccountCategory().isCategoryClass(AccountCategoryClass.Portfolio)) {
@@ -175,7 +175,7 @@ public class NetWorth
         /* Build the total row */
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -215,7 +215,7 @@ public class NetWorth
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -252,7 +252,7 @@ public class NetWorth
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
             theBuilder.makeDelayLinkCell(myTable, myName);
-            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
 
             /* Note the delayed subTable */
             setDelayedTable(myName, myTable, myBucket);
@@ -323,10 +323,10 @@ public class NetWorth
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
             if (!myClass.isLoan()) {
-                theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.Rate));
-                theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.Maturity));
+                theBuilder.makeValueCell(myTable, myValues.getRateValue(AccountAttribute.RATE));
+                theBuilder.makeValueCell(myTable, myValues.getDateValue(AccountAttribute.MATURITY));
             }
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(AccountAttribute.VALUATION));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);
@@ -382,9 +382,9 @@ public class NetWorth
             /* Create the detail row */
             theBuilder.startRow(myTable);
             theBuilder.makeFilterLinkCell(myTable, myName);
-            theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.Units));
-            theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.Price));
-            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.UNITS));
+            theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.PRICE));
+            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUATION));
 
             /* Record the filter */
             setFilterForId(myName, myBucket);

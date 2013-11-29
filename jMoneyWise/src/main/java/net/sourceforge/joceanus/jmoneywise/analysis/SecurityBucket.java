@@ -450,10 +450,10 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustUnits(final JUnits pDelta) {
-        JUnits myUnits = theValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myUnits = theValues.getUnitsValue(SecurityAttribute.UNITS);
         myUnits = new JUnits(myUnits);
         myUnits.addUnits(pDelta);
-        setValue(SecurityAttribute.Units, myUnits);
+        setValue(SecurityAttribute.UNITS, myUnits);
     }
 
     /**
@@ -461,10 +461,10 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustCost(final JMoney pDelta) {
-        JMoney myCost = theValues.getMoneyValue(SecurityAttribute.Cost);
+        JMoney myCost = theValues.getMoneyValue(SecurityAttribute.COST);
         myCost = new JMoney(myCost);
         myCost.addAmount(pDelta);
-        setValue(SecurityAttribute.Cost, myCost);
+        setValue(SecurityAttribute.COST, myCost);
     }
 
     /**
@@ -472,10 +472,10 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustInvested(final JMoney pDelta) {
-        JMoney myInvested = theValues.getMoneyValue(SecurityAttribute.Invested);
+        JMoney myInvested = theValues.getMoneyValue(SecurityAttribute.INVESTED);
         myInvested = new JMoney(myInvested);
         myInvested.addAmount(pDelta);
-        setValue(SecurityAttribute.Invested, myInvested);
+        setValue(SecurityAttribute.INVESTED, myInvested);
     }
 
     /**
@@ -483,10 +483,10 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustGains(final JMoney pDelta) {
-        JMoney myGains = theValues.getMoneyValue(SecurityAttribute.Gains);
+        JMoney myGains = theValues.getMoneyValue(SecurityAttribute.GAINS);
         myGains = new JMoney(myGains);
         myGains.addAmount(pDelta);
-        setValue(SecurityAttribute.Gains, myGains);
+        setValue(SecurityAttribute.GAINS, myGains);
     }
 
     /**
@@ -494,10 +494,10 @@ public final class SecurityBucket
      * @param pDelta the delta
      */
     protected void adjustDividend(final JMoney pDelta) {
-        JMoney myDividend = theValues.getMoneyValue(SecurityAttribute.Dividend);
+        JMoney myDividend = theValues.getMoneyValue(SecurityAttribute.DIVIDEND);
         myDividend = new JMoney(myDividend);
         myDividend.addAmount(pDelta);
-        setValue(SecurityAttribute.Dividend, myDividend);
+        setValue(SecurityAttribute.DIVIDEND, myDividend);
     }
 
     /**
@@ -520,20 +520,20 @@ public final class SecurityBucket
         JPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
-        JUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.Units);
+        JUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
         JPrice myPrice = myPrices[0];
 
         /* Calculate the value */
-        theBaseValues.setValue(SecurityAttribute.Price, myPrice);
-        theBaseValues.setValue(SecurityAttribute.Valuation, myUnits.valueAtPrice(myPrice));
+        theBaseValues.setValue(SecurityAttribute.PRICE, myPrice);
+        theBaseValues.setValue(SecurityAttribute.VALUATION, myUnits.valueAtPrice(myPrice));
 
         /* Access units */
-        myUnits = theValues.getUnitsValue(SecurityAttribute.Units);
+        myUnits = theValues.getUnitsValue(SecurityAttribute.UNITS);
         myPrice = myPrices[1];
 
         /* Calculate the value */
-        setValue(SecurityAttribute.Price, myPrices[1]);
-        setValue(SecurityAttribute.Valuation, myUnits.valueAtPrice(myPrice));
+        setValue(SecurityAttribute.PRICE, myPrices[1]);
+        setValue(SecurityAttribute.VALUATION, myUnits.valueAtPrice(myPrice));
     }
 
     /**
@@ -541,13 +541,13 @@ public final class SecurityBucket
      */
     protected void calculateProfit() {
         /* Calculate the profit */
-        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.Delta);
+        JMoney myValuation = theValues.getMoneyValue(SecurityAttribute.DELTA);
         JMoney myProfit = new JMoney(myValuation);
-        myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Invested));
-        myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.Dividend));
+        myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
+        myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
 
         /* Set the attribute */
-        setValue(SecurityAttribute.Profit, myProfit);
+        setValue(SecurityAttribute.PROFIT, myProfit);
     }
 
     /**
@@ -559,14 +559,14 @@ public final class SecurityBucket
         valueAsset(pRange);
 
         /* Obtain a copy of the value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Valuation);
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.Valuation));
+        myValue.subtractAmount(theBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
 
         /* Set the delta */
-        setValue(SecurityAttribute.Delta, myValue);
+        setValue(SecurityAttribute.DELTA, myValue);
 
         /* Calculate the profit */
         calculateProfit();
@@ -589,15 +589,15 @@ public final class SecurityBucket
      */
     private void calculateMarket() {
         /* Obtain the delta value */
-        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.Delta);
+        JMoney myValue = theValues.getMoneyValue(SecurityAttribute.DELTA);
         myValue = new JMoney(myValue);
 
         /* Subtract the investment and gains */
-        myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Invested));
+        myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
         // myValue.subtractAmount(theValues.getMoneyValue(SecurityAttribute.Gains));
 
         /* Set the delta */
-        setValue(SecurityAttribute.Market, myValue);
+        setValue(SecurityAttribute.MARKET, myValue);
     }
 
     /**
@@ -626,11 +626,11 @@ public final class SecurityBucket
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
-            put(SecurityAttribute.Units, new JUnits());
-            put(SecurityAttribute.Cost, new JMoney());
-            put(SecurityAttribute.Invested, new JMoney());
-            put(SecurityAttribute.Gains, new JMoney());
-            put(SecurityAttribute.Dividend, new JMoney());
+            put(SecurityAttribute.UNITS, new JUnits());
+            put(SecurityAttribute.COST, new JMoney());
+            put(SecurityAttribute.INVESTED, new JMoney());
+            put(SecurityAttribute.GAINS, new JMoney());
+            put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 
         /**
@@ -650,17 +650,17 @@ public final class SecurityBucket
         @Override
         protected void adjustToBaseValues(final SecurityValues pBase) {
             /* Adjust invested/gains values */
-            adjustMoneyToBase(pBase, SecurityAttribute.Invested);
-            adjustMoneyToBase(pBase, SecurityAttribute.Gains);
-            adjustMoneyToBase(pBase, SecurityAttribute.Dividend);
+            adjustMoneyToBase(pBase, SecurityAttribute.INVESTED);
+            adjustMoneyToBase(pBase, SecurityAttribute.GAINS);
+            adjustMoneyToBase(pBase, SecurityAttribute.DIVIDEND);
         }
 
         @Override
         protected void resetBaseValues() {
             /* Reset Invested, Gains and Dividend values */
-            put(SecurityAttribute.Invested, new JMoney());
-            put(SecurityAttribute.Gains, new JMoney());
-            put(SecurityAttribute.Dividend, new JMoney());
+            put(SecurityAttribute.INVESTED, new JMoney());
+            put(SecurityAttribute.GAINS, new JMoney());
+            put(SecurityAttribute.DIVIDEND, new JMoney());
         }
 
         /**
@@ -668,7 +668,7 @@ public final class SecurityBucket
          * @return true/false
          */
         public boolean isActive() {
-            JUnits myUnits = getUnitsValue(SecurityAttribute.Units);
+            JUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
             return (myUnits != null)
                    && (myUnits.isNonZero());
         }
@@ -812,60 +812,5 @@ public final class SecurityBucket
             /* Return the bucket */
             return myItem;
         }
-    }
-
-    /**
-     * SecurityAttribute enumeration.
-     */
-    public enum SecurityAttribute {
-        /**
-         * Valuation.
-         */
-        Valuation,
-
-        /**
-         * Valuation Delta.
-         */
-        Delta,
-
-        /**
-         * Units.
-         */
-        Units,
-
-        /**
-         * Cost.
-         */
-        Cost,
-
-        /**
-         * Gains.
-         */
-        Gains,
-
-        /**
-         * Invested.
-         */
-        Invested,
-
-        /**
-         * Dividend.
-         */
-        Dividend,
-
-        /**
-         * Market.
-         */
-        Market,
-
-        /**
-         * Profit.
-         */
-        Profit,
-
-        /**
-         * Price.
-         */
-        Price;
     }
 }
