@@ -147,7 +147,7 @@ public final class TaxBasisBucket
     /**
      * History Map.
      */
-    private final BucketHistory<TaxBasisValues> theHistory;
+    private final BucketHistory<TaxBasisValues, TaxBasisAttribute> theHistory;
 
     @Override
     public String formatObject() {
@@ -226,20 +226,22 @@ public final class TaxBasisBucket
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public TaxBasisValues getDeltaForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getDeltaForEvent(pEvent);
+    public JDecimal getDeltaForEvent(final Event pEvent,
+                                     final TaxBasisAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaValue(pEvent, pAttr);
     }
 
     /**
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<TaxBasisValues> getHistoryMap() {
+    private BucketHistory<TaxBasisValues, TaxBasisAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -249,6 +251,14 @@ public final class TaxBasisBucket
      */
     protected Analysis getAnalysis() {
         return theAnalysis;
+    }
+
+    /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
     }
 
     /**
@@ -309,7 +319,7 @@ public final class TaxBasisBucket
         theAnalysis = pAnalysis;
 
         /* Create the history map */
-        theHistory = new BucketHistory<TaxBasisValues>(new TaxBasisValues());
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(new TaxBasisValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -330,7 +340,7 @@ public final class TaxBasisBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -351,7 +361,7 @@ public final class TaxBasisBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<TaxBasisValues>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<TaxBasisValues, TaxBasisAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -387,7 +397,12 @@ public final class TaxBasisBucket
 
         /* Compare the Tax Categories */
         TaxBasisBucket myThat = (TaxBasisBucket) pThat;
-        return getTaxCategory().equals(myThat.getTaxCategory());
+        if (!getTaxCategory().equals(myThat.getTaxCategory())) {
+            return false;
+        }
+
+        /* Compare the date ranges */
+        return getDateRange().equals(myThat.getDateRange());
     }
 
     @Override

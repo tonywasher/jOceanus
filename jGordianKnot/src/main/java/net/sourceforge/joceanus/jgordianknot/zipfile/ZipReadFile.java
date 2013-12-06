@@ -127,9 +127,13 @@ public class ZipReadFile {
             theHdrStream = new ZipInputStream(myInBuffer);
 
             /* Loop through the Zip file entries */
-            while ((myEntry = theHdrStream.getNextEntry()) != null) {
-                /* If this is a header record */
-                if (myEntry.getExtra() != null) {
+            for (;;) {
+                /* Read next entry */
+                myEntry = theHdrStream.getNextEntry();
+
+                /* If this is EOF or a header record break the loop */
+                if ((myEntry == null)
+                    || (myEntry.getExtra() != null)) {
                     break;
                 }
 
@@ -154,11 +158,6 @@ public class ZipReadFile {
      * @throws JDataException on error
      */
     public void setPasswordHash(final PasswordHash pHash) throws JDataException {
-        byte[] myBuffer = new byte[BUFFERSIZE];
-        int myRead;
-        int myLen;
-        int mySpace;
-
         /* Ignore if we have no security */
         if (!isEncrypted()) {
             return;
@@ -176,11 +175,18 @@ public class ZipReadFile {
             theGenerator = myHash.getSecurityGenerator();
 
             /* Initialise variables */
-            myLen = 0;
-            mySpace = BUFFERSIZE;
+            int myLen = 0;
+            int mySpace = BUFFERSIZE;
+            byte[] myBuffer = new byte[BUFFERSIZE];
 
-            /* Read the header entry */
-            while ((myRead = theHdrStream.read(myBuffer, myLen, mySpace)) != -1) {
+            /* Loop */
+            for (;;) {
+                /* Read the header entry */
+                int myRead = theHdrStream.read(myBuffer, myLen, mySpace);
+                if (myRead == -1) {
+                    break;
+                }
+
                 /* Adjust buffer */
                 myLen += myRead;
                 mySpace -= myRead;
@@ -267,9 +273,12 @@ public class ZipReadFile {
             myName = pFile.getZipName();
 
             /* Loop through the Zip file entries */
-            while ((myEntry = myZipFile.getNextEntry()) != null) {
-                /* Break if we found the correct entry */
-                if (myEntry.getName().compareTo(myName) == 0) {
+            for (;;) {
+                /* Read the entry */
+                myEntry = myZipFile.getNextEntry();
+                /* Break if we reached EOF or found the correct entry */
+                if ((myEntry == null)
+                    || (myEntry.getName().compareTo(myName) == 0)) {
                     break;
                 }
             }

@@ -345,11 +345,6 @@ public class Register
     private static final int COLUMN_YEARS = 10;
 
     /**
-     * Date column width.
-     */
-    private static final int WIDTH_DATE = 90;
-
-    /**
      * Category column width.
      */
     private static final int WIDTH_CATEGORY = 110;

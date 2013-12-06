@@ -51,14 +51,9 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AccountFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
@@ -158,6 +153,11 @@ public class AnalysisSelect
     private final JButton theBucketButton;
 
     /**
+     * The filter detail panel.
+     */
+    private final JPanel theFilterDetail;
+
+    /**
      * DateDayRange Select Panel.
      */
     private final JDateDayRangeSelect theRangeSelect;
@@ -251,11 +251,14 @@ public class AnalysisSelect
         theLayout = new CardLayout();
         theCardPanel.setLayout(theLayout);
 
-        /* Create the control panel */
-        JPanel myPanel = buildControlPanel();
+        /* Create the filter detail panel */
+        theFilterDetail = buildFilterDetail();
 
         /* Create the filter selection panel */
-        theFilterSelect = buildFilterPanel();
+        theFilterSelect = buildFilterSelect();
+
+        /* Create the control panel */
+        JPanel myPanel = buildControlPanel();
 
         /* Create the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -277,6 +280,7 @@ public class AnalysisSelect
         /* Create the listener */
         AnalysisListener myListener = new AnalysisListener();
         theRangeButton.addActionListener(myListener);
+        theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theFilterButton.addActionListener(myListener);
         theFilterTypeButton.addActionListener(myListener);
         theBucketButton.addActionListener(myListener);
@@ -297,8 +301,6 @@ public class AnalysisSelect
 
         /* Create the labels */
         JLabel myRangeLabel = new JLabel(NLS_RANGE);
-        JLabel myFilterLabel = new JLabel(NLS_FILTER);
-        JLabel myBucketLabel = new JLabel(NLS_BUCKET);
 
         /* Create the panel */
         myPanel.setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
@@ -309,6 +311,27 @@ public class AnalysisSelect
         myPanel.add(theRangeButton);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(Box.createHorizontalGlue());
+        myPanel.add(theFilterDetail);
+
+        /* Return the panel */
+        return myPanel;
+    }
+
+    /**
+     * Create filter detail panel.
+     * @return the panel
+     */
+    private JPanel buildFilterDetail() {
+        /* Create the control panel */
+        JPanel myPanel = new JPanel();
+
+        /* Create the labels */
+        JLabel myFilterLabel = new JLabel(NLS_FILTER);
+        JLabel myBucketLabel = new JLabel(NLS_BUCKET);
+
+        /* Create the panel */
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+        myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(myFilterLabel);
         myPanel.add(Box.createRigidArea(new Dimension(STRUT_SIZE, 0)));
         myPanel.add(theFilterButton);
@@ -324,10 +347,10 @@ public class AnalysisSelect
     }
 
     /**
-     * Create filter panel.
+     * Create filter select panel.
      * @return the panel
      */
-    private JPanel buildFilterPanel() {
+    private JPanel buildFilterSelect() {
         /* Create the filter panel */
         JPanel myPanel = new JPanel();
 
@@ -391,6 +414,7 @@ public class AnalysisSelect
         theEventSelect.setAnalysis(theAnalysis);
         thePayeeSelect.setAnalysis(theAnalysis);
         theTaxBasisSelect.setAnalysis(theAnalysis);
+        checkType();
     }
 
     /**
@@ -414,15 +438,109 @@ public class AnalysisSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        /* Determine whether there are any Accounts to select */
-        // boolean acAvailable = (theAccounts != null)
-        // && !theAccounts.isEmpty();
+        /* If there are filters available */
+        if (isAvailable()) {
+            /* Enabled disable range selection */
+            theRangeButton.setEnabled(bEnabled);
 
-        /* Pass call on to buttons */
-        // theAccountButton.setEnabled(bEnabled
-        // && acAvailable);
-        // theCatButton.setEnabled(bEnabled
-        // && acAvailable);
+            /* Enable filter detail */
+            theFilterDetail.setVisible(true);
+            theFilterButton.setEnabled(bEnabled);
+            theBucketButton.setEnabled(bEnabled);
+
+            /* If we are disabling */
+            if (!bEnabled) {
+                /* Hide panels */
+                theRangeSelect.setVisible(false);
+                theFilterSelect.setVisible(false);
+            }
+
+            /* else no filters available */
+        } else {
+            /* Enabled disable range selection */
+            theRangeButton.setEnabled(false);
+
+            /* Hide panels */
+            theRangeSelect.setVisible(false);
+            theFilterDetail.setVisible(false);
+            theFilterSelect.setVisible(false);
+            theRangeSelect.setEnabled(bEnabled);
+        }
+    }
+
+    /**
+     * Is there any filter available?
+     * @return true/false
+     */
+    private boolean isAvailable() {
+        /* Loop through the panels */
+        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
+
+            /* If the filter is possible */
+            if (myEntry.getValue().isAvailable()) {
+                /* Filter available */
+                return true;
+            }
+        }
+
+        /* No available filters */
+        return false;
+    }
+
+    /**
+     * Check analysis type.
+     */
+    private void checkType() {
+        /* If the type is not appropriate */
+        AnalysisType myType = theState.getType();
+
+        /* If the type is selected */
+        if (myType != null) {
+            /* Check that the filter is appropriate */
+            AnalysisFilterSelection myPanel = theMap.get(myType);
+            if (myPanel.isAvailable()) {
+                /* We are OK */
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
+                theState.setFilter(myFilter);
+                return;
+            }
+        }
+
+        /* Loop through the panels */
+        Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            Map.Entry<AnalysisType, AnalysisFilterSelection> myEntry = myIterator.next();
+
+            /* If the filter is possible */
+            AnalysisFilterSelection myPanel = myEntry.getValue();
+            if (myPanel.isAvailable()) {
+                /* Access Analysis type */
+                myType = myEntry.getKey();
+
+                /* Move correct card to front */
+                theLayout.show(theCardPanel, myType.name());
+
+                /* Obtain the relevant filter */
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
+                myFilter.setCurrentAttribute(myType.getDefaultValue());
+
+                /* Set new bucket type and apply state */
+                theState.setAnalysisType(myType);
+                theState.setFilter(myFilter);
+                theState.setBucket(myFilter.getCurrentAttribute());
+                theState.applyState();
+
+                /* Filter available */
+                return;
+            }
+        }
+
+        /* No available filters */
+        theState.setFilter(null);
+        theState.setAnalysisType(null);
+        theState.setBucket(null);
     }
 
     /**
@@ -520,6 +638,7 @@ public class AnalysisSelect
                     /* Declare new analysis */
                     setAnalysis();
                     theState.applyState();
+                    fireStateChanged();
                 }
             }
         }
@@ -533,10 +652,11 @@ public class AnalysisSelect
             if (theAccountSelect.equals(o)) {
                 /* Create the new filter */
                 AccountFilter myFilter = theAccountSelect.getFilter();
-                myFilter.setCurrentAttribute((AccountAttribute) theState.getBucket());
+                myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
+                theState.applyState();
                 fireStateChanged();
             }
 
@@ -544,10 +664,11 @@ public class AnalysisSelect
             if (theSecuritySelect.equals(o)) {
                 /* Create the new filter */
                 SecurityFilter myFilter = theSecuritySelect.getFilter();
-                myFilter.setCurrentAttribute((SecurityAttribute) theState.getBucket());
+                myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
+                theState.applyState();
                 fireStateChanged();
             }
 
@@ -555,10 +676,11 @@ public class AnalysisSelect
             if (thePayeeSelect.equals(o)) {
                 /* Create the new filter */
                 PayeeFilter myFilter = thePayeeSelect.getFilter();
-                myFilter.setCurrentAttribute((PayeeAttribute) theState.getBucket());
+                myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
+                theState.applyState();
                 fireStateChanged();
             }
 
@@ -566,10 +688,11 @@ public class AnalysisSelect
             if (theEventSelect.equals(o)) {
                 /* Create the new filter */
                 EventCategoryFilter myFilter = theEventSelect.getFilter();
-                myFilter.setCurrentAttribute((EventAttribute) theState.getBucket());
+                myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
+                theState.applyState();
                 fireStateChanged();
             }
 
@@ -577,10 +700,11 @@ public class AnalysisSelect
             if (theTaxBasisSelect.equals(o)) {
                 /* Create the new filter */
                 TaxBasisFilter myFilter = theTaxBasisSelect.getFilter();
-                myFilter.setCurrentAttribute((TaxBasisAttribute) theState.getBucket());
+                myFilter.setCurrentAttribute(theState.getBucket());
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
+                theState.applyState();
                 fireStateChanged();
             }
         }
@@ -617,9 +741,16 @@ public class AnalysisSelect
                 /* Move correct card to front */
                 theLayout.show(theCardPanel, theType.name());
 
+                /* Obtain the relevant filter */
+                AnalysisFilterSelection myPanel = theMap.get(theType);
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
+                myFilter.setCurrentAttribute(theType.getDefaultValue());
+
                 /* Set new bucket type and apply state */
-                theState.setBucket(theType.getDefaultValue());
+                theState.setFilter(myFilter);
+                theState.setBucket(myFilter.getCurrentAttribute());
                 theState.applyState();
+                fireStateChanged();
             }
         }
     }
@@ -652,7 +783,10 @@ public class AnalysisSelect
         public void actionPerformed(final ActionEvent e) {
             /* Record the bucket */
             if (theState.setBucket(theBucket)) {
+                AnalysisFilter<?> myFilter = theState.getFilter();
+                myFilter.setCurrentAttribute(theBucket);
                 theState.applyState();
+                fireStateChanged();
             }
         }
     }
@@ -719,8 +853,8 @@ public class AnalysisSelect
         private AnalysisState() {
             theRange = null;
             theFilter = null;
-            theType = AnalysisType.ACCOUNT;
-            theBucket = theType.getDefaultValue();
+            theType = null;
+            theBucket = null;
         }
 
         /**
@@ -790,7 +924,9 @@ public class AnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theRangeButton.setText(theRange.toString());
-            theFilterButton.setText("Y");
+            theFilterButton.setText((theFilter == null)
+                    ? null
+                    : theFilter.getName());
             theFilterTypeButton.setText((theType == null)
                     ? null
                     : theType.toString());
@@ -798,10 +934,5 @@ public class AnalysisSelect
                     ? null
                     : theBucket.toString());
         }
-
-        /**
-         * Obtain filter name.
-         * @return the filter name
-         */
     }
 }

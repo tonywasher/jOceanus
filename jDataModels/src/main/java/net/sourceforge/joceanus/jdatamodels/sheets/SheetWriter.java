@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -47,6 +48,11 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @param <T> the DataSet type
  */
 public abstract class SheetWriter<T extends DataSet<T>> {
+    /**
+     * Delete error text.
+     */
+    private static final String ERROR_DELETE = "Failed to delete file";
+
     /**
      * Task control.
      */
@@ -182,14 +188,14 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, SheetReader.ERROR_CLOSE, ex);
             }
 
             /* Delete the file on error */
             if ((!bSuccess)
                 && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
             }
         }
     }
@@ -247,14 +253,14 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, SheetReader.ERROR_CLOSE, ex);
             }
 
             /* Delete the file on error */
             if ((!bSuccess)
                 && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
             }
         }
     }

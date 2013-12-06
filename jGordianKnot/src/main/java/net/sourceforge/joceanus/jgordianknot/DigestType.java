@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -33,39 +34,44 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  */
 public enum DigestType {
     /**
-     * SHA256.
+     * SHA2.
      */
-    SHA256(1, 256),
+    SHA2(1),
 
     /**
      * Tiger.
      */
-    Tiger(2, 192),
+    TIGER(2),
 
     /**
      * WhirlPool.
      */
-    WHIRLPOOL(3, 512),
+    WHIRLPOOL(3),
 
     /**
      * RIPEMD.
      */
-    RIPEMD(4, 320),
+    RIPEMD(4),
 
     /**
      * GOST.
      */
-    GOST(5, 256),
-
-    /**
-     * SHA512.
-     */
-    SHA512(6, 512),
+    GOST(5),
 
     /**
      * SHA3.
      */
-    SHA3(7, 256);
+    SHA3(6),
+
+    /**
+     * Skein.
+     */
+    SKEIN(7);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DigestType.class.getName());
 
     /**
      * The external Id of the algorithm.
@@ -73,9 +79,21 @@ public enum DigestType {
     private int theId = 0;
 
     /**
-     * The length of the hash.
+     * The String name.
      */
-    private int theHashLen = 0;
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
      * Obtain the external Id.
@@ -86,22 +104,11 @@ public enum DigestType {
     }
 
     /**
-     * Obtain the length of the hash.
-     * @return the length
-     */
-    public int getHashLen() {
-        return theHashLen;
-    }
-
-    /**
      * Constructor.
      * @param id the id
-     * @param iLen the hash length
      */
-    private DigestType(final int id,
-                       final int iLen) {
+    private DigestType(final int id) {
         theId = id;
-        theHashLen = iLen;
     }
 
     /**
@@ -122,41 +129,40 @@ public enum DigestType {
 
     /**
      * Return the associated algorithm.
+     * @param bLong use long hash
      * @return the algorithm
      */
-    public String getAlgorithm() {
+    public String getAlgorithm(final boolean bLong) {
         switch (this) {
+            case SKEIN:
+                return (bLong)
+                        ? "SKEIN-512-512"
+                        : "SKEIN-256-256";
             case SHA3:
-                return "SHA3-256";
-            case SHA256:
-                return "SHA-256";
-            case SHA512:
-                return "SHA-512";
+                return (bLong)
+                        ? "SHA3-512"
+                        : "SHA3-256";
+            case SHA2:
+                return (bLong)
+                        ? "SHA512"
+                        : "SHA-256";
             case RIPEMD:
                 return "RIPEMD320";
             case GOST:
                 return "GOST3411";
             default:
-                return toString();
+                return name();
         }
     }
 
     /**
      * Return the associated HMac algorithm.
+     * @param bLong use long hash
      * @return the algorithm
      */
-    public String getHMacAlgorithm() {
-        switch (this) {
-            case RIPEMD:
-                return "HMacRIPEMD320";
-            case GOST:
-                return "HMacGOST3411";
-            case SHA3:
-                return "HMacSHA3-256";
-            default:
-                return "HMac"
-                       + toString();
-        }
+    public String getHMacAlgorithm(final boolean bLong) {
+        return "HMac"
+               + getAlgorithm(bLong);
     }
 
     /**

@@ -85,10 +85,15 @@ public class ZipFileProperties {
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
         String myPropSep = Character.toString(SEP_PROPERTY);
-        int myLoc;
 
         /* while we have separators in the string */
-        while ((myLoc = myString.indexOf(myPropSep)) != -1) {
+        for (;;) {
+            /* Locate next separator and break if not found */
+            int myLoc = myString.indexOf(myPropSep);
+            if (myLoc == -1) {
+                break;
+            }
+
             /* Parse the encoded property and remove it from the buffer */
             parseEncodedProperty(myString.substring(0, myLoc));
             myString.delete(0, myLoc + 1);
@@ -118,7 +123,7 @@ public class ZipFileProperties {
     protected void setProperty(final String pName,
                                final byte[] pValue) {
         /* Determine whether we are setting a null value */
-        boolean isNull = (pValue == null);
+        boolean isNull = pValue == null;
 
         /* Access any existing property */
         Property myProperty = getProperty(pName);
@@ -155,7 +160,7 @@ public class ZipFileProperties {
     protected void setProperty(final String pName,
                                final Long pValue) {
         /* Determine whether we are setting a null value */
-        boolean isNull = (pValue == null);
+        boolean isNull = pValue == null;
 
         /* Access any existing property */
         Property myProperty = getProperty(pName);

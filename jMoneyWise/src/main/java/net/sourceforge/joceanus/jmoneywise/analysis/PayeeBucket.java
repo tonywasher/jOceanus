@@ -115,7 +115,7 @@ public final class PayeeBucket
     /**
      * History Map.
      */
-    private final BucketHistory<PayeeValues> theHistory;
+    private final BucketHistory<PayeeValues, PayeeAttribute> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -210,6 +210,14 @@ public final class PayeeBucket
     }
 
     /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
+    }
+
+    /**
      * Obtain the value map.
      * @return the value map
      */
@@ -236,20 +244,22 @@ public final class PayeeBucket
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public PayeeValues getDeltaForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getDeltaForEvent(pEvent);
+    public JDecimal getDeltaForEvent(final Event pEvent,
+                                     final PayeeAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaValue(pEvent, pAttr);
     }
 
     /**
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<PayeeValues> getHistoryMap() {
+    private BucketHistory<PayeeValues, PayeeAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -312,7 +322,7 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Create the history map */
-        theHistory = new BucketHistory<PayeeValues>(new PayeeValues());
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(new PayeeValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -334,7 +344,7 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -356,7 +366,7 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<PayeeValues>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<PayeeValues, PayeeAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -390,9 +400,14 @@ public final class PayeeBucket
             return false;
         }
 
-        /* Compare the Accounts */
+        /* Compare the Payees */
         PayeeBucket myThat = (PayeeBucket) pThat;
-        return getPayee().equals(myThat.getPayee());
+        if (!getPayee().equals(myThat.getPayee())) {
+            return false;
+        }
+
+        /* Compare the date ranges */
+        return getDateRange().equals(myThat.getDateRange());
     }
 
     @Override

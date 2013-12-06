@@ -41,12 +41,17 @@ public class SecureManager {
     /**
      * Default Security Provider.
      */
-    public static final SecurityProvider DEFAULT_PROVIDER = SecurityProvider.BouncyCastle;
+    public static final SecurityProvider DEFAULT_PROVIDER = SecurityProvider.BC;
 
     /**
      * Default Restricted Security.
      */
     public static final Boolean DEFAULT_RESTRICTED = Boolean.FALSE;
+
+    /**
+     * Default Long Hash.
+     */
+    public static final Boolean DEFAULT_LONGHASH = Boolean.TRUE;
 
     /**
      * Default Cipher Steps.
@@ -84,13 +89,14 @@ public class SecureManager {
      */
     public SecureManager() throws JDataException {
         /* Access with defaults */
-        this(DEFAULT_PROVIDER, DEFAULT_RESTRICTED, DEFAULT_CIPHER_STEPS, DEFAULT_HASH_ITERATIONS, DEFAULT_SECURITY_PHRASE);
+        this(DEFAULT_PROVIDER, DEFAULT_RESTRICTED, DEFAULT_LONGHASH, DEFAULT_CIPHER_STEPS, DEFAULT_HASH_ITERATIONS, DEFAULT_SECURITY_PHRASE);
     }
 
     /**
      * Constructor.
      * @param pProvider the Security provider
      * @param pRestricted do we use restricted security
+     * @param pLongHash do we use restricted security
      * @param pNumCipherSteps the number of cipher steps
      * @param pHashIterations the number of hash iterations
      * @param pSecurityPhrase the security phrase
@@ -98,11 +104,12 @@ public class SecureManager {
      */
     public SecureManager(final SecurityProvider pProvider,
                          final boolean pRestricted,
+                         final boolean pLongHash,
                          final int pNumCipherSteps,
                          final int pHashIterations,
                          final String pSecurityPhrase) throws JDataException {
         /* Allocate the security generator */
-        theGenerator = new SecurityGenerator(pProvider, pRestricted, pNumCipherSteps, pHashIterations, pSecurityPhrase);
+        theGenerator = new SecurityGenerator(pProvider, pRestricted, pLongHash, pNumCipherSteps, pHashIterations, pSecurityPhrase);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<PasswordHash>();
@@ -189,7 +196,6 @@ public class SecureManager {
                 break;
             } catch (WrongPasswordException e) {
                 myPass.setError("Incorrect password. Please re-enter");
-                continue;
             }
         }
 

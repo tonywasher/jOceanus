@@ -21,8 +21,8 @@
  * Copyright (c) 2000-2012 The Legion Of The Bouncy Castle (http://www.bouncycastle.org)
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction, 
- * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
  * <p>
@@ -220,7 +220,7 @@ public class HashSP800DRBG
                            final int pNumBits) {
         /* Determine # of iterations */
         int mySize = theDigest.getDigestLength();
-        int myLen = (pNumBits >> BIT_SHIFT);
+        int myLen = pNumBits >> BIT_SHIFT;
 
         /* Allocate counters */
         ByteArrayInteger myData = new ByteArrayInteger(pInputBytes);

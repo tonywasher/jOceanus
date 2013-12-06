@@ -127,7 +127,7 @@ public final class EventCategoryBucket
     /**
      * History Map.
      */
-    private final BucketHistory<CategoryValues> theHistory;
+    private final BucketHistory<CategoryValues, EventAttribute> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -245,20 +245,22 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public CategoryValues getDeltaForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getDeltaForEvent(pEvent);
+    public JDecimal getDeltaForEvent(final Event pEvent,
+                                     final EventAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaValue(pEvent, pAttr);
     }
 
     /**
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<CategoryValues> getHistoryMap() {
+    private BucketHistory<CategoryValues, EventAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -268,6 +270,14 @@ public final class EventCategoryBucket
      */
     protected Analysis getAnalysis() {
         return theAnalysis;
+    }
+
+    /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
     }
 
     /**
@@ -331,7 +341,7 @@ public final class EventCategoryBucket
                 : pCategory.getCategoryType();
 
         /* Create the history map */
-        theHistory = new BucketHistory<CategoryValues>(new CategoryValues());
+        theHistory = new BucketHistory<CategoryValues, EventAttribute>(new CategoryValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -353,7 +363,7 @@ public final class EventCategoryBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<CategoryValues, EventAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -375,7 +385,7 @@ public final class EventCategoryBucket
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<CategoryValues>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<CategoryValues, EventAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -411,7 +421,12 @@ public final class EventCategoryBucket
 
         /* Compare the Event Categories */
         EventCategoryBucket myThat = (EventCategoryBucket) pThat;
-        return getEventCategory().equals(myThat.getEventCategory());
+        if (!getEventCategory().equals(myThat.getEventCategory())) {
+            return false;
+        }
+
+        /* Compare the date ranges */
+        return getDateRange().equals(myThat.getDateRange());
     }
 
     @Override

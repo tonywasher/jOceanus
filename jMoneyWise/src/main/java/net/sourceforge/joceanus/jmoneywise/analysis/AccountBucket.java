@@ -132,7 +132,7 @@ public final class AccountBucket
     /**
      * History Map.
      */
-    private final BucketHistory<AccountValues> theHistory;
+    private final BucketHistory<AccountValues, AccountAttribute> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -247,6 +247,14 @@ public final class AccountBucket
     }
 
     /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
+    }
+
+    /**
      * Obtain the value map.
      * @return the value map
      */
@@ -273,20 +281,22 @@ public final class AccountBucket
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public AccountValues getDeltaForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getDeltaForEvent(pEvent);
+    public JDecimal getDeltaForEvent(final Event pEvent,
+                                     final AccountAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaValue(pEvent, pAttr);
     }
 
     /**
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<AccountValues> getHistoryMap() {
+    private BucketHistory<AccountValues, AccountAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -355,7 +365,7 @@ public final class AccountBucket
         isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CreditCard);
 
         /* Create the history map */
-        theHistory = new BucketHistory<AccountValues>(new AccountValues());
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -379,7 +389,7 @@ public final class AccountBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -403,7 +413,7 @@ public final class AccountBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<AccountValues>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<AccountValues, AccountAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -439,7 +449,12 @@ public final class AccountBucket
 
         /* Compare the Accounts */
         AccountBucket myThat = (AccountBucket) pThat;
-        return getAccount().equals(myThat.getAccount());
+        if (!getAccount().equals(myThat.getAccount())) {
+            return false;
+        }
+
+        /* Compare the date ranges */
+        return getDateRange().equals(myThat.getDateRange());
     }
 
     @Override

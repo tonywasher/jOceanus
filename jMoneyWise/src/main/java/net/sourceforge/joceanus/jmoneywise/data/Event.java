@@ -1059,7 +1059,7 @@ public class Event
                 /* If this is a child event */
                 if (myEvent.isChild()) {
                     /* Register child against parent (in this edit list) */
-                    registerChild(myEvent);
+                    myList.registerChild(myEvent);
                 }
             }
 
@@ -1110,7 +1110,7 @@ public class Event
                     /* If this is a child event */
                     if (myEvent.isChild()) {
                         /* Register child against parent (in this edit list) */
-                        registerChild(myEvent);
+                        myList.registerChild(myEvent);
                     }
                 }
             }

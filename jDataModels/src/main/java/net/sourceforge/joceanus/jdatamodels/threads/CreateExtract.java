@@ -128,19 +128,16 @@ public class CreateExtract<T extends DataSet<T>>
                 throw new JDataException(ExceptionClass.DATA, myDiff, "Extract is inconsistent");
             }
 
+            /* OK so switch off flag */
+            doDelete = false;
+
             /* Catch any exceptions */
-        } catch (JDataException e) {
+        } finally {
             /* Delete the file */
             if ((doDelete)
                 && (!myFile.delete())) {
                 doDelete = false;
             }
-
-            /* Report the failure */
-            throw e;
-            /* Catch any exceptions */
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.LOGIC, "Failed", e);
         }
 
         /* Return nothing */

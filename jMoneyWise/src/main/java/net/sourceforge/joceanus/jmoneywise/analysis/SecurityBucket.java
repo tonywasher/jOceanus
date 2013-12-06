@@ -132,7 +132,7 @@ public final class SecurityBucket
     /**
      * History Map.
      */
-    private final BucketHistory<SecurityValues> theHistory;
+    private final BucketHistory<SecurityValues, SecurityAttribute> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -194,6 +194,16 @@ public final class SecurityBucket
     }
 
     /**
+     * Obtain the decorated name.
+     * @return the decorated name
+     */
+    public String getDecoratedName() {
+        return thePortfolio.getName()
+               + ":"
+               + theSecurity.getName();
+    }
+
+    /**
      * Obtain the security.
      * @return the account
      */
@@ -247,6 +257,14 @@ public final class SecurityBucket
     }
 
     /**
+     * Obtain date range.
+     * @return the range
+     */
+    public JDateDayRange getDateRange() {
+        return theAnalysis.getDateRange();
+    }
+
+    /**
      * Obtain the value map.
      * @return the value map
      */
@@ -273,20 +291,46 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public SecurityValues getDeltaForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getDeltaForEvent(pEvent);
+    public JDecimal getDeltaForEvent(final Event pEvent,
+                                     final SecurityAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaValue(pEvent, pAttr);
+    }
+
+    /**
+     * Obtain money delta for event.
+     * @param pEvent the event
+     * @param pAttr the attribute
+     * @return the delta (or null)
+     */
+    public JMoney getMoneyDeltaForEvent(final Event pEvent,
+                                        final SecurityAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaMoneyValue(pEvent, pAttr);
+    }
+
+    /**
+     * Obtain delta for event.
+     * @param pEvent the event
+     * @param pAttr the attribute
+     * @return the delta (or null)
+     */
+    public JUnits getUnitsDeltaForEvent(final Event pEvent,
+                                        final SecurityAttribute pAttr) {
+        /* Obtain delta for event */
+        return theHistory.getDeltaUnitsValue(pEvent, pAttr);
     }
 
     /**
      * Obtain the history map.
      * @return the history map
      */
-    private BucketHistory<SecurityValues> getHistoryMap() {
+    private BucketHistory<SecurityValues, SecurityAttribute> getHistoryMap() {
         return theHistory;
     }
 
@@ -353,7 +397,7 @@ public final class SecurityBucket
         theCategory = theSecurity.getAccountCategory();
 
         /* Create the history map */
-        theHistory = new BucketHistory<SecurityValues>(new SecurityValues());
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(new SecurityValues());
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -377,7 +421,7 @@ public final class SecurityBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues>(pBase.getHistoryMap(), pDate);
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pDate);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -401,7 +445,7 @@ public final class SecurityBucket
         theData = theAnalysis.getData();
 
         /* Access the relevant history */
-        theHistory = new BucketHistory<SecurityValues>(pBase.getHistoryMap(), pRange);
+        theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(pBase.getHistoryMap(), pRange);
 
         /* Access the key value maps */
         theValues = theHistory.getValues();
@@ -437,7 +481,12 @@ public final class SecurityBucket
 
         /* Compare the Securities */
         SecurityBucket myThat = (SecurityBucket) pThat;
-        return getSecurity().equals(myThat.getSecurity());
+        if (!getSecurity().equals(myThat.getSecurity())) {
+            return false;
+        }
+
+        /* Compare the date ranges */
+        return getDateRange().equals(myThat.getDateRange());
     }
 
     @Override

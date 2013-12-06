@@ -115,7 +115,7 @@ public class ByteArrayInteger {
         }
 
         /* Determine whether we have reached the limit */
-        return (myVal >= pLimit);
+        return myVal >= pLimit;
     }
 
     /**

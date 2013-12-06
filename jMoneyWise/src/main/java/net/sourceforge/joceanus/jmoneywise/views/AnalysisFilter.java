@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
@@ -58,11 +57,16 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
     private T theAttr;
 
     /**
-     * Set current attribute.
-     * @param pAttr the current attribute
+     * The Attribute class.
      */
-    public void setCurrentAttribute(final T pAttr) {
-        theAttr = pAttr;
+    private final Class<T> theClass;
+
+    /**
+     * Set attribute.
+     * @param pAttr the attribute
+     */
+    public void setCurrentAttribute(final BucketAttribute pAttr) {
+        theAttr = theClass.cast(pAttr);
     }
 
     /**
@@ -71,6 +75,14 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      */
     public T getCurrentAttribute() {
         return theAttr;
+    }
+
+    /**
+     * Constructor.
+     * @param pClass the attribute class
+     */
+    protected AnalysisFilter(final Class<T> pClass) {
+        theClass = pClass;
     }
 
     /**
@@ -116,7 +128,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      */
     protected boolean filterSingleEvent(final Event pEvent) {
         /* Check whether this event is registered */
-        return getValuesForEvent(pEvent) != null;
+        return getValuesForEvent(pEvent) == null;
     }
 
     /**
@@ -133,19 +145,19 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
     public abstract BucketValues<?, T> getValuesForEvent(final Event pEvent);
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta value for event.
      * @param pEvent the event
-     * @return the delta values
+     * @return the delta value
      */
-    public abstract BucketValues<?, T> getDeltaForEvent(final Event pEvent);
+    public abstract JDecimal getDeltaForEvent(final Event pEvent);
 
     /**
-     * Obtain starting money value for attribute.
+     * Obtain starting value for attribute.
      * @return the value
      */
-    public JMoney getStartingMoney() {
+    public JDecimal getStartingBalance() {
         BucketValues<?, T> myValues = getBaseValues();
-        return myValues.getMoneyValue(getCurrentAttribute());
+        return myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
@@ -153,49 +165,49 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      * @param pEvent the event to check
      * @return the value
      */
-    public JMoney getTotalMoney(final Event pEvent) {
+    public JDecimal getBalanceForEvent(final Event pEvent) {
         BucketValues<?, T> myValues = getValuesForEvent(pEvent);
-        return myValues.getMoneyValue(getCurrentAttribute());
+        return myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
-     * Obtain delta money value for attribute.
+     * Obtain delta debit value for attribute.
      * @param pEvent the event to check
      * @return the value
      */
-    public JMoney getDeltaMoney(final Event pEvent) {
-        BucketValues<?, T> myValues = getDeltaForEvent(pEvent);
-        return myValues.getMoneyValue(getCurrentAttribute());
+    public JDecimal getDebitForEvent(final Event pEvent) {
+        JDecimal myValue = getDeltaForEvent(pEvent);
+        if (myValue != null) {
+            if (myValue.isPositive()
+                || myValue.isZero()) {
+                myValue = null;
+            } else {
+                myValue.negate();
+            }
+        }
+        return (myValue != null)
+                ? myValue
+                : null;
     }
 
     /**
-     * Obtain starting units value for attribute.
-     * @return the value
-     */
-    public JUnits getStartingUnits() {
-        BucketValues<?, T> myValues = getBaseValues();
-        return myValues.getUnitsValue(getCurrentAttribute());
-    }
-
-    /**
-     * Obtain total units value for attribute.
+     * Obtain delta credit value for attribute.
      * @param pEvent the event to check
      * @return the value
      */
-    public JUnits getTotalUnits(final Event pEvent) {
-        BucketValues<?, T> myValues = getValuesForEvent(pEvent);
-        return myValues.getUnitsValue(getCurrentAttribute());
+    public JDecimal getCreditForEvent(final Event pEvent) {
+        JDecimal myValue = getDeltaForEvent(pEvent);
+        return (myValue != null)
+               && myValue.isPositive()
+                ? myValue
+                : null;
     }
 
     /**
-     * Obtain delta units value for attribute.
-     * @param pEvent the event to check
-     * @return the value
+     * Obtain analysis name.
+     * @return the name
      */
-    public JUnits getDeltaUnits(final Event pEvent) {
-        BucketValues<?, T> myValues = getDeltaForEvent(pEvent);
-        return myValues.getUnitsValue(getCurrentAttribute());
-    }
+    public abstract String getName();
 
     /**
      * Account Bucket filter class.
@@ -207,12 +219,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
          */
         private final AccountBucket theAccount;
 
+        @Override
+        public String getName() {
+            return theAccount.getName();
+        }
+
         /**
          * Constructor.
          * @param pAccount the account bucket
          */
         public AccountFilter(final AccountBucket pAccount) {
             /* Store parameter */
+            super(AccountAttribute.class);
             theAccount = pAccount;
         }
 
@@ -227,8 +245,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         }
 
         @Override
-        public AccountValues getDeltaForEvent(final Event pEvent) {
-            return theAccount.getDeltaForEvent(pEvent);
+        public JDecimal getDeltaForEvent(final Event pEvent) {
+            return theAccount.getDeltaForEvent(pEvent, getCurrentAttribute());
         }
     }
 
@@ -242,12 +260,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
          */
         private final SecurityBucket theSecurity;
 
+        @Override
+        public String getName() {
+            return theSecurity.getDecoratedName();
+        }
+
         /**
          * Constructor.
          * @param pSecurity the security bucket
          */
         public SecurityFilter(final SecurityBucket pSecurity) {
             /* Store parameter */
+            super(SecurityAttribute.class);
             theSecurity = pSecurity;
         }
 
@@ -262,8 +286,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         }
 
         @Override
-        public SecurityValues getDeltaForEvent(final Event pEvent) {
-            return theSecurity.getDeltaForEvent(pEvent);
+        public JDecimal getDeltaForEvent(final Event pEvent) {
+            return theSecurity.getDeltaForEvent(pEvent, getCurrentAttribute());
         }
     }
 
@@ -277,12 +301,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
          */
         private final PayeeBucket thePayee;
 
+        @Override
+        public String getName() {
+            return thePayee.getName();
+        }
+
         /**
          * Constructor.
          * @param pPayee the payee bucket
          */
         public PayeeFilter(final PayeeBucket pPayee) {
             /* Store parameter */
+            super(PayeeAttribute.class);
             thePayee = pPayee;
         }
 
@@ -297,8 +327,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         }
 
         @Override
-        public PayeeValues getDeltaForEvent(final Event pEvent) {
-            return thePayee.getDeltaForEvent(pEvent);
+        public JDecimal getDeltaForEvent(final Event pEvent) {
+            return thePayee.getDeltaForEvent(pEvent, getCurrentAttribute());
         }
     }
 
@@ -312,12 +342,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
          */
         private final EventCategoryBucket theCategory;
 
+        @Override
+        public String getName() {
+            return theCategory.getName();
+        }
+
         /**
          * Constructor.
          * @param pCategory the category bucket
          */
         public EventCategoryFilter(final EventCategoryBucket pCategory) {
             /* Store parameter */
+            super(EventAttribute.class);
             theCategory = pCategory;
         }
 
@@ -332,8 +368,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         }
 
         @Override
-        public CategoryValues getDeltaForEvent(final Event pEvent) {
-            return theCategory.getDeltaForEvent(pEvent);
+        public JDecimal getDeltaForEvent(final Event pEvent) {
+            return theCategory.getDeltaForEvent(pEvent, getCurrentAttribute());
         }
     }
 
@@ -347,12 +383,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
          */
         private final TaxBasisBucket theTaxBasis;
 
+        @Override
+        public String getName() {
+            return theTaxBasis.getName();
+        }
+
         /**
          * Constructor.
          * @param pTaxBasis the taxBasis bucket
          */
         public TaxBasisFilter(final TaxBasisBucket pTaxBasis) {
             /* Store parameter */
+            super(TaxBasisAttribute.class);
             theTaxBasis = pTaxBasis;
         }
 
@@ -367,8 +409,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         }
 
         @Override
-        public TaxBasisValues getDeltaForEvent(final Event pEvent) {
-            return theTaxBasis.getDeltaForEvent(pEvent);
+        public JDecimal getDeltaForEvent(final Event pEvent) {
+            return theTaxBasis.getDeltaForEvent(pEvent, getCurrentAttribute());
         }
     }
 }

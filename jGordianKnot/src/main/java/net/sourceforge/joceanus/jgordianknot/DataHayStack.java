@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  * Class to hide a small piece of data into a larger piece of data.
  * @author Tony Washer
  */
-public class DataHayStack {
+public abstract class DataHayStack {
     /**
      * HayStack signature.
      */
@@ -66,6 +66,12 @@ public class DataHayStack {
      * Id mask.
      */
     private static final int ID_MASK = 0xF;
+
+    /**
+     * Constructor.
+     */
+    private DataHayStack() {
+    }
 
     /**
      * Hide a needle in a hayStack.
@@ -723,14 +729,17 @@ public class DataHayStack {
             theInitVector = null;
             theBytes = null;
 
+            /* Determine IV length */
+            int myIVLen = pInitVector.length;
+
             /* Create the byte array to hide */
             byte[] myMode = pMode.getEncoded();
 
             /* Allocate the hayStack */
-            byte[] myHayStack = new byte[SymmetricKey.IVSIZE
+            byte[] myHayStack = new byte[myIVLen
                                          + pBytes.length];
-            System.arraycopy(pInitVector, 0, myHayStack, 0, SymmetricKey.IVSIZE);
-            System.arraycopy(pBytes, 0, myHayStack, SymmetricKey.IVSIZE, pBytes.length);
+            System.arraycopy(pInitVector, 0, myHayStack, 0, myIVLen);
+            System.arraycopy(pBytes, 0, myHayStack, myIVLen, pBytes.length);
 
             /* Hide the EncryptionMode into the HayStack */
             theExternal = hideNeedle(myMode, myHayStack);

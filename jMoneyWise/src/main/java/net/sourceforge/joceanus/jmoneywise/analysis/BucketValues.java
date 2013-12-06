@@ -26,6 +26,7 @@ import java.util.EnumMap;
 
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
@@ -76,6 +77,60 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
      * @param pBaseValues the base values.
      */
     protected void adjustToBaseValues(final T pBaseValues) {
+    }
+
+    /**
+     * Obtain delta value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected JDecimal getDeltaValue(final T pPrevious,
+                                     final E pAttr) {
+        switch (pAttr.getDataType()) {
+            case MONEY:
+                return getDeltaMoneyValue(pPrevious, pAttr);
+            case UNITS:
+                return getDeltaUnitsValue(pPrevious, pAttr);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain delta money value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected JMoney getDeltaMoneyValue(final T pPrevious,
+                                        final E pAttr) {
+        /* Access current and previous values */
+        JMoney myCurr = getMoneyValue(pAttr);
+        JMoney myPrev = pPrevious.getMoneyValue(pAttr);
+
+        /* Calculate delta */
+        myCurr = new JMoney(myCurr);
+        myCurr.subtractAmount(myPrev);
+        return myCurr;
+    }
+
+    /**
+     * Obtain delta units value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected JUnits getDeltaUnitsValue(final T pPrevious,
+                                        final E pAttr) {
+        /* Access current and previous values */
+        JUnits myCurr = getUnitsValue(pAttr);
+        JUnits myPrev = pPrevious.getUnitsValue(pAttr);
+
+        /* Calculate delta */
+        myCurr = new JUnits(myCurr);
+        myCurr.subtractUnits(myPrev);
+        return myCurr;
     }
 
     /**
@@ -131,6 +186,16 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     private Object getValue(final E pAttr) {
         /* Obtain the attribute value */
         return get(pAttr);
+    }
+
+    /**
+     * Obtain a decimal attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public JDecimal getDecimalValue(final E pAttr) {
+        /* Obtain the attribute value */
+        return getValue(pAttr, JDecimal.class);
     }
 
     /**

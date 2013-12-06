@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -49,6 +50,16 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @param <T> the DataSet type
  */
 public abstract class SheetReader<T extends DataSet<T>> {
+    /**
+     * Close error text.
+     */
+    protected static final String ERROR_CLOSE = "Close failure";
+
+    /**
+     * Cancel error text.
+     */
+    private static final String ERROR_CANCEL = "Operation cancelled";
+
     /**
      * Task control.
      */
@@ -184,7 +195,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JDataException(ExceptionClass.EXCEL, ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
@@ -200,7 +211,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, ERROR_CLOSE, ex);
             }
         }
 
@@ -243,7 +254,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JDataException(ExceptionClass.EXCEL, ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
@@ -259,7 +270,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                theTask.getLogger().log(Level.SEVERE, ERROR_CLOSE, ex);
             }
         }
 

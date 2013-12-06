@@ -44,12 +44,12 @@ public class DataCipher {
     /**
      * The cipher.
      */
-    private Cipher theCipher = null;
+    private final Cipher theCipher;
 
     /**
      * The SymmetricKey.
      */
-    private SymmetricKey theSymKey = null;
+    private final SymmetricKey theSymKey;
 
     /**
      * Get Symmetric Key Type.
@@ -57,6 +57,14 @@ public class DataCipher {
      */
     protected SymKeyType getSymKeyType() {
         return theSymKey.getKeyType();
+    }
+
+    /**
+     * Get Block Size.
+     * @return the block size
+     */
+    protected int getBlockSize() {
+        return theCipher.getBlockSize();
     }
 
     /**

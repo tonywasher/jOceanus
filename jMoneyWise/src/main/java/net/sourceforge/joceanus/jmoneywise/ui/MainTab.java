@@ -86,19 +86,19 @@ public class MainTab
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainTab.class.getName());
 
     /**
-     * Register tab title.
-     */
-    private static final String TITLE_REGISTER = NLS_BUNDLE.getString("TabRegister");
-
-    /**
-     * Account tab title.
-     */
-    private static final String TITLE_ACCOUNT = NLS_BUNDLE.getString("TabAccount");
-
-    /**
      * Report tab title.
      */
     private static final String TITLE_REPORT = NLS_BUNDLE.getString("TabReport");
+
+    /**
+     * Statement tab title.
+     */
+    private static final String TITLE_STATEMENT = NLS_BUNDLE.getString("TabStatement");
+
+    /**
+     * Register tab title.
+     */
+    private static final String TITLE_REGISTER = NLS_BUNDLE.getString("TabRegister");
 
     /**
      * SpotPrices tab title.
@@ -255,17 +255,17 @@ public class MainTab
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 
-        /* Create the register table and add to tabbed pane */
-        theRegister = new Register(theView, theComboList);
-        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
-
         /* Create the Report Tab */
         theReportTab = new ReportTab(theView);
         theTabs.addTab(TITLE_REPORT, theReportTab);
 
         /* Create the Analysis Tab */
         theStatement = new AnalysisStatement(theView);
-        theTabs.addTab(TITLE_ACCOUNT, theStatement);
+        theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
+
+        /* Create the register table and add to tabbed pane */
+        theRegister = new Register(theView, theComboList);
+        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotView Tab */
         theSpotView = new PricePoint(theView);
@@ -421,7 +421,7 @@ public class MainTab
         // theAccountCtl.selectAccount(pAccount, pSource);
 
         /* Goto the Accounts tab */
-        gotoNamedTab(TITLE_ACCOUNT);
+        gotoNamedTab(TITLE_STATEMENT);
     }
 
     /**
@@ -457,7 +457,7 @@ public class MainTab
         // theAccountCtl.addPattern(pEvent);
 
         /* Change focus to the account */
-        gotoNamedTab(TITLE_ACCOUNT);
+        gotoNamedTab(TITLE_STATEMENT);
     }
 
     /**

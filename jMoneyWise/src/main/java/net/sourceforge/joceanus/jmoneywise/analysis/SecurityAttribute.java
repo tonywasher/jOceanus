@@ -31,6 +31,11 @@ import net.sourceforge.joceanus.jdatamanager.DataType;
  */
 public enum SecurityAttribute implements BucketAttribute {
     /**
+     * Units.
+     */
+    UNITS,
+
+    /**
      * Valuation.
      */
     VALUATION,
@@ -39,11 +44,6 @@ public enum SecurityAttribute implements BucketAttribute {
      * Valuation Delta.
      */
     DELTA,
-
-    /**
-     * Units.
-     */
-    UNITS,
 
     /**
      * Cost.

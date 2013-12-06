@@ -150,16 +150,16 @@ public class CreateBackup<T extends DataSet<T>>
                 throw new JDataException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
             }
 
-            /* Catch any exceptions */
-        } catch (JDataException e) {
+            /* OK so switch off flag */
+            doDelete = false;
+
+            /* Delete file on error */
+        } finally {
             /* Delete the file */
             if ((doDelete)
                 && (!myFile.delete())) {
                 doDelete = false;
             }
-
-            /* Report the failure */
-            throw e;
         }
 
         /* Return nothing */

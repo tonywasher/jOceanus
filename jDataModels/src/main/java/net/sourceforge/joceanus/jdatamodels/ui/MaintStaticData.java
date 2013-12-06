@@ -134,11 +134,6 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     private static final int WIDTH_CLASS = 90;
 
     /**
-     * Name column width.
-     */
-    private static final int WIDTH_NAME = 80;
-
-    /**
      * Description column width.
      */
     private static final int WIDTH_DESC = 200;

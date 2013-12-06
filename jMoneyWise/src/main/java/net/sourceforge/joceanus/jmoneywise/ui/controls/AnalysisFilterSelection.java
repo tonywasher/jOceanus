@@ -35,7 +35,7 @@ public interface AnalysisFilterSelection {
     boolean isAvailable();
 
     /**
-     * Obtain analysis filter
+     * Obtain analysis filter.
      * @return the filter
      */
     AnalysisFilter<?> getFilter();

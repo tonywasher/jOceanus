@@ -37,37 +37,37 @@ public enum AsymKeyType {
     /**
      * Elliptic Curve 1.
      */
-    ECpSec384_1(2, "secp384r1"),
+    ECPSEC384_1(2, "secp384r1"),
 
     /**
      * Elliptic Curve 2.
      */
-    ECpSec521_1(3, "secp521r1"),
+    ECPSEC521_1(3, "secp521r1"),
 
     /**
      * Elliptic Curve 3.
      */
-    ECmX431_1(4, "c2tnb431r1"),
+    ECMX431_1(4, "c2tnb431r1"),
 
     /**
      * Elliptic Curve 4.
      */
-    ECmSec409_1(5, "sect409r1"),
+    ECMSEC409_1(5, "sect409r1"),
 
     /**
      * Elliptic Curve 5.
      */
-    ECmSec571_1(6, "sect571r1"),
+    ECMSEC571_1(6, "sect571r1"),
 
     /**
      * Elliptic Curve 6.
      */
-    ECmTT384t_1(7, "brainpoolp384t1"),
+    ECMTT384T_1(7, "brainpoolp384t1"),
 
     /**
      * Elliptic Curve 7.
      */
-    ECmTT512t_1(8, "brainpoolp512t1");
+    ECMTT512T_1(8, "brainpoolp512t1");
 
     /**
      * Encryption algorithm.
@@ -78,6 +78,17 @@ public enum AsymKeyType {
      * Signature algorithm.
      */
     private static final String BASESIGNATURE = "SHA256with";
+
+    @Override
+    public String toString() {
+        /* Elliptic Curve use the curve name */
+        if (isElliptic) {
+            return theCurve;
+        }
+
+        /* return the name */
+        return name();
+    }
 
     /**
      * The external Id of the algorithm.

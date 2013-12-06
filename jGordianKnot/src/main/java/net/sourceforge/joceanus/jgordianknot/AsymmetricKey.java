@@ -142,7 +142,7 @@ public class AsymmetricKey {
      * @return true/false
      */
     public boolean isPublicOnly() {
-        return (theKeyPair.getPrivate() == null);
+        return theKeyPair.getPrivate() == null;
     }
 
     /**
@@ -330,7 +330,7 @@ public class AsymmetricKey {
         if (!Arrays.equals(myThat.thePrivateKeyDef, thePrivateKeyDef)) {
             return false;
         }
-        return (Arrays.equals(myThat.thePublicKeyDef, thePublicKeyDef));
+        return Arrays.equals(myThat.thePublicKeyDef, thePublicKeyDef);
     }
 
     /**

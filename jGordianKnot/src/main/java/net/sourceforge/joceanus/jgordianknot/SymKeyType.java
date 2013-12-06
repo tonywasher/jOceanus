@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -40,12 +41,12 @@ public enum SymKeyType {
     /**
      * TwoFish.
      */
-    TwoFish(2),
+    TWOFISH(2),
 
     /**
      * Serpent.
      */
-    Serpent(3),
+    SERPENT(3),
 
     /**
      * CAMELLIA.
@@ -60,7 +61,17 @@ public enum SymKeyType {
     /**
      * CAST6.
      */
-    CAST6(6);
+    CAST6(6),
+
+    /**
+     * ThreeFish.
+     */
+    THREEFISH(7);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SymKeyType.class.getName());
 
     /**
      * Symmetric full algorithm.
@@ -71,6 +82,23 @@ public enum SymKeyType {
      * The external Id of the algorithm.
      */
     private final int theId;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
      * Obtain the external Id.
@@ -85,7 +113,16 @@ public enum SymKeyType {
      * @return the algorithm
      */
     public String getAlgorithm() {
-        return toString();
+        switch (this) {
+            case TWOFISH:
+                return "TwoFish";
+            case SERPENT:
+                return "Serpent";
+            case THREEFISH:
+                return "ThreeFish-256";
+            default:
+                return name();
+        }
     }
 
     /**

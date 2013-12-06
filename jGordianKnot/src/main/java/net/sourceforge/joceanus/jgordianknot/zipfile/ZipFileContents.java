@@ -94,10 +94,15 @@ public class ZipFileContents {
         /* Wrap string in a string builder */
         StringBuilder myString = new StringBuilder(pCodedString);
         String myFileSep = Character.toString(SEPARATOR_FILE);
-        int myLoc;
 
         /* while we have separators in the string */
-        while ((myLoc = myString.indexOf(myFileSep)) != -1) {
+        for (;;) {
+            /* Locate End of entry and break loop if not found */
+            int myLoc = myString.indexOf(myFileSep);
+            if (myLoc == -1) {
+                break;
+            }
+
             /* Parse the encoded entry and remove it from the buffer */
             parseEncodedEntry(myString.substring(0, myLoc));
             myString.delete(0, myLoc + 1);

@@ -89,12 +89,14 @@ public class NybbleArray {
         byte myByte = theEncoded[iPos / 2];
 
         /* Determine whether this is high/low nybble */
-        boolean bHigh = ((iPos % 2) == 0);
+        boolean bHigh = (iPos % 2) == 0;
 
         /* Return the relevant nybble */
         return (short) ((bHigh)
-                ? ((myByte >> MASK_SHIFT) & MASK_LOW)
-                : (myByte & MASK_LOW));
+                ? (myByte >> MASK_SHIFT)
+                  & MASK_LOW
+                : myByte
+                  & MASK_LOW);
     }
 
     /**
@@ -123,7 +125,7 @@ public class NybbleArray {
         byte myByte = theEncoded[myPos];
 
         /* Determine whether this is high/low nybble */
-        boolean bHigh = ((iPos % 2) == 0);
+        boolean bHigh = (iPos % 2) == 0;
 
         /* If this is a high nybble */
         if (bHigh) {

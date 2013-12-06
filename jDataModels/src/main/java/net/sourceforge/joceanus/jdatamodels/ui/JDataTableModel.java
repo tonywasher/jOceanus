@@ -316,6 +316,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         /* Note that the data for table and row header has changed */
         fireTableDataChanged();
         theRowHdrModel.fireTableDataChanged();
+        theFilter.reportMappingChanged();
     }
 
     @Override

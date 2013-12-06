@@ -173,6 +173,7 @@ public class DecryptionInputStream
 
     @Override
     public void mark(final int pReadLimit) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

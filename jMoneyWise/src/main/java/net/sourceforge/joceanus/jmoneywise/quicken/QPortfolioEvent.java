@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
@@ -716,10 +715,9 @@ public class QPortfolioEvent
 
         /* Access SecurityBucket for Debit */
         SecurityBucket myBucket = getSecurityBucket(myDebit);
-        SecurityValues myDelta = myBucket.getDeltaForEvent(myEvent);
 
         /* Obtain the delta cost */
-        JMoney myDeltaCost = myDelta.getMoneyValue(SecurityAttribute.COST);
+        JMoney myDeltaCost = myBucket.getMoneyDeltaForEvent(myEvent, SecurityAttribute.COST);
         myDeltaCost = new JMoney(myDeltaCost);
         myDeltaCost.negate();
 
@@ -848,11 +846,9 @@ public class QPortfolioEvent
         /* Access Investment Analysis for Debit */
         SecurityBucket myDebitBucket = getSecurityBucket(myDebit);
         SecurityBucket myCreditBucket = getSecurityBucket(myCredit);
-        SecurityValues myDeltaDebit = myDebitBucket.getDeltaForEvent(myEvent);
-        SecurityValues myDeltaCredit = myCreditBucket.getDeltaForEvent(myEvent);
 
         /* Obtain total payment value for sale stock */
-        JMoney myStockValue = myDeltaCredit.getMoneyValue(SecurityAttribute.COST);
+        JMoney myStockValue = myCreditBucket.getMoneyDeltaForEvent(myEvent, SecurityAttribute.COST);
         JMoney mySaleValue = new JMoney(myStockValue);
         mySaleValue.addAmount(myAmount);
 
@@ -864,7 +860,7 @@ public class QPortfolioEvent
         addStringLine(QPortfolioLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
-        myValue = new JDecimal(myDeltaDebit.getUnitsValue(SecurityAttribute.UNITS));
+        myValue = new JDecimal(myDebitBucket.getUnitsDeltaForEvent(myEvent, SecurityAttribute.UNITS));
         myValue.negate();
         addDecimalLine(QPortfolioLineType.Quantity, myValue);
 

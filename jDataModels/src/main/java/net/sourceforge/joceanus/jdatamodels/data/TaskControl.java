@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.data;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 
@@ -95,4 +97,10 @@ public interface TaskControl<T extends DataSet<T>> {
      * @return true/false
      */
     boolean isCancelled();
+
+    /**
+     * Obtain logger.
+     * @return the logger
+     */
+    Logger getLogger();
 }

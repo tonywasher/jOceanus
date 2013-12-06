@@ -280,6 +280,7 @@ public class PipedStream {
 
         @Override
         public void flush() throws IOException {
+            /* No need to flush */
         }
 
         @Override

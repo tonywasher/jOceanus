@@ -29,14 +29,18 @@ import java.util.Map;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**
  * History for a bucket.
  * @param <T> the values
+ * @param <E> the enum class
  */
-public class BucketHistory<T extends BucketValues<T, ?>>
-        extends LinkedHashMap<Integer, BucketSnapShot<T>>
+public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
+        extends LinkedHashMap<Integer, BucketSnapShot<T, E>>
         implements JDataFormat {
     /**
      * Serial Id.
@@ -56,7 +60,7 @@ public class BucketHistory<T extends BucketValues<T, ?>>
     /**
      * Last values.
      */
-    private transient BucketSnapShot<T> theLastValues = null;
+    private transient T theLastValues = null;
 
     @Override
     public String formatObject() {
@@ -104,19 +108,19 @@ public class BucketHistory<T extends BucketValues<T, ?>>
      * @param pHistory the base history
      * @param pDate the date for history cut-off
      */
-    protected BucketHistory(final BucketHistory<T> pHistory,
+    protected BucketHistory(final BucketHistory<T, E> pHistory,
                             final JDateDay pDate) {
         /* Copy the base values */
         theBaseValues = pHistory.getBaseValues().getSnapShot();
 
         /* Record latest event */
-        BucketSnapShot<T> myLatest = null;
+        BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = pHistory.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T>> myEntry = myIterator.next();
-            BucketSnapShot<T> myEvent = myEntry.getValue();
+            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            BucketSnapShot<T, E> myEvent = myEntry.getValue();
 
             /* If we have passed the Date, break the loop */
             if (pDate.compareTo(myEvent.getDate()) < 0) {
@@ -145,17 +149,17 @@ public class BucketHistory<T extends BucketValues<T, ?>>
      * @param pHistory the base history
      * @param pRange the date range for history cut-off
      */
-    protected BucketHistory(final BucketHistory<T> pHistory,
+    protected BucketHistory(final BucketHistory<T, E> pHistory,
                             final JDateDayRange pRange) {
         /* Record first and last events */
-        BucketSnapShot<T> myFirst = null;
-        BucketSnapShot<T> myLatest = null;
+        BucketSnapShot<T, E> myFirst = null;
+        BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T>>> myIterator = pHistory.entrySet().iterator();
+        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T>> myEntry = myIterator.next();
-            BucketSnapShot<T> myEvent = myEntry.getValue();
+            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            BucketSnapShot<T, E> myEvent = myEntry.getValue();
 
             /* If we are past the initial Date */
             int iRange = pRange.compareTo(myEvent.getDate());
@@ -178,19 +182,20 @@ public class BucketHistory<T extends BucketValues<T, ?>>
         theBaseValues = (myFirst == null)
                 ? pHistory.getBaseValues().getSnapShot()
                 : myFirst.getNewSnapShot();
+        theLastValues = theBaseValues;
 
         /* If we broke the loop because we found an event */
         if (myLatest != null) {
             /* Add to the map */
-            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myLatest, theBaseValues, theLastValues);
+            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myLatest, theBaseValues, theLastValues);
             put(myLatest.getId(), myNewEvent);
-            theLastValues = myNewEvent;
+            theLastValues = myNewEvent.getSnapShot();
         }
 
         /* Continue the loop */
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T>> myEntry = myIterator.next();
-            BucketSnapShot<T> myEvent = myEntry.getValue();
+            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            BucketSnapShot<T, E> myEvent = myEntry.getValue();
 
             /* If we are past the range, break the loop */
             if (pRange.compareTo(myEvent.getDate()) < 0) {
@@ -198,9 +203,9 @@ public class BucketHistory<T extends BucketValues<T, ?>>
             }
 
             /* Add to the map */
-            BucketSnapShot<T> myNewEvent = new BucketSnapShot<T>(myEvent, theBaseValues, theLastValues);
+            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myEvent, theBaseValues, theLastValues);
             put(myEntry.getKey(), myNewEvent);
-            theLastValues = myNewEvent;
+            theLastValues = myNewEvent.getNewSnapShot();
 
             /* Store latest value */
             myLatest = myEvent;
@@ -221,12 +226,12 @@ public class BucketHistory<T extends BucketValues<T, ?>>
     protected T registerEvent(final Event pEvent,
                               final T pValues) {
         /* Allocate the event and add to map */
-        BucketSnapShot<T> myEvent = new BucketSnapShot<T>(pEvent, pValues, theLastValues);
+        BucketSnapShot<T, E> myEvent = new BucketSnapShot<T, E>(pEvent, pValues, theLastValues);
         put(pEvent.getId(), myEvent);
-        theLastValues = myEvent;
+        theLastValues = myEvent.getSnapShot();
 
         /* Return the values */
-        return myEvent.getSnapShot();
+        return theLastValues;
     }
 
     /**
@@ -236,22 +241,54 @@ public class BucketHistory<T extends BucketValues<T, ?>>
      */
     public T getValuesForEvent(final Event pEvent) {
         /* Locate the event in the map */
-        BucketSnapShot<T> myEvent = get(pEvent.getId());
+        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
         return (myEvent == null)
                 ? null
                 : myEvent.getSnapShot();
     }
 
     /**
-     * Obtain delta values for event.
+     * Obtain delta for event.
      * @param pEvent the event
-     * @return the values (or null)
+     * @param pAttr the attribute
+     * @return the delta (or null)
      */
-    public T getDeltaForEvent(final Event pEvent) {
+    public JDecimal getDeltaValue(final Event pEvent,
+                                  final E pAttr) {
         /* Locate the event in the map */
-        BucketSnapShot<T> myEvent = get(pEvent.getId());
+        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
         return (myEvent == null)
                 ? null
-                : myEvent.getDelta();
+                : myEvent.getDeltaValue(pAttr);
+    }
+
+    /**
+     * Obtain delta for event.
+     * @param pEvent the event
+     * @param pAttr the attribute
+     * @return the delta (or null)
+     */
+    public JMoney getDeltaMoneyValue(final Event pEvent,
+                                     final E pAttr) {
+        /* Locate the event in the map */
+        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
+        return (myEvent == null)
+                ? null
+                : myEvent.getDeltaMoneyValue(pAttr);
+    }
+
+    /**
+     * Obtain delta for event.
+     * @param pEvent the event
+     * @param pAttr the attribute
+     * @return the delta (or null)
+     */
+    public JUnits getDeltaUnitsValue(final Event pEvent,
+                                     final E pAttr) {
+        /* Locate the event in the map */
+        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
+        return (myEvent == null)
+                ? null
+                : myEvent.getDeltaUnitsValue(pAttr);
     }
 }

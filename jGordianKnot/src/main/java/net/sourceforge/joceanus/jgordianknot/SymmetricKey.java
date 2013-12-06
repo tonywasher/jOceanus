@@ -47,7 +47,7 @@ public class SymmetricKey {
     /**
      * Initialisation Vector size.
      */
-    public static final int IVSIZE = 16;
+    public static final int IVSIZE = 32;
 
     /**
      * Restricted key length.

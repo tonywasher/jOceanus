@@ -158,6 +158,7 @@ public class DigestInputStream
 
     @Override
     public void mark(final int readLimit) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

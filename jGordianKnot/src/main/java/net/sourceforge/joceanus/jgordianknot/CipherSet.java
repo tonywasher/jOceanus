@@ -84,6 +84,11 @@ public class CipherSet {
     private final byte[] theSaltBytes;
 
     /**
+     * The Block Size.
+     */
+    private int theBlockSize = 0;
+
+    /**
      * The DataKey Map.
      */
     private final Map<SymKeyType, DataCipher> theMap;
@@ -202,6 +207,19 @@ public class CipherSet {
     public void addCipher(final DataCipher pCipher) {
         /* Store into map */
         theMap.put(pCipher.getSymKeyType(), pCipher);
+        adjustBlockLength(pCipher);
+    }
+
+    /**
+     * Adjust IV length.
+     * @param pCipher the Cipher to adjust with
+     */
+    private void adjustBlockLength(final DataCipher pCipher) {
+        /* Obtain block size */
+        int mySize = pCipher.getBlockSize();
+        if (mySize > theBlockSize) {
+            theBlockSize = mySize;
+        }
     }
 
     /**
@@ -265,6 +283,9 @@ public class CipherSet {
 
         /* Store into map */
         theMap.put(pKeyType, myCipher);
+
+        /* adjust the block length */
+        adjustBlockLength(myCipher);
     }
 
     /**
@@ -316,7 +337,7 @@ public class CipherSet {
      */
     public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
         /* Allocate a new initialisation vector */
-        byte[] myVector = new byte[SymmetricKey.IVSIZE];
+        byte[] myVector = new byte[theBlockSize];
         theRandom.nextBytes(myVector);
 
         /* Access the current set of bytes */
@@ -335,7 +356,7 @@ public class CipherSet {
             DataCipher myCipher = theMap.get(myType);
 
             /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(myType, myVector);
+            byte[] myShift = getShiftedVector(myType, myVector, myCipher);
 
             /* Encrypt the bytes */
             myCurBytes = myCipher.encryptBytes(myCurBytes, myShift);
@@ -381,7 +402,7 @@ public class CipherSet {
             DataCipher myCipher = theMap.get(myType);
 
             /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(myType, myVector);
+            byte[] myShift = getShiftedVector(myType, myVector, myCipher);
 
             /* Decrypt the bytes */
             myBytes = myCipher.decryptBytes(myBytes, myShift);
@@ -395,15 +416,18 @@ public class CipherSet {
      * Obtain shifted Initialisation vector.
      * @param pKeyType the Symmetric Key Type
      * @param pVector the initialisation vector
+     * @param pCipher the data cipher
      * @return the shifted vector
      */
     private static byte[] getShiftedVector(final SymKeyType pKeyType,
-                                           final byte[] pVector) {
+                                           final byte[] pVector,
+                                           final DataCipher pCipher) {
         /* Determine index into array for Key Type */
-        byte[] myNew = new byte[pVector.length];
+        int myVectorLen = pVector.length;
+        byte[] myNew = new byte[myVectorLen];
         int myIndex = VECTOR_SHIFT
                       * pKeyType.getId();
-        myIndex %= pVector.length;
+        myIndex %= myVectorLen;
 
         /* Access current vector */
         byte[] myVector = pVector;
@@ -411,11 +435,17 @@ public class CipherSet {
         /* If we need to shift the array */
         if (myIndex > 0) {
             /* Access shifted array */
-            System.arraycopy(myVector, myIndex, myNew, 0, myVector.length
+            System.arraycopy(myVector, myIndex, myNew, 0, myVectorLen
                                                           - myIndex);
-            System.arraycopy(myVector, 0, myNew, myVector.length
+            System.arraycopy(myVector, 0, myNew, myVectorLen
                                                  - myIndex, myIndex);
             myVector = myNew;
+        }
+
+        /* Shift to correct length */
+        int myLen = pCipher.getBlockSize();
+        if (myLen < myVector.length) {
+            myVector = Arrays.copyOf(myVector, myLen);
         }
 
         /* return the shifted vector */
@@ -545,7 +575,7 @@ public class CipherSet {
         /* Access the Private Key */
         PrivateKey myPrivate = pKey.getPrivateKey();
 
-        /* Return null if there is no PrivateKey */
+        /* Reject if there is no PrivateKey */
         if (myPrivate == null) {
             throw new JDataException(ExceptionClass.DATA, "No PrivateKey");
         }

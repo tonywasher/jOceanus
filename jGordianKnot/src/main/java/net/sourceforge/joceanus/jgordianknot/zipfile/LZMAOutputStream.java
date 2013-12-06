@@ -104,6 +104,7 @@ public final class LZMAOutputStream
 
     @Override
     public void flush() throws IOException {
+        /* No need to flush */
     }
 
     @Override

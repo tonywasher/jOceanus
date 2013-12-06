@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.Security;
+import java.util.ResourceBundle;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -34,7 +35,29 @@ public enum SecurityProvider {
     /**
      * BouncyCastle.
      */
-    BouncyCastle;
+    BC;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityProvider.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
 
     /**
      * Obtain provider.
@@ -42,7 +65,7 @@ public enum SecurityProvider {
      */
     public String getProvider() {
         switch (this) {
-            case BouncyCastle:
+            case BC:
                 return "BC";
             default:
                 return name();
@@ -54,7 +77,7 @@ public enum SecurityProvider {
      */
     public void ensureInstalled() {
         switch (this) {
-            case BouncyCastle:
+            case BC:
                 Security.addProvider(new BouncyCastleProvider());
                 break;
             default:

@@ -45,6 +45,11 @@ public class SecurityPreferences
     public static final String NAME_RESTRICTED = "RestrictedKeys";
 
     /**
+     * Registry name for Long Hash.
+     */
+    public static final String NAME_LONGHASH = "LongHash";
+
+    /**
      * Registry name for Cipher Steps.
      */
     public static final String NAME_CIPHER_STEPS = "CipherSteps";
@@ -70,6 +75,11 @@ public class SecurityPreferences
     private static final String DISPLAY_RESTRICTED = "Restricted Keys";
 
     /**
+     * Display name for LongHash.
+     */
+    private static final String DISPLAY_LONGHASH = "Use Long Hash";
+
+    /**
      * Display name for Cipher Steps.
      */
     private static final String DISPLAY_CIPHER_STEPS = "Number of CipherSteps";
@@ -93,6 +103,11 @@ public class SecurityPreferences
      * Default Restricted Security.
      */
     private static final Boolean DEFAULT_RESTRICTED = SecureManager.DEFAULT_RESTRICTED;
+
+    /**
+     * Default Long Hash.
+     */
+    private static final Boolean DEFAULT_LONGHASH = SecureManager.DEFAULT_LONGHASH;
 
     /**
      * Default Cipher Steps.
@@ -123,8 +138,8 @@ public class SecurityPreferences
      * @throws JDataException on error
      */
     public SecureManager getSecurity() throws JDataException {
-        return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
-                getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
+        return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getBooleanValue(NAME_LONGHASH),
+                getIntegerValue(NAME_CIPHER_STEPS), getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }
 
     /**
@@ -133,8 +148,8 @@ public class SecurityPreferences
      * @throws JDataException on error
      */
     public SecurityGenerator getGenerator() throws JDataException {
-        return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
-                getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
+        return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getBooleanValue(NAME_LONGHASH),
+                getIntegerValue(NAME_CIPHER_STEPS), getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }
 
     @Override
@@ -142,6 +157,7 @@ public class SecurityPreferences
         /* Define the properties */
         definePreference(NAME_PROVIDER, DEFAULT_PROVIDER, SecurityProvider.class);
         defineBooleanPreference(NAME_RESTRICTED, DEFAULT_RESTRICTED);
+        defineBooleanPreference(NAME_LONGHASH, DEFAULT_LONGHASH);
         defineIntegerPreference(NAME_CIPHER_STEPS, DEFAULT_CIPHER_STEPS);
         defineIntegerPreference(NAME_HASH_ITERATIONS, DEFAULT_HASH_ITERATIONS);
         defineStringPreference(NAME_SECURITY_PHRASE, DEFAULT_SECURITY_PHRASE);
@@ -155,6 +171,9 @@ public class SecurityPreferences
         }
         if (pName.equals(NAME_RESTRICTED)) {
             return DISPLAY_RESTRICTED;
+        }
+        if (pName.equals(NAME_LONGHASH)) {
+            return DISPLAY_LONGHASH;
         }
         if (pName.equals(NAME_CIPHER_STEPS)) {
             return DISPLAY_CIPHER_STEPS;

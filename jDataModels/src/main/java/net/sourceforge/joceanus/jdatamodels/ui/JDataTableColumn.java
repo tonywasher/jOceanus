@@ -90,6 +90,19 @@ public class JDataTableColumn
         super(modelIndex, width, cellRenderer, cellEditor);
     }
 
+    /**
+     * Constructor.
+     * @param modelIndex model index
+     * @param width column width
+     * @param cellRenderer cell renderer
+     */
+    public JDataTableColumn(final int modelIndex,
+                            final int width,
+                            final TableCellRenderer cellRenderer) {
+        /* Call super-constructor */
+        this(modelIndex, width, cellRenderer, null);
+    }
+
     @Override
     public Object getHeaderValue() {
         /* Return the column name according to the model */
@@ -105,6 +118,21 @@ public class JDataTableColumn
          * Serial Id.
          */
         private static final long serialVersionUID = -5503203201580691221L;
+
+        /**
+         * Date column standard width.
+         */
+        protected static final int WIDTH_DATE = 90;
+
+        /**
+         * Name column standard width.
+         */
+        protected static final int WIDTH_MONEY = 90;
+
+        /**
+         * Name column standard width.
+         */
+        protected static final int WIDTH_NAME = 130;
 
         /**
          * The DataTableModel.

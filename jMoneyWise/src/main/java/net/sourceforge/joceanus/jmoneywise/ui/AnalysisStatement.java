@@ -24,30 +24,45 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.AbstractTableModel;
 
+import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTable;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel;
 import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Analysis Statement.
  */
 public class AnalysisStatement
-        extends JPanel {
+        extends JDataTable<Event> {
     /**
      * Serial Id.
      */
@@ -69,9 +84,14 @@ public class AnalysisStatement
     private final transient JFieldManager theFieldMgr;
 
     /**
-     * The update entry.
+     * The event entry.
      */
-    private final transient UpdateEntry<Event> theUpdateEntry;
+    private final transient UpdateEntry<Event> theEventEntry;
+
+    /**
+     * The info entry.
+     */
+    private final transient UpdateEntry<EventInfo> theInfoEntry;
 
     /**
      * The data entry.
@@ -94,14 +114,42 @@ public class AnalysisStatement
     private final ErrorPanel theError;
 
     /**
-     * The scroll pane.
-     */
-    private final JScrollPane theScroll;
-
-    /**
      * The table model.
      */
     private final AnalysisTableModel theModel;
+
+    /**
+     * The Column Model.
+     */
+    private final AnalysisColumnModel theColumns;
+
+    /**
+     * The panel.
+     */
+    private final JEnablePanel thePanel;
+
+    /**
+     * The date range.
+     */
+    private JDateDayRange theRange;
+
+    /**
+     * The analysis filter.
+     */
+    private AnalysisFilter<?> theFilter;
+
+    /**
+     * Events.
+     */
+    private transient EventList theEvents = null;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
 
     /**
      * Constructor.
@@ -111,10 +159,13 @@ public class AnalysisStatement
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
 
-        /* Build the Update set and entry */
+        /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
-        theUpdateEntry = theUpdateSet.registerClass(Event.class);
+        theEventEntry = theUpdateSet.registerClass(Event.class);
+        theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -133,31 +184,25 @@ public class AnalysisStatement
         theError = new ErrorPanel(myDataMgr, theDataAnalysis);
 
         /* Create the table model */
-        theModel = new AnalysisTableModel();
+        theModel = new AnalysisTableModel(this);
+        setModel(theModel);
 
-        /* Create the Table and ScrollPane */
-        JTable myTable = new JTable(theModel);
-        theScroll = new JScrollPane(myTable);
+        /* Create the data column model and declare it */
+        theColumns = new AnalysisColumnModel(this);
+        setColumnModel(theColumns);
 
         /* Create the layout for the panel */
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(theSelect);
-        add(theError);
-        add(theScroll);
-        add(theSaveButtons);
+        thePanel = new JEnablePanel();
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(theSelect);
+        thePanel.add(theError);
+        thePanel.add(getScrollPane());
+        thePanel.add(theSaveButtons);
 
         /* Create listener */
         AnalysisListener myListener = new AnalysisListener();
         theView.addChangeListener(myListener);
-    }
-
-    @Override
-    public void setEnabled(final boolean bEnabled) {
-        /* Pass on to important elements */
-        theSelect.setEnabled(bEnabled);
-        theError.setEnabled(bEnabled);
-        theScroll.setEnabled(bEnabled);
-        theSaveButtons.setEnabled(bEnabled);
+        theSelect.addChangeListener(myListener);
     }
 
     /**
@@ -177,6 +222,13 @@ public class AnalysisStatement
     public void refreshData() {
         /* Update the selection */
         theSelect.refreshData(theView);
+
+        /* Set the filter */
+        theFilter = theSelect.getFilter();
+
+        /* Set the selection */
+        theRange = null;
+        setSelection(theSelect.getRange());
     }
 
     /**
@@ -188,29 +240,128 @@ public class AnalysisStatement
     }
 
     /**
+     * Set Selection to the specified date range.
+     * @param pRange the Date range for the extract
+     */
+    public void setSelection(final JDateDayRange pRange) {
+        theRange = pRange;
+        theEvents = null;
+        EventInfoList myInfo = null;
+        if (theRange != null) {
+            /* Get the Events edit list */
+            FinanceData myData = theView.getData();
+            EventList myEvents = myData.getEvents();
+            theEvents = myEvents.deriveEditList(pRange);
+            myInfo = theEvents.getEventInfo();
+        }
+        setList(theEvents);
+        theEventEntry.setDataList(theEvents);
+        theInfoEntry.setDataList(myInfo);
+        theSaveButtons.setEnabled(true);
+        theSelect.setEnabled(!hasUpdates());
+        fireStateChanged();
+
+        /* Touch the updateSet */
+        theDataAnalysis.setObject(theUpdateSet);
+    }
+
+    /**
+     * Does this panel have updates?
+     * @return true/false
+     */
+    public boolean hasUpdates() {
+        return theUpdateSet.hasUpdates();
+    }
+
+    /**
+     * Do we have errors?
+     * @return true/false
+     */
+    public boolean hasErrors() {
+        return theUpdateSet.hasErrors();
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class AnalysisTableModel
-            extends AbstractTableModel {
+            extends JDataTableModel<Event> {
         /**
          * The Serial Id.
          */
         private static final long serialVersionUID = -7384250393275180461L;
 
+        /**
+         * Constructor.
+         * @param pTable the table
+         */
+        private AnalysisTableModel(final AnalysisStatement pTable) {
+            /* call constructor */
+            super(pTable);
+        }
+
         @Override
         public int getColumnCount() {
-            return 0;
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         @Override
         public int getRowCount() {
-            return 0;
+            return (theEvents == null)
+                    ? 0
+                    : theEvents.size();
         }
 
         @Override
-        public Object getValueAt(final int pRow,
-                                 final int pCol) {
-            return null;
+        public JDataField getFieldForCell(final Event pItem,
+                                          final int pColIndex) {
+            return theColumns.getFieldForCell(pColIndex);
+        }
+
+        @Override
+        public boolean isCellEditable(final Event pEvent,
+                                      final int pColIndex) {
+            return false;
+        }
+
+        @Override
+        public Event getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theEvents.get(pRowIndex);
+        }
+
+        @Override
+        public Object getItemValue(final Event pEvent,
+                                   final int pColIndex) {
+            /* Return the appropriate value */
+            return theColumns.getItemValue(pEvent, pColIndex);
+        }
+
+        @Override
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case AnalysisColumnModel.COLUMN_DATE:
+                    return "Date";
+                case AnalysisColumnModel.COLUMN_DESC:
+                    return "Description";
+                case AnalysisColumnModel.COLUMN_CATEGORY:
+                    return "Category";
+                case AnalysisColumnModel.COLUMN_CREDIT:
+                    return "Credit";
+                case AnalysisColumnModel.COLUMN_DEBIT:
+                    return "Debit";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public boolean includeRow(final Event pRow) {
+            /* Return visibility of row */
+            return !pRow.isDeleted()
+                   && !theFilter.filterEvent(pRow);
         }
     }
 
@@ -222,7 +373,173 @@ public class AnalysisStatement
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
-            refreshData();
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If this is the View */
+            if (theView.equals(o)) {
+                /* Refresh the data */
+                refreshData();
+            }
+
+            /* If this is the Selection */
+            if (theSelect.equals(o)) {
+                /* Set the filter */
+                theFilter = theSelect.getFilter();
+
+                /* Set the selection */
+                JDateDayRange myRange = theSelect.getRange();
+                if (Difference.isEqual(myRange, theRange)) {
+                    theModel.fireNewDataEvents();
+                } else {
+                    setSelection(myRange);
+                }
+            }
         }
+    }
+
+    /**
+     * Column Model class.
+     */
+    private final class AnalysisColumnModel
+            extends JDataTableColumnModel {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -7376205781228806385L;
+
+        /**
+         * Date column id.
+         */
+        private static final int COLUMN_DATE = 0;
+
+        /**
+         * Category column id.
+         */
+        private static final int COLUMN_CATEGORY = 1;
+
+        /**
+         * Description column id.
+         */
+        private static final int COLUMN_DESC = 2;
+
+        /**
+         * Debit column id.
+         */
+        private static final int COLUMN_DEBIT = 3;
+
+        /**
+         * Credit column id.
+         */
+        private static final int COLUMN_CREDIT = 4;
+
+        /**
+         * Debited column id.
+         */
+        private static final int COLUMN_DEBITED = 5;
+
+        /**
+         * Credited column id.
+         */
+        private static final int COLUMN_CREDITED = 6;
+
+        /**
+         * Balance column id.
+         */
+        private static final int COLUMN_BALANCE = 7;
+
+        /**
+         * Date Renderer.
+         */
+        private final CalendarCellRenderer theDateRenderer;
+
+        /**
+         * Decimal Renderer.
+         */
+        private final DecimalCellRenderer theDecimalRenderer;
+
+        /**
+         * String Renderer.
+         */
+        private final StringCellRenderer theStringRenderer;
+
+        /**
+         * Constructor.
+         * @param pTable the table
+         */
+        private AnalysisColumnModel(final AnalysisStatement pTable) {
+            /* call constructor */
+            super(pTable);
+
+            /* Create the relevant formatters */
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+
+            /* Create the columns */
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
+            addColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
+        }
+
+        /**
+         * Obtain the value for the event column.
+         * @param pEvent event
+         * @param pColIndex column index
+         * @return the value
+         */
+        protected Object getItemValue(final Event pEvent,
+                                      final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return pEvent.getDate();
+                case COLUMN_CATEGORY:
+                    return pEvent.getCategory();
+                case COLUMN_CREDIT:
+                    return pEvent.getCredit();
+                case COLUMN_DEBIT:
+                    return pEvent.getDebit();
+                case COLUMN_DESC:
+                    return pEvent.getComments();
+                case COLUMN_DEBITED:
+                    return theFilter.getDebitForEvent(pEvent);
+                case COLUMN_CREDITED:
+                    return theFilter.getCreditForEvent(pEvent);
+                case COLUMN_BALANCE:
+                    return theFilter.getBalanceForEvent(pEvent);
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the field for the column index.
+         * @param pColIndex column index
+         * @return the field
+         */
+        protected JDataField getFieldForCell(final int pColIndex) {
+            /* Switch on column */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return Event.FIELD_DATE;
+                case COLUMN_DESC:
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
+                case COLUMN_CATEGORY:
+                    return Event.FIELD_CATEGORY;
+                case COLUMN_CREDIT:
+                    return Event.FIELD_CREDIT;
+                case COLUMN_DEBIT:
+                    return Event.FIELD_DEBIT;
+                default:
+                    return null;
+            }
+        }
+
     }
 }

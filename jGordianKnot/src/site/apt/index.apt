@@ -34,9 +34,11 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * RC6
 
+    * ThreeFish
+
   The following MessageDigest algorithms are supported.
 
-    * SHA256
+    * SHA2
 
     * Tiger
 
@@ -46,9 +48,9 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * RIPEMD320
 
-    * SHA512
-
     * SHA3
+
+    * Skein
 
   The following Elliptic Curves are supported (see BouncyCastle documentation for details)
 

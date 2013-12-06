@@ -116,11 +116,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     private final O theOwner;
 
     /**
-     * The Class for the InfoSet.
-     */
-    private final Class<E> theClass;
-
-    /**
      * The InfoTypes for the InfoSet.
      */
     private final StaticList<I, E> theTypeList;
@@ -156,10 +151,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         theOwner = pOwner;
         theTypeList = pTypeList;
         theInfoList = pInfoList;
-        theClass = theTypeList.getEnumClass();
 
         /* Create the Map */
-        theMap = new EnumMap<E, T>(theClass);
+        theMap = new EnumMap<E, T>(theTypeList.getEnumClass());
     }
 
     /**

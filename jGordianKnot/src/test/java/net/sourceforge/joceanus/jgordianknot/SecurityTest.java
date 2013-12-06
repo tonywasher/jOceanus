@@ -29,12 +29,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
+import java.security.Signature;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.crypto.Mac;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -66,11 +70,13 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
-            listAlgorithms(SecurityProvider.BouncyCastle);
+            // listAlgorithms(SecurityProvider.BC);
+            // checkAlgorithms();
+            testSecurity();
             /* Test zip file creation */
-            File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-            createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-            extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+            // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+            // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
+            // extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();
@@ -344,6 +350,36 @@ public class SecurityTest {
                 System.out.println("            "
                                    + name);
             }
+        }
+    }
+
+    /**
+     * List the supported algorithms
+     */
+    protected static void checkAlgorithms() throws JDataException {
+        /* Create new Password Hash */
+        SecureManager myManager = new SecureManager();
+        SecurityGenerator myGenerator = myManager.getSecurityGenerator();
+
+        /* Create instance of each digest */
+        for (DigestType myDigest : DigestType.values()) {
+            MessageDigest myMsgDigest = myGenerator.accessDigest(myDigest);
+        }
+
+        /* Create instance of each hmac */
+        for (DigestType myDigest : DigestType.values()) {
+            Mac myMac = myGenerator.accessMac(myDigest);
+        }
+
+        /* Create instance of each symmetric key */
+        for (SymKeyType myType : SymKeyType.values()) {
+            SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
+        }
+
+        /* Create instance of each asymmetric key */
+        for (AsymKeyType myType : AsymKeyType.values()) {
+            KeyPair myPair = myGenerator.generateKeyPair(myType);
+            Signature mySig = myGenerator.accessSignature(myType.getSignature());
         }
     }
 }

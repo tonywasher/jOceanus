@@ -21,7 +21,8 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
-import java.security.InvalidAlgorithmParameterException;
+
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -53,7 +54,6 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
-
 /**
  * Generator class for various security primitives.
  * @author Tony Washer
@@ -78,6 +78,11 @@ public class SecurityGenerator {
      * Do we use restricted keys?
      */
     private final boolean useRestricted;
+
+    /**
+     * Do we use long hashes?
+     */
+    private final boolean useLongHash;
 
     /**
      * The Number of cipher steps.
@@ -171,6 +176,7 @@ public class SecurityGenerator {
      * Constructor for explicit provider.
      * @param pProvider the Security provider
      * @param pRestricted do we use restricted security
+     * @param pLongHash use long hash
      * @param pNumCipherSteps the number of cipher steps
      * @param pHashIterations the number of hash iterations
      * @param pSecurityPhrase the security phrase
@@ -178,6 +184,7 @@ public class SecurityGenerator {
      */
     public SecurityGenerator(final SecurityProvider pProvider,
                              final boolean pRestricted,
+                             final boolean pLongHash,
                              final int pNumCipherSteps,
                              final int pHashIterations,
                              final String pSecurityPhrase) throws JDataException {
@@ -190,6 +197,7 @@ public class SecurityGenerator {
 
         /* Store parameters */
         useRestricted = pRestricted;
+        useLongHash = pLongHash;
         theCipherSteps = pNumCipherSteps;
         theIterations = pHashIterations;
         theSecurityPhrase = DataConverter.stringToByteArray(pSecurityPhrase);
@@ -421,7 +429,7 @@ public class SecurityGenerator {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(pDigestType.getAlgorithm(), theProviderName);
+            return MessageDigest.getInstance(pDigestType.getAlgorithm(useLongHash), theProviderName);
 
             /* Catch exceptions */
         } catch (NoSuchProviderException e) {
@@ -443,7 +451,7 @@ public class SecurityGenerator {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
-            return Mac.getInstance(pDigestType.getHMacAlgorithm(), theProviderName);
+            return Mac.getInstance(pDigestType.getHMacAlgorithm(useLongHash), theProviderName);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -470,7 +478,7 @@ public class SecurityGenerator {
             Mac myMac = accessMac(pDigestType);
 
             /* Initialise the MAC */
-            SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getHMacAlgorithm());
+            SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getHMacAlgorithm(useLongHash));
             myMac.init(myKey);
 
             /* Return the initialised MAC */

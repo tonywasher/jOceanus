@@ -29,13 +29,17 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**
  * History snapShot for a bucket.
  * @param <T> the values
+ * @param <E> the enum class
  */
-public class BucketSnapShot<T extends BucketValues<T, ?>>
+public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
         implements JDataContents {
     /**
      * Resource Bundle.
@@ -155,8 +159,16 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * Obtain snapShot.
      * @return the snapShot
      */
-    protected T getSnapShot() {
+    public T getSnapShot() {
         return theSnapShot;
+    }
+
+    /**
+     * Obtain previous SnapShot.
+     * @return the previous snapShot
+     */
+    public T getPrevious() {
+        return thePrevious;
     }
 
     /**
@@ -175,7 +187,7 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      */
     protected BucketSnapShot(final Event pEvent,
                              final T pValues,
-                             final BucketSnapShot<T> pPrevious) {
+                             final T pPrevious) {
         /* Store event details */
         theId = pEvent.getId();
         theEvent = pEvent;
@@ -183,9 +195,7 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
 
         /* Store the snapshot map */
         theSnapShot = pValues.getSnapShot();
-        thePrevious = (pPrevious == null)
-                ? null
-                : pPrevious.getSnapShot();
+        thePrevious = pPrevious;
     }
 
     /**
@@ -194,9 +204,9 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
      * @param pBaseValues the base values
      * @param pPrevious the previous snapShot
      */
-    protected BucketSnapShot(final BucketSnapShot<T> pSnapShot,
+    protected BucketSnapShot(final BucketSnapShot<T, E> pSnapShot,
                              final T pBaseValues,
-                             final BucketSnapShot<T> pPrevious) {
+                             final T pPrevious) {
         /* Store event details */
         theId = pSnapShot.getId();
         theEvent = pSnapShot.getEvent();
@@ -205,25 +215,36 @@ public class BucketSnapShot<T extends BucketValues<T, ?>>
         /* Store the snapshot map */
         theSnapShot = pSnapShot.getNewSnapShot();
         theSnapShot.adjustToBaseValues(pBaseValues);
-        thePrevious = (pPrevious == null)
-                ? null
-                : pPrevious.getSnapShot();
+        thePrevious = pPrevious;
     }
 
     /**
      * Obtain delta snapShot.
+     * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected T getDelta() {
-        /* If we have a previous event */
-        if (thePrevious != null) {
-            /* Allocate new snapShot and adjust */
-            T myDelta = theSnapShot.getSnapShot();
-            myDelta.adjustToBaseValues(thePrevious);
-            return myDelta;
-        }
+    protected JDecimal getDeltaValue(final E pAttr) {
+        /* return the delta value */
+        return theSnapShot.getDeltaValue(thePrevious, pAttr);
+    }
 
-        /* Return the snapShot unchanged */
-        return theSnapShot;
+    /**
+     * Obtain delta snapShot.
+     * @param pAttr the attribute
+     * @return the delta snapShot
+     */
+    protected JMoney getDeltaMoneyValue(final E pAttr) {
+        /* return the delta value */
+        return theSnapShot.getDeltaMoneyValue(thePrevious, pAttr);
+    }
+
+    /**
+     * Obtain delta snapShot.
+     * @param pAttr the attribute
+     * @return the delta snapShot
+     */
+    protected JUnits getDeltaUnitsValue(final E pAttr) {
+        /* return the delta value */
+        return theSnapShot.getDeltaUnitsValue(thePrevious, pAttr);
     }
 }

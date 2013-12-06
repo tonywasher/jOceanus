@@ -215,11 +215,6 @@ public class MaintNewYear
     private static final int COLUMN_CREDIT = 5;
 
     /**
-     * Date column width.
-     */
-    private static final int WIDTH_DATE = 80;
-
-    /**
      * Description column width.
      */
     private static final int WIDTH_DESC = 150;
