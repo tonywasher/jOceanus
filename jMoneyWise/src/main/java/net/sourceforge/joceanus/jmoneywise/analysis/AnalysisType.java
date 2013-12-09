@@ -20,16 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.ui.controls;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 
 /**
  * Analysis Types.

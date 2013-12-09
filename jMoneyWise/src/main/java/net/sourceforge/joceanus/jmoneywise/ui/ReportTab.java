@@ -46,6 +46,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
@@ -54,7 +56,9 @@ import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 import org.w3c.dom.Document;
@@ -199,6 +203,9 @@ public class ReportTab
 
         /* Add listener to data */
         theView.addChangeListener(myListener);
+
+        /* Add listener to manager */
+        theManager.addActionListener(myListener);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -420,10 +427,27 @@ public class ReportTab
 
         @Override
         public void actionPerformed(final ActionEvent evt) {
-            /* If this is the error panel */
-            if (theSelect.equals(evt.getSource())) {
+            Object o = evt.getSource();
+
+            /* If this is the selection panel */
+            if (theSelect.equals(o)) {
                 /* Print the report */
                 printIt();
+            }
+
+            /* If this is the report manager */
+            if (theManager.equals(o)
+                && (evt instanceof ActionDetailEvent)) {
+                ActionDetailEvent myEvent = (ActionDetailEvent) evt;
+                if (myEvent.getSubId() == ReportManager.ACTION_VIEWFILTER) {
+                    /* Create the details of the report */
+                    JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
+                    AnalysisFilter<?> myFilter = myEvent.getDetails(AnalysisFilter.class);
+                    StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
+
+                    /* Request the action */
+                    fireActionEvent(MainTab.ACTION_VIEWSTATEMENT, myStatement);
+                }
             }
         }
     }

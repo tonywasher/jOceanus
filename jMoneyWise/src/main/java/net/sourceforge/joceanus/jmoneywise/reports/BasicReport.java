@@ -26,6 +26,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
 import org.w3c.dom.Document;
@@ -63,21 +64,23 @@ public abstract class BasicReport {
     /**
      * Process a filter.
      * @param pSource the filter source
+     * @return the AnalysisFilter or null
      */
-    protected void processFilter(final Object pSource) {
+    protected AnalysisFilter<?> processFilter(final Object pSource) {
+        return null;
     }
 
     /**
      * Process a filtered reference.
      * @param pReference the reference
+     * @return the filter (or null)
      */
-    protected void processFilterReference(final String pReference) {
+    protected AnalysisFilter<?> processFilterReference(final String pReference) {
         /* Lookup the filter */
         Object mySource = theFilterMap.get(pReference);
-        if (mySource != null) {
-            /* Process the filter */
-            processFilter(mySource);
-        }
+        return (mySource != null)
+                ? processFilter(mySource)
+                : null;
     }
 
     /**

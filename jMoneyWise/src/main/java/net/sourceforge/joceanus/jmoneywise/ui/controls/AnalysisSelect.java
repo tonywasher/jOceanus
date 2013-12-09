@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AccountFilter;
@@ -201,6 +202,11 @@ public class AnalysisSelect
      * The card layout.
      */
     private final CardLayout theLayout;
+
+    /**
+     * Is the control refreshing?
+     */
+    private boolean isRefreshing = false;
 
     /**
      * Select panel map.
@@ -388,10 +394,45 @@ public class AnalysisSelect
     }
 
     /**
+     * Select Statement.
+     * @param pSelect the selection
+     */
+    public void selectStatement(final StatementSelect pSelect) {
+        /* Set refreshing flag */
+        isRefreshing = true;
+
+        /* Update the range */
+        JDateDayRangeSelect mySelect = pSelect.getRangeSelect();
+        theRangeSelect.setSelection(mySelect);
+        theRangeSelect.lockPeriod(false);
+
+        /* Update analysis for filter panels */
+        setAnalysis(mySelect.getRange());
+
+        /* Access the filter and the selection panel */
+        AnalysisFilter<?> myFilter = pSelect.getFilter();
+        AnalysisType myType = myFilter.getAnalysisType();
+        AnalysisFilterSelection myPanel = theMap.get(myType);
+
+        /* Move correct card to front and update it */
+        theLayout.show(theCardPanel, myType.name());
+        myPanel.setFilter(myFilter);
+
+        /* Determine the state */
+        theState.determineState(theRangeSelect, myPanel);
+
+        /* Clear refreshing flag */
+        isRefreshing = false;
+    }
+
+    /**
      * Refresh data.
      * @param pView the view
      */
     public void refreshData(final View pView) {
+        /* Set refreshing flag */
+        isRefreshing = true;
+
         /* Access the analysis manager */
         theManager = pView.getAnalysisManager();
 
@@ -400,21 +441,25 @@ public class AnalysisSelect
         theRangeSelect.setOverallRange(myRange);
 
         /* Update the filter selection */
-        setAnalysis();
+        setAnalysis(getRange());
+        checkType();
+
+        /* Clear refreshing flag */
+        isRefreshing = false;
     }
 
     /**
      * Declare analysis.
+     * @param pRange the range
      */
-    private void setAnalysis() {
+    private void setAnalysis(final JDateDayRange pRange) {
         /* Update the filter selection */
-        theAnalysis = theManager.getAnalysis(getRange());
+        theAnalysis = theManager.getAnalysis(pRange);
         theAccountSelect.setAnalysis(theAnalysis);
         theSecuritySelect.setAnalysis(theAnalysis);
         theEventSelect.setAnalysis(theAnalysis);
         thePayeeSelect.setAnalysis(theAnalysis);
         theTaxBasisSelect.setAnalysis(theAnalysis);
-        checkType();
     }
 
     /**
@@ -631,12 +676,18 @@ public class AnalysisSelect
 
         @Override
         public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Ignore if we are refreshing */
+            if (isRefreshing) {
+                return;
+            }
+
             /* If this is the range select panel */
             if (theRangeSelect.equals(pEvent.getSource())) {
                 /* If we have a change to the range */
                 if (theState.setRange(theRangeSelect)) {
                     /* Declare new analysis */
-                    setAnalysis();
+                    setAnalysis(getRange());
+                    checkType();
                     theState.applyState();
                     fireStateChanged();
                 }
@@ -645,6 +696,11 @@ public class AnalysisSelect
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
+            /* Ignore if we are refreshing */
+            if (isRefreshing) {
+                return;
+            }
+
             /* Obtain source */
             Object o = pEvent.getSource();
 
@@ -869,6 +925,21 @@ public class AnalysisSelect
         }
 
         /**
+         * Determine selection from panels.
+         * @param pSelect the range selection panel
+         * @param pFilter selection panel
+         */
+        private void determineState(final JDateDayRangeSelect pSelect,
+                                    final AnalysisFilterSelection pFilter) {
+            /* Update the selection panels */
+            theRange = theRangeSelect.getRange();
+            theFilter = pFilter.getFilter();
+            theType = theFilter.getAnalysisType();
+            theBucket = theFilter.getCurrentAttribute();
+            applyState();
+        }
+
+        /**
          * Set new Range from select panel.
          * @param pSelect the selection panel
          * @return true/false did a change occur
@@ -933,6 +1004,49 @@ public class AnalysisSelect
             theBucketButton.setText((theBucket == null)
                     ? null
                     : theBucket.toString());
+        }
+    }
+
+    /**
+     * The Filter state class.
+     */
+    public static final class StatementSelect {
+        /**
+         * The Range Selection.
+         */
+        private final JDateDayRangeSelect theRangeSelect;
+
+        /**
+         * The AnalysisFilter.
+         */
+        private final AnalysisFilter<?> theFilter;
+
+        /**
+         * Obtain the RangeSelection.
+         * @return the filter
+         */
+        public JDateDayRangeSelect getRangeSelect() {
+            return theRangeSelect;
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        public AnalysisFilter<?> getFilter() {
+            return theFilter;
+        }
+
+        /**
+         * Constructor.
+         * @param pRangeSelect the range selection
+         * @param pFilter the analysis filter
+         */
+        public StatementSelect(final JDateDayRangeSelect pRangeSelect,
+                               final AnalysisFilter<?> pFilter) {
+            /* Store parameters */
+            theRangeSelect = pRangeSelect;
+            theFilter = pFilter;
         }
     }
 }

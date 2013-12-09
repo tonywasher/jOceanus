@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jsvnmanager.threads.SubversionBackup;
@@ -61,24 +62,14 @@ import net.sourceforge.joceanus.jsvnmanager.threads.SubversionRestore;
 public class MainTab
         extends MainWindow<FinanceData> {
     /**
-     * Add pattern action event.
+     * View Statement.
      */
-    protected static final int ACTION_ADDPATTERN = ActionEvent.ACTION_PERFORMED + 1;
+    protected static final int ACTION_VIEWSTATEMENT = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
      * View Register.
      */
-    protected static final int ACTION_VIEWREGISTER = ACTION_ADDPATTERN + 1;
-
-    /**
-     * View Account.
-     */
-    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
-
-    /**
-     * Maintain Account.
-     */
-    protected static final int ACTION_MAINTACCOUNT = ACTION_VIEWACCOUNT + 1;
+    protected static final int ACTION_VIEWREGISTER = ACTION_VIEWSTATEMENT + 1;
 
     /**
      * Resource Bundle.
@@ -283,6 +274,7 @@ public class MainTab
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
         theRegister.addActionListener(myListener);
+        theReportTab.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
 
@@ -411,14 +403,12 @@ public class MainTab
     }
 
     /**
-     * Select an explicit account and period.
-     * @param pAccount the account
-     * @param pSource the range
+     * Select a Statement.
+     * @param pSelect the statement request
      */
-    private void selectAccount(final Account pAccount,
-                               final JDateDayRangeSelect pSource) {
-        /* Pass through to the Account control */
-        // theAccountCtl.selectAccount(pAccount, pSource);
+    private void selectStatement(final StatementSelect pSelect) {
+        /* Pass through to the Statement view */
+        theStatement.selectStatement(pSelect);
 
         /* Goto the Accounts tab */
         gotoNamedTab(TITLE_STATEMENT);
@@ -434,30 +424,6 @@ public class MainTab
 
         /* Goto the Register tab */
         gotoNamedTab(TITLE_REGISTER);
-    }
-
-    /**
-     * Select an explicit account for maintenance.
-     * @param pAccount the account
-     */
-    private void selectAccountMaint(final Account pAccount) {
-        /* Pass through to the Account control */
-        theMaint.selectAccount(pAccount);
-
-        /* Goto the Accounts tab */
-        gotoNamedTab(TITLE_MAINT);
-    }
-
-    /**
-     * Add a pattern from an event.
-     * @param pEvent the base event
-     */
-    private void addPattern(final Event pEvent) {
-        /* Add the pattern */
-        // theAccountCtl.addPattern(pEvent);
-
-        /* Change focus to the account */
-        gotoNamedTab(TITLE_STATEMENT);
     }
 
     /**
@@ -607,33 +573,20 @@ public class MainTab
             if (e instanceof ActionDetailEvent) {
                 /* Access event and obtain details */
                 ActionDetailEvent evt = (ActionDetailEvent) e;
-                Object o = evt.getDetails();
-                if (o instanceof ActionRequest) {
-                    ActionRequest myReq = (ActionRequest) o;
-                    switch (evt.getSubId()) {
-                    /* Add the requested pattern */
-                        case ACTION_ADDPATTERN:
-                            selectAccount(myReq.getAccount(), myReq.getRange());
-                            addPattern(myReq.getEvent());
-                            break;
+                switch (evt.getSubId()) {
+                /* View the requested register */
+                    case ACTION_VIEWREGISTER:
+                        ActionRequest myReq = evt.getDetails(ActionRequest.class);
+                        selectRegister(myReq.getRange());
+                        break;
 
-                        /* View the requested register */
-                        case ACTION_VIEWREGISTER:
-                            selectRegister(myReq.getRange());
-                            break;
-
-                        /* View the requested account */
-                        case ACTION_VIEWACCOUNT:
-                            selectAccount(myReq.getAccount(), myReq.getRange());
-                            break;
-
-                        /* Maintain the requested account */
-                        case ACTION_MAINTACCOUNT:
-                            selectAccountMaint(myReq.getAccount());
-                            break;
-                        default:
-                            break;
-                    }
+                    /* View the requested statement */
+                    case ACTION_VIEWSTATEMENT:
+                        StatementSelect mySelect = evt.getDetails(StatementSelect.class);
+                        selectStatement(mySelect);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

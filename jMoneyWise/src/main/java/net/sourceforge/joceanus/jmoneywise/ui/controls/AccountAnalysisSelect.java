@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.Accoun
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AccountFilter;
 
 /**
@@ -223,6 +224,25 @@ public class AccountAnalysisSelect
         /* Set the account */
         theState.setAccount(myAccount);
         theState.applyState();
+    }
+
+    @Override
+    public void setFilter(final AnalysisFilter<?> pFilter) {
+        /* If this is the correct filter type */
+        if (pFilter instanceof AccountFilter) {
+            /* Access filter */
+            AccountFilter myFilter = (AccountFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            AccountBucket myAccount = myFilter.getBucket();
+
+            /* Obtain equivalent bucket */
+            myAccount = theAccounts.findItemById(myAccount.getOrderedId());
+
+            /* Set the account */
+            theState.setAccount(myAccount);
+            theState.applyState();
+        }
     }
 
     /**

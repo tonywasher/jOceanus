@@ -23,11 +23,19 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
@@ -50,7 +58,47 @@ import net.sourceforge.joceanus.jmoneywise.data.EventGroup;
  * Analysis Filter Classes.
  * @param <T> the attribute for the filter
  */
-public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
+public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
+        implements JDataContents {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisFilter.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Bucket Field Id.
+     */
+    private static final JDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBucket"));
+
+    /**
+     * Attribute Field Id.
+     */
+    private static final JDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAttr"));
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ATTR.equals(pField)) {
+            return theAttr;
+        }
+        /* Unknown */
+        return JDataFieldValue.UNKNOWN;
+    }
+
+    @Override
+    public String formatObject() {
+        return getName();
+    }
+
     /**
      * The Current Attribute.
      */
@@ -76,6 +124,12 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
     public T getCurrentAttribute() {
         return theAttr;
     }
+
+    /**
+     * Get Analysis Type.
+     * @return the Analysis Type
+     */
+    public abstract AnalysisType getAnalysisType();
 
     /**
      * Constructor.
@@ -126,9 +180,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      * @param pEvent the event to check
      * @return true/false
      */
-    protected boolean filterSingleEvent(final Event pEvent) {
+    private boolean filterSingleEvent(final Event pEvent) {
         /* Check whether this event is registered */
-        return getValuesForEvent(pEvent) == null;
+        return !pEvent.isHeader()
+               && getValuesForEvent(pEvent) == null;
     }
 
     /**
@@ -166,8 +221,34 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      * @return the value
      */
     public JDecimal getBalanceForEvent(final Event pEvent) {
-        BucketValues<?, T> myValues = getValuesForEvent(pEvent);
-        return myValues.getDecimalValue(getCurrentAttribute());
+        /* If this is a split event */
+        if (pEvent.isSplit()) {
+            /* Access the group */
+            EventList myList = (EventList) pEvent.getList();
+            EventGroup<Event> myGroup = myList.getGroup(pEvent);
+
+            /* Initialise return value */
+            JDecimal myBalance = null;
+
+            /* Loop through the elements */
+            Iterator<Event> myIterator = myGroup.iterator();
+            while (myIterator.hasNext()) {
+                Event myEvent = myIterator.next();
+
+                /* Access Balance for event */
+                JDecimal myValue = getSingleBalanceForEvent(myEvent);
+                if (myValue != null) {
+                    /* Record as value */
+                    myBalance = myValue;
+                }
+            }
+
+            /* Return the balance */
+            return myBalance;
+        }
+
+        /* Obtain single event value */
+        return getSingleBalanceForEvent(pEvent);
     }
 
     /**
@@ -176,7 +257,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      * @return the value
      */
     public JDecimal getDebitForEvent(final Event pEvent) {
-        JDecimal myValue = getDeltaForEvent(pEvent);
+        JDecimal myValue = getDeltaValueForEvent(pEvent);
         if (myValue != null) {
             if (myValue.isPositive()
                 || myValue.isZero()) {
@@ -196,11 +277,87 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
      * @return the value
      */
     public JDecimal getCreditForEvent(final Event pEvent) {
-        JDecimal myValue = getDeltaForEvent(pEvent);
-        return (myValue != null)
-               && myValue.isPositive()
+        JDecimal myValue = getDeltaValueForEvent(pEvent);
+        return ((myValue != null)
+                && myValue.isPositive() && myValue.isNonZero())
                 ? myValue
                 : null;
+    }
+
+    /**
+     * Obtain delta debit value for attribute.
+     * @param pEvent the event to check
+     * @return the value
+     */
+    private JDecimal getDeltaValueForEvent(final Event pEvent) {
+        /* If this is a split event */
+        if (pEvent.isSplit()) {
+            /* Access the group */
+            EventList myList = (EventList) pEvent.getList();
+            EventGroup<Event> myGroup = myList.getGroup(pEvent);
+
+            /* Initialise return value */
+            JDecimal myTotal = null;
+
+            /* Loop through the elements */
+            Iterator<Event> myIterator = myGroup.iterator();
+            while (myIterator.hasNext()) {
+                Event myEvent = myIterator.next();
+
+                /* Access Delta for event */
+                JDecimal myDelta = getDeltaForEvent(myEvent);
+                if (myDelta != null) {
+                    /* If this is the first value */
+                    if (myTotal == null) {
+                        /* Record as value */
+                        myTotal = myDelta;
+
+                        /* else need to add values */
+                    } else {
+                        /* add values appropriately */
+                        myTotal = addDecimals(myTotal, myDelta);
+                    }
+                }
+            }
+
+            /* Return the total */
+            return myTotal;
+        }
+
+        /* Obtain single event value */
+        return getDeltaForEvent(pEvent);
+    }
+
+    /**
+     * Add decimal values.
+     * @param pFirst the first decimal
+     * @param pSecond the second decimal
+     * @return the sum
+     */
+    private JDecimal addDecimals(final JDecimal pFirst,
+                                 final JDecimal pSecond) {
+        switch (theAttr.getDataType()) {
+            case MONEY:
+                ((JMoney) pFirst).addAmount((JMoney) pSecond);
+                return pFirst;
+            case UNITS:
+                ((JUnits) pFirst).addUnits((JUnits) pSecond);
+                return pFirst;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain total money value for attribute.
+     * @param pEvent the event to check
+     * @return the value
+     */
+    private JDecimal getSingleBalanceForEvent(final Event pEvent) {
+        BucketValues<?, T> myValues = getValuesForEvent(pEvent);
+        return (myValues == null)
+                ? null
+                : myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
@@ -220,8 +377,30 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         private final AccountBucket theAccount;
 
         @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return theAccount;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public AccountBucket getBucket() {
+            return theAccount;
+        }
+
+        @Override
         public String getName() {
             return theAccount.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.ACCOUNT;
         }
 
         /**
@@ -232,6 +411,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
             /* Store parameter */
             super(AccountAttribute.class);
             theAccount = pAccount;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
@@ -261,8 +441,30 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         private final SecurityBucket theSecurity;
 
         @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return theSecurity;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public SecurityBucket getBucket() {
+            return theSecurity;
+        }
+
+        @Override
         public String getName() {
             return theSecurity.getDecoratedName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.SECURITY;
         }
 
         /**
@@ -273,6 +475,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
             /* Store parameter */
             super(SecurityAttribute.class);
             theSecurity = pSecurity;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
@@ -302,8 +505,30 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         private final PayeeBucket thePayee;
 
         @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return thePayee;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public PayeeBucket getBucket() {
+            return thePayee;
+        }
+
+        @Override
         public String getName() {
             return thePayee.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.PAYEE;
         }
 
         /**
@@ -314,6 +539,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
             /* Store parameter */
             super(PayeeAttribute.class);
             thePayee = pPayee;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
@@ -343,8 +569,30 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         private final EventCategoryBucket theCategory;
 
         @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return theCategory;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public EventCategoryBucket getBucket() {
+            return theCategory;
+        }
+
+        @Override
         public String getName() {
             return theCategory.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.CATEGORY;
         }
 
         /**
@@ -355,6 +603,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
             /* Store parameter */
             super(EventAttribute.class);
             theCategory = pCategory;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override
@@ -384,8 +633,30 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
         private final TaxBasisBucket theTaxBasis;
 
         @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_BUCKET.equals(pField)) {
+                return theTaxBasis;
+            }
+            /* Unknown */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public TaxBasisBucket getBucket() {
+            return theTaxBasis;
+        }
+
+        @Override
         public String getName() {
             return theTaxBasis.getName();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.TAXBASIS;
         }
 
         /**
@@ -396,6 +667,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute> {
             /* Store parameter */
             super(TaxBasisAttribute.class);
             theTaxBasis = pTaxBasis;
+            setCurrentAttribute(getAnalysisType().getDefaultValue());
         }
 
         @Override

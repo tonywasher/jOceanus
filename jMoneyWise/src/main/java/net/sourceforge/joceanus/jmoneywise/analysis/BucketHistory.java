@@ -112,6 +112,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
                             final JDateDay pDate) {
         /* Copy the base values */
         theBaseValues = pHistory.getBaseValues().getSnapShot();
+        theLastValues = theBaseValues;
 
         /* Record latest event */
         BucketSnapShot<T, E> myLatest = null;
@@ -127,8 +128,10 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
                 break;
             }
 
-            /* The event is relevant so add to the map */
-            put(myEntry.getKey(), myEvent);
+            /* Add to the map */
+            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myEvent, theBaseValues, theLastValues);
+            theLastValues = myNewEvent.getSnapShot();
+            put(myEntry.getKey(), myNewEvent);
 
             /* Store latest value */
             myLatest = myEvent;

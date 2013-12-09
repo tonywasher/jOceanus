@@ -680,15 +680,8 @@ public final class PayeeBucket
      * Calculate delta.
      */
     private void calculateDelta() {
-        /* Obtain a copy of the value */
-        JMoney myDelta = getNewIncome();
-
-        /* Subtract the expense value */
-        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.EXPENSE);
-        myDelta.subtractAmount(myExpense);
-
-        /* Set the delta */
-        setValue(PayeeAttribute.DELTA, myDelta);
+        /* Calculate delta for the values */
+        theValues.calculateDelta();
     }
 
     /**
@@ -741,6 +734,7 @@ public final class PayeeBucket
             /* Adjust income/expense values */
             adjustMoneyToBase(pBase, PayeeAttribute.INCOME);
             adjustMoneyToBase(pBase, PayeeAttribute.EXPENSE);
+            calculateDelta();
         }
 
         @Override
@@ -748,6 +742,23 @@ public final class PayeeBucket
             /* Reset Income and expense values */
             put(PayeeAttribute.INCOME, new JMoney());
             put(PayeeAttribute.EXPENSE, new JMoney());
+            put(PayeeAttribute.DELTA, new JMoney());
+        }
+
+        /**
+         * Calculate delta.
+         */
+        private void calculateDelta() {
+            /* Obtain a copy of the value */
+            JMoney myDelta = getMoneyValue(PayeeAttribute.INCOME);
+            myDelta = new JMoney(myDelta);
+
+            /* Subtract the expense value */
+            JMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
+            myDelta.subtractAmount(myExpense);
+
+            /* Set the delta */
+            put(PayeeAttribute.DELTA, myDelta);
         }
 
         /**

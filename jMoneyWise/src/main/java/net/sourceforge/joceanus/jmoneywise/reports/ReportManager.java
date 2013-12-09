@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.reports;
 
+import java.awt.event.ActionEvent;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,7 +48,13 @@ import org.w3c.dom.Node;
  * Provides functionality to hide and restore sections of an HTML document. This is useful for displaying HTML documents in a jEditorPane, allowing a click to
  * open/close sections of the document.
  */
-public class ReportManager {
+public class ReportManager
+        extends JEventObject {
+    /**
+     * View Filter statement action event.
+     */
+    public static final int ACTION_VIEWFILTER = ActionEvent.ACTION_PERFORMED + 1;
+
     /**
      * The id attribute.
      */
@@ -168,7 +177,14 @@ public class ReportManager {
                 /* else if this is a filter reference */
             } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
                 /* Process the filter reference */
-                theReport.processFilterReference(pId);
+                AnalysisFilter<?> myFilter = theReport.processFilterReference(pId);
+
+                /* Fire Action event if necessary */
+                if (myFilter != null) {
+                    fireActionEvent(ACTION_VIEWFILTER, myFilter);
+                }
+
+                /* Return immediately */
                 return;
             }
         } catch (JDataException e) {

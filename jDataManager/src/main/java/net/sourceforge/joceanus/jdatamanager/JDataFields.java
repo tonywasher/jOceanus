@@ -423,7 +423,7 @@ public class JDataFields {
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
             /* Declare a field for the value */
-            JDataField myField = pAnchor.declareLocalField(myValue.name());
+            JDataField myField = pAnchor.declareLocalField(myValue.toString());
 
             /* Add to the map */
             myMap.put(myField, myValue);

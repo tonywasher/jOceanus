@@ -45,6 +45,9 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AccountFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -355,9 +358,17 @@ public class BalanceSheet
     }
 
     @Override
-    protected void processFilter(final Object pSource) {
-        /* Create the new filter */
-        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        // myFilter.setFilter(pSource);
+    protected AnalysisFilter<?> processFilter(final Object pSource) {
+        /* If this is an AccountBucket */
+        if (pSource instanceof AccountBucket) {
+            /* Create the new filter */
+            return new AccountFilter((AccountBucket) pSource);
+        }
+        /* If this is a SecurityBucket */
+        if (pSource instanceof SecurityBucket) {
+            /* Create the new filter */
+            return new SecurityFilter((SecurityBucket) pSource);
+        }
+        return null;
     }
 }

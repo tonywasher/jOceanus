@@ -632,15 +632,8 @@ public final class EventCategoryBucket
      * Calculate Income delta.
      */
     protected void calculateDelta() {
-        /* Obtain a copy of the value */
-        JMoney myDelta = getNewIncome();
-
-        /* Subtract the expense value */
-        JMoney myExpense = theValues.getMoneyValue(EventAttribute.EXPENSE);
-        myDelta.subtractAmount(myExpense);
-
-        /* Set the delta */
-        setValue(EventAttribute.DELTA, myDelta);
+        /* Calculate delta for the values */
+        theValues.calculateDelta();
     }
 
     /**
@@ -712,6 +705,23 @@ public final class EventCategoryBucket
             /* Adjust income/expense values */
             adjustMoneyToBase(pBase, EventAttribute.INCOME);
             adjustMoneyToBase(pBase, EventAttribute.EXPENSE);
+            calculateDelta();
+        }
+
+        /**
+         * Calculate delta.
+         */
+        private void calculateDelta() {
+            /* Obtain a copy of the value */
+            JMoney myDelta = getMoneyValue(EventAttribute.INCOME);
+            myDelta = new JMoney(myDelta);
+
+            /* Subtract the expense value */
+            JMoney myExpense = getMoneyValue(EventAttribute.EXPENSE);
+            myDelta.subtractAmount(myExpense);
+
+            /* Set the delta */
+            put(EventAttribute.DELTA, myDelta);
         }
 
         @Override
@@ -719,6 +729,7 @@ public final class EventCategoryBucket
             /* Reset Income and expense values */
             put(EventAttribute.INCOME, new JMoney());
             put(EventAttribute.EXPENSE, new JMoney());
+            put(EventAttribute.DELTA, new JMoney());
         }
 
         /**

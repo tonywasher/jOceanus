@@ -150,6 +150,14 @@ public class ReportSelect
     }
 
     /**
+     * Obtain the date range selection control.
+     * @return the date range selection
+     */
+    public JDateDayRangeSelect getDateRangeSelect() {
+        return theRangeSelect;
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      */
@@ -396,6 +404,7 @@ public class ReportSelect
                     theRangeSelect.setPeriod(isPointInTime
                             ? JDatePeriod.FISCALYEAR
                             : JDatePeriod.DATESUPTO);
+                    theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
                 } else if (theType == ReportType.TAXCALC) {

@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 
 /**
@@ -180,6 +181,25 @@ public class EventCategoryAnalysisSelect
         /* Set the payee */
         theState.setEventCategory(myCategory);
         theState.applyState();
+    }
+
+    @Override
+    public void setFilter(final AnalysisFilter<?> pFilter) {
+        /* If this is the correct filter type */
+        if (pFilter instanceof EventCategoryFilter) {
+            /* Access filter */
+            EventCategoryFilter myFilter = (EventCategoryFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            EventCategoryBucket myCategory = myFilter.getBucket();
+
+            /* Obtain equivalent bucket */
+            myCategory = theCategories.findItemById(myCategory.getOrderedId());
+
+            /* Set the category */
+            theState.setEventCategory(myCategory);
+            theState.applyState();
+        }
     }
 
     /**

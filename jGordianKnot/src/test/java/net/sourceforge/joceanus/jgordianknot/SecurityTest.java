@@ -29,16 +29,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.KeyPair;
-import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
-import java.security.Signature;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.crypto.Mac;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -363,23 +359,23 @@ public class SecurityTest {
 
         /* Create instance of each digest */
         for (DigestType myDigest : DigestType.values()) {
-            MessageDigest myMsgDigest = myGenerator.accessDigest(myDigest);
+            myGenerator.accessDigest(myDigest);
         }
 
         /* Create instance of each hmac */
         for (DigestType myDigest : DigestType.values()) {
-            Mac myMac = myGenerator.accessMac(myDigest);
+            myGenerator.accessMac(myDigest);
         }
 
         /* Create instance of each symmetric key */
         for (SymKeyType myType : SymKeyType.values()) {
-            SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
+            myGenerator.generateSymmetricKey(myType);
         }
 
         /* Create instance of each asymmetric key */
         for (AsymKeyType myType : AsymKeyType.values()) {
-            KeyPair myPair = myGenerator.generateKeyPair(myType);
-            Signature mySig = myGenerator.accessSignature(myType.getSignature());
+            myGenerator.generateKeyPair(myType);
+            myGenerator.accessSignature(myType.getSignature());
         }
     }
 }

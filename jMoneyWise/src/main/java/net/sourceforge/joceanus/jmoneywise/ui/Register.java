@@ -81,7 +81,6 @@ import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.ui.MainTab.ActionRequest;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
@@ -1313,15 +1312,15 @@ public class Register
             Account myAccount = theView.getData().getAccounts().findItemByName(myName);
 
             /* If this is an account view request */
-            if (myCmd.compareTo(POPUP_VIEW) == 0) {
-                /* Switch view */
-                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(myAccount, theSelect));
+            // if (myCmd.compareTo(POPUP_VIEW) == 0) {
+            /* Switch view */
+            // fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(myAccount, theSelect));
 
-                /* If this is an account maintenance request */
-            } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
-                /* Switch view */
-                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(myAccount));
-            }
+            /* If this is an account maintenance request */
+            // } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
+            /* Switch view */
+            // fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(myAccount));
+            // }
         }
     }
 

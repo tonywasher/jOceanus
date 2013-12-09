@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,9 +137,12 @@ public class CashFlow
     }
 
     @Override
-    protected void processFilter(final Object pSource) {
-        /* Create the new filter */
-        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        // myFilter.setFilter(pSource);
+    protected PayeeFilter processFilter(final Object pSource) {
+        /* If this is an PayeeBucket */
+        if (pSource instanceof PayeeBucket) {
+            /* Create the new filter */
+            return new PayeeFilter((PayeeBucket) pSource);
+        }
+        return null;
     }
 }

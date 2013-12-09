@@ -80,6 +80,16 @@ public class ActionDetailEvent
     }
 
     /**
+     * Obtain the details.
+     * @param pClass the class of the details
+     * @param <T> the details class
+     * @return the details
+     */
+    public <T> T getDetails(final Class<T> pClass) {
+        return pClass.cast(theDetails);
+    }
+
+    /**
      * Constructor.
      * @param pSource the source of the event
      * @param pId the id of the event

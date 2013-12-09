@@ -39,4 +39,10 @@ public interface AnalysisFilterSelection {
      * @return the filter
      */
     AnalysisFilter<?> getFilter();
+
+    /**
+     * Set analysis filter.
+     * @param pFilter the filter
+     */
+    void setFilter(final AnalysisFilter<?> pFilter);
 }

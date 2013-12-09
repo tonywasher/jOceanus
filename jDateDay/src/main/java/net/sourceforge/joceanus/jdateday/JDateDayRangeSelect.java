@@ -407,7 +407,8 @@ public class JDateDayRangeSelect
         /* Determine state */
         boolean isAdjust = theState.isAdjustable();
         boolean isCustom = theState.isCustom();
-        boolean isUpTo = theState.isUpTo();
+        boolean isUpTo = theState.isUpTo()
+                         && theState.isLocked();
         boolean isFull = theState.isFull();
 
         /* Lock/Unlock the components */
@@ -903,7 +904,7 @@ public class JDateDayRangeSelect
             theEndButton.setLatestDateDay(theFinalDate);
 
             /* Create the range */
-            theRange = new JDateDayRange(theStartDate, (useStartButtonForPeriod)
+            theRange = new JDateDayRange(theFirstDate, (useStartButtonForPeriod)
                     ? theStartDate
                     : theEndDate);
         }

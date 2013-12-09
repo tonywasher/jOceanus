@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -132,9 +133,12 @@ public class TaxationBasis
     }
 
     @Override
-    protected void processFilter(final Object pSource) {
-        /* Create the new filter */
-        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        // myFilter.setFilter(pSource);
+    protected TaxBasisFilter processFilter(final Object pSource) {
+        /* If this is a TaxBasisBucket */
+        if (pSource instanceof TaxBasisBucket) {
+            /* Create the new filter */
+            return new TaxBasisFilter((TaxBasisBucket) pSource);
+        }
+        return null;
     }
 }

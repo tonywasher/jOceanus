@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 
 /**
@@ -175,6 +176,25 @@ public class TaxBasisAnalysisSelect
         /* Set the basis */
         theState.setTaxBasis(myBasis);
         theState.applyState();
+    }
+
+    @Override
+    public void setFilter(final AnalysisFilter<?> pFilter) {
+        /* If this is the correct filter type */
+        if (pFilter instanceof TaxBasisFilter) {
+            /* Access filter */
+            TaxBasisFilter myFilter = (TaxBasisFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            TaxBasisBucket myTaxBasis = myFilter.getBucket();
+
+            /* Obtain equivalent bucket */
+            myTaxBasis = theTaxBases.findItemById(myTaxBasis.getOrderedId());
+
+            /* Set the taxBasis */
+            theState.setTaxBasis(myTaxBasis);
+            theState.applyState();
+        }
     }
 
     /**

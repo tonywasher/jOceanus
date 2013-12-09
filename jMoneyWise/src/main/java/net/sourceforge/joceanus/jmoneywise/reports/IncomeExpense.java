@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCat
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -205,9 +206,12 @@ public class IncomeExpense
     }
 
     @Override
-    protected void processFilter(final Object pSource) {
-        /* Create the new filter */
-        // EventFilter myFilter = new EventFilter(theAnalysis.getData());
-        // myFilter.setFilter(pSource);
+    protected EventCategoryFilter processFilter(final Object pSource) {
+        /* If this is an EventCategoryBucket */
+        if (pSource instanceof EventCategoryBucket) {
+            /* Create the new filter */
+            return new EventCategoryFilter((EventCategoryBucket) pSource);
+        }
+        return null;
     }
 }

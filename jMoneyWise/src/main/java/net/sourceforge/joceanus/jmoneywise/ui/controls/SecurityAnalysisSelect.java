@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBuc
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 
 /**
@@ -219,6 +220,25 @@ public class SecurityAnalysisSelect
         /* Set the security */
         theState.setSecurity(mySecurity);
         theState.applyState();
+    }
+
+    @Override
+    public void setFilter(final AnalysisFilter<?> pFilter) {
+        /* If this is the correct filter type */
+        if (pFilter instanceof SecurityFilter) {
+            /* Access filter */
+            SecurityFilter myFilter = (SecurityFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            SecurityBucket mySecurity = myFilter.getBucket();
+
+            /* Obtain equivalent bucket */
+            mySecurity = theSecurities.findItemById(mySecurity.getOrderedId());
+
+            /* Set the security */
+            theState.setSecurity(mySecurity);
+            theState.applyState();
+        }
     }
 
     /**

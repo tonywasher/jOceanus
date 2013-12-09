@@ -1,5 +1,4 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
  * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +20,8 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
+
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -55,6 +56,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
@@ -67,6 +69,56 @@ public class AnalysisStatement
      * Serial Id.
      */
     private static final long serialVersionUID = -8054491530459145911L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AnalysisStatement.class.getName());
+
+    /**
+     * Date Column Title.
+     */
+    private static final String TITLE_DATE = NLS_BUNDLE.getString("TitleDate");
+
+    /**
+     * Category Column Title.
+     */
+    private static final String TITLE_CAT = NLS_BUNDLE.getString("TitleCategory");
+
+    /**
+     * Description Column Title.
+     */
+    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+
+    /**
+     * Debit Column Title.
+     */
+    private static final String TITLE_DEBIT = NLS_BUNDLE.getString("TitleDebit");
+
+    /**
+     * Credit Column Title.
+     */
+    private static final String TITLE_CREDIT = NLS_BUNDLE.getString("TitleCredit");
+
+    /**
+     * Debited Column Title.
+     */
+    private static final String TITLE_DEBITED = NLS_BUNDLE.getString("TitleDebited");
+
+    /**
+     * Credited Column Title.
+     */
+    private static final String TITLE_CREDITED = NLS_BUNDLE.getString("TitleCredited");
+
+    /**
+     * Balance Column Title.
+     */
+    private static final String TITLE_BALANCE = NLS_BUNDLE.getString("TitleBalance");
+
+    /**
+     * Opening Balance Text.
+     */
+    private static final String TEXT_OPENBALANCE = NLS_BUNDLE.getString("TextOpenBalance");
 
     /**
      * The data view.
@@ -94,9 +146,14 @@ public class AnalysisStatement
     private final transient UpdateEntry<EventInfo> theInfoEntry;
 
     /**
-     * The data entry.
+     * The analysis data entry.
      */
     private final transient JDataEntry theDataAnalysis;
+
+    /**
+     * The filter data entry.
+     */
+    private final transient JDataEntry theDataFilter;
 
     /**
      * Analysis Selection panel.
@@ -131,17 +188,22 @@ public class AnalysisStatement
     /**
      * The date range.
      */
-    private JDateDayRange theRange;
+    private transient JDateDayRange theRange;
 
     /**
      * The analysis filter.
      */
-    private AnalysisFilter<?> theFilter;
+    private transient AnalysisFilter<?> theFilter;
 
     /**
      * Events.
      */
     private transient EventList theEvents = null;
+
+    /**
+     * Events.
+     */
+    private transient Event theHeader;
 
     /**
      * Obtain the panel.
@@ -173,6 +235,8 @@ public class AnalysisStatement
         theDataAnalysis = myDataMgr.new JDataEntry(AnalysisStatement.class.getSimpleName());
         theDataAnalysis.addAsChildOf(mySection);
         theDataAnalysis.setObject(theUpdateSet);
+        theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
+        theDataFilter.addAsChildOf(mySection);
 
         /* Create the Analysis Selection */
         theSelect = new AnalysisSelect();
@@ -217,6 +281,22 @@ public class AnalysisStatement
     }
 
     /**
+     * Select Statement.
+     * @param pSelect the selection
+     */
+    protected void selectStatement(final StatementSelect pSelect) {
+        /* Update selection */
+        theSelect.selectStatement(pSelect);
+
+        /* Set the filter */
+        theFilter = theSelect.getFilter();
+
+        /* Set the selection */
+        theRange = null;
+        setSelection(theSelect.getRange());
+    }
+
+    /**
      * Refresh data.
      */
     public void refreshData() {
@@ -246,12 +326,14 @@ public class AnalysisStatement
     public void setSelection(final JDateDayRange pRange) {
         theRange = pRange;
         theEvents = null;
+        theHeader = null;
         EventInfoList myInfo = null;
         if (theRange != null) {
             /* Get the Events edit list */
             FinanceData myData = theView.getData();
             EventList myEvents = myData.getEvents();
             theEvents = myEvents.deriveEditList(pRange);
+            theHeader = new AnalysisHeader(theEvents);
             myInfo = theEvents.getEventInfo();
         }
         setList(theEvents);
@@ -261,7 +343,8 @@ public class AnalysisStatement
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
 
-        /* Touch the updateSet */
+        /* Touch the filter and updateSet */
+        theDataFilter.setObject(theFilter);
         theDataAnalysis.setObject(theUpdateSet);
     }
 
@@ -311,7 +394,7 @@ public class AnalysisStatement
         public int getRowCount() {
             return (theEvents == null)
                     ? 0
-                    : theEvents.size();
+                    : 1 + theEvents.size();
         }
 
         @Override
@@ -329,29 +412,39 @@ public class AnalysisStatement
         @Override
         public Event getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theEvents.get(pRowIndex);
+            return pRowIndex == 0
+                    ? theHeader
+                    : theEvents.get(pRowIndex - 1);
         }
 
         @Override
         public Object getItemValue(final Event pEvent,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return theColumns.getItemValue(pEvent, pColIndex);
+            return pEvent.isHeader()
+                    ? theColumns.getHeaderValue(pColIndex)
+                    : theColumns.getItemValue(pEvent, pColIndex);
         }
 
         @Override
         public String getColumnName(final int pColIndex) {
             switch (pColIndex) {
                 case AnalysisColumnModel.COLUMN_DATE:
-                    return "Date";
+                    return TITLE_DATE;
                 case AnalysisColumnModel.COLUMN_DESC:
-                    return "Description";
+                    return TITLE_DESC;
                 case AnalysisColumnModel.COLUMN_CATEGORY:
-                    return "Category";
-                case AnalysisColumnModel.COLUMN_CREDIT:
-                    return "Credit";
+                    return TITLE_CAT;
                 case AnalysisColumnModel.COLUMN_DEBIT:
-                    return "Debit";
+                    return TITLE_DEBIT;
+                case AnalysisColumnModel.COLUMN_CREDIT:
+                    return TITLE_CREDIT;
+                case AnalysisColumnModel.COLUMN_DEBITED:
+                    return TITLE_DEBITED;
+                case AnalysisColumnModel.COLUMN_CREDITED:
+                    return TITLE_CREDITED;
+                case AnalysisColumnModel.COLUMN_BALANCE:
+                    return TITLE_BALANCE;
                 default:
                     return null;
             }
@@ -519,6 +612,25 @@ public class AnalysisStatement
         }
 
         /**
+         * Obtain the header value for the event column.
+         * @param pColIndex column index
+         * @return the value
+         */
+        protected Object getHeaderValue(final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return theRange.getStart();
+                case COLUMN_DESC:
+                    return TEXT_OPENBALANCE;
+                case COLUMN_BALANCE:
+                    return theFilter.getStartingBalance();
+                default:
+                    return null;
+            }
+        }
+
+        /**
          * Obtain the field for the column index.
          * @param pColIndex column index
          * @return the field
@@ -541,5 +653,21 @@ public class AnalysisStatement
             }
         }
 
+    }
+
+    /**
+     * Analysis Header class.
+     */
+    private static class AnalysisHeader
+            extends Event {
+        /**
+         * Constructor.
+         * @param pList the Event list
+         */
+        protected AnalysisHeader(final EventList pList) {
+            super(pList);
+            setHeader(true);
+            setSplit(Boolean.FALSE);
+        }
     }
 }

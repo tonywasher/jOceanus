@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 
 /**
@@ -175,6 +176,25 @@ public class PayeeAnalysisSelect
         /* Set the payee */
         theState.setPayee(myPayee);
         theState.applyState();
+    }
+
+    @Override
+    public void setFilter(final AnalysisFilter<?> pFilter) {
+        /* If this is the correct filter type */
+        if (pFilter instanceof PayeeFilter) {
+            /* Access filter */
+            PayeeFilter myFilter = (PayeeFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            PayeeBucket myPayee = myFilter.getBucket();
+
+            /* Obtain equivalent bucket */
+            myPayee = thePayees.findItemById(myPayee.getOrderedId());
+
+            /* Set the payee */
+            theState.setPayee(myPayee);
+            theState.applyState();
+        }
     }
 
     /**
