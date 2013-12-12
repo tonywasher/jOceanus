@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -102,7 +103,9 @@ public class TaxBasisAnalysisSelect
      */
     public TaxBasisAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton();
+        theButton = new JButton(AnalysisSelect.getListIcon());
+        theButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_BASIS);

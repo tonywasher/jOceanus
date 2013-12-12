@@ -436,7 +436,8 @@ public class AccountSelect
         /* If we have a selected item */
         if (mySelected != null) {
             /* Check its validity */
-            boolean isInvalid = ((!doShowDeleted) && (mySelected.isDeleted()));
+            boolean isInvalid = (!doShowDeleted)
+                                && (mySelected.isDeleted());
             isInvalid |= ((!doShowClosed) && (mySelected.isClosed()));
             isInvalid |= (myCategory.compareTo(mySelected.getAccountCategory()) != 0);
 

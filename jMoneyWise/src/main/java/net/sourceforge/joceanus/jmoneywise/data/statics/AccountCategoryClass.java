@@ -394,7 +394,7 @@ public enum AccountCategoryClass implements StaticInterface {
      * @return <code>true</code> if the account category type is cash, <code>false</code> otherwise.
      */
     public boolean isCash() {
-        return (this == Cash);
+        return this == Cash;
     }
 
     /**
@@ -402,7 +402,7 @@ public enum AccountCategoryClass implements StaticInterface {
      * @return <code>true</code> if the account category type is shares, <code>false</code> otherwise.
      */
     public boolean isShares() {
-        return (this == Shares);
+        return this == Shares;
     }
 
     /**

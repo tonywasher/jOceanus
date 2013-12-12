@@ -318,8 +318,9 @@ public class QAnalysis
         theStartDate = myTaxYear.getDateRange().getStart();
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS))
-                             && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
+        boolean bContinue = pStatus.setNumStages(QIF_NUMLISTS)
+                            && pStatus.setNewStage("Analysing accounts")
+                            && pStatus.setNumSteps(myAccounts.size());
 
         /* Loop through the accounts */
         Iterator<Account> myActIterator = myAccounts.iterator();
@@ -474,11 +475,11 @@ public class QAnalysis
             case StockTakeOver:
                 return true;
             case Dividend:
-                return (mySource.hasUnits());
+                return mySource.hasUnits();
             case Transfer:
                 /* Transfer from Units to Money */
-                if ((mySource.hasUnits())
-                    && (!myTarget.hasUnits())) {
+                if (mySource.hasUnits()
+                    && !myTarget.hasUnits()) {
                     /* Needs a credit line if we cannot use SellX */
                     return myType.canXferPortfolioLinked();
                 }

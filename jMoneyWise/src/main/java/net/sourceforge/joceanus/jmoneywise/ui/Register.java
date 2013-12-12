@@ -821,9 +821,10 @@ public class Register
                 case COLUMN_DATE:
                     return true;
                 case COLUMN_CATEGORY:
-                    return (pEvent.getDate() != null);
+                    return pEvent.getDate() != null;
                 case COLUMN_DESC:
-                    return ((pEvent.getDate() != null) && (pEvent.getCategory() != null));
+                    return (pEvent.getDate() != null)
+                           && (pEvent.getCategory() != null);
                 default:
                     if ((pEvent.getDate() == null)
                         || (pEvent.getComments() == null)
@@ -832,9 +833,11 @@ public class Register
                     }
                     switch (pColIndex) {
                         case COLUMN_DEBUNITS:
-                            return ((pEvent.getDebit() != null) && (pEvent.getDebit().hasUnits()));
+                            return (pEvent.getDebit() != null)
+                                   && (pEvent.getDebit().hasUnits());
                         case COLUMN_CREDUNITS:
-                            return ((pEvent.getCredit() != null) && (pEvent.getCredit().hasUnits()));
+                            return (pEvent.getCredit() != null)
+                                   && (pEvent.getCredit().hasUnits());
                             // case COLUMN_YEARS:
                             // return pEvent.isCategoryClass(EventCategoryClass.TaxableGain);
                         case COLUMN_TAXCRED:
@@ -1096,7 +1099,8 @@ public class Register
                 EventCategory myCat = myEvent.getCategory();
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = ((myCat != null) && ((myEvent.isInterest()) || (myEvent.isDividend())));
+                boolean isTaxable = (myCat != null)
+                                    && (myEvent.isInterest() || myEvent.isDividend());
                 if ((isTaxable)
                     && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
@@ -1152,7 +1156,7 @@ public class Register
             }
 
             /* If we have an account we can navigate */
-            boolean enableNavigate = (myAccount != null);
+            boolean enableNavigate = myAccount != null;
 
             /* If there is something to add and there are already items in the menu */
             if ((enableNavigate)

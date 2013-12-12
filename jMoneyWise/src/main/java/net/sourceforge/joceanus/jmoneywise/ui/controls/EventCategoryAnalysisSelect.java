@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -107,7 +108,9 @@ public class EventCategoryAnalysisSelect
      */
     public EventCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton();
+        theButton = new JButton(AnalysisSelect.getListIcon());
+        theButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY);

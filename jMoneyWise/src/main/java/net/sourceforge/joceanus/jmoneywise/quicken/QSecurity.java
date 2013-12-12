@@ -319,7 +319,8 @@ public final class QSecurity
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = ((pStatus.setNewStage("Writing securities")) && (pStatus.setNumSteps(theSecurities.size())));
+            boolean bContinue = pStatus.setNewStage("Writing securities")
+                                && pStatus.setNumSteps(theSecurities.size());
 
             /* Clear AutoSwitch */
             reset();
@@ -370,7 +371,8 @@ public final class QSecurity
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = ((pStatus.setNewStage("Writing prices")) && (pStatus.setNumSteps(theNumPrices)));
+            boolean bContinue = pStatus.setNewStage("Writing prices")
+                                && pStatus.setNumSteps(theNumPrices);
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();

@@ -225,7 +225,8 @@ public final class QCategory
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = ((pStatus.setNewStage("Writing categories")) && (pStatus.setNumSteps(size())));
+            boolean bContinue = pStatus.setNewStage("Writing categories")
+                                && pStatus.setNumSteps(size());
 
             /* Add the Item type */
             reset();

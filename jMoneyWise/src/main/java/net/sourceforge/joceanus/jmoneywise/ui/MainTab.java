@@ -450,7 +450,7 @@ public class MainTab
         boolean hasWorker = hasWorker();
 
         /* Note whether we have data */
-        boolean hasControl = (theView.getData().getControl() != null);
+        boolean hasControl = theView.getData().getControl() != null;
 
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker
@@ -458,7 +458,8 @@ public class MainTab
 
         /* Access the Register panel and determine its status */
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        boolean showTab = (!hasWorker && (!hasUpdates || theRegister.hasUpdates()));
+        boolean showTab = !hasWorker
+                          && (!hasUpdates || theRegister.hasUpdates());
 
         /* Enable/Disable the extract tab */
         if (iIndex != -1) {
@@ -467,7 +468,8 @@ public class MainTab
 
         /* Access the Report panel */
         iIndex = theTabs.indexOfTab(TITLE_REPORT);
-        showTab = (!hasWorker && !hasUpdates);
+        showTab = !hasWorker
+                  && !hasUpdates;
 
         /* Enable/Disable the reports tab */
         if (iIndex != -1) {
@@ -476,7 +478,8 @@ public class MainTab
 
         /* Access the SpotView panel and determine its status */
         iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
-        showTab = (!hasWorker && (!hasUpdates || theSpotView.hasUpdates()));
+        showTab = !hasWorker
+                  && (!hasUpdates || theSpotView.hasUpdates());
 
         /* Enable/Disable the spotView tab */
         if (iIndex != -1) {
@@ -485,7 +488,8 @@ public class MainTab
 
         /* Access the Maintenance panel */
         iIndex = theTabs.indexOfTab(TITLE_MAINT);
-        showTab = (!hasWorker && (!hasUpdates || theMaint.hasUpdates()));
+        showTab = !hasWorker
+                  && (!hasUpdates || theMaint.hasUpdates());
 
         /* Enable/Disable the maintenance tab */
         if (iIndex != -1) {

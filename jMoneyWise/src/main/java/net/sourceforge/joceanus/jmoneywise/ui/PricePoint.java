@@ -426,10 +426,10 @@ public class PricePoint
         switch (pRow.getState()) {
         /* Recoverable if there are changes */
             case DELNEW:
-                return (pRow.hasHistory());
+                return pRow.hasHistory();
                 /* Recoverable if date is the same */
             case DELETED:
-                return (!pRow.getDate().equals(theDate));
+                return !pRow.getDate().equals(theDate);
                 /* DELCHG must be recoverable */
             case DELCHG:
                 return true;
@@ -478,8 +478,8 @@ public class PricePoint
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
-                if (((!Difference.isEqual(theDate, myDate)))
-                    || (!Difference.isEqual(theAccountCategory, myCategory))) {
+                if (!Difference.isEqual(theDate, myDate)
+                    || !Difference.isEqual(theAccountCategory, myCategory)) {
                     /* Protect against exceptions */
                     try {
                         /* Set selection */

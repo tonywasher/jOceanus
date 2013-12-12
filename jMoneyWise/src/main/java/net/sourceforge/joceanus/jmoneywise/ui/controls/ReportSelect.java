@@ -23,20 +23,22 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
@@ -62,16 +64,6 @@ public class ReportSelect
      * Strut width.
      */
     private static final int STRUT_WIDTH = 10;
-
-    /**
-     * Box width.
-     */
-    private static final int BOX_WIDTH = 200;
-
-    /**
-     * Box height.
-     */
-    private static final int BOX_HEIGHT = 25;
 
     /**
      * Print operation string.
@@ -106,7 +98,7 @@ public class ReportSelect
     /**
      * Reports comboBox.
      */
-    private final JComboBox<ReportType> theReportBox;
+    private final JButton theReportButton;
 
     /**
      * Range select.
@@ -127,11 +119,6 @@ public class ReportSelect
      * Saved state.
      */
     private transient ReportState theSavePoint = null;
-
-    /**
-     * Are we refreshing data?.
-     */
-    private boolean refreshingData = false;
 
     /**
      * Obtain the report type.
@@ -167,9 +154,10 @@ public class ReportSelect
         /* Store table and view details */
         theView = pView;
 
-        /* Create the report box */
-        theReportBox = new JComboBox<ReportType>();
-        theReportBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
+        /* Create the range button */
+        theReportButton = new JButton(AnalysisSelect.getListIcon());
+        theReportButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theReportButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the Range Select and disable its border */
         theRangeSelect = new JDateDayRangeSelect();
@@ -181,16 +169,6 @@ public class ReportSelect
 
         /* Initialise the data from the view */
         refreshData(null);
-
-        /* Add the ReportTypes to the report box */
-        theReportBox.addItem(ReportType.NETWORTH);
-        theReportBox.addItem(ReportType.BALANCESHEET);
-        theReportBox.addItem(ReportType.CASHFLOW);
-        theReportBox.addItem(ReportType.INCOMEEXPENSE);
-        theReportBox.addItem(ReportType.TAXBASIS);
-        theReportBox.addItem(ReportType.TAXCALC);
-        theReportBox.addItem(ReportType.PORTFOLIO);
-        theReportBox.addItem(ReportType.MARKETGROWTH);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
@@ -207,7 +185,7 @@ public class ReportSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(myRepLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theReportBox);
+        add(theReportButton);
         add(Box.createHorizontalGlue());
         add(theRangeSelect);
         add(Box.createHorizontalGlue());
@@ -218,7 +196,7 @@ public class ReportSelect
         theState.setType(ReportType.NETWORTH);
 
         /* Add the listener for item changes */
-        theReportBox.addItemListener(myListener);
+        theReportButton.addActionListener(myListener);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
     }
 
@@ -230,14 +208,8 @@ public class ReportSelect
         /* Access the range */
         JDateDayRange myRange = theView.getRange();
 
-        /* Note that we are refreshing data */
-        refreshingData = true;
-
         /* Set the range for the DateButton and RangeSelect */
         setRange(myRange);
-
-        /* Note that we have finished refreshing data */
-        refreshingData = false;
     }
 
     /**
@@ -271,7 +243,7 @@ public class ReportSelect
     @Override
     public void setEnabled(final boolean bEnable) {
         theRangeSelect.setEnabled(bEnable);
-        theReportBox.setEnabled(bEnable);
+        theReportButton.setEnabled(bEnable);
         thePrintButton.setEnabled(bEnable);
     }
 
@@ -279,7 +251,27 @@ public class ReportSelect
      * Report Listener class.
      */
     private final class ReportListener
-            implements ActionListener, PropertyChangeListener, ItemListener {
+            implements ActionListener, PropertyChangeListener {
+        /**
+         * Show Report menu.
+         */
+        private void showReportMenu() {
+            /* Create a new popUp menu */
+            JPopupMenu myPopUp = new JPopupMenu();
+
+            /* Loop through the reports */
+            for (ReportType myType : ReportType.values()) {
+                /* Create a new JMenuItem and add it to the popUp */
+                ReportAction myAction = new ReportAction(myType);
+                JMenuItem myItem = new JMenuItem(myAction);
+                myPopUp.add(myItem);
+            }
+
+            /* Show the AnalysisType menu in the correct place */
+            Rectangle myLoc = theReportButton.getBounds();
+            myPopUp.show(theReportButton, 0, myLoc.height);
+        }
+
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -288,6 +280,12 @@ public class ReportSelect
             if (thePrintButton.equals(o)) {
                 /* Request a print operation */
                 fireActionPerformed(ACTION_PRINT);
+            }
+
+            /* If this event relates to the ReportButton */
+            if (theReportButton.equals(o)) {
+                /* Show the report type menu */
+                showReportMenu();
             }
         }
 
@@ -302,24 +300,37 @@ public class ReportSelect
                 fireStateChanged();
             }
         }
+    }
+
+    /**
+     * Bucket action class.
+     */
+    private final class ReportAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 6458171295976415700L;
+
+        /**
+         * Report Type.
+         */
+        private final ReportType theReport;
+
+        /**
+         * Constructor.
+         * @param pReport the report
+         */
+        private ReportAction(final ReportType pReport) {
+            super(pReport.toString());
+            theReport = pReport;
+        }
 
         @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            Object o = evt.getSource();
-
-            /* Ignore selection if refreshing data */
-            if (refreshingData) {
-                return;
-            }
-
-            /* If this event relates to the report box */
-            if ((theReportBox.equals(o))
-                && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                /* Determine the new report */
-                ReportType myType = (ReportType) evt.getItem();
-                if (theState.setType(myType)) {
-                    fireStateChanged();
-                }
+        public void actionPerformed(final ActionEvent e) {
+            /* Record the bucket */
+            if (theState.setType(theReport)) {
+                fireStateChanged();
             }
         }
     }
@@ -425,6 +436,9 @@ public class ReportSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
+            theReportButton.setText((theType == null)
+                    ? null
+                    : theType.toString());
         }
     }
 }

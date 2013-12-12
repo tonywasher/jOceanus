@@ -322,9 +322,9 @@ public class EventInfoSet
                         return JDataFieldRequired.NOTALLOWED;
                 }
 
-            default:
             case Pension:
             case CreditAmount:
+            default:
                 return JDataFieldRequired.NOTALLOWED;
         }
     }
@@ -429,9 +429,9 @@ public class EventInfoSet
                         myEvent.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                default:
                 case CreditAmount:
                 case Pension:
+                default:
                     break;
             }
         }

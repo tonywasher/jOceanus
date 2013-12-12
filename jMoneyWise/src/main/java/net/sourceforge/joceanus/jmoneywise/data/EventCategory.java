@@ -481,7 +481,7 @@ public final class EventCategory
      */
     public boolean isCategoryClass(final EventCategoryClass pClass) {
         /* Check for match */
-        return (getCategoryTypeClass() == pClass);
+        return getCategoryTypeClass() == pClass;
     }
 
     /**
@@ -828,7 +828,7 @@ public final class EventCategory
                 default:
                     /* Check parent requirement */
                     boolean isTransfer = isTransfer();
-                    boolean hasParent = (myParent != null);
+                    boolean hasParent = myParent != null;
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
                             addError(ERROR_EXIST, FIELD_PARENT);

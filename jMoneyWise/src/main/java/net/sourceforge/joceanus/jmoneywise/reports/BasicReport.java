@@ -160,7 +160,7 @@ public abstract class BasicReport {
     /**
      * Simple element class for delayed tables.
      */
-    protected final class DelayedTable {
+    protected static final class DelayedTable {
         /**
          * The table id.
          */

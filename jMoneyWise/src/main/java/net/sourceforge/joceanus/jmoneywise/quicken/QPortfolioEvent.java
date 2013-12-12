@@ -77,13 +77,13 @@ public class QPortfolioEvent
             case Inherited:
                 return true;
             case Dividend:
-                if ((!myEvent.getDebit().isTaxFree())) {
+                if (!myEvent.getDebit().isTaxFree()) {
                     return true;
                 }
                 if (Difference.isEqual(myEvent.getDebit(), myEvent.getCredit())) {
                     return false;
                 }
-                return !((myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect()));
+                return !(myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect());
             case StockTakeOver:
                 if (myEvent.getThirdParty() == null) {
                     return false;
@@ -223,7 +223,8 @@ public class QPortfolioEvent
         String myReconciled = getReconciledFlag();
 
         /* Determine additional features */
-        boolean useBuyX4Event = ((myDebit.hasValue()) && (getQIFType().canXferPortfolioLinked()));
+        boolean useBuyX4Event = myDebit.hasValue()
+                                && getQIFType().canXferPortfolioLinked();
 
         /* Reset the builder */
         reset();
@@ -329,7 +330,8 @@ public class QPortfolioEvent
         String myReconciled = getReconciledFlag();
 
         /* Determine additional flags */
-        boolean useSellX4Event = ((myCredit.hasValue()) && (getQIFType().canXferPortfolioLinked()));
+        boolean useSellX4Event = myCredit.hasValue()
+                                 && getQIFType().canXferPortfolioLinked();
 
         /* Reset the builder */
         reset();
@@ -338,13 +340,13 @@ public class QPortfolioEvent
         addDateLine(QPortfolioLineType.Date, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (zeroUnits)
-                ? ((useSellX4Event)
+        addEnumLine(QPortfolioLineType.Action, zeroUnits
+                ? useSellX4Event
                         ? QActionType.RtrnCapX
-                        : QActionType.RtrnCap)
-                : ((useSellX4Event)
+                        : QActionType.RtrnCap
+                : useSellX4Event
                         ? QActionType.SellX
-                        : QActionType.Sell));
+                        : QActionType.Sell);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.Security, mySecurity);
@@ -544,11 +546,15 @@ public class QPortfolioEvent
         }
 
         /* Determine additional features */
-        boolean useMiscIncTax = ((isReinvested) && (myTaxCredit != null));
-        boolean isTaxFreeDiv = ((!isReinvested) && (myTaxCredit == null));
-        boolean useDivX4Event = ((isTaxFreeDiv) && (myQIFType.canXferPortfolioLinked()));
-        boolean useXOut4Event = ((isTaxFreeDiv)
-                                 && (!useDivX4Event) && (myQIFType.canXferPortfolioDirect()));
+        boolean useMiscIncTax = isReinvested
+                                && (myTaxCredit != null);
+        boolean isTaxFreeDiv = !isReinvested
+                               && (myTaxCredit == null);
+        boolean useDivX4Event = isTaxFreeDiv
+                                && myQIFType.canXferPortfolioLinked();
+        boolean useXOut4Event = isTaxFreeDiv
+                                && !useDivX4Event
+                                && myQIFType.canXferPortfolioDirect();
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();

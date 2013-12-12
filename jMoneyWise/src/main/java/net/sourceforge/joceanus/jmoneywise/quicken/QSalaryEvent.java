@@ -67,9 +67,9 @@ public class QSalaryEvent
         JMoney myNatIns = myEvent.getNatInsurance();
         JMoney myBenefit = myEvent.getDeemedBenefit();
         EventCategory myCategory = myEvent.getCategory();
-        boolean isTaxCredit = (myTaxCredit != null);
-        boolean isNatIns = (myNatIns != null);
-        boolean isBenefit = (myBenefit != null);
+        boolean isTaxCredit = myTaxCredit != null;
+        boolean isNatIns = myNatIns != null;
+        boolean isBenefit = myBenefit != null;
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();

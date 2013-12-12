@@ -130,7 +130,7 @@ public enum TransactionType {
      * @return true/false
      */
     public boolean isIllegal() {
-        return (this == Illegal);
+        return this == Illegal;
     }
 
     /**

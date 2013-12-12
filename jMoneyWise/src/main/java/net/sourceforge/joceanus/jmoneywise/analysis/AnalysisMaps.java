@@ -42,7 +42,13 @@ import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 /**
  * Analysis Map classes.
  */
-public class AnalysisMaps {
+public abstract class AnalysisMaps {
+    /**
+     * Constructor.
+     */
+    private AnalysisMaps() {
+    }
+
     /**
      * Map of Security prices indexed by Security Id.
      */

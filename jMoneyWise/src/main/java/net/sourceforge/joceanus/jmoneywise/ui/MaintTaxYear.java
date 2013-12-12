@@ -671,7 +671,8 @@ public class MaintTaxYear
      * @return true/false
      */
     public boolean hasUpdates() {
-        return ((theTaxYear != null) && (theTaxYear.hasChanges()));
+        return (theTaxYear != null)
+               && (theTaxYear.hasChanges());
     }
 
     /**
@@ -679,7 +680,8 @@ public class MaintTaxYear
      * @return true/false
      */
     public boolean hasErrors() {
-        return ((theTaxYear != null) && (theTaxYear.hasErrors()));
+        return (theTaxYear != null)
+               && (theTaxYear.hasErrors());
     }
 
     /**
@@ -816,7 +818,8 @@ public class MaintTaxYear
             theFieldSet.renderSet(theTaxYear);
 
             /* Make sure delete buttons are visible */
-            boolean isEndOfList = ((theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears.peekNext(theTaxYear) == null));
+            boolean isEndOfList = (theTaxYears.peekPrevious(theTaxYear) == null)
+                                  || (theTaxYears.peekNext(theTaxYear) == null);
             theDelButton.setVisible(!bActive
                                     || ((!theTaxYear.isActive()) && (isEndOfList)));
             theDelButton.setText(!bActive

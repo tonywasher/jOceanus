@@ -78,13 +78,14 @@ public class QInterestEvent
         EventCategory myCategory = getAnalysis().getInterestCategory(myEvent);
 
         /* Determine type of event */
-        boolean isTaxFree = (myTaxCredit == null);
-        boolean isDonation = (myDonation != null);
+        boolean isTaxFree = myTaxCredit == null;
+        boolean isDonation = myDonation != null;
         boolean isReinvested = Difference.isEqual(myEvent.getDebit(), myEvent.getCredit());
 
         /* Are we using splits */
-        boolean useSplits = ((!isTaxFree) || (isDonation));
-        useSplits |= (!isReinvested);
+        boolean useSplits = !isTaxFree
+                            || isDonation;
+        useSplits |= !isReinvested;
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();

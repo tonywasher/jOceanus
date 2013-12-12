@@ -544,7 +544,8 @@ public class MaintAccount
      * @return true/false
      */
     public boolean hasUpdates() {
-        return ((theAccount != null) && (theAccount.hasChanges()));
+        return (theAccount != null)
+               && (theAccount.hasChanges());
     }
 
     /**
@@ -552,7 +553,8 @@ public class MaintAccount
      * @return true/false
      */
     public boolean hasErrors() {
-        return ((theAccount != null) && (theAccount.hasErrors()));
+        return (theAccount != null)
+               && (theAccount.hasErrors());
     }
 
     /**
@@ -745,13 +747,13 @@ public class MaintAccount
 
             /* Set the visibility */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
-                                                              && (isNewAccount));
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), (myCatClass == AccountCategoryClass.Bond));
+                                                              && isNewAccount);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), myCatClass == AccountCategoryClass.Bond);
             theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), myCatClass.isChild());
 
             /* Handle alias */
             if (myCategory.getCategoryTypeClass().canAlias()
-                && (!theAccount.isAliasedTo())) {
+                && !theAccount.isAliasedTo()) {
 
                 /* Set visible */
                 theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), true);

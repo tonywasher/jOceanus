@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -123,9 +124,15 @@ public class AccountAnalysisSelect
      * Constructor.
      */
     public AccountAnalysisSelect() {
-        /* Create the buttons */
-        theAccountButton = new JButton();
-        theCatButton = new JButton();
+        /* Create the account button */
+        theAccountButton = new JButton(AnalysisSelect.getListIcon());
+        theAccountButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theAccountButton.setHorizontalTextPosition(AbstractButton.LEFT);
+
+        /* Create the category button */
+        theCatButton = new JButton(AnalysisSelect.getListIcon());
+        theCatButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theCatButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY);

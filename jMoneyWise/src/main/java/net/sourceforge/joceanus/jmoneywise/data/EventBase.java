@@ -301,7 +301,7 @@ public abstract class EventBase
      * @return true/false
      */
     public boolean isChild() {
-        return (getParent() != null);
+        return getParent() != null;
     }
 
     /**
@@ -866,8 +866,8 @@ public abstract class EventBase
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
         /* Handle illegal setups */
-        if ((myCatTran.isIllegal())
-            || (myActTran.isIllegal())) {
+        if (myCatTran.isIllegal()
+            || myActTran.isIllegal()) {
             return false;
         }
 
@@ -899,7 +899,7 @@ public abstract class EventBase
 
         /* If this is an non-recursive expense (i.e. decreases the value of assets) */
         if (myActTran.isExpense()
-            && (!isRecursive)) {
+            && !isRecursive) {
             /* Switch Debit and Credit classes so that this look like an expense */
             AccountCategoryClass myClass = myDebitClass;
             myDebitClass = myCreditClass;
@@ -920,7 +920,8 @@ public abstract class EventBase
                 }
 
                 /* Taxed income must be from employer to savings/loan (as expense) */
-                return ((myDebitClass == AccountCategoryClass.Employer) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
+                return (myDebitClass == AccountCategoryClass.Employer)
+                       && (myCreditClass.isSavings() || myCreditClass.isLoan());
 
             case GrantIncome:
                 /* Cannot refund Grant Income */
@@ -929,7 +930,8 @@ public abstract class EventBase
                 }
 
                 /* Grant income must be from grant-able to savings account */
-                return ((myDebitClass.canGrant()) && (myCreditClass.isSavings()));
+                return myDebitClass.canGrant()
+                       && myCreditClass.isSavings();
 
             case BenefitIncome:
                 /* Cannot refund Benefit Income */
@@ -938,11 +940,13 @@ public abstract class EventBase
                 }
 
                 /* Benefit income must be from government to savings account */
-                return ((myDebitClass == AccountCategoryClass.Government) && (myCreditClass.isSavings()));
+                return (myDebitClass == AccountCategoryClass.Government)
+                       && myCreditClass.isSavings();
 
             case OtherIncome:
                 /* Other income is from nonAsset to savings/loan */
-                return ((myDebitClass.isNonAsset()) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
+                return myDebitClass.isNonAsset()
+                       && (myCreditClass.isSavings() || myCreditClass.isLoan());
 
             case GiftedIncome:
             case Inherited:
@@ -952,7 +956,8 @@ public abstract class EventBase
                 }
 
                 /* Inheritance must be from individual to asset */
-                return ((myDebitClass == AccountCategoryClass.Individual) && (myCreditType.isAsset()));
+                return (myDebitClass == AccountCategoryClass.Individual)
+                       && myCreditType.isAsset();
 
             case Interest:
                 /* Debit must be able to generate interest */
@@ -970,34 +975,41 @@ public abstract class EventBase
                 }
 
                 /* Dividend must be paid to valued account or else re-invested into capital */
-                return (myCreditType.isValued() || ((isRecursive) && (myDebitClass.isCapital())));
+                return myCreditType.isValued()
+                       || (isRecursive && myDebitClass.isCapital());
 
             case StockRightsTaken:
                 /* Stock rights taken is a transfer from a valued account to shares */
-                return ((myDebitType.isValued()) && (myCreditClass.isShares()));
+                return myDebitType.isValued()
+                       && myCreditClass.isShares();
 
             case StockRightsWaived:
                 /* Stock rights taken is a transfer to a valued account from shares */
-                return ((myCreditType.isValued()) && (myDebitClass.isShares()));
+                return myCreditType.isValued()
+                       && myDebitClass.isShares();
 
             case StockSplit:
                 /* Stock adjust is only valid for shares and must be recursive */
-                return ((isRecursive) && (myDebitClass.isShares()));
+                return isRecursive
+                       && myDebitClass.isShares();
 
             case StockAdjust:
                 /* Stock adjust is only valid for capital and must be recursive */
-                return ((isRecursive) && (myDebitClass.isCapital()));
+                return isRecursive
+                       && myDebitClass.isCapital();
 
             case StockDeMerger:
             case StockTakeOver:
                 /* Stock DeMerger/TakeOver must be between different capital shares */
-                return ((!isRecursive)
-                        && (myDebitClass.isShares()) && (myCreditClass.isShares()));
+                return !isRecursive
+                       && myDebitClass.isShares()
+                       && myCreditClass.isShares();
 
             case RentalIncome:
             case RoomRentalIncome:
                 /* Rental Income must be from property to loan */
-                return ((myDebitClass == AccountCategoryClass.Property) && (myCreditClass.isLoan()));
+                return (myDebitClass == AccountCategoryClass.Property)
+                       && myCreditClass.isLoan();
 
             case WriteOff:
             case LoanInterestEarned:
@@ -1008,28 +1020,34 @@ public abstract class EventBase
 
             case LocalTaxes:
                 /* Local taxes must be from government to valued account */
-                return ((myDebitClass == AccountCategoryClass.Government) && (myCreditType.isValued()));
+                return (myDebitClass == AccountCategoryClass.Government)
+                       && myCreditType.isValued();
 
             case CharityDonation:
                 /* CharityDonation is from nonAsset to Asset */
-                return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
+                return myDebitClass.isNonAsset()
+                       && myCreditClass.isAsset();
 
             case TaxRelief:
                 /* Tax Relief is from TaxMan to loan */
-                return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditClass.isLoan()));
+                return (myDebitClass == AccountCategoryClass.TaxMan)
+                       && myCreditClass.isLoan();
 
             case TaxSettlement:
                 /* Settlement income is from TaxMan to valued */
-                return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditType.isValued()));
+                return (myDebitClass == AccountCategoryClass.TaxMan)
+                       && myCreditType.isValued();
 
             case Transfer:
                 /* transfer is nonRecursive and from Asset to Asset */
-                return ((!isRecursive)
-                        && (myDebitClass.isAsset()) && (myCreditClass.isAsset()));
+                return !isRecursive
+                       && myDebitClass.isAsset()
+                       && myCreditClass.isAsset();
 
             case Expense:
                 /* Recovered expense is from nonAsset to Asset */
-                return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
+                return myDebitClass.isNonAsset()
+                       && myCreditClass.isAsset();
 
             default:
                 return false;
@@ -1065,7 +1083,8 @@ public abstract class EventBase
         Account myDebit = getDebit();
 
         /* Check credit and debit accounts */
-        return (((myCredit != null) && (myCredit.isClosed())) || ((myDebit != null) && (myDebit.isClosed())));
+        return ((myCredit != null) && myCredit.isClosed())
+               || ((myDebit != null) && myDebit.isClosed());
     }
 
     /**
@@ -1075,7 +1094,7 @@ public abstract class EventBase
      */
     public boolean isCategoryClass(final EventCategoryClass pClass) {
         /* Check for match */
-        return (getCategoryClass() == pClass);
+        return getCategoryClass() == pClass;
     }
 
     /**
@@ -1087,7 +1106,8 @@ public abstract class EventBase
         if (!isDividend()) {
             return false;
         }
-        return ((getCredit() != null) && (Difference.isEqual(getDebit(), getCredit())));
+        return (getCredit() != null)
+               && Difference.isEqual(getDebit(), getCredit());
     }
 
     /**
@@ -1096,7 +1116,8 @@ public abstract class EventBase
      */
     public boolean isInterest() {
         /* Check for interest */
-        return ((getCategory() != null) && (getCategory().getCategoryTypeClass().isInterest()));
+        return (getCategory() != null)
+               && getCategory().getCategoryTypeClass().isInterest();
     }
 
     /**
@@ -1104,8 +1125,9 @@ public abstract class EventBase
      * @return dividend true/false
      */
     public boolean isDividend() {
-        /* Check for interest */
-        return ((getCategory() != null) && (getCategory().getCategoryTypeClass().isDividend()));
+        /* Check for dividend */
+        return (getCategory() != null)
+               && getCategory().getCategoryTypeClass().isDividend();
     }
 
     /**

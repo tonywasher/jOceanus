@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -119,9 +120,15 @@ public class SecurityAnalysisSelect
      * Constructor.
      */
     public SecurityAnalysisSelect() {
-        /* Create the buttons */
-        theSecButton = new JButton();
-        thePortButton = new JButton();
+        /* Create the security button */
+        theSecButton = new JButton(AnalysisSelect.getListIcon());
+        theSecButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theSecButton.setHorizontalTextPosition(AbstractButton.LEFT);
+
+        /* Create the portfolio button */
+        thePortButton = new JButton(AnalysisSelect.getListIcon());
+        thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
+        thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO);

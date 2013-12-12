@@ -455,7 +455,7 @@ public class AccountCategory
      */
     public boolean isCategoryClass(final AccountCategoryClass pClass) {
         /* Check for match */
-        return (getCategoryTypeClass() == pClass);
+        return getCategoryTypeClass() == pClass;
     }
 
     @Override

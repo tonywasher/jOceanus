@@ -56,7 +56,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isNonAsset() {
-        return (this == NonAsset);
+        return this == NonAsset;
     }
 
     /**
@@ -73,7 +73,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isPriced() {
-        return (this == Priced);
+        return this == Priced;
     }
 
     /**
@@ -81,7 +81,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isValued() {
-        return (this == Valued);
+        return this == Valued;
     }
 
     /**
@@ -89,7 +89,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isAutoExpense() {
-        return (this == AutoExpense);
+        return this == AutoExpense;
     }
 
     /**
@@ -97,7 +97,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isIllegal() {
-        return (this == Illegal);
+        return this == Illegal;
     }
 
     /**
@@ -122,15 +122,15 @@ public enum AccountType {
                         : TransactionType.CashPayment;
             }
             return (toAsset)
-                    ? (pPartner.isAutoExpense()
+                    ? pPartner.isAutoExpense()
                             ? TransactionType.CashWithdrawal
-                            : TransactionType.Transfer)
+                            : TransactionType.Transfer
                     : TransactionType.Expense;
         } else {
             if (!toAsset) {
                 return TransactionType.Illegal;
             }
-            return (pPartner.isAutoExpense())
+            return pPartner.isAutoExpense()
                     ? TransactionType.CashRecovery
                     : TransactionType.Income;
         }

@@ -810,7 +810,8 @@ public class AccountRate
         /* Is this list locked */
         @Override
         public boolean isLocked() {
-            return ((theAccount != null) && (theAccount.isLocked()));
+            return (theAccount != null)
+                   && theAccount.isLocked();
         }
 
         /**
