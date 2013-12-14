@@ -48,13 +48,13 @@ public class QSalaryEvent
 
         /* Make sure that the additional categories are registered */
         if (pEvent.getTaxCredit() != null) {
-            getAnalysis().getCategory(EventInfoClass.TaxCredit);
+            getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
         }
         if (pEvent.getNatInsurance() != null) {
-            getAnalysis().getCategory(EventInfoClass.NatInsurance);
+            getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
         }
         if (pEvent.getDeemedBenefit() != null) {
-            getAnalysis().getCategory(EventInfoClass.DeemedBenefit);
+            getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
         }
     }
 
@@ -127,21 +127,21 @@ public class QSalaryEvent
             if (isTaxCredit) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
+                myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
                 addCategoryLine(QEventLineType.SplitCategory, myCategory);
                 addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
             if (isNatIns) {
                 myValue = new JDecimal(myNatIns);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.NatInsurance);
+                myCategory = getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
                 addCategoryLine(QEventLineType.SplitCategory, myCategory);
                 addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
             if (isBenefit) {
                 myValue = new JDecimal(myBenefit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.DeemedBenefit);
+                myCategory = getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
                 addCategoryLine(QEventLineType.SplitCategory, myCategory);
                 addDecimalLine(QEventLineType.SplitAmount, myValue);
             }

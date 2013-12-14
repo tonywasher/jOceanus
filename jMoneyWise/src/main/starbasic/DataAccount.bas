@@ -28,15 +28,16 @@ Private Const rangeAccountCategories As String = "AccountCategoryInfo"
 Private Const colAcctName As Integer = 1
 Private Const colAcctType As Integer = 2
 Private Const colAcctTaxFree As Integer = 3
-Private Const colAcctGrossInt As Integer = 4
+Private Const colAcctGross As Integer = 4
 Private Const colAcctClosed As Integer = 5
 Private Const colAcctParent As Integer = 6
 Private Const colAcctAlias As Integer = 7
-Private Const colAcctHolding As Integer = 8
-Private Const colAcctMaturity As Integer = 9
-Private Const colAcctOpenBal As Integer = 10
-Private Const colAcctSymbol As Integer = 11
-Private Const colAcctAutoExp As Integer = 12
+Private Const colAcctPortfolio As Integer = 8
+Private Const colAcctHolding As Integer = 9
+Private Const colAcctMaturity As Integer = 10
+Private Const colAcctOpenBal As Integer = 11
+Private Const colAcctSymbol As Integer = 12
+Private Const colAcctAutoExp As Integer = 13
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
@@ -78,6 +79,7 @@ Public Type AccountStats
 	'Account details
 	strAccount As String
 	strParent As String
+	strPortfolio As String
 	strHolding As String
 	strAlias As String
 	strSymbol As String
@@ -98,8 +100,8 @@ Public Type AccountStats
 	isAutoExpense As Boolean
 	isActive As Boolean
 	isClosed As Boolean
+	isGross As Boolean
 	isTaxFree As Boolean
-	isGrossInt As Boolean
 	isCapital As Boolean
 	isLifeBond As Boolean
 	isEndowment As Boolean
@@ -115,6 +117,7 @@ Public Type AccountStats
 	
 	'Counters
 	acctValue As Double
+	acctOpenBalance As Double
 	acctUnits As Double
 	acctPrice As Double
 	acctLastValue As Double
@@ -214,8 +217,10 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     	'Build core values 
     	myAcct.strAccount = myName
 	    myAcct.strParent = myRow.getCellByPosition(colAcctParent, 0).getString()
+	    myAcct.strPortfolio = myRow.getCellByPosition(colAcctPortfolio, 0).getString()
+	    myAcct.strHolding = myRow.getCellByPosition(colAcctHolding, 0).getString()
 	    myAcct.isTaxFree = myRow.getCellByPosition(colAcctTaxFree, 0).getValue()
-	    myAcct.isGrossInt = myRow.getCellByPosition(colAcctGrossInt, 0).getValue()
+	    myAcct.isGross = myRow.getCellByPosition(colAcctGross, 0).getValue()
 	    myAcct.isClosed = myRow.getCellByPosition(colAcctClosed, 0).getValue()
 
 		'Promote values from account type	    
@@ -232,8 +237,10 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     		
 		'Handle value accounts
 		myAcct.isAutoExpense = False()
-		If (myAcct.hasValue) Then		
-		    myAcct.acctValue = myRow.getCellByPosition(colAcctOpenBal, 0).getValue()
+		If (myAcct.hasValue) Then
+		    myOpenBal = myRow.getCellByPosition(colAcctOpenBal, 0).getValue()
+		    myAcct.acctValue = myOpenBal
+		    myAcct.acctOpenBalance = myOpenBal
 			myAutoExpense = myRow.getCellByPosition(colAcctAutoExp, 0).getString()
 			If (myAutoExpense <> "") Then
 				Set myAcct.catAutoExpense = getCategoryStats(Context, myAutoExpense)
@@ -245,11 +252,6 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		If (myAcct.hasUnits) Then		
 	    	myAcct.strAlias = myRow.getCellByPosition(colAcctAlias, 0).getString()
 		    myAcct.strSymbol = myRow.getCellByPosition(colAcctSymbol, 0).getString()
-		End If 
-		
-		'Handle portfolio accounts
-		If (myAcct.isPortfolio) Then		
-	    	myAcct.strHolding = myRow.getCellByPosition(colAcctHolding, 0).getString()
 		End If 
 		
 		'Initialise indices
@@ -266,10 +268,6 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     	putHashKey(myMap, myName, myAcct) 
 	Next
 	
-    'Access Opening Balances
-    Set myOpeningAcct = getCachedAccount(Context, acctOpenBal)
-    Set myOpeningCat = getCategoryStats(Context, catOpenBal)
-    
 	'Loop through the Accounts 
 	myIterator = hashIterator(Context.mapAccounts)
 	While (hashHasNext(myIterator))
@@ -280,17 +278,6 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myParent = myAcct.strParent
 		If (myParent <> "") Then		
 			Set myAcct.acctParent = getAccountStats(Context, myParent)		
-		End If
-
-		'If we have a value
-		myValue = myAcct.acctValue
-		If (myValue <> 0) Then		
-			'Access account in cache
-			Set x = getCachedAccount(Context, myAcct.strAccount)
-			
-			'Adjust income for opening balance
-			myOpeningAcct.acctIncome = myOpeningAcct.acctIncome + myValue
-			myOpeningCat.catValue = myOpeningCat.catValue + myValue
 		End If
 	Wend
 End Sub

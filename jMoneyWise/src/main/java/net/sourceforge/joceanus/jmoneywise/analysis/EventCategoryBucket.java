@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 
@@ -877,13 +877,13 @@ public final class EventCategoryBucket
 
             /* Obtain the implied buckets */
             EventCategoryList myList = theData.getEventCategories();
-            theTaxCredit = getBucket(myList.getEventInfoCategory(EventInfoClass.TaxCredit));
-            theNatInsurance = getBucket(myList.getEventInfoCategory(EventInfoClass.NatInsurance));
-            theDeemedBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.DeemedBenefit));
-            theCharityDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CharityDonation));
-            theTaxableGains = getBucket(myList.getSingularClass(EventCategoryClass.TaxableGain));
-            theTaxFreeGains = getBucket(myList.getSingularClass(EventCategoryClass.TaxFreeGain));
-            theCapitalGains = getBucket(myList.getSingularClass(EventCategoryClass.CapitalGain));
+            theTaxCredit = getBucket(myList.getEventInfoCategory(EventInfoClass.TAXCREDIT));
+            theNatInsurance = getBucket(myList.getEventInfoCategory(EventInfoClass.NATINSURANCE));
+            theDeemedBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.DEEMEDBENEFIT));
+            theCharityDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CHARITYDONATION));
+            theTaxableGains = getBucket(myList.getSingularClass(EventCategoryClass.TAXABLEGAIN));
+            theTaxFreeGains = getBucket(myList.getSingularClass(EventCategoryClass.TAXFREEGAIN));
+            theCapitalGains = getBucket(myList.getSingularClass(EventCategoryClass.CAPITALGAIN));
         }
 
         /**
@@ -1036,28 +1036,28 @@ public final class EventCategoryBucket
             JMoney myTaxCredit = pEvent.getTaxCredit();
             if (myTaxCredit != null) {
                 theTaxCredit.addExpense(pEvent, myTaxCredit);
-                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.TaxPaid, myTaxCredit);
+                theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXPAID, myTaxCredit);
             }
 
             /* Adjust for NatInsurance */
             JMoney myNatIns = pEvent.getNatInsurance();
             if (myNatIns != null) {
                 theNatInsurance.addExpense(pEvent, myNatIns);
-                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.Virtual, myNatIns);
+                theTaxBasis.adjustValue(pEvent, TaxBasisClass.VIRTUAL, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
             JMoney myBenefit = pEvent.getDeemedBenefit();
             if (myBenefit != null) {
                 theDeemedBenefit.addExpense(pEvent, myBenefit);
-                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.Virtual, myBenefit);
+                theTaxBasis.adjustValue(pEvent, TaxBasisClass.VIRTUAL, myBenefit);
             }
 
             /* Adjust for Charity Donation */
             JMoney myDonation = pEvent.getCharityDonation();
             if (myDonation != null) {
                 theCharityDonation.addExpense(pEvent, myDonation);
-                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.Expense, myDonation);
+                theTaxBasis.adjustValue(pEvent, TaxBasisClass.EXPENSE, myDonation);
             }
         }
 
@@ -1079,10 +1079,10 @@ public final class EventCategoryBucket
                     /* Adjust category */
                     if (mySecurity.isTaxFree()) {
                         theTaxFreeGains.addIncome(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxCategoryClass.TaxFree, pGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, pGains);
                     } else {
                         theCapitalGains.addIncome(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxCategoryClass.GrossCapitalGains, pGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, pGains);
                     }
                 } else {
                     /* Obtain normalised value */
@@ -1092,10 +1092,10 @@ public final class EventCategoryBucket
                     /* Adjust category */
                     if (mySecurity.isTaxFree()) {
                         theTaxFreeGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxCategoryClass.TaxFree, myGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, myGains);
                     } else {
                         theCapitalGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxCategoryClass.GrossCapitalGains, myGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, myGains);
                     }
                 }
             }
@@ -1123,11 +1123,11 @@ public final class EventCategoryBucket
                 myGains.addAmount(myTaxCredit);
 
                 /* Adjust tax basis */
-                theTaxBasis.adjustValue(pEvent, TaxCategoryClass.TaxPaid, myTaxCredit);
+                theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXPAID, myTaxCredit);
             }
 
             /* Adjust tax basis */
-            theTaxBasis.adjustValue(pEvent, TaxCategoryClass.GrossTaxableGains, myGains);
+            theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSTAXABLEGAINS, myGains);
         }
 
         /**

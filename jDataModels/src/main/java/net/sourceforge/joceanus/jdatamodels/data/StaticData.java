@@ -586,7 +586,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         /* Loop through the enum constants */
         for (E myValue : myEnums) {
             /* If this is the desired value */
-            if (myValue.toString().equalsIgnoreCase(pValue)) {
+            if (myValue.name().equalsIgnoreCase(pValue)) {
                 /* Store the class */
                 setValueClass(myValue);
 

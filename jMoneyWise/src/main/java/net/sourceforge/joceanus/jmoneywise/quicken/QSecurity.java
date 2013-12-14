@@ -186,15 +186,15 @@ public final class QSecurity
      */
     private String getSecurityType() {
         switch (theSecurity.getAccountCategoryClass()) {
-            case Shares:
+            case SHARES:
                 return "Share";
-            case UnitTrust:
+            case UNITTRUST:
                 return "Unit/Inv. Trust";
-            case LifeBond:
+            case LIFEBOND:
                 return "Bond";
-            case Endowment:
+            case ENDOWMENT:
                 return "Trust";
-            case Asset:
+            case ASSET:
                 return "Real Estate";
             default:
                 return "Other";

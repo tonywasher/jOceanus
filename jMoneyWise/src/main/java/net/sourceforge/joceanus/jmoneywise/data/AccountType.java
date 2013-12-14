@@ -144,38 +144,37 @@ public enum AccountType {
     public static AccountType deriveType(final Account pAccount) {
         /* Switch on account category class */
         switch (pAccount.getAccountCategoryClass()) {
-            case Savings:
-            case Bond:
-            case CreditCard:
-            case PrivateLoan:
-            case Loan:
+            case SAVINGS:
+            case BOND:
+            case CREDITCARD:
+            case PRIVATELOAN:
+            case LOAN:
                 return Valued;
-            case Cash:
+            case CASH:
                 return (pAccount.getAutoExpense() != null)
                         ? Valued
                         : AutoExpense;
-            case Shares:
-            case UnitTrust:
-            case LifeBond:
-            case Endowment:
-            case Asset:
-            case Property:
-            case Vehicle:
+            case SHARES:
+            case UNITTRUST:
+            case LIFEBOND:
+            case ENDOWMENT:
+            case ASSET:
+            case PROPERTY:
+            case VEHICLE:
                 return Priced;
-            case Employer:
-            case Payee:
-            case TaxMan:
-            case Government:
-            case Portfolio:
-            case Institution:
-            case Individual:
-            case OpeningBalance:
+            case EMPLOYER:
+            case PAYEE:
+            case TAXMAN:
+            case GOVERNMENT:
+            case PORTFOLIO:
+            case INSTITUTION:
+            case INDIVIDUAL:
                 return NonAsset;
-            case SavingsTotals:
-            case CashTotals:
-            case PricedTotals:
-            case LoanTotals:
-            case Totals:
+            case SAVINGSTOTALS:
+            case CASHTOTALS:
+            case PRICEDTOTALS:
+            case LOANTOTALS:
+            case TOTALS:
             default:
                 return Illegal;
         }

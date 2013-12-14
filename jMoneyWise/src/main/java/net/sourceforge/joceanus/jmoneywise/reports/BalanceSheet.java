@@ -136,7 +136,7 @@ public class BalanceSheet
             theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(AccountAttribute.DELTA));
 
             /* If this is the portfolio category */
-            if (myBucket.getAccountCategory().isCategoryClass(AccountCategoryClass.Portfolio)) {
+            if (myBucket.getAccountCategory().isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
                 /* Add the portfolio report */
                 makePortfolioReport(myTable, myBucket);
             } else {

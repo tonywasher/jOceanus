@@ -82,7 +82,7 @@ public class MarketAnalysis {
                     /* Adjust market account */
                     theMarketExpense.subtractAmount(myGains);
                 }
-            } else if (mySecurity.isCategoryClass(AccountCategoryClass.LifeBond)) {
+            } else if (mySecurity.isCategoryClass(AccountCategoryClass.LIFEBOND)) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGains);
 
@@ -121,7 +121,7 @@ public class MarketAnalysis {
         if ((theMarketIncome.isNonZero())
             || (theMarketExpense.isNonZero())) {
             /* Access market payee */
-            PayeeBucket myMarket = myPayees.getBucket(AccountCategoryClass.Market);
+            PayeeBucket myMarket = myPayees.getBucket(AccountCategoryClass.MARKET);
 
             /* Adjust totals */
             myMarket.addIncome(theMarketIncome);
@@ -132,7 +132,7 @@ public class MarketAnalysis {
         if ((theGrowthIncome.isNonZero())
             || (theGrowthExpense.isNonZero())) {
             /* Access marketGrowth category */
-            EventCategoryBucket myGrowth = myCategories.getBucket(EventCategoryClass.MarketGrowth);
+            EventCategoryBucket myGrowth = myCategories.getBucket(EventCategoryClass.MARKETGROWTH);
 
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);

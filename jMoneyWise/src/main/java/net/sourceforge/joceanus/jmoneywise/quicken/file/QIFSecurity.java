@@ -87,11 +87,11 @@ public class QIFSecurity
         Map<AccountCategoryClass, String> myMap = new EnumMap<AccountCategoryClass, String>(AccountCategoryClass.class);
 
         /* Add the entries */
-        myMap.put(AccountCategoryClass.Shares, "Share");
-        myMap.put(AccountCategoryClass.UnitTrust, "Unit/Inv. Trust");
-        myMap.put(AccountCategoryClass.LifeBond, "Bond");
-        myMap.put(AccountCategoryClass.Asset, "Real Estate");
-        myMap.put(AccountCategoryClass.Endowment, "Trust");
+        myMap.put(AccountCategoryClass.SHARES, "Share");
+        myMap.put(AccountCategoryClass.UNITTRUST, "Unit/Inv. Trust");
+        myMap.put(AccountCategoryClass.LIFEBOND, "Bond");
+        myMap.put(AccountCategoryClass.ASSET, "Real Estate");
+        myMap.put(AccountCategoryClass.ENDOWMENT, "Trust");
 
         /* Return the map */
         return myMap;

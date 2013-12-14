@@ -149,7 +149,7 @@ public class Event
      */
     public JUnits getDebitUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.DebitUnits, JUnits.class)
+                ? theInfoSet.getValue(EventInfoClass.DEBITUNITS, JUnits.class)
                 : null;
     }
 
@@ -159,7 +159,7 @@ public class Event
      */
     public JUnits getCreditUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CreditUnits, JUnits.class)
+                ? theInfoSet.getValue(EventInfoClass.CREDITUNITS, JUnits.class)
                 : null;
     }
 
@@ -169,7 +169,7 @@ public class Event
      */
     public JMoney getTaxCredit() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.TaxCredit, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.TAXCREDIT, JMoney.class)
                 : null;
     }
 
@@ -179,7 +179,7 @@ public class Event
      */
     public JDilution getDilution() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Dilution, JDilution.class)
+                ? theInfoSet.getValue(EventInfoClass.DILUTION, JDilution.class)
                 : null;
     }
 
@@ -189,7 +189,7 @@ public class Event
      */
     public Integer getYears() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.QualifyYears, Integer.class)
+                ? theInfoSet.getValue(EventInfoClass.QUALIFYYEARS, Integer.class)
                 : null;
     }
 
@@ -199,7 +199,7 @@ public class Event
      */
     public JDateDay getCreditDate() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CreditDate, JDateDay.class)
+                ? theInfoSet.getValue(EventInfoClass.CREDITDATE, JDateDay.class)
                 : null;
     }
 
@@ -209,7 +209,7 @@ public class Event
      */
     public JMoney getNatInsurance() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.NatInsurance, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.NATINSURANCE, JMoney.class)
                 : null;
     }
 
@@ -219,7 +219,7 @@ public class Event
      */
     public JMoney getDeemedBenefit() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.DeemedBenefit, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.DEEMEDBENEFIT, JMoney.class)
                 : null;
     }
 
@@ -229,7 +229,7 @@ public class Event
      */
     public JMoney getPension() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Pension, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.PENSION, JMoney.class)
                 : null;
     }
 
@@ -239,7 +239,7 @@ public class Event
      */
     public JMoney getCharityDonation() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CharityDonation, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.CHARITYDONATION, JMoney.class)
                 : null;
     }
 
@@ -249,7 +249,7 @@ public class Event
      */
     public String getReference() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Reference, String.class)
+                ? theInfoSet.getValue(EventInfoClass.REFERENCE, String.class)
                 : null;
     }
 
@@ -259,7 +259,7 @@ public class Event
      */
     public String getComments() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Comments, String.class)
+                ? theInfoSet.getValue(EventInfoClass.COMMENTS, String.class)
                 : null;
     }
 
@@ -269,7 +269,7 @@ public class Event
      */
     public Account getThirdParty() {
         return hasInfoSet
-                ? theInfoSet.getAccount(EventInfoClass.ThirdParty)
+                ? theInfoSet.getAccount(EventInfoClass.THIRDPARTY)
                 : null;
     }
 
@@ -279,7 +279,7 @@ public class Event
      */
     public JMoney getCreditAmount() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CreditAmount, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.CREDITAMOUNT, JMoney.class)
                 : null;
     }
 
@@ -611,7 +611,7 @@ public class Event
         if ((myCreditUnits != null)
             && (myDebitUnits != null)
             && (Difference.isEqual(myCredit, myDebit))) {
-            addError(ERROR_CIRCULAR, EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
+            addError(ERROR_CIRCULAR, EventInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS));
         }
 
         /* If we have a category and an infoSet */
@@ -665,7 +665,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setDebitUnits(final JUnits pUnits) throws JDataException {
-        setInfoSetValue(EventInfoClass.DebitUnits, pUnits);
+        setInfoSetValue(EventInfoClass.DEBITUNITS, pUnits);
     }
 
     /**
@@ -674,7 +674,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setCreditUnits(final JUnits pUnits) throws JDataException {
-        setInfoSetValue(EventInfoClass.CreditUnits, pUnits);
+        setInfoSetValue(EventInfoClass.CREDITUNITS, pUnits);
     }
 
     /**
@@ -683,7 +683,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setTaxCredit(final JMoney pCredit) throws JDataException {
-        setInfoSetValue(EventInfoClass.TaxCredit, pCredit);
+        setInfoSetValue(EventInfoClass.TAXCREDIT, pCredit);
     }
 
     /**
@@ -692,7 +692,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setDilution(final JDilution pDilution) throws JDataException {
-        setInfoSetValue(EventInfoClass.Dilution, pDilution);
+        setInfoSetValue(EventInfoClass.DILUTION, pDilution);
     }
 
     /**
@@ -701,7 +701,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setYears(final Integer pYears) throws JDataException {
-        setInfoSetValue(EventInfoClass.QualifyYears, pYears);
+        setInfoSetValue(EventInfoClass.QUALIFYYEARS, pYears);
     }
 
     /**
@@ -710,7 +710,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setCreditDate(final JDateDay pCreditDate) throws JDataException {
-        setInfoSetValue(EventInfoClass.CreditDate, pCreditDate);
+        setInfoSetValue(EventInfoClass.CREDITDATE, pCreditDate);
     }
 
     /**
@@ -719,7 +719,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setNatInsurance(final JMoney pNatIns) throws JDataException {
-        setInfoSetValue(EventInfoClass.NatInsurance, pNatIns);
+        setInfoSetValue(EventInfoClass.NATINSURANCE, pNatIns);
     }
 
     /**
@@ -728,7 +728,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setBenefit(final JMoney pBenefit) throws JDataException {
-        setInfoSetValue(EventInfoClass.DeemedBenefit, pBenefit);
+        setInfoSetValue(EventInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
     /**
@@ -737,7 +737,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setPension(final JMoney pPension) throws JDataException {
-        setInfoSetValue(EventInfoClass.Pension, pPension);
+        setInfoSetValue(EventInfoClass.PENSION, pPension);
     }
 
     /**
@@ -746,7 +746,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setDonation(final JMoney pDonation) throws JDataException {
-        setInfoSetValue(EventInfoClass.CharityDonation, pDonation);
+        setInfoSetValue(EventInfoClass.CHARITYDONATION, pDonation);
     }
 
     /**
@@ -755,7 +755,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setCreditAmount(final JMoney pValue) throws JDataException {
-        setInfoSetValue(EventInfoClass.CreditAmount, pValue);
+        setInfoSetValue(EventInfoClass.CREDITAMOUNT, pValue);
     }
 
     /**
@@ -764,7 +764,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setReference(final String pReference) throws JDataException {
-        setInfoSetValue(EventInfoClass.Reference, pReference);
+        setInfoSetValue(EventInfoClass.REFERENCE, pReference);
     }
 
     /**
@@ -773,7 +773,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setComments(final String pComments) throws JDataException {
-        setInfoSetValue(EventInfoClass.Comments, pComments);
+        setInfoSetValue(EventInfoClass.COMMENTS, pComments);
     }
 
     /**
@@ -782,7 +782,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setThirdParty(final Account pParty) throws JDataException {
-        setInfoSetValue(EventInfoClass.ThirdParty, pParty);
+        setInfoSetValue(EventInfoClass.THIRDPARTY, pParty);
     }
 
     /**

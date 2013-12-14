@@ -544,17 +544,17 @@ public class SheetEvent
                     myLastCredit = myCredit;
 
                     /* Add information relating to the account */
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Comments, myDesc);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.NatInsurance, myNatInsurance);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DeemedBenefit, myBenefit);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DebitUnits, myDebitUnits);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditUnits, myCreditUnits);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Reference, myReference);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CharityDonation, myDonation);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.ThirdParty, myThirdParty);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.COMMENTS, myDesc);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.TAXCREDIT, myTaxCredit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.NATINSURANCE, myNatInsurance);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DEEMEDBENEFIT, myBenefit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DEBITUNITS, myDebitUnits);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CREDITUNITS, myCreditUnits);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DILUTION, myDilution);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.REFERENCE, myReference);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.QUALIFYYEARS, myYears);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CHARITYDONATION, myDonation);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.THIRDPARTY, myThirdParty);
 
                     /* Report the progress */
                     myCount++;
@@ -611,7 +611,7 @@ public class SheetEvent
             super.formatSheet();
 
             /* Set the Validations */
-            applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(EventInfoClass.THIRDPARTY, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 }

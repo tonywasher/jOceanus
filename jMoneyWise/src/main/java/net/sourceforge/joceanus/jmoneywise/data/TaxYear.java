@@ -139,7 +139,7 @@ public class TaxYear
      */
     public JMoney getAllowance() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.Allowance, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class)
                 : null;
     }
 
@@ -149,7 +149,7 @@ public class TaxYear
      */
     public JMoney getRentalAllowance() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.RentalAllowance, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.RENTALALLOWANCE, JMoney.class)
                 : null;
     }
 
@@ -159,7 +159,7 @@ public class TaxYear
      */
     public JMoney getLoBand() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LoTaxBand, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.LOTAXBAND, JMoney.class)
                 : null;
     }
 
@@ -169,7 +169,7 @@ public class TaxYear
      */
     public JMoney getBasicBand() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxBand, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXBAND, JMoney.class)
                 : null;
     }
 
@@ -179,7 +179,7 @@ public class TaxYear
      */
     public JMoney getCapitalAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CapitalAllowance, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.CAPITALALLOWANCE, JMoney.class)
                 : null;
     }
 
@@ -189,7 +189,7 @@ public class TaxYear
      */
     public JMoney getLoAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LoAgeAllowance, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class)
                 : null;
     }
 
@@ -199,7 +199,7 @@ public class TaxYear
      */
     public JMoney getHiAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiAgeAllowance, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class)
                 : null;
     }
 
@@ -209,7 +209,7 @@ public class TaxYear
      */
     public JMoney getAgeAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AgeAllowanceLimit, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AGEALLOWANCELIMIT, JMoney.class)
                 : null;
     }
 
@@ -219,7 +219,7 @@ public class TaxYear
      */
     public JMoney getAddAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalAllowanceLimit, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, JMoney.class)
                 : null;
     }
 
@@ -229,7 +229,7 @@ public class TaxYear
      */
     public JMoney getAddIncBound() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalIncomeThreshold, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, JMoney.class)
                 : null;
     }
 
@@ -239,7 +239,7 @@ public class TaxYear
      */
     public JRate getLoTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LoTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.LOTAXRATE, JRate.class)
                 : null;
     }
 
@@ -249,7 +249,7 @@ public class TaxYear
      */
     public JRate getBasicTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class)
                 : null;
     }
 
@@ -259,7 +259,7 @@ public class TaxYear
      */
     public JRate getHiTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HITAXRATE, JRate.class)
                 : null;
     }
 
@@ -269,7 +269,7 @@ public class TaxYear
      */
     public JRate getIntTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.InterestTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.INTERESTTAXRATE, JRate.class)
                 : null;
     }
 
@@ -279,7 +279,7 @@ public class TaxYear
      */
     public JRate getDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.DividendTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDTAXRATE, JRate.class)
                 : null;
     }
 
@@ -289,7 +289,7 @@ public class TaxYear
      */
     public JRate getHiDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiDividendTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class)
                 : null;
     }
 
@@ -299,7 +299,7 @@ public class TaxYear
      */
     public JRate getAddTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALTAXRATE, JRate.class)
                 : null;
     }
 
@@ -309,7 +309,7 @@ public class TaxYear
      */
     public JRate getAddDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalDividendTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, JRate.class)
                 : null;
     }
 
@@ -319,7 +319,7 @@ public class TaxYear
      */
     public JRate getCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CapitalTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.CAPITALTAXRATE, JRate.class)
                 : null;
     }
 
@@ -329,7 +329,7 @@ public class TaxYear
      */
     public JRate getHiCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiCapitalTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, JRate.class)
                 : null;
     }
 
@@ -365,7 +365,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAllowance(final JMoney pAllowance) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.Allowance, pAllowance);
+        setInfoSetValue(TaxYearInfoClass.ALLOWANCE, pAllowance);
     }
 
     /**
@@ -374,7 +374,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setRentalAllowance(final JMoney pAllowance) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.RentalAllowance, pAllowance);
+        setInfoSetValue(TaxYearInfoClass.RENTALALLOWANCE, pAllowance);
     }
 
     /**
@@ -383,7 +383,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setCapitalAllow(final JMoney pAllowance) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.CapitalAllowance, pAllowance);
+        setInfoSetValue(TaxYearInfoClass.CAPITALALLOWANCE, pAllowance);
     }
 
     /**
@@ -392,7 +392,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setLoBand(final JMoney pLoBand) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.LoTaxBand, pLoBand);
+        setInfoSetValue(TaxYearInfoClass.LOTAXBAND, pLoBand);
     }
 
     /**
@@ -401,7 +401,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setBasicBand(final JMoney pBasicBand) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.BasicTaxBand, pBasicBand);
+        setInfoSetValue(TaxYearInfoClass.BASICTAXBAND, pBasicBand);
     }
 
     /**
@@ -410,7 +410,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setLoAgeAllow(final JMoney pLoAgeAllow) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.LoAgeAllowance, pLoAgeAllow);
+        setInfoSetValue(TaxYearInfoClass.LOAGEALLOWANCE, pLoAgeAllow);
     }
 
     /**
@@ -419,7 +419,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiAgeAllow(final JMoney pHiAgeAllow) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiAgeAllowance, pHiAgeAllow);
+        setInfoSetValue(TaxYearInfoClass.HIAGEALLOWANCE, pHiAgeAllow);
     }
 
     /**
@@ -428,7 +428,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAgeAllowLimit(final JMoney pAgeAllowLimit) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AgeAllowanceLimit, pAgeAllowLimit);
+        setInfoSetValue(TaxYearInfoClass.AGEALLOWANCELIMIT, pAgeAllowLimit);
     }
 
     /**
@@ -437,7 +437,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddAllowLimit(final JMoney pAddAllowLimit) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AdditionalAllowanceLimit, pAddAllowLimit);
+        setInfoSetValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, pAddAllowLimit);
     }
 
     /**
@@ -446,7 +446,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddIncBound(final JMoney pAddIncBound) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AdditionalIncomeThreshold, pAddIncBound);
+        setInfoSetValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, pAddIncBound);
     }
 
     /**
@@ -455,7 +455,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setLoTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.LoTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.LOTAXRATE, pRate);
     }
 
     /**
@@ -464,7 +464,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setBasicTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.BasicTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.BASICTAXRATE, pRate);
     }
 
     /**
@@ -473,7 +473,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.HITAXRATE, pRate);
     }
 
     /**
@@ -482,7 +482,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setIntTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.InterestTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.INTERESTTAXRATE, pRate);
     }
 
     /**
@@ -491,7 +491,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.DividendTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.DIVIDENDTAXRATE, pRate);
     }
 
     /**
@@ -500,7 +500,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiDividendTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, pRate);
     }
 
     /**
@@ -509,7 +509,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AdditionalTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.ADDITIONALTAXRATE, pRate);
     }
 
     /**
@@ -518,7 +518,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AdditionalDividendTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, pRate);
     }
 
     /**
@@ -527,7 +527,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setCapTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.CapitalTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.CAPITALTAXRATE, pRate);
     }
 
     /**
@@ -536,7 +536,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiCapTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiCapitalTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.HICAPITALTAXRATE, pRate);
     }
 
     /**

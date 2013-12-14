@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -34,87 +36,97 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * Tax Credit.
      */
-    TaxCredit(1, 0, DataType.MONEY),
+    TAXCREDIT(1, 0, DataType.MONEY),
 
     /**
      * National Insurance.
      */
-    NatInsurance(2, 1, DataType.MONEY),
+    NATINSURANCE(2, 1, DataType.MONEY),
 
     /**
      * Deemed Benefit.
      */
-    DeemedBenefit(3, 2, DataType.MONEY),
+    DEEMEDBENEFIT(3, 2, DataType.MONEY),
 
     /**
      * Pension.
      */
-    Pension(4, 3, DataType.MONEY),
+    PENSION(4, 3, DataType.MONEY),
 
     /**
      * QualifyingYears.
      */
-    QualifyYears(5, 4, DataType.INTEGER),
+    QUALIFYYEARS(5, 4, DataType.INTEGER),
 
     /**
      * CreditDate.
      */
-    CreditDate(6, 5, DataType.DATEDAY),
+    CREDITDATE(6, 5, DataType.DATEDAY),
 
     /**
      * Credit Units.
      */
-    CreditUnits(7, 6, DataType.UNITS),
+    CREDITUNITS(7, 6, DataType.UNITS),
 
     /**
      * Debit Units.
      */
-    DebitUnits(8, 7, DataType.UNITS),
+    DEBITUNITS(8, 7, DataType.UNITS),
 
     /**
      * Dilution.
      */
-    Dilution(9, 8, DataType.DILUTION),
+    DILUTION(9, 8, DataType.DILUTION),
 
     /**
      * Reference.
      */
-    Reference(10, 9, DataType.STRING),
+    REFERENCE(10, 9, DataType.STRING),
 
     /**
      * Charity Donation.
      */
-    CharityDonation(11, 10, DataType.MONEY),
+    CHARITYDONATION(11, 10, DataType.MONEY),
 
     /**
      * Credit Amount.
      */
-    CreditAmount(12, 11, DataType.MONEY),
+    CREDITAMOUNT(12, 11, DataType.MONEY),
 
     /**
      * ThirdParty.
      */
-    ThirdParty(13, 12),
+    THIRDPARTY(13, 12),
 
     /**
      * Comments.
      */
-    Comments(14, 13, DataType.STRING),
+    COMMENTS(14, 13, DataType.STRING),
 
     /**
      * Price.
      */
-    Price(15, 14, DataType.PRICE),
+    PRICE(15, 14, DataType.PRICE),
 
     /**
      * Comments.
      */
-    Commission(16, 15, DataType.MONEY),
+    COMMISSION(16, 15, DataType.MONEY),
 
     /**
      * Grant.
      */
-    OptionsGrant(17, 16);
+    OPTIONSGRANT(17, 16);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventInfoClass.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
 
     /**
      * Class Id.
@@ -154,6 +166,18 @@ public enum EventInfoClass implements DataInfoClass {
     @Override
     public boolean isLink() {
         return isLink;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**
@@ -206,9 +230,9 @@ public enum EventInfoClass implements DataInfoClass {
      */
     public int getMaximumLength() {
         switch (this) {
-            case Reference:
+            case REFERENCE:
                 return EventInfoType.DATA_LEN;
-            case Comments:
+            case COMMENTS:
                 return EventInfoType.COMMENT_LEN;
             default:
                 return 0;

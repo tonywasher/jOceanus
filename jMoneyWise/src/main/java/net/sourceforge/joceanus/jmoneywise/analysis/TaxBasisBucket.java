@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 
@@ -65,9 +65,9 @@ public final class TaxBasisBucket
     private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
-     * Tax Category Field Id.
+     * Tax Basis Field Id.
      */
-    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataCategory"));
+    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataBasis"));
 
     /**
      * Base Field Id.
@@ -99,8 +99,8 @@ public final class TaxBasisBucket
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        if (FIELD_TAXCAT.equals(pField)) {
-            return theTaxCategory;
+        if (FIELD_TAXBASIS.equals(pField)) {
+            return theTaxBasis;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
@@ -130,9 +130,9 @@ public final class TaxBasisBucket
     private final Analysis theAnalysis;
 
     /**
-     * Tax Category.
+     * Tax Basis.
      */
-    private final TaxCategory theTaxCategory;
+    private final TaxBasis theTaxBasis;
 
     /**
      * Values.
@@ -161,7 +161,7 @@ public final class TaxBasisBucket
 
     @Override
     public Integer getOrderedId() {
-        return theTaxCategory.getId();
+        return theTaxBasis.getId();
     }
 
     /**
@@ -169,17 +169,17 @@ public final class TaxBasisBucket
      * @return the name
      */
     public String getName() {
-        return (theTaxCategory == null)
+        return (theTaxBasis == null)
                 ? NAME_TOTALS
-                : theTaxCategory.getName();
+                : theTaxBasis.getName();
     }
 
     /**
-     * Obtain tax category.
-     * @return the category
+     * Obtain tax basis.
+     * @return the basis
      */
-    public TaxCategory getTaxCategory() {
-        return theTaxCategory;
+    public TaxBasis getTaxBasis() {
+        return theTaxBasis;
     }
 
     /**
@@ -310,12 +310,12 @@ public final class TaxBasisBucket
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pTaxCategory the category
+     * @param pTaxBasis the basis
      */
     private TaxBasisBucket(final Analysis pAnalysis,
-                           final TaxCategory pTaxCategory) {
+                           final TaxBasis pTaxBasis) {
         /* Store the parameters */
-        theTaxCategory = pTaxCategory;
+        theTaxBasis = pTaxBasis;
         theAnalysis = pAnalysis;
 
         /* Create the history map */
@@ -336,7 +336,7 @@ public final class TaxBasisBucket
                            final TaxBasisBucket pBase,
                            final JDateDay pDate) {
         /* Copy details from base */
-        theTaxCategory = pBase.getTaxCategory();
+        theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
@@ -357,7 +357,7 @@ public final class TaxBasisBucket
                            final TaxBasisBucket pBase,
                            final JDateDayRange pRange) {
         /* Copy details from base */
-        theTaxCategory = pBase.getTaxCategory();
+        theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
 
         /* Access the relevant history */
@@ -378,8 +378,8 @@ public final class TaxBasisBucket
             return -1;
         }
 
-        /* Compare the TaxCategories */
-        return getTaxCategory().compareTo(pThat.getTaxCategory());
+        /* Compare the TaxBases */
+        return getTaxBasis().compareTo(pThat.getTaxBasis());
     }
 
     @Override
@@ -397,7 +397,7 @@ public final class TaxBasisBucket
 
         /* Compare the Tax Categories */
         TaxBasisBucket myThat = (TaxBasisBucket) pThat;
-        if (!getTaxCategory().equals(myThat.getTaxCategory())) {
+        if (!getTaxBasis().equals(myThat.getTaxBasis())) {
             return false;
         }
 
@@ -407,7 +407,7 @@ public final class TaxBasisBucket
 
     @Override
     public int hashCode() {
-        return getTaxCategory().hashCode();
+        return getTaxBasis().hashCode();
     }
 
     /**
@@ -827,15 +827,15 @@ public final class TaxBasisBucket
          * @param pClass the event category class
          * @return the bucket
          */
-        public TaxBasisBucket getBucket(final TaxCategoryClass pClass) {
+        public TaxBasisBucket getBucket(final TaxBasisClass pClass) {
             /* Locate the bucket in the list */
-            TaxCategory myCategory = theData.getTaxCategories().findItemByClass(pClass);
-            TaxBasisBucket myItem = findItemById(myCategory.getId());
+            TaxBasis myBasis = theData.getTaxBases().findItemByClass(pClass);
+            TaxBasisBucket myItem = findItemById(myBasis.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new TaxBasisBucket(theAnalysis, myCategory);
+                myItem = new TaxBasisBucket(theAnalysis, myBasis);
 
                 /* Add to the list */
                 add(myItem);
@@ -855,69 +855,68 @@ public final class TaxBasisBucket
             /* Switch on the category type */
             TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {
-                case TaxedIncome:
-                case BenefitIncome:
-                case RentalIncome:
+                case TAXEDINCOME:
+                case BENEFITINCOME:
+                case RENTALINCOME:
                     /* Adjust the Gross salary bucket */
-                    myBucket = getBucket(TaxCategoryClass.GrossSalary);
+                    myBucket = getBucket(TaxBasisClass.GROSSSALARY);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case Interest:
-                case TaxedInterest:
-                case GrossInterest:
+                case INTEREST:
+                case TAXEDINTEREST:
+                case GROSSINTEREST:
                     /* Adjust the Gross interest bucket */
-                    myBucket = getBucket(TaxCategoryClass.GrossInterest);
+                    myBucket = getBucket(TaxBasisClass.GROSSINTEREST);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case Dividend:
-                case ShareDividend:
+                case DIVIDEND:
+                case SHAREDIVIDEND:
                     /* Adjust the Gross dividend bucket */
-                    myBucket = getBucket(TaxCategoryClass.GrossDividend);
+                    myBucket = getBucket(TaxBasisClass.GROSSDIVIDEND);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case UnitTrustDividend:
+                case UNITTRUSTDIVIDEND:
                     /* Adjust the Gross UT dividend bucket */
-                    myBucket = getBucket(TaxCategoryClass.GrossUTDividend);
+                    myBucket = getBucket(TaxBasisClass.GROSSUTDIVIDEND);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case RoomRentalIncome:
+                case ROOMRENTALINCOME:
                     /* Adjust the Gross rental bucket */
-                    myBucket = getBucket(TaxCategoryClass.GrossRental);
+                    myBucket = getBucket(TaxBasisClass.GROSSRENTAL);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case TaxSettlement:
+                case TAXSETTLEMENT:
                     /* Adjust the Tax Paid bucket */
-                    myBucket = getBucket(TaxCategoryClass.TaxPaid);
+                    myBucket = getBucket(TaxBasisClass.TAXPAID);
                     myBucket.addExpenseEvent(pEvent);
                     break;
-                case TaxFreeInterest:
-                case TaxFreeDividend:
-                case LoanInterestEarned:
-                case GrantIncome:
-                case Inherited:
-                case GiftedIncome:
+                case TAXFREEINTEREST:
+                case TAXFREEDIVIDEND:
+                case LOANINTERESTEARNED:
+                case GRANTINCOME:
+                case INHERITED:
+                case GIFTEDINCOME:
                     /* Adjust the Tax Free bucket */
-                    myBucket = getBucket(TaxCategoryClass.TaxFree);
+                    myBucket = getBucket(TaxBasisClass.TAXFREE);
                     myBucket.addIncomeEvent(pEvent);
                     break;
-                case Expense:
-                case LocalTaxes:
-                case WriteOff:
-                case LoanInterestCharged:
-                case CharityDonation:
-                case TaxRelief:
-                case OtherIncome:
+                case EXPENSE:
+                case LOCALTAXES:
+                case WRITEOFF:
+                case LOANINTERESTCHARGED:
+                case CHARITYDONATION:
+                case TAXRELIEF:
+                case OTHERINCOME:
                     /* Adjust the Expense bucket */
-                    myBucket = getBucket(TaxCategoryClass.Expense);
+                    myBucket = getBucket(TaxBasisClass.EXPENSE);
                     myBucket.addExpenseEvent(pEvent);
                     break;
-                case StockTakeOver:
-                case StockSplit:
-                case StockDeMerger:
-                case StockRightsTaken:
-                case StockRightsWaived:
-                case OpeningBalance:
-                case Transfer:
+                case STOCKTAKEOVER:
+                case STOCKSPLIT:
+                case STOCKDEMERGER:
+                case STOCKRIGHTSTAKEN:
+                case STOCKRIGHTSWAIVED:
+                case TRANSFER:
                 default:
                     break;
             }
@@ -930,7 +929,7 @@ public final class TaxBasisBucket
          * @param pIncome the income
          */
         protected void adjustValue(final Event pEvent,
-                                   final TaxCategoryClass pClass,
+                                   final TaxBasisClass pClass,
                                    final JMoney pIncome) {
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(pClass);
@@ -952,7 +951,7 @@ public final class TaxBasisBucket
             }
 
             /* Access the bucket and adjust it */
-            TaxBasisBucket myBucket = getBucket(TaxCategoryClass.Expense);
+            TaxBasisBucket myBucket = getBucket(TaxBasisClass.EXPENSE);
             myBucket.adjustValue(pEvent, myAmount);
         }
 
@@ -968,7 +967,7 @@ public final class TaxBasisBucket
             myDelta.subtractAmount(pExpense);
 
             /* Access the bucket and adjust it */
-            TaxBasisBucket myBucket = getBucket(TaxCategoryClass.Market);
+            TaxBasisBucket myBucket = getBucket(TaxBasisClass.MARKET);
             myBucket.adjustValue(myDelta);
         }
 
@@ -980,25 +979,25 @@ public final class TaxBasisBucket
             Iterator<TaxBasisBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 TaxBasisBucket myBucket = myIterator.next();
-                TaxCategory myType = myBucket.getTaxCategory();
+                TaxBasis myBasis = myBucket.getTaxBasis();
 
-                /* Switch on the tax type */
-                switch (myType.getTaxClass()) {
-                    case GrossSalary:
-                    case GrossInterest:
-                    case GrossDividend:
-                    case GrossUTDividend:
-                    case GrossRental:
-                    case GrossTaxableGains:
-                    case GrossCapitalGains:
-                    case Market:
-                    case TaxFree:
+                /* Switch on the tax basis */
+                switch (myBasis.getTaxClass()) {
+                    case GROSSSALARY:
+                    case GROSSINTEREST:
+                    case GROSSDIVIDEND:
+                    case GROSSUTDIVIDEND:
+                    case GROSSRENTAL:
+                    case GROSSTAXABLEGAINS:
+                    case GROSSCAPITALGAINS:
+                    case MARKET:
+                    case TAXFREE:
                         /* Adjust the Total Profit buckets */
                         theTotals.addValues(myBucket);
                         break;
-                    case TaxPaid:
-                    case Expense:
-                    case Virtual:
+                    case TAXPAID:
+                    case EXPENSE:
+                    case VIRTUAL:
                         /* Adjust the Total profits buckets */
                         theTotals.subtractValues(myBucket);
                         break;

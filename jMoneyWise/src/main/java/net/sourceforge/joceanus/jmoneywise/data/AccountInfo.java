@@ -239,13 +239,13 @@ public class AccountInfo
                     if (myType.isLink()) {
                         DataItem myLink = null;
                         switch (myType.getInfoClass()) {
-                            case Alias:
-                            case Parent:
-                            case Portfolio:
-                            case Holding:
+                            case ALIAS:
+                            case PARENT:
+                            case PORTFOLIO:
+                            case HOLDING:
                                 myLink = myAccounts.findItemById(getValue(Integer.class));
                                 break;
-                            case AutoExpense:
+                            case AUTOEXPENSE:
                                 myLink = myData.getEventCategories().findItemById(getValue(Integer.class));
                                 break;
                             default:
@@ -384,13 +384,13 @@ public class AccountInfo
             Integer myId = getValue(Integer.class);
             DataItem myNewLink = null;
             switch (myType.getInfoClass()) {
-                case Alias:
-                case Parent:
-                case Portfolio:
-                case Holding:
+                case ALIAS:
+                case PARENT:
+                case PORTFOLIO:
+                case HOLDING:
                     myNewLink = myAccounts.findItemById(myId);
                     break;
-                case AutoExpense:
+                case AUTOEXPENSE:
                     myNewLink = myData.getEventCategories().findItemById(myId);
                     break;
                 default:
@@ -457,13 +457,13 @@ public class AccountInfo
                         String myName = (String) pValue;
                         FinanceData myData = getDataSet();
                         switch (myType.getInfoClass()) {
-                            case Alias:
-                            case Parent:
-                            case Portfolio:
-                            case Holding:
+                            case ALIAS:
+                            case PARENT:
+                            case PORTFOLIO:
+                            case HOLDING:
                                 myLink = myData.getAccounts().findItemByName(myName);
                                 break;
-                            case AutoExpense:
+                            case AUTOEXPENSE:
                                 myLink = myData.getEventCategories().findItemByName(myName);
                                 break;
                             default:
@@ -566,13 +566,13 @@ public class AccountInfo
 
         /* Switch on info class */
         switch (getInfoClass()) {
-            case Parent:
-            case Alias:
-            case Portfolio:
-            case Holding:
+            case PARENT:
+            case ALIAS:
+            case PORTFOLIO:
+            case HOLDING:
                 getAccount().touchItem(this);
                 break;
-            case AutoExpense:
+            case AUTOEXPENSE:
                 getEventCategory().touchItem(this);
                 break;
             default:

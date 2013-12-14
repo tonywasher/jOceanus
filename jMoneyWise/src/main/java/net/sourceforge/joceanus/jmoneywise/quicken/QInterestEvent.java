@@ -51,10 +51,10 @@ public class QInterestEvent
         /* Make sure that the additional categories are registered */
         getAnalysis().getInterestCategory(pEvent);
         if (pEvent.getTaxCredit() != null) {
-            getAnalysis().getCategory(EventInfoClass.TaxCredit);
+            getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
         }
         if (pEvent.getCharityDonation() != null) {
-            getAnalysis().getCategory(EventInfoClass.CharityDonation);
+            getAnalysis().getCategory(EventInfoClass.CHARITYDONATION);
         }
     }
 
@@ -142,14 +142,14 @@ public class QInterestEvent
             if (!isTaxFree) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
+                myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
                 addCategoryLine(QEventLineType.SplitCategory, myCategory);
                 addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
             if (isDonation) {
                 myValue = new JDecimal(myDonation);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.CharityDonation);
+                myCategory = getAnalysis().getCategory(EventInfoClass.CHARITYDONATION);
                 addCategoryLine(QEventLineType.SplitCategory, myCategory);
                 addDecimalLine(QEventLineType.SplitAmount, myValue);
             }

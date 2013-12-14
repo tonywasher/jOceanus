@@ -433,14 +433,14 @@ public class SheetAccount
                 }
 
                 /* Add information relating to the account */
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Portfolio, myPortfolio);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Holding, myHolding);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Symbol, mySymbol);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OpeningBalance, myBalance);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AutoExpense, myAutoExpense);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.MATURITY, myMaturity);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.PARENT, myParent);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.ALIAS, myAlias);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.PORTFOLIO, myPortfolio);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.HOLDING, myHolding);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.SYMBOL, mySymbol);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OPENINGBALANCE, myBalance);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
 
                 /* Report the progress */
                 myCount++;
@@ -490,8 +490,8 @@ public class SheetAccount
             super.formatSheet();
 
             /* Set the Validations */
-            applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
-            applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
+            applyDataValidation(AccountInfoClass.PARENT, AREA_ACCOUNTNAMES);
+            applyDataValidation(AccountInfoClass.ALIAS, AREA_ACCOUNTNAMES);
         }
     }
 }

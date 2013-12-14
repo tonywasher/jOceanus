@@ -517,14 +517,14 @@ public class AccountStatus
 
             /* If we are being aliased to */
             switch (myInfo.getInfoClass()) {
-                case Alias:
+                case ALIAS:
                     /* Set flags */
                     isAliasedTo = true;
                     if (!isClosed) {
                         isCloseable = false;
                     }
                     break;
-                case Parent:
+                case PARENT:
                     /* Set flags */
                     isParent = true;
                     if (!isClosed) {
@@ -534,14 +534,14 @@ public class AccountStatus
                         hasLoans = true;
                     }
                     break;
-                case Portfolio:
+                case PORTFOLIO:
                     /* Set flags */
                     isPortfolio = true;
                     if (!isClosed) {
                         isCloseable = false;
                     }
                     break;
-                case Holding:
+                case HOLDING:
                     /* Set flags */
                     isHolding = true;
                     if (!isClosed) {

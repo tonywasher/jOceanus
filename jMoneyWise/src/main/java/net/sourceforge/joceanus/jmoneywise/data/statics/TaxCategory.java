@@ -152,36 +152,6 @@ public class TaxCategory
     }
 
     /**
-     * Determine whether we should add tax credits to the total.
-     * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
-     */
-    public boolean hasTaxCredits() {
-        switch (getTaxClass()) {
-            case GrossSalary:
-            case GrossInterest:
-            case GrossDividend:
-            case GrossUTDividend:
-            case GrossTaxableGains:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether we this is the tax paid category.
-     * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
-     */
-    public boolean isTaxPaid() {
-        switch (getTaxClass()) {
-            case TaxPaid:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Represents a list of {@link TaxCategory} objects.
      */
     public static class TaxCategoryList

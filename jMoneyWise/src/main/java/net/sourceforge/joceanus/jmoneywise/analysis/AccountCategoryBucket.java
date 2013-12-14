@@ -293,10 +293,10 @@ public final class AccountCategoryBucket
         /* If we have do not have value */
         if (myClass.isNonAsset()) {
             /* If this is a totals account */
-            if (myClass == AccountCategoryClass.Totals) {
+            if (myClass == AccountCategoryClass.TOTALS) {
                 return CategoryType.Total;
             }
-            if (myClass == AccountCategoryClass.Portfolio) {
+            if (myClass == AccountCategoryClass.PORTFOLIO) {
                 return CategoryType.Portfolio;
             }
 
@@ -307,7 +307,7 @@ public final class AccountCategoryBucket
         }
 
         /* Return creditCard/Money */
-        return (myClass == AccountCategoryClass.CreditCard)
+        return (myClass == AccountCategoryClass.CREDITCARD)
                 ? CategoryType.CreditCard
                 : CategoryType.Money;
     }
@@ -485,7 +485,7 @@ public final class AccountCategoryBucket
          */
         private AccountCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-            AccountCategory myTotals = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Totals);
+            AccountCategory myTotals = theData.getAccountCategories().getSingularClass(AccountCategoryClass.TOTALS);
             return (myTotals == null)
                     ? null
                     : new AccountCategoryBucket(myTotals);
@@ -549,7 +549,7 @@ public final class AccountCategoryBucket
             }
 
             /* Obtain the portfolios category */
-            AccountCategory myTotal = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Portfolio);
+            AccountCategory myTotal = theData.getAccountCategories().getSingularClass(AccountCategoryClass.PORTFOLIO);
             AccountCategoryBucket myTotals = getBucket(myTotal);
 
             /* Loop through the buckets */

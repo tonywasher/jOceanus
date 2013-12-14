@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
@@ -31,284 +33,214 @@ import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
  */
 public enum TaxCategoryClass implements StaticInterface {
     /**
-     * Gross Salary Income.
-     */
-    GrossSalary(1, 0, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Interest Income.
-     */
-    GrossInterest(2, 1, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Dividend Income.
-     */
-    GrossDividend(3, 2, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Unit Trust Dividend Income.
-     */
-    GrossUTDividend(4, 3, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Rental Income.
-     */
-    GrossRental(5, 4, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Taxable gains.
-     */
-    GrossTaxableGains(6, 5, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Capital gains.
-     */
-    GrossCapitalGains(7, 6, TaxCategorySection.CATSUMM),
-
-    /**
-     * Total Tax Paid.
-     */
-    TaxPaid(8, 7, TaxCategorySection.CATSUMM),
-
-    /**
-     * Market Growth/Shrinkage.
-     */
-    Market(9, 8, TaxCategorySection.CATSUMM),
-
-    /**
-     * Tax Free Income.
-     */
-    TaxFree(10, 9, TaxCategorySection.CATSUMM),
-
-    /**
-     * Gross Expense.
-     */
-    Expense(11, 10, TaxCategorySection.CATSUMM),
-
-    /**
-     * Virtual Income.
-     */
-    Virtual(12, 11, TaxCategorySection.CATSUMM),
-
-    /**
-     * Non-Core Income.
-     */
-    NonCore(13, 12, TaxCategorySection.CATSUMM),
-
-    /**
-     * Profit on Year.
-     */
-    ProfitLoss(14, 0, TaxCategorySection.CATTOTAL),
-
-    /**
-     * Core Income after tax ignoring market movements and inheritance.
-     */
-    CoreIncome(15, 1, TaxCategorySection.CATTOTAL),
-
-    /**
-     * Profit on year after ignoring market movements and inheritance.
-     */
-    CoreProfitLoss(16, 2, TaxCategorySection.CATTOTAL),
-
-    /**
      * Gross Income.
      */
-    GrossIncome(17, 0, TaxCategorySection.TAXDETAIL),
+    GROSSINCOME(1, 0, TaxCategorySection.TAXDETAIL),
 
     /**
      * Original Allowance.
      */
-    OriginalAllowance(18, 1, TaxCategorySection.TAXDETAIL),
+    ORIGINALALLOWANCE(2, 1, TaxCategorySection.TAXDETAIL),
 
     /**
      * Adjusted Allowance.
      */
-    AdjustedAllowance(19, 2, TaxCategorySection.TAXDETAIL),
+    ADJUSTEDALLOWANCE(3, 2, TaxCategorySection.TAXDETAIL),
 
     /**
      * High Tax Band.
      */
-    HiTaxBand(20, 3, TaxCategorySection.TAXDETAIL),
+    HITAXBAND(4, 3, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at nil-rate.
      */
-    SalaryNilRate(21, 4, TaxCategorySection.TAXDETAIL),
+    SALARYNILRATE(5, 4, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at low-rate.
      */
-    SalaryLoRate(22, 5, TaxCategorySection.TAXDETAIL),
+    SALARYLORATE(6, 5, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at basic-rate.
      */
-    SalaryBasicRate(23, 6, TaxCategorySection.TAXDETAIL),
+    SALARYBASICRATE(7, 6, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at high-rate.
      */
-    SalaryHiRate(24, 7, TaxCategorySection.TAXDETAIL),
+    SALARYHIRATE(8, 7, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at additional-rate.
      */
-    SalaryAdditionalRate(25, 8, TaxCategorySection.TAXDETAIL),
+    SALARYADDRATE(9, 8, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at nil-rate.
      */
-    RentalNilRate(26, 9, TaxCategorySection.TAXDETAIL),
+    RENTALNILRATE(10, 9, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at low-rate.
      */
-    RentalLoRate(27, 10, TaxCategorySection.TAXDETAIL),
+    RENTALLORATE(11, 10, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at basic-rate.
      */
-    RentalBasicRate(28, 11, TaxCategorySection.TAXDETAIL),
+    RENTALBASICRATE(12, 11, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at high-rate.
      */
-    RentalHiRate(29, 12, TaxCategorySection.TAXDETAIL),
+    RENTALHIRATE(13, 12, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at additional-rate.
      */
-    RentalAdditionalRate(30, 13, TaxCategorySection.TAXDETAIL),
+    RENTALADDRATE(14, 13, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at nil-rate.
      */
-    InterestNilRate(31, 14, TaxCategorySection.TAXDETAIL),
+    INTERESTNILRATE(15, 14, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at low-rate.
      */
-    InterestLoRate(32, 15, TaxCategorySection.TAXDETAIL),
+    INTERESTLORATE(16, 15, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at basic-rate.
      */
-    InterestBasicRate(33, 16, TaxCategorySection.TAXDETAIL),
+    INTERESTBASICRATE(17, 16, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at high-rate.
      */
-    InterestHiRate(34, 17, TaxCategorySection.TAXDETAIL),
+    INTERESTHIRATE(18, 17, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at additional-rate.
      */
-    InterestAdditionalRate(35, 18, TaxCategorySection.TAXDETAIL),
+    INTERESTADDRATE(19, 18, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at basic-rate.
      */
-    DividendBasicRate(36, 19, TaxCategorySection.TAXDETAIL),
+    DIVIDENDBASICRATE(20, 19, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at high-rate.
      */
-    DividendHiRate(37, 20, TaxCategorySection.TAXDETAIL),
+    DIVIDENDHIRATE(21, 20, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at additional-rate.
      */
-    DividendAdditionalRate(38, 21, TaxCategorySection.TAXDETAIL),
+    DIVIDENDADDRATE(22, 21, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at basic-rate.
      */
-    SliceBasicRate(39, 22, TaxCategorySection.TAXDETAIL),
+    SLICEBASICRATE(23, 22, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at high-rate.
      */
-    SliceHiRate(40, 23, TaxCategorySection.TAXDETAIL),
+    SLICEHIRATE(24, 23, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at additional-rate.
      */
-    SliceAdditionalRate(41, 24, TaxCategorySection.TAXDETAIL),
+    SLICEADDRATE(25, 24, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at basic-rate.
      */
-    GainsBasicRate(42, 25, TaxCategorySection.TAXDETAIL),
+    GAINSBASICRATE(26, 25, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at high-rate.
      */
-    GainsHiRate(43, 26, TaxCategorySection.TAXDETAIL),
+    GAINSHIRATE(27, 26, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at additional-rate.
      */
-    GainsAdditionalRate(44, 27, TaxCategorySection.TAXDETAIL),
+    GAINSADDRATE(28, 27, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at nil-rate.
      */
-    CapitalNilRate(45, 28, TaxCategorySection.TAXDETAIL),
+    CAPITALNILRATE(29, 28, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at basic-rate.
      */
-    CapitalBasicRate(46, 29, TaxCategorySection.TAXDETAIL),
+    CAPITALBASICRATE(30, 29, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at high-rate.
      */
-    CapitalHiRate(47, 30, TaxCategorySection.TAXDETAIL),
+    CAPITALHIRATE(31, 30, TaxCategorySection.TAXDETAIL),
 
     /**
      * Total Taxation Due on Salary.
      */
-    TaxDueSalary(48, 0, TaxCategorySection.TAXSUMM),
+    TAXDUESALARY(32, 0, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Rental.
      */
-    TaxDueRental(49, 1, TaxCategorySection.TAXSUMM),
+    TAXDUERENTAL(33, 1, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Interest.
      */
-    TaxDueInterest(50, 2, TaxCategorySection.TAXSUMM),
+    TAXDUEINTEREST(34, 2, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Dividends.
      */
-    TaxDueDividend(51, 3, TaxCategorySection.TAXSUMM),
+    TAXDUEDIVIDEND(35, 3, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Taxable Gains.
      */
-    TaxDueTaxableGains(52, 4, TaxCategorySection.TAXSUMM),
+    TAXDUETAXGAINS(36, 4, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Slice.
      */
-    TaxDueSlice(53, 5, TaxCategorySection.TAXSUMM),
+    TAXDUESLICE(37, 5, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Capital Gains.
      */
-    TaxDueCapitalGains(54, 6, TaxCategorySection.TAXSUMM),
+    TAXDUECAPITAL(38, 6, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due.
      */
-    TotalTaxationDue(55, 0, TaxCategorySection.TAXTOTAL),
+    TOTALTAXATIONDUE(39, 0, TaxCategorySection.TAXTOTAL),
 
     /**
      * Taxation Profit (TaxDue-TaxPaid).
      */
-    TaxProfitLoss(56, 1, TaxCategorySection.TAXTOTAL);
+    TAXPROFITLOSS(40, 1, TaxCategorySection.TAXTOTAL);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCategoryClass.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
 
     /**
      * Class Id.
@@ -341,6 +273,18 @@ public enum TaxCategoryClass implements StaticInterface {
     @Override
     public int getOrder() {
         return theOrder;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**

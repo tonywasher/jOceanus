@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 
 /**
@@ -293,8 +292,7 @@ public class QEvent
             addXferAccountLine(QEventLineType.Category, pAccount);
         } else {
             /* Add the explicit category */
-            EventCategory myCat = getAnalysis().getCategory(EventCategoryClass.OpeningBalance);
-            addCategoryLine(QEventLineType.Category, myCat);
+            addStringLine(QEventLineType.Category, "Income:OpeningBalance");
         }
 
         /* Return the result */
@@ -539,11 +537,11 @@ public class QEvent
                                      final boolean isCredit) {
             QEvent myEvent;
             switch (pEvent.getCategoryClass()) {
-                case TaxedIncome:
-                case BenefitIncome:
+                case TAXEDINCOME:
+                case BENEFITINCOME:
                     myEvent = new QSalaryEvent(getAnalysis(), pEvent, isCredit);
                     break;
-                case Interest:
+                case INTEREST:
                     myEvent = new QInterestEvent(getAnalysis(), pEvent, isCredit);
                     break;
                 default:

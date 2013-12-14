@@ -385,9 +385,9 @@ public class MaintAccount
         /* Dimension fields correctly */
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
         theFieldSet.addFieldElement(Account.FIELD_CATEGORY, AccountCategory.class, myTypeLabel, theCategoriesBox);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), Account.class, myParLabel, theParentBox);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), Account.class, myAlsLabel, theAliasBox);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), DataType.DATEDAY, myMatLabel, myMaturity);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.PARENT), Account.class, myParLabel, theParentBox);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.ALIAS), Account.class, myAlsLabel, theAliasBox);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.MATURITY), DataType.DATEDAY, myMatLabel, myMaturity);
 
         /* Create the limits panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -477,20 +477,20 @@ public class MaintAccount
         JTextField myNotes = new JTextField();
 
         /* Set the column widths */
-        myWebSite.setColumns(AccountInfoClass.WebSite.getMaximumLength());
-        myCustNo.setColumns(AccountInfoClass.CustomerNo.getMaximumLength());
-        myUserId.setColumns(AccountInfoClass.UserId.getMaximumLength());
-        myPassword.setColumns(AccountInfoClass.Password.getMaximumLength());
-        myAccount.setColumns(AccountInfoClass.Account.getMaximumLength());
-        myNotes.setColumns(AccountInfoClass.WebSite.getMaximumLength());
+        myWebSite.setColumns(AccountInfoClass.WEBSITE.getMaximumLength());
+        myCustNo.setColumns(AccountInfoClass.CUSTOMERNO.getMaximumLength());
+        myUserId.setColumns(AccountInfoClass.USERID.getMaximumLength());
+        myPassword.setColumns(AccountInfoClass.PASSWORD.getMaximumLength());
+        myAccount.setColumns(AccountInfoClass.ACCOUNT.getMaximumLength());
+        myNotes.setColumns(AccountInfoClass.WEBSITE.getMaximumLength());
 
         /* Add the components to the field Set */
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.WebSite), DataType.CHARARRAY, myWebSiteLabel, myWebSite);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.CustomerNo), DataType.CHARARRAY, myCustNoLabel, myCustNo);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.UserId), DataType.CHARARRAY, myUserIdLabel, myUserId);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Password), DataType.CHARARRAY, myPasswordLabel, myPassword);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Account), DataType.CHARARRAY, myAccountLabel, myAccount);
-        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Notes), DataType.CHARARRAY, myNotesLabel, myNotes);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), DataType.CHARARRAY, myWebSiteLabel, myWebSite);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), DataType.CHARARRAY, myCustNoLabel, myCustNo);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.USERID), DataType.CHARARRAY, myUserIdLabel, myUserId);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), DataType.CHARARRAY, myPasswordLabel, myPassword);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccountLabel, myAccount);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myNotesLabel, myNotes);
 
         /* Create the limits panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -748,15 +748,15 @@ public class MaintAccount
             /* Set the visibility */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
                                                               && isNewAccount);
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), myCatClass == AccountCategoryClass.Bond);
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), myCatClass.isChild());
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myCatClass == AccountCategoryClass.BOND);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.PARENT), myCatClass.isChild());
 
             /* Handle alias */
             if (myCategory.getCategoryTypeClass().canAlias()
                 && !theAccount.isAliasedTo()) {
 
                 /* Set visible */
-                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), true);
+                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.ALIAS), true);
 
                 /* If we have alias already populated */
                 if (theAliasBox.getItemCount() > 0) {
@@ -799,7 +799,7 @@ public class MaintAccount
                 }
             } else {
                 /* Set visible */
-                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), false);
+                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.ALIAS), false);
             }
 
             /* Render the FieldSet */
@@ -859,9 +859,9 @@ public class MaintAccount
 
             /* Hide the optional fields */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, false);
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), false);
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), false);
-            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.MATURITY), false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.PARENT), false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.ALIAS), false);
 
             /* Render the Null Field Set */
             theFieldSet.renderNullSet();
@@ -1025,7 +1025,7 @@ public class MaintAccount
                     theAccount.setAccountCategory(pUpdate.getValue(AccountCategory.class));
 
                     /* If the account is now a bond */
-                    if (theAccount.isCategoryClass(AccountCategoryClass.Bond)) {
+                    if (theAccount.isCategoryClass(AccountCategoryClass.BOND)) {
                         /* If it doesn't have a maturity */
                         if (theAccount.getMaturity() == null) {
                             /* Create a default maturity */
@@ -1048,31 +1048,31 @@ public class MaintAccount
                 } else {
                     /* Switch on the field */
                     switch (AccountInfoSet.getClassForField(myField)) {
-                        case Parent:
+                        case PARENT:
                             theAccount.setParent(pUpdate.getValue(Account.class));
                             break;
-                        case Alias:
+                        case ALIAS:
                             theAccount.setAlias(pUpdate.getValue(Account.class));
                             break;
-                        case Maturity:
+                        case MATURITY:
                             theAccount.setMaturity(pUpdate.getDateDay());
                             break;
-                        case WebSite:
+                        case WEBSITE:
                             theAccount.setWebSite(pUpdate.getCharArray());
                             break;
-                        case CustomerNo:
+                        case CUSTOMERNO:
                             theAccount.setCustNo(pUpdate.getCharArray());
                             break;
-                        case UserId:
+                        case USERID:
                             theAccount.setUserId(pUpdate.getCharArray());
                             break;
-                        case Password:
+                        case PASSWORD:
                             theAccount.setPassword(pUpdate.getCharArray());
                             break;
-                        case Account:
+                        case ACCOUNT:
                             theAccount.setAccount(pUpdate.getCharArray());
                             break;
-                        case Notes:
+                        case NOTES:
                             theAccount.setNotes(pUpdate.getCharArray());
                             break;
                         default:

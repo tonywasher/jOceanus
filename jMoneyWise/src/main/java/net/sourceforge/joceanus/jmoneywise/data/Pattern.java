@@ -229,7 +229,7 @@ public class Pattern
         /* Default to monthly frequency */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.Monthly));
+        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
     }
 
     /**
@@ -379,7 +379,7 @@ public class Pattern
         /* If this is the first request for an event */
         if (pDate.compareTo(getDate()) == 0) {
             /* If the frequency is maturity */
-            if (myFreq == FrequencyClass.Maturity) {
+            if (myFreq == FrequencyClass.MATURITY) {
                 /* Access the maturity date */
                 myDate = getDebit().getMaturity();
 
@@ -407,25 +407,25 @@ public class Pattern
             /* switch on frequency type */
             switch (myFreq) {
             /* Weekly etc add relevant days */
-                case Weekly:
-                case Fortnightly:
+                case WEEKLY:
+                case FORTNIGHTLY:
                     pDate.adjustDay(myFreq.getAdjustment());
                     break;
 
                 /* Monthly etc add relevant months */
-                case Monthly:
-                case Quarterly:
-                case HalfYearly:
+                case MONTHLY:
+                case QUARTERLY:
+                case HALFYEARLY:
                     pDate.adjustMonth(myFreq.getAdjustment());
                     break;
 
                 /* EndMonthly shift to end of next month */
-                case EndOfMonth:
+                case ENDOFMONTH:
                     pDate.endNextMonth();
                     break;
                 /* Annual and maturity patterns only generate single event */
-                case Annually:
-                case Maturity:
+                case ANNUALLY:
+                case MATURITY:
                 default:
                     return null;
             }

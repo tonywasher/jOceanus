@@ -774,20 +774,20 @@ public class AccountCategory
 
             /* Switch on the account class */
             switch (myClass) {
-                case Totals:
+                case TOTALS:
                     /* If parent exists */
                     if (myParent != null) {
                         addError(ERROR_EXIST, FIELD_PARENT);
                     }
                     break;
-                case SavingsTotals:
-                case CashTotals:
-                case PricedTotals:
-                case LoanTotals:
+                case SAVINGSTOTALS:
+                case CASHTOTALS:
+                case PRICEDTOTALS:
+                case LOANTOTALS:
                     /* Check parent */
                     if (myParent == null) {
                         addError(ERROR_MISSING, FIELD_PARENT);
-                    } else if (!myParent.isCategoryClass(AccountCategoryClass.Totals)) {
+                    } else if (!myParent.isCategoryClass(AccountCategoryClass.TOTALS)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;

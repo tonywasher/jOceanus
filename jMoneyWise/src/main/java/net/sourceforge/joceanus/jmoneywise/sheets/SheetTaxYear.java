@@ -339,26 +339,26 @@ public class SheetTaxYear
                 TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myDate);
 
                 /* Add information relating to the tax year */
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RentalAllowance, myRentalAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxBand, myLoTaxBand);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxBand, myBasicTaxBand);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalAllowance, myCapitalAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoAgeAllowance, myLoAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiAgeAllowance, myHiAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AgeAllowanceLimit, myAgeAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalAllowanceLimit, myAddAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalIncomeThreshold, myAddIncBound);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxRate, myLoTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxRate, myBasicTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiTaxRate, myHiTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalTaxRate, myAddTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.InterestTaxRate, myIntTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DividendTaxRate, myDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiDividendTaxRate, myHiDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalDividendTaxRate, myAddDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalTaxRate, myCapTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiCapitalTaxRate, myHiCapTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ALLOWANCE, myAllowance);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RENTALALLOWANCE, myRentalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOTAXBAND, myLoTaxBand);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BASICTAXBAND, myBasicTaxBand);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CAPITALALLOWANCE, myCapitalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOAGEALLOWANCE, myLoAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HIAGEALLOWANCE, myHiAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AGEALLOWANCELIMIT, myAgeAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, myAddAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, myAddIncBound);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOTAXRATE, myLoTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BASICTAXRATE, myBasicTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HITAXRATE, myHiTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALTAXRATE, myAddTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.INTERESTTAXRATE, myIntTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DIVIDENDTAXRATE, myDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HIDIVIDENDTAXRATE, myHiDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myAddDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CAPITALTAXRATE, myCapTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HICAPITALTAXRATE, myHiCapTaxRate);
 
                 /* Report the progress */
                 myCount++;

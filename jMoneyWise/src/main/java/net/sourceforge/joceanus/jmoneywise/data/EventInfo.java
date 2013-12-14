@@ -220,7 +220,7 @@ public class EventInfo
                     if (myType.isLink()) {
                         DataItem myLink = null;
                         switch (myType.getInfoClass()) {
-                            case ThirdParty:
+                            case THIRDPARTY:
                                 myLink = myData.getAccounts().findItemById(getValue(Integer.class));
                                 break;
                             default:
@@ -350,7 +350,7 @@ public class EventInfo
             Integer myId = getValue(Integer.class);
             DataItem myNewLink = null;
             switch (myType.getInfoClass()) {
-                case ThirdParty:
+                case THIRDPARTY:
                     myNewLink = myData.getAccounts().findItemById(myId);
                     break;
                 default:
@@ -429,7 +429,7 @@ public class EventInfo
                         String myName = (String) pValue;
                         FinanceData myData = getDataSet();
                         switch (myType.getInfoClass()) {
-                            case ThirdParty:
+                            case THIRDPARTY:
                                 myLink = myData.getAccounts().findItemByName(myName);
                                 break;
                             default:
@@ -545,7 +545,7 @@ public class EventInfo
 
         /* Switch on info class */
         switch (getInfoClass()) {
-            case ThirdParty:
+            case THIRDPARTY:
                 getAccount().touchItem(getOwner());
                 break;
             default:

@@ -362,7 +362,7 @@ public final class AccountBucket
         theCategory = theAccount.getAccountCategory();
 
         /* Determine whether this is a credit card */
-        isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CreditCard);
+        isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CREDITCARD);
 
         /* Create the history map */
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());

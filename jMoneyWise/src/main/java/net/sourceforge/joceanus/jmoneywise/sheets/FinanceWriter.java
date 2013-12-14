@@ -51,6 +51,7 @@ public class FinanceWriter
         /* Register the sheets */
         addSheet(new SheetAccountCategoryType(this));
         addSheet(new SheetEventCategoryType(this));
+        addSheet(new SheetTaxBasis(this));
         addSheet(new SheetTaxCategory(this));
         addSheet(new SheetAccountCurrency(this));
         addSheet(new SheetTaxRegime(this));

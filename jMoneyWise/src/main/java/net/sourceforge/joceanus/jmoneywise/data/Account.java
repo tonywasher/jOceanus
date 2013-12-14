@@ -193,7 +193,7 @@ public class Account
      */
     public JDateDay getMaturity() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Maturity, JDateDay.class)
+                ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
                 : null;
     }
 
@@ -203,7 +203,7 @@ public class Account
      */
     public Account getParent() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.Parent)
+                ? theInfoSet.getAccount(AccountInfoClass.PARENT)
                 : null;
     }
 
@@ -213,7 +213,7 @@ public class Account
      */
     public Account getAlias() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.Alias)
+                ? theInfoSet.getAccount(AccountInfoClass.ALIAS)
                 : null;
     }
 
@@ -223,7 +223,7 @@ public class Account
      */
     public Account getPortfolio() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.Portfolio)
+                ? theInfoSet.getAccount(AccountInfoClass.PORTFOLIO)
                 : null;
     }
 
@@ -233,7 +233,7 @@ public class Account
      */
     public Account getHolding() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.Holding)
+                ? theInfoSet.getAccount(AccountInfoClass.HOLDING)
                 : null;
     }
 
@@ -243,7 +243,7 @@ public class Account
      */
     public EventCategory getAutoExpense() {
         return hasInfoSet
-                ? theInfoSet.getEventCategory(AccountInfoClass.AutoExpense)
+                ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
                 : null;
     }
 
@@ -253,7 +253,7 @@ public class Account
      */
     public String getSymbol() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Symbol, String.class)
+                ? theInfoSet.getValue(AccountInfoClass.SYMBOL, String.class)
                 : null;
     }
 
@@ -263,7 +263,7 @@ public class Account
      */
     public String getComments() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Comments, String.class)
+                ? theInfoSet.getValue(AccountInfoClass.COMMENTS, String.class)
                 : null;
     }
 
@@ -273,7 +273,7 @@ public class Account
      */
     public JMoney getOpeningBalance() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.OpeningBalance, JMoney.class)
+                ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
                 : null;
     }
 
@@ -283,7 +283,7 @@ public class Account
      */
     public char[] getWebSite() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.WebSite, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
                 : null;
     }
 
@@ -293,7 +293,7 @@ public class Account
      */
     public char[] getCustNo() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.CustomerNo, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
                 : null;
     }
 
@@ -303,7 +303,7 @@ public class Account
      */
     public char[] getUserId() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.UserId, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
                 : null;
     }
 
@@ -313,7 +313,7 @@ public class Account
      */
     public char[] getPassword() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Password, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
                 : null;
     }
 
@@ -323,7 +323,7 @@ public class Account
      */
     public char[] getSortCode() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.SortCode, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
                 : null;
     }
 
@@ -333,7 +333,7 @@ public class Account
      */
     public char[] getReference() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Reference, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
                 : null;
     }
 
@@ -343,7 +343,7 @@ public class Account
      */
     public char[] getAccount() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Account, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
                 : null;
     }
 
@@ -353,7 +353,7 @@ public class Account
      */
     public char[] getNotes() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Notes, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
                 : null;
     }
 
@@ -696,7 +696,7 @@ public class Account
         theStatus.adjustClosed();
 
         /* If the maturity is null for a bond set it to close date */
-        if (isCategoryClass(AccountCategoryClass.Bond)
+        if (isCategoryClass(AccountCategoryClass.BOND)
             && getMaturity() == null) {
             /* Record a date for maturity */
             setMaturity(getCloseDate());
@@ -749,7 +749,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setMaturity(final JDateDay pDate) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Maturity, pDate);
+        setInfoSetValue(AccountInfoClass.MATURITY, pDate);
     }
 
     /**
@@ -758,7 +758,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setParent(final Account pParent) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Parent, pParent);
+        setInfoSetValue(AccountInfoClass.PARENT, pParent);
     }
 
     /**
@@ -767,7 +767,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setAlias(final Account pAlias) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Alias, pAlias);
+        setInfoSetValue(AccountInfoClass.ALIAS, pAlias);
     }
 
     /**
@@ -776,7 +776,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setPortfolio(final Account pPortfolio) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Portfolio, pPortfolio);
+        setInfoSetValue(AccountInfoClass.PORTFOLIO, pPortfolio);
     }
 
     /**
@@ -785,7 +785,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setHolding(final Account pHolding) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Holding, pHolding);
+        setInfoSetValue(AccountInfoClass.HOLDING, pHolding);
     }
 
     /**
@@ -794,7 +794,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setSymbol(final String pSymbol) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Symbol, pSymbol);
+        setInfoSetValue(AccountInfoClass.SYMBOL, pSymbol);
     }
 
     /**
@@ -803,7 +803,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setComments(final String pComments) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Comments, pComments);
+        setInfoSetValue(AccountInfoClass.COMMENTS, pComments);
     }
 
     /**
@@ -812,7 +812,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setOpeningBalance(final JMoney pBalance) throws JDataException {
-        setInfoSetValue(AccountInfoClass.OpeningBalance, pBalance);
+        setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
     /**
@@ -821,7 +821,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setAutoExpense(final EventCategory pCategory) throws JDataException {
-        setInfoSetValue(AccountInfoClass.AutoExpense, pCategory);
+        setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
     }
 
     /**
@@ -830,7 +830,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setWebSite(final char[] pWebSite) throws JDataException {
-        setInfoSetValue(AccountInfoClass.WebSite, pWebSite);
+        setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
     }
 
     /**
@@ -839,7 +839,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setCustNo(final char[] pCustNo) throws JDataException {
-        setInfoSetValue(AccountInfoClass.CustomerNo, pCustNo);
+        setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
     }
 
     /**
@@ -848,7 +848,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setUserId(final char[] pUserId) throws JDataException {
-        setInfoSetValue(AccountInfoClass.UserId, pUserId);
+        setInfoSetValue(AccountInfoClass.USERID, pUserId);
     }
 
     /**
@@ -857,7 +857,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setPassword(final char[] pPassword) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Password, pPassword);
+        setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
     }
 
     /**
@@ -866,7 +866,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setSortCode(final char[] pSortCode) throws JDataException {
-        setInfoSetValue(AccountInfoClass.SortCode, pSortCode);
+        setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
@@ -875,7 +875,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setAccount(final char[] pAccount) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Account, pAccount);
+        setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
@@ -884,7 +884,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setReference(final char[] pReference) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Reference, pReference);
+        setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
@@ -893,7 +893,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setNotes(final char[] pNotes) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Notes, pNotes);
+        setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
     /**
@@ -996,7 +996,7 @@ public class Account
                 /* If the account is autoExpense, check that there is no opening balance */
                 if ((getAutoExpense() != null)
                     && (getOpeningBalance() != null)) {
-                    addError(ERROR_AUTOBALANCE, AccountInfoSet.getFieldForClass(AccountInfoClass.AutoExpense));
+                    addError(ERROR_AUTOBALANCE, AccountInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE));
                 }
             }
         }

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
@@ -33,251 +35,256 @@ public enum EventCategoryClass implements StaticInterface {
     /**
      * Taxed Salary Income.
      */
-    TaxedIncome(1, 0),
+    TAXEDINCOME(1, 0),
 
     /**
      * Rental Income.
      */
-    RentalIncome(2, 1),
+    RENTALINCOME(2, 1),
 
     /**
      * RoomRental Income.
      */
-    RoomRentalIncome(3, 2),
+    ROOMRENTALINCOME(3, 2),
 
     /**
      * Interest Income.
      */
-    Interest(4, 3),
+    INTEREST(4, 3),
 
     /**
      * Dividend Income.
      */
-    Dividend(5, 4),
+    DIVIDEND(5, 4),
 
     /**
      * Grant Income.
      */
-    GrantIncome(6, 5),
+    GRANTINCOME(6, 5),
 
     /**
      * Benefit Income.
      */
-    BenefitIncome(7, 6),
+    BENEFITINCOME(7, 6),
 
     /**
      * Gifted Income.
      */
-    GiftedIncome(8, 7),
+    GIFTEDINCOME(8, 7),
 
     /**
      * Inheritance.
      */
-    Inherited(9, 8),
+    INHERITED(9, 8),
 
     /**
      * Interest earned on Loans.
      */
-    LoanInterestEarned(10, 9),
+    LOANINTERESTEARNED(10, 9),
 
     /**
      * Other Income.
      */
-    OtherIncome(11, 10),
+    OTHERINCOME(11, 10),
 
     /**
      * Transfer.
      */
-    Transfer(12, 11),
+    TRANSFER(12, 11),
 
     /**
      * Stock Adjustment.
      */
-    StockAdjust(13, 12),
+    STOCKADJUST(13, 12),
 
     /**
      * Stock Split.
      */
-    StockSplit(14, 13),
+    STOCKSPLIT(14, 13),
 
     /**
-     * Stock Demerger.
+     * Stock DeMerger.
      */
-    StockDeMerger(15, 14),
+    STOCKDEMERGER(15, 14),
 
     /**
      * Stock Takeover.
      */
-    StockTakeOver(16, 15),
+    STOCKTAKEOVER(16, 15),
 
     /**
      * Stock Rights Taken.
      */
-    StockRightsTaken(17, 16),
+    STOCKRIGHTSTAKEN(17, 16),
 
     /**
      * Stock Rights Waived.
      */
-    StockRightsWaived(18, 17),
+    STOCKRIGHTSWAIVED(18, 17),
 
     /**
      * Stock Options Granted.
      */
-    OptionsGrant(19, 18),
+    OPTIONSGRANT(19, 18),
 
     /**
      * Stock Options Vested.
      */
-    OptionsVest(20, 19),
+    OPTIONSVEST(20, 19),
 
     /**
      * Stock Options Exercised.
      */
-    OptionsExercise(21, 20),
+    OPTIONSEXERCISE(21, 20),
 
     /**
      * Stock Options Expired.
      */
-    OptionsExpire(22, 21),
+    OPTIONSEXPIRE(22, 21),
 
     /**
      * Expense.
      */
-    Expense(23, 22),
+    EXPENSE(23, 22),
 
     /**
      * LocalTaxes.
      */
-    LocalTaxes(24, 23),
+    LOCALTAXES(24, 23),
 
     /**
      * Write Off.
      */
-    WriteOff(25, 24),
+    WRITEOFF(25, 24),
 
     /**
      * Interest earned on Loans.
      */
-    LoanInterestCharged(26, 25),
+    LOANINTERESTCHARGED(26, 25),
 
     /**
      * Tax Relief.
      */
-    TaxRelief(27, 26),
+    TAXRELIEF(27, 26),
 
     /**
      * Tax Settlement.
      */
-    TaxSettlement(28, 27),
-
-    /**
-     * Opening Balance.
-     */
-    OpeningBalance(29, 28),
+    TAXSETTLEMENT(28, 27),
 
     /**
      * Taxed Interest.
      */
-    TaxedInterest(30, 29),
+    TAXEDINTEREST(29, 28),
 
     /**
      * Gross Interest.
      */
-    GrossInterest(31, 30),
+    GROSSINTEREST(30, 29),
 
     /**
      * Tax Free Interest.
      */
-    TaxFreeInterest(32, 31),
+    TAXFREEINTEREST(31, 30),
 
     /**
      * Share Dividend Income.
      */
-    ShareDividend(33, 32),
+    SHAREDIVIDEND(32, 31),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UnitTrustDividend(34, 33),
+    UNITTRUSTDIVIDEND(33, 32),
 
     /**
      * Tax Free Dividend.
      */
-    TaxFreeDividend(35, 34),
+    TAXFREEDIVIDEND(34, 33),
 
     /**
      * Taxable Gain.
      */
-    TaxableGain(36, 35),
+    TAXABLEGAIN(35, 34),
 
     /**
      * Capital Gain.
      */
-    CapitalGain(37, 36),
+    CAPITALGAIN(36, 35),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TaxFreeGain(38, 37),
+    TAXFREEGAIN(37, 36),
 
     /**
      * Market Growth.
      */
-    MarketGrowth(39, 38),
+    MARKETGROWTH(38, 37),
 
     /**
      * CurrencyFluctuation.
      */
-    CurrencyFluctuation(40, 39),
+    CURRENCYFLUCTUATION(39, 38),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(41, 40),
+    TAXCREDIT(40, 39),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(42, 41),
+    NATINSURANCE(41, 40),
 
     /**
      * Deemed Benefit.
      * <p>
      * This is a singular category catching deemed benefit payments associated with an event.
      */
-    DeemedBenefit(43, 42),
+    DEEMEDBENEFIT(42, 41),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(44, 43),
+    CHARITYDONATION(43, 42),
 
     /**
      * Income Totals.
      * <p>
      * This is used for categories which simply own a set of income sub-categories and is used purely for reporting purposes.
      */
-    IncomeTotals(45, 44),
+    INCOMETOTALS(44, 43),
 
     /**
      * Expense Totals.
      * <p>
      * This is used for categories which simply own a set of expense sub-categories and is used purely for reporting purposes.
      */
-    ExpenseTotals(46, 45),
+    EXPENSETOTALS(45, 44),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(47, 46);
+    TOTALS(46, 45);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategoryClass.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
 
     /**
      * Class Id.
@@ -310,6 +317,18 @@ public enum EventCategoryClass implements StaticInterface {
         theOrder = uOrder;
     }
 
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
+
     /**
      * get value from id.
      * @param id the id value
@@ -332,23 +351,22 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isHiddenType() {
         switch (this) {
-            case ShareDividend:
-            case UnitTrustDividend:
-            case TaxFreeDividend:
-            case TaxedInterest:
-            case GrossInterest:
-            case TaxFreeInterest:
-            case MarketGrowth:
-            case CurrencyFluctuation:
-            case TaxCredit:
-            case NatInsurance:
-            case DeemedBenefit:
-            case CapitalGain:
-            case TaxFreeGain:
-            case OpeningBalance:
-            case IncomeTotals:
-            case ExpenseTotals:
-            case Totals:
+            case SHAREDIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXFREEDIVIDEND:
+            case TAXEDINTEREST:
+            case GROSSINTEREST:
+            case TAXFREEINTEREST:
+            case MARKETGROWTH:
+            case CURRENCYFLUCTUATION:
+            case TAXCREDIT:
+            case NATINSURANCE:
+            case DEEMEDBENEFIT:
+            case CAPITALGAIN:
+            case TAXFREEGAIN:
+            case INCOMETOTALS:
+            case EXPENSETOTALS:
+            case TOTALS:
                 return true;
             default:
                 return false;
@@ -361,9 +379,9 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isDebitParentPayee() {
         switch (this) {
-            case Interest:
-            case Dividend:
-            case LoanInterestEarned:
+            case INTEREST:
+            case DIVIDEND:
+            case LOANINTERESTEARNED:
                 return true;
             default:
                 return false;
@@ -376,10 +394,10 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isCreditParentPayee() {
         switch (this) {
-            case RentalIncome:
-            case RoomRentalIncome:
-            case WriteOff:
-            case LoanInterestCharged:
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+            case WRITEOFF:
+            case LOANINTERESTCHARGED:
                 return true;
             default:
                 return false;
@@ -392,22 +410,21 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isSingular() {
         switch (this) {
-            case ShareDividend:
-            case UnitTrustDividend:
-            case TaxFreeDividend:
-            case TaxedInterest:
-            case GrossInterest:
-            case TaxFreeInterest:
-            case OpeningBalance:
-            case MarketGrowth:
-            case CurrencyFluctuation:
-            case TaxCredit:
-            case NatInsurance:
-            case DeemedBenefit:
-            case CharityDonation:
-            case CapitalGain:
-            case TaxFreeGain:
-            case Totals:
+            case SHAREDIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXFREEDIVIDEND:
+            case TAXEDINTEREST:
+            case GROSSINTEREST:
+            case TAXFREEINTEREST:
+            case MARKETGROWTH:
+            case CURRENCYFLUCTUATION:
+            case TAXCREDIT:
+            case NATINSURANCE:
+            case DEEMEDBENEFIT:
+            case CHARITYDONATION:
+            case CAPITALGAIN:
+            case TAXFREEGAIN:
+            case TOTALS:
                 return true;
             default:
                 return false;
@@ -420,13 +437,13 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean needsTaxCredit() {
         switch (this) {
-            case TaxedIncome:
-            case BenefitIncome:
-            case Interest:
-            case TaxedInterest:
-            case Dividend:
-            case ShareDividend:
-            case UnitTrustDividend:
+            case TAXEDINCOME:
+            case BENEFITINCOME:
+            case INTEREST:
+            case TAXEDINTEREST:
+            case DIVIDEND:
+            case SHAREDIVIDEND:
+            case UNITTRUSTDIVIDEND:
                 return true;
             default:
                 return false;
@@ -439,24 +456,23 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isIncome() {
         switch (this) {
-            case TaxedIncome:
-            case BenefitIncome:
-            case GrantIncome:
-            case OtherIncome:
-            case GiftedIncome:
-            case Interest:
-            case TaxedInterest:
-            case GrossInterest:
-            case TaxFreeInterest:
-            case Dividend:
-            case ShareDividend:
-            case UnitTrustDividend:
-            case TaxFreeDividend:
-            case Inherited:
-            case RentalIncome:
-            case RoomRentalIncome:
-            case OpeningBalance:
-            case IncomeTotals:
+            case TAXEDINCOME:
+            case BENEFITINCOME:
+            case GRANTINCOME:
+            case OTHERINCOME:
+            case GIFTEDINCOME:
+            case INTEREST:
+            case TAXEDINTEREST:
+            case GROSSINTEREST:
+            case TAXFREEINTEREST:
+            case DIVIDEND:
+            case SHAREDIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXFREEDIVIDEND:
+            case INHERITED:
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+            case INCOMETOTALS:
                 return true;
             default:
                 return false;
@@ -469,10 +485,10 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isDilutable() {
         switch (this) {
-            case StockSplit:
-            case StockDeMerger:
-            case StockRightsWaived:
-            case StockRightsTaken:
+            case STOCKSPLIT:
+            case STOCKDEMERGER:
+            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSTAKEN:
                 return true;
             default:
                 return false;
@@ -485,10 +501,10 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isDividend() {
         switch (this) {
-            case Dividend:
-            case ShareDividend:
-            case UnitTrustDividend:
-            case TaxFreeDividend:
+            case DIVIDEND:
+            case SHAREDIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXFREEDIVIDEND:
                 return true;
             default:
                 return false;
@@ -501,10 +517,10 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isInterest() {
         switch (this) {
-            case Interest:
-            case TaxedInterest:
-            case GrossInterest:
-            case TaxFreeInterest:
+            case INTEREST:
+            case TAXEDINTEREST:
+            case GROSSINTEREST:
+            case TAXFREEINTEREST:
                 return true;
             default:
                 return false;
@@ -517,13 +533,13 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isStockAdjustment() {
         switch (this) {
-            case StockSplit:
-            case StockAdjust:
-            case StockDeMerger:
-            case StockTakeOver:
-            case OptionsGrant:
-            case OptionsVest:
-            case OptionsExpire:
+            case STOCKSPLIT:
+            case STOCKADJUST:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
+            case OPTIONSGRANT:
+            case OPTIONSVEST:
+            case OPTIONSEXPIRE:
                 return true;
             default:
                 return false;
@@ -536,12 +552,12 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean needsZeroAmount() {
         switch (this) {
-            case StockSplit:
-            case StockAdjust:
-            case StockDeMerger:
-            case OptionsGrant:
-            case OptionsVest:
-            case OptionsExpire:
+            case STOCKSPLIT:
+            case STOCKADJUST:
+            case STOCKDEMERGER:
+            case OPTIONSGRANT:
+            case OPTIONSVEST:
+            case OPTIONSEXPIRE:
                 return true;
             default:
                 return false;
@@ -554,9 +570,9 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean canParentCategory() {
         switch (this) {
-            case IncomeTotals:
-            case ExpenseTotals:
-            case Totals:
+            case INCOMETOTALS:
+            case EXPENSETOTALS:
+            case TOTALS:
                 return true;
             default:
                 return false;
@@ -569,8 +585,8 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isSubTotal() {
         switch (this) {
-            case IncomeTotals:
-            case ExpenseTotals:
+            case INCOMETOTALS:
+            case EXPENSETOTALS:
                 return true;
             default:
                 return false;
@@ -583,17 +599,17 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isTransfer() {
         switch (this) {
-            case Transfer:
-            case StockAdjust:
-            case StockSplit:
-            case StockDeMerger:
-            case StockTakeOver:
-            case StockRightsWaived:
-            case StockRightsTaken:
-            case OptionsGrant:
-            case OptionsVest:
-            case OptionsExercise:
-            case OptionsExpire:
+            case TRANSFER:
+            case STOCKADJUST:
+            case STOCKSPLIT:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
+            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSTAKEN:
+            case OPTIONSGRANT:
+            case OPTIONSVEST:
+            case OPTIONSEXERCISE:
+            case OPTIONSEXPIRE:
                 return true;
             default:
                 return false;

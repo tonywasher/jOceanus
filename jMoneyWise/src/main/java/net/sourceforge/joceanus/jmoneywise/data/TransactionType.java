@@ -158,45 +158,44 @@ public enum TransactionType {
     public static TransactionType deriveType(final EventCategory pCategory) {
         /* Switch on event category class */
         switch (pCategory.getCategoryTypeClass()) {
-            case TaxedIncome:
-            case GrantIncome:
-            case BenefitIncome:
-            case Interest:
-            case TaxFreeInterest:
-            case LoanInterestEarned:
-            case Dividend:
-            case UnitTrustDividend:
-            case TaxFreeDividend:
-            case OtherIncome:
-            case RentalIncome:
-            case RoomRentalIncome:
-            case Inherited:
-            case OpeningBalance:
-            case MarketGrowth:
-            case CapitalGain:
+            case TAXEDINCOME:
+            case GRANTINCOME:
+            case BENEFITINCOME:
+            case INTEREST:
+            case TAXFREEINTEREST:
+            case LOANINTERESTEARNED:
+            case DIVIDEND:
+            case UNITTRUSTDIVIDEND:
+            case TAXFREEDIVIDEND:
+            case OTHERINCOME:
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+            case INHERITED:
+            case MARKETGROWTH:
+            case CAPITALGAIN:
                 return Income;
-            case Transfer:
-            case StockSplit:
-            case StockAdjust:
-            case StockRightsTaken:
-            case StockRightsWaived:
-            case StockDeMerger:
-            case StockTakeOver:
+            case TRANSFER:
+            case STOCKSPLIT:
+            case STOCKADJUST:
+            case STOCKRIGHTSTAKEN:
+            case STOCKRIGHTSWAIVED:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
                 return Transfer;
-            case IncomeTotals:
-            case ExpenseTotals:
-            case Totals:
+            case INCOMETOTALS:
+            case EXPENSETOTALS:
+            case TOTALS:
                 return Illegal;
-            case Expense:
-            case WriteOff:
-            case LocalTaxes:
-            case TaxRelief:
-            case TaxSettlement:
-            case TaxCredit:
-            case NatInsurance:
-            case DeemedBenefit:
-            case CharityDonation:
-            case LoanInterestCharged:
+            case EXPENSE:
+            case WRITEOFF:
+            case LOCALTAXES:
+            case TAXRELIEF:
+            case TAXSETTLEMENT:
+            case TAXCREDIT:
+            case NATINSURANCE:
+            case DEEMEDBENEFIT:
+            case CHARITYDONATION:
+            case LOANINTERESTCHARGED:
             default:
                 return Expense;
         }

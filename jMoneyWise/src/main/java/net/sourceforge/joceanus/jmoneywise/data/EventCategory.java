@@ -810,18 +810,18 @@ public final class EventCategory
 
             /* Switch on the category class */
             switch (myClass) {
-                case Totals:
+                case TOTALS:
                     /* If parent exists */
                     if (myParent != null) {
                         addError(ERROR_EXIST, FIELD_PARENT);
                     }
                     break;
-                case IncomeTotals:
-                case ExpenseTotals:
+                case INCOMETOTALS:
+                case EXPENSETOTALS:
                     /* Check parent */
                     if (myParent == null) {
                         addError(ERROR_MISSING, FIELD_PARENT);
-                    } else if (!myParent.isCategoryClass(EventCategoryClass.Totals)) {
+                    } else if (!myParent.isCategoryClass(EventCategoryClass.TOTALS)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;
@@ -1100,14 +1100,14 @@ public final class EventCategory
         public EventCategory getEventInfoCategory(final EventInfoClass pInfoClass) {
             /* Switch on info class */
             switch (pInfoClass) {
-                case TaxCredit:
-                    return getSingularClass(EventCategoryClass.TaxCredit);
-                case NatInsurance:
-                    return getSingularClass(EventCategoryClass.NatInsurance);
-                case DeemedBenefit:
-                    return getSingularClass(EventCategoryClass.DeemedBenefit);
-                case CharityDonation:
-                    return getSingularClass(EventCategoryClass.CharityDonation);
+                case TAXCREDIT:
+                    return getSingularClass(EventCategoryClass.TAXCREDIT);
+                case NATINSURANCE:
+                    return getSingularClass(EventCategoryClass.NATINSURANCE);
+                case DEEMEDBENEFIT:
+                    return getSingularClass(EventCategoryClass.DEEMEDBENEFIT);
+                case CHARITYDONATION:
+                    return getSingularClass(EventCategoryClass.CHARITYDONATION);
                 default:
                     return null;
             }

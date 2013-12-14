@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
@@ -33,22 +35,32 @@ public enum TaxRegimeClass implements StaticInterface {
     /**
      * Archive tax regime.
      */
-    Archive(1, 0),
+    ARCHIVE(1, 0),
 
     /**
      * Standard tax regime.
      */
-    Standard(2, 1),
+    STANDARD(2, 1),
 
     /**
      * Low Interest Tax Band.
      */
-    LoInterest(3, 2),
+    LOINTEREST(3, 2),
 
     /**
      * Additional tax band.
      */
-    AdditionalBand(4, 3);
+    ADDITIONALBAND(4, 3);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxRegimeClass.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
 
     /**
      * Class Id.
@@ -68,6 +80,18 @@ public enum TaxRegimeClass implements StaticInterface {
     @Override
     public int getOrder() {
         return theOrder;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**
@@ -103,9 +127,9 @@ public enum TaxRegimeClass implements StaticInterface {
      */
     public boolean hasLoSalaryBand() {
         switch (this) {
-            case Archive:
+            case ARCHIVE:
                 return true;
-            case Standard:
+            case STANDARD:
                 return true;
             default:
                 return false;
@@ -118,7 +142,7 @@ public enum TaxRegimeClass implements StaticInterface {
      */
     public boolean hasCapitalGainsAsIncome() {
         switch (this) {
-            case Standard:
+            case STANDARD:
                 return true;
             default:
                 return false;
@@ -131,7 +155,7 @@ public enum TaxRegimeClass implements StaticInterface {
      */
     public boolean hasAdditionalTaxBand() {
         switch (this) {
-            case AdditionalBand:
+            case ADDITIONALBAND:
                 return true;
             default:
                 return false;

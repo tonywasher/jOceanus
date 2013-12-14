@@ -376,11 +376,11 @@ public class MaintTaxYear
         myRentalAllow.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.Allowance), DataType.MONEY, myAllowLabel, myAllowance);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LoAgeAllowance), DataType.MONEY, myLoAgeLabel, myLoAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiAgeAllowance), DataType.MONEY, myHiAgeLabel, myHiAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CapitalAllowance), DataType.MONEY, myCapLabel, myCapitalAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RentalAllowance), DataType.MONEY, myRentalLabel, myRentalAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowLabel, myAllowance);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeLabel, myLoAgeAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeLabel, myHiAgeAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapLabel, myCapitalAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalLabel, myRentalAllow);
 
         /* Create the allow panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -426,8 +426,8 @@ public class MaintTaxYear
         myAddLimit.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AgeAllowanceLimit), DataType.MONEY, myAgeLabel, myAgeLimit);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalAllowanceLimit), DataType.MONEY, myAddLabel, myAddLimit);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLabel, myAgeLimit);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLabel, myAddLimit);
 
         /* Create the limits panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -470,9 +470,9 @@ public class MaintTaxYear
         myAddIncBdy.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LoTaxBand), DataType.MONEY, myLoBandLabel, myLoBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BasicTaxBand), DataType.MONEY, myBasicBandLabel, myBasicBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalIncomeThreshold), DataType.MONEY, myAddIncLabel, myAddIncBdy);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBandLabel, myLoBand);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBandLabel, myBasicBand);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncLabel, myAddIncBdy);
 
         /* Create the bands panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -520,10 +520,10 @@ public class MaintTaxYear
         myAddTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LoTaxRate), DataType.RATE, myLoTaxLabel, myLoTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BasicTaxRate), DataType.RATE, myBasicTaxLabel, myBasicTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiTaxRate), DataType.RATE, myHiTaxLabel, myHiTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalTaxRate), DataType.RATE, myAddTaxLabel, myAddTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxLabel, myLoTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxLabel, myBasicTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxLabel, myHiTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxLabel, myAddTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -573,10 +573,10 @@ public class MaintTaxYear
         myAddDivTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.InterestTaxRate), DataType.RATE, myIntTaxLabel, myIntTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DividendTaxRate), DataType.RATE, myDivTaxLabel, myDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiDividendTaxRate), DataType.RATE, myHiDivTaxLabel, myHiDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalDividendTaxRate), DataType.RATE, myAddDivTaxLabel, myAddDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxLabel, myIntTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxLabel, myDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxLabel, myHiDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxLabel, myAddDivTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -620,8 +620,8 @@ public class MaintTaxYear
         myHiCapTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CapitalTaxRate), DataType.RATE, myCapTaxLabel, myCapTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiCapitalTaxRate), DataType.RATE, myHiCapTaxLabel, myHiCapTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxLabel, myCapTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxLabel, myHiCapTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -807,12 +807,12 @@ public class MaintTaxYear
             theYear.setEnabled(bActive);
 
             /* Set field visibility */
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalIncomeThreshold), hasAdditionalTaxBand);
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalAllowanceLimit), hasAdditionalTaxBand);
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalTaxRate), hasAdditionalTaxBand);
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalDividendTaxRate), hasAdditionalTaxBand);
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CapitalTaxRate), !hasCapitalGainsAsIncome);
-            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiCapitalTaxRate), !hasCapitalGainsAsIncome);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), !hasCapitalGainsAsIncome);
+            theFieldSet.setVisibility(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), !hasCapitalGainsAsIncome);
 
             /* Render the FieldSet */
             theFieldSet.renderSet(theTaxYear);
@@ -907,64 +907,64 @@ public class MaintTaxYear
                 } else {
                     /* Switch on the field */
                     switch (TaxInfoSet.getClassForField(myField)) {
-                        case Allowance:
+                        case ALLOWANCE:
                             theTaxYear.setAllowance(pUpdate.getMoney());
                             break;
-                        case LoAgeAllowance:
+                        case LOAGEALLOWANCE:
                             theTaxYear.setLoAgeAllow(pUpdate.getMoney());
                             break;
-                        case HiAgeAllowance:
+                        case HIAGEALLOWANCE:
                             theTaxYear.setHiAgeAllow(pUpdate.getMoney());
                             break;
-                        case CapitalAllowance:
+                        case CAPITALALLOWANCE:
                             theTaxYear.setCapitalAllow(pUpdate.getMoney());
                             break;
-                        case RentalAllowance:
+                        case RENTALALLOWANCE:
                             theTaxYear.setRentalAllowance(pUpdate.getMoney());
                             break;
-                        case AgeAllowanceLimit:
+                        case AGEALLOWANCELIMIT:
                             theTaxYear.setAgeAllowLimit(pUpdate.getMoney());
                             break;
-                        case AdditionalAllowanceLimit:
+                        case ADDITIONALALLOWANCELIMIT:
                             theTaxYear.setAddAllowLimit(pUpdate.getMoney());
                             break;
-                        case LoTaxBand:
+                        case LOTAXBAND:
                             theTaxYear.setLoBand(pUpdate.getMoney());
                             break;
-                        case BasicTaxBand:
+                        case BASICTAXBAND:
                             theTaxYear.setBasicBand(pUpdate.getMoney());
                             break;
-                        case AdditionalIncomeThreshold:
+                        case ADDITIONALINCOMETHRESHOLD:
                             theTaxYear.setAddIncBound(pUpdate.getMoney());
                             break;
-                        case LoTaxRate:
+                        case LOTAXRATE:
                             theTaxYear.setLoTaxRate(pUpdate.getRate());
                             break;
-                        case BasicTaxRate:
+                        case BASICTAXRATE:
                             theTaxYear.setBasicTaxRate(pUpdate.getRate());
                             break;
-                        case HiTaxRate:
+                        case HITAXRATE:
                             theTaxYear.setHiTaxRate(pUpdate.getRate());
                             break;
-                        case AdditionalTaxRate:
+                        case ADDITIONALTAXRATE:
                             theTaxYear.setAddTaxRate(pUpdate.getRate());
                             break;
-                        case InterestTaxRate:
+                        case INTERESTTAXRATE:
                             theTaxYear.setIntTaxRate(pUpdate.getRate());
                             break;
-                        case DividendTaxRate:
+                        case DIVIDENDTAXRATE:
                             theTaxYear.setDivTaxRate(pUpdate.getRate());
                             break;
-                        case HiDividendTaxRate:
+                        case HIDIVIDENDTAXRATE:
                             theTaxYear.setHiDivTaxRate(pUpdate.getRate());
                             break;
-                        case AdditionalDividendTaxRate:
+                        case ADDITIONALDIVIDENDTAXRATE:
                             theTaxYear.setAddDivTaxRate(pUpdate.getRate());
                             break;
-                        case CapitalTaxRate:
+                        case CAPITALTAXRATE:
                             theTaxYear.setCapTaxRate(pUpdate.getRate());
                             break;
-                        case HiCapitalTaxRate:
+                        case HICAPITALTAXRATE:
                             theTaxYear.setHiCapTaxRate(pUpdate.getRate());
                             break;
                         default:

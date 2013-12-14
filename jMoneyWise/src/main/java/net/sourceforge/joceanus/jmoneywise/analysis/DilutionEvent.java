@@ -258,12 +258,12 @@ public final class DilutionEvent
 
         /* Switch on the category type */
         switch (myCategory.getCategoryTypeClass()) {
-            case StockRightsTaken:
+            case STOCKRIGHTSTAKEN:
                 myAccount = pEvent.getCredit();
                 break;
-            case StockSplit:
-            case StockRightsWaived:
-            case StockDeMerger:
+            case STOCKSPLIT:
+            case STOCKRIGHTSWAIVED:
+            case STOCKDEMERGER:
             default:
                 myAccount = pEvent.getDebit();
                 break;

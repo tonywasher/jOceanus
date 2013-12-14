@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
@@ -135,21 +136,21 @@ public class TaxCalculation
         }
 
         /* Access the Total taxation bucket */
-        myTax = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
+        myTax = myList.getBucket(TaxCategoryClass.TOTALTAXATIONDUE);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
         theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Taxation));
 
         /* Access the Tax Paid bucket */
-        TaxBasisBucket myTaxPaid = myBasis.getBucket(TaxCategoryClass.TaxPaid);
+        TaxBasisBucket myTaxPaid = myBasis.getBucket(TaxBasisClass.TAXPAID);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTaxPaid.getName());
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTotalCell(myTable, myTaxPaid.getMoneyValue(TaxBasisAttribute.GROSS));
 
         /* Access the Tax Profit bucket */
-        myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
+        myTax = myList.getBucket(TaxCategoryClass.TAXPROFITLOSS);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTotalCell(myTable, myTax.getName());
         theBuilder.makeTotalCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
@@ -277,7 +278,7 @@ public class TaxCalculation
         theBuilder.makeValueCell(myTable, myList.getAge());
 
         /* Access the original allowance */
-        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
+        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.ORIGINALALLOWANCE);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "Personal Allowance");
         theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
@@ -285,13 +286,13 @@ public class TaxCalculation
         /* if we have adjusted the allowance */
         if (myList.hasReducedAllow()) {
             /* Access the gross income */
-            myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
+            myTax = myList.getBucket(TaxCategoryClass.GROSSINCOME);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "Gross Taxable Income");
             theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
 
             /* Access the gross income */
-            myTax = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
+            myTax = myList.getBucket(TaxCategoryClass.ADJUSTEDALLOWANCE);
             theBuilder.makeTitleCell(myTable, "Adjusted Allowance");
             theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
         }
@@ -311,7 +312,7 @@ public class TaxCalculation
         /* If we have a high tax band */
         if (pYear.hasAdditionalTaxBand()) {
             /* Access the gross income */
-            myTax = myList.getBucket(TaxCategoryClass.HiTaxBand);
+            myTax = myList.getBucket(TaxCategoryClass.HITAXBAND);
             theBuilder.startRow(myTable);
             theBuilder.makeTitleCell(myTable, "High Tax Band");
             theBuilder.makeValueCell(myTable, myTax.getMoneyValue(TaxAttribute.Amount));
@@ -412,7 +413,7 @@ public class TaxCalculation
         theBuilder.makeTotalCell(myTable, myCharges.getTaxTotal());
 
         /* Access the Summary Tax Due Slice */
-        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.TaxDueSlice);
+        TaxCalcBucket myTax = myList.getBucket(TaxCategoryClass.TAXDUESLICE);
 
         /* Add the Slice taxation details */
         makeTaxReport(myTable, myTax);

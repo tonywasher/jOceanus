@@ -26,7 +26,6 @@ Public Const colorGreen As Long = 65280
 Public Const colorWhite As Long = -1
 
 'Hidden account names 
-Public Const acctOpenBal As String = "OpeningBalance"
 Public Const acctMarket As String = "Market" 
 
 'Well known accounts
@@ -40,7 +39,6 @@ Public Const catCharityDonate As String = "Donations:Charity"
 Public Const catMktGrowth As String = "Market:Growth"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
 Public Const catTaxableGain	As String = "Market:TaxableGain"
-Public Const catOpenBal As String = "Income:" + acctOpenBal
 
 'Analyse data for the year
 Sub analyseYear(ByRef Context As FinanceState, _
@@ -83,7 +81,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     myCharInfo = getCategoryStats(Context, catCharityDonate) 
 	
     'Build the new date
-    'myFinalDate = DateSerial(2013, 02, 28)     
+    'myFinalDate = DateSerial(2013, 10, 20)     
     
 	'Loop through the rows in the range    
     For Each myRow in myRange.getRows()
@@ -540,6 +538,9 @@ Sub TotalIt()
 		myDoc.enableAutomaticCalculation(False())
 	End If
 
+	'Report Opening Balances
+	reportOpeningBalances(myContext)
+	
 	'Loop through the years
 	For myIndex = myRange.getColumns().Count To 1 Step -1
 		'Access the year

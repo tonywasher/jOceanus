@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -34,87 +36,97 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Maturity Date.
      */
-    Maturity(1, 0, DataType.DATEDAY),
+    MATURITY(1, 0, DataType.DATEDAY),
 
     /**
      * Parent Id.
      */
-    Parent(2, 1),
+    PARENT(2, 1),
 
     /**
      * Alias Id.
      */
-    Alias(3, 2),
+    ALIAS(3, 2),
 
     /**
      * Portfolio Account.
      */
-    Portfolio(4, 3),
+    PORTFOLIO(4, 3),
 
     /**
      * Holding Account.
      */
-    Holding(5, 4),
+    HOLDING(5, 4),
 
     /**
      * Comments.
      */
-    Comments(6, 5, DataType.STRING),
+    COMMENTS(6, 5, DataType.STRING),
 
     /**
      * Symbol.
      */
-    Symbol(7, 6, DataType.STRING),
+    SYMBOL(7, 6, DataType.STRING),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(8, 7, DataType.MONEY),
+    OPENINGBALANCE(8, 7, DataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AutoExpense(9, 8),
+    AUTOEXPENSE(9, 8),
 
     /**
      * WebSite.
      */
-    WebSite(10, 9, DataType.CHARARRAY),
+    WEBSITE(10, 9, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CustomerNo(11, 10, DataType.CHARARRAY),
+    CUSTOMERNO(11, 10, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    UserId(12, 11, DataType.CHARARRAY),
+    USERID(12, 11, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    Password(13, 12, DataType.CHARARRAY),
+    PASSWORD(13, 12, DataType.CHARARRAY),
 
     /**
      * SortCode.
      */
-    SortCode(14, 13, DataType.CHARARRAY),
+    SORTCODE(14, 13, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    Account(15, 14, DataType.CHARARRAY),
+    ACCOUNT(15, 14, DataType.CHARARRAY),
 
     /**
      * Reference.
      */
-    Reference(16, 15, DataType.CHARARRAY),
+    REFERENCE(16, 15, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    Notes(17, 16, DataType.CHARARRAY);
+    NOTES(17, 16, DataType.CHARARRAY);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountInfoClass.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
 
     /**
      * Class Id.
@@ -154,6 +166,18 @@ public enum AccountInfoClass implements DataInfoClass {
     @Override
     public boolean isLink() {
         return isLink;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
     }
 
     /**
@@ -206,18 +230,18 @@ public enum AccountInfoClass implements DataInfoClass {
      */
     public int getMaximumLength() {
         switch (this) {
-            case WebSite:
+            case WEBSITE:
                 return AccountInfoType.WEBSITE_LEN;
-            case CustomerNo:
-            case UserId:
-            case Password:
-            case SortCode:
-            case Account:
-            case Reference:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
                 return AccountInfoType.DATA_LEN;
-            case Notes:
+            case NOTES:
                 return AccountInfoType.NOTES_LEN;
-            case Comments:
+            case COMMENTS:
                 return AccountInfoType.COMMENT_LEN;
             default:
                 return 0;

@@ -783,7 +783,7 @@ public class Register
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_AMOUNT:
@@ -793,15 +793,15 @@ public class Register
                 case COLUMN_DEBIT:
                     return Event.FIELD_DEBIT;
                 case COLUMN_DEBUNITS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.DEBITUNITS);
                 case COLUMN_CREDUNITS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS);
                 case COLUMN_DILUTE:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.Dilution);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.DILUTION);
                 case COLUMN_TAXCRED:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.TAXCREDIT);
                 case COLUMN_YEARS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.QUALIFYYEARS);
                 default:
                     return null;
             }

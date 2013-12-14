@@ -104,7 +104,7 @@ public class EventInfoSet
         Object myValue;
 
         switch (pInfoClass) {
-            case ThirdParty:
+            case THIRDPARTY:
                 /* Access account of object */
                 myValue = getAccount(pInfoClass);
                 break;
@@ -213,47 +213,47 @@ public class EventInfoSet
         /* Switch on class */
         switch (pClass) {
         /* Reference and comments are always available */
-            case Reference:
-            case Comments:
+            case REFERENCE:
+            case COMMENTS:
                 return JDataFieldRequired.CANEXIST;
 
                 /* NatInsurance and benefit can only occur on salary */
-            case NatInsurance:
-            case DeemedBenefit:
-                return (myClass == EventCategoryClass.TaxedIncome)
+            case NATINSURANCE:
+            case DEEMEDBENEFIT:
+                return (myClass == EventCategoryClass.TAXEDINCOME)
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
-            case CreditDate:
-                return (myClass == EventCategoryClass.Transfer)
+            case CREDITDATE:
+                return (myClass == EventCategoryClass.TRANSFER)
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
-            case CharityDonation:
-                return (myClass == EventCategoryClass.Interest)
+            case CHARITYDONATION:
+                return (myClass == EventCategoryClass.INTEREST)
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Tax Credit */
-            case TaxCredit:
+            case TAXCREDIT:
                 switch (myClass) {
-                    case TaxedIncome:
-                    case BenefitIncome:
+                    case TAXEDINCOME:
+                    case BENEFITINCOME:
                         return JDataFieldRequired.MUSTEXIST;
-                    case GrantIncome:
+                    case GRANTINCOME:
                         return JDataFieldRequired.CANEXIST;
-                    case Interest:
+                    case INTEREST:
                         return ((myDebit.isTaxFree()) || (myDebit.isGrossInterest()))
                                 ? JDataFieldRequired.NOTALLOWED
                                 : JDataFieldRequired.MUSTEXIST;
-                    case Dividend:
+                    case DIVIDEND:
                         return (myDebit.isTaxFree())
                                 ? JDataFieldRequired.NOTALLOWED
                                 : JDataFieldRequired.MUSTEXIST;
-                    case Transfer:
-                        return myDebit.isCategoryClass(AccountCategoryClass.LifeBond)
+                    case TRANSFER:
+                        return myDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)
                                 ? JDataFieldRequired.MUSTEXIST
                                 : JDataFieldRequired.NOTALLOWED;
                     default:
@@ -261,60 +261,60 @@ public class EventInfoSet
                 }
 
                 /* Handle debit units */
-            case DebitUnits:
+            case DEBITUNITS:
                 if (!myDebit.hasUnits()) {
                     return JDataFieldRequired.NOTALLOWED;
                 }
                 switch (myClass) {
-                    case Transfer:
-                    case StockAdjust:
-                    case StockDeMerger:
+                    case TRANSFER:
+                    case STOCKADJUST:
+                    case STOCKDEMERGER:
                         return JDataFieldRequired.CANEXIST;
                     default:
                         return JDataFieldRequired.NOTALLOWED;
                 }
 
-            case CreditUnits:
+            case CREDITUNITS:
                 if (!myCredit.hasUnits()) {
                     return JDataFieldRequired.NOTALLOWED;
                 }
                 switch (myClass) {
-                    case StockRightsTaken:
-                    case StockDeMerger:
-                    case StockTakeOver:
-                    case StockSplit:
+                    case STOCKRIGHTSTAKEN:
+                    case STOCKDEMERGER:
+                    case STOCKTAKEOVER:
+                    case STOCKSPLIT:
                         return JDataFieldRequired.MUSTEXIST;
-                    case Transfer:
-                    case Inherited:
-                    case StockAdjust:
-                    case Dividend:
+                    case TRANSFER:
+                    case INHERITED:
+                    case STOCKADJUST:
+                    case DIVIDEND:
                         return JDataFieldRequired.CANEXIST;
                     default:
                         return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Dilution is only required for stock split/rights/deMerger */
-            case Dilution:
+            case DILUTION:
                 switch (myClass) {
-                    case StockSplit:
-                    case StockRightsWaived:
-                    case StockRightsTaken:
-                    case StockDeMerger:
+                    case STOCKSPLIT:
+                    case STOCKRIGHTSWAIVED:
+                    case STOCKRIGHTSTAKEN:
+                    case STOCKDEMERGER:
                         return JDataFieldRequired.MUSTEXIST;
                     default:
                         return JDataFieldRequired.NOTALLOWED;
                 }
 
                 /* Qualify Years is needed only for Taxable Gain */
-            case QualifyYears:
-                return ((myClass == EventCategoryClass.Transfer) && (myDebit.isCategoryClass(AccountCategoryClass.LifeBond)))
+            case QUALIFYYEARS:
+                return ((myClass == EventCategoryClass.TRANSFER) && (myDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)))
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Qualify Years is possible only for StockTakeOver */
-            case ThirdParty:
+            case THIRDPARTY:
                 switch (myClass) {
-                    case StockTakeOver:
+                    case STOCKTAKEOVER:
                         return myEvent.getAmount().isNonZero()
                                 ? JDataFieldRequired.MUSTEXIST
                                 : JDataFieldRequired.NOTALLOWED;
@@ -322,8 +322,8 @@ public class EventInfoSet
                         return JDataFieldRequired.NOTALLOWED;
                 }
 
-            case Pension:
-            case CreditAmount:
+            case PENSION:
+            case CREDITAMOUNT:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -363,14 +363,14 @@ public class EventInfoSet
 
             /* Switch on class */
             switch (myClass) {
-                case CreditDate:
+                case CREDITDATE:
                     /* Check value */
                     JDateDay myDate = myInfo.getValue(JDateDay.class);
                     if (myDate.compareTo(myEvent.getDate()) <= 0) {
                         myEvent.addError(ERROR_BADDATE, getFieldForClass(myClass));
                     }
                     break;
-                case QualifyYears:
+                case QUALIFYYEARS:
                     /* Check value */
                     Integer myYears = myInfo.getValue(Integer.class);
                     if (myYears == 0) {
@@ -379,16 +379,16 @@ public class EventInfoSet
                         myEvent.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
-                case TaxCredit:
+                case TAXCREDIT:
                     /* Check value */
                     JMoney myAmount = myInfo.getValue(JMoney.class);
                     if (!myAmount.isPositive()) {
                         myEvent.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
-                case NatInsurance:
-                case DeemedBenefit:
-                case CharityDonation:
+                case NATINSURANCE:
+                case DEEMEDBENEFIT:
+                case CHARITYDONATION:
                     /* Check value */
                     myAmount = myInfo.getValue(JMoney.class);
                     if (myAmount.isZero()) {
@@ -397,8 +397,8 @@ public class EventInfoSet
                         myEvent.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
-                case CreditUnits:
-                case DebitUnits:
+                case CREDITUNITS:
+                case DEBITUNITS:
                     /* Check value */
                     JUnits myUnits = myInfo.getValue(JUnits.class);
                     if (myUnits.isZero()) {
@@ -407,30 +407,30 @@ public class EventInfoSet
                         myEvent.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
                     }
                     break;
-                case Dilution:
+                case DILUTION:
                     /* Check range */
                     JDilution myDilution = myInfo.getValue(JDilution.class);
                     if (myDilution.outOfRange()) {
                         myEvent.addError(DataItem.ERROR_RANGE, getFieldForClass(myClass));
                     }
                     break;
-                case ThirdParty:
+                case THIRDPARTY:
                     /* Check account type */
                     Account myThirdParty = myInfo.getAccount();
                     if (!myThirdParty.isSavings()) {
                         myEvent.addError(ERROR_BADACCOUNT, getFieldForClass(myClass));
                     }
                     break;
-                case Reference:
-                case Comments:
+                case REFERENCE:
+                case COMMENTS:
                     /* Check length */
                     String myValue = myInfo.getValue(String.class);
                     if (myValue.length() > myClass.getMaximumLength()) {
                         myEvent.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                case CreditAmount:
-                case Pension:
+                case CREDITAMOUNT:
+                case PENSION:
                 default:
                     break;
             }

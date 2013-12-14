@@ -641,7 +641,7 @@ public class AnalysisStatement
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
+                    return EventInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_CREDIT:

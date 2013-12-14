@@ -55,12 +55,12 @@ public class QHoldingEvent
 
         /* Switch on transaction type */
         switch (myEvent.getCategoryClass()) {
-            case Inherited:
-            case OtherIncome:
+            case INHERITED:
+            case OTHERINCOME:
                 return buildIncomeQIF();
-            case Dividend:
+            case DIVIDEND:
                 return buildDividendQIF();
-            case StockTakeOver:
+            case STOCKTAKEOVER:
                 return buildTakeOverQIF();
             default:
                 break;
@@ -139,7 +139,7 @@ public class QHoldingEvent
         Account myXferAccount = myEvent.getCredit();
         Account myPortfolio = mySecurity.getPortfolio();
         JMoney myTaxCredit = myEvent.getTaxCredit();
-        EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
+        EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
         boolean isReinvested = Difference.isEqual(mySecurity, myXferAccount);
         boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
 

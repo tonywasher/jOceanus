@@ -90,13 +90,13 @@ public class QIFAccount
         Map<AccountCategoryClass, String> myMap = new EnumMap<AccountCategoryClass, String>(AccountCategoryClass.class);
 
         /* Add the entries */
-        myMap.put(AccountCategoryClass.Savings, "Bank");
-        myMap.put(AccountCategoryClass.Bond, "Bank");
-        myMap.put(AccountCategoryClass.Cash, "Cash");
-        myMap.put(AccountCategoryClass.CreditCard, "CCard");
-        myMap.put(AccountCategoryClass.Portfolio, "Invst");
-        myMap.put(AccountCategoryClass.PrivateLoan, "Oth A");
-        myMap.put(AccountCategoryClass.Loan, "Oth L");
+        myMap.put(AccountCategoryClass.SAVINGS, "Bank");
+        myMap.put(AccountCategoryClass.BOND, "Bank");
+        myMap.put(AccountCategoryClass.CASH, "Cash");
+        myMap.put(AccountCategoryClass.CREDITCARD, "CCard");
+        myMap.put(AccountCategoryClass.PORTFOLIO, "Invst");
+        myMap.put(AccountCategoryClass.PRIVATELOAN, "Oth A");
+        myMap.put(AccountCategoryClass.LOAN, "Oth L");
 
         /* Return the map */
         return myMap;

@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.jmoneywise.data.EventGroup;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 
 /**
  * Filter criteria for events.
@@ -161,14 +161,14 @@ public class EventFilter
     private final EventCategoryList theEventCategories;
 
     /**
-     * Filtered Tax Category List.
+     * Filtered Tax Basis List.
      */
-    private TaxCategoryList theFilteredTaxCategories;
+    private TaxBasisList theFilteredTaxBases;
 
     /**
-     * Tax Category List.
+     * Tax Basis List.
      */
-    private final TaxCategoryList theTaxCategories;
+    private final TaxBasisList theTaxBases;
 
     /**
      * Are we filtering on TaxMan payee?
@@ -223,8 +223,8 @@ public class EventFilter
      * Obtain active Tax Category list.
      * @return the active tax category list
      */
-    public TaxCategoryList getTaxCategoryList() {
-        return theTaxCategories;
+    public TaxBasisList getTaxBasisList() {
+        return theTaxBases;
     }
 
     /**
@@ -239,7 +239,7 @@ public class EventFilter
         theAccounts = new AccountList(theDataSet);
         thePayees = new AccountList(theDataSet);
         theEventCategories = new EventCategoryList(theDataSet);
-        theTaxCategories = new TaxCategoryList(theDataSet);
+        theTaxBases = new TaxBasisList(theDataSet);
     }
 
     /**
@@ -309,7 +309,7 @@ public class EventFilter
     public void setFilter(final AccountBucket pBucket) {
         /* Clear selection by categories */
         theFilteredEventCategories = null;
-        theFilteredTaxCategories = null;
+        theFilteredTaxBases = null;
 
         /* If the account is a non-asset */
         Account myAccount = pBucket.getAccount();
@@ -321,7 +321,7 @@ public class EventFilter
             theFilteredAccounts = null;
 
             /* Determine whether we are filtering on TaxMan */
-            filterOnTaxManPayee = (myAccount.isCategoryClass(AccountCategoryClass.TaxMan));
+            filterOnTaxManPayee = (myAccount.isCategoryClass(AccountCategoryClass.TAXMAN));
             /* else the account is a payee */
         } else {
             /* Set filtered account list */
@@ -337,7 +337,7 @@ public class EventFilter
      */
     public void setFilter(final EventCategoryBucket pBucket) {
         /* Clear selection by tax categories/accounts */
-        theFilteredTaxCategories = null;
+        theFilteredTaxBases = null;
         theFilteredPayees = null;
         theFilteredAccounts = null;
 
@@ -349,10 +349,10 @@ public class EventFilter
         theFilteredEventCategories.add(myCategory);
 
         /* Determine whether we are filtering on various categories */
-        filterOnTaxCreditCategory = (myCategory.isCategoryClass(EventCategoryClass.TaxCredit));
-        filterOnNatInsCategory = (myCategory.isCategoryClass(EventCategoryClass.NatInsurance));
-        filterOnBenefitCategory = (myCategory.isCategoryClass(EventCategoryClass.DeemedBenefit));
-        filterOnDonationCategory = (myCategory.isCategoryClass(EventCategoryClass.CharityDonation));
+        filterOnTaxCreditCategory = (myCategory.isCategoryClass(EventCategoryClass.TAXCREDIT));
+        filterOnNatInsCategory = (myCategory.isCategoryClass(EventCategoryClass.NATINSURANCE));
+        filterOnBenefitCategory = (myCategory.isCategoryClass(EventCategoryClass.DEEMEDBENEFIT));
+        filterOnDonationCategory = (myCategory.isCategoryClass(EventCategoryClass.CHARITYDONATION));
     }
 
     /**
@@ -365,12 +365,12 @@ public class EventFilter
         theFilteredPayees = null;
         theFilteredAccounts = null;
 
-        /* Access category and set for final category */
-        TaxCategory myCategory = pBucket.getTaxCategory();
+        /* Access basis and set for final basis */
+        TaxBasis myBasis = pBucket.getTaxBasis();
 
         /* Set filtered tax category list list */
-        theFilteredTaxCategories = new TaxCategoryList(theDataSet);
-        theFilteredTaxCategories.add(myCategory);
+        theFilteredTaxBases = new TaxBasisList(theDataSet);
+        theFilteredTaxBases.add(myBasis);
     }
 
     /**
@@ -390,7 +390,7 @@ public class EventFilter
                 Account myAccount = myIterator.next();
 
                 /* If the account is the taxMan class */
-                if (myAccount.isCategoryClass(AccountCategoryClass.TaxMan)) {
+                if (myAccount.isCategoryClass(AccountCategoryClass.TAXMAN)) {
                     /* Note that we are filtering on taxMan */
                     filterOnTaxManPayee = true;
                     break;
@@ -428,16 +428,16 @@ public class EventFilter
 
                 /* Switch on category class */
                 switch (myCategory.getCategoryTypeClass()) {
-                    case TaxCredit:
+                    case TAXCREDIT:
                         filterOnTaxCreditCategory = true;
                         break;
-                    case NatInsurance:
+                    case NATINSURANCE:
                         filterOnNatInsCategory = true;
                         break;
-                    case DeemedBenefit:
+                    case DEEMEDBENEFIT:
                         filterOnBenefitCategory = true;
                         break;
-                    case CharityDonation:
+                    case CHARITYDONATION:
                         filterOnDonationCategory = true;
                         break;
                     default:
@@ -448,11 +448,11 @@ public class EventFilter
     }
 
     /**
-     * Set Tax Category List.
-     * @param pCategories the list of Categories (or null for all)
+     * Set Tax Basis List.
+     * @param pBases the list of TaxBases (or null for all)
      */
-    public void setTaxCategoryList(final TaxCategoryList pCategories) {
-        theFilteredTaxCategories = pCategories;
+    public void setTaxBasisList(final TaxBasisList pBases) {
+        theFilteredTaxBases = pBases;
     }
 
     /**
@@ -462,7 +462,7 @@ public class EventFilter
         theAccounts.clear();
         thePayees.clear();
         theEventCategories.clear();
-        theTaxCategories.clear();
+        theTaxBases.clear();
     }
 
     /**
@@ -516,23 +516,23 @@ public class EventFilter
 
         /* Add TaxMan/TaxCredit if required */
         if (pEvent.getTaxCredit() != null) {
-            thePayees.add(myAccounts.getSingularClass(AccountCategoryClass.TaxMan));
-            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.TaxCredit));
+            thePayees.add(myAccounts.getSingularClass(AccountCategoryClass.TAXMAN));
+            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.TAXCREDIT));
         }
 
         /* Add National Insurance if required */
         if (pEvent.getNatInsurance() != null) {
-            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.NatInsurance));
+            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.NATINSURANCE));
         }
 
         /* Add Deemed Benefit required */
         if (pEvent.getDeemedBenefit() != null) {
-            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.DeemedBenefit));
+            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.DEEMEDBENEFIT));
         }
 
         /* Add Charity Donation if required */
         if (pEvent.getCharityDonation() != null) {
-            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.CharityDonation));
+            theEventCategories.add(myCategories.getSingularClass(EventCategoryClass.CHARITYDONATION));
         }
 
         /* Register the event category */

@@ -29,53 +29,73 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
 
 /**
- * Enumeration of Frequency Classes.
+ * Enumeration of Tax Basis Classes.
  */
-public enum FrequencyClass implements StaticInterface {
+public enum TaxBasisClass implements StaticInterface {
     /**
-     * Weekly Frequency.
+     * Gross Salary Income.
      */
-    WEEKLY(1, 0, 7),
+    GROSSSALARY(1, 0),
 
     /**
-     * Fortnightly Frequency.
+     * Gross Interest Income.
      */
-    FORTNIGHTLY(2, 1, 14),
+    GROSSINTEREST(2, 1),
 
     /**
-     * Monthly Frequency.
+     * Gross Dividend Income.
      */
-    MONTHLY(3, 2, 1),
+    GROSSDIVIDEND(3, 2),
 
     /**
-     * Monthly Frequency (at end of month).
+     * Gross Unit Trust Dividend Income.
      */
-    ENDOFMONTH(4, 3, 1),
+    GROSSUTDIVIDEND(4, 3),
 
     /**
-     * Quarterly Frequency.
+     * Gross Rental Income.
      */
-    QUARTERLY(5, 4, 3),
+    GROSSRENTAL(5, 4),
 
     /**
-     * Half Yearly Frequency.
+     * Gross Taxable gains.
      */
-    HALFYEARLY(6, 5, 6),
+    GROSSTAXABLEGAINS(6, 5),
 
     /**
-     * Annual Frequency.
+     * Gross Capital gains.
      */
-    ANNUALLY(7, 6, 0),
+    GROSSCAPITALGAINS(7, 6),
 
     /**
-     * Only on Maturity.
+     * Total Tax Paid.
      */
-    MATURITY(8, 7, 0);
+    TAXPAID(8, 7),
+
+    /**
+     * Market Growth.
+     */
+    MARKET(9, 8),
+
+    /**
+     * Tax Free Income.
+     */
+    TAXFREE(10, 9),
+
+    /**
+     * Gross Expense.
+     */
+    EXPENSE(11, 10),
+
+    /**
+     * Virtual Income.
+     */
+    VIRTUAL(12, 11);
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(FrequencyClass.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxBasisClass.class.getName());
 
     /**
      * The String name.
@@ -92,11 +112,6 @@ public enum FrequencyClass implements StaticInterface {
      */
     private final int theOrder;
 
-    /**
-     * Adjustment factor.
-     */
-    private final int theAdjust;
-
     @Override
     public int getClassId() {
         return theId;
@@ -105,14 +120,6 @@ public enum FrequencyClass implements StaticInterface {
     @Override
     public int getOrder() {
         return theOrder;
-    }
-
-    /**
-     * Obtain Adjustment.
-     * @return the adjustment
-     */
-    public int getAdjustment() {
-        return theAdjust;
     }
 
     @Override
@@ -130,15 +137,13 @@ public enum FrequencyClass implements StaticInterface {
     /**
      * Constructor.
      * @param uId the id
-     * @param uOrder the default order
-     * @param uAdjust the adjustment
+     * @param uOrder the order
      */
-    private FrequencyClass(final int uId,
-                           final int uOrder,
-                           final int uAdjust) {
+    private TaxBasisClass(final int uId,
+                          final int uOrder) {
+        /* Set values */
         theId = uId;
         theOrder = uOrder;
-        theAdjust = uAdjust;
     }
 
     /**
@@ -147,13 +152,13 @@ public enum FrequencyClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static FrequencyClass fromId(final int id) throws JDataException {
-        for (FrequencyClass myClass : values()) {
+    public static TaxBasisClass fromId(final int id) throws JDataException {
+        for (TaxBasisClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: "
+        throw new JDataException(ExceptionClass.DATA, "Invalid Tax Basis Class Id: "
                                                       + id);
     }
 }

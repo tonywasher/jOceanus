@@ -694,20 +694,20 @@ public abstract class AccountBase
 
         /* Switch on category type */
         switch (pCategory.getCategoryTypeClass()) {
-            case Interest:
+            case INTEREST:
                 if (isTaxFree()) {
-                    return myCategories.getSingularClass(EventCategoryClass.TaxFreeInterest);
+                    return myCategories.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGrossInterest())
-                        ? EventCategoryClass.GrossInterest
-                        : EventCategoryClass.TaxedInterest);
-            case Dividend:
+                        ? EventCategoryClass.GROSSINTEREST
+                        : EventCategoryClass.TAXEDINTEREST);
+            case DIVIDEND:
                 if (isTaxFree()) {
-                    return myCategories.getSingularClass(EventCategoryClass.TaxFreeDividend);
+                    return myCategories.getSingularClass(EventCategoryClass.TAXFREEDIVIDEND);
                 }
-                return myCategories.getSingularClass(isCategoryClass(AccountCategoryClass.UnitTrust)
-                        ? EventCategoryClass.UnitTrustDividend
-                        : EventCategoryClass.ShareDividend);
+                return myCategories.getSingularClass(isCategoryClass(AccountCategoryClass.UNITTRUST)
+                        ? EventCategoryClass.UNITTRUSTDIVIDEND
+                        : EventCategoryClass.SHAREDIVIDEND);
             default:
                 return pCategory;
         }

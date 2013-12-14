@@ -171,14 +171,14 @@ public class AccountInfoSet
         Object myValue;
 
         switch (pInfoClass) {
-            case Parent:
-            case Alias:
-            case Portfolio:
-            case Holding:
+            case PARENT:
+            case ALIAS:
+            case PORTFOLIO:
+            case HOLDING:
                 /* Access account of object */
                 myValue = getAccount(pInfoClass);
                 break;
-            case AutoExpense:
+            case AUTOEXPENSE:
                 /* Access event category of object */
                 myValue = getEventCategory(pInfoClass);
                 break;
@@ -303,66 +303,66 @@ public class AccountInfoSet
         /* Switch on class */
         switch (pClass) {
         /* Notes/Account are always available */
-            case Notes:
-            case SortCode:
-            case Account:
-            case Reference:
-            case Comments:
+            case NOTES:
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
+            case COMMENTS:
                 return JDataFieldRequired.CANEXIST;
 
                 /* Handle Institution Details */
-            case WebSite:
-            case CustomerNo:
-            case UserId:
-            case Password:
+            case WEBSITE:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
                 return myClass.isNonAsset()
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Parent */
-            case Parent:
+            case PARENT:
                 return myClass.isChild()
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Alias */
-            case Alias:
+            case ALIAS:
                 return myClass.canAlias()
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Portfolio */
-            case Portfolio:
+            case PORTFOLIO:
                 return (myClass.hasUnits())
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Holding */
-            case Holding:
-                return (myClass == AccountCategoryClass.Portfolio)
+            case HOLDING:
+                return (myClass == AccountCategoryClass.PORTFOLIO)
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Maturity */
-            case Maturity:
-                return (myClass == AccountCategoryClass.Bond)
+            case MATURITY:
+                return (myClass == AccountCategoryClass.BOND)
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Symbol */
-            case Symbol:
+            case SYMBOL:
                 return (myClass.hasUnits() && (myAccount.getAlias() == null))
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle OpeningBalance */
-            case OpeningBalance:
+            case OPENINGBALANCE:
                 return myClass.isSavings()
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle AutoExpense */
-            case AutoExpense:
+            case AUTOEXPENSE:
                 return myClass.isCash()
                         ? JDataFieldRequired.CANEXIST
                         : JDataFieldRequired.NOTALLOWED;
@@ -407,41 +407,41 @@ public class AccountInfoSet
 
             /* Switch on class */
             switch (myClass) {
-                case OpeningBalance:
+                case OPENINGBALANCE:
                     /* Access data */
                     JMoney myBalance = myInfo.getValue(JMoney.class);
                     if (!myBalance.getCurrency().equals(myAccount.getAccountCurrency().getCurrency())) {
                         myAccount.addError(ERROR_BALANCE, getFieldForClass(myClass));
                     }
                     break;
-                case WebSite:
-                case CustomerNo:
-                case UserId:
-                case Password:
-                case SortCode:
-                case Account:
-                case Notes:
+                case WEBSITE:
+                case CUSTOMERNO:
+                case USERID:
+                case PASSWORD:
+                case SORTCODE:
+                case ACCOUNT:
+                case NOTES:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         myAccount.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                case Reference:
-                case Comments:
+                case REFERENCE:
+                case COMMENTS:
                     /* Access data */
                     String myString = myInfo.getValue(String.class);
                     if (myString.length() > myClass.getMaximumLength()) {
                         myAccount.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
-                case Parent:
+                case PARENT:
                     /* Access parent */
                     Account myParent = myInfo.getAccount();
 
                     /* If the account needs a market parent */
                     if (myAccount.getAccountCategoryClass().needsMarketParent()) {
-                        if (!myParent.isCategoryClass(AccountCategoryClass.Market)) {
+                        if (!myParent.isCategoryClass(AccountCategoryClass.MARKET)) {
                             myAccount.addError(ERROR_PARMARKET, getFieldForClass(myClass));
                         }
 
@@ -456,7 +456,7 @@ public class AccountInfoSet
                         myAccount.addError(ERROR_PARCLOSED, getFieldForClass(myClass));
                     }
                     break;
-                case Alias:
+                case ALIAS:
                     /* Access Alias account */
                     Account myAlias = myInfo.getAccount();
                     AccountCategoryClass myAliasClass = myAlias.getAccountCategoryClass();
@@ -497,12 +497,12 @@ public class AccountInfoSet
                         myAccount.addError(ERROR_ALSNOPRICES, getFieldForClass(myClass));
                     }
                     break;
-                case Portfolio:
+                case PORTFOLIO:
                     /* Access portfolio */
                     Account myPortfolio = myInfo.getAccount();
 
                     /* check that portfolio account is portfolio */
-                    if (!myPortfolio.isCategoryClass(AccountCategoryClass.Portfolio)) {
+                    if (!myPortfolio.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
                         myAccount.addError(ERROR_BADPORT, getFieldForClass(myClass));
                     }
 
@@ -512,7 +512,7 @@ public class AccountInfoSet
                         myAccount.addError(ERROR_PORTCLOSED, getFieldForClass(myClass));
                     }
                     break;
-                case Holding:
+                case HOLDING:
                     /* Access holding account */
                     Account myHolding = myInfo.getAccount();
 

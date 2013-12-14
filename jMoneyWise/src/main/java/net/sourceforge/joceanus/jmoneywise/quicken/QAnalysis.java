@@ -210,7 +210,7 @@ public class QAnalysis
 
         /* Access category */
         EventCategoryList myList = theData.getEventCategories();
-        EventCategory myCategory = myList.getSingularClass(EventCategoryClass.TaxFreeInterest);
+        EventCategory myCategory = myList.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
 
         /* Register category and return */
         theCategories.registerCategory(myCategory);
@@ -454,7 +454,7 @@ public class QAnalysis
         /* If this is a debit event */
         if (!isCredit) {
             switch (pEvent.getCategoryClass()) {
-                case Transfer:
+                case TRANSFER:
                     /* Transfer from Money to Units */
                     if ((!mySource.hasUnits())
                         && (myTarget.hasUnits())) {
@@ -470,13 +470,13 @@ public class QAnalysis
         }
 
         switch (pEvent.getCategoryClass()) {
-            case Interest:
-            case StockDeMerger:
-            case StockTakeOver:
+            case INTEREST:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
                 return true;
-            case Dividend:
+            case DIVIDEND:
                 return mySource.hasUnits();
-            case Transfer:
+            case TRANSFER:
                 /* Transfer from Units to Money */
                 if (mySource.hasUnits()
                     && !myTarget.hasUnits()) {

@@ -179,22 +179,22 @@ public class TaxInfoSet
         switch (pClass) {
 
         /* Handle Additional Tax Details */
-            case AdditionalAllowanceLimit:
-            case AdditionalIncomeThreshold:
-            case AdditionalTaxRate:
-            case AdditionalDividendTaxRate:
+            case ADDITIONALALLOWANCELIMIT:
+            case ADDITIONALINCOMETHRESHOLD:
+            case ADDITIONALTAXRATE:
+            case ADDITIONALDIVIDENDTAXRATE:
                 return myRegime.hasAdditionalTaxBand()
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle CapitalIncome Tax Details */
-            case CapitalTaxRate:
+            case CAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
                         ? JDataFieldRequired.NOTALLOWED
                         : JDataFieldRequired.MUSTEXIST;
 
                 /* Handle CapitalIncome Tax Details */
-            case HiCapitalTaxRate:
+            case HICAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
                         ? JDataFieldRequired.NOTALLOWED
                         : JDataFieldRequired.CANEXIST;
@@ -246,9 +246,9 @@ public class TaxInfoSet
             }
 
             /* If this is LoAgeAllowance */
-            if (myClass == TaxYearInfoClass.LoAgeAllowance) {
+            if (myClass == TaxYearInfoClass.LOAGEALLOWANCE) {
                 /* Obtain Allowance value */
-                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.Allowance);
+                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.ALLOWANCE);
                 JDecimal myAllowance = (myAllowInfo != null)
                         ? myInfo.getValue(JDecimal.class)
                         : null;
@@ -259,9 +259,9 @@ public class TaxInfoSet
             }
 
             /* If this is HiAgeAllowance */
-            if (myClass == TaxYearInfoClass.HiAgeAllowance) {
+            if (myClass == TaxYearInfoClass.HIAGEALLOWANCE) {
                 /* Obtain LoAgeAllowance value */
-                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LoAgeAllowance);
+                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LOAGEALLOWANCE);
                 JDecimal myAllowance = (myAllowInfo != null)
                         ? myInfo.getValue(JDecimal.class)
                         : null;

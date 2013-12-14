@@ -36,6 +36,7 @@ Public Const rangeCategoryData As String = "CategoryData"
 Public Const rangeUnitsYears As String = "UnitsYears"
 Public Const rangeUnitsNames As String = "UnitsNames"
 Public Const rangeUnitsData As String = "UnitsData"
+Public Const rangeOpenBalance As String = "OpeningBalances"
 
 'Report on Units Data for the Year
 Private Sub reportUnitsYear(ByRef Context As FinanceState, _
@@ -77,6 +78,48 @@ Private Sub reportUnitsYear(ByRef Context As FinanceState, _
 			'Access the cell
 			myCell = myData.getCellByPosition(myCol, myRow)
 			myCell.setValue(myAccount.acctUnits)
+		End If 
+	Wend
+End Sub
+
+'Report on Opening Balances
+Private Sub reportOpeningBalances(ByRef Context As FinanceState)
+	Dim myDoc As Object
+	Dim myData As Object
+	Dim myAccount As Object
+	Dim myRow As Integer
+	
+	'Access the current workbook
+	Set myDoc = Context.docBook
+	
+    'Access the ranges
+    Set myData = myDoc.NamedRanges.getByName(rangeOpenBalance).getReferredCells()
+    
+	'Clear results
+	clearResults(myData, 0)
+	
+	'Loop through the Accounts 
+	Set myIterator = hashIterator(Context.mapAccounts)
+	While (hashHasNext(myIterator))
+		'Access the element
+		Set myAccount = hashNext(myIterator)
+		
+		'If the element has Units or Value
+		If Not(myAccount.isNonAsset) And (myAccount.acctOpenBalance <> 0) Then
+		    'Determine the row to use
+    		myRow = myAccount.idxAssets
+    		if (myRow = -1) Then
+    			'Look up the index
+    			myRow = allocateVerticalIndex(Context, rangeAssetsNames, myAccount.strAccount)
+   				myAccount.idxAssets = myRow
+    		End If
+    		 
+			'Access the cell
+			myCell = myData.getCellByPosition(0, myRow)
+			myCell.setValue(myAccount.acctOpenBalance)
+
+			'Access account in cache
+			Set x = getCachedAccount(Context, myAccount.strAccount)
 		End If 
 	Wend
 End Sub

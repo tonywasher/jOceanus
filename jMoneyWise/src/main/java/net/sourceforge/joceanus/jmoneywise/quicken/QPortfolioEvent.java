@@ -73,10 +73,10 @@ public class QPortfolioEvent
 
         /* Switch on transaction type */
         switch (myEvent.getCategoryClass()) {
-            case OtherIncome:
-            case Inherited:
+            case OTHERINCOME:
+            case INHERITED:
                 return true;
-            case Dividend:
+            case DIVIDEND:
                 if (!myEvent.getDebit().isTaxFree()) {
                     return true;
                 }
@@ -84,7 +84,7 @@ public class QPortfolioEvent
                     return false;
                 }
                 return !(myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect());
-            case StockTakeOver:
+            case STOCKTAKEOVER:
                 if (myEvent.getThirdParty() == null) {
                     return false;
                 }
@@ -102,26 +102,26 @@ public class QPortfolioEvent
 
         /* Switch on transaction type */
         switch (myEvent.getCategoryClass()) {
-            case OtherIncome:
-            case Inherited:
+            case OTHERINCOME:
+            case INHERITED:
                 return buildIncomeQIF();
-            case Transfer:
+            case TRANSFER:
                 return (isCredit)
                         ? buildXferInQIF()
                         : buildXferOutQIF();
-            case StockRightsWaived:
+            case STOCKRIGHTSWAIVED:
                 return buildXferOutQIF();
-            case StockRightsTaken:
+            case STOCKRIGHTSTAKEN:
                 return buildXferInQIF();
-            case StockSplit:
+            case STOCKSPLIT:
                 return buildStockSplitQIF();
-            case StockAdjust:
+            case STOCKADJUST:
                 return buildStockAdjustQIF();
-            case Dividend:
+            case DIVIDEND:
                 return buildDividendQIF();
-            case StockDeMerger:
+            case STOCKDEMERGER:
                 return buildDeMergerQIF();
-            case StockTakeOver:
+            case STOCKTAKEOVER:
                 return buildTakeOverQIF();
             default:
                 break;

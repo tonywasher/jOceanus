@@ -140,7 +140,7 @@ public final class QAccount
         theAnalysis = pAnalysis;
         theAccount = pAccount;
         isAutoExpense = (pAccount.getAutoExpense() != null);
-        isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.Portfolio);
+        isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO);
 
         theEvents = (isPortfolio)
                 ? new QPortfolioEventList(pAnalysis, this)
@@ -232,18 +232,18 @@ public final class QAccount
      */
     protected String getAccountType() {
         switch (theAccount.getAccountCategoryClass()) {
-            case Savings:
-            case Bond:
+            case SAVINGS:
+            case BOND:
                 return "Bank";
-            case Cash:
+            case CASH:
                 return "Cash";
-            case CreditCard:
+            case CREDITCARD:
                 return "CCard";
-            case Portfolio:
+            case PORTFOLIO:
                 return "Invst";
-            case PrivateLoan:
+            case PRIVATELOAN:
                 return "Oth A";
-            case Loan:
+            case LOAN:
                 return "Oth L";
             default:
                 return null;

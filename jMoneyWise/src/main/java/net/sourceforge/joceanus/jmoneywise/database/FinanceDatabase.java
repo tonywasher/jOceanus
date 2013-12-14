@@ -53,6 +53,7 @@ public class FinanceDatabase
         /* Add additional tables */
         addTable(new TableAccountCategoryType(this));
         addTable(new TableEventCategoryType(this));
+        addTable(new TableTaxBasis(this));
         addTable(new TableTaxCategory(this));
         addTable(new TableAccountCurrency(this));
         addTable(new TableTaxRegime(this));

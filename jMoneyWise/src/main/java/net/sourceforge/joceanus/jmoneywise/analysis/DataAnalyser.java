@@ -209,7 +209,7 @@ public class DataAnalyser
         theCategoryBuckets = theAnalysis.getEventCategories();
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
         theDilutions = theAnalysis.getDilutions();
-        theTaxMan = thePayeeBuckets.getBucket(AccountCategoryClass.TaxMan);
+        theTaxMan = thePayeeBuckets.getBucket(AccountCategoryClass.TAXMAN);
 
         /* Access the Event iterator */
         Iterator<Event> myIterator = myEvents.listIterator();
@@ -339,7 +339,7 @@ public class DataAnalyser
 
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
-                case Interest:
+                case INTEREST:
                     /* Obtain detailed category */
                     myCat = myDebit.getDetailedCategory(myCat);
 
@@ -349,20 +349,20 @@ public class DataAnalyser
                             : myDebit;
                     myDebit = myDebit.getParent();
                     break;
-                case LoanInterestEarned:
+                case LOANINTERESTEARNED:
                     /* True debit account is the parent of the loan */
                     myDebit = myDebit.getParent();
                     break;
-                case RentalIncome:
-                case RoomRentalIncome:
+                case RENTALINCOME:
+                case ROOMRENTALINCOME:
                     /* True debit account is the parent of the loan */
                     myChild = myDebit.equals(myCredit)
                             ? null
                             : myDebit;
                     myDebit = myCredit.getParent();
                     break;
-                case WriteOff:
-                case LoanInterestCharged:
+                case WRITEOFF:
+                case LOANINTERESTCHARGED:
                     /* True credit account is the parent of the loan */
                     myCredit = myCredit.getParent();
                     break;
@@ -460,36 +460,36 @@ public class DataAnalyser
         EventCategory myCat = pEvent.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
-            case StockSplit:
-            case StockAdjust:
+            case STOCKSPLIT:
+            case STOCKADJUST:
                 processStockSplit(pEvent);
                 break;
             /* Process a stock right taken */
-            case StockRightsTaken:
+            case STOCKRIGHTSTAKEN:
                 processTransferIn(pEvent);
                 break;
             /* Process a stock right taken */
-            case StockRightsWaived:
+            case STOCKRIGHTSWAIVED:
                 processStockRightWaived(pEvent);
                 break;
             /* Process a stock DeMerger */
-            case StockDeMerger:
+            case STOCKDEMERGER:
                 processStockDeMerger(pEvent);
                 break;
             /* Process a Stock TakeOver */
-            case StockTakeOver:
+            case STOCKTAKEOVER:
                 processStockTakeover(pEvent);
                 break;
             /* Process a dividend */
-            case Dividend:
+            case DIVIDEND:
                 processDividend(pEvent);
                 break;
             /* Process standard transfer in/out */
-            case Transfer:
-            case Expense:
-            case Inherited:
-            case OtherIncome:
-                if (pEvent.getDebit().isCategoryClass(AccountCategoryClass.LifeBond)) {
+            case TRANSFER:
+            case EXPENSE:
+            case INHERITED:
+            case OTHERINCOME:
+                if (pEvent.getDebit().isCategoryClass(AccountCategoryClass.LIFEBOND)) {
                     processTaxableGain(pEvent);
                 } else if (!pEvent.getDebit().hasUnits()) {
                     processTransferIn(pEvent);

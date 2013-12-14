@@ -27,29 +27,19 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
  */
 public enum TaxCategorySection {
     /**
-     * Category Summary.
-     */
-    CATSUMM(0),
-
-    /**
-     * Category Total.
-     */
-    CATTOTAL(100),
-
-    /**
      * Tax Detail.
      */
-    TAXDETAIL(200),
+    TAXDETAIL(0),
 
     /**
      * Tax Summary.
      */
-    TAXSUMM(300),
+    TAXSUMM(100),
 
     /**
      * Tax Total.
      */
-    TAXTOTAL(400);
+    TAXTOTAL(200);
 
     /**
      * Order base.
