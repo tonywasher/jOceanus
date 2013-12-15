@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.jOceanus</groupId>
     <artifactId>jOceanus</artifactId>
-    <version>v1.2.0-SNAPSHOT</version>   
+    <version>v1.2.0-b3</version>   
   </parent>
   <artifactId>jFieldSet</artifactId>
   <name>Java FieldSet Manager</name>
