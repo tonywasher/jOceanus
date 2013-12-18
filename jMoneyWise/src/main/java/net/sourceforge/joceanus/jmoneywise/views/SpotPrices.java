@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
@@ -49,9 +49,14 @@ import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 public class SpotPrices
         implements JDataContents {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SpotPrices.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotPrices.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     @Override
     public JDataFields getDataFields() {
@@ -61,40 +66,40 @@ public class SpotPrices
     /**
      * View Field Id.
      */
-    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField("View");
+    public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataView"));
 
     /**
-     * AccountCategory Field Id.
+     * Portfolio Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField("AccountCategory");
+    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDate"));
 
     /**
      * Next Field Id.
      */
-    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+    public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataNext"));
 
     /**
      * Previous Field Id.
      */
-    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
+    public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrevious"));
 
     /**
      * Prices Field Id.
      */
-    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField("Prices");
+    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrices"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_VIEW.equals(pField)) {
             return theView;
         }
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
+        if (FIELD_PORTFOLIO.equals(pField)) {
+            return thePortfolio;
         }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
@@ -122,9 +127,9 @@ public class SpotPrices
     private final View theView;
 
     /**
-     * The account category.
+     * The portfolio.
      */
-    private final AccountCategory theCategory;
+    private final Account thePortfolio;
 
     /**
      * The date.
@@ -137,11 +142,11 @@ public class SpotPrices
     private final SpotList thePrices;
 
     /**
-     * Obtain account category.
-     * @return the account category
+     * Obtain portfolio.
+     * @return the portfolio
      */
-    public AccountCategory getAccountCategory() {
-        return theCategory;
+    public Account getPortfolio() {
+        return thePortfolio;
     }
 
     /**
@@ -204,16 +209,16 @@ public class SpotPrices
     /**
      * Constructor.
      * @param pView the view
-     * @param pCategory the account category
+     * @param pPortfolio the portfolio
      * @param pDate the date
      */
     public SpotPrices(final View pView,
-                      final AccountCategory pCategory,
+                      final Account pPortfolio,
                       final JDateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
         theDate = pDate;
-        theCategory = pCategory;
+        thePortfolio = pPortfolio;
         thePrices = new SpotList(this);
     }
 
@@ -225,27 +230,27 @@ public class SpotPrices
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         /**
-         * The account category field Id.
+         * The portfolio field Id.
          */
-        public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField("AccountCategory");
+        public static final JDataField FIELD_PORFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
 
         /**
          * The date field Id.
          */
-        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+        public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDate"));
 
         /**
          * The next date field Id.
          */
-        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField("Next");
+        public static final JDataField FIELD_NEXT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataNext"));
 
         /**
          * The previous date field Id.
          */
-        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField("Previous");
+        public static final JDataField FIELD_PREV = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPrevious"));
 
         @Override
         public JDataFields declareFields() {
@@ -254,8 +259,8 @@ public class SpotPrices
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_CATEGORY.equals(pField)) {
-                return theCategory;
+            if (FIELD_PORTFOLIO.equals(pField)) {
+                return thePortfolio;
             }
             if (FIELD_DATE.equals(pField)) {
                 return theDate;
@@ -290,9 +295,9 @@ public class SpotPrices
         private final View theView;
 
         /**
-         * The account category.
+         * The portfolio.
          */
-        private final AccountCategory theCategory;
+        private final Account thePortfolio;
 
         /**
          * The next date.
@@ -330,15 +335,15 @@ public class SpotPrices
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();
-            theCategory = pPrices.getAccountCategory();
+            thePortfolio = pPrices.getPortfolio();
 
             /* Loop through the Accounts */
             FinanceData myData = theView.getData();
             Iterator<Account> myActIterator = myData.getAccounts().listIterator();
             while (myActIterator.hasNext()) {
                 Account myAccount = myActIterator.next();
-                /* Ignore accounts that are wrong category, have no prices or are aliases */
-                if ((!Difference.isEqual(myAccount.getAccountCategory(), theCategory))
+                /* Ignore accounts that are wrong portfolio, have no prices or are aliases */
+                if ((!Difference.isEqual(myAccount.getPortfolio(), thePortfolio))
                     || (!myAccount.hasUnits())
                     || (myAccount.isAlias())) {
                     continue;
@@ -365,7 +370,7 @@ public class SpotPrices
             while (myIterator.hasNext()) {
                 AccountPrice myPrice = myIterator.next();
                 /* Ignore accounts that are wrong type */
-                if (!Difference.isEqual(myPrice.getAccount().getAccountCategory(), theCategory)) {
+                if (!Difference.isEqual(myPrice.getAccount().getPortfolio(), thePortfolio)) {
                     continue;
                 }
 
@@ -509,12 +514,12 @@ public class SpotPrices
         /**
          * Previous Date field Id.
          */
-        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField("PreviousDate");
+        public static final JDataField FIELD_PREVDATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevDate"));
 
         /**
          * Previous Price field Id.
          */
-        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField("PreviousPrice");
+        public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPrevPrice"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRendere
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
@@ -132,9 +132,9 @@ public class PricePoint
     private transient JDateDay theDate = null;
 
     /**
-     * The Account category.
+     * The Portfolio.
      */
-    private transient AccountCategory theAccountCategory = null;
+    private transient Account thePortfolio = null;
 
     /**
      * The Spot selection panel.
@@ -317,7 +317,7 @@ public class PricePoint
             theSelect.refreshData();
 
             /* Access the selection details */
-            setSelection(theSelect.getAccountCategory(), theSelect.getDate());
+            setSelection(theSelect.getPortfolio(), theSelect.getDate());
 
             /* Create SavePoint */
             theSelect.createSavePoint();
@@ -344,22 +344,22 @@ public class PricePoint
     }
 
     /**
-     * Set Selection to the specified account category and date.
-     * @param pCategory the account category
+     * Set Selection to the specified portfolio and date.
+     * @param pPortfolio the portfolio
      * @param pDate the Date for the extract
      * @throws JDataException on error
      */
-    public void setSelection(final AccountCategory pCategory,
+    public void setSelection(final Account pPortfolio,
                              final JDateDay pDate) throws JDataException {
         /* Record selection */
         theDate = pDate;
-        theAccountCategory = pCategory;
+        thePortfolio = pPortfolio;
 
         /* If selection is valid */
         if ((theDate != null)
-            && (theAccountCategory != null)) {
+            && (thePortfolio != null)) {
             /* Create the new list */
-            theSnapshot = new SpotPrices(theView, pCategory, pDate);
+            theSnapshot = new SpotPrices(theView, pPortfolio, pDate);
             thePrices = theSnapshot.getPrices();
 
             /* Update Next/Previous values */
@@ -474,16 +474,16 @@ public class PricePoint
                 setShowAll(theSelect.getShowClosed());
 
                 /* Access selection */
-                AccountCategory myCategory = theSelect.getAccountCategory();
+                Account myPortfolio = theSelect.getPortfolio();
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
                 if (!Difference.isEqual(theDate, myDate)
-                    || !Difference.isEqual(theAccountCategory, myCategory)) {
+                    || !Difference.isEqual(thePortfolio, myPortfolio)) {
                     /* Protect against exceptions */
                     try {
                         /* Set selection */
-                        setSelection(myCategory, myDate);
+                        setSelection(myPortfolio, myDate);
 
                         /* Create SavePoint */
                         theSelect.createSavePoint();

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -32,13 +33,16 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -47,9 +51,8 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
@@ -69,16 +72,6 @@ public class SpotSelect
     private static final int STRUT_WIDTH = 10;
 
     /**
-     * Field Height.
-     */
-    private static final int FIELD_HEIGHT = 20;
-
-    /**
-     * Field Width.
-     */
-    private static final int FIELD_WIDTH = 200;
-
-    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotSelect.class.getName());
@@ -89,9 +82,9 @@ public class SpotSelect
     private static final String NLS_DATE = NLS_BUNDLE.getString("SelectDate");
 
     /**
-     * Text for AccountType Label.
+     * Text for Portfolio Label.
      */
-    private static final String NLS_TYPE = NLS_BUNDLE.getString("SelectType");
+    private static final String NLS_PORT = NLS_BUNDLE.getString("SelectPortfolio");
 
     /**
      * Text for Show Closed.
@@ -139,9 +132,14 @@ public class SpotSelect
     private final JButton thePrev;
 
     /**
-     * The accountCategories comboBox.
+     * The portfolio button.
      */
-    private final JComboBox<AccountCategory> theCategoriesBox;
+    private final JButton thePortButton;
+
+    /**
+     * The Account list.
+     */
+    private transient AccountList theAccounts = null;
 
     /**
      * The current state.
@@ -172,11 +170,11 @@ public class SpotSelect
     }
 
     /**
-     * Get the selected account category.
-     * @return the account category
+     * Get the selected portfolio.
+     * @return the portfolio
      */
-    public final AccountCategory getAccountCategory() {
-        return theState.getAccountCategory();
+    public final Account getPortfolio() {
+        return theState.getPortfolio();
     }
 
     /**
@@ -200,7 +198,7 @@ public class SpotSelect
 
         /* Create Labels */
         JLabel myDate = new JLabel(NLS_DATE);
-        JLabel myAct = new JLabel(NLS_TYPE);
+        JLabel myPort = new JLabel(NLS_PORT);
 
         /* Create the check box */
         theShowClosed = new JCheckBox(NLS_CLOSED);
@@ -213,9 +211,10 @@ public class SpotSelect
         theNext = new JButton(NLS_NEXT);
         thePrev = new JButton(NLS_PREV);
 
-        /* Create the Category box */
-        theCategoriesBox = new JComboBox<AccountCategory>();
-        theCategoriesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        /* Create the portfolio button */
+        thePortButton = new JButton(AnalysisSelect.getListIcon());
+        thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
+        thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create initial state */
         theState = new SpotState();
@@ -234,9 +233,9 @@ public class SpotSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(thePrev);
         add(Box.createHorizontalGlue());
-        add(myAct);
+        add(myPort);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theCategoriesBox);
+        add(thePortButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theShowClosed);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -252,16 +251,13 @@ public class SpotSelect
         theShowClosed.addItemListener(myListener);
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
-        theCategoriesBox.addItemListener(myListener);
+        thePortButton.addActionListener(myListener);
     }
 
     /**
      * Refresh data.
      */
     public final void refreshData() {
-        AccountCategory myCategory = null;
-        AccountCategory myFirst = null;
-
         /* Access the data */
         JDateDayRange myRange = theView.getRange();
 
@@ -271,72 +267,57 @@ public class SpotSelect
         /* Access the data */
         FinanceData myData = theView.getData();
 
-        /* Access categories and accounts */
-        AccountCategoryList myCategories = myData.getAccountCategories();
-        AccountList myAccounts = myData.getAccounts();
+        /* Access account list */
+        theAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
-        /* If we have categories already populated */
-        if (theCategoriesBox.getItemCount() > 0) {
-            /* If we have a selected category */
-            if (getAccountCategory() != null) {
-                /* Find it in the new list */
-                theState.setCategory(myCategories.findItemByName(getAccountCategory().getName()));
-            }
+        /* Obtain the current account */
+        Account myPortfolio = theState.getPortfolio();
 
-            /* Remove the categories */
-            theCategoriesBox.removeAllItems();
+        /* If we have a selected Portfolio */
+        if (myPortfolio != null) {
+            /* Look for the equivalent bucket */
+            myPortfolio = theAccounts.findItemById(myPortfolio.getOrderedId());
         }
 
-        /* Access the iterator */
-        Iterator<Account> myIterator = myAccounts.iterator();
-
-        /* Loop through the non-owner accounts */
-        while (myIterator.hasNext()) {
-            Account myAccount = myIterator.next();
-
-            /* Skip non-priced, deleted and alias items */
-            if ((!myAccount.hasUnits())
-                || (myAccount.isDeleted())
-                || (myAccount.isAlias())) {
-                continue;
-            }
-
-            /* Skip closed items if required */
-            if ((!doShowClosed)
-                && (myAccount.isClosed())) {
-                continue;
-            }
-
-            /* If the category of this account is new */
-            if (!Difference.isEqual(myCategory, myAccount.getAccountCategory())) {
-                /* Note the category */
-                myCategory = myAccount.getAccountCategory();
-                if (myFirst == null) {
-                    myFirst = myCategory;
-                }
-
-                /* Add the item to the list */
-                theCategoriesBox.addItem(myCategory);
-            }
+        /* If we do not have an active portfolio and the list is non-empty */
+        if ((myPortfolio == null)
+            && (!theAccounts.isEmpty())) {
+            /* Access the first portfolio */
+            myPortfolio = getFirstPortfolio();
         }
 
-        /* If we have a selected type */
-        if (getAccountCategory() != null) {
-            /* Select it in the new list */
-            theCategoriesBox.setSelectedItem(getAccountCategory());
-
-            /* Else we have no type currently selected */
-        } else if (theCategoriesBox.getItemCount() > 0) {
-            /* Select the first account category */
-            theCategoriesBox.setSelectedIndex(0);
-            theState.setCategory(myFirst);
-        }
+        /* Set the portfolio */
+        theState.setPortfolio(myPortfolio);
+        theState.applyState();
 
         /* Note that we have finished refreshing data */
         refreshingData = false;
+    }
+
+    /**
+     * Obtain first portfolio.
+     * @return the first portfolio
+     */
+    private Account getFirstPortfolio() {
+        /* Loop through the available account values */
+        Iterator<Account> myIterator = theAccounts.iterator();
+        while (myIterator.hasNext()) {
+            Account myPortfolio = myIterator.next();
+
+            /* Ignore if it is not a portfolio */
+            if (!myPortfolio.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
+                continue;
+            }
+
+            /* Return the bucket */
+            return myPortfolio;
+        }
+
+        /* No such account */
+        return null;
     }
 
     /**
@@ -363,7 +344,7 @@ public class SpotSelect
         thePrev.setEnabled(bEnabled
                            && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
-        theCategoriesBox.setEnabled(bEnabled);
+        thePortButton.setEnabled(bEnabled);
     }
 
     /**
@@ -416,6 +397,10 @@ public class SpotSelect
                 /* Set previous and notify changes */
                 theState.setPrev();
                 fireStateChanged();
+
+                /* If this event relates to the portfolio button */
+            } else if (thePortButton.equals(o)) {
+                showPortfolioMenu();
             }
         }
 
@@ -442,16 +427,68 @@ public class SpotSelect
                 /* Note the new criteria and re-build lists */
                 doShowClosed = theShowClosed.isSelected();
                 fireStateChanged();
+            }
+        }
 
-                /* If this event relates to the Account Category box */
-            } else if ((theCategoriesBox.equals(o))
-                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                AccountCategory myCategory = (AccountCategory) evt.getItem();
+        /**
+         * Show Portfolio menu.
+         */
+        private void showPortfolioMenu() {
+            /* Create a new popUp menu */
+            JPopupMenu myPopUp = new JPopupMenu();
 
-                /* Select the new category */
-                if (theState.setCategory(myCategory)) {
-                    fireStateChanged();
+            /* Loop through the available portfolio values */
+            Iterator<Account> myIterator = theAccounts.iterator();
+            while (myIterator.hasNext()) {
+                Account myPortfolio = myIterator.next();
+
+                /* Ignore if it is not a portfolio */
+                if (!myPortfolio.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
+                    continue;
                 }
+
+                /* Create a new JMenuItem and add it to the popUp */
+                PortfolioAction myAction = new PortfolioAction(myPortfolio);
+                JMenuItem myItem = new JMenuItem(myAction);
+                myPopUp.add(myItem);
+            }
+
+            /* Show the Account menu in the correct place */
+            Rectangle myLoc = thePortButton.getBounds();
+            myPopUp.show(thePortButton, 0, myLoc.height);
+        }
+    }
+
+    /**
+     * Portfolio action class.
+     */
+    private final class PortfolioAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -6312490702258532708L;
+
+        /**
+         * Portfolio.
+         */
+        private final Account thePortfolio;
+
+        /**
+         * Constructor.
+         * @param pPortfolio the portfolio
+         */
+        private PortfolioAction(final Account pPortfolio) {
+            super(pPortfolio.getName());
+            thePortfolio = pPortfolio;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* Select the new portfolio */
+            if (theState.setPortfolio(thePortfolio)) {
+                theState.applyState();
+                fireStateChanged();
             }
         }
     }
@@ -461,9 +498,9 @@ public class SpotSelect
      */
     private final class SpotState {
         /**
-         * AccountCategory.
+         * Portfolio.
          */
-        private AccountCategory theCategory = null;
+        private Account thePortfolio = null;
 
         /**
          * Selected date.
@@ -481,11 +518,11 @@ public class SpotSelect
         private JDateDay thePrevDate = null;
 
         /**
-         * Get the account category.
-         * @return the account category
+         * Get the portfolio.
+         * @return the portfolio
          */
-        private AccountCategory getAccountCategory() {
-            return theCategory;
+        private Account getPortfolio() {
+            return thePortfolio;
         }
 
         /**
@@ -524,7 +561,7 @@ public class SpotSelect
          * @param pState state to copy from
          */
         private SpotState(final SpotState pState) {
-            theCategory = pState.getAccountCategory();
+            thePortfolio = pState.getPortfolio();
             theDate = new JDateDay(pState.getDate());
             if (pState.getNextDate() != null) {
                 theNextDate = new JDateDay(pState.getNextDate());
@@ -535,14 +572,14 @@ public class SpotSelect
         }
 
         /**
-         * Set new Account Category.
-         * @param pCategory the AccountCategory
+         * Set new Portfolio.
+         * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setCategory(final AccountCategory pCategory) {
-            /* Adjust the selected account */
-            if (!Difference.isEqual(pCategory, theCategory)) {
-                theCategory = pCategory;
+        private boolean setPortfolio(final Account pPortfolio) {
+            /* Adjust the selected portfolio */
+            if (!Difference.isEqual(pPortfolio, thePortfolio)) {
+                thePortfolio = pPortfolio;
                 return true;
             }
             return false;
@@ -603,7 +640,9 @@ public class SpotSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            theCategoriesBox.setSelectedItem(theCategory);
+            thePortButton.setText((thePortfolio == null)
+                    ? null
+                    : thePortfolio.getName());
         }
     }
 }
