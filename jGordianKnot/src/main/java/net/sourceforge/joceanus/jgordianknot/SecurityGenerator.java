@@ -173,34 +173,37 @@ public class SecurityGenerator {
     }
 
     /**
-     * Constructor for explicit provider.
-     * @param pProvider the Security provider
-     * @param pRestricted do we use restricted security
-     * @param pLongHash use long hash
-     * @param pNumCipherSteps the number of cipher steps
-     * @param pHashIterations the number of hash iterations
-     * @param pSecurityPhrase the security phrase
+     * Default Constructor.
      * @throws JDataException on error
      */
-    public SecurityGenerator(final SecurityProvider pProvider,
-                             final boolean pRestricted,
-                             final boolean pLongHash,
-                             final int pNumCipherSteps,
-                             final int pHashIterations,
-                             final String pSecurityPhrase) throws JDataException {
+    public SecurityGenerator() throws JDataException {
+        this(new SecurityParameters());
+    }
+
+    /**
+     * Constructor for explicit provider.
+     * @param pParameters the Security parameters
+     * @throws JDataException on error
+     */
+    public SecurityGenerator(final SecurityParameters pParameters) throws JDataException {
         /* Store the provider */
-        theProvider = pProvider;
+        theProvider = pParameters.getProvider();
         theProviderName = theProvider.getProvider();
 
         /* Ensure that the provider is installed */
         theProvider.ensureInstalled();
 
         /* Store parameters */
-        useRestricted = pRestricted;
-        useLongHash = pLongHash;
-        theCipherSteps = pNumCipherSteps;
-        theIterations = pHashIterations;
-        theSecurityPhrase = DataConverter.stringToByteArray(pSecurityPhrase);
+        useRestricted = pParameters.useRestricted();
+        useLongHash = pParameters.useLongHash();
+        theCipherSteps = pParameters.getNumCipherSteps();
+        theIterations = pParameters.getNumHashIterations();
+
+        /* Store security phrase */
+        String myPhrase = pParameters.getSecurityPhrase();
+        theSecurityPhrase = (myPhrase == null)
+                ? null
+                : DataConverter.stringToByteArray(myPhrase);
 
         /* Create the random builder */
         theRandomBuilder = new SP800SecureRandomBuilder();

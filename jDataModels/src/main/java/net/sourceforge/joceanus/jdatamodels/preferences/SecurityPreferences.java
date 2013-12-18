@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jdatamodels.preferences;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.SecurityParameters;
 import net.sourceforge.joceanus.jgordianknot.SecurityProvider;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 
@@ -97,32 +98,32 @@ public class SecurityPreferences
     /**
      * Default Security Provider.
      */
-    private static final SecurityProvider DEFAULT_PROVIDER = SecureManager.DEFAULT_PROVIDER;
+    private static final SecurityProvider DEFAULT_PROVIDER = SecurityParameters.DEFAULT_PROVIDER;
 
     /**
      * Default Restricted Security.
      */
-    private static final Boolean DEFAULT_RESTRICTED = SecureManager.DEFAULT_RESTRICTED;
+    private static final Boolean DEFAULT_RESTRICTED = SecurityParameters.DEFAULT_RESTRICTED;
 
     /**
      * Default Long Hash.
      */
-    private static final Boolean DEFAULT_LONGHASH = SecureManager.DEFAULT_LONGHASH;
+    private static final Boolean DEFAULT_LONGHASH = SecurityParameters.DEFAULT_LONGHASH;
 
     /**
      * Default Cipher Steps.
      */
-    private static final Integer DEFAULT_CIPHER_STEPS = SecureManager.DEFAULT_CIPHER_STEPS;
+    private static final Integer DEFAULT_CIPHER_STEPS = SecurityParameters.DEFAULT_CIPHER_STEPS;
 
     /**
      * Default Hash iterations.
      */
-    private static final Integer DEFAULT_HASH_ITERATIONS = SecureManager.DEFAULT_HASH_ITERATIONS;
+    private static final Integer DEFAULT_HASH_ITERATIONS = SecurityParameters.DEFAULT_HASH_ITERATIONS;
 
     /**
      * Default Security Phrase.
      */
-    private static final String DEFAULT_SECURITY_PHRASE = SecureManager.DEFAULT_SECURITY_PHRASE;
+    private static final String DEFAULT_SECURITY_PHRASE = SecurityParameters.DEFAULT_SECURITY_PHRASE;
 
     /**
      * Constructor.
@@ -138,8 +139,7 @@ public class SecurityPreferences
      * @throws JDataException on error
      */
     public SecureManager getSecurity() throws JDataException {
-        return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getBooleanValue(NAME_LONGHASH),
-                getIntegerValue(NAME_CIPHER_STEPS), getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
+        return new SecureManager(getParameters());
     }
 
     /**
@@ -148,8 +148,7 @@ public class SecurityPreferences
      * @throws JDataException on error
      */
     public SecurityGenerator getGenerator() throws JDataException {
-        return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getBooleanValue(NAME_LONGHASH),
-                getIntegerValue(NAME_CIPHER_STEPS), getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
+        return new SecurityGenerator(getParameters());
     }
 
     @Override
@@ -185,5 +184,23 @@ public class SecurityPreferences
             return DISPLAY_SECURITY_PHRASE;
         }
         return null;
+    }
+
+    /**
+     * Get Security Parameters.
+     * @return the parameters
+     */
+    private SecurityParameters getParameters() {
+        /* Create default preferences */
+        SecurityParameters myParms = new SecurityParameters(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED));
+
+        /* Set other parameters */
+        myParms.setUseLongHash(getBooleanValue(NAME_LONGHASH));
+        myParms.setNumCipherSteps(getIntegerValue(NAME_CIPHER_STEPS));
+        myParms.setNumIterations(getIntegerValue(NAME_HASH_ITERATIONS));
+        myParms.setSecurityPhrase(getStringValue(NAME_SECURITY_PHRASE));
+
+        /* return the parameters */
+        return myParms;
     }
 }

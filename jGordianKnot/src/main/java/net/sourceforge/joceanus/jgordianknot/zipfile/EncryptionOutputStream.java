@@ -146,9 +146,6 @@ public class EncryptionOutputStream
     public void write(final byte[] pBytes,
                       final int pOffset,
                       final int pLength) throws IOException {
-        int iNumBytes;
-        byte[] myBytes;
-
         /* If we are already closed throw IO Exception */
         if (isClosed) {
             throw new IOException("Stream is closed");
@@ -162,8 +159,8 @@ public class EncryptionOutputStream
         /* Protect against exceptions */
         try {
             /* Update the cipher with these bytes */
-            iNumBytes = theCipher.update(pBytes, pOffset, pLength);
-            myBytes = theCipher.getBuffer();
+            int iNumBytes = theCipher.update(pBytes, pOffset, pLength);
+            byte[] myBytes = theCipher.getBuffer();
 
             /* Write the bytes to the stream */
             theStream.write(myBytes, 0, iNumBytes);
