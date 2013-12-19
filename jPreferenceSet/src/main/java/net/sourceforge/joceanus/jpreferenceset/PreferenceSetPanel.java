@@ -123,11 +123,6 @@ public class PreferenceSetPanel
     private final transient PreferenceSet thePreferences;
 
     /**
-     * The Self Reference.
-     */
-    private final PreferenceSetPanel theSelf = this;
-
-    /**
      * The individual preference elements.
      */
     private final transient List<PreferenceElement> theElList;
@@ -548,9 +543,9 @@ public class PreferenceSetPanel
                         /* If we are a directory preference */
                             case DIRECTORY:
                                 /* Create and show the dialog */
-                                FileSelector myDialog = new FileSelector(theSelf, NLS_SELECT
-                                                                                  + " "
-                                                                                  + theString.getDisplay(), new File(theString.getValue()));
+                                FileSelector myDialog = new FileSelector(PreferenceSetPanel.this, NLS_SELECT
+                                                                                                  + " "
+                                                                                                  + theString.getDisplay(), new File(theString.getValue()));
                                 myDialog.showDialog(theLogger);
 
                                 /* Handle selection */
@@ -567,9 +562,10 @@ public class PreferenceSetPanel
                             /* If we are a file preference */
                             case FILE:
                                 /* Create and show the dialog */
-                                FileSelector myFileDialog = new FileSelector(theSelf, NLS_SELECT
-                                                                                      + " "
-                                                                                      + theString.getDisplay(), new File(theString.getValue()), null, null);
+                                FileSelector myFileDialog = new FileSelector(PreferenceSetPanel.this, NLS_SELECT
+                                                                                                      + " "
+                                                                                                      + theString.getDisplay(), new File(theString.getValue()),
+                                        null, null);
                                 myFileDialog.showDialog(theLogger);
 
                                 /* Handle selection */

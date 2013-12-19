@@ -37,12 +37,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollMenu;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket;
@@ -125,12 +126,12 @@ public class AccountAnalysisSelect
      */
     public AccountAnalysisSelect() {
         /* Create the account button */
-        theAccountButton = new JButton(AnalysisSelect.getListIcon());
+        theAccountButton = new JButton(ArrowIcon.DOWN);
         theAccountButton.setVerticalTextPosition(AbstractButton.CENTER);
         theAccountButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the category button */
-        theCatButton = new JButton(AnalysisSelect.getListIcon());
+        theCatButton = new JButton(ArrowIcon.DOWN);
         theCatButton.setVerticalTextPosition(AbstractButton.CENTER);
         theCatButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -299,10 +300,10 @@ public class AccountAnalysisSelect
          */
         private void showCategoryMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Create a simple map for top-level categories */
-            Map<String, JMenu> myMap = new HashMap<String, JMenu>();
+            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
             /* Loop through the available category values */
             Iterator<AccountCategoryBucket> myIterator = theCategories.iterator();
@@ -317,9 +318,9 @@ public class AccountAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JMenu myMenu = new JMenu(myName);
+                JScrollMenu myMenu = new JScrollMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.add(myMenu);
+                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -336,12 +337,12 @@ public class AccountAnalysisSelect
 
                 /* Determine menu to add to */
                 AccountCategory myParent = myBucket.getAccountCategory().getParentCategory();
-                JMenu myMenu = myMap.get(myParent.getName());
+                JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
                 CategoryAction myAction = new CategoryAction(myBucket.getAccountCategory());
                 JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.add(myItem);
+                myMenu.addMenuItem(myItem);
             }
 
             /* Show the Category menu in the correct place */
@@ -354,10 +355,14 @@ public class AccountAnalysisSelect
          */
         private void showAccountMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
-            /* Access current category */
+            /* Access current category and Account */
             AccountCategory myCategory = theState.getCategory();
+            AccountBucket myAccount = theState.getAccount();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the available account values */
             Iterator<AccountBucket> myIterator = theAccounts.iterator();
@@ -372,8 +377,17 @@ public class AccountAnalysisSelect
                 /* Create a new JMenuItem and add it to the popUp */
                 AccountAction myAction = new AccountAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                myPopUp.addMenuItem(myItem);
+
+                /* If this is the active account */
+                if (myAccount.equals(myBucket)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
 
             /* Show the Account menu in the correct place */
             Rectangle myLoc = theAccountButton.getBounds();

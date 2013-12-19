@@ -1145,28 +1145,28 @@ public class MaintAccount
     private AccountStatus determineStatus() {
         /* Handle new account */
         if (isNewAccount) {
-            return AccountStatus.New;
+            return AccountStatus.NEW;
         }
 
         /* Handle unused account */
         if (theAccount.isDeletable()) {
-            return AccountStatus.Unused;
+            return AccountStatus.UNUSED;
         }
 
         /* Handle deleted account */
         if (theAccount.isDeleted()) {
-            return AccountStatus.Deleted;
+            return AccountStatus.DELETED;
         }
 
         /* Handle closed account */
         if (theAccount.isClosed()) {
-            return AccountStatus.Closed;
+            return AccountStatus.CLOSED;
         }
 
         /* Handle standard account */
         return (theAccount.isCloseable())
-                ? AccountStatus.Inactive
-                : AccountStatus.Active;
+                ? AccountStatus.INACTIVE
+                : AccountStatus.ACTIVE;
     }
 
     /**
@@ -1176,31 +1176,31 @@ public class MaintAccount
         /**
          * New account.
          */
-        New,
+        NEW,
 
         /**
          * Deleted account.
          */
-        Deleted,
+        DELETED,
 
         /**
          * Closed account.
          */
-        Closed,
+        CLOSED,
 
         /**
          * Unused account (i.e. delete-able).
          */
-        Unused,
+        UNUSED,
 
         /**
          * Inactive account (i.e. close-able).
          */
-        Inactive,
+        INACTIVE,
 
         /**
          * Active account.
          */
-        Active;
+        ACTIVE;
     }
 }

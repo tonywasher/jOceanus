@@ -387,13 +387,13 @@ public class DataAnalyser
                 /* Determine the type of the debit account */
                 CategoryType myType = AccountCategoryBucket.determineCategoryType(myDebit.getAccountCategory());
                 switch (myType) {
-                    case Portfolio:
-                    case Payee:
+                    case PORTFOLIO:
+                    case PAYEE:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
                         myPayee.adjustForDebit(pEvent);
                         break;
-                    case Money:
-                    case CreditCard:
+                    case MONEY:
+                    case CREDITCARD:
                     default:
                         AccountBucket myAccount = theAccountBuckets.getBucket(myDebit);
                         myAccount.adjustForDebit(pEvent);
@@ -418,13 +418,13 @@ public class DataAnalyser
                 /* Determine the type of the credit account */
                 CategoryType myType = AccountCategoryBucket.determineCategoryType(myCredit.getAccountCategory());
                 switch (myType) {
-                    case Portfolio:
-                    case Payee:
+                    case PORTFOLIO:
+                    case PAYEE:
                         PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
                         myPayee.adjustForCredit(pEvent);
                         break;
-                    case Money:
-                    case CreditCard:
+                    case MONEY:
+                    case CREDITCARD:
                     default:
                         AccountBucket myAccount = theAccountBuckets.getBucket(myCredit);
                         myAccount.adjustForCredit(pEvent);
@@ -551,12 +551,12 @@ public class DataAnalyser
         /* Determine the type of the debit account */
         CategoryType myType = AccountCategoryBucket.determineCategoryType(myDebit.getAccountCategory());
         switch (myType) {
-            case Payee:
+            case PAYEE:
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
                 myPayee.adjustForDebit(pEvent);
                 break;
-            case Money:
-            case CreditCard:
+            case MONEY:
+            case CREDITCARD:
             default:
                 AccountBucket myAccount = theAccountBuckets.getBucket(myDebit);
                 myAccount.adjustForDebit(pEvent);

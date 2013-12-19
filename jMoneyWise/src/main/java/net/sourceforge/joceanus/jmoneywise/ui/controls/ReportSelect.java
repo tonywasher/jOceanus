@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jdateday.JDatePeriod;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -155,7 +156,7 @@ public class ReportSelect
         theView = pView;
 
         /* Create the range button */
-        theReportButton = new JButton(AnalysisSelect.getListIcon());
+        theReportButton = new JButton(ArrowIcon.DOWN);
         theReportButton.setVerticalTextPosition(AbstractButton.CENTER);
         theReportButton.setHorizontalTextPosition(AbstractButton.LEFT);
 

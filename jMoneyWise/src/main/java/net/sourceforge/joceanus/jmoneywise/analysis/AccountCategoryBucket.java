@@ -294,22 +294,22 @@ public final class AccountCategoryBucket
         if (myClass.isNonAsset()) {
             /* If this is a totals account */
             if (myClass == AccountCategoryClass.TOTALS) {
-                return CategoryType.Total;
+                return CategoryType.TOTAL;
             }
             if (myClass == AccountCategoryClass.PORTFOLIO) {
-                return CategoryType.Portfolio;
+                return CategoryType.PORTFOLIO;
             }
 
             /* This is a payee */
             return (myClass.isSubTotal())
-                    ? CategoryType.SubTotal
-                    : CategoryType.Payee;
+                    ? CategoryType.SUBTOTAL
+                    : CategoryType.PAYEE;
         }
 
         /* Return creditCard/Money */
         return (myClass == AccountCategoryClass.CREDITCARD)
-                ? CategoryType.CreditCard
-                : CategoryType.Money;
+                ? CategoryType.CREDITCARD
+                : CategoryType.MONEY;
     }
 
     /**
@@ -636,32 +636,32 @@ public final class AccountCategoryBucket
         /**
          * Money.
          */
-        Money,
+        MONEY,
 
         /**
          * CreditCard.
          */
-        CreditCard,
+        CREDITCARD,
 
         /**
          * Portfolio.
          */
-        Portfolio,
+        PORTFOLIO,
 
         /**
          * Payee.
          */
-        Payee,
+        PAYEE,
 
         /**
          * SubTotal.
          */
-        SubTotal,
+        SUBTOTAL,
 
         /**
          * Total.
          */
-        Total;
+        TOTAL;
 
         /**
          * Is this a subTotal category?
@@ -669,8 +669,8 @@ public final class AccountCategoryBucket
          */
         public boolean isSubTotal() {
             switch (this) {
-                case SubTotal:
-                case Portfolio:
+                case SUBTOTAL:
+                case PORTFOLIO:
                     return true;
                 default:
                     return false;

@@ -974,7 +974,7 @@ public class HTMLBuilder {
             /* Store parameters */
             theTable = pTable;
             theParent = null;
-            theClass = TableClass.Summary;
+            theClass = TableClass.SUMMARY;
         }
 
         /**
@@ -1069,17 +1069,17 @@ public class HTMLBuilder {
         /**
          * Summary.
          */
-        Summary,
+        SUMMARY,
 
         /**
          * DetailedSummary.
          */
-        DetailedSummary,
+        DETAILEDSUMMARY,
 
         /**
          * Detail.
          */
-        Detail;
+        DETAIL;
 
         /**
          * Obtain the odd class name.
@@ -1087,11 +1087,11 @@ public class HTMLBuilder {
          */
         private String getOddClass() {
             switch (this) {
-                case Summary:
+                case SUMMARY:
                     return CLASS_SUMMROW;
-                case DetailedSummary:
+                case DETAILEDSUMMARY:
                     return CLASS_DTLSUMMROW;
-                case Detail:
+                case DETAIL:
                     return CLASS_DTLROW;
                 default:
                     return null;
@@ -1104,11 +1104,11 @@ public class HTMLBuilder {
          */
         private String getEvenClass() {
             switch (this) {
-                case Summary:
+                case SUMMARY:
                     return CLASS_ALTSUMMROW;
-                case DetailedSummary:
+                case DETAILEDSUMMARY:
                     return CLASS_ALTDTLSUMMROW;
-                case Detail:
+                case DETAIL:
                     return CLASS_ALTDTLROW;
                 default:
                     return null;
@@ -1121,11 +1121,11 @@ public class HTMLBuilder {
          */
         private TableClass getNextClass() {
             switch (this) {
-                case Summary:
-                    return DetailedSummary;
-                case DetailedSummary:
-                case Detail:
-                    return Detail;
+                case SUMMARY:
+                    return DETAILEDSUMMARY;
+                case DETAILEDSUMMARY:
+                case DETAIL:
+                    return DETAIL;
                 default:
                     return null;
             }

@@ -73,11 +73,6 @@ public class MaintNewYear
     private static final long serialVersionUID = 7406051901546832781L;
 
     /**
-     * Self reference.
-     */
-    private final MaintNewYear theTable = this;
-
-    /**
      * The Data View.
      */
     private final transient View theView;
@@ -412,7 +407,7 @@ public class MaintNewYear
          */
         private PatternYearModel() {
             /* call constructor */
-            super(theTable);
+            super(MaintNewYear.this);
         }
 
         @Override
@@ -559,7 +554,7 @@ public class MaintNewYear
          */
         private YearColumnModel() {
             /* call constructor */
-            super(theTable);
+            super(MaintNewYear.this);
 
             /* Create the relevant formatters/editors */
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();

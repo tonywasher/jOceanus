@@ -128,11 +128,6 @@ public class OasisWorkBook {
     private static final String ERROR_SAVE = "Failed to save workbook";
 
     /**
-     * Self Reference.
-     */
-    private final OasisWorkBook theWorkBook = this;
-
-    /**
      * Oasis WorkBook.
      */
     private final SpreadsheetDocument theBook;
@@ -1038,7 +1033,7 @@ public class OasisWorkBook {
          * @return the sheet representation
          */
         private OasisSheet getReadOnlySheet() {
-            return new OasisSheet(theWorkBook, theElement, theIndex, true);
+            return new OasisSheet(OasisWorkBook.this, theElement, theIndex, true);
         }
 
         /**
@@ -1046,7 +1041,7 @@ public class OasisWorkBook {
          * @return the sheet representation
          */
         private OasisSheet getSheet() {
-            return new OasisSheet(theWorkBook, theElement, theIndex, false);
+            return new OasisSheet(OasisWorkBook.this, theElement, theIndex, false);
         }
     }
 }

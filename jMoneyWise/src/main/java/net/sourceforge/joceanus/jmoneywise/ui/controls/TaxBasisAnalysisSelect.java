@@ -40,6 +40,7 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -103,7 +104,7 @@ public class TaxBasisAnalysisSelect
      */
     public TaxBasisAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(AnalysisSelect.getListIcon());
+        theButton = new JButton(ArrowIcon.DOWN);
         theButton.setVerticalTextPosition(AbstractButton.CENTER);
         theButton.setHorizontalTextPosition(AbstractButton.LEFT);
 

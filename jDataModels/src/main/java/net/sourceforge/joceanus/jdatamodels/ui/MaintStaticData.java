@@ -189,11 +189,6 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     private transient L theStatic = null;
 
     /**
-     * Self reference.
-     */
-    private final MaintStaticData<L, T> theTable = this;
-
-    /**
      * The Table Model.
      */
     private final StaticModel theModel;
@@ -353,7 +348,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         private StaticModel() {
             /* call constructor */
-            super(theTable);
+            super(MaintStaticData.this);
         }
 
         @Override
@@ -547,7 +542,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         private StaticColumnModel() {
             /* call constructor */
-            super(theTable);
+            super(MaintStaticData.this);
 
             /* Create the relevant formatters/editors */
             theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();

@@ -117,11 +117,6 @@ public class PricePoint
     private final JEnablePanel thePanel;
 
     /**
-     * Self reference.
-     */
-    private final PricePoint theTable = this;
-
-    /**
      * The column model.
      */
     private final SpotViewColumnModel theColumns;
@@ -560,7 +555,7 @@ public class PricePoint
          */
         private SpotViewModel() {
             /* call constructor */
-            super(theTable);
+            super(PricePoint.this);
         }
 
         @Override
@@ -740,7 +735,7 @@ public class PricePoint
          */
         private SpotViewColumnModel() {
             /* call constructor */
-            super(theTable);
+            super(PricePoint.this);
 
             /* Create the relevant formatters/editors */
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();

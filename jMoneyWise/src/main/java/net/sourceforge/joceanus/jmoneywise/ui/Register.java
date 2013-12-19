@@ -236,11 +236,6 @@ public class Register
     private final JEnablePanel thePanel;
 
     /**
-     * Self Reference.
-     */
-    private final Register theTable = this;
-
-    /**
      * Column Model.
      */
     private final RegisterColumnModel theColumns;
@@ -698,7 +693,7 @@ public class Register
          */
         private RegisterModel() {
             /* call constructor */
-            super(theTable);
+            super(Register.this);
         }
 
         /**
@@ -953,7 +948,7 @@ public class Register
          */
         private RegisterMouse() {
             /* Call super-constructor */
-            super(theTable);
+            super(Register.this);
         }
 
         /**
@@ -968,14 +963,15 @@ public class Register
             boolean enableNullTax = false;
             boolean enableNullYears = false;
             boolean enableNullDilution = false;
+            Register mySelf = Register.this;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked()) {
+            if (mySelf.isLocked()) {
                 return;
             }
 
             /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null)
                     || (myRow.isLocked())
@@ -1078,14 +1074,15 @@ public class Register
         @Override
         protected void addSpecialCommands(final JPopupMenu pMenu) {
             boolean enableCalcTax = false;
+            Register mySelf = Register.this;
 
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked()) {
+            if (mySelf.isLocked()) {
                 return;
             }
 
             /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null)
                     || (myRow.isLocked())
@@ -1131,7 +1128,7 @@ public class Register
         @Override
         protected void addNavigationCommands(final JPopupMenu pMenu) {
             /* Nothing to do if the table is locked */
-            if (theTable.isLocked()) {
+            if (Register.this.isLocked()) {
                 return;
             }
 
@@ -1202,7 +1199,7 @@ public class Register
             String myCmd = evt.getActionCommand();
 
             /* Cancel any editing */
-            theTable.cancelEditing();
+            Register.this.cancelEditing();
 
             /* If this is a set null debit units command */
             if (myCmd.equals(POPUP_NULLDEBUNITS)) {
@@ -1256,8 +1253,10 @@ public class Register
          * Calculate tax credits.
          */
         private void calculateTaxCredits() {
+            Register mySelf = Register.this;
+
             /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
+            for (DataItem myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
                 if ((myRow == null)
                     || (myRow.isLocked())
@@ -1267,7 +1266,7 @@ public class Register
 
                 /* Determine row */
                 int row = myRow.indexOf();
-                if (theTable.hasHeader()) {
+                if (mySelf.hasHeader()) {
                     row--;
                 }
 
@@ -1398,7 +1397,7 @@ public class Register
          */
         private RegisterColumnModel() {
             /* call constructor */
-            super(theTable);
+            super(Register.this);
 
             /* Create the relevant formatters/editors */
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();

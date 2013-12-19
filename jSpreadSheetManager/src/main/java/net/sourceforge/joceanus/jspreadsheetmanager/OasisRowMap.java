@@ -53,11 +53,6 @@ import org.w3c.dom.Node;
  */
 public class OasisRowMap {
     /**
-     * Self Reference.
-     */
-    private final OasisRowMap theSelf = this;
-
-    /**
      * Underlying sheet.
      */
     private final OasisSheet theOasisSheet;
@@ -414,7 +409,7 @@ public class OasisRowMap {
             }
 
             /* Create and return the row object */
-            return new OasisRow(theSelf, theElement, theIndex, false);
+            return new OasisRow(OasisRowMap.this, theElement, theIndex, false);
         }
 
         /**
@@ -423,7 +418,7 @@ public class OasisRowMap {
          */
         private OasisRow getReadOnlyRow() {
             /* Create and return the row object */
-            return new OasisRow(theSelf, theElement, theIndex, true);
+            return new OasisRow(OasisRowMap.this, theElement, theIndex, true);
         }
 
         /**

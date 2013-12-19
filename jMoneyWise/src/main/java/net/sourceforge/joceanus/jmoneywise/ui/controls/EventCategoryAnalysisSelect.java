@@ -37,12 +37,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollMenu;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
@@ -108,7 +109,7 @@ public class EventCategoryAnalysisSelect
      */
     public EventCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(AnalysisSelect.getListIcon());
+        theButton = new JButton(ArrowIcon.DOWN);
         theButton.setVerticalTextPosition(AbstractButton.CENTER);
         theButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -226,10 +227,10 @@ public class EventCategoryAnalysisSelect
          */
         private void showCategoryMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Create a simple map for top-level categories */
-            Map<String, JMenu> myMap = new HashMap<String, JMenu>();
+            Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
             /* Loop through the available category values */
             Iterator<EventCategoryBucket> myIterator = theCategories.iterator();
@@ -244,9 +245,9 @@ public class EventCategoryAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JMenu myMenu = new JMenu(myName);
+                JScrollMenu myMenu = new JScrollMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.add(myMenu);
+                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -262,12 +263,12 @@ public class EventCategoryAnalysisSelect
 
                 /* Determine menu to add to */
                 EventCategory myParent = myBucket.getEventCategory().getParentCategory();
-                JMenu myMenu = myMap.get(myParent.getName());
+                JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the menu */
                 EventAction myAction = new EventAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.add(myItem);
+                myMenu.addMenuItem(myItem);
             }
 
             /* Show the Category menu in the correct place */

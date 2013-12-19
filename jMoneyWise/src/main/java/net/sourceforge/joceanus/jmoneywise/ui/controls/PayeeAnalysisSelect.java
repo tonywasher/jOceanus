@@ -36,10 +36,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
@@ -103,7 +104,7 @@ public class PayeeAnalysisSelect
      */
     public PayeeAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(AnalysisSelect.getListIcon());
+        theButton = new JButton(ArrowIcon.DOWN);
         theButton.setVerticalTextPosition(AbstractButton.CENTER);
         theButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -221,7 +222,13 @@ public class PayeeAnalysisSelect
          */
         private void showPayeeMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Access current payee */
+            PayeeBucket myPayee = theState.getPayee();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the available payee values */
             Iterator<PayeeBucket> myIterator = thePayees.iterator();
@@ -232,7 +239,16 @@ public class PayeeAnalysisSelect
                 PayeeAction myAction = new PayeeAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.add(myItem);
+
+                /* If this is the active payee */
+                if (myPayee.equals(myBucket)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
 
             /* Show the Payee menu in the correct place */
             Rectangle myLoc = theButton.getBounds();

@@ -52,11 +52,6 @@ public class ValueField
     private static final long serialVersionUID = -1865387282196348594L;
 
     /**
-     * Self reference.
-     */
-    private final ValueField theSelf = this;
-
-    /**
      * The Data Model.
      */
     private transient DataModel theModel = null;
@@ -237,7 +232,7 @@ public class ValueField
         }
 
         /* Store value */
-        theSelf.setToolTipText(null);
+        setToolTipText(null);
         setValue(myValue);
 
         /* Reset the cache */
@@ -281,7 +276,7 @@ public class ValueField
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* If this relates to the value */
-            if (theSelf.equals(e.getSource())) {
+            if (ValueField.this.equals(e.getSource())) {
                 /* Check for finish of edit */
                 finishEdit();
 

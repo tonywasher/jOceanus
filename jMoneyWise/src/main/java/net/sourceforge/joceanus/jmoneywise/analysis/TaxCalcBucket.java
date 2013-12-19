@@ -291,7 +291,7 @@ public final class TaxCalcBucket
         theAttributes = new EnumMap<TaxAttribute, JDecimal>(TaxAttribute.class);
 
         /* Create all possible values */
-        setAttribute(TaxAttribute.Amount, new JMoney());
+        setAttribute(TaxAttribute.AMOUNT, new JMoney());
     }
 
     @Override
@@ -345,8 +345,8 @@ public final class TaxCalcBucket
      */
     protected boolean isRelevant() {
         /* Check for non-zero amount */
-        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
-        JMoney myTax = getMoneyValue(TaxAttribute.Taxation);
+        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        JMoney myTax = getMoneyValue(TaxAttribute.TAXATION);
         return myAmount.isNonZero()
                || ((myTax != null) && (myTax.isNonZero()));
     }
@@ -358,11 +358,11 @@ public final class TaxCalcBucket
      */
     protected JMoney setAmount(final JMoney pAmount) {
         /* Access the rate */
-        JRate myRate = getRateValue(TaxAttribute.Rate);
+        JRate myRate = getRateValue(TaxAttribute.RATE);
 
         /* Set the value */
         JMoney myAmount = new JMoney(pAmount);
-        setAttribute(TaxAttribute.Amount, myAmount);
+        setAttribute(TaxAttribute.AMOUNT, myAmount);
 
         /* Calculate the tax if we have a rate */
         JMoney myTaxation = (myRate != null)
@@ -370,7 +370,7 @@ public final class TaxCalcBucket
                 : new JMoney();
 
         /* Return the taxation amount */
-        setAttribute(TaxAttribute.Taxation, myTaxation);
+        setAttribute(TaxAttribute.TAXATION, myTaxation);
         return myTaxation;
     }
 
@@ -380,7 +380,7 @@ public final class TaxCalcBucket
      */
     protected void setTaxation(final JMoney pAmount) {
         /* Set the value */
-        setAttribute(TaxAttribute.Taxation, new JMoney(pAmount));
+        setAttribute(TaxAttribute.TAXATION, new JMoney(pAmount));
     }
 
     /**
@@ -398,7 +398,7 @@ public final class TaxCalcBucket
      */
     protected void setRate(final JRate pRate) {
         /* Set the value */
-        setAttribute(TaxAttribute.Rate, new JRate(pRate));
+        setAttribute(TaxAttribute.RATE, new JRate(pRate));
     }
 
     /**
@@ -407,8 +407,8 @@ public final class TaxCalcBucket
      */
     protected void addValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
-        myAmount.addAmount(pBucket.getMoneyValue(TaxAttribute.Amount));
+        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        myAmount.addAmount(pBucket.getMoneyValue(TaxAttribute.AMOUNT));
     }
 
     /**
@@ -417,8 +417,8 @@ public final class TaxCalcBucket
      */
     protected void subtractValues(final TaxCalcBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyValue(TaxAttribute.Amount);
-        myAmount.subtractAmount(pBucket.getMoneyValue(TaxAttribute.Amount));
+        JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
+        myAmount.subtractAmount(pBucket.getMoneyValue(TaxAttribute.AMOUNT));
     }
 
     /**
@@ -665,22 +665,22 @@ public final class TaxCalcBucket
     }
 
     /**
-     * EventAttribute enumeration.
+     * TaxAttribute enumeration.
      */
     public enum TaxAttribute {
         /**
          * Amount.
          */
-        Amount,
+        AMOUNT,
 
         /**
          * Rate.
          */
-        Rate,
+        RATE,
 
         /**
          * Taxation.
          */
-        Taxation;
+        TAXATION;
     }
 }

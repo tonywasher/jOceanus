@@ -36,10 +36,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -121,12 +122,12 @@ public class SecurityAnalysisSelect
      */
     public SecurityAnalysisSelect() {
         /* Create the security button */
-        theSecButton = new JButton(AnalysisSelect.getListIcon());
+        theSecButton = new JButton(ArrowIcon.DOWN);
         theSecButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSecButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the portfolio button */
-        thePortButton = new JButton(AnalysisSelect.getListIcon());
+        thePortButton = new JButton(ArrowIcon.DOWN);
         thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
         thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -295,18 +296,34 @@ public class SecurityAnalysisSelect
          */
         private void showPortfolioMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Access current portfolio */
+            Account myPortfolio = theState.getPortfolio();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the available portfolio values */
             Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
             while (myIterator.hasNext()) {
                 PortfolioBucket myBucket = myIterator.next();
+                Account myPort = myBucket.getPortfolio();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myBucket.getPortfolio());
+                PortfolioAction myAction = new PortfolioAction(myPort);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                myPopUp.addMenuItem(myItem);
+
+                /* If this is the active portfolio */
+                if (myPortfolio.equals(myPort)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
 
             /* Show the Portfolio menu in the correct place */
             Rectangle myLoc = thePortButton.getBounds();
@@ -318,10 +335,14 @@ public class SecurityAnalysisSelect
          */
         private void showSecurityMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
-            /* Access current portfolio */
+            /* Access current portfolio and security */
             Account myPortfolio = theState.getPortfolio();
+            SecurityBucket mySecurity = theState.getSecurity();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the available security values */
             Iterator<SecurityBucket> myIterator = theSecurities.iterator();
@@ -336,8 +357,17 @@ public class SecurityAnalysisSelect
                 /* Create a new JMenuItem and add it to the popUp */
                 SecurityAction myAction = new SecurityAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                myPopUp.addMenuItem(myItem);
+
+                /* If this is the active security */
+                if (mySecurity.equals(myBucket)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
 
             /* Show the Security menu in the correct place */
             Rectangle myLoc = theSecButton.getBounds();

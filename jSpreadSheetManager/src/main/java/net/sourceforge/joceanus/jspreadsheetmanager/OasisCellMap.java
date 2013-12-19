@@ -46,11 +46,6 @@ import org.w3c.dom.Node;
  */
 public class OasisCellMap {
     /**
-     * Self Reference.
-     */
-    private final OasisCellMap theSelf = this;
-
-    /**
      * Underlying row.
      */
     private final OasisRow theOasisRow;
@@ -358,7 +353,7 @@ public class OasisCellMap {
             }
 
             /* Create and return the cell object */
-            return new OasisCell(theSelf, theElement, theIndex, false);
+            return new OasisCell(OasisCellMap.this, theElement, theIndex, false);
         }
 
         /**
@@ -367,7 +362,7 @@ public class OasisCellMap {
          */
         private OasisCell getReadOnlyCell() {
             /* Create and return the cell object */
-            return new OasisCell(theSelf, theElement, theIndex, true);
+            return new OasisCell(OasisCellMap.this, theElement, theIndex, true);
         }
 
         /**

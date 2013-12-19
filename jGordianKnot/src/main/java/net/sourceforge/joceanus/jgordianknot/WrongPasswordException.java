@@ -24,10 +24,9 @@ package net.sourceforge.joceanus.jgordianknot;
 
 /**
  * Exception indicating that an incorrect password was given.
- * @author Tony Washer
  */
 public class WrongPasswordException
-        extends Exception {
+        extends RuntimeException {
     /**
      * Serial id.
      */

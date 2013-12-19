@@ -35,11 +35,6 @@ import java.util.Map;
  */
 public class JDataFields {
     /**
-     * Self reference.
-     */
-    private final JDataFields theSelf = this;
-
-    /**
      * Name of Item.
      */
     private final String theName;
@@ -321,7 +316,7 @@ public class JDataFields {
          * @return the anchor
          */
         public JDataFields getAnchor() {
-            return theSelf;
+            return JDataFields.this;
         }
 
         /**
@@ -383,7 +378,7 @@ public class JDataFields {
             }
 
             /* Must belong to the same anchor */
-            if (theSelf != myThat.getAnchor()) {
+            if (JDataFields.this != myThat.getAnchor()) {
                 return false;
             }
 

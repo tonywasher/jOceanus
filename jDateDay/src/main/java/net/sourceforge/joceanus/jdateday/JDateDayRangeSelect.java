@@ -23,22 +23,26 @@
 package net.sourceforge.joceanus.jdateday;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
@@ -55,16 +59,6 @@ public class JDateDayRangeSelect
      * Strut width.
      */
     private static final int STRUT_WIDTH = 10;
-
-    /**
-     * Period Box width.
-     */
-    private static final int PERIOD_WIDTH = 150;
-
-    /**
-     * Period Box height.
-     */
-    private static final int PERIOD_HEIGHT = 25;
 
     /**
      * Name of the Range property.
@@ -137,9 +131,9 @@ public class JDateDayRangeSelect
     private final JLabel theEndLabel;
 
     /**
-     * The Period ComboBox.
+     * The Period Button.
      */
-    private final JComboBox<JDatePeriod> thePeriodBox;
+    private final JButton thePeriodButton;
 
     /**
      * The Next button.
@@ -175,11 +169,6 @@ public class JDateDayRangeSelect
      * The Saved state.
      */
     private transient JDateRangeState theSavePoint = null;
-
-    /**
-     * Are we refreshing data.
-     */
-    private boolean refreshingData = false;
 
     /**
      * Should we use start button for periods.
@@ -232,21 +221,14 @@ public class JDateDayRangeSelect
         /* Record whether we are using start for periods */
         useStartButtonForPeriod = useStartForPeriod;
 
-        /* Create the boxes */
-        thePeriodBox = new JComboBox<JDatePeriod>();
-        thePeriodBox.setMaximumSize(new Dimension(PERIOD_WIDTH, PERIOD_HEIGHT));
+        /* Create the account button */
+        thePeriodButton = new JButton(ArrowIcon.DOWN);
+        thePeriodButton.setVerticalTextPosition(AbstractButton.CENTER);
+        thePeriodButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the DateButtons */
         theStartButton = new JDateDayButton(pFormatter);
         theEndButton = new JDateDayButton(pFormatter);
-
-        /* Add the PeriodTypes to the period box */
-        for (JDatePeriod myPeriod : JDatePeriod.values()) {
-            /* Add as long as it is not the datesUpTo period */
-            if (!myPeriod.datesUpTo()) {
-                thePeriodBox.addItem(myPeriod);
-            }
-        }
 
         /* Create the labels */
         theStartLabel = new JLabel(NLS_START);
@@ -266,7 +248,7 @@ public class JDateDayRangeSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(thePeriodLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePeriodBox);
+        add(thePeriodButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(Box.createHorizontalGlue());
         add(theStartLabel);
@@ -285,7 +267,7 @@ public class JDateDayRangeSelect
         setInitialRange();
 
         /* Add the listeners for item changes */
-        thePeriodBox.addItemListener(myListener);
+        thePeriodButton.addActionListener(myListener);
         theNextButton.addActionListener(myListener);
         thePrevButton.addActionListener(myListener);
         theStartButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
@@ -371,18 +353,12 @@ public class JDateDayRangeSelect
         /* Access the state */
         JDateRangeState myState = pSource.theState;
 
-        /* Set the refreshing data flag */
-        refreshingData = true;
-
         /* Accept this state */
         theState = new JDateRangeState(myState);
 
         /* Build the range */
         theState.buildRange();
         notifyChangedRange();
-
-        /* Reset the refreshing data flag */
-        refreshingData = false;
     }
 
     /**
@@ -414,7 +390,7 @@ public class JDateDayRangeSelect
         /* Lock/Unlock the components */
         theStartButton.setEnabled(pEnable);
         theEndButton.setEnabled(pEnable);
-        thePeriodBox.setEnabled(pEnable);
+        thePeriodButton.setEnabled(pEnable);
         theNextButton.setEnabled(pEnable
                                  && theState.isNextOK());
         thePrevButton.setEnabled(pEnable
@@ -426,7 +402,7 @@ public class JDateDayRangeSelect
 
         /* Hide Period label and box for UpTo range */
         thePeriodLabel.setVisible(!isUpTo);
-        thePeriodBox.setVisible(!isUpTo);
+        thePeriodButton.setVisible(!isUpTo);
 
         /* If we are using start button for period */
         if (useStartButtonForPeriod) {
@@ -470,15 +446,8 @@ public class JDateDayRangeSelect
      * Notify changes to selected range.
      */
     private void notifyChangedRange() {
-        /* Set the refreshing data flag */
-        refreshingData = true;
-
         /* Make sure that the state has been applied */
         theState.applyState();
-
-        /* Reset the refreshing data flag */
-        refreshingData = false;
-
         /* Determine whether a change has occurred */
         JDateDayRange myNew = getRange();
         if (!JDateDayRange.isDifferent(thePublishedRange, myNew)) {
@@ -498,28 +467,7 @@ public class JDateDayRangeSelect
      * The Date Listener.
      */
     private final class DateListener
-            implements ActionListener, PropertyChangeListener, ItemListener {
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            JDatePeriod myPeriod = null;
-
-            /* Ignore selection if refreshing data */
-            if (refreshingData) {
-                return;
-            }
-
-            /* If this event relates to the period box */
-            if ((thePeriodBox.equals(evt.getSource()))
-                && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                /* Determine the new period */
-                myPeriod = (JDatePeriod) evt.getItem();
-
-                /* Apply period and build the range */
-                theState.setPeriod(myPeriod);
-                notifyChangedRange();
-            }
-        }
-
+            implements ActionListener, PropertyChangeListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object src = evt.getSource();
@@ -535,6 +483,8 @@ public class JDateDayRangeSelect
                 /* Set the previous date */
                 theState.setPreviousDate();
                 notifyChangedRange();
+            } else if (thePeriodButton.equals(src)) {
+                showPeriodMenu();
             }
         }
 
@@ -551,6 +501,62 @@ public class JDateDayRangeSelect
                 theState.setEndDate(theEndButton);
                 notifyChangedRange();
             }
+        }
+
+        /**
+         * Show Period menu.
+         */
+        private void showPeriodMenu() {
+            /* Create a new popUp menu */
+            JPopupMenu myPopUp = new JPopupMenu();
+
+            /* Loop through the buckets */
+            for (JDatePeriod myPeriod : JDatePeriod.values()) {
+                /* Add as long as it is not the datesUpTo period */
+                if (!myPeriod.datesUpTo()) {
+                    /* Create a new JMenuItem and add it to the popUp */
+                    PeriodAction myAction = new PeriodAction(myPeriod);
+                    JMenuItem myItem = new JMenuItem(myAction);
+                    myPopUp.add(myItem);
+                }
+            }
+
+            /* Show the Bucket menu in the correct place */
+            Rectangle myLoc = thePeriodButton.getBounds();
+            myPopUp.show(thePeriodButton, 0, myLoc.height);
+        }
+    }
+
+    /**
+     * Period action class.
+     */
+    private final class PeriodAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -6794188590595362257L;
+
+        /**
+         * Date Period.
+         */
+        private final JDatePeriod thePeriod;
+
+        /**
+         * Constructor.
+         * @param pPeriod the period
+         */
+        private PeriodAction(final JDatePeriod pPeriod) {
+            super(pPeriod.toString());
+            thePeriod = pPeriod;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* Record the period */
+            theState.setPeriod(thePeriod);
+            theState.applyState();
+            notifyChangedRange();
         }
     }
 
@@ -1062,7 +1068,9 @@ public class JDateDayRangeSelect
             setEnabled(true);
             theStartButton.setSelectedDateDay(theStartDate);
             theEndButton.setSelectedDateDay(theEndDate);
-            thePeriodBox.setSelectedItem(thePeriod);
+            thePeriodButton.setText((thePeriod == null)
+                    ? null
+                    : thePeriod.toString());
         }
     }
 }

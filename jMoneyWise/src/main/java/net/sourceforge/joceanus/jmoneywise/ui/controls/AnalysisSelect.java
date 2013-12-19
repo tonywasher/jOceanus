@@ -39,8 +39,6 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,6 +52,7 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
@@ -80,11 +79,6 @@ public class AnalysisSelect
      * Strut size.
      */
     protected static final int STRUT_SIZE = 10;
-
-    /**
-     * The list indicator icon (16x16).
-     */
-    private static final Icon ICON_LIST = new ImageIcon(AnalysisSelect.class.getResource("ListIndicator.png"));
 
     /**
      * Resource Bundle.
@@ -222,14 +216,6 @@ public class AnalysisSelect
     private final Map<AnalysisType, AnalysisFilterSelection> theMap;
 
     /**
-     * Obtain the List Indicator Icon.
-     * @return the icon.
-     */
-    public static Icon getListIcon() {
-        return ICON_LIST;
-    }
-
-    /**
      * Obtain the DateDayRange.
      * @return the range.
      */
@@ -250,22 +236,22 @@ public class AnalysisSelect
      */
     public AnalysisSelect() {
         /* Create the range button */
-        theRangeButton = new JButton(AnalysisSelect.getListIcon());
+        theRangeButton = new JButton(ArrowIcon.DOWN);
         theRangeButton.setVerticalTextPosition(AbstractButton.CENTER);
         theRangeButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter button */
-        theFilterButton = new JButton(AnalysisSelect.getListIcon());
+        theFilterButton = new JButton(ArrowIcon.DOWN);
         theFilterButton.setVerticalTextPosition(AbstractButton.CENTER);
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter type button */
-        theFilterTypeButton = new JButton(AnalysisSelect.getListIcon());
+        theFilterTypeButton = new JButton(ArrowIcon.DOWN);
         theFilterTypeButton.setVerticalTextPosition(AbstractButton.CENTER);
         theFilterTypeButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the bucket button */
-        theBucketButton = new JButton(AnalysisSelect.getListIcon());
+        theBucketButton = new JButton(ArrowIcon.DOWN);
         theBucketButton.setVerticalTextPosition(AbstractButton.CENTER);
         theBucketButton.setHorizontalTextPosition(AbstractButton.LEFT);
 

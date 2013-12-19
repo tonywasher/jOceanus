@@ -51,11 +51,6 @@ import org.w3c.dom.Node;
  */
 public class OasisColumnMap {
     /**
-     * Self Reference.
-     */
-    private final OasisColumnMap theSelf = this;
-
-    /**
      * Underlying sheet.
      */
     private final OasisSheet theOasisSheet;
@@ -363,7 +358,7 @@ public class OasisColumnMap {
             }
 
             /* Create and return the column object */
-            return new OasisColumn(theSelf, theElement, theIndex, false);
+            return new OasisColumn(OasisColumnMap.this, theElement, theIndex, false);
         }
 
         /**
@@ -372,7 +367,7 @@ public class OasisColumnMap {
          */
         private OasisColumn getReadOnlyColumn() {
             /* Create and return the column object */
-            return new OasisColumn(theSelf, theElement, theIndex, true);
+            return new OasisColumn(OasisColumnMap.this, theElement, theIndex, true);
         }
 
         /**

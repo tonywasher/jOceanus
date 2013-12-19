@@ -42,13 +42,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayButton;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
@@ -212,7 +213,7 @@ public class SpotSelect
         thePrev = new JButton(NLS_PREV);
 
         /* Create the portfolio button */
-        thePortButton = new JButton(AnalysisSelect.getListIcon());
+        thePortButton = new JButton(ArrowIcon.DOWN);
         thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
         thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
@@ -435,23 +436,38 @@ public class SpotSelect
          */
         private void showPortfolioMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Access current portfolio and security */
+            Account myPortfolio = theState.getPortfolio();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the available portfolio values */
             Iterator<Account> myIterator = theAccounts.iterator();
             while (myIterator.hasNext()) {
-                Account myPortfolio = myIterator.next();
+                Account myAccount = myIterator.next();
 
                 /* Ignore if it is not a portfolio */
-                if (!myPortfolio.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
+                if (!myAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
                     continue;
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myPortfolio);
+                PortfolioAction myAction = new PortfolioAction(myAccount);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.add(myItem);
+
+                /* If this is the active portfolio */
+                if (myPortfolio.equals(myAccount)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
 
             /* Show the Account menu in the correct place */
             Rectangle myLoc = thePortButton.getBounds();
