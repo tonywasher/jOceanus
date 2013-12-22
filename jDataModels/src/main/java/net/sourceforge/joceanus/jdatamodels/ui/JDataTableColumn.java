@@ -125,7 +125,7 @@ public class JDataTableColumn
         protected static final int WIDTH_DATE = 90;
 
         /**
-         * Name column standard width.
+         * Money column standard width.
          */
         protected static final int WIDTH_MONEY = 90;
 
@@ -133,6 +133,16 @@ public class JDataTableColumn
          * Name column standard width.
          */
         protected static final int WIDTH_NAME = 130;
+
+        /**
+         * Description column standard width.
+         */
+        protected static final int WIDTH_DESC = 200;
+
+        /**
+         * Active column width.
+         */
+        protected static final int WIDTH_BOOL = 20;
 
         /**
          * The DataTableModel.

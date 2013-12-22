@@ -24,25 +24,30 @@ package net.sourceforge.joceanus.jpreferenceset;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -50,27 +55,19 @@ import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
-public class MaintPreferences
+public class PreferencesPanel
         extends JEventPanel {
     /**
      * The serial Id.
      */
     private static final long serialVersionUID = -1512860688570367124L;
-
-    /**
-     * The panel width.
-     */
-    private static final int SELECT_WIDTH = 300;
-
-    /**
-     * The panel height.
-     */
-    private static final int SELECT_HEIGHT = 25;
 
     /**
      * Strut width.
@@ -80,7 +77,7 @@ public class MaintPreferences
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintPreferences.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferencesPanel.class.getName());
 
     /**
      * Text for OK.
@@ -138,9 +135,9 @@ public class MaintPreferences
     private final JButton theResetButton;
 
     /**
-     * The selection panel.
+     * The selection button.
      */
-    private final JComboBox<PreferenceSetPanel> theSelect;
+    private final JButton theSelectButton;
 
     /**
      * The properties panel.
@@ -158,6 +155,11 @@ public class MaintPreferences
     private PreferenceSetPanel theActive = null;
 
     /**
+     * The list of panels.
+     */
+    private final List<PreferenceSetPanel> thePanels;
+
+    /**
      * The listener.
      */
     private final transient PropertyListener theListener;
@@ -169,7 +171,7 @@ public class MaintPreferences
      * @param pDataMgr the data manager
      * @param pSection the data section
      */
-    public MaintPreferences(final PreferenceManager pPreferenceMgr,
+    public PreferencesPanel(final PreferenceManager pPreferenceMgr,
                             final JFieldManager pFieldMgr,
                             final JDataManager pDataMgr,
                             final JDataEntry pSection) {
@@ -196,10 +198,11 @@ public class MaintPreferences
         myButtons.add(theResetButton);
         myButtons.add(Box.createHorizontalGlue());
 
-        /* Create selection box and label */
+        /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelect = new JComboBox<PreferenceSetPanel>();
-        theSelect.setMaximumSize(new Dimension(SELECT_WIDTH, SELECT_HEIGHT));
+        theSelectButton = new JButton(ArrowIcon.DOWN);
+        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the selection panel */
         JPanel mySelection = new JPanel();
@@ -209,12 +212,16 @@ public class MaintPreferences
         mySelection.setLayout(new BoxLayout(mySelection, BoxLayout.X_AXIS));
         mySelection.add(myLabel);
         mySelection.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelection.add(theSelect);
+        mySelection.add(theSelectButton);
+        mySelection.add(Box.createHorizontalGlue());
 
         /* Create the properties panel */
         theProperties = new JEnablePanel();
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
+
+        /* Create the panel list */
+        thePanels = new ArrayList<PreferenceSetPanel>();
 
         /* Loop through the existing property sets */
         for (PreferenceSet mySet : pPreferenceMgr.getPreferenceSets()) {
@@ -238,13 +245,14 @@ public class MaintPreferences
         add(myButtons);
 
         /* Determine the active items */
-        theActive = (PreferenceSetPanel) theSelect.getSelectedItem();
+        theActive = thePanels.get(0);
+        setSelectText();
         setVisibility();
 
         /* Add Listeners */
         theOKButton.addActionListener(theListener);
         theResetButton.addActionListener(theListener);
-        theSelect.addItemListener(theListener);
+        theSelectButton.addActionListener(theListener);
 
         /* Create the debug entry, and attach to correct section */
         theDataEntry = pDataMgr.new JDataEntry("Preferences");
@@ -266,7 +274,7 @@ public class MaintPreferences
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Pass on to important elements */
-        theSelect.setEnabled(bEnabled);
+        theSelectButton.setEnabled(bEnabled);
         theProperties.setEnabled(bEnabled);
     }
 
@@ -280,9 +288,9 @@ public class MaintPreferences
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());
+        thePanels.add(myPanel);
 
-        /* Add name to the ComboBox */
-        theSelect.addItem(myPanel);
+        /* Add listener */
         myPanel.addChangeListener(theListener);
     }
 
@@ -331,8 +339,8 @@ public class MaintPreferences
      */
     protected final void setVisibility() {
         /* Enable selection */
-        theSelect.setEnabled((theActive != null)
-                             && !theActive.hasChanges());
+        theSelectButton.setEnabled((theActive != null)
+                                   && !theActive.hasChanges());
 
         /* Enable the buttons */
         theOKButton.setEnabled((theActive != null)
@@ -342,10 +350,43 @@ public class MaintPreferences
     }
 
     /**
+     * Set the select button text.
+     */
+    private final void setSelectText() {
+        /* Show selection text */
+        theSelectButton.setText((theActive == null)
+                ? null
+                : theActive.toString());
+    }
+
+    /**
      * PropertyListener class.
      */
     private final class PropertyListener
-            implements ActionListener, ItemListener, ChangeListener {
+            implements ActionListener, ChangeListener {
+        /**
+         * Show Preference menu.
+         */
+        private void showPreferenceMenu() {
+            /* Create a new popUp menu */
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Loop through the panels */
+            Iterator<PreferenceSetPanel> myIterator = thePanels.iterator();
+            while (myIterator.hasNext()) {
+                PreferenceSetPanel myPanel = myIterator.next();
+
+                /* Create a new JMenuItem and add it to the popUp */
+                PreferenceAction myAction = new PreferenceAction(myPanel);
+                JMenuItem myItem = new JMenuItem(myAction);
+                myPopUp.addMenuItem(myItem);
+            }
+
+            /* Show the Preference menu in the correct place */
+            Rectangle myLoc = theSelectButton.getBounds();
+            myPopUp.show(theSelectButton, 0, myLoc.height);
+        }
+
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -359,18 +400,11 @@ public class MaintPreferences
             } else if (theResetButton.equals(o)) {
                 /* Perform the command */
                 resetUpdates();
-            }
-        }
 
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            /* If this event relates to the selected box */
-            if (theSelect.equals(evt.getSource())) {
-                /* Set the Active component */
-                theActive = (PreferenceSetPanel) evt.getItem();
-
-                /* Show the requested set */
-                theLayout.show(theProperties, theActive.toString());
+                /* If this event relates to the select button */
+            } else if (theSelectButton.equals(o)) {
+                /* Show the menu */
+                showPreferenceMenu();
             }
         }
 
@@ -381,6 +415,44 @@ public class MaintPreferences
 
             /* Notify listeners */
             fireStateChanged();
+        }
+    }
+
+    /**
+     * Preference action class.
+     */
+    private final class PreferenceAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 4736215082949452032L;
+
+        /**
+         * Preference Panel Type.
+         */
+        private final PreferenceSetPanel thePanel;
+
+        /**
+         * Constructor.
+         * @param pPanel the panel
+         */
+        private PreferenceAction(final PreferenceSetPanel pPanel) {
+            super(pPanel.toString());
+            thePanel = pPanel;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If the panel has changed */
+            if (!Difference.isEqual(theActive, thePanel)) {
+                /* Set the Active component */
+                theActive = thePanel;
+                setSelectText();
+
+                /* Move correct card to front */
+                theLayout.show(theProperties, theActive.toString());
+            }
         }
     }
 

@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldManager;
  * @param <L> the list type
  * @param <T> the data type
  */
-public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>>
+public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T, ?>>
         extends JDataTable<T> {
     /**
      * Serial Id.
@@ -66,7 +66,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintStaticData.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataTable.class.getName());
 
     /**
      * Class column title.
@@ -134,24 +134,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     private static final int WIDTH_CLASS = 90;
 
     /**
-     * Description column width.
-     */
-    private static final int WIDTH_DESC = 200;
-
-    /**
      * Order column width.
      */
     private static final int WIDTH_ORDER = 20;
-
-    /**
-     * Enabled column width.
-     */
-    private static final int WIDTH_ENABLED = 20;
-
-    /**
-     * Active column width.
-     */
-    private static final int WIDTH_ACTIVE = 20;
 
     /**
      * Panel width.
@@ -234,7 +219,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
      * @param pListClass the list class
      * @param pItemClass the item class
      */
-    public MaintStaticData(final DataControl<?> pControl,
+    public StaticDataTable(final DataControl<?> pControl,
                            final UpdateSet pUpdateSet,
                            final ErrorPanel pError,
                            final Class<L> pListClass,
@@ -348,7 +333,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         private StaticModel() {
             /* call constructor */
-            super(MaintStaticData.this);
+            super(StaticDataTable.this);
         }
 
         @Override
@@ -542,7 +527,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         private StaticColumnModel() {
             /* call constructor */
-            super(MaintStaticData.this);
+            super(StaticDataTable.this);
 
             /* Create the relevant formatters/editors */
             theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
@@ -556,8 +541,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, theBooleanRenderer, theBooleanEditor));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, theBooleanRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_BOOL, theBooleanRenderer, theBooleanEditor));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer, null));
         }
     }
 }

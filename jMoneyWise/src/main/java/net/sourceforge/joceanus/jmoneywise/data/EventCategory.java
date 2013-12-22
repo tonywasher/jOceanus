@@ -979,6 +979,33 @@ public final class EventCategory
         }
 
         /**
+         * Derive Edit list.
+         * @return the edit list
+         */
+        public EventCategoryList deriveEditList() {
+            /* Build an empty List */
+            EventCategoryList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the categories */
+            Iterator<EventCategory> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                EventCategory myCurr = myIterator.next();
+
+                /* Ignore deleted events */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked event category and add it to the list */
+                EventCategory myCategory = new EventCategory(myList, myCurr);
+                myList.append(myCategory);
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pCategory item
          * @return the newly added item

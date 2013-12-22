@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jdatamodels.ui.MaintStatic;
+import net.sourceforge.joceanus.jdatamodels.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
@@ -61,8 +61,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jpreferenceset.MaintPreferences;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jpreferenceset.PreferencesPanel;
 import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
 
 /**
@@ -97,9 +97,14 @@ public class MaintenanceTab
     private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
 
     /**
-     * NewYear tab title.
+     * AccountCategory tab title.
      */
-    private static final String TITLE_NEWYEAR = NLS_BUNDLE.getString("TabNewYear");
+    private static final String TITLE_ACCOUNTCAT = NLS_BUNDLE.getString("TabAccountCat");
+
+    /**
+     * EventCategory tab title.
+     */
+    private static final String TITLE_EVENTCAT = NLS_BUNDLE.getString("TabEventCat");
 
     /**
      * Static tab title.
@@ -132,19 +137,24 @@ public class MaintenanceTab
     private final MaintTaxYear theTaxYearTab;
 
     /**
-     * The Preferences Panel.
+     * The AccountCategory Panel.
      */
-    private final MaintPreferences thePreferences;
+    private final MaintAccountCategory theAccountCatTab;
 
     /**
-     * The NewYear Panel.
+     * The EventCategory Panel.
      */
-    private final MaintNewYear thePatternYear;
+    private final MaintEventCategory theEventCatTab;
 
     /**
      * The Static Panel.
      */
-    private final MaintStatic theStatic;
+    private final StaticDataPanel theStatic;
+
+    /**
+     * The Preferences Panel.
+     */
+    private final PreferencesPanel thePreferences;
 
     /**
      * Obtain the view.
@@ -191,30 +201,23 @@ public class MaintenanceTab
         theTabs.addTab(TITLE_ACCOUNTS, theAccountTab);
         theAccountTab.addChangeListener(myListener);
 
+        /* Create the event category Tab and add it */
+        theAccountCatTab = new MaintAccountCategory(theView);
+        theTabs.addTab(TITLE_ACCOUNTCAT, theAccountCatTab.getPanel());
+        theAccountCatTab.addChangeListener(myListener);
+
+        /* Create the event category Tab and add it */
+        theEventCatTab = new MaintEventCategory(theView);
+        theTabs.addTab(TITLE_EVENTCAT, theEventCatTab.getPanel());
+        theEventCatTab.addChangeListener(myListener);
+
         /* Create the TaxYears Tab */
         theTaxYearTab = new MaintTaxYear(theView);
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab);
         theTaxYearTab.addChangeListener(myListener);
 
-        /* Create the Preferences Tab */
-        PreferenceManager myPrefs = theView.getPreferenceMgr();
-        thePreferences = new MaintPreferences(myPrefs, theView.getFieldMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
-        theTabs.addTab(TITLE_PREFERENCES, thePreferences);
-        thePreferences.addChangeListener(myListener);
-
-        /* Add interesting preferences */
-        myPrefs.getPreferenceSet(DatabasePreferences.class);
-        myPrefs.getPreferenceSet(BackupPreferences.class);
-        myPrefs.getPreferenceSet(JiraPreferences.class);
-        myPrefs.getPreferenceSet(SubVersionPreferences.class);
-        myPrefs.getPreferenceSet(QIFPreference.class);
-
-        /* Create the PatternYear Tab */
-        thePatternYear = new MaintNewYear(theView);
-        theTabs.addTab(TITLE_NEWYEAR, thePatternYear.getPanel());
-
         /* Create the Static Tab */
-        theStatic = new MaintStatic(theView);
+        theStatic = new StaticDataPanel(theView);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
         theView.addChangeListener(myListener);
@@ -230,6 +233,19 @@ public class MaintenanceTab
         theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
         theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
         theStatic.addStatic(EventInfoType.LIST_NAME, EventInfoTypeList.class, EventInfoType.class);
+
+        /* Create the Preferences Tab */
+        PreferenceManager myPrefs = theView.getPreferenceMgr();
+        thePreferences = new PreferencesPanel(myPrefs, theView.getFieldMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
+        theTabs.addTab(TITLE_PREFERENCES, thePreferences);
+        thePreferences.addChangeListener(myListener);
+
+        /* Add interesting preferences */
+        myPrefs.getPreferenceSet(DatabasePreferences.class);
+        myPrefs.getPreferenceSet(BackupPreferences.class);
+        myPrefs.getPreferenceSet(JiraPreferences.class);
+        myPrefs.getPreferenceSet(SubVersionPreferences.class);
+        myPrefs.getPreferenceSet(QIFPreference.class);
 
         /* Create the layout for the panel */
         FlowLayout myLayout = new FlowLayout();
@@ -253,8 +269,9 @@ public class MaintenanceTab
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();
+            theAccountCatTab.refreshData();
+            theEventCatTab.refreshData();
             theTaxYearTab.refreshData();
-            thePatternYear.refreshData();
             theStatic.refreshData();
 
             /* Determine visibility */
@@ -273,13 +290,19 @@ public class MaintenanceTab
         /* Determine whether we have updates */
         boolean hasUpdates = theAccountTab.hasUpdates();
         if (!hasUpdates) {
+            hasUpdates = theAccountCatTab.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theEventCatTab.hasUpdates();
+        }
+        if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = thePreferences.hasUpdates();
+            hasUpdates = theStatic.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = theStatic.hasUpdates();
+            hasUpdates = thePreferences.hasUpdates();
         }
 
         /* Return to caller */
@@ -326,6 +349,24 @@ public class MaintenanceTab
                                          || theAccountTab.hasUpdates());
         }
 
+        /* Access the Account Category index */
+        iIndex = theTabs.indexOfTab(TITLE_ACCOUNTCAT);
+
+        /* Enable/Disable the Account Category tab */
+        if (iIndex != -1) {
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || theAccountCatTab.hasUpdates());
+        }
+
+        /* Access the Event Category index */
+        iIndex = theTabs.indexOfTab(TITLE_EVENTCAT);
+
+        /* Enable/Disable the Event Category tab */
+        if (iIndex != -1) {
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || theEventCatTab.hasUpdates());
+        }
+
         /* Access the TaxYear index */
         iIndex = theTabs.indexOfTab(TITLE_TAXYEARS);
 
@@ -335,23 +376,6 @@ public class MaintenanceTab
                                          || theTaxYearTab.hasUpdates());
         }
 
-        /* Access the Properties panel */
-        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
-
-        /* Enable/Disable the Properties tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || thePreferences.hasUpdates());
-        }
-
-        /* Access the PatternYear panel */
-        iIndex = theTabs.indexOfTab(TITLE_NEWYEAR);
-
-        /* Enable/Disable the patternYear tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates);
-        }
-
         /* Access the Static panel */
         iIndex = theTabs.indexOfTab(TITLE_STATIC);
 
@@ -359,6 +383,15 @@ public class MaintenanceTab
         if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates
                                          || theStatic.hasUpdates());
+        }
+
+        /* Access the Properties panel */
+        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
+
+        /* Enable/Disable the Properties tab */
+        if (iIndex != -1) {
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || thePreferences.hasUpdates());
         }
 
         /* Update the top level tabs */
@@ -377,25 +410,30 @@ public class MaintenanceTab
             /* Set the debug focus */
             theAccountTab.determineFocus();
 
+            /* If the selected component is AccountCategory */
+        } else if (myComponent.equals(theAccountCatTab)) {
+            /* Set the debug focus */
+            theAccountCatTab.determineFocus();
+
+            /* If the selected component is EventCategory */
+        } else if (myComponent.equals(theEventCatTab)) {
+            /* Set the debug focus */
+            theEventCatTab.determineFocus();
+
             /* If the selected component is TaxYear */
         } else if (myComponent.equals(theTaxYearTab)) {
             /* Set the debug focus */
             theTaxYearTab.determineFocus();
 
-            /* If the selected component is Preferences */
-        } else if (myComponent.equals(thePreferences)) {
-            /* Set the debug focus */
-            thePreferences.determineFocus();
-
-            /* If the selected component is NewYear */
-        } else if (myComponent.equals(thePatternYear.getPanel())) {
-            /* Set the debug focus */
-            thePatternYear.determineFocus();
-
             /* If the selected component is Static */
         } else if (myComponent.equals(theStatic)) {
             /* Set the debug focus */
             theStatic.determineFocus();
+
+            /* If the selected component is Preferences */
+        } else if (myComponent.equals(thePreferences)) {
+            /* Set the debug focus */
+            thePreferences.determineFocus();
         }
     }
 

@@ -24,21 +24,27 @@ package net.sourceforge.joceanus.jdatamodels.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -48,12 +54,14 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
 
 /**
  * Top level panel for static data.
  * @author Tony Washer
  */
-public class MaintStatic
+public class StaticDataPanel
         extends JEventPanel {
     /**
      * Serial Id.
@@ -61,24 +69,24 @@ public class MaintStatic
     private static final long serialVersionUID = -1089967527250331711L;
 
     /**
-     * Panel width.
+     * Strut width.
      */
-    private static final int PANEL_WIDTH = 900;
-
-    /**
-     * Panel height.
-     */
-    private static final int PANEL_HEIGHT = 25;
+    private static final int STRUT_WIDTH = 5;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintStatic.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataPanel.class.getName());
 
     /**
      * Text for Selection Title.
      */
     private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectionTitle");
+
+    /**
+     * Text for Data.
+     */
+    private static final String NLS_DATA = NLS_BUNDLE.getString("StaticData");
 
     /**
      * The data control.
@@ -96,19 +104,19 @@ public class MaintStatic
     private final CardLayout theLayout;
 
     /**
-     * The selection box.
+     * The selection button.
      */
-    private final JComboBox<String> theSelectBox;
+    private final JButton theSelectButton;
 
     /**
      * The Panel map.
      */
-    private final Map<String, MaintStaticData<?, ?>> theMap;
+    private final Map<String, StaticDataTable<?, ?>> theMap;
 
     /**
      * The Active panel.
      */
-    private MaintStaticData<?, ?> theActive;
+    private StaticDataTable<?, ?> theActive;
 
     /**
      * The error panel.
@@ -147,7 +155,7 @@ public class MaintStatic
      * Constructor.
      * @param pControl the data control
      */
-    public MaintStatic(final DataControl<?> pControl) {
+    public StaticDataPanel(final DataControl<?> pControl) {
         /* Store control */
         theControl = pControl;
 
@@ -167,12 +175,14 @@ public class MaintStatic
         /* Create the save buttons panel */
         theSaveButtons = new SaveButtons(theUpdateSet);
 
-        /* Create the selection box */
-        theSelectBox = new JComboBox<String>();
+        /* Create selection button and label */
+        JLabel myLabel = new JLabel(NLS_DATA);
+        theSelectButton = new JButton(ArrowIcon.DOWN);
+        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Add the listener for item changes */
-        theSelectBox.addItemListener(theListener);
-        theSelectBox.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        theSelectButton.addActionListener(theListener);
         theError.addChangeListener(theListener);
         theSaveButtons.addActionListener(theListener);
 
@@ -182,7 +192,10 @@ public class MaintStatic
 
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
-        mySelect.add(theSelectBox);
+        mySelect.add(myLabel);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.add(theSelectButton);
+        mySelect.add(Box.createHorizontalGlue());
 
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
@@ -190,7 +203,7 @@ public class MaintStatic
         theCardPanel.setLayout(theLayout);
 
         /* Create the panel map */
-        theMap = new HashMap<String, MaintStaticData<?, ?>>();
+        theMap = new LinkedHashMap<String, StaticDataTable<?, ?>>();
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -212,11 +225,7 @@ public class MaintStatic
                                                                                    final Class<L> pListClass,
                                                                                    final Class<T> pItemClass) {
         /* Create the new panel */
-        MaintStaticData<L, T> myPanel = new MaintStaticData<L, T>(theControl, theUpdateSet, theError, pListClass, pItemClass);
-
-        /* Add the name to the selectionBox */
-        theSelectBox.addItem(pListName);
-        theSelectBox.setSelectedIndex(0);
+        StaticDataTable<L, T> myPanel = new StaticDataTable<L, T>(theControl, theUpdateSet, theError, pListClass, pItemClass);
 
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);
@@ -226,6 +235,12 @@ public class MaintStatic
 
         /* Add to the Map */
         theMap.put(pListName, myPanel);
+
+        /* If we do not have an active panel */
+        if (theActive == null) {
+            /* select this panel */
+            setSelection(pListName);
+        }
     }
 
     /**
@@ -247,6 +262,9 @@ public class MaintStatic
         theLayout.show(theCardPanel, pName);
         theActive = theMap.get(pName);
         determineFocus();
+
+        /* Show selection text */
+        theSelectButton.setText(pName);
     }
 
     /**
@@ -273,7 +291,7 @@ public class MaintStatic
      */
     public void refreshData() throws JDataException {
         /* Loop through the map */
-        for (MaintStaticData<?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?> myPanel : theMap.values()) {
             /* Refresh the panel */
             myPanel.refreshData();
         }
@@ -287,7 +305,7 @@ public class MaintStatic
      */
     private void cancelEditing() {
         /* Loop through the map */
-        for (MaintStaticData<?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?> myPanel : theMap.values()) {
             /* Refresh the underlying children */
             myPanel.cancelEditing();
         }
@@ -296,7 +314,7 @@ public class MaintStatic
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Pass on to important elements */
-        theSelectBox.setEnabled(bEnabled);
+        theSelectButton.setEnabled(bEnabled);
         theError.setEnabled(bEnabled);
         theCardPanel.setEnabled(bEnabled);
         theSaveButtons.setEnabled(bEnabled);
@@ -307,7 +325,7 @@ public class MaintStatic
      */
     protected void setVisibility() {
         /* Lock down Selection if required */
-        theSelectBox.setEnabled(!hasUpdates());
+        theSelectButton.setEnabled(!hasUpdates());
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
@@ -320,21 +338,28 @@ public class MaintStatic
      * Listener class.
      */
     private final class StaticListener
-            implements ItemListener, ChangeListener, ActionListener {
-        @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            /* Ignore if this is not a selection event */
-            if (evt.getStateChange() != ItemEvent.SELECTED) {
-                return;
+            implements ChangeListener, ActionListener {
+        /**
+         * Show StaticData menu.
+         */
+        private void showDataMenu() {
+            /* Create a new popUp menu */
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Loop through the panels */
+            Iterator<Map.Entry<String, StaticDataTable<?, ?>>> myIterator = theMap.entrySet().iterator();
+            while (myIterator.hasNext()) {
+                Map.Entry<String, StaticDataTable<?, ?>> myEntry = myIterator.next();
+
+                /* Create a new JMenuItem and add it to the popUp */
+                DataAction myAction = new DataAction(myEntry.getKey(), myEntry.getValue());
+                JMenuItem myItem = new JMenuItem(myAction);
+                myPopUp.addMenuItem(myItem);
             }
 
-            /* If this event relates to the Select box */
-            if (theSelectBox.equals(evt.getSource())) {
-                String myName = (String) evt.getItem();
-
-                /* Select the requested table */
-                setSelection(myName);
-            }
+            /* Show the Data menu in the correct place */
+            Rectangle myLoc = theSelectButton.getBounds();
+            myPopUp.show(theSelectButton, 0, myLoc.height);
         }
 
         @Override
@@ -348,7 +373,7 @@ public class MaintStatic
                 boolean isError = theError.hasError();
 
                 /* Hide selection panel on error */
-                theSelectBox.setVisible(!isError);
+                theSelectButton.setVisible(!isError);
 
                 /* Lock scroll-able area */
                 theCardPanel.setEnabled(!isError);
@@ -357,7 +382,7 @@ public class MaintStatic
                 theSaveButtons.setEnabled(!isError);
 
                 /* if this is one of the static data panels */
-            } else if (o instanceof MaintStaticData) {
+            } else if (o instanceof StaticDataTable) {
                 /* Adjust visibility */
                 setVisibility();
             }
@@ -379,6 +404,57 @@ public class MaintStatic
 
                 /* Adjust visibility */
                 setVisibility();
+            }
+
+            /* if this is the select button reporting */
+            if (theSelectButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Show data menu */
+                showDataMenu();
+            }
+        }
+    }
+
+    /**
+     * Data action class.
+     */
+    private final class DataAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 7998735079273862989L;
+
+        /**
+         * Data Name.
+         */
+        private final String theName;
+
+        /**
+         * Data Table.
+         */
+        private final StaticDataTable<?, ?> theTable;
+
+        /**
+         * Constructor.
+         * @param pName the panel name
+         * @param pTable the table
+         */
+        private DataAction(final String pName,
+                           StaticDataTable<?, ?> pTable) {
+            super(pName);
+            theName = pName;
+            theTable = pTable;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If the panel has changed */
+            if (!Difference.isEqual(theActive, theTable)) {
+                /* Move correct card to front */
+                setSelection(theName);
             }
         }
     }

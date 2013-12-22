@@ -201,7 +201,7 @@ public class AnalysisStatement
     private transient EventList theEvents = null;
 
     /**
-     * Events.
+     * Statement Header.
      */
     private transient Event theHeader;
 
@@ -311,10 +311,7 @@ public class AnalysisStatement
         setSelection(theSelect.getRange());
     }
 
-    /**
-     * Set error details.
-     * @param pError the error
-     */
+    @Override
     protected void setError(final JDataException pError) {
         theError.addError(pError);
     }
@@ -572,7 +569,7 @@ public class AnalysisStatement
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
@@ -652,7 +649,6 @@ public class AnalysisStatement
                     return null;
             }
         }
-
     }
 
     /**

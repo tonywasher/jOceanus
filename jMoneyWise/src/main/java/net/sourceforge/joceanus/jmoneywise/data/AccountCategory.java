@@ -912,6 +912,33 @@ public class AccountCategory
         }
 
         /**
+         * Derive Edit list.
+         * @return the edit list
+         */
+        public AccountCategoryList deriveEditList() {
+            /* Build an empty List */
+            AccountCategoryList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the categories */
+            Iterator<AccountCategory> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                AccountCategory myCurr = myIterator.next();
+
+                /* Ignore deleted events */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked event category and add it to the list */
+                AccountCategory myCategory = new AccountCategory(myList, myCurr);
+                myList.append(myCategory);
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pCategory item
          * @return the newly added item
