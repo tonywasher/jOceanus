@@ -425,26 +425,8 @@ public class AnalysisStatement
 
         @Override
         public String getColumnName(final int pColIndex) {
-            switch (pColIndex) {
-                case AnalysisColumnModel.COLUMN_DATE:
-                    return TITLE_DATE;
-                case AnalysisColumnModel.COLUMN_DESC:
-                    return TITLE_DESC;
-                case AnalysisColumnModel.COLUMN_CATEGORY:
-                    return TITLE_CAT;
-                case AnalysisColumnModel.COLUMN_DEBIT:
-                    return TITLE_DEBIT;
-                case AnalysisColumnModel.COLUMN_CREDIT:
-                    return TITLE_CREDIT;
-                case AnalysisColumnModel.COLUMN_DEBITED:
-                    return TITLE_DEBITED;
-                case AnalysisColumnModel.COLUMN_CREDITED:
-                    return TITLE_CREDITED;
-                case AnalysisColumnModel.COLUMN_BALANCE:
-                    return TITLE_BALANCE;
-                default:
-                    return null;
-            }
+            /* Obtain the column name */
+            return theColumns.getColumnName(pColIndex);
         }
 
         @Override
@@ -578,13 +560,41 @@ public class AnalysisStatement
         }
 
         /**
+         * Obtain column name
+         * @param pColIndex the column index
+         * @return the column name
+         */
+        private String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return TITLE_DATE;
+                case COLUMN_DESC:
+                    return TITLE_DESC;
+                case COLUMN_CATEGORY:
+                    return TITLE_CAT;
+                case COLUMN_DEBIT:
+                    return TITLE_DEBIT;
+                case COLUMN_CREDIT:
+                    return TITLE_CREDIT;
+                case COLUMN_DEBITED:
+                    return TITLE_DEBITED;
+                case COLUMN_CREDITED:
+                    return TITLE_CREDITED;
+                case COLUMN_BALANCE:
+                    return TITLE_BALANCE;
+                default:
+                    return null;
+            }
+        }
+
+        /**
          * Obtain the value for the event column.
          * @param pEvent event
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final Event pEvent,
-                                      final int pColIndex) {
+        private Object getItemValue(final Event pEvent,
+                                    final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
@@ -613,7 +623,7 @@ public class AnalysisStatement
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getHeaderValue(final int pColIndex) {
+        private Object getHeaderValue(final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
@@ -632,7 +642,7 @@ public class AnalysisStatement
          * @param pColIndex column index
          * @return the field
          */
-        protected JDataField getFieldForCell(final int pColIndex) {
+        private JDataField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_DATE:

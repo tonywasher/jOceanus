@@ -139,12 +139,12 @@ public class MaintenanceTab
     /**
      * The AccountCategory Panel.
      */
-    private final MaintAccountCategory theAccountCatTab;
+    private final AccountCategoryTable theAccountCatTab;
 
     /**
      * The EventCategory Panel.
      */
-    private final MaintEventCategory theEventCatTab;
+    private final EventCategoryTable theEventCatTab;
 
     /**
      * The Static Panel.
@@ -202,12 +202,12 @@ public class MaintenanceTab
         theAccountTab.addChangeListener(myListener);
 
         /* Create the event category Tab and add it */
-        theAccountCatTab = new MaintAccountCategory(theView);
+        theAccountCatTab = new AccountCategoryTable(theView);
         theTabs.addTab(TITLE_ACCOUNTCAT, theAccountCatTab.getPanel());
         theAccountCatTab.addChangeListener(myListener);
 
         /* Create the event category Tab and add it */
-        theEventCatTab = new MaintEventCategory(theView);
+        theEventCatTab = new EventCategoryTable(theView);
         theTabs.addTab(TITLE_EVENTCAT, theEventCatTab.getPanel());
         theEventCatTab.addChangeListener(myListener);
 

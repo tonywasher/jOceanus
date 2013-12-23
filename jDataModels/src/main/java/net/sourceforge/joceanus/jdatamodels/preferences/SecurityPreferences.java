@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.preferences;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
@@ -135,20 +137,22 @@ public class SecurityPreferences
 
     /**
      * Get SecureManager.
+     * @param pLogger the logger
      * @return Security Manager for these preferences
      * @throws JDataException on error
      */
-    public SecureManager getSecurity() throws JDataException {
-        return new SecureManager(getParameters());
+    public SecureManager getSecurity(final Logger pLogger) throws JDataException {
+        return new SecureManager(pLogger, getParameters());
     }
 
     /**
      * Get SecurityGenerator.
+     * @param pLogger the logger
      * @return Security Generator for these preferences
      * @throws JDataException on error
      */
-    public SecurityGenerator getGenerator() throws JDataException {
-        return new SecurityGenerator(getParameters());
+    public SecurityGenerator getGenerator(final Logger pLogger) throws JDataException {
+        return new SecurityGenerator(pLogger, getParameters());
     }
 
     @Override

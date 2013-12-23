@@ -443,7 +443,7 @@ public class StaticDataPanel
          * @param pTable the table
          */
         private DataAction(final String pName,
-                           StaticDataTable<?, ?> pTable) {
+                           final StaticDataTable<?, ?> pTable) {
             super(pName);
             theName = pName;
             theTable = pTable;

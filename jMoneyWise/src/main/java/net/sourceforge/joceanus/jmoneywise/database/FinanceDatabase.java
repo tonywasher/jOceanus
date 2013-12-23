@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
@@ -35,12 +37,14 @@ public class FinanceDatabase
         extends Database<FinanceData> {
     /**
      * Construct a new Database class for load.
+     * @param pLogger the logger
      * @param pPreferences the preferences
      * @throws JDataException on error
      */
-    public FinanceDatabase(final DatabasePreferences pPreferences) throws JDataException {
+    public FinanceDatabase(final Logger pLogger,
+                           final DatabasePreferences pPreferences) throws JDataException {
         /* Call super-constructor */
-        super(pPreferences);
+        super(pLogger, pPreferences);
 
         /* Add additional tables */
         declareTables();

@@ -21,10 +21,12 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
-import java.security.SecureRandom;
+
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.crypto.Mac;
 
@@ -32,7 +34,6 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.DataHayStack.HashModeNeedle;
-
 
 /**
  * Password Hash implementation.
@@ -177,7 +178,7 @@ public class PasswordHash {
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
                            final byte[] pHashBytes,
-                           final char[] pPassword) throws WrongPasswordException, JDataException {
+                           final char[] pPassword) throws JDataException {
         /* Store the hash bytes and extract the mode */
         theHashBytes = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
@@ -298,10 +299,10 @@ public class PasswordHash {
     /**
      * Attempt to match the password hash with the password.
      * @param pPassword the password (cleared after usage)
-     * @throws WrongPasswordException n wrong password
+     * @throws WrongPasswordException on wrong password
      * @throws JDataException on error
      */
-    private void attemptPassword(final char[] pPassword) throws WrongPasswordException, JDataException {
+    private void attemptPassword(final char[] pPassword) throws JDataException {
         /* Generate the HashBytes */
         byte[] myHashBytes = generateHashBytes(pPassword);
 
@@ -539,6 +540,7 @@ public class PasswordHash {
 
             /* Catch Exceptions */
         } catch (JDataException e) {
+            theGenerator.getLogger().log(Level.SEVERE, "Password attempt failed", e);
             return null;
         } catch (WrongPasswordException e) {
             return null;

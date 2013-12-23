@@ -181,7 +181,7 @@ public abstract class DataControl<T extends DataSet<T>>
         SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);
 
         /* Create the Secure Manager */
-        theSecurity = mySecurity.getSecurity();
+        theSecurity = mySecurity.getSecurity(theLogger);
 
         /* Create the error list */
         theErrors = new DataErrorList<JDataException>();

@@ -344,11 +344,6 @@ public class Register
     private static final int WIDTH_CATEGORY = 110;
 
     /**
-     * Description column width.
-     */
-    private static final int WIDTH_DESC = 140;
-
-    /**
      * Amount column width.
      */
     private static final int WIDTH_AMOUNT = 90;

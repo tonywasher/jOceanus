@@ -99,46 +99,6 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
-     * Class column id.
-     */
-    private static final int COLUMN_CLASS = 0;
-
-    /**
-     * Name column id.
-     */
-    private static final int COLUMN_NAME = 1;
-
-    /**
-     * Description column id.
-     */
-    private static final int COLUMN_DESC = 2;
-
-    /**
-     * Order column id.
-     */
-    private static final int COLUMN_ORDER = 3;
-
-    /**
-     * Enabled column id.
-     */
-    private static final int COLUMN_ENABLED = 4;
-
-    /**
-     * Active column id.
-     */
-    private static final int COLUMN_ACTIVE = 5;
-
-    /**
-     * Class column width.
-     */
-    private static final int WIDTH_CLASS = 90;
-
-    /**
-     * Order column width.
-     */
-    private static final int WIDTH_ORDER = 20;
-
-    /**
      * Panel width.
      */
     private static final int WIDTH_PANEL = 800;
@@ -230,6 +190,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         theControl = pControl;
         theFieldMgr = theControl.getFieldMgr();
         setFieldMgr(theFieldMgr);
+        setLogger(theControl.getLogger());
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
@@ -366,124 +327,37 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
 
         @Override
         public String getColumnName(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_CLASS:
-                    return TITLE_CLASS;
-                case COLUMN_NAME:
-                    return TITLE_NAME;
-                case COLUMN_DESC:
-                    return TITLE_DESC;
-                case COLUMN_ORDER:
-                    return TITLE_ORDER;
-                case COLUMN_ENABLED:
-                    return TITLE_ENABLED;
-                case COLUMN_ACTIVE:
-                    return TITLE_ACTIVE;
-                default:
-                    return null;
-            }
+            /* Obtain the column name */
+            return theColumns.getColumnName(pColIndex);
         }
 
         @Override
         public JDataField getFieldForCell(final T pItem,
                                           final int pColIndex) {
-            /* Switch on column */
-            switch (pColIndex) {
-                case COLUMN_CLASS:
-                    return StaticData.FIELD_CLASS;
-                case COLUMN_NAME:
-                    return StaticData.FIELD_NAME;
-                case COLUMN_DESC:
-                    return StaticData.FIELD_DESC;
-                case COLUMN_ENABLED:
-                    return StaticData.FIELD_ENABLED;
-                case COLUMN_ORDER:
-                    return StaticData.FIELD_ORDER;
-                case COLUMN_ACTIVE:
-                    return DataItem.FIELD_ACTIVE;
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public Class<?> getColumnClass(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_DESC:
-                    return String.class;
-                case COLUMN_CLASS:
-                    return String.class;
-                case COLUMN_NAME:
-                    return String.class;
-                case COLUMN_ORDER:
-                    return Integer.class;
-                case COLUMN_ENABLED:
-                    return Boolean.class;
-                case COLUMN_ACTIVE:
-                    return Boolean.class;
-                default:
-                    return Object.class;
-            }
+            /* Obtain the column field */
+            return theColumns.getFieldForCell(pItem, pColIndex);
         }
 
         @Override
         public boolean isCellEditable(final T pItem,
                                       final int pColIndex) {
-            /* switch on column */
-            switch (pColIndex) {
-                case COLUMN_NAME:
-                case COLUMN_DESC:
-                    return pItem.getEnabled();
-                case COLUMN_ENABLED:
-                    return !pItem.isActive();
-                case COLUMN_CLASS:
-                case COLUMN_ORDER:
-                case COLUMN_ACTIVE:
-                default:
-                    return false;
-            }
+            /* Is the cell editable? */
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
         public Object getItemValue(final T pItem,
                                    final int pColIndex) {
-            /* Return the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_CLASS:
-                    return pItem.getStaticClass().toString();
-                case COLUMN_NAME:
-                    return pItem.getName();
-                case COLUMN_DESC:
-                    return pItem.getDesc();
-                case COLUMN_ENABLED:
-                    return pItem.getEnabled();
-                case COLUMN_ORDER:
-                    return pItem.getOrder();
-                case COLUMN_ACTIVE:
-                    return pItem.isActive();
-                default:
-                    return null;
-            }
+            /* Obtain the item value for the column */
+            return theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
         public void setItemValue(final T pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JDataException {
-            /* Store the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_NAME:
-                    pItem.setName((String) pValue);
-                    break;
-                case COLUMN_DESC:
-                    pItem.setDescription((String) pValue);
-                    break;
-                case COLUMN_ENABLED:
-                    pItem.setEnabled((Boolean) pValue);
-                    break;
-                default:
-                    break;
-            }
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
     }
 
@@ -496,6 +370,46 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
          * Serial Id.
          */
         private static final long serialVersionUID = 676363206266447113L;
+
+        /**
+         * Class column id.
+         */
+        private static final int COLUMN_CLASS = 0;
+
+        /**
+         * Name column id.
+         */
+        private static final int COLUMN_NAME = 1;
+
+        /**
+         * Description column id.
+         */
+        private static final int COLUMN_DESC = 2;
+
+        /**
+         * Order column id.
+         */
+        private static final int COLUMN_ORDER = 3;
+
+        /**
+         * Enabled column id.
+         */
+        private static final int COLUMN_ENABLED = 4;
+
+        /**
+         * Class column width.
+         */
+        private static final int WIDTH_CLASS = 90;
+
+        /**
+         * Order column width.
+         */
+        private static final int WIDTH_ORDER = 20;
+
+        /**
+         * Active column id.
+         */
+        private static final int COLUMN_ACTIVE = 5;
 
         /**
          * Integer renderer.
@@ -543,6 +457,131 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
             addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_BOOL, theBooleanRenderer, theBooleanEditor));
             addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer, null));
+        }
+
+        /**
+         * Obtain column name
+         * @param pColIndex the column index
+         * @return the column name
+         */
+        private String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_CLASS:
+                    return TITLE_CLASS;
+                case COLUMN_NAME:
+                    return TITLE_NAME;
+                case COLUMN_DESC:
+                    return TITLE_DESC;
+                case COLUMN_ORDER:
+                    return TITLE_ORDER;
+                case COLUMN_ENABLED:
+                    return TITLE_ENABLED;
+                case COLUMN_ACTIVE:
+                    return TITLE_ACTIVE;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @return the value
+         */
+        private Object getItemValue(final T pItem,
+                                    final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_CLASS:
+                    return pItem.getStaticClass().toString();
+                case COLUMN_NAME:
+                    return pItem.getName();
+                case COLUMN_DESC:
+                    return pItem.getDesc();
+                case COLUMN_ENABLED:
+                    return pItem.getEnabled();
+                case COLUMN_ORDER:
+                    return pItem.getOrder();
+                case COLUMN_ACTIVE:
+                    return pItem.isActive();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value
+         */
+        private void setItemValue(final T pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    pItem.setName((String) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setDescription((String) pValue);
+                    break;
+                case COLUMN_ENABLED:
+                    pItem.setEnabled((Boolean) pValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Is the item editable at the column index.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final T pItem,
+                                       final int pColIndex) {
+            /* switch on column */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                case COLUMN_DESC:
+                    return pItem.getEnabled();
+                case COLUMN_ENABLED:
+                    return !pItem.isActive();
+                case COLUMN_CLASS:
+                case COLUMN_ORDER:
+                case COLUMN_ACTIVE:
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Obtain the field for the column index.
+         * @param pColIndex column index
+         * @return the field
+         */
+        private JDataField getFieldForCell(final T pItem,
+                                           final int pColIndex) {
+            /* Switch on column */
+            switch (pColIndex) {
+                case COLUMN_CLASS:
+                    return StaticData.FIELD_CLASS;
+                case COLUMN_NAME:
+                    return StaticData.FIELD_NAME;
+                case COLUMN_DESC:
+                    return StaticData.FIELD_DESC;
+                case COLUMN_ENABLED:
+                    return StaticData.FIELD_ENABLED;
+                case COLUMN_ORDER:
+                    return StaticData.FIELD_ORDER;
+                case COLUMN_ACTIVE:
+                    return DataItem.FIELD_ACTIVE;
+                default:
+                    return null;
+            }
         }
     }
 }

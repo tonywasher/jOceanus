@@ -170,6 +170,9 @@ public class JDataTableColumn
         }
 
         /**
+         * Obtain column name
+         */
+        /**
          * Remove a column from the model.
          * @param pColumn the column
          */

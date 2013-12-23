@@ -109,10 +109,6 @@ public class ZipReadFile {
      * @throws JDataException on error
      */
     public ZipReadFile(final File pFile) throws JDataException {
-        FileInputStream myInFile;
-        BufferedInputStream myInBuffer;
-        ZipEntry myEntry;
-
         /* Protect against exceptions */
         try {
             /* Store the zipFile name */
@@ -122,11 +118,12 @@ public class ZipReadFile {
             theContents = new ZipFileContents();
 
             /* Open the zip file for reading */
-            myInFile = new FileInputStream(pFile);
-            myInBuffer = new BufferedInputStream(myInFile);
+            FileInputStream myInFile = new FileInputStream(pFile);
+            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
             theHdrStream = new ZipInputStream(myInBuffer);
 
             /* Loop through the Zip file entries */
+            ZipEntry myEntry;
             for (;;) {
                 /* Read next entry */
                 myEntry = theHdrStream.getNextEntry();

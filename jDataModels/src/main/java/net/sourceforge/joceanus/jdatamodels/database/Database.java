@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -73,6 +75,11 @@ public abstract class Database<T extends DataSet<T>> {
     private final JDBCDriver theDriver;
 
     /**
+     * The logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * List of Database tables.
      */
     private final List<DatabaseTable<?>> theTables;
@@ -87,12 +94,17 @@ public abstract class Database<T extends DataSet<T>> {
 
     /**
      * Construct a new Database class.
+     * @param pLogger the logger
      * @param pPreferences the preferences
      * @throws JDataException on error
      */
-    public Database(final DatabasePreferences pPreferences) throws JDataException {
+    public Database(final Logger pLogger,
+                    final DatabasePreferences pPreferences) throws JDataException {
         /* Create the connection */
         try {
+            /* Store the logger */
+            theLogger = pLogger;
+
             /* Access the batch size */
             theBatchSize = pPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
@@ -188,6 +200,7 @@ public abstract class Database<T extends DataSet<T>> {
 
             /* Discard Exceptions */
         } catch (SQLException e) {
+            theLogger.log(Level.SEVERE, "Failed to close database connection", e);
             theConn = null;
         }
     }

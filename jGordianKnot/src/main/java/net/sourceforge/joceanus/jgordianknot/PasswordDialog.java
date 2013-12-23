@@ -31,6 +31,8 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -201,17 +203,12 @@ public class PasswordDialog
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
 
-        /* Store the confirm option */
+        /* Store the parameters */
         needConfirm = pNeedConfirm;
 
-        /* Local variables */
-        JLabel myPassLabel;
-        JLabel myConfLabel;
-        JPanel myPanel;
-
         /* Create the components */
-        myPassLabel = new JLabel(NLS_PASSWORD, SwingConstants.TRAILING);
-        myConfLabel = new JLabel(NLS_CONFIRM, SwingConstants.TRAILING);
+        JLabel myPassLabel = new JLabel(NLS_PASSWORD, SwingConstants.TRAILING);
+        JLabel myConfLabel = new JLabel(NLS_CONFIRM, SwingConstants.TRAILING);
         thePassField = new JPasswordField("", PASSWORD_FIELD_LEN);
         theConfirmField = new JPasswordField("", PASSWORD_FIELD_LEN);
         theOKButton = new JButton(NLS_OK);
@@ -252,7 +249,7 @@ public class PasswordDialog
         SpringUtilities.makeCompactGrid(myForm, mySpring, myNumRows, NUM_COLS, PADDING_SIZE);
 
         /* Layout the panel */
-        myPanel = new JPanel();
+        JPanel myPanel = new JPanel();
         myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
         myPanel.add(myForm);
         myPanel.add(theError);
@@ -360,9 +357,11 @@ public class PasswordDialog
     /**
      * Show the dialog under an invokeAndWait clause.
      * @param pDialog the dialog to show
+     * @param pLogger the logger
      * @return successful dialog usage true/false
      */
-    public static boolean showTheDialog(final PasswordDialog pDialog) {
+    public static boolean showTheDialog(final PasswordDialog pDialog,
+                                        final Logger pLogger) {
         /* If this is the event dispatcher thread */
         if (SwingUtilities.isEventDispatchThread()) {
             /* invoke the dialog directly */
@@ -378,10 +377,8 @@ public class PasswordDialog
                         pDialog.showDialog();
                     }
                 });
-            } catch (InvocationTargetException e) {
-                return false;
-            } catch (InterruptedException e) {
-                return false;
+            } catch (InvocationTargetException | InterruptedException e) {
+                pLogger.log(Level.SEVERE, "Failed to display dialog", e);
             }
         }
 

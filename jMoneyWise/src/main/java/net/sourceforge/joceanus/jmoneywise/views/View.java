@@ -123,7 +123,7 @@ public class View
     @Override
     public Database<FinanceData> getDatabase() throws JDataException {
         PreferenceManager myMgr = getPreferenceMgr();
-        return new FinanceDatabase(myMgr.getPreferenceSet(DatabasePreferences.class));
+        return new FinanceDatabase(getLogger(), myMgr.getPreferenceSet(DatabasePreferences.class));
     }
 
     /**

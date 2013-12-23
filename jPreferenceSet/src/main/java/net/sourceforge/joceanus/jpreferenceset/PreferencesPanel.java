@@ -352,7 +352,7 @@ public class PreferencesPanel
     /**
      * Set the select button text.
      */
-    private final void setSelectText() {
+    private void setSelectText() {
         /* Show selection text */
         theSelectButton.setText((theActive == null)
                 ? null

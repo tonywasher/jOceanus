@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
+import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -112,6 +113,11 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
     private JEnableScroll theScroll = null;
 
     /**
+     * The Logger.
+     */
+    private Logger theLogger = null;
+
+    /**
      * Is Enabled?
      */
     private boolean isEnabled = false;
@@ -130,6 +136,14 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      */
     public JFieldManager getFieldMgr() {
         return theFieldMgr;
+    }
+
+    /**
+     * Obtain the logger.
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return theLogger;
     }
 
     /**
@@ -306,6 +320,14 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      */
     protected void setFieldMgr(final JFieldManager pFieldMgr) {
         theFieldMgr = pFieldMgr;
+    }
+
+    /**
+     * Set the logger for the table.
+     * @param pLogger the logger
+     */
+    protected void setLogger(final Logger pLogger) {
+        theLogger = pLogger;
     }
 
     /**

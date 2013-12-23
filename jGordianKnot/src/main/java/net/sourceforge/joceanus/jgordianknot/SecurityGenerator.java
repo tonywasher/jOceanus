@@ -41,6 +41,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -115,6 +116,11 @@ public class SecurityGenerator {
     private final SecureRandom theRandom;
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * List of asymmetric registrations.
      */
     private List<AsymRegistration> theAsymRegister = new ArrayList<AsymRegistration>();
@@ -173,19 +179,33 @@ public class SecurityGenerator {
     }
 
     /**
+     * Obtain logger.
+     * @return the Logger
+     */
+    public Logger getLogger() {
+        return theLogger;
+    }
+
+    /**
      * Default Constructor.
+     * @param pLogger the logger
      * @throws JDataException on error
      */
-    public SecurityGenerator() throws JDataException {
-        this(new SecurityParameters());
+    public SecurityGenerator(final Logger pLogger) throws JDataException {
+        this(pLogger, new SecurityParameters());
     }
 
     /**
      * Constructor for explicit provider.
+     * @param pLogger the logger
      * @param pParameters the Security parameters
      * @throws JDataException on error
      */
-    public SecurityGenerator(final SecurityParameters pParameters) throws JDataException {
+    public SecurityGenerator(final Logger pLogger,
+                             final SecurityParameters pParameters) throws JDataException {
+        /* Store the logger */
+        theLogger = pLogger;
+
         /* Store the provider */
         theProvider = pParameters.getProvider();
         theProviderName = theProvider.getProvider();
@@ -274,7 +294,7 @@ public class SecurityGenerator {
      * @throws WrongPasswordException if password does not match
      */
     public PasswordHash derivePasswordHash(final byte[] pHashBytes,
-                                           final char[] pPassword) throws JDataException, WrongPasswordException {
+                                           final char[] pPassword) throws JDataException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pHashBytes, pPassword);
     }

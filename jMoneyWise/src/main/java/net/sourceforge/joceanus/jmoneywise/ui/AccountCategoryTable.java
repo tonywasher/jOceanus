@@ -45,25 +45,26 @@ import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
- * Event Category Maintenance.
+ * Account Category Maintenance.
  */
-public class MaintEventCategory
-        extends JDataTable<EventCategory> {
+public class AccountCategoryTable
+        extends JDataTable<AccountCategory> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 3913303076200887840L;
+    private static final long serialVersionUID = 4419927779522960812L;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintEventCategory.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategoryTable.class.getName());
 
     /**
      * Name Column Title.
@@ -108,7 +109,7 @@ public class MaintEventCategory
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<EventCategory> theCategoryEntry;
+    private final transient UpdateEntry<AccountCategory> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -141,9 +142,9 @@ public class MaintEventCategory
     private final JEnablePanel thePanel;
 
     /**
-     * Event Categories.
+     * Account Categories.
      */
-    private transient EventCategoryList theCategories = null;
+    private transient AccountCategoryList theCategories = null;
 
     /**
      * Obtain the panel.
@@ -157,7 +158,7 @@ public class MaintEventCategory
      * Constructor.
      * @param pView the data view
      */
-    public MaintEventCategory(final View pView) {
+    public AccountCategoryTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -165,13 +166,13 @@ public class MaintEventCategory
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
-        theCategoryEntry = theUpdateSet.registerClass(EventCategory.class);
+        theCategoryEntry = theUpdateSet.registerClass(AccountCategory.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataCategories = myDataMgr.new JDataEntry(MaintEventCategory.class.getSimpleName());
+        theDataCategories = myDataMgr.new JDataEntry(EventCategoryTable.class.getSimpleName());
         theDataCategories.addAsChildOf(mySection);
         theDataCategories.setObject(theUpdateSet);
 
@@ -218,7 +219,7 @@ public class MaintEventCategory
     public void refreshData() {
         /* Get the Events edit list */
         FinanceData myData = theView.getData();
-        EventCategoryList myCategories = myData.getEventCategories();
+        AccountCategoryList myCategories = myData.getAccountCategories();
         theCategories = myCategories.deriveEditList();
         setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
@@ -248,17 +249,17 @@ public class MaintEventCategory
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<EventCategory> {
+            extends JDataTableModel<AccountCategory> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = -3367619290052755129L;
+        private static final long serialVersionUID = 2654650162773869736L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private CategoryTableModel(final MaintEventCategory pTable) {
+        private CategoryTableModel(final AccountCategoryTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -278,25 +279,25 @@ public class MaintEventCategory
         }
 
         @Override
-        public JDataField getFieldForCell(final EventCategory pItem,
+        public JDataField getFieldForCell(final AccountCategory pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final EventCategory pCategory,
+        public boolean isCellEditable(final AccountCategory pCategory,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public EventCategory getItemAtIndex(final int pRowIndex) {
+        public AccountCategory getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return theCategories.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final EventCategory pCategory,
+        public Object getItemValue(final AccountCategory pCategory,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pCategory, pColIndex);
@@ -304,24 +305,12 @@ public class MaintEventCategory
 
         @Override
         public String getColumnName(final int pColIndex) {
-            switch (pColIndex) {
-                case CategoryColumnModel.COLUMN_NAME:
-                    return TITLE_NAME;
-                case CategoryColumnModel.COLUMN_DESC:
-                    return TITLE_DESC;
-                case CategoryColumnModel.COLUMN_CATEGORY:
-                    return TITLE_CAT;
-                case CategoryColumnModel.COLUMN_FULLNAME:
-                    return TITLE_FULLNAME;
-                case CategoryColumnModel.COLUMN_ACTIVE:
-                    return TITLE_ACTIVE;
-                default:
-                    return null;
-            }
+            /* Obtain the column name */
+            return theColumns.getColumnName(pColIndex);
         }
 
         @Override
-        public boolean includeRow(final EventCategory pRow) {
+        public boolean includeRow(final AccountCategory pRow) {
             /* Return visibility of row */
             return !pRow.isDeleted();
         }
@@ -354,7 +343,7 @@ public class MaintEventCategory
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -5129198935581030200L;
+        private static final long serialVersionUID = 6374822452498064568L;
 
         /**
          * Name column id.
@@ -395,7 +384,7 @@ public class MaintEventCategory
          * Constructor.
          * @param pTable the table
          */
-        private CategoryColumnModel(final MaintEventCategory pTable) {
+        private CategoryColumnModel(final AccountCategoryTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -412,12 +401,34 @@ public class MaintEventCategory
         }
 
         /**
+         * Obtain column name
+         * @param pColIndex the column index
+         * @return the column name
+         */
+        private String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    return TITLE_NAME;
+                case COLUMN_DESC:
+                    return TITLE_DESC;
+                case COLUMN_CATEGORY:
+                    return TITLE_CAT;
+                case COLUMN_FULLNAME:
+                    return TITLE_FULLNAME;
+                case COLUMN_ACTIVE:
+                    return TITLE_ACTIVE;
+                default:
+                    return null;
+            }
+        }
+
+        /**
          * Obtain the value for the category column.
          * @param pCategory event category
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final EventCategory pCategory,
+        protected Object getItemValue(final AccountCategory pCategory,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {

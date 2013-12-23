@@ -34,6 +34,7 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -48,6 +49,11 @@ import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
  * Security Test suite.
  */
 public class SecurityTest {
+    /**
+     * Logger.
+     */
+    private static Logger theLogger = Logger.getLogger(SecurityTest.class.getName());
+
     /**
      * Main entry point.
      * @param args the parameters
@@ -97,7 +103,7 @@ public class SecurityTest {
             /* If we are creating a secure zip file */
             if (bSecure) {
                 /* Create new Password Hash */
-                SecureManager myManager = new SecureManager();
+                SecureManager myManager = new SecureManager(theLogger);
                 PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
 
                 /* Initialise the Zip file */
@@ -174,7 +180,7 @@ public class SecurityTest {
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
                 /* Resolve security and unlock file */
-                SecureManager myManager = new SecureManager();
+                SecureManager myManager = new SecureManager(theLogger);
                 PasswordHash myHash = myManager.resolvePasswordHash(myHashBytes, pZipFile.getName());
                 myZipFile.setPasswordHash(myHash);
             }
@@ -227,7 +233,7 @@ public class SecurityTest {
      */
     protected static void testSecurity() throws JDataException {
         /* Create new Password Hash */
-        SecureManager myManager = new SecureManager();
+        SecureManager myManager = new SecureManager(theLogger);
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
@@ -251,7 +257,7 @@ public class SecurityTest {
         long myDataLen = myDigest.getDataLength();
 
         /* Start a new session */
-        myManager = new SecureManager();
+        myManager = new SecureManager(theLogger);
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
@@ -354,7 +360,7 @@ public class SecurityTest {
      */
     protected static void checkAlgorithms() throws JDataException {
         /* Create new Password Hash */
-        SecureManager myManager = new SecureManager();
+        SecureManager myManager = new SecureManager(theLogger);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
         /* Create instance of each digest */

@@ -29,6 +29,8 @@ import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -992,6 +994,8 @@ public abstract class MainWindow<T extends DataSet<T>>
             /* Display it */
             theHelpWdw.showDialog();
         } catch (JDataException e) {
+            Logger myLogger = theView.getLogger();
+            myLogger.log(Level.SEVERE, "Failed to start Help Window", e);
             theHelpWdw = null;
         }
     }

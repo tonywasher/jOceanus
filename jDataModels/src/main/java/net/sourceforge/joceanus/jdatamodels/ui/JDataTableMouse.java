@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -375,7 +377,8 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
                 myModel.setItemValue(myData, col, null);
             }
         } catch (JDataException e) {
-            myModel = null;
+            Logger myLogger = theTable.getLogger();
+            myLogger.log(Level.SEVERE, "Failed to NULL column", e);
         }
     }
 

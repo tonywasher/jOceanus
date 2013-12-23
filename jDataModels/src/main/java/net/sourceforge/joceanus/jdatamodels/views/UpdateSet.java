@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -346,6 +348,8 @@ public class UpdateSet
             }
             return true;
         } catch (JDataException e) {
+            Logger myLogger = theControl.getLogger();
+            myLogger.log(Level.SEVERE, "Failed to prepare changes", e);
             return false;
         }
     }

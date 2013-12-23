@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
@@ -55,21 +56,24 @@ public class SecureManager {
 
     /**
      * Constructor for default values.
+     * @param pLogger the logger
      * @throws JDataException on error
      */
-    public SecureManager() throws JDataException {
+    public SecureManager(final Logger pLogger) throws JDataException {
         /* Access with defaults */
-        this(new SecurityParameters());
+        this(pLogger, new SecurityParameters());
     }
 
     /**
      * Constructor.
+     * @param pLogger the logger
      * @param pParameters the Security parameters
      * @throws JDataException on error
      */
-    public SecureManager(final SecurityParameters pParameters) throws JDataException {
+    public SecureManager(final Logger pLogger,
+                         final SecurityParameters pParameters) throws JDataException {
         /* Allocate the security generator */
-        theGenerator = new SecurityGenerator(pParameters);
+        theGenerator = new SecurityGenerator(pLogger, pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<PasswordHash>();
@@ -136,7 +140,7 @@ public class SecureManager {
 
         /* Prompt for the password */
         boolean isPasswordOk = false;
-        while (PasswordDialog.showTheDialog(myPass)) {
+        while (PasswordDialog.showTheDialog(myPass, theGenerator.getLogger())) {
             try {
                 /* Access the password */
                 myPassword = myPass.getPassword();
