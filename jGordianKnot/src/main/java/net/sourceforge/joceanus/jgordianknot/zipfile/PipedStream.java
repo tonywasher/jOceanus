@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+
 /**
  * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and reading from an input stream.
  * @author Tony Washer
@@ -153,7 +155,7 @@ public class PipedStream {
                         final int pLength) throws IOException {
             /* If we are already closed throw IO Exception */
             if (isClosed) {
-                throw new IOException("Stream is closed");
+                throw new IOException(StreamCipher.ERROR_CLOSED);
             }
 
             /* If we have already seen EOF return now */
@@ -243,7 +245,7 @@ public class PipedStream {
                           final int pLength) throws IOException {
             /* If we are already closed throw IO Exception */
             if (isClosed) {
-                throw new IOException("Stream is closed");
+                throw new IOException(StreamCipher.ERROR_CLOSED);
             }
 
             /* no data is to be written, just ignore */

@@ -35,7 +35,8 @@ import java.util.zip.ZipInputStream;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.MsgDigest;
+import net.sourceforge.joceanus.jgordianknot.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.DigestType;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
@@ -241,19 +242,6 @@ public class ZipReadFile {
      * @throws JDataException on error
      */
     public InputStream getInputStream(final ZipFileEntry pFile) throws JDataException {
-        FileInputStream myInFile;
-        BufferedInputStream myInBuffer;
-        ZipInputStream myZipFile;
-        ZipEntry myEntry;
-        String myName;
-        InputStream myCurrent;
-        DigestInputStream myDigest;
-        DecryptionInputStream myDecrypt;
-        int iDigest;
-        int iDecrypt;
-        MsgDigest myMsgDigest;
-        boolean bDebug;
-
         /* Protect against exceptions */
         try {
             /* Check that entry belongs to this zip file */
@@ -262,12 +250,13 @@ public class ZipReadFile {
             }
 
             /* Open the zip file for reading */
-            myInFile = new FileInputStream(theZipFile);
-            myInBuffer = new BufferedInputStream(myInFile);
-            myZipFile = new ZipInputStream(myInBuffer);
+            FileInputStream myInFile = new FileInputStream(theZipFile);
+            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+            ZipInputStream myZipFile = new ZipInputStream(myInBuffer);
 
             /* Access the name of the file entry */
-            myName = pFile.getZipName();
+            String myName = pFile.getZipName();
+            ZipEntry myEntry;
 
             /* Loop through the Zip file entries */
             for (;;) {
@@ -288,8 +277,8 @@ public class ZipReadFile {
             }
 
             /* Note the current input stream */
-            myCurrent = myZipFile;
-            iDigest = 0;
+            InputStream myCurrent = myZipFile;
+            int iDigest = 0;
 
             /* If the file is encrypted */
             if (isEncrypted()) {
@@ -297,54 +286,39 @@ public class ZipReadFile {
                 Signature mySignature = theAsymKey.getSignature(false);
                 pFile.signEntry(mySignature, true);
 
-                /* Determine whether we are debugging */
-                bDebug = pFile.isDebug();
-
                 /* Access the digests */
                 byte[][] myDigests = pFile.getDigests();
-                long[] myDigestLens = pFile.getDigestLens();
+                // long[] myDigestLens = pFile.getDigestLens();
 
                 /* Access the secretKeys */
                 byte[][] mySecretKeys = pFile.getSecretKeys();
                 byte[][] myInitVectors = pFile.getInitVectors();
 
                 /* Wrap a digest input stream around the zip file */
-                myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest++], "Final");
-                myDigest = new DigestInputStream(myMsgDigest, myCurrent);
-                myCurrent = myDigest;
+                DataDigest myDataDigest = theGenerator.generateDigest(DigestType.SHA3);
+                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest], myCurrent);
 
                 /* For each decryption stream */
-                for (iDecrypt = 0; iDecrypt < mySecretKeys.length; iDecrypt++) {
+                for (int iDecrypt = 0; iDecrypt < mySecretKeys.length; iDecrypt++) {
                     /* Create the decryption stream */
                     SymmetricKey myKey = theAsymKey.deriveSymmetricKey(mySecretKeys[iDecrypt]);
-                    myDecrypt = new DecryptionInputStream(myKey, myInitVectors[iDecrypt], myCurrent);
-                    myCurrent = myDecrypt;
-
-                    /* if we are debugging */
-                    if (bDebug) {
-                        /* Create an extra digest stream */
-                        myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest], "Debug"
-                                                                                                             + iDigest++);
-                        myDigest = new DigestInputStream(myMsgDigest, myCurrent);
-                        myCurrent = myDigest;
-                    }
+                    myCurrent = new DecryptionInputStream(myKey, myInitVectors[iDecrypt], myCurrent);
                 }
 
                 /* Wrap a LZMAInputStream around the stream */
                 myCurrent = new LZMAInputStream(myCurrent);
 
                 /* Wrap a digest input stream around the stream */
-                myMsgDigest = new MsgDigest(theGenerator, myDigests[iDigest], myDigestLens[iDigest++], "Raw");
-                myDigest = new DigestInputStream(myMsgDigest, myCurrent);
-                myCurrent = myDigest;
+                myDataDigest = theGenerator.generateDigest(DigestType.SHA3);
+                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest], myCurrent);
             }
+
+            /* return the new stream */
+            return myCurrent;
 
             /* Catch exceptions */
         } catch (IOException e) {
             throw new JDataException(ExceptionClass.DATA, "Exception creating new Input stream", e);
         }
-
-        /* return the new stream */
-        return myCurrent;
     }
 }

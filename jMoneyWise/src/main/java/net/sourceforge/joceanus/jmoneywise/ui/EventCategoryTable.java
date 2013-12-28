@@ -400,7 +400,7 @@ public class EventCategoryTable
         }
 
         /**
-         * Obtain column name
+         * Obtain column name.
          * @param pColIndex the column index
          * @return the column name
          */

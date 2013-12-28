@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import javax.crypto.Cipher;
-
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
@@ -52,11 +52,6 @@ public class EncryptionOutputStream
     private final StreamCipher theCipher;
 
     /**
-     * The Symmetric Key.
-     */
-    private final SymmetricKey theSymKey;
-
-    /**
      * The initialisation vector.
      */
     private final byte[] theInitVector;
@@ -75,14 +70,6 @@ public class EncryptionOutputStream
     }
 
     /**
-     * Access the key.
-     * @return the symmetric key
-     */
-    public SymmetricKey getSymmetricKey() {
-        return theSymKey;
-    }
-
-    /**
      * Construct a symmetric key encryption output stream.
      * @param pKey the symmetric key to use
      * @param pStream the stream to encrypt to
@@ -97,12 +84,27 @@ public class EncryptionOutputStream
         theStream = pStream;
 
         /* Initialise the cipher */
-        theSymKey = pKey;
-        Cipher myCipher = theSymKey.initEncryptionStream();
-        theCipher = new StreamCipher(myCipher, myCipher.getIV());
+        theCipher = new StreamCipher(pKey);
+        theInitVector = theCipher.initialiseEncryption(pKey.getRandom());
+    }
 
-        /* Access the initialisation vector */
-        theInitVector = theCipher.getInitVector();
+    /**
+     * Construct a stream key encryption output stream.
+     * @param pKey the stream key to use
+     * @param pStream the stream to encrypt to
+     * @throws JDataException on error
+     */
+    public EncryptionOutputStream(final StreamKey pKey,
+                                  final OutputStream pStream) throws JDataException {
+        /* Create the byte buffer */
+        theByte = new byte[1];
+
+        /* record the output stream */
+        theStream = pStream;
+
+        /* Initialise the cipher */
+        theCipher = new StreamCipher(pKey);
+        theInitVector = theCipher.initialiseEncryption(pKey.getRandom());
     }
 
     @Override
@@ -135,7 +137,7 @@ public class EncryptionOutputStream
     public void flush() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* Flush the output stream */
@@ -148,7 +150,7 @@ public class EncryptionOutputStream
                       final int pLength) throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException("Stream is closed");
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* Ignore a null write */

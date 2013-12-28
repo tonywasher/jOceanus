@@ -772,8 +772,8 @@ public abstract class DataHayStack {
             theMode = new EncryptionMode(myNeedle);
 
             /* Split the HayStack into the separate parts */
-            theInitVector = Arrays.copyOf(myHayStack, SymmetricKey.IVSIZE);
-            theBytes = Arrays.copyOfRange(myHayStack, SymmetricKey.IVSIZE, myHayStack.length);
+            theInitVector = Arrays.copyOf(myHayStack, CipherSet.IVSIZE);
+            theBytes = Arrays.copyOfRange(myHayStack, CipherSet.IVSIZE, myHayStack.length);
         }
     }
 }

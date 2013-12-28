@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Asymmetric Key Types. Available Algorithms
- * @author Tony Washer
  */
 public enum AsymKeyType {
     // RSA(1, 2048),
@@ -194,7 +193,7 @@ public enum AsymKeyType {
     /**
      * Constructor.
      * @param id the id
-     * @param pCurve the keySize the RSA Key size
+     * @param pCurve the name of the elliptic curve
      */
     private AsymKeyType(final int id,
                         final String pCurve) {
@@ -221,39 +220,108 @@ public enum AsymKeyType {
     }
 
     /**
-     * Get random unique set of key types.
+     * Check the number of types.
+     * @param pNumTypes the number of asymmetric keys
+     */
+    private static void checkNumTypes(final int pNumTypes) {
+        /* Access the values */
+        AsymKeyType[] myValues = values();
+        int myNumTypes = myValues.length;
+
+        /* Validate number of types */
+        if ((pNumTypes < 1)
+            || (pNumTypes > myNumTypes)) {
+            /* Throw exception */
+            throw new IllegalArgumentException("Invalid number of asymmetric keys");
+        }
+    }
+
+    /**
+     * Determine bound of random integer for choice of random AsymKeyTypes.
+     * @param pNumTypes the number of Asymmetric keys
+     * @return the bound of the random integer.
+     */
+    public static int getRandomBound(final int pNumTypes) {
+        /* Validate number of types */
+        checkNumTypes(pNumTypes);
+
+        /* Access the values */
+        AsymKeyType[] myValues = values();
+        int myNumTypes = myValues.length;
+
+        /* Initialise the bounds */
+        int myBound = myNumTypes--;
+
+        /* Loop through the types */
+        for (int i = 1; i < pNumTypes; i++) {
+            /* Factor in additional types */
+            myBound *= myNumTypes--;
+        }
+
+        /* Return the bound */
+        return myBound;
+    }
+
+    /**
+     * Get random unique set of asymmetric key types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException if the number of types is invalid
      */
     public static AsymKeyType[] getRandomTypes(final int pNumTypes,
-                                               final SecureRandom pRandom) throws JDataException {
+                                               final SecureRandom pRandom) {
+        /* Determine bound for the number of types */
+        int myBound = getRandomBound(pNumTypes);
+
+        /* Generate the seed */
+        int mySeed = pRandom.nextInt(myBound);
+
+        /* Generate the random types */
+        return getRandomAsymKeyTypes(pNumTypes, mySeed);
+    }
+
+    /**
+     * Get random unique set of asymmetric key types.
+     * @param pNumTypes the number of types
+     * @param pSeed the seed value
+     * @return the random set
+     */
+    public static AsymKeyType[] getRandomTypes(final int pNumTypes,
+                                               final long pSeed) {
+        /* Validate number of types */
+        checkNumTypes(pNumTypes);
+
+        /* Generate the random types */
+        return getRandomAsymKeyTypes(pNumTypes, pSeed);
+    }
+
+    /**
+     * Get unique set of asymmetric key types from seed.
+     * @param pNumTypes the number of types
+     * @param pSeed the seed value
+     * @return the random set
+     */
+    private static AsymKeyType[] getRandomAsymKeyTypes(final int pNumTypes,
+                                                       final long pSeed) {
         /* Access the values */
         AsymKeyType[] myValues = values();
         int iNumValues = myValues.length;
-        int iIndex;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: "
-                                                           + pNumTypes);
-        }
+        long mySeed = pSeed;
 
         /* Create the result set */
         AsymKeyType[] myTypes = new AsymKeyType[pNumTypes];
 
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            iIndex = pRandom.nextInt(iNumValues);
+            /* Extract the index */
+            int myIndex = (int) (mySeed % iNumValues);
+            mySeed /= iNumValues;
 
             /* Store the type */
-            myTypes[i] = myValues[iIndex];
+            myTypes[i] = myValues[myIndex];
 
             /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
+            myValues[myIndex] = myValues[iNumValues - 1];
             iNumValues--;
         }
 

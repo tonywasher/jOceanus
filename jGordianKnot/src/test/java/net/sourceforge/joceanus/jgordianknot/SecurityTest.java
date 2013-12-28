@@ -36,8 +36,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
@@ -72,9 +77,10 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
-            // listAlgorithms(SecurityProvider.BC);
+            listAlgorithms(SecurityProvider.BC);
+            // TestStream();
             // checkAlgorithms();
-            testSecurity();
+            // testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
             // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
@@ -247,14 +253,13 @@ public class SecurityTest {
         byte[] myAsymPublic = myAsym.getExternalDef();
         byte[] mySymSafe2 = myAsym.secureSymmetricKey(mySym);
 
-        /* Create a message digest */
-        MsgDigest myDigest = new MsgDigest(myGen);
+        /* Create a data digest */
+        DataDigest myDigest = new DataDigest(myGen);
         myDigest.update(mySymSafe);
         myDigest.update(myAsymSafe);
         myDigest.update(myAsymPublic);
         myDigest.update(mySymSafe2);
-        byte[] myDigestBytes = myDigest.buildExternal();
-        long myDataLen = myDigest.getDataLength();
+        // byte[] myDigestBytes = myDigest.digest();
 
         /* Start a new session */
         myManager = new SecureManager(theLogger);
@@ -262,12 +267,12 @@ public class SecurityTest {
         myGen = myHash.getSecurityGenerator();
 
         /* Create a message digest */
-        myDigest = new MsgDigest(myGen, myDigestBytes, myDataLen, "Test");
+        myDigest = new DataDigest(myGen, myDigest.getDigestType());
         myDigest.update(mySymSafe);
         myDigest.update(myAsymSafe);
         myDigest.update(myAsymPublic);
         myDigest.update(mySymSafe2);
-        myDigest.validateDigest();
+        // myDigest.validateDigest();
 
         /* Derive the keys */
         AsymmetricKey myAsym1 = myNewHash.deriveAsymmetricKey(myAsymSafe, myAsymPublic);
@@ -356,7 +361,7 @@ public class SecurityTest {
     }
 
     /**
-     * List the supported algorithms
+     * Check the supported algorithms
      */
     protected static void checkAlgorithms() throws JDataException {
         /* Create new Password Hash */
@@ -365,10 +370,10 @@ public class SecurityTest {
 
         /* Create instance of each digest */
         for (DigestType myDigest : DigestType.values()) {
-            myGenerator.accessDigest(myDigest);
+            myGenerator.generateDigest(myDigest);
         }
 
-        /* Create instance of each hmac */
+        /* Create instance of each hMac */
         for (DigestType myDigest : DigestType.values()) {
             myGenerator.accessMac(myDigest);
         }
@@ -379,9 +384,43 @@ public class SecurityTest {
         }
 
         /* Create instance of each asymmetric key */
-        for (AsymKeyType myType : AsymKeyType.values()) {
-            myGenerator.generateKeyPair(myType);
-            myGenerator.accessSignature(myType.getSignature());
+        // for (AsymKeyType myType : AsymKeyType.values()) {
+        // AsymmetricKey myKey = myGenerator.generateAsymmetricKey(myType);
+        // myKey..accessSignature(myType.getSignature());
+        // }
+    }
+
+    /**
+     * Test stream ciphers.
+     * @throws JDataException
+     */
+    protected static void TestStream() throws JDataException {
+        try {
+            /* Create new Password Hash */
+            SecureManager myManager = new SecureManager(theLogger);
+            SecurityGenerator myGenerator = myManager.getSecurityGenerator();
+
+            /* Access the Stream Cipher */
+            StreamKeyType myType = StreamKeyType.VMPC;
+            Cipher myCipher = Cipher.getInstance(myType.toString(), "BC");
+            KeyGenerator myFactory = KeyGenerator.getInstance(myType.toString(), "BC");
+            myFactory.init(256, myGenerator.getRandom());
+            SecretKey myKey = myFactory.generateKey();
+            myCipher.init(Cipher.ENCRYPT_MODE, myKey, myGenerator.getRandom());
+            byte[] myIV = myCipher.getIV();
+
+            /* Access test string */
+            byte[] myInput = DataConverter.stringToByteArray("MyTesterString");
+            byte[] myOutput = myCipher.doFinal(myInput);
+
+            /* Reinitialise for decryption */
+            myCipher.init(Cipher.DECRYPT_MODE, myKey, new IvParameterSpec(myIV));
+            byte[] myResult = myCipher.doFinal(myOutput);
+            String myStr = DataConverter.byteArrayToString(myResult);
+            myStr = null;
+
+        } catch (Exception e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "FF", e);
         }
     }
 }

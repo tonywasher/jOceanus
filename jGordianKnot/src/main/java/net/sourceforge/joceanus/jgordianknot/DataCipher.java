@@ -24,23 +24,48 @@ package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
+import org.bouncycastle.util.Arrays;
+
 /**
  * Wrapper class for Cipher used to encryption data objects.
- * @author Tony Washer
  */
 public class DataCipher {
+    /**
+     * Data length error text.
+     */
+    private static final String ERROR_DATALEN = "Invalid data length";
+
+    /**
+     * Wrap block length (128-bits) in bytes.
+     * <p>
+     * This needs to be the half the block size to ensure that the wrap encryption is always performed on a multiple of the block
+     */
+    private static final int WRAP_BLOCKLEN = CipherSet.IVSIZE >> 1;
+
+    /**
+     * Wrap repeat count.
+     */
+    private static final int WRAP_COUNT = 6;
+
+    /**
+     * Multiplier to obtain IV from vector.
+     */
+    private static final int VECTOR_SHIFT = 7;
+
     /**
      * The cipher.
      */
@@ -50,6 +75,11 @@ public class DataCipher {
      * The SymmetricKey.
      */
     private final SymmetricKey theSymKey;
+
+    /**
+     * The SecretKey.
+     */
+    private final SecretKey theSecretKey;
 
     /**
      * Get Symmetric Key Type.
@@ -69,13 +99,24 @@ public class DataCipher {
 
     /**
      * Constructor.
-     * @param pCipher the initialised cipher
      * @param pKey the Symmetric Key
+     * @throws JDataException on error
      */
-    protected DataCipher(final Cipher pCipher,
-                         final SymmetricKey pKey) {
-        theCipher = pCipher;
+    protected DataCipher(final SymmetricKey pKey) throws JDataException {
+        /* Record keys */
         theSymKey = pKey;
+        theSecretKey = theSymKey.getSecretKey();
+
+        /* protect against exceptions */
+        try {
+            /* Create a new cipher */
+            SecurityGenerator myGenerator = theSymKey.getGenerator();
+            SecurityProvider myProvider = myGenerator.getProvider();
+            SymKeyType myKeyType = theSymKey.getKeyType();
+            theCipher = Cipher.getInstance(myKeyType.getCipher(), myProvider.getProvider());
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create cipher", e);
+        }
     }
 
     @Override
@@ -114,23 +155,19 @@ public class DataCipher {
      */
     public byte[] encryptBytes(final byte[] pBytes,
                                final byte[] pVector) throws JDataException {
-        byte[] myBytes;
-
         /* Protect against exceptions */
         try {
-            /* Initialise the cipher using the vector */
-            initialiseEncryption(pVector);
+            /* Access the shifted vector */
+            byte[] myShift = getShiftedVector(pVector);
+
+            /* Initialise the cipher using the shifted vector */
+            initialiseEncryption(myShift);
 
             /* Encrypt the byte array */
-            myBytes = theCipher.doFinal(pBytes);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
-        } catch (BadPaddingException e) {
+            return theCipher.doFinal(pBytes);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
         }
-
-        /* Return to caller */
-        return myBytes;
     }
 
     /**
@@ -142,136 +179,148 @@ public class DataCipher {
      */
     public byte[] decryptBytes(final byte[] pBytes,
                                final byte[] pVector) throws JDataException {
-        byte[] myBytes;
-
         /* Protect against exceptions */
         try {
+            /* Access the shifted vector */
+            byte[] myShift = getShiftedVector(pVector);
+
             /* Initialise the cipher using the vector */
-            initialiseDecryption(pVector);
+            initialiseDecryption(myShift);
 
             /* Encrypt the byte array */
-            myBytes = theCipher.doFinal(pBytes);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
-        } catch (BadPaddingException e) {
+            return theCipher.doFinal(pBytes);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
         }
-
-        /* Return to caller */
-        return myBytes;
     }
 
     /**
-     * Encrypt string.
-     * @param pString string to encrypt
-     * @return Encrypted bytes
+     * Wrap bytes.
+     * @param pBytes the bytes to wrap
+     * @param pVector initialisation vector
+     * @return the wrapped bytes
      * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString) throws JDataException {
-        byte[] myBytes;
+    protected byte[] wrapBytes(final byte[] pBytes,
+                               final byte[] pVector) throws JDataException {
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
 
-        /* Protect against exceptions */
-        try {
-            /* Convert the string to a byte array */
-            myBytes = DataConverter.stringToByteArray(pString);
+        /* Determine number of blocks */
+        int myDataLen = pBytes.length;
+        int myNumBlocks = myDataLen
+                          / WRAP_BLOCKLEN;
 
-            /* Encrypt the byte array */
-            myBytes = theCipher.doFinal(myBytes);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
+        /* Data must be a multiple of WRAP_BLOCKLEN */
+        if ((myNumBlocks * WRAP_BLOCKLEN) != myDataLen) {
+            throw new IllegalArgumentException(ERROR_DATALEN);
         }
 
-        /* Return to caller */
-        return myBytes;
+        /* Allocate buffer for data and encryption */
+        byte[] myData = new byte[myDataLen
+                                 + WRAP_BLOCKLEN];
+        byte[] myBuffer = new byte[WRAP_BLOCKLEN << 1];
+
+        /* Build the data block */
+        System.arraycopy(myShift, 0, myData, 0, WRAP_BLOCKLEN);
+        System.arraycopy(pBytes, 0, myData, WRAP_BLOCKLEN, myDataLen);
+
+        /* Initialise the cipher using the shifted vector */
+        initialiseEncryption(myShift);
+
+        /* Loop WRAP_COUNT times */
+        for (int myCycle = 0, myCount = 1; myCycle < WRAP_COUNT; myCycle++) {
+            /* Loop through the data blocks */
+            for (int myBlock = 1, myOffset = WRAP_BLOCKLEN; myBlock <= myNumBlocks; myBlock++, myOffset += WRAP_BLOCKLEN) {
+                /* Build the data to be encrypted */
+                System.arraycopy(myData, 0, myBuffer, 0, WRAP_BLOCKLEN);
+                System.arraycopy(myData, myOffset, myBuffer, WRAP_BLOCKLEN, WRAP_BLOCKLEN);
+
+                /* Encrypt the byte array */
+                byte[] myResult = theCipher.update(myBuffer);
+
+                /* Adjust the result using the count as a mask */
+                for (int myMask = myCount++, myIndex = WRAP_BLOCKLEN - 1; myMask != 0; myMask >>>= Byte.SIZE) {
+                    myResult[myIndex--] ^= (byte) myMask;
+                }
+
+                /* Restore encrypted data */
+                System.arraycopy(myResult, 0, myData, 0, WRAP_BLOCKLEN);
+                System.arraycopy(myResult, WRAP_BLOCKLEN, myData, myOffset, WRAP_BLOCKLEN);
+            }
+        }
+
+        /* Return the wrapped data */
+        return myData;
     }
 
     /**
-     * Encrypt character array.
-     * @param pChars Characters to encrypt
-     * @return Encrypted bytes
+     * unWrap bytes.
+     * @param pBytes the bytes to unwrap
+     * @param pVector initialisation vector
+     * @return the unwrapped bytes
      * @throws JDataException on error
      */
-    public byte[] encryptChars(final char[] pChars) throws JDataException {
-        byte[] myBytes;
-        byte[] myRawBytes;
+    protected byte[] unwrapBytes(final byte[] pBytes,
+                                 final byte[] pVector) throws JDataException {
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
+        byte[] myCheck = Arrays.copyOf(pVector, WRAP_BLOCKLEN);
 
-        /* Protect against exceptions */
-        try {
-            /* Convert the characters to a byte array */
-            myRawBytes = DataConverter.charsToByteArray(pChars);
+        /* Determine number of blocks */
+        int myDataLen = pBytes.length
+                        - WRAP_BLOCKLEN;
+        int myNumBlocks = myDataLen
+                          / WRAP_BLOCKLEN;
 
-            /* Encrypt the characters */
-            myBytes = theCipher.doFinal(myRawBytes);
-
-            /* Clear out the bytes */
-            Arrays.fill(myRawBytes, (byte) 0);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
+        /* Data must be a multiple of WRAP_BLOCKLEN */
+        if ((myNumBlocks * WRAP_BLOCKLEN) != myDataLen) {
+            throw new IllegalArgumentException(ERROR_DATALEN);
         }
 
-        /* Return to caller */
-        return myBytes;
-    }
+        /* Allocate buffers for data and encryption */
+        byte[] myIV = new byte[WRAP_BLOCKLEN];
+        byte[] myData = new byte[myDataLen];
+        byte[] myBuffer = new byte[WRAP_BLOCKLEN << 1];
 
-    /**
-     * Decrypt bytes into a string.
-     * @param pBytes bytes to decrypt
-     * @return Decrypted string
-     * @throws JDataException on error
-     */
-    public String decryptString(final byte[] pBytes) throws JDataException {
-        byte[] myBytes;
-        String myString;
+        /* Build the data block */
+        System.arraycopy(pBytes, 0, myIV, 0, WRAP_BLOCKLEN);
+        System.arraycopy(pBytes, WRAP_BLOCKLEN, myData, 0, myDataLen);
 
-        /* Protect against exceptions */
-        try {
-            /* Decrypt the bytes */
-            myBytes = theCipher.doFinal(pBytes);
+        /* Initialise the cipher using the shifted vector */
+        initialiseDecryption(myShift);
 
-            /* Convert the bytes to a string */
-            myString = DataConverter.byteArrayToString(myBytes);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
+        /* Loop WRAP_COUNT times */
+        for (int myCycle = WRAP_COUNT - 1, myCount = myNumBlocks
+                                                     * (myCycle + 1); myCycle >= 0; myCycle--) {
+            /* Loop through the data blocks */
+            for (int myBlock = myNumBlocks, myOffset = WRAP_BLOCKLEN
+                                                       * (myBlock - 1); myBlock >= 1; myBlock--, myOffset -= WRAP_BLOCKLEN) {
+                /* Build the data to be decrypted */
+                System.arraycopy(myIV, 0, myBuffer, 0, WRAP_BLOCKLEN);
+                System.arraycopy(myData, myOffset, myBuffer, WRAP_BLOCKLEN, WRAP_BLOCKLEN);
+
+                /* Adjust the buffer using the count as a mask */
+                for (int myMask = myCount--, myIndex = WRAP_BLOCKLEN - 1; myMask != 0; myMask >>>= Byte.SIZE) {
+                    myBuffer[myIndex--] ^= (byte) myMask;
+                }
+
+                /* Decrypt the byte array */
+                byte[] myResult = theCipher.update(myBuffer);
+
+                /* Restore encrypted data */
+                System.arraycopy(myResult, 0, myIV, 0, WRAP_BLOCKLEN);
+                System.arraycopy(myResult, WRAP_BLOCKLEN, myData, myOffset, WRAP_BLOCKLEN);
+            }
         }
 
-        /* Return to caller */
-        return myString;
-    }
-
-    /**
-     * Decrypt bytes into a character array.
-     * @param pBytes Bytes to decrypt
-     * @return Decrypted character array
-     * @throws JDataException on error
-     */
-    public char[] decryptChars(final byte[] pBytes) throws JDataException {
-        byte[] myBytes;
-        char[] myChars;
-
-        /* Protect against exceptions */
-        try {
-            /* Decrypt the bytes */
-            myBytes = theCipher.doFinal(pBytes);
-
-            /* Convert the bytes to characters */
-            myChars = DataConverter.bytesToCharArray(myBytes);
-
-            /* Clear out the bytes */
-            Arrays.fill(myBytes, (byte) 0);
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
+        /* Perform integrity check */
+        if (!Arrays.areEqual(myIV, myCheck)) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Checksum failed");
         }
 
-        /* Return to caller */
-        return myChars;
+        /* Return unwrapped data */
+        return myData;
     }
 
     /**
@@ -283,10 +332,8 @@ public class DataCipher {
         try {
             /* Initialise the cipher using the vector */
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise encryption", e);
-        } catch (InvalidKeyException e) {
+            theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise encryption", e);
         }
     }
@@ -300,11 +347,45 @@ public class DataCipher {
         try {
             /* Initialise the cipher using the vector */
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise decryption", e);
-        } catch (InvalidKeyException e) {
+            theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise decryption", e);
         }
+    }
+
+    /**
+     * Obtain shifted Initialisation vector.
+     * @param pVector the initialisation vector
+     * @return the shifted vector
+     */
+    private byte[] getShiftedVector(final byte[] pVector) {
+        /* Determine length of input and output vectors */
+        int myVectorLen = pVector.length;
+        int myLen = theCipher.getBlockSize();
+        SymKeyType myType = theSymKey.getKeyType();
+        byte[] myNew = new byte[myLen];
+
+        /* Determine index into array for Key Type */
+        int myIndex = VECTOR_SHIFT
+                      * myType.getId();
+        myIndex %= myVectorLen;
+
+        /* Determine remaining data length in vector */
+        int myRemainder = myVectorLen
+                          - myIndex;
+
+        /* If we need a single copy */
+        if (myRemainder >= myLen) {
+            /* Copy whole part */
+            System.arraycopy(pVector, myIndex, myNew, 0, myLen);
+        } else {
+            /* Build in two parts */
+            System.arraycopy(pVector, myIndex, myNew, 0, myRemainder);
+            System.arraycopy(pVector, 0, myNew, myRemainder, myLen
+                                                             - myRemainder);
+        }
+
+        /* return the shifted vector */
+        return myNew;
     }
 }

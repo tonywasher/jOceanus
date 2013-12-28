@@ -460,7 +460,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         }
 
         /**
-         * Obtain column name
+         * Obtain column name.
          * @param pColIndex the column index
          * @return the column name
          */
@@ -515,6 +515,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value
+         * @throws JDataException on error
          */
         private void setItemValue(final T pItem,
                                   final int pColIndex,
@@ -560,6 +561,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
 
         /**
          * Obtain the field for the column index.
+         * @param pItem the item
          * @param pColIndex column index
          * @return the field
          */

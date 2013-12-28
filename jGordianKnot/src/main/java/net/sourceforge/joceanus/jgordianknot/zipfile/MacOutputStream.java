@@ -26,14 +26,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jgordianknot.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.DataMac;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 
 /**
- * Provides a digest OutputStream. This class simply calculates a digest of the data in the stream at this point and passes the data onto the next Output Stream
- * in the chain.
+ * Provides a Mac OutputStream. This class simply calculates a Mac of the data in the stream at this point and passes the data onto the next Output Stream in
+ * the chain.
  */
-public class DigestOutputStream
+public class MacOutputStream
         extends OutputStream {
     /**
      * The underlying output stream.
@@ -46,28 +46,28 @@ public class DigestOutputStream
     private boolean isClosed = false;
 
     /**
-     * The Data Digest of the data written.
+     * The Data Mac of the data written.
      */
-    private final DataDigest theDigest;
+    private final DataMac theMac;
 
     /**
-     * Access the digest of the data written.
-     * @return the digest of data written
+     * Access the Mac of the data written.
+     * @return the Mac of data written
      */
-    public byte[] getDigest() {
-        return theDigest.digest();
+    public byte[] getMac() {
+        return theMac.finish();
     }
 
     /**
      * Construct the output stream.
-     * @param pDigest the message digest
+     * @param pMac the data mac
      * @param pStream the stream to write encrypted data to
      * @throws JDataException on error
      */
-    public DigestOutputStream(final DataDigest pDigest,
-                              final OutputStream pStream) throws JDataException {
-        /* Store the data digest */
-        theDigest = pDigest;
+    public MacOutputStream(final DataMac pMac,
+                           final OutputStream pStream) throws JDataException {
+        /* Store the data mac */
+        theMac = pMac;
 
         /* Store the stream */
         theStream = pStream;
@@ -104,8 +104,8 @@ public class DigestOutputStream
             throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
-        /* Update the data digest */
-        theDigest.update(pBytes, pOffset, pLength);
+        /* Update the Mac */
+        theMac.update(pBytes, pOffset, pLength);
 
         /* Write the bytes to the stream */
         theStream.write(pBytes, pOffset, pLength);
@@ -124,8 +124,8 @@ public class DigestOutputStream
             throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
-        /* Update the data digest */
-        theDigest.update((byte) pByte);
+        /* Update the data mac */
+        theMac.update((byte) pByte);
 
         /* Write the byte to the stream */
         theStream.write(pByte);

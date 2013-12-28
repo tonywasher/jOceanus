@@ -25,16 +25,18 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jgordianknot.DataDigest;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.DataMac;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 
 import org.bouncycastle.util.Arrays;
 
 /**
- * Provides a digest InputStream. This class simply calculates a digest of the data in the stream at this point as it is read. On close of the file, the digest
- * is validated.
+ * Provides a Mac InputStream. This class simply calculates a Mac of the data in the stream at this point as it is read. On close of the file, the digest is
+ * validated.
  */
-public class DigestInputStream
+public class MacInputStream
         extends InputStream {
     /**
      * Buffer size for skip reads.
@@ -52,19 +54,19 @@ public class DigestInputStream
     private boolean isClosed = false;
 
     /**
-     * The Data Digest of the data read.
+     * The Data Mac of the data read.
      */
-    private final DataDigest theDigest;
+    private final DataMac theMac;
 
     /**
-     * The expected digest.
+     * The Skip buffer.
      */
     private final byte[] theSkipBuffer = new byte[BUFSIZE];
 
     /**
-     * The expected digest value.
+     * The expected mac value.
      */
-    private final byte[] theExpectedDigest;
+    private final byte[] theExpectedMac;
 
     /**
      * Has EOF been reached.
@@ -73,19 +75,34 @@ public class DigestInputStream
 
     /**
      * Construct the input stream.
-     * @param pDigest the message digest
-     * @param pExpected the expected digest value
+     * @param pMac the data Mac
+     * @param pExpected the expected mac value
      * @param pStream the Stream to read data from
      */
-    public DigestInputStream(final DataDigest pDigest,
-                             final byte[] pExpected,
-                             final InputStream pStream) {
-        /* Store the message digest */
-        theDigest = pDigest;
-        theExpectedDigest = Arrays.copyOf(pExpected, pExpected.length);
+    public MacInputStream(final DataMac pMac,
+                          final byte[] pExpected,
+                          final InputStream pStream) {
+        /* Store the data Mac */
+        theMac = pMac;
+        theExpectedMac = Arrays.copyOf(pExpected, pExpected.length);
 
         /* Store the stream details */
         theStream = pStream;
+    }
+
+    /**
+     * Validate the digest.
+     * @param pExpected the expected digest
+     * @throws JDataException on error
+     */
+    public void validateMac(final byte[] pExpected) throws JDataException {
+        /* Calculate mac */
+        byte[] myMac = theMac.finish();
+
+        /* Check valid digest */
+        if (Arrays.areEqual(myMac, pExpected)) {
+            throw new JDataException(ExceptionClass.DATA, "Invalid Mac");
+        }
     }
 
     @Override
@@ -98,12 +115,12 @@ public class DigestInputStream
 
             /* If we have seen EOF */
             if (hasEOFbeenSeen) {
-                /* Calculate digest */
-                byte[] myDigest = theDigest.digest();
+                /* Calculate mac */
+                byte[] myMac = theMac.finish();
 
-                /* Check valid digest */
-                if (!Arrays.areEqual(myDigest, theExpectedDigest)) {
-                    throw new IOException("Invalid Digest");
+                /* Check valid mac */
+                if (!Arrays.areEqual(myMac, theExpectedMac)) {
+                    throw new IOException("Invalid Mac");
                 }
             }
         }
@@ -111,6 +128,7 @@ public class DigestInputStream
 
     @Override
     public long skip(final long pNumToSkip) throws IOException {
+
         /* If we are already closed throw IO Exception */
         if (isClosed) {
             throw new IOException(StreamCipher.ERROR_CLOSED);
@@ -139,7 +157,6 @@ public class DigestInputStream
             iNumSkipped += iNumRead;
         }
 
-        /* Return the skip count */
         return iNumSkipped;
     }
 
@@ -190,8 +207,8 @@ public class DigestInputStream
 
         /* If we have read some data */
         if (iNumRead > 0) {
-            /* Update the message digest */
-            theDigest.update(pBuffer, pOffset, iNumRead);
+            /* Update the data mac */
+            theMac.update(pBuffer, pOffset, iNumRead);
         }
 
         /* Note if EOF has been seen */
@@ -221,8 +238,8 @@ public class DigestInputStream
 
         /* If we read data */
         if (iByte > -1) {
-            /* Update the message digest */
-            theDigest.update((byte) iByte);
+            /* Update the data mac */
+            theMac.update((byte) iByte);
         }
 
         /* Note if EOF has been seen */

@@ -535,7 +535,7 @@ public class ZipFileEntry {
         for (int iIndex = 0; iIndex < myLen; iIndex++) {
             /* Set the digest properties */
             theDigests[iIndex] = pDigests[iIndex].getDigest();
-            theDigestLens[iIndex] = pDigests[iIndex].getDataLen();
+            // theDigestLens[iIndex] = pDigests[iIndex].getDataLen();
         }
 
         /* Store the last length as the file size */
@@ -562,7 +562,7 @@ public class ZipFileEntry {
         /* Loop through the array */
         for (int iIndex = 0; iIndex < myLen; iIndex++) {
             /* Set the key properties */
-            theSecretKeys[iIndex] = pAsymKey.secureSymmetricKey(pEncrypts[iIndex].getSymmetricKey());
+            // theSecretKeys[iIndex] = pAsymKey.secureSymmetricKey(pEncrypts[iIndex].getSymmetricKey());
             theInitVectors[iIndex] = pEncrypts[iIndex].getInitVector();
         }
     }

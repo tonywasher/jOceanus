@@ -158,7 +158,7 @@ public class SecureManager {
                 /* Add the hash to the list and break the loop */
                 theHashList.add(myHash);
                 break;
-            } catch (WrongPasswordException e) {
+            } catch (InvalidCredentialsException e) {
                 myPass.setError("Incorrect password. Please re-enter");
             }
         }

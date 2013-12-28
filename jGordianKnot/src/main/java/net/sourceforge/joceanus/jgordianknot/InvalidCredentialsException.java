@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 /**
  * Exception indicating that an incorrect password was given.
  */
-public class WrongPasswordException
+public class InvalidCredentialsException
         extends RuntimeException {
     /**
      * Serial id.
@@ -36,7 +36,7 @@ public class WrongPasswordException
      * Constructor.
      * @param s exception string
      */
-    public WrongPasswordException(final String s) {
+    public InvalidCredentialsException(final String s) {
         super(s);
     }
 }

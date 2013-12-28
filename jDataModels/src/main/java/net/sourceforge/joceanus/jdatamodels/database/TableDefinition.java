@@ -59,7 +59,6 @@ import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Database field definition class. Maps each dataType to a database field.
@@ -436,9 +435,9 @@ public class TableDefinition {
     public BinaryColumn addEncryptedColumn(final JDataField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, SymmetricKey.IVSIZE
+        BinaryColumn myColumn = new BinaryColumn(this, pId, CipherSet.IVSIZE
                                                             + CipherSet.KEYIDLEN
-                                                            + SymmetricKey.getEncryptionLength(2 * pLength));
+                                                            + CipherSet.getEncryptionLength(2 * pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);

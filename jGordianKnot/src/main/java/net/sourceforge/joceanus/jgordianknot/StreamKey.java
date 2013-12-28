@@ -39,18 +39,13 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
- * Symmetric Key implementation.
+ * Stream Key implementation.
  */
-public class SymmetricKey {
+public class StreamKey {
     /**
      * Cipher initialisation failure.
      */
     private static final String ERROR_CIPHER = "Failed to initialise Cipher";
-
-    /**
-     * Encrypted ID Key Size.
-     */
-    public static final int IDSIZE = 128;
 
     /**
      * The Secret Key.
@@ -60,7 +55,7 @@ public class SymmetricKey {
     /**
      * The Key Type.
      */
-    private final SymKeyType theKeyType;
+    private final StreamKeyType theKeyType;
 
     /**
      * The security generator.
@@ -102,10 +97,10 @@ public class SymmetricKey {
     }
 
     /**
-     * Obtain the symmetric key type.
-     * @return the symmetric key type
+     * Obtain the stream key type.
+     * @return the stream key type
      */
-    public SymKeyType getKeyType() {
+    public StreamKeyType getKeyType() {
         return theKeyType;
     }
 
@@ -118,13 +113,13 @@ public class SymmetricKey {
     }
 
     /**
-     * Constructor for a symmetric key of specified type.
+     * Constructor for a stream key of specified type.
      * @param pGenerator the security generator
-     * @param pKeyType Symmetric KeyType
+     * @param pKeyType Stream KeyType
      * @throws JDataException on error
      */
-    protected SymmetricKey(final SecurityGenerator pGenerator,
-                           final SymKeyType pKeyType) throws JDataException {
+    protected StreamKey(final SecurityGenerator pGenerator,
+                        final StreamKeyType pKeyType) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pGenerator.getKeyLen();
@@ -136,25 +131,25 @@ public class SymmetricKey {
     }
 
     /**
-     * Constructor for a symmetric key of random type.
+     * Constructor for a stream key of random type.
      * @param pGenerator the security generator
      * @throws JDataException on error
      */
-    protected SymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected StreamKey(final SecurityGenerator pGenerator) throws JDataException {
         /* Create StreamKey for random key type */
-        this(pGenerator, SymKeyType.getRandomTypes(1, pGenerator.getRandom())[0]);
+        this(pGenerator, StreamKeyType.getRandomTypes(1, pGenerator.getRandom())[0]);
     }
 
     /**
-     * Constructor for a decoded symmetric key.
+     * Constructor for a decoded stream key.
      * @param pGenerator the security generator
      * @param pKey Secret Key for algorithm
-     * @param pKeyType Symmetric KeyType
+     * @param pKeyType Stream KeyType
      * @throws JDataException on error
      */
-    protected SymmetricKey(final SecurityGenerator pGenerator,
-                           final SecretKey pKey,
-                           final SymKeyType pKeyType) throws JDataException {
+    protected StreamKey(final SecurityGenerator pGenerator,
+                        final SecretKey pKey,
+                        final StreamKeyType pKeyType) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
@@ -182,13 +177,13 @@ public class SymmetricKey {
             return false;
         }
 
-        /* Make sure that the object is a Symmetric Key */
+        /* Make sure that the object is a Stream Key */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }
 
         /* Access the target Key */
-        SymmetricKey myThat = (SymmetricKey) pThat;
+        StreamKey myThat = (StreamKey) pThat;
 
         /* Not equal if different key-types */
         if (myThat.theKeyType != theKeyType) {
@@ -200,22 +195,12 @@ public class SymmetricKey {
     }
 
     /**
-     * Obtain data cipher for encryption/decryption.
-     * @return the Data Cipher
-     * @throws JDataException on error
-     */
-    public DataCipher getDataCipher() throws JDataException {
-        /* Create the Data Cipher */
-        return new DataCipher(this);
-    }
-
-    /**
      * Obtain stream cipher for encryption/decryption.
      * @return the Stream Cipher
      * @throws JDataException on error
      */
     public StreamCipher getStreamCipher() throws JDataException {
-        /* Create the Stream Cipher */
+        /* Return the Stream Cipher */
         return new StreamCipher(this);
     }
 
@@ -228,7 +213,7 @@ public class SymmetricKey {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
-            return Cipher.getInstance(theKeyType.getCipher(), theGenerator.getProvider().getProvider());
+            return Cipher.getInstance(theKeyType.getAlgorithm(theGenerator.useRestricted()), theGenerator.getProvider().getProvider());
 
             /* catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
@@ -249,10 +234,9 @@ public class SymmetricKey {
         try {
             /* Initialise the cipher generating a random Initialisation vector */
             myCipher.init(Cipher.ENCRYPT_MODE, theKey, theGenerator.getRandom());
-
             /* catch exceptions */
         } catch (InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
 
         /* Return the Stream Cipher */
@@ -274,10 +258,9 @@ public class SymmetricKey {
             /* Initialise the cipher using the password */
             AlgorithmParameterSpec myParms = new IvParameterSpec(pInitVector);
             myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
-
             /* catch exceptions */
         } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
         }
 
         /* Return the Stream Cipher */

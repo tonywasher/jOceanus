@@ -173,7 +173,7 @@ public class PasswordHash {
      * @param pGenerator the security generator
      * @param pHashBytes the Hash bytes
      * @param pPassword the password (cleared after usage)
-     * @throws WrongPasswordException if wrong password is given
+     * @throws InvalidCredentialsException if wrong password is given
      * @throws JDataException on error
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
@@ -299,7 +299,7 @@ public class PasswordHash {
     /**
      * Attempt to match the password hash with the password.
      * @param pPassword the password (cleared after usage)
-     * @throws WrongPasswordException on wrong password
+     * @throws InvalidCredentialsException on wrong password
      * @throws JDataException on error
      */
     private void attemptPassword(final char[] pPassword) throws JDataException {
@@ -309,7 +309,7 @@ public class PasswordHash {
         /* Check that the arrays match */
         if (!Arrays.equals(theHashBytes, myHashBytes)) {
             /* Fail the password attempt */
-            throw new WrongPasswordException("Invalid Password");
+            throw new InvalidCredentialsException("Invalid Password");
         }
 
         /* Create the Cipher Set */
@@ -542,7 +542,7 @@ public class PasswordHash {
         } catch (JDataException e) {
             theGenerator.getLogger().log(Level.SEVERE, "Password attempt failed", e);
             return null;
-        } catch (WrongPasswordException e) {
+        } catch (InvalidCredentialsException e) {
             return null;
         } finally {
             if (myPassword != null) {

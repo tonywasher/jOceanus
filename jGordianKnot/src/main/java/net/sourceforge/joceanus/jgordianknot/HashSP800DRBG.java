@@ -44,8 +44,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.MessageDigest;
-
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 
 import org.bouncycastle.crypto.prng.EntropySource;
@@ -55,7 +53,7 @@ import org.bouncycastle.util.Arrays;
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.
  * <p>
- * This implementation is modified so that it accepts any JCE Digest.
+ * This implementation is modified so that it accepts any JCE MessageDigest.
  */
 public class HashSP800DRBG
         implements SP80090DRBG {
@@ -92,7 +90,7 @@ public class HashSP800DRBG
     /**
      * The Message Digest.
      */
-    private final MessageDigest theDigest;
+    private final DataDigest theDigest;
 
     /**
      * The Entropy Source.
@@ -121,7 +119,7 @@ public class HashSP800DRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected HashSP800DRBG(final MessageDigest pDigest,
+    protected HashSP800DRBG(final DataDigest pDigest,
                             final EntropySource pEntropy,
                             final byte[] pSecurityBytes,
                             final byte[] pInitVector) {

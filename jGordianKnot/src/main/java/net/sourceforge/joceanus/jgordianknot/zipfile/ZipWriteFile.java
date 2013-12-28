@@ -34,7 +34,6 @@ import java.util.zip.ZipOutputStream;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.MsgDigest;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
@@ -146,9 +145,6 @@ public class ZipWriteFile {
      */
     public ZipWriteFile(final PasswordHash pHash,
                         final File pFile) throws JDataException {
-        FileOutputStream myOutFile;
-        BufferedOutputStream myOutBuffer;
-
         /* Protect against exceptions */
         try {
             /* Record hash and generator */
@@ -163,8 +159,8 @@ public class ZipWriteFile {
             theNumEncrypts = theGenerator.getNumCipherSteps();
 
             /* Create the output streams */
-            myOutFile = new FileOutputStream(pFile);
-            myOutBuffer = new BufferedOutputStream(myOutFile);
+            FileOutputStream myOutFile = new FileOutputStream(pFile);
+            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
 
             /*
@@ -188,9 +184,6 @@ public class ZipWriteFile {
      * @throws JDataException on error
      */
     public ZipWriteFile(final File pFile) throws JDataException {
-        FileOutputStream myOutFile;
-        BufferedOutputStream myOutBuffer;
-
         /* Protect against exceptions */
         try {
             /* record the password hash */
@@ -200,8 +193,8 @@ public class ZipWriteFile {
             theNumEncrypts = -1;
 
             /* Create the output streams */
-            myOutFile = new FileOutputStream(pFile);
-            myOutBuffer = new BufferedOutputStream(myOutFile);
+            FileOutputStream myOutFile = new FileOutputStream(pFile);
+            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
 
             /* Create the file contents */
@@ -214,42 +207,12 @@ public class ZipWriteFile {
     }
 
     /**
-     * Obtain a debug output stream for an entry in the zip file.
-     * @param pFile the file details for the new zip entry
-     * @return the output stream
-     * @throws JDataException on error
-     */
-    public OutputStream getDebugOutputStream(final File pFile) throws JDataException {
-        /* Obtain debug output stream */
-        return getOutputStream(pFile, true);
-    }
-
-    /**
-     * Obtain a standard output stream for an entry in the zip file.
+     * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
      * @throws JDataException on error
      */
     public OutputStream getOutputStream(final File pFile) throws JDataException {
-        /* Obtain standard output stream */
-        return getOutputStream(pFile, false);
-    }
-
-    /**
-     * Obtain an output stream for an entry in the zip file.
-     * @param pFile the file details for the new zip entry
-     * @param pDebug is this entry to be debugged
-     * @return the output stream
-     * @throws JDataException on error
-     */
-    private OutputStream getOutputStream(final File pFile,
-                                         final boolean pDebug) throws JDataException {
-        LZMAOutputStream myZip;
-        DigestOutputStream myDigest;
-        EncryptionOutputStream myEncrypt;
-        int iDigest;
-        int iEncrypt;
-
         /* Reject call if we have closed the stream */
         if (theStream == null) {
             throw new JDataException(ExceptionClass.LOGIC, "ZipFile is closed");
@@ -276,28 +239,21 @@ public class ZipWriteFile {
             /* Create a new zipFileEntry */
             theFileEntry = theContents.addZipFileEntry(theFileName);
 
-            /* Add debug indication if required */
-            if (pDebug) {
-                theFileEntry.setDebug();
-            }
-
             /* Simply create a wrapper on the output stream */
             theOutput = new WrapOutputStream();
 
             /* If we are encrypting */
             if (isEncrypted()) {
                 /* Determine number of digests */
-                int iNumDigest = 2 + (pDebug
-                        ? theNumEncrypts
-                        : 0);
+                int iNumDigest = 2;
 
                 /* Create the arrays */
                 theDigests = new DigestOutputStream[iNumDigest];
                 theEncrypts = new EncryptionOutputStream[theNumEncrypts];
-                iDigest = 0;
+                int iDigest = 0;
 
                 /* Create an initial digest stream */
-                myDigest = new DigestOutputStream(new MsgDigest(theGenerator), theOutput);
+                DigestOutputStream myDigest = new DigestOutputStream(theGenerator.generateDigest(), theOutput);
                 theOutput = myDigest;
                 theDigests[iDigest++] = myDigest;
 
@@ -305,28 +261,20 @@ public class ZipWriteFile {
                 SymKeyType[] myTypes = theGenerator.generateSymKeyTypes();
 
                 /* For each encryption stream */
-                for (iEncrypt = 0; iEncrypt < theNumEncrypts; iEncrypt++) {
+                for (int iEncrypt = 0; iEncrypt < theNumEncrypts; iEncrypt++) {
                     /* Create the encryption stream */
                     SymmetricKey myKey = theGenerator.generateSymmetricKey(myTypes[iEncrypt]);
-                    myEncrypt = new EncryptionOutputStream(myKey, theOutput);
+                    EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, theOutput);
                     theOutput = myEncrypt;
                     theEncrypts[iEncrypt] = myEncrypt;
-
-                    /* if we are debugging */
-                    if (pDebug) {
-                        /* Create an extra digest stream */
-                        myDigest = new DigestOutputStream(new MsgDigest(theGenerator), theOutput);
-                        theOutput = myDigest;
-                        theDigests[iDigest++] = myDigest;
-                    }
                 }
 
                 /* Attach an LZMA output stream onto the output */
-                myZip = new LZMAOutputStream(theOutput);
+                LZMAOutputStream myZip = new LZMAOutputStream(theOutput);
                 theOutput = myZip;
 
                 /* Create a final digest stream */
-                myDigest = new DigestOutputStream(new MsgDigest(theGenerator), theOutput);
+                myDigest = new DigestOutputStream(theGenerator.generateDigest(), theOutput);
                 theOutput = myDigest;
                 theDigests[iDigest++] = myDigest;
             }
@@ -390,8 +338,6 @@ public class ZipWriteFile {
      * @throws IOException on error
      */
     public void close() throws IOException {
-        String myHeader;
-
         /* Close any open output stream */
         closeOutputStream();
 
@@ -426,7 +372,7 @@ public class ZipWriteFile {
                     myEntry.setZipEntry(theEntry);
 
                     /* Access the encoded file string */
-                    myHeader = theContents.encodeContents();
+                    String myHeader = theContents.encodeContents();
 
                     /* Write the bytes to the zip file and close the entry */
                     theStream.write(theHash.encryptString(myHeader));

@@ -362,7 +362,7 @@ public class DataKey
             setValuePasswordHash(myHash);
 
             /* Access the Cipher */
-            setValueCipher(myKey.initDataCipher());
+            setValueCipher(myKey.getDataCipher());
 
             /* Register the DataKey */
             myControlKey.registerDataKey(this);
@@ -405,7 +405,7 @@ public class DataKey
             setValueSecuredKeyDef(myCipher.secureSymmetricKey(myKey));
 
             /* Access the Cipher */
-            setValueCipher(myKey.initDataCipher());
+            setValueCipher(myKey.getDataCipher());
 
             /* Register the DataKey */
             pControlKey.registerDataKey(this);

@@ -44,7 +44,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -100,6 +99,14 @@ public class SP800SecureRandomBuilder {
     private byte[] theSecurityBytes = null;
 
     /**
+     * Access the Secure Random.
+     * @return the secure random
+     */
+    protected SecureRandom getRandom() {
+        return theRandom;
+    }
+
+    /**
      * Basic constructor, creates a builder using an EntropySourceProvider based on the default SecureRandom with predictionResistant set to false.
      * <p>
      * Any SecureRandom created from a builder constructed like this will make use of input passed to SecureRandom.setSeed() if the default SecureRandom does
@@ -151,12 +158,12 @@ public class SP800SecureRandomBuilder {
 
     /**
      * Build a SecureRandom based on a SP 800-90A Hash DRBG.
-     * @param pDigest digest algorithm to use in the DRBG underneath the SecureRandom.
+     * @param pDigest digest to use in the DRBG underneath the SecureRandom.
      * @param pInitVector nonce value to use in DRBG construction.
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting SecureRandom should reseed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
      */
-    protected SP800SecureRandom buildHash(final MessageDigest pDigest,
+    protected SP800SecureRandom buildHash(final DataDigest pDigest,
                                           final byte[] pInitVector,
                                           final boolean isPredictionResistant) {
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);

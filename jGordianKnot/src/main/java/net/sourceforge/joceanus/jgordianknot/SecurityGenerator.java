@@ -22,38 +22,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.StreamRegister;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
 
 /**
  * Generator class for various security primitives.
@@ -69,6 +55,16 @@ public class SecurityGenerator {
      * The number of seed bytes.
      */
     protected static final int SEED_SIZE = 32;
+
+    /**
+     * Restricted key length.
+     */
+    protected static final int SMALL_KEYLEN = 128;
+
+    /**
+     * Unlimited key length.
+     */
+    protected static final int BIG_KEYLEN = 256;
 
     /**
      * The Security provider.
@@ -121,14 +117,9 @@ public class SecurityGenerator {
     private final Logger theLogger;
 
     /**
-     * List of asymmetric registrations.
+     * Security Register.
      */
-    private List<AsymRegistration> theAsymRegister = new ArrayList<AsymRegistration>();
-
-    /**
-     * List of symmetric registrations.
-     */
-    private List<SymRegistration> theSymRegister = new ArrayList<SymRegistration>();
+    private final SecurityRegister theRegister;
 
     /**
      * Access the Security provider.
@@ -179,11 +170,29 @@ public class SecurityGenerator {
     }
 
     /**
+     * Do we use long hashes.
+     * @return true/false
+     */
+    protected boolean useLongHash() {
+        return useLongHash;
+    }
+
+    /**
      * Obtain logger.
      * @return the Logger
      */
     public Logger getLogger() {
         return theLogger;
+    }
+
+    /**
+     * Determine key length.
+     * @return key length
+     */
+    protected int getKeyLen() {
+        return useRestricted
+                ? SMALL_KEYLEN
+                : BIG_KEYLEN;
     }
 
     /**
@@ -230,7 +239,12 @@ public class SecurityGenerator {
         theRandomBuilder.setSecurityBytes(theSecurityPhrase);
 
         /* Create a new secure random generator */
-        theRandom = generateHashSecureRandom(DigestType.SHA3, false);
+        SecureRandom myRandom = theRandomBuilder.getRandom();
+        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+        theRandom = generateHashSecureRandom(myType[0], false);
+
+        /* Create the register */
+        theRegister = new SecurityRegister(this);
     }
 
     /**
@@ -252,7 +266,7 @@ public class SecurityGenerator {
     public final SecureRandom generateHashSecureRandom(final DigestType pType,
                                                        final boolean isPredictionResistant) throws JDataException {
         /* Create the digest */
-        MessageDigest myDigest = accessDigest(pType);
+        DataDigest myDigest = generateDigest(pType);
 
         /* Create the new SecureRandom */
         return theRandomBuilder.buildHash(myDigest, null, isPredictionResistant);
@@ -291,7 +305,7 @@ public class SecurityGenerator {
      * @param pPassword the password
      * @return the Password hash
      * @throws JDataException on error
-     * @throws WrongPasswordException if password does not match
+     * @throws InvalidCredentialsException if password does not match
      */
     public PasswordHash derivePasswordHash(final byte[] pHashBytes,
                                            final char[] pPassword) throws JDataException {
@@ -317,7 +331,38 @@ public class SecurityGenerator {
      */
     public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws JDataException {
         /* Create the new Symmetric Key */
-        return new SymmetricKey(this, pKeyType, useRestricted());
+        return new SymmetricKey(this, pKeyType);
+    }
+
+    /**
+     * Generate a new Symmetric Key of a random type.
+     * @return the newly created Symmetric Key
+     * @throws JDataException on error
+     */
+    public SymmetricKey generateSymmetricKey() throws JDataException {
+        /* Create the new Symmetric Key */
+        return new SymmetricKey(this);
+    }
+
+    /**
+     * Generate a new Stream Key for the required KeyType.
+     * @param pKeyType the Stream Key type
+     * @return the newly created Stream Key
+     * @throws JDataException on error
+     */
+    public StreamKey generateStreamKey(final StreamKeyType pKeyType) throws JDataException {
+        /* Create the new Stream Key */
+        return new StreamKey(this, pKeyType);
+    }
+
+    /**
+     * Generate a new Stream Key of a random type.
+     * @return the newly created Stream Key
+     * @throws JDataException on error
+     */
+    public StreamKey generateStreamKey() throws JDataException {
+        /* Create the new Stream Key */
+        return new StreamKey(this);
     }
 
     /**
@@ -355,7 +400,7 @@ public class SecurityGenerator {
      */
     protected KeyPair generateKeyPair(final AsymKeyType pKeyType) throws JDataException {
         /* Obtain the registration */
-        AsymRegistration myReg = getAsymRegistration(pKeyType);
+        AsymmetricRegister myReg = theRegister.getAsymRegistration(pKeyType);
 
         /* Generate the KeyPair */
         return myReg.generateKeyPair();
@@ -373,14 +418,14 @@ public class SecurityGenerator {
                                     final byte[] pPrivate,
                                     final byte[] pPublic) throws JDataException {
         /* Obtain the registration */
-        AsymRegistration myReg = getAsymRegistration(pKeyType);
+        AsymmetricRegister myReg = theRegister.getAsymRegistration(pKeyType);
 
         /* Derive the KeyPair */
         return myReg.deriveKeyPair(pPrivate, pPublic);
     }
 
     /**
-     * Generate new KeyPair.
+     * Generate new Secret Key.
      * @param pKeyType the key type
      * @param pKeyLen the key length
      * @return the SecretKey
@@ -389,7 +434,23 @@ public class SecurityGenerator {
     protected SecretKey generateSecretKey(final SymKeyType pKeyType,
                                           final int pKeyLen) throws JDataException {
         /* Obtain the registration */
-        SymRegistration myReg = getSymRegistration(pKeyType, pKeyLen);
+        SymmetricRegister myReg = theRegister.getSymRegistration(pKeyType, pKeyLen);
+
+        /* Generate the SecretKey */
+        return myReg.generateKey();
+    }
+
+    /**
+     * Generate new Stream Key.
+     * @param pKeyType the key type
+     * @param pKeyLen the key length
+     * @return the StreamKey
+     * @throws JDataException on error
+     */
+    protected SecretKey generateSecretKey(final StreamKeyType pKeyType,
+                                          final int pKeyLen) throws JDataException {
+        /* Obtain the registration */
+        StreamRegister myReg = theRegister.getStreamRegistration(pKeyType, pKeyLen);
 
         /* Generate the SecretKey */
         return myReg.generateKey();
@@ -408,60 +469,31 @@ public class SecurityGenerator {
             return KeyAgreement.getInstance(pAlgorithm, theProviderName);
 
             /* Catch exceptions */
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
         }
     }
 
     /**
-     * Obtain a Cipher.
-     * @param pAlgorithm the algorithm required
-     * @return the cipher
-     * @throws JDataException on error
-     */
-    protected Cipher accessCipher(final String pAlgorithm) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Return a cipher for the algorithm */
-            return Cipher.getInstance(pAlgorithm, theProviderName);
-
-            /* Catch exceptions */
-        } catch (NoSuchPaddingException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
-        }
-    }
-
-    /**
-     * Obtain a MessageDigest.
+     * Obtain a DataDigest of the specified type.
      * @param pDigestType the digest type required
-     * @return the MessageDigest
+     * @return the DataDigest
      * @throws JDataException on error
      */
-    public final MessageDigest accessDigest(final DigestType pDigestType) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(pDigestType.getAlgorithm(useLongHash), theProviderName);
+    public final DataDigest generateDigest(final DigestType pDigestType) throws JDataException {
+        /* Return a digest for the algorithm */
+        return new DataDigest(this, pDigestType);
+    }
 
-            /* Catch exceptions */
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Digest", e);
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Digest", e);
-        }
+    /**
+     * Obtain a DataDigest of a random type.
+     * @return the DataDigest
+     * @throws JDataException on error
+     */
+    public final DataDigest generateDigest() throws JDataException {
+        /* Return a random digest */
+        return new DataDigest(this);
     }
 
     /**
@@ -474,13 +506,10 @@ public class SecurityGenerator {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
-            return Mac.getInstance(pDigestType.getHMacAlgorithm(useLongHash), theProviderName);
+            return Mac.getInstance(pDigestType.getMacAlgorithm(useLongHash), theProviderName);
 
             /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        } catch (NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
@@ -501,7 +530,7 @@ public class SecurityGenerator {
             Mac myMac = accessMac(pDigestType);
 
             /* Initialise the MAC */
-            SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getHMacAlgorithm(useLongHash));
+            SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getMacAlgorithm(useLongHash));
             myMac.init(myKey);
 
             /* Return the initialised MAC */
@@ -538,294 +567,6 @@ public class SecurityGenerator {
         } catch (InvalidKeyException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Obtain a Signature.
-     * @param pAlgorithm the algorithm required
-     * @return the signature
-     * @throws JDataException on error
-     */
-    protected Signature accessSignature(final String pAlgorithm) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Return a signature for the algorithm */
-            return Signature.getInstance(pAlgorithm, theProviderName);
-
-            /* Catch exceptions */
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
-        }
-    }
-
-    /**
-     * Obtain the Asymmetric Registration.
-     * @param pKeyType the key type
-     * @return the registration
-     */
-    private AsymRegistration getAsymRegistration(final AsymKeyType pKeyType) {
-        /* Loop through the list */
-        Iterator<AsymRegistration> myIterator = theAsymRegister.iterator();
-        while (myIterator.hasNext()) {
-            /* Access the item */
-            AsymRegistration myReg = myIterator.next();
-
-            /* If this is the right one, return it */
-            if (myReg.getKeyType() == pKeyType) {
-                return myReg;
-            }
-        }
-
-        /* Return the new registration */
-        return new AsymRegistration(pKeyType);
-    }
-
-    /**
-     * Obtain the Symmetric Registration.
-     * @param pKeyType the key type
-     * @param pKeyLen the key length
-     * @return the registration
-     */
-    private SymRegistration getSymRegistration(final SymKeyType pKeyType,
-                                               final int pKeyLen) {
-        /* Loop through the list */
-        Iterator<SymRegistration> myIterator = theSymRegister.iterator();
-        while (myIterator.hasNext()) {
-            /* Access the item */
-            SymRegistration myReg = myIterator.next();
-
-            /* If this is the right one, return it */
-            if ((myReg.getKeyType() == pKeyType)
-                && (myReg.getKeyLen() == pKeyLen)) {
-                return myReg;
-            }
-        }
-
-        /* Return the new registration */
-        return new SymRegistration(pKeyType, pKeyLen);
-    }
-
-    /**
-     * AsymRegistration class.
-     */
-    private final class AsymRegistration {
-        /**
-         * Asymmetric Key Type.
-         */
-        private final AsymKeyType theKeyType;
-
-        /**
-         * Asymmetric Algorithm.
-         */
-        private final String theAlgorithm;
-
-        /**
-         * Key Factory for Asymmetric Key Type.
-         */
-        private KeyFactory theFactory = null;
-
-        /**
-         * KeyPair Generator for Asymmetric Key Type.
-         */
-        private KeyPairGenerator theGenerator = null;
-
-        /**
-         * Obtain the KeyType.
-         * @return the Key type
-         */
-        private AsymKeyType getKeyType() {
-            return theKeyType;
-        }
-
-        /**
-         * Constructor.
-         * @param pKeyType the key type
-         */
-        private AsymRegistration(final AsymKeyType pKeyType) {
-            /* Store the key type */
-            theKeyType = pKeyType;
-            theAlgorithm = theKeyType.getAlgorithm();
-
-            /* Add it to the registrations */
-            theAsymRegister.add(this);
-        }
-
-        /**
-         * Derive the KeyPair from encoded forms.
-         * @param pPrivate the Encoded private form (may be null for public-only)
-         * @param pPublic the Encoded public form
-         * @return the KeyPair
-         * @throws JDataException on error
-         */
-        private KeyPair deriveKeyPair(final byte[] pPrivate,
-                                      final byte[] pPublic) throws JDataException {
-            /* If we have not allocated the factory */
-            if (theFactory == null) {
-                /* Protect against Exceptions */
-                try {
-                    /* Allocate the new factory */
-                    theFactory = KeyFactory.getInstance(theAlgorithm, theProviderName);
-                } catch (NoSuchProviderException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
-                } catch (NoSuchAlgorithmException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
-                }
-            }
-
-            /* Protect against exceptions */
-            try {
-                PrivateKey myPrivate = null;
-                PublicKey myPublic = null;
-
-                /* if we have a private key */
-                if (pPrivate != null) {
-                    /* Build the private key */
-                    PKCS8EncodedKeySpec myPrivSpec = new PKCS8EncodedKeySpec(pPrivate);
-                    myPrivate = theFactory.generatePrivate(myPrivSpec);
-                }
-
-                /* Build the public key */
-                X509EncodedKeySpec myPubSpec = new X509EncodedKeySpec(pPublic);
-                myPublic = theFactory.generatePublic(myPubSpec);
-
-                /* Return the private key */
-                return new KeyPair(myPublic, myPrivate);
-
-                /* Catch exceptions */
-            } catch (InvalidKeySpecException e) {
-                /* Throw the exception */
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
-            }
-        }
-
-        /**
-         * Generate new KeyPair.
-         * @return the KeyPair
-         * @throws JDataException on error
-         */
-        private KeyPair generateKeyPair() throws JDataException {
-            /* If we have not allocated the generator */
-            if (theGenerator == null) {
-                /* Protect against Exceptions */
-                try {
-                    /* Allocate the new factory */
-                    theGenerator = KeyPairGenerator.getInstance(theAlgorithm, theProviderName);
-
-                    /* Handle elliptic curve key types differently */
-                    if (theKeyType.isElliptic()) {
-                        /* Initialise with the parameter specification for the curve */
-                        ECGenParameterSpec parms = new ECGenParameterSpec(theKeyType.getCurve());
-                        theGenerator.initialize(parms, theRandom);
-
-                        /* Else standard RSA type */
-                    } else {
-                        /* Initialise to required key size */
-                        theGenerator.initialize(theKeyType.getKeySize(), theRandom);
-                    }
-                } catch (NoSuchProviderException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                } catch (NoSuchAlgorithmException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                } catch (InvalidAlgorithmParameterException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                }
-            }
-
-            /* Generate the Key Pair */
-            return theGenerator.generateKeyPair();
-        }
-    }
-
-    /**
-     * SymRegistration class.
-     */
-    private final class SymRegistration {
-        /**
-         * Symmetric Key Type.
-         */
-        private final SymKeyType theKeyType;
-
-        /**
-         * Symmetric Algorithm.
-         */
-        private final String theAlgorithm;
-
-        /**
-         * Key Length.
-         */
-        private final int theKeyLen;
-
-        /**
-         * Key Generator for Symmetric Key Type.
-         */
-        private KeyGenerator theGenerator = null;
-
-        /**
-         * Obtain the KeyType.
-         * @return the Key type
-         */
-        private SymKeyType getKeyType() {
-            return theKeyType;
-        }
-
-        /**
-         * Obtain the KeyLength.
-         * @return the Key length
-         */
-        private int getKeyLen() {
-            return theKeyLen;
-        }
-
-        /**
-         * Constructor.
-         * @param pKeyType the key type
-         * @param pKeyLen the key length
-         */
-        private SymRegistration(final SymKeyType pKeyType,
-                                final int pKeyLen) {
-            /* Store the key type */
-            theKeyType = pKeyType;
-            theKeyLen = pKeyLen;
-            theAlgorithm = theKeyType.getAlgorithm();
-
-            /* Add it to the registrations */
-            theSymRegister.add(this);
-        }
-
-        /**
-         * Generate a new key of the required keyLength.
-         * @return the Secret Key
-         * @throws JDataException on error
-         */
-        private SecretKey generateKey() throws JDataException {
-            /* If we have not allocated the generator */
-            if (theGenerator == null) {
-                /* Protect against Exceptions */
-                try {
-                    /* Create the key generator */
-                    theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
-                    theGenerator.init(theKeyLen, theRandom);
-                } catch (NoSuchProviderException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                } catch (NoSuchAlgorithmException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                }
-            }
-
-            /* Generate the Secret key */
-            return theGenerator.generateKey();
         }
     }
 }

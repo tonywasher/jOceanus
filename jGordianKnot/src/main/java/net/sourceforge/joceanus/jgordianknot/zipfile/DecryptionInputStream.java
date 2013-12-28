@@ -25,10 +25,9 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.crypto.Cipher;
-
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
@@ -37,11 +36,6 @@ import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
  */
 public class DecryptionInputStream
         extends InputStream {
-    /**
-     * Stream closed failure message.
-     */
-    private static final String MSG_STREAM_CLOSED = "Stream is closed";
-
     /**
      * Buffer size for transfers.
      */
@@ -92,19 +86,30 @@ public class DecryptionInputStream
     public DecryptionInputStream(final SymmetricKey pKey,
                                  final byte[] pInitVector,
                                  final InputStream pStream) throws JDataException {
-        /* Protect from exceptions */
-        try {
-            /* record the input stream */
-            theStream = pStream;
+        /* record the input stream */
+        theStream = pStream;
 
-            /* Initialise the decryption */
-            Cipher myCipher = pKey.initDecryptionStream(pInitVector);
-            theCipher = new StreamCipher(myCipher, myCipher.getIV());
+        /* Initialise the cipher */
+        theCipher = new StreamCipher(pKey);
+        theCipher.initialiseDecryption(pInitVector);
+    }
 
-            /* Catch exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception deciphering secret key", e);
-        }
+    /**
+     * Construct the decryption input stream.
+     * @param pKey the stream key
+     * @param pInitVector the initialisation vector
+     * @param pStream the stream to decrypt from
+     * @throws JDataException on error
+     */
+    public DecryptionInputStream(final StreamKey pKey,
+                                 final byte[] pInitVector,
+                                 final InputStream pStream) throws JDataException {
+        /* record the input stream */
+        theStream = pStream;
+
+        /* Initialise the cipher */
+        theCipher = new StreamCipher(pKey);
+        theCipher.initialiseDecryption(pInitVector);
     }
 
     @Override
@@ -127,7 +132,7 @@ public class DecryptionInputStream
 
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException(MSG_STREAM_CLOSED);
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* while we have data left to skip */
@@ -158,7 +163,7 @@ public class DecryptionInputStream
     public int available() throws IOException {
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException(MSG_STREAM_CLOSED);
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* Determine the number of bytes available */
@@ -180,7 +185,7 @@ public class DecryptionInputStream
     public void reset() throws IOException {
         /* If we are already closed then throw IO Exception */
         if (isClosed) {
-            throw new IOException(MSG_STREAM_CLOSED);
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* Not supported */
@@ -195,7 +200,7 @@ public class DecryptionInputStream
 
         /* If we are already closed throw IO Exception */
         if (isClosed) {
-            throw new IOException(MSG_STREAM_CLOSED);
+            throw new IOException(StreamCipher.ERROR_CLOSED);
         }
 
         /* Protect against exceptions */

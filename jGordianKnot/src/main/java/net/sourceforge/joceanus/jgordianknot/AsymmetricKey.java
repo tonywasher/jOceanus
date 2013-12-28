@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -37,6 +38,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
@@ -51,6 +53,11 @@ import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
  * should only be used for Signatures and Wrapping keys.
  */
 public class AsymmetricKey {
+    /**
+     * Cipher initialisation failure.
+     */
+    private static final String ERROR_CIPHER = "Failed to initialise Cipher";
+
     /**
      * Encoded Size for Public Keys.
      */
@@ -391,6 +398,26 @@ public class AsymmetricKey {
     }
 
     /**
+     * Obtain cipher.
+     * @param bWrap initialise cipher for wrap true/false?
+     * @return the Stream Cipher
+     * @throws JDataException on error
+     */
+    private Cipher getCipher(final boolean bWrap) throws JDataException {
+        /* Protect against exceptions */
+        try {
+            /* Create a new cipher */
+            return Cipher.getInstance(bWrap
+                    ? theKeyType.getAlgorithm()
+                    : theKeyType.getCipher(), theGenerator.getProvider().getProvider());
+
+            /* catch exceptions */
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+        }
+    }
+
+    /**
      * derive a SymmetricKey from secured key definition.
      * @param pSecuredKeyDef the secured key definition
      * @return the Symmetric key
@@ -417,7 +444,7 @@ public class AsymmetricKey {
                 /* else we use RAS semantics */
             } else {
                 /* Initialise the cipher */
-                Cipher myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
+                Cipher myCipher = getCipher(true);
                 myCipher.init(Cipher.UNWRAP_MODE, getPrivateKey());
 
                 /* Parse the KeySpec */
@@ -431,9 +458,7 @@ public class AsymmetricKey {
                 mySymKey = new SymmetricKey(theGenerator, myKey, myType);
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to unwrap key", e);
-        } catch (InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to unwrap key", e);
         }
 
@@ -472,7 +497,7 @@ public class AsymmetricKey {
                 /* else we are using RSA semantics */
             } else {
                 /* Initialise the cipher */
-                Cipher myCipher = theGenerator.accessCipher(theKeyType.getAlgorithm());
+                Cipher myCipher = getCipher(true);
                 myCipher.init(Cipher.WRAP_MODE, getPublicKey());
 
                 /* wrap the key */
@@ -483,11 +508,8 @@ public class AsymmetricKey {
                 myWrappedKey = myNeedle.getExternal();
             }
 
-        } catch (InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Invalid key", e);
-
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Invalid BlockSize", e);
+        } catch (InvalidKeyException | IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to wrap key", e);
         }
 
         /* Add the key definition to the map */
@@ -552,7 +574,7 @@ public class AsymmetricKey {
         /* Protect against exceptions */
         try {
             /* Create a signature */
-            Signature mySignature = theGenerator.accessSignature(theKeyType.getSignature());
+            Signature mySignature = Signature.getInstance(theKeyType.getSignature(), theGenerator.getProvider().getProvider());
             if (bSign) {
                 mySignature.initSign(getPrivateKey(), theGenerator.getRandom());
             } else {
@@ -563,7 +585,7 @@ public class AsymmetricKey {
             return mySignature;
 
             /* Catch exceptions */
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Exception building signature", e);
         }
     }
@@ -611,7 +633,7 @@ public class AsymmetricKey {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
-            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = getCipher(false);
             myCipher.init(Cipher.ENCRYPT_MODE, pTarget.getPublicKey());
 
             /* Convert the string to a byte array */
@@ -657,16 +679,7 @@ public class AsymmetricKey {
 
             /* Return to caller */
             return myOutput;
-        } catch (ShortBufferException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (InvalidKeyException e) {
+        } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }
@@ -716,7 +729,7 @@ public class AsymmetricKey {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
-            Cipher myCipher = theGenerator.accessCipher(theKeyType.getCipher());
+            Cipher myCipher = getCipher(false);
             myCipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
 
             /* Determine the block sizes */
@@ -759,16 +772,7 @@ public class AsymmetricKey {
 
             /* Create the string */
             return DataConverter.byteArrayToString(myOutput);
-        } catch (ShortBufferException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-
-        } catch (InvalidKeyException e) {
+        } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }
     }

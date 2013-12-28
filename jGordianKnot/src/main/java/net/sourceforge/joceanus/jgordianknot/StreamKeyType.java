@@ -29,53 +29,33 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
- * Symmetric Key Types. Available algorithms.
+ * Stream Key Type.
  */
-public enum SymKeyType {
+public enum StreamKeyType {
     /**
-     * AES.
+     * XSalsa20.
      */
-    AES(1),
+    XSALSA20(1),
 
     /**
-     * TwoFish.
+     * HC256.
      */
-    TWOFISH(2),
+    HC256(2),
 
     /**
-     * Serpent.
+     * ChaCha.
      */
-    SERPENT(3),
+    CHACHA(3),
 
     /**
-     * CAMELLIA.
+     * VMPC.
      */
-    CAMELLIA(4),
-
-    /**
-     * RC6.
-     */
-    RC6(5),
-
-    /**
-     * CAST6.
-     */
-    CAST6(6),
-
-    /**
-     * ThreeFish.
-     */
-    THREEFISH(7);
+    VMPC(4);
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SymKeyType.class.getName());
-
-    /**
-     * Symmetric full algorithm.
-     */
-    private static final String FULLALGORITHM = "/CBC/PKCS5PADDING";
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StreamKeyType.class.getName());
 
     /**
      * The external Id of the algorithm.
@@ -109,72 +89,23 @@ public enum SymKeyType {
 
     /**
      * Obtain the algorithm.
+     * @param pRestricted use restricted algorithms
      * @return the algorithm
      */
-    public String getAlgorithm() {
+    public String getAlgorithm(final boolean pRestricted) {
         switch (this) {
-            case TWOFISH:
-                return "TwoFish";
-            case SERPENT:
-                return "Serpent";
-            case THREEFISH:
-                return "ThreeFish-256";
+            case VMPC:
+                return "VMPC-KSA3";
+            case HC256:
+                return pRestricted
+                        ? "HC128"
+                        : name();
+            case XSALSA20:
+                return pRestricted
+                        ? "SALSA20"
+                        : name();
             default:
                 return name();
-        }
-    }
-
-    /**
-     * Obtain the cipher name.
-     * @return the cipher name
-     */
-    public String getCipher() {
-        return getAlgorithm()
-               + FULLALGORITHM;
-    }
-
-    /**
-     * Adjust MacType.
-     * @param pMacType the mac type
-     * @return the adjusted MacType
-     */
-    public MacType adjustMacType(final MacType pMacType) {
-        switch (this) {
-            case THREEFISH:
-                return MacType.SKEIN;
-            default:
-                return (pMacType == MacType.SKEIN)
-                        ? MacType.GMAC
-                        : pMacType;
-        }
-    }
-
-    /**
-     * Obtain the GMac algorithm.
-     * @param pMacType the mac type
-     * @return the GMac algorithm
-     */
-    public String getMacAlgorithm(final MacType pMacType) {
-        switch (this) {
-            case THREEFISH:
-                return "SKEIN-256-256-MAC";
-            default:
-                return name()
-                       + "-GMAC";
-        }
-    }
-
-    /**
-     * Obtain the Poly1305 algorithm.
-     * @return the GMAc algorithm
-     */
-    public String getPoly1305Algorithm() {
-        switch (this) {
-            case THREEFISH:
-                return "SKEIN-256-256-MAC";
-            default:
-                return "POLY1305-"
-                       + name();
         }
     }
 
@@ -182,7 +113,7 @@ public enum SymKeyType {
      * Constructor.
      * @param id the id
      */
-    private SymKeyType(final int id) {
+    private StreamKeyType(final int id) {
         theId = id;
     }
 
@@ -192,36 +123,36 @@ public enum SymKeyType {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static SymKeyType fromId(final int id) throws JDataException {
-        for (SymKeyType myType : values()) {
+    public static StreamKeyType fromId(final int id) throws JDataException {
+        for (StreamKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: "
+        throw new JDataException(ExceptionClass.DATA, "Invalid StreamKeyType: "
                                                       + id);
     }
 
     /**
      * Check the number of types.
-     * @param pNumTypes the number of symmetric keys
+     * @param pNumTypes the number of stream keys
      */
     private static void checkNumTypes(final int pNumTypes) {
         /* Access the values */
-        SymKeyType[] myValues = values();
+        StreamKeyType[] myValues = values();
         int myNumTypes = myValues.length;
 
         /* Validate number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > myNumTypes)) {
             /* Throw exception */
-            throw new IllegalArgumentException("Invalid number of symmetric keys");
+            throw new IllegalArgumentException("Invalid number of stream keys");
         }
     }
 
     /**
-     * Determine bound of random integer for choice of random SymKeyTypes.
-     * @param pNumTypes the number of Symmetric keys
+     * Determine bound of random integer for choice of random StreamKeys.
+     * @param pNumTypes the number of digests
      * @return the bound of the random integer.
      */
     public static int getRandomBound(final int pNumTypes) {
@@ -229,7 +160,7 @@ public enum SymKeyType {
         checkNumTypes(pNumTypes);
 
         /* Access the values */
-        SymKeyType[] myValues = values();
+        StreamKeyType[] myValues = values();
         int myNumTypes = myValues.length;
 
         /* Initialise the bounds */
@@ -246,13 +177,13 @@ public enum SymKeyType {
     }
 
     /**
-     * Get random unique set of symmetric key types.
+     * Get random unique set of stream key types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
      */
-    public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) {
+    public static StreamKeyType[] getRandomTypes(final int pNumTypes,
+                                                 final SecureRandom pRandom) {
         /* Determine bound for the number of types */
         int myBound = getRandomBound(pNumTypes);
 
@@ -260,39 +191,39 @@ public enum SymKeyType {
         int mySeed = pRandom.nextInt(myBound);
 
         /* Generate the random types */
-        return getRandomSymKeyTypes(pNumTypes, mySeed);
+        return getRandomStreamTypes(pNumTypes, mySeed);
     }
 
     /**
-     * Get random unique set of symmetric key types.
+     * Get random unique set of stream key types.
      * @param pNumTypes the number of types
      * @param pSeed the seed value
      * @return the random set
      */
-    public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final long pSeed) {
+    public static StreamKeyType[] getRandomTypes(final int pNumTypes,
+                                                 final long pSeed) {
         /* Validate number of types */
         checkNumTypes(pNumTypes);
 
         /* Generate the random types */
-        return getRandomSymKeyTypes(pNumTypes, pSeed);
+        return getRandomStreamTypes(pNumTypes, pSeed);
     }
 
     /**
-     * Get unique set of symmetric key types from seed.
+     * Get unique set of stream key types from seed.
      * @param pNumTypes the number of types
      * @param pSeed the seed value
      * @return the random set
      */
-    private static SymKeyType[] getRandomSymKeyTypes(final int pNumTypes,
-                                                     final long pSeed) {
+    private static StreamKeyType[] getRandomStreamTypes(final int pNumTypes,
+                                                        final long pSeed) {
         /* Access the values */
-        SymKeyType[] myValues = values();
+        StreamKeyType[] myValues = values();
         int iNumValues = myValues.length;
         long mySeed = pSeed;
 
         /* Create the result set */
-        SymKeyType[] myTypes = new SymKeyType[pNumTypes];
+        StreamKeyType[] myTypes = new StreamKeyType[pNumTypes];
 
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {

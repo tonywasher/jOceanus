@@ -152,9 +152,7 @@ public class HMacSP800DRBG
             if (pSeed != null) {
                 updateState(pSeed, SEED_ID);
             }
-        } catch (ShortBufferException e) {
-            throw new IllegalStateException(e);
-        } catch (InvalidKeyException e) {
+        } catch (ShortBufferException | InvalidKeyException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -263,9 +261,7 @@ public class HMacSP800DRBG
                 System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
-        } catch (ShortBufferException e) {
-            throw new IllegalStateException(e);
-        } catch (InvalidKeyException e) {
+        } catch (ShortBufferException | InvalidKeyException e) {
             throw new IllegalStateException(e);
         }
 

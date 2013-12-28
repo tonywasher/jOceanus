@@ -29,8 +29,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
- * Digest types. Available algorithms.
- * @author Tony Washer
+ * DataDigest types. Available algorithms.
  */
 public enum DigestType {
     /**
@@ -132,7 +131,7 @@ public enum DigestType {
      * @param bLong use long hash
      * @return the algorithm
      */
-    public String getAlgorithm(final boolean bLong) {
+    protected String getAlgorithm(final boolean bLong) {
         switch (this) {
             case SKEIN:
                 return (bLong)
@@ -160,9 +159,52 @@ public enum DigestType {
      * @param bLong use long hash
      * @return the algorithm
      */
-    public String getHMacAlgorithm(final boolean bLong) {
+    protected String getMacAlgorithm(final boolean bLong) {
         return "HMac"
                + getAlgorithm(bLong);
+    }
+
+    /**
+     * Check the number of types.
+     * @param pNumTypes the number of digests
+     */
+    private static void checkNumTypes(final int pNumTypes) {
+        /* Access the values */
+        DigestType[] myValues = values();
+        int myNumTypes = myValues.length;
+
+        /* Validate number of types */
+        if ((pNumTypes < 1)
+            || (pNumTypes > myNumTypes)) {
+            /* Throw exception */
+            throw new IllegalArgumentException("Invalid number of digests");
+        }
+    }
+
+    /**
+     * Determine bound of random integer for choice of random DigestTypes.
+     * @param pNumTypes the number of digests
+     * @return the bound of the random integer.
+     */
+    public static int getRandomBound(final int pNumTypes) {
+        /* Validate number of types */
+        checkNumTypes(pNumTypes);
+
+        /* Access the values */
+        DigestType[] myValues = values();
+        int myNumTypes = myValues.length;
+
+        /* Initialise the bounds */
+        int myBound = myNumTypes--;
+
+        /* Loop through the types */
+        for (int i = 1; i < pNumTypes; i++) {
+            /* Factor in additional types */
+            myBound *= myNumTypes--;
+        }
+
+        /* Return the bound */
+        return myBound;
     }
 
     /**
@@ -170,35 +212,61 @@ public enum DigestType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
      */
     public static DigestType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws JDataException {
+                                              final SecureRandom pRandom) {
+        /* Determine bound for the number of types */
+        int myBound = getRandomBound(pNumTypes);
+
+        /* Generate the seed */
+        int mySeed = pRandom.nextInt(myBound);
+
+        /* Generate the random types */
+        return getRandomDigestTypes(pNumTypes, mySeed);
+    }
+
+    /**
+     * Get random unique set of digest types.
+     * @param pNumTypes the number of types
+     * @param pSeed the seed value
+     * @return the random set
+     */
+    public static DigestType[] getRandomTypes(final int pNumTypes,
+                                              final long pSeed) {
+        /* Validate number of types */
+        checkNumTypes(pNumTypes);
+
+        /* Generate the random types */
+        return getRandomDigestTypes(pNumTypes, pSeed);
+    }
+
+    /**
+     * Get unique set of digest types from seed.
+     * @param pNumTypes the number of types
+     * @param pSeed the seed value
+     * @return the random set
+     */
+    private static DigestType[] getRandomDigestTypes(final int pNumTypes,
+                                                     final long pSeed) {
         /* Access the values */
         DigestType[] myValues = values();
         int iNumValues = myValues.length;
-        int iIndex;
-
-        /* Reject call if invalid number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of digests: "
-                                                           + pNumTypes);
-        }
+        long mySeed = pSeed;
 
         /* Create the result set */
         DigestType[] myTypes = new DigestType[pNumTypes];
 
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {
-            /* Access the next random index */
-            iIndex = pRandom.nextInt(iNumValues);
+            /* Extract the index */
+            int myIndex = (int) (mySeed % iNumValues);
+            mySeed /= iNumValues;
 
             /* Store the type */
-            myTypes[i] = myValues[iIndex];
+            myTypes[i] = myValues[myIndex];
 
             /* Shift last value down in place of the one thats been used */
-            myValues[iIndex] = myValues[iNumValues - 1];
+            myValues[myIndex] = myValues[iNumValues - 1];
             iNumValues--;
         }
 

@@ -44,6 +44,11 @@ import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
  */
 public class CipherSet {
     /**
+     * Initialisation Vector size.
+     */
+    public static final int IVSIZE = 32;
+
+    /**
      * Maximum number of encryption steps.
      */
     public static final int MAXSTEPS = SymKeyType.values().length - 1;
@@ -54,19 +59,9 @@ public class CipherSet {
     public static final int KEYIDLEN = numKeyBytes(MAXSTEPS);
 
     /**
-     * Multiplier to obtain IV from vector.
-     */
-    private static final int VECTOR_SHIFT = 7;
-
-    /**
      * The Number of Steps.
      */
     private final int theNumSteps;
-
-    /**
-     * Use restricted keys.
-     */
-    private final boolean useRestricted;
 
     /**
      * Cipher digest.
@@ -99,6 +94,17 @@ public class CipherSet {
     private final SecurityGenerator theGenerator;
 
     /**
+     * Encryption length.
+     * @param pDataLength the length of data to be encrypted
+     * @return the length of encrypted data
+     */
+    public static int getEncryptionLength(final int pDataLength) {
+        int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
+        return iBlocks
+               * IVSIZE;
+    }
+
+    /**
      * Constructor.
      * @param pGenerator the security generator
      * @param pSaltBytes the salt bytes
@@ -111,7 +117,6 @@ public class CipherSet {
         theGenerator = pGenerator;
         theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
         theRandom = theGenerator.getRandom();
-        useRestricted = pKeyMode.useRestricted();
         theDigest = pKeyMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
@@ -134,7 +139,6 @@ public class CipherSet {
         theGenerator = pGenerator;
         theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
         theRandom = theGenerator.getRandom();
-        useRestricted = pHashMode.useRestricted();
         theDigest = pHashMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
@@ -155,7 +159,6 @@ public class CipherSet {
         theGenerator = pGenerator;
         theSaltBytes = null;
         theRandom = theGenerator.getRandom();
-        useRestricted = pHashMode.useRestricted();
         theDigest = pHashMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
@@ -244,7 +247,7 @@ public class CipherSet {
     private void buildCipher(final SymKeyType pKeyType,
                              final byte[] pSecret) throws JDataException {
         /* Determine the key length in bytes */
-        int myKeyLen = SymmetricKey.getKeyLen(useRestricted)
+        int myKeyLen = theGenerator.getKeyLen()
                        / Byte.SIZE;
 
         /* Create a buffer to hold the resulting key and # of bytes built */
@@ -278,8 +281,8 @@ public class CipherSet {
         /* Create the Symmetric Key */
         SymmetricKey myKey = new SymmetricKey(theGenerator, myKeyDef, pKeyType);
 
-        /* Access a Cipher */
-        DataCipher myCipher = myKey.initDataCipher();
+        /* Obtain a Cipher */
+        DataCipher myCipher = myKey.getDataCipher();
 
         /* Store into map */
         theMap.put(pKeyType, myCipher);
@@ -355,11 +358,8 @@ public class CipherSet {
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
 
-            /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(myType, myVector, myCipher);
-
             /* Encrypt the bytes */
-            myCurBytes = myCipher.encryptBytes(myCurBytes, myShift);
+            myCurBytes = myCipher.encryptBytes(myCurBytes, myVector);
         }
 
         /* hide the encryptionMode */
@@ -401,11 +401,8 @@ public class CipherSet {
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
 
-            /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(myType, myVector, myCipher);
-
             /* Decrypt the bytes */
-            myBytes = myCipher.decryptBytes(myBytes, myShift);
+            myBytes = myCipher.decryptBytes(myBytes, myVector);
         }
 
         /* Return the decrypted bytes */
@@ -413,43 +410,70 @@ public class CipherSet {
     }
 
     /**
-     * Obtain shifted Initialisation vector.
-     * @param pKeyType the Symmetric Key Type
-     * @param pVector the initialisation vector
-     * @param pCipher the data cipher
-     * @return the shifted vector
+     * Wrap bytes.
+     * @param pBytes the bytes to wrap
+     * @return the wrapped bytes
+     * @throws JDataException on error
      */
-    private static byte[] getShiftedVector(final SymKeyType pKeyType,
-                                           final byte[] pVector,
-                                           final DataCipher pCipher) {
-        /* Determine index into array for Key Type */
-        int myVectorLen = pVector.length;
-        byte[] myNew = new byte[myVectorLen];
-        int myIndex = VECTOR_SHIFT
-                      * pKeyType.getId();
-        myIndex %= myVectorLen;
+    public byte[] wrapBytes(final byte[] pBytes) throws JDataException {
+        /* Allocate a new initialisation vector */
+        byte[] myVector = new byte[theBlockSize];
+        theRandom.nextBytes(myVector);
 
-        /* Access current vector */
-        byte[] myVector = pVector;
+        /* Access the current set of bytes */
+        byte[] myCurBytes = pBytes;
 
-        /* If we need to shift the array */
-        if (myIndex > 0) {
-            /* Access shifted array */
-            System.arraycopy(myVector, myIndex, myNew, 0, myVectorLen
-                                                          - myIndex);
-            System.arraycopy(myVector, 0, myNew, myVectorLen
-                                                 - myIndex, myIndex);
-            myVector = myNew;
+        /* Determine the encryption mode */
+        EncryptionMode myMode = new EncryptionMode(theNumSteps, theRandom);
+        SymKeyType[] myKeyTypes = myMode.getSymKeyTypes();
+
+        /* Loop through the SymKeyTypes */
+        for (int i = 0; i < myKeyTypes.length; i++) {
+            /* Access the Key Type */
+            SymKeyType myType = myKeyTypes[i];
+
+            /* Access the DataCipher */
+            DataCipher myCipher = theMap.get(myType);
+
+            /* Wrap the bytes */
+            myCurBytes = myCipher.wrapBytes(myCurBytes, myVector);
         }
 
-        /* Shift to correct length */
-        int myLen = pCipher.getBlockSize();
-        if (myLen < myVector.length) {
-            myVector = Arrays.copyOf(myVector, myLen);
+        /* hide the encryptionMode */
+        EncryptModeNeedle myNeedle = new EncryptModeNeedle(myMode, myVector, myCurBytes);
+
+        /* Return the encrypted bytes */
+        return myNeedle.getExternal();
+    }
+
+    /**
+     * Unwrap Bytes.
+     * @param pBytes the bytes to unwrap
+     * @return the unwrapped bytes
+     * @throws JDataException on error
+     */
+    public byte[] unwrapBytes(final byte[] pBytes) throws JDataException {
+        /* Parse the bytes into the separate parts */
+        EncryptModeNeedle myNeedle = new EncryptModeNeedle(pBytes);
+        byte[] myVector = myNeedle.getInitVector();
+        byte[] myBytes = myNeedle.getEncryptedBytes();
+        EncryptionMode myMode = myNeedle.getEncryptionMode();
+        SymKeyType[] myTypes = myMode.getSymKeyTypes();
+
+        /* Loop through the SymKeyTypes */
+        for (int i = myTypes.length - 1; i >= 0; i--) {
+            /* Access the Key Type */
+            SymKeyType myType = myTypes[i];
+
+            /* Access the DataCipher */
+            DataCipher myCipher = theMap.get(myType);
+
+            /* unwrap the bytes */
+            myBytes = myCipher.unwrapBytes(myBytes, myVector);
         }
 
-        /* return the shifted vector */
-        return myVector;
+        /* Return the decrypted bytes */
+        return myBytes;
     }
 
     /**
@@ -487,17 +511,11 @@ public class CipherSet {
      * @throws JDataException on error
      */
     public byte[] encryptChars(final char[] pChars) throws JDataException {
-        byte[] myBytes;
-        byte[] myRawBytes;
-
         /* Convert the characters to a byte array */
-        myRawBytes = DataConverter.charsToByteArray(pChars);
+        byte[] myRawBytes = DataConverter.charsToByteArray(pChars);
 
         /* Encrypt the characters */
-        myBytes = encryptBytes(myRawBytes);
-
-        /* Return to caller */
-        return myBytes;
+        return encryptBytes(myRawBytes);
     }
 
     /**
@@ -507,14 +525,11 @@ public class CipherSet {
      * @throws JDataException on error
      */
     public char[] decryptChars(final byte[] pBytes) throws JDataException {
-        byte[] myBytes;
-        char[] myChars;
-
         /* Decrypt the bytes */
-        myBytes = decryptBytes(pBytes);
+        byte[] myBytes = decryptBytes(pBytes);
 
         /* Convert the bytes to characters */
-        myChars = DataConverter.bytesToCharArray(myBytes);
+        char[] myChars = DataConverter.bytesToCharArray(myBytes);
 
         /* Clear out the bytes */
         Arrays.fill(myBytes, (byte) 0);
