@@ -41,7 +41,18 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import org.bouncycastle.util.Arrays;
 
 /**
- * Wrapper class for Cipher used to encryption data objects.
+ * Wrapper class for Cipher used for encryption data objects.
+ * <p>
+ * This class also includes a KeyWrapper algorithm that is a modified form of RFC3394. The differences are as follows
+ * <ol>
+ * <li>CBC/NoPadding is used as the encryption mode rather than ECB. This requires an initialisation vector.
+ * <li>The initialisation vector is used as the integrity header check value as well as for initialising the cipher.
+ * <li>Encryption etc. is performed using the doFinal() method so that the cipher is reinitialised on each step.
+ * <li>With the inclusion of ThreeFish (which has a cipher block size of 256-bits), the algorithm will always use a wrap block size of half the cipher block
+ * size - normally 64-bits, but 128-bits in the case of ThreeFish. This requires the integrity check value to be expanded to 128-bits on ThreeFish so that is
+ * always fills a whole number of blocks.
+ * <li>The algorithm supports byte arrays that are not strict multiples of the wrap block size. Such arrays are padded with null bytes up to the block size and
+ * the number of padding bytes is stored as the last byte of the integrity check vector.
  */
 public class DataCipher {
     /**
@@ -50,11 +61,24 @@ public class DataCipher {
     private static final String ERROR_DATALEN = "Invalid data length";
 
     /**
-     * Wrap block length (128-bits) in bytes.
-     * <p>
-     * This needs to be the half the block size to ensure that the wrap encryption is always performed on a multiple of the block
+     * Failed to initialise Cipher.
      */
-    private static final int WRAP_BLOCKLEN = CipherSet.IVSIZE >> 1;
+    private static final String ERROR_INIT = "Failed to initialise cipher";
+
+    /**
+     * Wrap failure error text.
+     */
+    private static final String ERROR_WRAP = "Failed to wrap bytes";
+
+    /**
+     * UnWrap failure error text.
+     */
+    private static final String ERROR_UNWRAP = "Failed to unwrap bytes";
+
+    /**
+     * UnWrap integrity error text.
+     */
+    private static final String ERROR_INTEGRITY = "Integrity checks failed";
 
     /**
      * Wrap repeat count.
@@ -70,6 +94,11 @@ public class DataCipher {
      * The cipher.
      */
     private final Cipher theCipher;
+
+    /**
+     * The wrap cipher.
+     */
+    private final Cipher theWrapCipher;
 
     /**
      * The SymmetricKey.
@@ -112,8 +141,10 @@ public class DataCipher {
             /* Create a new cipher */
             SecurityGenerator myGenerator = theSymKey.getGenerator();
             SecurityProvider myProvider = myGenerator.getProvider();
+            String myProviderName = myProvider.getProvider();
             SymKeyType myKeyType = theSymKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getCipher(), myProvider.getProvider());
+            theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myProviderName);
+            theWrapCipher = Cipher.getInstance(myKeyType.getWrapCipher(), myProviderName);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to create cipher", e);
         }
@@ -171,6 +202,21 @@ public class DataCipher {
     }
 
     /**
+     * Initialise encryption.
+     * @param pVector initialisation vector
+     * @throws JDataException on error
+     */
+    private void initialiseEncryption(final byte[] pVector) throws JDataException {
+        try {
+            /* Initialise the cipher using the vector */
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
+            theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+        }
+    }
+
+    /**
      * Decrypt bytes.
      * @param pBytes bytes to decrypt
      * @param pVector initialisation vector
@@ -195,6 +241,21 @@ public class DataCipher {
     }
 
     /**
+     * Initialise decryption.
+     * @param pVector initialisation vector
+     * @throws JDataException on error
+     */
+    private void initialiseDecryption(final byte[] pVector) throws JDataException {
+        try {
+            /* Initialise the cipher using the vector */
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
+            theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+        }
+    }
+
+    /**
      * Wrap bytes.
      * @param pBytes the bytes to wrap
      * @param pVector initialisation vector
@@ -203,51 +264,68 @@ public class DataCipher {
      */
     protected byte[] wrapBytes(final byte[] pBytes,
                                final byte[] pVector) throws JDataException {
-        /* Access the shifted vector */
-        byte[] myShift = getShiftedVector(pVector);
+        /* Determine the block length */
+        int myBlockLen = theWrapCipher.getBlockSize() >> 1;
 
         /* Determine number of blocks */
         int myDataLen = pBytes.length;
         int myNumBlocks = myDataLen
-                          / WRAP_BLOCKLEN;
+                          / myBlockLen;
 
-        /* Data must be a multiple of WRAP_BLOCKLEN */
-        if ((myNumBlocks * WRAP_BLOCKLEN) != myDataLen) {
-            throw new IllegalArgumentException(ERROR_DATALEN);
+        /* Calculate padding length */
+        int myTrueLen;
+        if ((myDataLen % myBlockLen) == 0) {
+            myTrueLen = myDataLen;
+        } else {
+            myNumBlocks++;
+            myTrueLen = myNumBlocks
+                        * myBlockLen;
         }
+        int myZeroLen = myTrueLen
+                        - myDataLen;
 
         /* Allocate buffer for data and encryption */
-        byte[] myData = new byte[myDataLen
-                                 + WRAP_BLOCKLEN];
-        byte[] myBuffer = new byte[WRAP_BLOCKLEN << 1];
+        byte[] myData = new byte[myTrueLen
+                                 + myBlockLen];
+        byte[] myBuffer = new byte[myBlockLen << 1];
 
-        /* Build the data block */
-        System.arraycopy(myShift, 0, myData, 0, WRAP_BLOCKLEN);
-        System.arraycopy(pBytes, 0, myData, WRAP_BLOCKLEN, myDataLen);
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
 
-        /* Initialise the cipher using the shifted vector */
-        initialiseEncryption(myShift);
+        /* Build the basic block */
+        int myCheckLen = myBlockLen - 1;
+        System.arraycopy(myShift, 0, myData, 0, myCheckLen);
+        myData[myCheckLen] = (byte) myZeroLen;
+        System.arraycopy(pBytes, 0, myData, myBlockLen, myDataLen);
 
-        /* Loop WRAP_COUNT times */
-        for (int myCycle = 0, myCount = 1; myCycle < WRAP_COUNT; myCycle++) {
-            /* Loop through the data blocks */
-            for (int myBlock = 1, myOffset = WRAP_BLOCKLEN; myBlock <= myNumBlocks; myBlock++, myOffset += WRAP_BLOCKLEN) {
-                /* Build the data to be encrypted */
-                System.arraycopy(myData, 0, myBuffer, 0, WRAP_BLOCKLEN);
-                System.arraycopy(myData, myOffset, myBuffer, WRAP_BLOCKLEN, WRAP_BLOCKLEN);
+        /* Initialise the cipher */
+        try {
+            /* Initialise the cipher */
+            theWrapCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
 
-                /* Encrypt the byte array */
-                byte[] myResult = theCipher.update(myBuffer);
+            /* Loop WRAP_COUNT times */
+            for (int myCycle = 0, myCount = 1; myCycle < WRAP_COUNT; myCycle++) {
+                /* Loop through the data blocks */
+                for (int myBlock = 1, myOffset = myBlockLen; myBlock <= myNumBlocks; myBlock++, myOffset += myBlockLen) {
+                    /* Build the data to be encrypted */
+                    System.arraycopy(myData, 0, myBuffer, 0, myBlockLen);
+                    System.arraycopy(myData, myOffset, myBuffer, myBlockLen, myBlockLen);
 
-                /* Adjust the result using the count as a mask */
-                for (int myMask = myCount++, myIndex = WRAP_BLOCKLEN - 1; myMask != 0; myMask >>>= Byte.SIZE) {
-                    myResult[myIndex--] ^= (byte) myMask;
+                    /* Encrypt the byte array */
+                    byte[] myResult = theWrapCipher.doFinal(myBuffer);
+
+                    /* Adjust the result using the count as a mask */
+                    for (int myMask = myCount++, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE) {
+                        myResult[myIndex--] ^= (byte) myMask;
+                    }
+
+                    /* Restore encrypted data */
+                    System.arraycopy(myResult, 0, myData, 0, myBlockLen);
+                    System.arraycopy(myResult, myBlockLen, myData, myOffset, myBlockLen);
                 }
-
-                /* Restore encrypted data */
-                System.arraycopy(myResult, 0, myData, 0, WRAP_BLOCKLEN);
-                System.arraycopy(myResult, WRAP_BLOCKLEN, myData, myOffset, WRAP_BLOCKLEN);
             }
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_WRAP, e);
         }
 
         /* Return the wrapped data */
@@ -263,94 +341,85 @@ public class DataCipher {
      */
     protected byte[] unwrapBytes(final byte[] pBytes,
                                  final byte[] pVector) throws JDataException {
-        /* Access the shifted vector */
-        byte[] myShift = getShiftedVector(pVector);
-        byte[] myCheck = Arrays.copyOf(pVector, WRAP_BLOCKLEN);
+        /* Determine the block length */
+        int myBlockLen = theWrapCipher.getBlockSize() >> 1;
 
         /* Determine number of blocks */
         int myDataLen = pBytes.length
-                        - WRAP_BLOCKLEN;
+                        - myBlockLen;
         int myNumBlocks = myDataLen
-                          / WRAP_BLOCKLEN;
+                          / myBlockLen;
 
-        /* Data must be a multiple of WRAP_BLOCKLEN */
-        if ((myNumBlocks * WRAP_BLOCKLEN) != myDataLen) {
+        /* Data must be a multiple of BlockLength */
+        if ((myNumBlocks * myBlockLen) != myDataLen) {
             throw new IllegalArgumentException(ERROR_DATALEN);
         }
 
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
+
         /* Allocate buffers for data and encryption */
-        byte[] myIV = new byte[WRAP_BLOCKLEN];
-        byte[] myData = new byte[myDataLen];
-        byte[] myBuffer = new byte[WRAP_BLOCKLEN << 1];
+        byte[] myData = Arrays.copyOf(pBytes, pBytes.length);
+        byte[] myBuffer = new byte[myBlockLen << 1];
 
-        /* Build the data block */
-        System.arraycopy(pBytes, 0, myIV, 0, WRAP_BLOCKLEN);
-        System.arraycopy(pBytes, WRAP_BLOCKLEN, myData, 0, myDataLen);
+        /* Protect against exceptions */
+        try {
+            /* Initialise the cipher */
+            theWrapCipher.init(Cipher.DECRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
 
-        /* Initialise the cipher using the shifted vector */
-        initialiseDecryption(myShift);
+            /* Loop WRAP_COUNT times */
+            for (int myCycle = WRAP_COUNT - 1, myCount = myNumBlocks
+                                                         * (myCycle + 1); myCycle >= 0; myCycle--) {
+                /* Loop through the data blocks */
+                for (int myBlock = myNumBlocks, myOffset = myBlockLen
+                                                           * myBlock; myBlock >= 1; myBlock--, myOffset -= myBlockLen) {
+                    /* Build the data to be decrypted */
+                    System.arraycopy(myData, 0, myBuffer, 0, myBlockLen);
+                    System.arraycopy(myData, myOffset, myBuffer, myBlockLen, myBlockLen);
 
-        /* Loop WRAP_COUNT times */
-        for (int myCycle = WRAP_COUNT - 1, myCount = myNumBlocks
-                                                     * (myCycle + 1); myCycle >= 0; myCycle--) {
-            /* Loop through the data blocks */
-            for (int myBlock = myNumBlocks, myOffset = WRAP_BLOCKLEN
-                                                       * (myBlock - 1); myBlock >= 1; myBlock--, myOffset -= WRAP_BLOCKLEN) {
-                /* Build the data to be decrypted */
-                System.arraycopy(myIV, 0, myBuffer, 0, WRAP_BLOCKLEN);
-                System.arraycopy(myData, myOffset, myBuffer, WRAP_BLOCKLEN, WRAP_BLOCKLEN);
+                    /* Adjust the buffer using the count as a mask */
+                    for (int myMask = myCount--, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE) {
+                        myBuffer[myIndex--] ^= (byte) myMask;
+                    }
 
-                /* Adjust the buffer using the count as a mask */
-                for (int myMask = myCount--, myIndex = WRAP_BLOCKLEN - 1; myMask != 0; myMask >>>= Byte.SIZE) {
-                    myBuffer[myIndex--] ^= (byte) myMask;
+                    /* Decrypt the byte array */
+                    byte[] myResult = theWrapCipher.doFinal(myBuffer);
+
+                    /* Restore decrypted data */
+                    System.arraycopy(myResult, 0, myData, 0, myBlockLen);
+                    System.arraycopy(myResult, myBlockLen, myData, myOffset, myBlockLen);
                 }
-
-                /* Decrypt the byte array */
-                byte[] myResult = theCipher.update(myBuffer);
-
-                /* Restore encrypted data */
-                System.arraycopy(myResult, 0, myIV, 0, WRAP_BLOCKLEN);
-                System.arraycopy(myResult, WRAP_BLOCKLEN, myData, myOffset, WRAP_BLOCKLEN);
             }
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_UNWRAP, e);
         }
 
-        /* Perform integrity check */
-        if (!Arrays.areEqual(myIV, myCheck)) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Checksum failed");
+        /* Determine check values */
+        int myCheckLen = myBlockLen - 1;
+        int myZeroLen = myData[myCheckLen];
+
+        /* Check initialisation value */
+        boolean isCheckOK = Arrays.areEqual(Arrays.copyOf(myData, myCheckLen), Arrays.copyOf(myShift, myCheckLen));
+
+        /* Check valid ZeroLen */
+        isCheckOK &= (myZeroLen >= 0)
+                     && (myZeroLen < myBlockLen);
+
+        /* Check trailing bytes */
+        for (int myZeros = myZeroLen, myLoc = myData.length - 1; isCheckOK
+                                                                 && myZeros > 0; myZeros--, myLoc--) {
+            /* Check that byte is zero */
+            isCheckOK = myData[myLoc] == 0;
+        }
+
+        /* Reject if checks fail */
+        if (!isCheckOK) {
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INTEGRITY);
         }
 
         /* Return unwrapped data */
-        return myData;
-    }
-
-    /**
-     * Initialise encryption.
-     * @param pVector initialisation vector
-     * @throws JDataException on error
-     */
-    private void initialiseEncryption(final byte[] pVector) throws JDataException {
-        try {
-            /* Initialise the cipher using the vector */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise encryption", e);
-        }
-    }
-
-    /**
-     * Initialise decryption.
-     * @param pVector initialisation vector
-     * @throws JDataException on error
-     */
-    private void initialiseDecryption(final byte[] pVector) throws JDataException {
-        try {
-            /* Initialise the cipher using the vector */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise decryption", e);
-        }
+        return Arrays.copyOfRange(myData, myBlockLen, myData.length
+                                                      - myZeroLen);
     }
 
     /**

@@ -22,31 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Stream Key implementation.
  */
 public class StreamKey {
-    /**
-     * Cipher initialisation failure.
-     */
-    private static final String ERROR_CIPHER = "Failed to initialise Cipher";
-
     /**
      * The Secret Key.
      */
@@ -202,68 +188,5 @@ public class StreamKey {
     public StreamCipher getStreamCipher() throws JDataException {
         /* Return the Stream Cipher */
         return new StreamCipher(this);
-    }
-
-    /**
-     * Obtain cipher.
-     * @return the Stream Cipher
-     * @throws JDataException on error
-     */
-    private Cipher getCipher() throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Create a new cipher */
-            return Cipher.getInstance(theKeyType.getAlgorithm(theGenerator.useRestricted()), theGenerator.getProvider().getProvider());
-
-            /* catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
-        }
-    }
-
-    /**
-     * Initialise stream cipher for encryption with random initialisation vector.
-     * @return the Stream Cipher
-     * @throws JDataException on error
-     */
-    public Cipher initEncryptionStream() throws JDataException {
-        /* Create a new cipher */
-        Cipher myCipher = getCipher();
-
-        /* Protect against exceptions */
-        try {
-            /* Initialise the cipher generating a random Initialisation vector */
-            myCipher.init(Cipher.ENCRYPT_MODE, theKey, theGenerator.getRandom());
-            /* catch exceptions */
-        } catch (InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
-        }
-
-        /* Return the Stream Cipher */
-        return myCipher;
-    }
-
-    /**
-     * Initialise Stream cipher for decryption with initialisation vector.
-     * @param pInitVector Initialisation vector for cipher
-     * @return the Stream Cipher
-     * @throws JDataException on error
-     */
-    public Cipher initDecryptionStream(final byte[] pInitVector) throws JDataException {
-        /* Create a new cipher */
-        Cipher myCipher = getCipher();
-
-        /* Protect against exceptions */
-        try {
-            /* Initialise the cipher using the password */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pInitVector);
-            myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
-            /* catch exceptions */
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise cipher", e);
-        }
-
-        /* Return the Stream Cipher */
-        return myCipher;
     }
 }

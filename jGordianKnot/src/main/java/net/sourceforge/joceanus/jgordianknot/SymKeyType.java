@@ -73,9 +73,14 @@ public enum SymKeyType {
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SymKeyType.class.getName());
 
     /**
-     * Symmetric full algorithm.
+     * Symmetric data algorithm.
      */
-    private static final String FULLALGORITHM = "/CBC/PKCS5PADDING";
+    private static final String DATAALGORITHM = "/CBC/PKCS5PADDING";
+
+    /**
+     * Symmetric wrap algorithm.
+     */
+    private static final String WRAPALGORITHM = "/CBC/NOPADDING";
 
     /**
      * The external Id of the algorithm.
@@ -125,12 +130,21 @@ public enum SymKeyType {
     }
 
     /**
-     * Obtain the cipher name.
-     * @return the cipher name
+     * Obtain the data cipher name.
+     * @return the data cipher name
      */
-    public String getCipher() {
+    public String getDataCipher() {
         return getAlgorithm()
-               + FULLALGORITHM;
+               + DATAALGORITHM;
+    }
+
+    /**
+     * Obtain the wrap cipher name.
+     * @return the wrap cipher name
+     */
+    public String getWrapCipher() {
+        return getAlgorithm()
+               + WRAPALGORITHM;
     }
 
     /**

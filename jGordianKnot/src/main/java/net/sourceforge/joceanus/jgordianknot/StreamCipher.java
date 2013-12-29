@@ -108,7 +108,7 @@ public class StreamCipher {
             SecurityGenerator myGenerator = pKey.getGenerator();
             SecurityProvider myProvider = myGenerator.getProvider();
             SymKeyType myKeyType = pKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getCipher(), myProvider.getProvider());
+            theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myProvider.getProvider());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
         }

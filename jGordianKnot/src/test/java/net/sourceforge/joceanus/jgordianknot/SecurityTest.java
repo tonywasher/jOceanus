@@ -36,19 +36,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
+
+import org.bouncycastle.util.Arrays;
 
 /**
  * Security Test suite.
@@ -77,8 +74,8 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
-            listAlgorithms(SecurityProvider.BC);
-            // TestStream();
+            // listAlgorithms(SecurityProvider.BC);
+            TestStream();
             // checkAlgorithms();
             // testSecurity();
             /* Test zip file creation */
@@ -398,26 +395,18 @@ public class SecurityTest {
         try {
             /* Create new Password Hash */
             SecureManager myManager = new SecureManager(theLogger);
-            SecurityGenerator myGenerator = myManager.getSecurityGenerator();
+            PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
+            SecurityGenerator myGen = myHash.getSecurityGenerator();
 
-            /* Access the Stream Cipher */
-            StreamKeyType myType = StreamKeyType.VMPC;
-            Cipher myCipher = Cipher.getInstance(myType.toString(), "BC");
-            KeyGenerator myFactory = KeyGenerator.getInstance(myType.toString(), "BC");
-            myFactory.init(256, myGenerator.getRandom());
-            SecretKey myKey = myFactory.generateKey();
-            myCipher.init(Cipher.ENCRYPT_MODE, myKey, myGenerator.getRandom());
-            byte[] myIV = myCipher.getIV();
-
-            /* Access test string */
-            byte[] myInput = DataConverter.stringToByteArray("MyTesterString");
-            byte[] myOutput = myCipher.doFinal(myInput);
-
-            /* Reinitialise for decryption */
-            myCipher.init(Cipher.DECRYPT_MODE, myKey, new IvParameterSpec(myIV));
-            byte[] myResult = myCipher.doFinal(myOutput);
-            String myStr = DataConverter.byteArrayToString(myResult);
-            myStr = null;
+            /* Create a new SymmetricKey */
+            SymmetricKey myKey = myGen.generateSymmetricKey();
+            CipherSet mySet = myHash.getCipherSet();
+            byte[] myStart = myKey.getSecretKey().getEncoded();
+            byte[] myXtra = Arrays.copyOf(myStart, myStart.length + 5);
+            byte[] myWrapped = mySet.wrapBytes(myXtra);
+            byte[] myEnd = mySet.unwrapBytes(myWrapped);
+            boolean res = Arrays.areEqual(myXtra, myEnd);
+            String myStr = null;
 
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.CRYPTO, "FF", e);
