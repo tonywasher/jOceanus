@@ -32,6 +32,9 @@ import javax.crypto.Mac;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.DigestType;
+import net.sourceforge.joceanus.jgordianknot.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Class represents an encrypted file in the Zip file.
@@ -98,11 +101,6 @@ public class ZipFileEntry {
     private static final String PROP_HEADER = "Header";
 
     /**
-     * The Debug property name of a file.
-     */
-    private static final String PROP_DEBUG = "Debug";
-
-    /**
      * The parent contents.
      */
     private ZipFileContents theParent = null;
@@ -138,6 +136,11 @@ public class ZipFileEntry {
     private byte[][] theSecretKeys = null;
 
     /**
+     * The Secret Key Types.
+     */
+    private SymKeyType[] theKeyTypes = null;
+
+    /**
      * The Initialisation vectors.
      */
     private byte[][] theInitVectors = null;
@@ -148,9 +151,9 @@ public class ZipFileEntry {
     private byte[][] theDigests = null;
 
     /**
-     * The Digest lengths.
+     * The Digest types.
      */
-    private long[] theDigestLens = null;
+    private DigestType[] theDigestTypes = null;
 
     /**
      * The Signature.
@@ -173,11 +176,6 @@ public class ZipFileEntry {
     private boolean isHeader = false;
 
     /**
-     * Is this entry in debug mode.
-     */
-    private boolean isDebug = false;
-
-    /**
      * Obtain the name of the file.
      * @return the name of the file
      */
@@ -194,8 +192,8 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the zip name of the file.
-     * @return the zip name of the file
+     * Obtain the Zip name of the file.
+     * @return the Zip name of the file
      */
     public String getZipName() {
         return theZipName;
@@ -226,11 +224,11 @@ public class ZipFileEntry {
     }
 
     /**
-     * Obtain the digest length array.
-     * @return the digest length array
+     * Obtain the digest types.
+     * @return the digest type array
      */
-    protected long[] getDigestLens() {
-        return theDigestLens;
+    protected DigestType[] getDigestTypes() {
+        return theDigestTypes;
     }
 
     /**
@@ -282,14 +280,6 @@ public class ZipFileEntry {
     }
 
     /**
-     * Is this entry in debug mode.
-     * @return true/false
-     */
-    protected boolean isDebug() {
-        return isDebug;
-    }
-
-    /**
      * Standard constructor from filename.
      * @param pFileName the file name
      */
@@ -329,26 +319,24 @@ public class ZipFileEntry {
             theFileSize = pProperties.getLongProperty(PROP_NAME);
             theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
 
-            /* Determine whether this is a debug entry */
-            isDebug = (pProperties.getLongProperty(PROP_DEBUG) != null);
-
             /* Determine the number of digests */
             long myNumDigests = pProperties.getLongProperty(PROP_NUMDIGESTS);
             theDigests = new byte[(int) myNumDigests][];
-            theDigestLens = new long[(int) myNumDigests];
+            theDigestTypes = new DigestType[(int) myNumDigests];
 
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Get digest properties */
                 theDigests[iIndex - 1] = pProperties.getByteProperty(PROP_DIGEST
                                                                      + iIndex);
-                theDigestLens[iIndex - 1] = pProperties.getLongProperty(PROP_DIGEST
-                                                                        + iIndex);
+                theDigestTypes[iIndex - 1] = DigestType.fromId(pProperties.getLongProperty(PROP_DIGEST
+                                                                                           + iIndex).intValue());
             }
 
             /* Determine the number of encryption steps */
             long myNumEncrypts = pProperties.getLongProperty(PROP_NUMENCRYPTS);
             theSecretKeys = new byte[(int) myNumEncrypts][];
+            theKeyTypes = new SymKeyType[(int) myNumEncrypts];
             theInitVectors = new byte[(int) myNumEncrypts][];
 
             /* Loop through the encrypts */
@@ -358,6 +346,8 @@ public class ZipFileEntry {
                                                                         + iIndex);
                 theInitVectors[iIndex - 1] = pProperties.getByteProperty(PROP_INITVECTOR
                                                                          + iIndex);
+                theKeyTypes[iIndex - 1] = SymKeyType.fromId(pProperties.getLongProperty(PROP_SECRETKEY
+                                                                                        + iIndex).intValue());
             }
 
             /* Get signature */
@@ -388,11 +378,6 @@ public class ZipFileEntry {
 
             /* Else standard entry */
         } else {
-            /* Set debug flag if required */
-            if (isDebug) {
-                theProperties.setProperty(PROP_DEBUG, 1L);
-            }
-
             /* Store the number of digests */
             long myNumDigests = theDigests.length;
             theProperties.setProperty(PROP_NUMDIGESTS, myNumDigests);
@@ -403,7 +388,7 @@ public class ZipFileEntry {
                 theProperties.setProperty(PROP_DIGEST
                                           + iIndex, theDigests[iIndex - 1]);
                 theProperties.setProperty(PROP_DIGEST
-                                          + iIndex, theDigestLens[iIndex - 1]);
+                                          + iIndex, (long) theDigestTypes[iIndex - 1].getId());
             }
 
             /* Store the number of encryption steps */
@@ -415,6 +400,8 @@ public class ZipFileEntry {
                 /* Set Secret key properties */
                 theProperties.setProperty(PROP_SECRETKEY
                                           + iIndex, theSecretKeys[iIndex - 1]);
+                theProperties.setProperty(PROP_SECRETKEY
+                                          + iIndex, (long) theKeyTypes[iIndex - 1].getId());
                 theProperties.setProperty(PROP_INITVECTOR
                                           + iIndex, theInitVectors[iIndex - 1]);
             }
@@ -529,17 +516,17 @@ public class ZipFileEntry {
         /* Allocate new arrays */
         int myLen = pDigests.length;
         theDigests = new byte[myLen][];
-        theDigestLens = new long[myLen];
+        theDigestTypes = new DigestType[myLen];
 
         /* Loop through the array */
         for (int iIndex = 0; iIndex < myLen; iIndex++) {
             /* Set the digest properties */
             theDigests[iIndex] = pDigests[iIndex].getDigest();
-            // theDigestLens[iIndex] = pDigests[iIndex].getDataLen();
+            theDigestTypes[iIndex] = pDigests[iIndex].getDigestType();
         }
 
         /* Store the last length as the file size */
-        theFileSize = theDigestLens[myLen - 1];
+        theFileSize = pDigests[myLen - 1].getDataLen();
     }
 
     /**
@@ -557,12 +544,15 @@ public class ZipFileEntry {
         /* Allocate new arrays */
         int myLen = pEncrypts.length;
         theSecretKeys = new byte[myLen][];
+        theKeyTypes = new SymKeyType[myLen];
         theInitVectors = new byte[myLen][];
 
         /* Loop through the array */
         for (int iIndex = 0; iIndex < myLen; iIndex++) {
             /* Set the key properties */
-            // theSecretKeys[iIndex] = pAsymKey.secureSymmetricKey(pEncrypts[iIndex].getSymmetricKey());
+            SymmetricKey myKey = (SymmetricKey) pEncrypts[iIndex].getKey();
+            theSecretKeys[iIndex] = pAsymKey.secureSymmetricKey(myKey);
+            theKeyTypes[iIndex] = myKey.getKeyType();
             theInitVectors[iIndex] = pEncrypts[iIndex].getInitVector();
         }
     }
@@ -583,13 +573,6 @@ public class ZipFileEntry {
      */
     protected void setHeader() {
         isHeader = true;
-    }
-
-    /**
-     * Set debug indication.
-     */
-    protected void setDebug() {
-        isDebug = true;
     }
 
     /**

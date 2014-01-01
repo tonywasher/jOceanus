@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.DigestType;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 
 /**
@@ -51,11 +52,32 @@ public class DigestOutputStream
     private final DataDigest theDigest;
 
     /**
+     * The length of the data digested.
+     */
+    private long theDataLen = 0;
+
+    /**
      * Access the digest of the data written.
      * @return the digest of data written
      */
     public byte[] getDigest() {
-        return theDigest.digest();
+        return theDigest.finish();
+    }
+
+    /**
+     * Access the digest type.
+     * @return the digest type
+     */
+    public DigestType getDigestType() {
+        return theDigest.getDigestType();
+    }
+
+    /**
+     * Access the data length.
+     * @return the data length
+     */
+    public long getDataLen() {
+        return theDataLen;
     }
 
     /**
@@ -107,6 +129,9 @@ public class DigestOutputStream
         /* Update the data digest */
         theDigest.update(pBytes, pOffset, pLength);
 
+        /* Adjust the data length */
+        theDataLen += pLength;
+
         /* Write the bytes to the stream */
         theStream.write(pBytes, pOffset, pLength);
     }
@@ -126,6 +151,9 @@ public class DigestOutputStream
 
         /* Update the data digest */
         theDigest.update((byte) pByte);
+
+        /* Adjust the data length */
+        theDataLen++;
 
         /* Write the byte to the stream */
         theStream.write(pByte);

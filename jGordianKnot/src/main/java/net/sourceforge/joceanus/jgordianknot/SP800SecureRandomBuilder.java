@@ -47,8 +47,6 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import javax.crypto.Mac;
-
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
@@ -178,7 +176,7 @@ public class SP800SecureRandomBuilder {
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting SecureRandom should reseed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
      */
-    protected SP800SecureRandom buildHMAC(final Mac hMac,
+    protected SP800SecureRandom buildHMAC(final DataMac hMac,
                                           final byte[] pInitVector,
                                           final boolean isPredictionResistant) {
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);

@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import javax.crypto.Mac;
-
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -349,9 +347,9 @@ public class PasswordHash {
             myPassBytes = DataConverter.charsToByteArray(pPassword);
 
             /* Access the MACs */
-            Mac myPrimeMac = theGenerator.accessMac(theHashMode.getPrimeDigest(), myPassBytes);
-            Mac myAlternateMac = theGenerator.accessMac(theHashMode.getAlternateDigest(), myPassBytes);
-            Mac mySecretMac = theGenerator.accessMac(theHashMode.getSecretDigest(), myPassBytes);
+            DataMac myPrimeMac = theGenerator.generateMac(theHashMode.getPrimeDigest(), myPassBytes);
+            DataMac myAlternateMac = theGenerator.generateMac(theHashMode.getAlternateDigest(), myPassBytes);
+            DataMac mySecretMac = theGenerator.generateMac(theHashMode.getSecretDigest(), myPassBytes);
 
             /* Initialise the hash values as the salt bytes */
             byte[] myPrimeHash = theSaltBytes;
@@ -397,11 +395,11 @@ public class PasswordHash {
                 }
 
                 /* Recalculate hashes and combine them */
-                myPrimeHash = myPrimeMac.doFinal();
+                myPrimeHash = myPrimeMac.finish();
                 myPrimeBytes = DataConverter.combineHashes(myPrimeBytes, myPrimeHash);
-                myAlternateHash = myAlternateMac.doFinal();
+                myAlternateHash = myAlternateMac.finish();
                 myAlternateBytes = DataConverter.combineHashes(myAlternateBytes, myAlternateHash);
-                mySecretHash = mySecretMac.doFinal();
+                mySecretHash = mySecretMac.finish();
                 mySecretBytes = DataConverter.combineHashes(mySecretBytes, mySecretHash);
             }
 

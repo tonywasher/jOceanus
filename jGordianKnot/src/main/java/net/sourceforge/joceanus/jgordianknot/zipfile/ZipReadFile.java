@@ -288,15 +288,15 @@ public class ZipReadFile {
 
                 /* Access the digests */
                 byte[][] myDigests = pFile.getDigests();
-                // long[] myDigestLens = pFile.getDigestLens();
+                DigestType[] myDigestTypes = pFile.getDigestTypes();
 
                 /* Access the secretKeys */
                 byte[][] mySecretKeys = pFile.getSecretKeys();
                 byte[][] myInitVectors = pFile.getInitVectors();
 
                 /* Wrap a digest input stream around the zip file */
-                DataDigest myDataDigest = theGenerator.generateDigest(DigestType.SHA3);
-                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest], myCurrent);
+                DataDigest myDataDigest = theGenerator.generateDigest(myDigestTypes[iDigest]);
+                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest++], myCurrent);
 
                 /* For each decryption stream */
                 for (int iDecrypt = 0; iDecrypt < mySecretKeys.length; iDecrypt++) {
@@ -309,7 +309,7 @@ public class ZipReadFile {
                 myCurrent = new LZMAInputStream(myCurrent);
 
                 /* Wrap a digest input stream around the stream */
-                myDataDigest = theGenerator.generateDigest(DigestType.SHA3);
+                myDataDigest = theGenerator.generateDigest(myDigestTypes[iDigest]);
                 myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest], myCurrent);
             }
 

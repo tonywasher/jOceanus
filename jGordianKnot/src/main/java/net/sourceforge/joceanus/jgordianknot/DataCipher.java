@@ -53,6 +53,7 @@ import org.bouncycastle.util.Arrays;
  * always fills a whole number of blocks.
  * <li>The algorithm supports byte arrays that are not strict multiples of the wrap block size. Such arrays are padded with null bytes up to the block size and
  * the number of padding bytes is stored as the last byte of the integrity check vector.
+ * </ol>
  */
 public class DataCipher {
     /**

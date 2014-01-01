@@ -36,11 +36,6 @@ public class ByteArrayInteger {
     private static final int COUNTER_LEN = DataConverter.BYTES_INTEGER;
 
     /**
-     * The byte mask.
-     */
-    private static final int BYTE_MASK = 0xFF;
-
-    /**
      * The counter length.
      */
     private final int theLength;
@@ -111,7 +106,7 @@ public class ByteArrayInteger {
         for (int i = 0; i < theLength; i++) {
             myVal <<= DataConverter.NYBBLE_SHIFT;
             myVal += theBuffer[i]
-                     & BYTE_MASK;
+                     & DataConverter.BYTE_MASK;
         }
 
         /* Determine whether we have reached the limit */
@@ -152,9 +147,9 @@ public class ByteArrayInteger {
         while (myOffset <= myLength) {
             /* Calculate sum at offset */
             int myNext = (theBuffer[theLength
-                                    - myOffset] & BYTE_MASK)
+                                    - myOffset] & DataConverter.BYTE_MASK)
                          + (pAdjust[myLength
-                                    - myOffset] & BYTE_MASK);
+                                    - myOffset] & DataConverter.BYTE_MASK);
             if (doCarry) {
                 myNext++;
             }
@@ -165,7 +160,7 @@ public class ByteArrayInteger {
             myOffset++;
 
             /* Determine the carry */
-            doCarry = ((myNext & ~BYTE_MASK) != 0);
+            doCarry = ((myNext & ~DataConverter.BYTE_MASK) != 0);
         }
 
         /* Adjust remaining bytes for carry */

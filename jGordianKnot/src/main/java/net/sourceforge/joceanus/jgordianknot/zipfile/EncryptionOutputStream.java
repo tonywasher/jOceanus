@@ -57,9 +57,22 @@ public class EncryptionOutputStream
     private final byte[] theInitVector;
 
     /**
+     * The key.
+     */
+    private final Object theKey;
+
+    /**
      * A buffer for single byte writes.
      */
     private final byte[] theByte;
+
+    /**
+     * Access the key.
+     * @return the key
+     */
+    public Object getKey() {
+        return theKey;
+    }
 
     /**
      * Access the initialisation vector.
@@ -77,6 +90,9 @@ public class EncryptionOutputStream
      */
     public EncryptionOutputStream(final SymmetricKey pKey,
                                   final OutputStream pStream) throws JDataException {
+        /* Store the key */
+        theKey = pKey;
+
         /* Create the byte buffer */
         theByte = new byte[1];
 
@@ -96,6 +112,9 @@ public class EncryptionOutputStream
      */
     public EncryptionOutputStream(final StreamKey pKey,
                                   final OutputStream pStream) throws JDataException {
+        /* Store the key */
+        theKey = pKey;
+
         /* Create the byte buffer */
         theByte = new byte[1];
 

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
- * DataDigest types. Available algorithms.
+ * Mac types. Available algorithms.
  */
 public enum MacType {
     /**

@@ -30,7 +30,10 @@ import java.security.NoSuchProviderException;
 import java.util.Arrays;
 
 import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -40,6 +43,16 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  */
 public class DataMac {
     /**
+     * Creation failure error text.
+     */
+    private static final String ERROR_CREATE = "failed to create Mac";
+
+    /**
+     * Creation failure error text.
+     */
+    private static final String ERROR_CALC = "failed to calculate MAC";
+
+    /**
      * The Mac.
      */
     private final Mac theMac;
@@ -48,6 +61,11 @@ public class DataMac {
      * The MacType.
      */
     private final MacType theMacType;
+
+    /**
+     * The Algorithm.
+     */
+    private final String theAlgo;
 
     /**
      * The DigestType.
@@ -105,31 +123,53 @@ public class DataMac {
     }
 
     /**
-     * Constructor for a new HMac digest.
+     * Constructor for a new HMac digest of specified parameters.
+     * @param pGenerator the security generator
+     * @param pDigestType DigestType
+     * @param pVector the initialisation vector
+     * @throws JDataException on error
+     */
+    protected DataMac(final SecurityGenerator pGenerator,
+                      final DigestType pDigestType,
+                      final byte[] pVector) throws JDataException {
+        /* Store the KeyType and the Generator */
+        theMacType = MacType.HMAC;
+        theDigestType = pDigestType;
+        theKey = null;
+        theInitVector = (pVector == null)
+                ? null
+                : Arrays.copyOf(pVector, pVector.length);
+
+        /* Determine the algorithm */
+        boolean useLongHash = pGenerator.useLongHash();
+        theAlgo = pDigestType.getMacAlgorithm(useLongHash);
+
+        /* Protect against exceptions */
+        try {
+            String myProviderName = pGenerator.getProvider().getProvider();
+            theMac = Mac.getInstance(theAlgo, myProviderName);
+            if (theInitVector != null) {
+                initialiseMac(pVector);
+            }
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+        }
+    }
+
+    /**
+     * Constructor for a new HMac digest of specified digest type.
      * @param pGenerator the security generator
      * @param pDigestType DigestType
      * @throws JDataException on error
      */
     protected DataMac(final SecurityGenerator pGenerator,
                       final DigestType pDigestType) throws JDataException {
-        /* Store the KeyType and the Generator */
-        theMacType = MacType.HMAC;
-        theDigestType = pDigestType;
-        theKey = null;
-        theInitVector = null;
-
-        /* Protect against exceptions */
-        try {
-            /* Return a digest for the algorithm */
-            boolean useLongHash = pGenerator.useLongHash();
-            String myProviderName = pGenerator.getProvider().getProvider();
-            theMac = Mac.getInstance(theDigestType.getMacAlgorithm(useLongHash), myProviderName);
-
-            /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
-        }
+        /* Create digest with random initialisation vector */
+        this(pGenerator, pDigestType, pGenerator.getRandomBytes(pGenerator.getKeyLen()
+                                                                / Byte.SIZE));
     }
 
     /**
@@ -159,19 +199,44 @@ public class DataMac {
         SymKeyType myKeyType = theKey.getKeyType();
         theMacType = myKeyType.adjustMacType(pMacType);
         theDigestType = null;
-        theInitVector = Arrays.copyOf(pVector, pVector.length);
+        theInitVector = (pVector == null)
+                ? null
+                : Arrays.copyOf(pVector, pVector.length);
+        theAlgo = myKeyType.getMacAlgorithm(theMacType);
 
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
             String myProviderName = pGenerator.getProvider().getProvider();
-            theMac = Mac.getInstance(myKeyType.getMacAlgorithm(theMacType), myProviderName);
-            theMac.init(theKey.getSecretKey(), new IvParameterSpec(pVector));
+            theMac = Mac.getInstance(theAlgo, myProviderName);
+            if (pVector != null) {
+                theMac.init(theKey.getSecretKey(), new IvParameterSpec(pVector));
+            } else {
+                theMac.init(theKey.getSecretKey());
+            }
 
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Mac", e);
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+        }
+    }
+
+    /**
+     * Initialise a Mac object.
+     * @param pVector the initialisation vector
+     * @throws JDataException on error
+     */
+    public void initialiseMac(final byte[] pVector) throws JDataException {
+        /* Protect against exceptions */
+        try {
+            SecretKey myKey = new SecretKeySpec(pVector, theAlgo);
+            theMac.init(myKey);
+
+            /* Catch exceptions */
+        } catch (InvalidKeyException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
         }
     }
 
@@ -233,12 +298,29 @@ public class DataMac {
     }
 
     /**
-     * Update the mac, calculate and reset it.
+     * Update the MAC, calculate and reset it.
      * @param pBytes the bytes to update with.
      * @return the code
      */
     public byte[] finish(final byte[] pBytes) {
         /* Calculate the mac */
         return theMac.doFinal(pBytes);
+    }
+
+    /**
+     * Calculate the MAC, and return it in the buffer provided.
+     * @param pBuffer the buffer to return the mac in.
+     * @param pOffset the offset in the buffer to store the MAC.
+     * @throws JDataException if buffer too short
+     */
+    public void finish(final byte[] pBuffer,
+                       final int pOffset) throws JDataException {
+        /* Calculate the mac */
+        try {
+            theMac.doFinal(pBuffer, pOffset);
+        } catch (ShortBufferException | IllegalStateException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CALC, e);
+        }
     }
 }

@@ -100,17 +100,19 @@ public final class DataConverter {
     /**
      * Number of bytes in a long.
      */
-    public static final int BYTES_LONG = 8;
+    public static final int BYTES_LONG = Long.SIZE
+                                         / Byte.SIZE;
 
     /**
      * Number of bytes in an integer.
      */
-    public static final int BYTES_INTEGER = 4;
+    public static final int BYTES_INTEGER = Integer.SIZE
+                                            / Byte.SIZE;
 
     /**
      * Byte shift.
      */
-    public static final int BYTE_SHIFT = 8;
+    public static final int BYTE_SHIFT = Byte.SIZE;
 
     /**
      * Byte mask.
@@ -130,7 +132,7 @@ public final class DataConverter {
     /**
      * Nybble shift.
      */
-    public static final int NYBBLE_SHIFT = 4;
+    public static final int NYBBLE_SHIFT = Byte.SIZE >> 1;
 
     /**
      * Nybble mask.
@@ -431,13 +433,11 @@ public final class DataConverter {
      * @return the long value
      */
     public static long byteArrayToLong(final byte[] pBytes) {
-        int myByte;
-        long myValue = 0;
-
         /* Loop through the bytes */
+        long myValue = 0;
         for (int i = 0; i < BYTES_LONG; i++) {
             /* Access the next byte as an unsigned integer */
-            myByte = pBytes[i];
+            int myByte = pBytes[i];
             myByte &= BYTE_MASK;
 
             /* Add in to value */
@@ -455,14 +455,12 @@ public final class DataConverter {
      * @return the byte array
      */
     public static byte[] longToByteArray(final long pValue) {
-        byte myByte;
-        byte[] myBytes = new byte[BYTES_LONG];
-        long myValue = pValue;
-
         /* Loop through the bytes */
+        long myValue = pValue;
+        byte[] myBytes = new byte[BYTES_LONG];
         for (int i = BYTES_LONG; i > 0; i--) {
-            /* Access the next byte as an unsigned integer */
-            myByte = (byte) (myValue & BYTE_MASK);
+            /* Store the next byte */
+            byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
@@ -479,13 +477,11 @@ public final class DataConverter {
      * @return the integer value
      */
     public static int byteArrayToInteger(final byte[] pBytes) {
-        int myByte;
-        int myValue = 0;
-
         /* Loop through the bytes */
+        int myValue = 0;
         for (int i = 0; i < BYTES_INTEGER; i++) {
             /* Access the next byte as an unsigned integer */
-            myByte = pBytes[i];
+            int myByte = pBytes[i];
             myByte &= BYTE_MASK;
 
             /* Add in to value */
@@ -503,14 +499,12 @@ public final class DataConverter {
      * @return the byte array
      */
     public static byte[] integerToByteArray(final int pValue) {
-        byte myByte;
+        /* Loop through the bytes */
         byte[] myBytes = new byte[BYTES_INTEGER];
         int myValue = pValue;
-
-        /* Loop through the bytes */
         for (int i = BYTES_INTEGER; i > 0; i--) {
-            /* Access the next byte as an unsigned integer */
-            myByte = (byte) (myValue & BYTE_MASK);
+            /* Store the next byte */
+            byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
@@ -558,11 +552,6 @@ public final class DataConverter {
      */
     public static byte[] combineHashes(final byte[] pFirst,
                                        final byte[] pSecond) throws JDataException {
-        byte[] myTarget = pSecond;
-        byte[] mySource = pFirst;
-        int myLen;
-        int i;
-
         /* Handle nulls */
         if (pFirst == null) {
             return pSecond;
@@ -572,6 +561,8 @@ public final class DataConverter {
         }
 
         /* If the target is smaller than the source */
+        byte[] myTarget = pSecond;
+        byte[] mySource = pFirst;
         if (myTarget.length < mySource.length) {
             /* Reverse the order to make use of all bits */
             myTarget = pFirst;
@@ -582,10 +573,10 @@ public final class DataConverter {
         myTarget = Arrays.copyOf(myTarget, myTarget.length);
 
         /* Determine length of operation */
-        myLen = mySource.length;
+        int myLen = mySource.length;
 
         /* Loop through the array bytes */
-        for (i = 0; i < myTarget.length; i++) {
+        for (int i = 0; i < myTarget.length; i++) {
             /* Combine the bytes */
             myTarget[i] ^= mySource[i
                                     % myLen];

@@ -75,8 +75,8 @@ public class SecurityTest {
     public static void createAndShowGUI() {
         try {
             // listAlgorithms(SecurityProvider.BC);
-            TestStream();
-            // checkAlgorithms();
+            // TestStream();
+            checkAlgorithms();
             // testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
@@ -361,8 +361,9 @@ public class SecurityTest {
      * Check the supported algorithms
      */
     protected static void checkAlgorithms() throws JDataException {
-        /* Create new Password Hash */
-        SecureManager myManager = new SecureManager(theLogger);
+        /* Create new Security Generator */
+        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, false);
+        SecureManager myManager = new SecureManager(theLogger, myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 
         /* Create instance of each digest */
@@ -372,12 +373,17 @@ public class SecurityTest {
 
         /* Create instance of each hMac */
         for (DigestType myDigest : DigestType.values()) {
-            myGenerator.accessMac(myDigest);
+            myGenerator.generateMac(myDigest, "Hello".getBytes());
         }
 
         /* Create instance of each symmetric key */
         for (SymKeyType myType : SymKeyType.values()) {
             myGenerator.generateSymmetricKey(myType);
+        }
+
+        /* Create instance of each stream key */
+        for (StreamKeyType myType : StreamKeyType.values()) {
+            myGenerator.generateStreamKey(myType);
         }
 
         /* Create instance of each asymmetric key */

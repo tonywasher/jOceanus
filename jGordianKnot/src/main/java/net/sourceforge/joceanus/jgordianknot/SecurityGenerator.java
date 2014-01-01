@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -30,9 +29,7 @@ import java.security.SecureRandom;
 import java.util.logging.Logger;
 
 import javax.crypto.KeyAgreement;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -257,6 +254,18 @@ public class SecurityGenerator {
     }
 
     /**
+     * Obtain random bytes.
+     * @param pNumBytes the number of bytes to obtain
+     * @return the random bytes
+     */
+    public byte[] getRandomBytes(final int pNumBytes) {
+        /* Generate and apply the new seed */
+        byte[] myBytes = new byte[pNumBytes];
+        theRandom.nextBytes(myBytes);
+        return myBytes;
+    }
+
+    /**
      * Generate an SP800HashDRBG SecureRandom.
      * @param pType the digest type
      * @param isPredictionResistant true/false
@@ -275,14 +284,16 @@ public class SecurityGenerator {
     /**
      * Generate an SP800HMacDRBG SecureRandom.
      * @param pType the digest type
+     * @param pPassword the password in byte format
      * @param isPredictionResistant true/false
      * @return the SecureRandom
      * @throws JDataException on error
      */
     public final SecureRandom generateHMacSecureRandom(final DigestType pType,
+                                                       final byte[] pPassword,
                                                        final boolean isPredictionResistant) throws JDataException {
         /* Create the mac */
-        Mac myMac = accessMac(pType);
+        DataMac myMac = generateMac(pType, pPassword);
 
         /* Create the new SecureRandom */
         return theRandomBuilder.buildHMAC(myMac, null, isPredictionResistant);
@@ -497,76 +508,28 @@ public class SecurityGenerator {
     }
 
     /**
-     * Obtain a MAC.
-     * @param pDigestType the digest type required
-     * @return the MAC
-     * @throws JDataException on error
-     */
-    protected final Mac accessMac(final DigestType pDigestType) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Access the MAC */
-            return Mac.getInstance(pDigestType.getMacAlgorithm(useLongHash), theProviderName);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        }
-    }
-
-    /**
      * Obtain a MAC for a password.
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
      * @return the MAC
      * @throws JDataException on error
      */
-    protected Mac accessMac(final DigestType pDigestType,
-                            final byte[] pPassword) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Access the MAC */
-            Mac myMac = accessMac(pDigestType);
-
-            /* Initialise the MAC */
-            SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getMacAlgorithm(useLongHash));
-            myMac.init(myKey);
-
-            /* Return the initialised MAC */
-            return myMac;
-
-            /* Catch exceptions */
-        } catch (InvalidKeyException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        }
+    public DataMac generateMac(final DigestType pDigestType,
+                               final byte[] pPassword) throws JDataException {
+        /* Create the mac */
+        return new DataMac(this, pDigestType, pPassword);
     }
 
     /**
      * Obtain a MAC for a symmetricKey.
-     * @param pDigestType the digest type required
+     * @param pMacType the mac type required
      * @param pKey the symmetricKey
      * @return the MAC
      * @throws JDataException on error
      */
-    protected Mac accessMac(final DigestType pDigestType,
-                            final SymmetricKey pKey) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Access the MAC */
-            Mac myMac = accessMac(pDigestType);
-
-            /* Initialise the MAC */
-            myMac.init(pKey.getSecretKey());
-
-            /* Return the initialised MAC */
-            return myMac;
-
-            /* Catch exceptions */
-        } catch (InvalidKeyException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        }
+    public DataMac generateMac(final MacType pMacType,
+                               final SymmetricKey pKey) throws JDataException {
+        /* Create the mac */
+        return new DataMac(this, pMacType, pKey, null);
     }
 }

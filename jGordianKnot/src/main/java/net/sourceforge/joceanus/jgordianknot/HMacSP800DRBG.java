@@ -44,13 +44,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.InvalidKeyException;
-
-import javax.crypto.Mac;
-import javax.crypto.ShortBufferException;
-import javax.crypto.spec.SecretKeySpec;
-
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jdatamanager.JDataException;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
@@ -81,12 +76,7 @@ public class HMacSP800DRBG
     /**
      * The HMac.
      */
-    private final Mac theHMac;
-
-    /**
-     * The HMac algorithm .
-     */
-    private final String theAlgo;
+    private final DataMac theHMac;
 
     /**
      * The Entropy Source.
@@ -115,14 +105,13 @@ public class HMacSP800DRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected HMacSP800DRBG(final Mac pHMac,
+    protected HMacSP800DRBG(final DataMac pHMac,
                             final EntropySource pEntropy,
                             final byte[] pSecurityBytes,
                             final byte[] pInitVector) {
         /* Store hMac and entropy source */
         theHMac = pHMac;
         theEntropy = pEntropy;
-        theAlgo = theHMac.getAlgorithm();
 
         /* Create Seed Material */
         byte[] myEntropy = theEntropy.getEntropy();
@@ -152,7 +141,7 @@ public class HMacSP800DRBG
             if (pSeed != null) {
                 updateState(pSeed, SEED_ID);
             }
-        } catch (ShortBufferException | InvalidKeyException e) {
+        } catch (JDataException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -161,14 +150,13 @@ public class HMacSP800DRBG
      * Update the state.
      * @param pSeed optional seed material
      * @param pCycle the cycle id
-     * @throws InvalidKeyException on invalid key
-     * @throws ShortBufferException on invalid buffer
+     * @throws JDataException on error
      */
     private void updateState(final byte[] pSeed,
-                             final byte[] pCycle) throws InvalidKeyException, ShortBufferException {
+                             final byte[] pCycle) throws JDataException {
 
         /* Initialise the hMac */
-        theHMac.init(new SecretKeySpec(theKey, theAlgo));
+        theHMac.initialiseMac(theKey);
 
         /* Update with hash and cycle id */
         theHMac.update(theHash);
@@ -180,12 +168,12 @@ public class HMacSP800DRBG
         }
 
         /* Generate new key */
-        theHMac.doFinal(theKey, 0);
+        theHMac.finish(theKey, 0);
 
         /* Calculate new hash */
-        theHMac.init(new SecretKeySpec(theKey, theAlgo));
+        theHMac.initialiseMac(theKey);
         theHMac.update(theHash);
-        theHMac.doFinal(theHash, 0);
+        theHMac.finish(theHash, 0);
     }
 
     @Override
@@ -240,7 +228,7 @@ public class HMacSP800DRBG
         /* Protect against exceptions */
         try {
             /* Initialise the hMac */
-            theHMac.init(new SecretKeySpec(theKey, theAlgo));
+            theHMac.initialiseMac(theKey);
             int mySize = theHMac.getMacLength();
 
             /* while we need to generate more bytes */
@@ -248,7 +236,7 @@ public class HMacSP800DRBG
             while (myBuilt < myLen) {
                 /* Update the mac */
                 theHMac.update(theHash);
-                theHMac.doFinal(theHash, 0);
+                theHMac.finish(theHash, 0);
 
                 /* Determine how many bytes of this hash should be used */
                 int myNeeded = myLen
@@ -261,7 +249,7 @@ public class HMacSP800DRBG
                 System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
-        } catch (ShortBufferException | InvalidKeyException e) {
+        } catch (JDataException e) {
             throw new IllegalStateException(e);
         }
 

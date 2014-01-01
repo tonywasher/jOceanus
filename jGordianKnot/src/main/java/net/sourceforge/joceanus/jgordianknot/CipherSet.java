@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -256,7 +255,7 @@ public class CipherSet {
 
         /* Create the Mac and standard data */
         ByteArrayInteger myCount = new ByteArrayInteger();
-        Mac myMac = theGenerator.accessMac(theDigest, pSecret);
+        DataMac myMac = theGenerator.generateMac(theDigest, pSecret);
 
         /* while we need to generate more bytes */
         while (myBuilt < myKeyLen) {
@@ -299,7 +298,7 @@ public class CipherSet {
      * @return the section
      * @throws JDataException on error
      */
-    private byte[] buildCipherSection(final Mac pMac,
+    private byte[] buildCipherSection(final DataMac pMac,
                                       final byte[] pSection,
                                       final SymKeyType pKeyType) throws JDataException {
         /* Declare initial value */
@@ -324,7 +323,7 @@ public class CipherSet {
             pMac.update(myHash);
 
             /* Calculate Mac */
-            myHash = pMac.doFinal();
+            myHash = pMac.finish();
             myResult = DataConverter.combineHashes(myHash, myResult);
         }
 

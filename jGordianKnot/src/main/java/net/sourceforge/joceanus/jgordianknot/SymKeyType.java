@@ -264,61 +264,35 @@ public enum SymKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
+     * @throws JDataException on error
      */
     public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) {
-        /* Determine bound for the number of types */
-        int myBound = getRandomBound(pNumTypes);
-
-        /* Generate the seed */
-        int mySeed = pRandom.nextInt(myBound);
-
-        /* Generate the random types */
-        return getRandomSymKeyTypes(pNumTypes, mySeed);
-    }
-
-    /**
-     * Get random unique set of symmetric key types.
-     * @param pNumTypes the number of types
-     * @param pSeed the seed value
-     * @return the random set
-     */
-    public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final long pSeed) {
-        /* Validate number of types */
-        checkNumTypes(pNumTypes);
-
-        /* Generate the random types */
-        return getRandomSymKeyTypes(pNumTypes, pSeed);
-    }
-
-    /**
-     * Get unique set of symmetric key types from seed.
-     * @param pNumTypes the number of types
-     * @param pSeed the seed value
-     * @return the random set
-     */
-    private static SymKeyType[] getRandomSymKeyTypes(final int pNumTypes,
-                                                     final long pSeed) {
+                                              final SecureRandom pRandom) throws JDataException {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
-        long mySeed = pSeed;
+        int iIndex;
+
+        /* Reject call if invalid number of types */
+        if ((pNumTypes < 1)
+            || (pNumTypes > iNumValues)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of symmetric keys: "
+                                                           + pNumTypes);
+        }
 
         /* Create the result set */
         SymKeyType[] myTypes = new SymKeyType[pNumTypes];
 
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {
-            /* Extract the index */
-            int myIndex = (int) (mySeed % iNumValues);
-            mySeed /= iNumValues;
+            /* Access the next random index */
+            iIndex = pRandom.nextInt(iNumValues);
 
             /* Store the type */
-            myTypes[i] = myValues[myIndex];
+            myTypes[i] = myValues[iIndex];
 
             /* Shift last value down in place of the one thats been used */
-            myValues[myIndex] = myValues[iNumValues - 1];
+            myValues[iIndex] = myValues[iNumValues - 1];
             iNumValues--;
         }
 

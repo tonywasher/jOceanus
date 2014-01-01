@@ -182,7 +182,7 @@ public class HashSP800DRBG
         } else if (pXtraBytes != null) {
             /* Hash the new input and add to variable hash */
             byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);
-            theV.addTo(theDigest.digest(newInput));
+            theV.addTo(theDigest.finish(newInput));
         }
 
         /* Generate the requested bits */
@@ -192,7 +192,7 @@ public class HashSP800DRBG
         byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());
 
         /* Add the hash and constant */
-        theV.addTo(theDigest.digest(myTempH));
+        theV.addTo(theDigest.finish(myTempH));
         theV.addTo(theC.getBuffer());
 
         /* Add the reSeed counter */
@@ -228,7 +228,7 @@ public class HashSP800DRBG
         int myBuilt = 0;
         while (myBuilt < myLen) {
             /* Calculate the digest */
-            byte[] myDigest = theDigest.digest(myData.getBuffer());
+            byte[] myDigest = theDigest.finish(myData.getBuffer());
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myLen
@@ -283,7 +283,7 @@ public class HashSP800DRBG
             theDigest.update(mySeed);
 
             /* Create digest with the seed material */
-            byte[] myDigest = theDigest.digest(pSeedMaterial);
+            byte[] myDigest = theDigest.finish(pSeedMaterial);
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myLen

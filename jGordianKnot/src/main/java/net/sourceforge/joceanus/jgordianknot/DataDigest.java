@@ -147,7 +147,7 @@ public class DataDigest {
      * Calculate the digest and reset it.
      * @return the digest
      */
-    public byte[] digest() {
+    public byte[] finish() {
         /* Calculate the digest */
         return theDigest.digest();
     }
@@ -157,7 +157,7 @@ public class DataDigest {
      * @param pBytes the bytes to update with.
      * @return the digest
      */
-    public byte[] digest(final byte[] pBytes) {
+    public byte[] finish(final byte[] pBytes) {
         /* Calculate the digest */
         return theDigest.digest(pBytes);
     }

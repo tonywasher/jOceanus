@@ -57,7 +57,12 @@ public class DigestInputStream
     private final DataDigest theDigest;
 
     /**
-     * The expected digest.
+     * The length of the data digested.
+     */
+    private long theDataLen = 0;
+
+    /**
+     * The skip buffer.
      */
     private final byte[] theSkipBuffer = new byte[BUFSIZE];
 
@@ -70,6 +75,14 @@ public class DigestInputStream
      * Has EOF been reached.
      */
     private boolean hasEOFbeenSeen = false;
+
+    /**
+     * Access the data length.
+     * @return the data length
+     */
+    public long getDataLen() {
+        return theDataLen;
+    }
 
     /**
      * Construct the input stream.
@@ -99,7 +112,7 @@ public class DigestInputStream
             /* If we have seen EOF */
             if (hasEOFbeenSeen) {
                 /* Calculate digest */
-                byte[] myDigest = theDigest.digest();
+                byte[] myDigest = theDigest.finish();
 
                 /* Check valid digest */
                 if (!Arrays.areEqual(myDigest, theExpectedDigest)) {
@@ -192,6 +205,9 @@ public class DigestInputStream
         if (iNumRead > 0) {
             /* Update the message digest */
             theDigest.update(pBuffer, pOffset, iNumRead);
+
+            /* Adjust the data length */
+            theDataLen += iNumRead;
         }
 
         /* Note if EOF has been seen */
@@ -223,6 +239,9 @@ public class DigestInputStream
         if (iByte > -1) {
             /* Update the message digest */
             theDigest.update((byte) iByte);
+
+            /* Adjust the data length */
+            theDataLen++;
         }
 
         /* Note if EOF has been seen */
