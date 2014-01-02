@@ -156,7 +156,7 @@ public class HMacSP800DRBG
                              final byte[] pCycle) throws JDataException {
 
         /* Initialise the hMac */
-        theHMac.initialiseMac(theKey);
+        theHMac.setSecretKey(theKey);
 
         /* Update with hash and cycle id */
         theHMac.update(theHash);
@@ -171,7 +171,7 @@ public class HMacSP800DRBG
         theHMac.finish(theKey, 0);
 
         /* Calculate new hash */
-        theHMac.initialiseMac(theKey);
+        theHMac.setSecretKey(theKey);
         theHMac.update(theHash);
         theHMac.finish(theHash, 0);
     }
@@ -228,7 +228,7 @@ public class HMacSP800DRBG
         /* Protect against exceptions */
         try {
             /* Initialise the hMac */
-            theHMac.initialiseMac(theKey);
+            theHMac.setSecretKey(theKey);
             int mySize = theHMac.getMacLength();
 
             /* while we need to generate more bytes */

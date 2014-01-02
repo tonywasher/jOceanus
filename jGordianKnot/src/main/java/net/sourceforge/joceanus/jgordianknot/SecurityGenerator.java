@@ -29,14 +29,11 @@ import java.security.SecureRandom;
 import java.util.logging.Logger;
 
 import javax.crypto.KeyAgreement;
-import javax.crypto.SecretKey;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.StreamRegister;
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
 
 /**
  * Generator class for various security primitives.
@@ -132,6 +129,14 @@ public class SecurityGenerator {
      */
     protected SecureRandom getRandom() {
         return theRandom;
+    }
+
+    /**
+     * Access the Security Register.
+     * @return the register
+     */
+    protected SecurityRegister getRegister() {
+        return theRegister;
     }
 
     /**
@@ -342,7 +347,7 @@ public class SecurityGenerator {
      */
     public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws JDataException {
         /* Create the new Symmetric Key */
-        return new SymmetricKey(this, pKeyType);
+        return SymmetricKey.generateSymmetricKey(this, pKeyType);
     }
 
     /**
@@ -352,7 +357,7 @@ public class SecurityGenerator {
      */
     public SymmetricKey generateSymmetricKey() throws JDataException {
         /* Create the new Symmetric Key */
-        return new SymmetricKey(this);
+        return SymmetricKey.generateSymmetricKey(this);
     }
 
     /**
@@ -363,7 +368,7 @@ public class SecurityGenerator {
      */
     public StreamKey generateStreamKey(final StreamKeyType pKeyType) throws JDataException {
         /* Create the new Stream Key */
-        return new StreamKey(this, pKeyType);
+        return StreamKey.generateStreamKey(this, pKeyType);
     }
 
     /**
@@ -373,7 +378,7 @@ public class SecurityGenerator {
      */
     public StreamKey generateStreamKey() throws JDataException {
         /* Create the new Stream Key */
-        return new StreamKey(this);
+        return StreamKey.generateStreamKey(this);
     }
 
     /**
@@ -436,38 +441,6 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate new Secret Key.
-     * @param pKeyType the key type
-     * @param pKeyLen the key length
-     * @return the SecretKey
-     * @throws JDataException on error
-     */
-    protected SecretKey generateSecretKey(final SymKeyType pKeyType,
-                                          final int pKeyLen) throws JDataException {
-        /* Obtain the registration */
-        SymmetricRegister myReg = theRegister.getSymRegistration(pKeyType, pKeyLen);
-
-        /* Generate the SecretKey */
-        return myReg.generateKey();
-    }
-
-    /**
-     * Generate new Stream Key.
-     * @param pKeyType the key type
-     * @param pKeyLen the key length
-     * @return the StreamKey
-     * @throws JDataException on error
-     */
-    protected SecretKey generateSecretKey(final StreamKeyType pKeyType,
-                                          final int pKeyLen) throws JDataException {
-        /* Obtain the registration */
-        StreamRegister myReg = theRegister.getStreamRegistration(pKeyType, pKeyLen);
-
-        /* Generate the SecretKey */
-        return myReg.generateKey();
-    }
-
-    /**
      * Obtain a KeyAgreement.
      * @param pAlgorithm the algorithm required
      * @return the key agreement
@@ -504,32 +477,66 @@ public class SecurityGenerator {
      */
     public final DataDigest generateDigest() throws JDataException {
         /* Return a random digest */
-        return new DataDigest(this);
+        return DataDigest.generateRandomDigest(this);
     }
 
     /**
-     * Obtain a MAC for a password.
+     * Obtain an HMac for a password.
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
-     * @return the MAC
+     * @return the HMac
      * @throws JDataException on error
      */
     public DataMac generateMac(final DigestType pDigestType,
                                final byte[] pPassword) throws JDataException {
         /* Create the mac */
-        return new DataMac(this, pDigestType, pPassword);
+        DataMac myMac = new DataMac(this, pDigestType, null);
+        myMac.setSecretKey(pPassword);
+        return myMac;
     }
 
     /**
-     * Obtain a MAC for a symmetricKey.
-     * @param pMacType the mac type required
-     * @param pKey the symmetricKey
+     * Obtain a random HMac of specific type.
+     * @param pDigestType the DigestType
+     * @return the HMac
+     * @throws JDataException on error
+     */
+    public DataMac generateMac(final DigestType pDigestType) throws JDataException {
+        /* Create the mac */
+        return DataMac.generateRandomDigestMac(this, pDigestType);
+    }
+
+    /**
+     * Obtain a random MAC of specific type and SymKeyType.
+     * @param pMacType the MacType
+     * @param pKeyType the KeyType
      * @return the MAC
      * @throws JDataException on error
      */
     public DataMac generateMac(final MacType pMacType,
-                               final SymmetricKey pKey) throws JDataException {
+                               final SymKeyType pKeyType) throws JDataException {
         /* Create the mac */
-        return new DataMac(this, pMacType, pKey, null);
+        return DataMac.generateRandomSymKeyMac(this, pMacType, pKeyType);
+    }
+
+    /**
+     * Obtain a random MAC of specific type.
+     * @param pMacType the MacType
+     * @return the MAC
+     * @throws JDataException on error
+     */
+    public DataMac generateMac(final MacType pMacType) throws JDataException {
+        /* Create the mac */
+        return DataMac.generateRandomMac(this, pMacType);
+    }
+
+    /**
+     * Obtain a random MAC.
+     * @return the MAC
+     * @throws JDataException on error
+     */
+    public DataMac generateMac() throws JDataException {
+        /* Create the mac */
+        return DataMac.generateRandomMac(this);
     }
 }

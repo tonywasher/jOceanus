@@ -455,7 +455,7 @@ public class AsymmetricKey {
                 SecretKey myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(), myType.getAlgorithm(), Cipher.SECRET_KEY);
 
                 /* Build the symmetric key */
-                mySymKey = new SymmetricKey(theGenerator, myKey, myType);
+                mySymKey = new SymmetricKey(theGenerator, myType, myKey);
             }
 
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import javax.crypto.SecretKey;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
 
 /**
  * Symmetric Key implementation.
@@ -104,43 +105,48 @@ public class SymmetricKey {
     }
 
     /**
-     * Constructor for a symmetric key of specified type.
+     * SymmetricKey Generator.
+     * @param pGenerator the security generator
+     * @return the new SymmetricKey
+     * @throws JDataException on error
+     */
+    protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom);
+
+        /* Generate a SymKey for the SymKey type */
+        return generateSymmetricKey(pGenerator, myType[0]);
+    }
+
+    /**
+     * SymmetricKey Generator.
      * @param pGenerator the security generator
      * @param pKeyType Symmetric KeyType
+     * @return the new SymmetricKey
      * @throws JDataException on error
      */
-    protected SymmetricKey(final SecurityGenerator pGenerator,
-                           final SymKeyType pKeyType) throws JDataException {
-        /* Store the KeyType and the Generator */
-        theKeyType = pKeyType;
-        theKeyLen = pGenerator.getKeyLen();
-        theGenerator = pGenerator;
+    protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator,
+                                                       final SymKeyType pKeyType) throws JDataException {
+        /* Generate a new Secret Key */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        SymmetricRegister myReg = myRegister.getSymRegistration(pKeyType, pGenerator.getKeyLen());
+        SecretKey myKey = myReg.generateKey();
 
-        /* Generate the new key */
-        theKey = theGenerator.generateSecretKey(theKeyType, theKeyLen);
-        theEncodedKeyDef = theKey.getEncoded();
+        /* Generate a SymKey for the SymKey type */
+        return new SymmetricKey(pGenerator, pKeyType, myKey);
     }
 
     /**
-     * Constructor for a symmetric key of random type.
+     * Constructor for a symmetric key.
      * @param pGenerator the security generator
-     * @throws JDataException on error
-     */
-    protected SymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
-        /* Create StreamKey for random key type */
-        this(pGenerator, SymKeyType.getRandomTypes(1, pGenerator.getRandom())[0]);
-    }
-
-    /**
-     * Constructor for a decoded symmetric key.
-     * @param pGenerator the security generator
+     * @param pKeyType Symmetric KeyType
      * @param pKey Secret Key for algorithm
-     * @param pKeyType Symmetric KeyType
      * @throws JDataException on error
      */
     protected SymmetricKey(final SecurityGenerator pGenerator,
-                           final SecretKey pKey,
-                           final SymKeyType pKeyType) throws JDataException {
+                           final SymKeyType pKeyType,
+                           final SecretKey pKey) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;

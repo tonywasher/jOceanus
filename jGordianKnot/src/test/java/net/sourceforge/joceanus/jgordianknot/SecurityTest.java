@@ -74,9 +74,9 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
-            // listAlgorithms(SecurityProvider.BC);
+            listAlgorithms(SecurityProvider.BC);
             // TestStream();
-            checkAlgorithms();
+            // checkAlgorithms();
             // testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");

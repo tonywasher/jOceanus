@@ -278,7 +278,7 @@ public class CipherSet {
         SecretKey myKeyDef = new SecretKeySpec(myKeyBytes, pKeyType.getAlgorithm());
 
         /* Create the Symmetric Key */
-        SymmetricKey myKey = new SymmetricKey(theGenerator, myKeyDef, pKeyType);
+        SymmetricKey myKey = new SymmetricKey(theGenerator, pKeyType, myKeyDef);
 
         /* Obtain a Cipher */
         DataCipher myCipher = myKey.getDataCipher();
@@ -573,7 +573,7 @@ public class CipherSet {
         SecretKey mySecret = new SecretKeySpec(myEncoded, myType.getAlgorithm());
 
         /* Create the Symmetric Key */
-        SymmetricKey myKey = new SymmetricKey(theGenerator, mySecret, myType);
+        SymmetricKey myKey = new SymmetricKey(theGenerator, myType, mySecret);
 
         /* Return the key */
         return myKey;

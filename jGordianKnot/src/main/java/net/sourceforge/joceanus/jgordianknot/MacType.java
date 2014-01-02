@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
+import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -49,7 +50,12 @@ public enum MacType {
     /**
      * Skein.
      */
-    SKEIN(4);
+    SKEIN(4),
+
+    /**
+     * VMPC.
+     */
+    VMPC(5);
 
     /**
      * Resource Bundle.
@@ -108,5 +114,101 @@ public enum MacType {
         }
         throw new JDataException(ExceptionClass.DATA, "Invalid MacType: "
                                                       + id);
+    }
+
+    /**
+     * Obtain the algorithm.
+     * @param pKeyType the symmetric key type (or null)
+     * @return the algorithm
+     */
+    public String getAlgorithm(final SymKeyType pKeyType) {
+        switch (this) {
+            case GMAC:
+                return (pKeyType == SymKeyType.THREEFISH)
+                        ? null
+                        : pKeyType.name()
+                          + "-GMAC";
+            case POLY1305:
+                return (pKeyType == SymKeyType.THREEFISH)
+                        ? null
+                        : "POLY1305-"
+                          + pKeyType.name();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the Key generation algorithm.
+     * @param bLong use long hashes?
+     * @return the algorithm
+     */
+    public String getAlgorithm(final boolean bLong) {
+        switch (this) {
+            case VMPC:
+                return "VMPC-MAC";
+            case SKEIN:
+                return DigestType.SKEIN.getMacAlgorithm(bLong)
+                       + "-MAC";
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the Key generation algorithm.
+     * @param bLong use long hashes?
+     * @return the algorithm
+     */
+    public String getKeyAlgorithm(final boolean bLong) {
+        switch (this) {
+            case VMPC:
+                return "VMPC-KSA3";
+            case SKEIN:
+                return getAlgorithm(bLong);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Get random unique set of Mac types.
+     * @param pNumTypes the number of types
+     * @param pRandom the random generator
+     * @return the random set
+     * @throws JDataException on error
+     */
+    public static MacType[] getRandomTypes(final int pNumTypes,
+                                           final SecureRandom pRandom) throws JDataException {
+        /* Access the values */
+        MacType[] myValues = values();
+        int iNumValues = myValues.length;
+        int iIndex;
+
+        /* Reject call if invalid number of types */
+        if ((pNumTypes < 1)
+            || (pNumTypes > iNumValues)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of Macs: "
+                                                           + pNumTypes);
+        }
+
+        /* Create the result set */
+        MacType[] myTypes = new MacType[pNumTypes];
+
+        /* Loop through the types */
+        for (int i = 0; i < pNumTypes; i++) {
+            /* Access the next random index */
+            iIndex = pRandom.nextInt(iNumValues);
+
+            /* Store the type */
+            myTypes[i] = myValues[iIndex];
+
+            /* Shift last value down in place of the one thats been used */
+            myValues[iIndex] = myValues[iNumValues - 1];
+            iNumValues--;
+        }
+
+        /* Return the types */
+        return myTypes;
     }
 }

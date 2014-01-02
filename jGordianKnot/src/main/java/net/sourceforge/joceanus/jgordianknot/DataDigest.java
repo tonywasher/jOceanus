@@ -23,9 +23,11 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.nio.ByteBuffer;
+import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -58,6 +60,21 @@ public class DataDigest {
      */
     public int getDigestLength() {
         return theDigest.getDigestLength();
+    }
+
+    /**
+     * DataDigest Generator.
+     * @param pGenerator the security generator
+     * @return the new Digest
+     * @throws JDataException on error
+     */
+    protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+
+        /* Generate a Digest for the Digest type */
+        return new DataDigest(pGenerator, myType[0]);
     }
 
     /**
@@ -160,5 +177,25 @@ public class DataDigest {
     public byte[] finish(final byte[] pBytes) {
         /* Calculate the digest */
         return theDigest.digest(pBytes);
+    }
+
+    /**
+     * Calculate the Digest, and return it in the buffer provided.
+     * @param pBuffer the buffer to return the digest in.
+     * @param pOffset the offset in the buffer to store the digest.
+     * @param pLen the number of bytes in the buffer available for the digest.
+     * @return the number of bytes placed into buffer
+     * @throws JDataException if buffer too short
+     */
+    public int finish(final byte[] pBuffer,
+                      final int pOffset,
+                      final int pLen) throws JDataException {
+        /* Calculate the digest */
+        try {
+            return theDigest.digest(pBuffer, pOffset, pLen);
+        } catch (DigestException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to calculate Digest", e);
+        }
     }
 }

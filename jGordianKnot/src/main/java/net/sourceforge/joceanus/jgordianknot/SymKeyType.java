@@ -148,51 +148,6 @@ public enum SymKeyType {
     }
 
     /**
-     * Adjust MacType.
-     * @param pMacType the mac type
-     * @return the adjusted MacType
-     */
-    public MacType adjustMacType(final MacType pMacType) {
-        switch (this) {
-            case THREEFISH:
-                return MacType.SKEIN;
-            default:
-                return (pMacType == MacType.SKEIN)
-                        ? MacType.GMAC
-                        : pMacType;
-        }
-    }
-
-    /**
-     * Obtain the GMac algorithm.
-     * @param pMacType the mac type
-     * @return the GMac algorithm
-     */
-    public String getMacAlgorithm(final MacType pMacType) {
-        switch (this) {
-            case THREEFISH:
-                return "SKEIN-256-256-MAC";
-            default:
-                return name()
-                       + "-GMAC";
-        }
-    }
-
-    /**
-     * Obtain the Poly1305 algorithm.
-     * @return the GMAc algorithm
-     */
-    public String getPoly1305Algorithm() {
-        switch (this) {
-            case THREEFISH:
-                return "SKEIN-256-256-MAC";
-            default:
-                return "POLY1305-"
-                       + name();
-        }
-    }
-
-    /**
      * Constructor.
      * @param id the id
      */

@@ -27,6 +27,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.Mac;
@@ -37,6 +38,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.MacRegister;
 
 /**
  * Encapsulation of a Mac.
@@ -46,6 +48,11 @@ public class DataMac {
      * Creation failure error text.
      */
     private static final String ERROR_CREATE = "failed to create Mac";
+
+    /**
+     * Initialisation failure error text.
+     */
+    private static final String ERROR_INIT = "failed to initialise Mac";
 
     /**
      * Creation failure error text.
@@ -73,9 +80,14 @@ public class DataMac {
     private final DigestType theDigestType;
 
     /**
-     * The SymmetricKey.
+     * The SymKeyType.
      */
-    private final SymmetricKey theKey;
+    private final SymKeyType theKeyType;
+
+    /**
+     * The SecretKey.
+     */
+    private SecretKey theKey;
 
     /**
      * The Initialisation vector.
@@ -99,10 +111,18 @@ public class DataMac {
     }
 
     /**
-     * Obtain the symmetric key.
-     * @return the symmetric key
+     * Obtain the SymKey Type.
+     * @return the SymKey type
      */
-    public SymmetricKey getSymmetricKey() {
+    public SymKeyType getSymKeyType() {
+        return theKeyType;
+    }
+
+    /**
+     * Obtain the secret key.
+     * @return the secret key
+     */
+    protected SecretKey getSecretKey() {
         return theKey;
     }
 
@@ -123,22 +143,151 @@ public class DataMac {
     }
 
     /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomMac(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        MacType[] myType = MacType.getRandomTypes(1, myRandom);
+
+        /* Generate a random Mac for the Mac type */
+        return generateRandomMac(pGenerator, myType[0]);
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @param pMacType the MacType
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomMac(final SecurityGenerator pGenerator,
+                                               final MacType pMacType) throws JDataException {
+        /* Switch on MacType */
+        switch (pMacType) {
+            case HMAC:
+                return generateRandomDigestMac(pGenerator);
+            case GMAC:
+            case POLY1305:
+                return generateRandomSymKeyMac(pGenerator, pMacType);
+            default:
+                return generateRandomOtherMac(pGenerator, pMacType);
+        }
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
+
+        /* Generate a random Mac for the Mac type */
+        return generateRandomDigestMac(pGenerator, myType[0]);
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @param pDigestType the digest type
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator,
+                                                     final DigestType pDigestType) throws JDataException {
+        /* Generate a new Secret Key */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        MacRegister myReg = myRegister.getMacRegistration(pDigestType, pGenerator.getKeyLen());
+        SecretKey myKey = myReg.generateKey();
+
+        /* Generate the Mac */
+        return new DataMac(pGenerator, pDigestType, myKey);
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @param pMacType the MacType
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomSymKeyMac(final SecurityGenerator pGenerator,
+                                                     final MacType pMacType) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom);
+
+        /* Generate a random Mac for the Mac type */
+        return generateRandomSymKeyMac(pGenerator, pMacType, myType[0]);
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @param pMacType the MacType
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomOtherMac(final SecurityGenerator pGenerator,
+                                                    final MacType pMacType) throws JDataException {
+        /* Generate a new Secret Key */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        MacRegister myReg = myRegister.getMacRegistration(pMacType, pGenerator.getKeyLen());
+        SecretKey myKey = myReg.generateKey();
+
+        /* Generate an initialisation vector */
+        byte[] myInitVector = pGenerator.getRandomBytes(CipherSet.IVSIZE);
+
+        /* Generate the Mac */
+        return new DataMac(pGenerator, pMacType, myKey, myInitVector);
+    }
+
+    /**
+     * DataMac Generator.
+     * @param pGenerator the security generator
+     * @param pMacType the MacType
+     * @param pKeyType the SymKey type
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac generateRandomSymKeyMac(final SecurityGenerator pGenerator,
+                                                     final MacType pMacType,
+                                                     final SymKeyType pKeyType) throws JDataException {
+        /* Generate a new Secret Key */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        MacRegister myReg = myRegister.getMacRegistration(pMacType, pKeyType, pGenerator.getKeyLen());
+        SecretKey myKey = myReg.generateKey();
+
+        /* Generate an initialisation vector */
+        byte[] myInitVector = pGenerator.getRandomBytes(CipherSet.IVSIZE);
+
+        /* Generate the Mac */
+        return new DataMac(pGenerator, pMacType, pKeyType, myKey, myInitVector);
+    }
+
+    /**
      * Constructor for a new HMac digest of specified parameters.
      * @param pGenerator the security generator
      * @param pDigestType DigestType
-     * @param pVector the initialisation vector
+     * @param pKey the secret Key (or null)
      * @throws JDataException on error
      */
     protected DataMac(final SecurityGenerator pGenerator,
                       final DigestType pDigestType,
-                      final byte[] pVector) throws JDataException {
+                      final SecretKey pKey) throws JDataException {
         /* Store the KeyType and the Generator */
         theMacType = MacType.HMAC;
         theDigestType = pDigestType;
-        theKey = null;
-        theInitVector = (pVector == null)
-                ? null
-                : Arrays.copyOf(pVector, pVector.length);
+        theKey = pKey;
+        theInitVector = null;
+        theKeyType = null;
 
         /* Determine the algorithm */
         boolean useLongHash = pGenerator.useLongHash();
@@ -148,72 +297,45 @@ public class DataMac {
         try {
             String myProviderName = pGenerator.getProvider().getProvider();
             theMac = Mac.getInstance(theAlgo, myProviderName);
-            if (theInitVector != null) {
-                initialiseMac(pVector);
+            if (theKey != null) {
+                theMac.init(theKey);
             }
 
             /* Catch exceptions */
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
         }
     }
 
     /**
-     * Constructor for a new HMac digest of specified digest type.
-     * @param pGenerator the security generator
-     * @param pDigestType DigestType
-     * @throws JDataException on error
-     */
-    protected DataMac(final SecurityGenerator pGenerator,
-                      final DigestType pDigestType) throws JDataException {
-        /* Create digest with random initialisation vector */
-        this(pGenerator, pDigestType, pGenerator.getRandomBytes(pGenerator.getKeyLen()
-                                                                / Byte.SIZE));
-    }
-
-    /**
-     * Constructor for a new hMac of random type.
-     * @param pGenerator the security generator
-     * @throws JDataException on error
-     */
-    protected DataMac(final SecurityGenerator pGenerator) throws JDataException {
-        /* Create digest for random digest type */
-        this(pGenerator, DigestType.getRandomTypes(1, pGenerator.getRandom())[0]);
-    }
-
-    /**
-     * Constructor for a new hMac of random type.
+     * Constructor for a new GMAC/Poly1305Mac of specified parameters.
      * @param pGenerator the security generator
      * @param pMacType the mac type
-     * @param pKey the symmetric key to use for Mac
+     * @param pKeyType the key type
+     * @param pKey the secret key
      * @param pVector the initialisation vector
      * @throws JDataException on error
      */
-    protected DataMac(final SecurityGenerator pGenerator,
-                      final MacType pMacType,
-                      final SymmetricKey pKey,
-                      final byte[] pVector) throws JDataException {
+    private DataMac(final SecurityGenerator pGenerator,
+                    final MacType pMacType,
+                    final SymKeyType pKeyType,
+                    final SecretKey pKey,
+                    final byte[] pVector) throws JDataException {
         /* Store the KeyType and the Generator */
         theKey = pKey;
-        SymKeyType myKeyType = theKey.getKeyType();
-        theMacType = myKeyType.adjustMacType(pMacType);
+        theMacType = pMacType;
         theDigestType = null;
-        theInitVector = (pVector == null)
-                ? null
-                : Arrays.copyOf(pVector, pVector.length);
-        theAlgo = myKeyType.getMacAlgorithm(theMacType);
+        theKeyType = pKeyType;
+        theInitVector = Arrays.copyOf(pVector, pVector.length);
+        theAlgo = pMacType.getAlgorithm(theKeyType);
 
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
             String myProviderName = pGenerator.getProvider().getProvider();
             theMac = Mac.getInstance(theAlgo, myProviderName);
-            if (pVector != null) {
-                theMac.init(theKey.getSecretKey(), new IvParameterSpec(pVector));
-            } else {
-                theMac.init(theKey.getSecretKey());
-            }
+            theMac.init(theKey, new IvParameterSpec(pVector));
 
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
@@ -223,20 +345,62 @@ public class DataMac {
     }
 
     /**
-     * Initialise a Mac object.
+     * Constructor for a new Skein/VMPCMac of specified parameters.
+     * @param pGenerator the security generator
+     * @param pMacType the mac type
+     * @param pKey the secret key
      * @param pVector the initialisation vector
      * @throws JDataException on error
      */
-    public void initialiseMac(final byte[] pVector) throws JDataException {
+    private DataMac(final SecurityGenerator pGenerator,
+                    final MacType pMacType,
+                    final SecretKey pKey,
+                    final byte[] pVector) throws JDataException {
+        /* Store the KeyType and the Generator */
+        theKey = pKey;
+        theMacType = pMacType;
+        theDigestType = null;
+        theKeyType = null;
+        theInitVector = Arrays.copyOf(pVector, pVector.length);
+
+        /* Determine the algorithm */
+        boolean useLongHash = pGenerator.useLongHash();
+        theAlgo = pMacType.getAlgorithm(useLongHash);
+
         /* Protect against exceptions */
         try {
-            SecretKey myKey = new SecretKeySpec(pVector, theAlgo);
-            theMac.init(myKey);
+            /* Return a digest for the algorithm */
+            String myProviderName = pGenerator.getProvider().getProvider();
+            theMac = Mac.getInstance(theAlgo, myProviderName);
+            theMac.init(theKey, new IvParameterSpec(pVector));
+
+            /* Catch exceptions */
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+        }
+    }
+
+    /**
+     * Initialise an HMac object.
+     * @param pKeyBytes the key bytes
+     * @throws JDataException on error
+     */
+    public void setSecretKey(final byte[] pKeyBytes) throws JDataException {
+        /* Only allowed for HMac */
+        if (theMacType != MacType.HMAC) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Protect against exceptions */
+        try {
+            theKey = new SecretKeySpec(pKeyBytes, theAlgo);
+            theMac.init(theKey);
 
             /* Catch exceptions */
         } catch (InvalidKeyException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
         }
     }
 

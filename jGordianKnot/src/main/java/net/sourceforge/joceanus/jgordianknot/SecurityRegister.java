@@ -60,6 +60,11 @@ public class SecurityRegister {
     private final SecureRandom theRandom;
 
     /**
+     * Do we use a long hash?
+     */
+    private final boolean useLongHash;
+
+    /**
      * List of asymmetric registrations.
      */
     private final List<AsymmetricRegister> theAsymRegister;
@@ -75,6 +80,11 @@ public class SecurityRegister {
     private final List<StreamRegister> theStreamRegister;
 
     /**
+     * List of Mac registrations.
+     */
+    private final List<MacRegister> theMacRegister;
+
+    /**
      * The constructor.
      * @param pGenerator the security generator
      */
@@ -83,11 +93,13 @@ public class SecurityRegister {
         SecurityProvider myProvider = pGenerator.getProvider();
         theRandom = pGenerator.getRandom();
         theProviderName = myProvider.getProvider();
+        useLongHash = pGenerator.useLongHash();
 
         /* Allocate the lists */
         theAsymRegister = new ArrayList<AsymmetricRegister>();
         theSymRegister = new ArrayList<SymmetricRegister>();
         theStreamRegister = new ArrayList<StreamRegister>();
+        theMacRegister = new ArrayList<MacRegister>();
     }
 
     /**
@@ -103,7 +115,7 @@ public class SecurityRegister {
             AsymmetricRegister myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if (myReg.getKeyType() == pKeyType) {
+            if (myReg.isMatch(pKeyType)) {
                 return myReg;
             }
         }
@@ -127,8 +139,7 @@ public class SecurityRegister {
             SymmetricRegister myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if ((myReg.getKeyType() == pKeyType)
-                && (myReg.getKeyLen() == pKeyLen)) {
+            if (myReg.isMatch(pKeyType, pKeyLen)) {
                 return myReg;
             }
         }
@@ -152,14 +163,87 @@ public class SecurityRegister {
             StreamRegister myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if ((myReg.getKeyType() == pKeyType)
-                && (myReg.getKeyLen() == pKeyLen)) {
+            if (myReg.isMatch(pKeyType, pKeyLen)) {
                 return myReg;
             }
         }
 
         /* Create the new registration */
         return new StreamRegister(pKeyType, pKeyLen);
+    }
+
+    /**
+     * Obtain the Mac Registration.
+     * @param pDigestType the digest type
+     * @param pKeyLen the key length
+     * @return the registration
+     */
+    protected MacRegister getMacRegistration(final DigestType pDigestType,
+                                             final int pKeyLen) {
+        /* Loop through the list */
+        Iterator<MacRegister> myIterator = theMacRegister.iterator();
+        while (myIterator.hasNext()) {
+            /* Access the item */
+            MacRegister myReg = myIterator.next();
+
+            /* If this is the right one, return it */
+            if (myReg.isMatch(pDigestType, pKeyLen)) {
+                return myReg;
+            }
+        }
+
+        /* Create the new registration */
+        return new MacRegister(pDigestType, pKeyLen);
+    }
+
+    /**
+     * Obtain the Mac Registration.
+     * @param pMacType the Mac type
+     * @param pKeyType the key type
+     * @param pKeyLen the key length
+     * @return the registration
+     */
+    protected MacRegister getMacRegistration(final MacType pMacType,
+                                             final SymKeyType pKeyType,
+                                             final int pKeyLen) {
+        /* Loop through the list */
+        Iterator<MacRegister> myIterator = theMacRegister.iterator();
+        while (myIterator.hasNext()) {
+            /* Access the item */
+            MacRegister myReg = myIterator.next();
+
+            /* If this is the right one, return it */
+            if (myReg.isMatch(pMacType, pKeyType, pKeyLen)) {
+                return myReg;
+            }
+        }
+
+        /* Create the new registration */
+        return new MacRegister(pMacType, pKeyLen);
+    }
+
+    /**
+     * Obtain the Mac Registration.
+     * @param pMacType the Mac type
+     * @param pKeyLen the key length
+     * @return the registration
+     */
+    protected MacRegister getMacRegistration(final MacType pMacType,
+                                             final int pKeyLen) {
+        /* Loop through the list */
+        Iterator<MacRegister> myIterator = theMacRegister.iterator();
+        while (myIterator.hasNext()) {
+            /* Access the item */
+            MacRegister myReg = myIterator.next();
+
+            /* If this is the right one, return it */
+            if (myReg.isMatch(pMacType, pKeyLen)) {
+                return myReg;
+            }
+        }
+
+        /* Create the new registration */
+        return new MacRegister(pMacType, pKeyLen);
     }
 
     /**
@@ -185,14 +269,6 @@ public class SecurityRegister {
          * KeyPair Generator for Asymmetric Key Type.
          */
         private KeyPairGenerator theGenerator = null;
-
-        /**
-         * Obtain the KeyType.
-         * @return the Key type
-         */
-        private AsymKeyType getKeyType() {
-            return theKeyType;
-        }
 
         /**
          * Constructor.
@@ -287,21 +363,26 @@ public class SecurityRegister {
             /* Generate the Key Pair */
             return theGenerator.generateKeyPair();
         }
+
+        /**
+         * Does this registration match the request.
+         * @param pKeyType the key type
+         * @return true/false
+         */
+        protected boolean isMatch(final AsymKeyType pKeyType) {
+            /* Check identity */
+            return theKeyType == pKeyType;
+        }
     }
 
     /**
-     * Symmetric Registration class.
+     * Secret Registration class.
      */
-    protected final class SymmetricRegister {
+    private abstract class SecretRegister {
         /**
-         * Symmetric Key Type.
+         * Algorithm.
          */
-        private final SymKeyType theKeyType;
-
-        /**
-         * Symmetric Algorithm.
-         */
-        private final String theAlgorithm;
+        private String theAlgorithm;
 
         /**
          * Key Length.
@@ -309,25 +390,92 @@ public class SecurityRegister {
         private final int theKeyLen;
 
         /**
-         * Key Generator for Symmetric Key Type.
+         * Key Generator for Secret Key.
          */
-        private KeyGenerator theGenerator = null;
+        private KeyGenerator theGenerator;
 
         /**
-         * Obtain the KeyType.
-         * @return the Key type
+         * Set the algorithm.
+         * @param pAlgorithm the algorithm
          */
-        private SymKeyType getKeyType() {
-            return theKeyType;
+        protected void setAlgorithm(final String pAlgorithm) {
+            theAlgorithm = pAlgorithm;
         }
 
         /**
          * Obtain the KeyLength.
          * @return the Key length
          */
-        private int getKeyLen() {
+        protected int getKeyLen() {
             return theKeyLen;
         }
+
+        /**
+         * Constructor.
+         * @param pAlgorithm the algorithm
+         * @param pKeyLen the key length
+         */
+        private SecretRegister(final int pKeyLen) {
+            /* Store the key type */
+            theKeyLen = pKeyLen;
+        }
+
+        /**
+         * Generate a new key of the required keyLength.
+         * @return the Secret Key
+         * @throws JDataException on error
+         */
+        protected SecretKey generateKey() throws JDataException {
+            /* If we have not allocated the generator */
+            if (theGenerator == null) {
+                /* Protect against Exceptions */
+                try {
+                    /* Create the key generator */
+                    theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
+                    theGenerator.init(theKeyLen, theRandom);
+                } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
+                    /* Throw the exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                }
+            }
+
+            /* Generate the Secret key */
+            return theGenerator.generateKey();
+        }
+
+        /**
+         * Does this registration match the request.
+         * @param pAlgorithm the algorithm
+         * @param pKeyLen the key length
+         * @return true/false
+         */
+        protected boolean isMatch(final String pAlgorithm,
+                                  final int pKeyLen) {
+            /* Check identity */
+            return (theKeyLen == pKeyLen)
+                   && theAlgorithm.equals(pAlgorithm);
+        }
+
+        /**
+         * Does this registration match the request.
+         * @param pKeyLen the key length
+         * @return true/false
+         */
+        protected boolean isMatch(final int pKeyLen) {
+            /* Check identity */
+            return (theKeyLen == pKeyLen);
+        }
+    }
+
+    /**
+     * Symmetric Registration class.
+     */
+    protected final class SymmetricRegister
+            extends SecretRegister {
+        /**
+         * Symmetric Key Type.
+         */
+        private final SymKeyType theKeyType;
 
         /**
          * Constructor.
@@ -336,78 +484,44 @@ public class SecurityRegister {
          */
         private SymmetricRegister(final SymKeyType pKeyType,
                                   final int pKeyLen) {
-            /* Store the key type */
+            /* Call super constructor */
+            super(pKeyLen);
+
+            /* Store variables */
             theKeyType = pKeyType;
-            theKeyLen = pKeyLen;
-            theAlgorithm = theKeyType.getAlgorithm();
+            setAlgorithm(theKeyType.getAlgorithm());
 
             /* Add it to the registrations */
             theSymRegister.add(this);
         }
 
         /**
-         * Generate a new key of the required keyLength.
-         * @return the Secret Key
-         * @throws JDataException on error
+         * Does this Key match the request.
+         * @param pKeyType the Key type
+         * @param pKeyLen the key length
+         * @return true/false
          */
-        protected SecretKey generateKey() throws JDataException {
-            /* If we have not allocated the generator */
-            if (theGenerator == null) {
-                /* Protect against Exceptions */
-                try {
-                    /* Create the key generator */
-                    theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
-                    theGenerator.init(theKeyLen, theRandom);
-                } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                }
+        private boolean isMatch(final SymKeyType pKeyType,
+                                final int pKeyLen) {
+            /* Ignore wrong key types */
+            if (theKeyType != pKeyType) {
+                return false;
             }
 
-            /* Generate the Secret key */
-            return theGenerator.generateKey();
+            /* Check for match */
+            return isMatch(pKeyLen);
         }
     }
 
     /**
      * Stream Registration class.
      */
-    protected final class StreamRegister {
+    protected final class StreamRegister
+            extends SecretRegister {
         /**
          * Stream Key Type.
          */
         private final StreamKeyType theKeyType;
-
-        /**
-         * Stream Algorithm.
-         */
-        private final String theAlgorithm;
-
-        /**
-         * Key Length.
-         */
-        private final int theKeyLen;
-
-        /**
-         * Key Generator for Stream Key Type.
-         */
-        private KeyGenerator theGenerator = null;
-
-        /**
-         * Obtain the KeyType.
-         * @return the Key type
-         */
-        private StreamKeyType getKeyType() {
-            return theKeyType;
-        }
-
-        /**
-         * Obtain the KeyLength.
-         * @return the Key length
-         */
-        private int getKeyLen() {
-            return theKeyLen;
-        }
 
         /**
          * Constructor.
@@ -416,36 +530,152 @@ public class SecurityRegister {
          */
         private StreamRegister(final StreamKeyType pKeyType,
                                final int pKeyLen) {
-            /* Store the key type */
+            /* Call super constructor */
+            super(pKeyLen);
+
+            /* Store variables */
             theKeyType = pKeyType;
-            theKeyLen = pKeyLen;
-            theAlgorithm = theKeyType.getAlgorithm(theKeyLen == SecurityGenerator.SMALL_KEYLEN);
+            setAlgorithm(theKeyType.getAlgorithm(pKeyLen == SecurityGenerator.SMALL_KEYLEN));
 
             /* Add it to the registrations */
             theStreamRegister.add(this);
         }
 
         /**
-         * Generate a new key of the required keyLength.
-         * @return the Secret Key
-         * @throws JDataException on error
+         * Does this Key match the request.
+         * @param pKeyType the Key type
+         * @param pKeyLen the key length
+         * @return true/false
          */
-        protected SecretKey generateKey() throws JDataException {
-            /* If we have not allocated the generator */
-            if (theGenerator == null) {
-                /* Protect against Exceptions */
-                try {
-                    /* Create the key generator */
-                    theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
-                    theGenerator.init(theKeyLen, theRandom);
-                } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
-                    /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-                }
+        private boolean isMatch(final StreamKeyType pKeyType,
+                                final int pKeyLen) {
+            /* Ignore wrong key types */
+            if (theKeyType != pKeyType) {
+                return false;
             }
 
-            /* Generate the Secret key */
-            return theGenerator.generateKey();
+            /* Check for match */
+            return isMatch(pKeyLen);
+        }
+    }
+
+    /**
+     * Mac Registration class.
+     */
+    protected final class MacRegister
+            extends SecretRegister {
+        /**
+         * Mac Type.
+         */
+        private final MacType theMacType;
+
+        /**
+         * Constructor.
+         * @param pDigestType the digest type
+         * @param pKeyLen the key length
+         */
+        private MacRegister(final DigestType pDigestType,
+                            final int pKeyLen) {
+            /* Call super constructor */
+            super(pKeyLen);
+
+            /* Store the variables */
+            theMacType = MacType.HMAC;
+            setAlgorithm(pDigestType.getMacAlgorithm(useLongHash));
+
+            /* Add it to the registrations */
+            theMacRegister.add(this);
+        }
+
+        /**
+         * Constructor.
+         * @param pMacType the Mac type
+         * @param pKeyType the key type
+         * @param pKeyLen the key length
+         */
+        private MacRegister(final MacType pMacType,
+                            final SymKeyType pKeyType,
+                            final int pKeyLen) {
+            /* Call super constructor */
+            super(pKeyLen);
+
+            /* Store the Mac type */
+            theMacType = pMacType;
+            setAlgorithm(pMacType.getAlgorithm(pKeyType));
+
+            /* Add it to the registrations */
+            theMacRegister.add(this);
+        }
+
+        /**
+         * Constructor.
+         * @param pMacType the Mac type
+         * @param pKeyLen the key length
+         */
+        private MacRegister(final MacType pMacType,
+                            final int pKeyLen) {
+            /* Call super constructor */
+            super(pKeyLen);
+
+            /* Store the Mac type */
+            theMacType = pMacType;
+            setAlgorithm(pMacType.getKeyAlgorithm(useLongHash));
+
+            /* Add it to the registrations */
+            theMacRegister.add(this);
+        }
+
+        /**
+         * Does this Mac match the request.
+         * @param pDigestType the Digest type
+         * @param pKeyLen the key length
+         * @return true/false
+         */
+        private boolean isMatch(final DigestType pDigestType,
+                                final int pKeyLen) {
+            /* Ignore non-HMacs */
+            if (theMacType != MacType.HMAC) {
+                return false;
+            }
+
+            /* Check for match */
+            return isMatch(pDigestType.getMacAlgorithm(useLongHash), pKeyLen);
+        }
+
+        /**
+         * Does this Mac match the request.
+         * @param pMacType the Digest type
+         * @param pKeyType the Key type
+         * @param pKeyLen the key length
+         * @return true/false
+         */
+        private boolean isMatch(final MacType pMacType,
+                                final SymKeyType pKeyType,
+                                final int pKeyLen) {
+            /* Ignore wrong types */
+            if (theMacType != pMacType) {
+                return false;
+            }
+
+            /* Check for match */
+            return isMatch(pMacType.getAlgorithm(pKeyType), pKeyLen);
+        }
+
+        /**
+         * Does this Mac match the request.
+         * @param pMacType the Mac type
+         * @param pKeyLen the key length
+         * @return true/false
+         */
+        private boolean isMatch(final MacType pMacType,
+                                final int pKeyLen) {
+            /* Ignore wrong types */
+            if (theMacType != pMacType) {
+                return false;
+            }
+
+            /* Check for match */
+            return isMatch(pMacType.getKeyAlgorithm(useLongHash), pKeyLen);
         }
     }
 }

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import javax.crypto.SecretKey;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.StreamRegister;
 
 /**
  * Stream Key implementation.
@@ -99,43 +100,48 @@ public class StreamKey {
     }
 
     /**
-     * Constructor for a stream key of specified type.
+     * StreamKey Generator.
      * @param pGenerator the security generator
-     * @param pKeyType Stream KeyType
+     * @return the new StreamKey
      * @throws JDataException on error
      */
-    protected StreamKey(final SecurityGenerator pGenerator,
-                        final StreamKeyType pKeyType) throws JDataException {
-        /* Store the KeyType and the Generator */
-        theKeyType = pKeyType;
-        theKeyLen = pGenerator.getKeyLen();
-        theGenerator = pGenerator;
+    protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        StreamKeyType[] myType = StreamKeyType.getRandomTypes(1, myRandom);
 
-        /* Generate the new key */
-        theKey = theGenerator.generateSecretKey(theKeyType, theKeyLen);
-        theEncodedKeyDef = theKey.getEncoded();
+        /* Generate a StreamKey for the StreamKey type */
+        return generateStreamKey(pGenerator, myType[0]);
     }
 
     /**
-     * Constructor for a stream key of random type.
+     * StreamKey Generator.
      * @param pGenerator the security generator
+     * @param pKeyType Stream KeyType
+     * @return the new StreamKey
      * @throws JDataException on error
      */
-    protected StreamKey(final SecurityGenerator pGenerator) throws JDataException {
-        /* Create StreamKey for random key type */
-        this(pGenerator, StreamKeyType.getRandomTypes(1, pGenerator.getRandom())[0]);
+    protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator,
+                                                 final StreamKeyType pKeyType) throws JDataException {
+        /* Generate a new Secret Key */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        StreamRegister myReg = myRegister.getStreamRegistration(pKeyType, pGenerator.getKeyLen());
+        SecretKey myKey = myReg.generateKey();
+
+        /* Generate a StreamKey for the StreamKey type */
+        return new StreamKey(pGenerator, pKeyType, myKey);
     }
 
     /**
      * Constructor for a decoded stream key.
      * @param pGenerator the security generator
-     * @param pKey Secret Key for algorithm
      * @param pKeyType Stream KeyType
+     * @param pKey Secret Key for algorithm
      * @throws JDataException on error
      */
     protected StreamKey(final SecurityGenerator pGenerator,
-                        final SecretKey pKey,
-                        final StreamKeyType pKeyType) throws JDataException {
+                        final StreamKeyType pKeyType,
+                        final SecretKey pKey) throws JDataException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
