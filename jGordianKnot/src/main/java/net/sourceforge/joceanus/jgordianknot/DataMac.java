@@ -222,7 +222,7 @@ public class DataMac {
                                                      final MacType pMacType) throws JDataException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
-        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom);
+        SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom, true);
 
         /* Generate a random Mac for the Mac type */
         return generateRandomSymKeyMac(pGenerator, pMacType, myType[0]);
@@ -322,6 +322,11 @@ public class DataMac {
                     final SymKeyType pKeyType,
                     final SecretKey pKey,
                     final byte[] pVector) throws JDataException {
+        /* Not allowed for ThreeFish */
+        if (pKeyType == SymKeyType.THREEFISH) {
+            throw new UnsupportedOperationException();
+        }
+
         /* Store the KeyType and the Generator */
         theKey = pKey;
         theMacType = pMacType;

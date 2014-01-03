@@ -223,6 +223,21 @@ public enum SymKeyType {
      */
     public static SymKeyType[] getRandomTypes(final int pNumTypes,
                                               final SecureRandom pRandom) throws JDataException {
+        /* Use all values */
+        return getRandomTypes(pNumTypes, pRandom, false);
+    }
+
+    /**
+     * Get random unique set of symmetric key types.
+     * @param pNumTypes the number of types
+     * @param pRandom the random generator
+     * @param pStdBlock use only standard block size
+     * @return the random set
+     * @throws JDataException on error
+     */
+    public static SymKeyType[] getRandomTypes(final int pNumTypes,
+                                              final SecureRandom pRandom,
+                                              final boolean pStdBlock) throws JDataException {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -239,12 +254,17 @@ public enum SymKeyType {
         SymKeyType[] myTypes = new SymKeyType[pNumTypes];
 
         /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
+        for (int i = 0; i < pNumTypes;) {
             /* Access the next random index */
             iIndex = pRandom.nextInt(iNumValues);
 
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
+            /* If we are using all keyTypes or else this is not ThreeFish */
+            SymKeyType myType = myValues[iIndex];
+            if ((!pStdBlock)
+                || (myType != SymKeyType.THREEFISH)) {
+                /* Store the type */
+                myTypes[i++] = myValues[iIndex];
+            }
 
             /* Shift last value down in place of the one thats been used */
             myValues[iIndex] = myValues[iNumValues - 1];
