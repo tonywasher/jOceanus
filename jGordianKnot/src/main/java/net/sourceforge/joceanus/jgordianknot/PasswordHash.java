@@ -31,18 +31,12 @@ import java.util.logging.Level;
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.DataHayStack.HashModeNeedle;
 
 /**
  * Password Hash implementation.
  * @author Tony Washer
  */
 public class PasswordHash {
-    /**
-     * Salt length for passwords.
-     */
-    protected static final int SALTLENGTH = 32;
-
     /**
      * Hash size for password hash.
      */
@@ -64,14 +58,9 @@ public class PasswordHash {
     public static final int SAMPLE_SECRET = 3;
 
     /**
-     * Hash Mode.
+     * Hash Key.
      */
-    private final HashMode theHashMode;
-
-    /**
-     * Salt Bytes.
-     */
-    private final byte[] theSaltBytes;
+    private final HashKey theHashKey;
 
     /**
      * The security generator.
@@ -117,11 +106,11 @@ public class PasswordHash {
     }
 
     /**
-     * Obtain the HashMode.
-     * @return the HashMode
+     * Obtain the HashKey.
+     * @return the HashKey
      */
-    public HashMode getHashMode() {
-        return theHashMode;
+    public HashKey getHashKey() {
+        return theHashKey;
     }
 
     /**
@@ -152,12 +141,8 @@ public class PasswordHash {
         theGenerator = pGenerator;
         theRandom = theGenerator.getRandom();
 
-        /* Create a random HashMode */
-        theHashMode = new HashMode(theGenerator.useRestricted(), theRandom);
-
-        /* Generate a new salt */
-        theSaltBytes = new byte[SALTLENGTH];
-        theRandom.nextBytes(theSaltBytes);
+        /* Create a random HashKey */
+        theHashKey = new HashKey(theGenerator);
 
         /* Build hash from password */
         setPassword(pPassword);
@@ -181,9 +166,7 @@ public class PasswordHash {
         theHashBytes = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
         /* Parse the hash */
-        HashModeNeedle myNeedle = new HashModeNeedle(theHashBytes);
-        theSaltBytes = myNeedle.getSalt();
-        theHashMode = myNeedle.getHashMode();
+        theHashKey = new HashKey(pPassword.length, pHashBytes);
 
         /* Store the secure random generator */
         theGenerator = pGenerator;
@@ -202,7 +185,6 @@ public class PasswordHash {
      * @throws JDataException on error
      */
     private PasswordHash(final PasswordHash pSource) throws JDataException {
-        char[] myPassword = null;
 
         /* Build the encryption cipher */
         CipherSet mySet = pSource.theCipherSet;
@@ -211,14 +193,11 @@ public class PasswordHash {
         theGenerator = pSource.theGenerator;
         theRandom = pSource.theRandom;
 
-        /* Create a random HashMode */
-        theHashMode = new HashMode(theGenerator.useRestricted(), theRandom);
-
-        /* Generate a new salt */
-        theSaltBytes = new byte[SALTLENGTH];
-        theRandom.nextBytes(theSaltBytes);
+        /* Create a random HashKey */
+        theHashKey = new HashKey(theGenerator);
 
         /* Protect against exceptions */
+        char[] myPassword = null;
         try {
             /* Access the original password */
             myPassword = mySet.decryptChars(pSource.thePassword);
@@ -284,7 +263,7 @@ public class PasswordHash {
         theHashBytes = generateHashBytes(pPassword);
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theSaltBytes, theHashMode);
+        theCipherSet = new CipherSet(theGenerator, theHashKey);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Encrypt the password */
@@ -311,7 +290,7 @@ public class PasswordHash {
         }
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theSaltBytes, theHashMode);
+        theCipherSet = new CipherSet(theGenerator, theHashKey);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Encrypt the password */
@@ -340,21 +319,22 @@ public class PasswordHash {
             /* Obtain configuration details */
             byte[] mySeed = theGenerator.getSecurityBytes();
             int iIterations = theGenerator.getNumHashIterations();
-            int iFinal = theHashMode.getAdjustment()
+            int iFinal = theHashKey.getAdjustment()
                          + iIterations;
 
             /* Convert password to bytes */
             myPassBytes = DataConverter.charsToByteArray(pPassword);
 
             /* Access the MACs */
-            DataMac myPrimeMac = theGenerator.generateMac(theHashMode.getPrimeDigest(), myPassBytes);
-            DataMac myAlternateMac = theGenerator.generateMac(theHashMode.getAlternateDigest(), myPassBytes);
-            DataMac mySecretMac = theGenerator.generateMac(theHashMode.getSecretDigest(), myPassBytes);
+            DataMac myPrimeMac = theGenerator.generateMac(theHashKey.getPrimeDigest(), myPassBytes);
+            DataMac myAlternateMac = theGenerator.generateMac(theHashKey.getAlternateDigest(), myPassBytes);
+            DataMac mySecretMac = theGenerator.generateMac(theHashKey.getSecretDigest(), myPassBytes);
 
             /* Initialise the hash values as the salt bytes */
-            byte[] myPrimeHash = theSaltBytes;
-            byte[] myAlternateHash = theSaltBytes;
-            byte[] mySecretHash = theSaltBytes;
+            byte[] mySaltBytes = theHashKey.getInitVector();
+            byte[] myPrimeHash = mySaltBytes;
+            byte[] myAlternateHash = mySaltBytes;
+            byte[] mySecretHash = mySaltBytes;
 
             /* Update each Hash with the seed */
             myPrimeMac.update(mySeed);
@@ -362,10 +342,7 @@ public class PasswordHash {
             mySecretMac.update(mySeed);
 
             /* Loop through the iterations */
-            for (int i = 0; i < iFinal; i++) {
-                /* Note the final pass */
-                int iPass = i + 1;
-
+            for (int iPass = 1; iPass <= iFinal; iPass++) {
                 /* Update the prime Mac */
                 myPrimeMac.update(myPrimeHash);
 
@@ -410,8 +387,7 @@ public class PasswordHash {
             theSecretHash = mySecretBytes;
 
             /* Create the external hash */
-            HashModeNeedle myNeedle = new HashModeNeedle(theHashMode, theSaltBytes, myExternalHash);
-            byte[] myHashBytes = myNeedle.getExternal();
+            byte[] myHashBytes = theHashKey.buildExternal(pPassword.length, myExternalHash);
 
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {

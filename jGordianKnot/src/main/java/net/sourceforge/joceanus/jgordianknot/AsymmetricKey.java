@@ -194,7 +194,7 @@ public class AsymmetricKey {
 
         /* Generate the salt bytes */
         SecureRandom myRandom = theGenerator.getRandom();
-        theSaltBytes = new byte[PasswordHash.SALTLENGTH];
+        theSaltBytes = new byte[HashKey.INITVECTOR_LEN];
         myRandom.nextBytes(theSaltBytes);
 
         /* Access the encoded formats */

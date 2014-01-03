@@ -49,7 +49,7 @@ public class HashKey {
     /**
      * InitVector length.
      */
-    private static final int INITVECTOR_LEN = 32;
+    protected static final int INITVECTOR_LEN = 32;
 
     /**
      * The KeyBytes.

@@ -277,12 +277,12 @@ public class CipherSetKey {
             int i = 0, j = 0;
             theKeyBytes[i++] = (byte) ((myNumCiphers << DataConverter.NYBBLE_SHIFT) + theSymKeyTypes[j++].getId());
             while (j < myNumCiphers) {
-                byte myByte = (byte) theSymKeyTypes[j++].getId();
-                myByte <<= DataConverter.NYBBLE_MASK;
+                int myByte = theSymKeyTypes[j++].getId();
+                myByte <<= DataConverter.NYBBLE_SHIFT;
                 if (j < myNumCiphers) {
                     myByte += theSymKeyTypes[j++].getId();
                 }
-                theKeyBytes[i++] = myByte;
+                theKeyBytes[i++] = (byte) myByte;
             }
         }
 

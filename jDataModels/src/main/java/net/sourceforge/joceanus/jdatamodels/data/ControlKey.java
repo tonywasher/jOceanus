@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.EncryptionGenerator;
-import net.sourceforge.joceanus.jgordianknot.HashMode;
+import net.sourceforge.joceanus.jgordianknot.HashKey;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
@@ -82,9 +82,9 @@ public class ControlKey
     public static final JDataField FIELD_PASSHASH = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHash"));
 
     /**
-     * Field ID for HashMode.
+     * Field ID for HashKey.
      */
-    public static final JDataField FIELD_HASHMODE = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataMode"));
+    public static final JDataField FIELD_HASHKEY = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataKey"));
 
     /**
      * Field ID for HashBytes.
@@ -159,11 +159,11 @@ public class ControlKey
     }
 
     /**
-     * Get the HashMode.
-     * @return the hash mode
+     * Get the HashKey.
+     * @return the hash key
      */
-    private HashMode getHashMode() {
-        return getHashMode(getValueSet());
+    private HashKey getHashKey() {
+        return getHashKey(getValueSet());
     }
 
     /**
@@ -185,12 +185,12 @@ public class ControlKey
     }
 
     /**
-     * Get the HashMode for the valueSet.
+     * Get the HashKey for the valueSet.
      * @param pValueSet the ValueSet
      * @return the hash mode
      */
-    private static HashMode getHashMode(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_HASHMODE, HashMode.class);
+    private static HashKey getHashKey(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_HASHKEY, HashKey.class);
     }
 
     /**
@@ -207,9 +207,9 @@ public class ControlKey
      */
     private void setValuePasswordHash(final PasswordHash pValue) {
         getValueSet().setValue(FIELD_PASSHASH, pValue);
-        setValueHashMode((pValue == null)
+        setValueHashKey((pValue == null)
                 ? null
-                : pValue.getHashMode());
+                : pValue.getHashKey());
         setValueHashBytes((pValue == null)
                 ? null
                 : pValue.getHashBytes());
@@ -224,11 +224,11 @@ public class ControlKey
     }
 
     /**
-     * Set the Hash Mode.
-     * @param pValue the Hash Mode
+     * Set the Hash Key.
+     * @param pValue the Hash Key
      */
-    private void setValueHashMode(final HashMode pValue) {
-        getValueSet().setValue(FIELD_HASHMODE, pValue);
+    private void setValueHashKey(final HashKey pValue) {
+        getValueSet().setValue(FIELD_HASHKEY, pValue);
     }
 
     @Override
@@ -256,7 +256,7 @@ public class ControlKey
             case CLONE:
                 theSecurityGenerator = pSource.theSecurityGenerator;
                 theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-                theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
+                theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
                 theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
                 break;
             default:
@@ -300,7 +300,7 @@ public class ControlKey
             theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
 
             /* Create the CipherSet and security generator */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
+            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
             theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Catch Exceptions */
@@ -339,7 +339,7 @@ public class ControlKey
             theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
 
             /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
+            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
             theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Allocate the DataKeys */
@@ -384,7 +384,7 @@ public class ControlKey
             theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
 
             /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
+            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
             theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Allocate the DataKeys */

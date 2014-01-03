@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.PrivateKey;
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,12 +33,10 @@ import javax.crypto.spec.SecretKeySpec;
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.DataHayStack.EncryptModeNeedle;
 import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
 
 /**
  * Set of DataCiphers used for encryption.
- * @author Tony Washer
  */
 public class CipherSet {
     /**
@@ -66,11 +63,6 @@ public class CipherSet {
      * Cipher digest.
      */
     private final DigestType theDigest;
-
-    /**
-     * The Random Generator.
-     */
-    private final SecureRandom theRandom;
 
     /**
      * The Salt bytes.
@@ -115,7 +107,6 @@ public class CipherSet {
         /* Store parameters */
         theGenerator = pGenerator;
         theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
-        theRandom = theGenerator.getRandom();
         theDigest = pKeyMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
@@ -128,37 +119,15 @@ public class CipherSet {
     /**
      * Constructor.
      * @param pGenerator the security generator
-     * @param pSaltBytes the salt bytes
-     * @param pHashMode the Hash Mode
+     * @param pHashKey the Hash Key
      */
     public CipherSet(final SecurityGenerator pGenerator,
-                     final byte[] pSaltBytes,
-                     final HashMode pHashMode) {
+                     final HashKey pHashKey) {
         /* Store parameters */
         theGenerator = pGenerator;
-        theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
-        theRandom = theGenerator.getRandom();
-        theDigest = pHashMode.getCipherDigest();
-
-        /* Determine the number of cipher steps */
-        theNumSteps = pGenerator.getNumCipherSteps();
-
-        /* Build the Map */
-        theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
-    }
-
-    /**
-     * Constructor.
-     * @param pGenerator the security generator
-     * @param pHashMode the Hash Mode
-     */
-    public CipherSet(final SecurityGenerator pGenerator,
-                     final HashMode pHashMode) {
-        /* Store parameters */
-        theGenerator = pGenerator;
-        theSaltBytes = null;
-        theRandom = theGenerator.getRandom();
-        theDigest = pHashMode.getCipherDigest();
+        byte[] myIV = pHashKey.getInitVector();
+        theSaltBytes = Arrays.copyOf(myIV, myIV.length);
+        theDigest = pHashKey.getCipherDigest();
 
         /* Determine the number of cipher steps */
         theNumSteps = pGenerator.getNumCipherSteps();
@@ -338,16 +307,13 @@ public class CipherSet {
      * @throws JDataException on error
      */
     public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
-        /* Allocate a new initialisation vector */
-        byte[] myVector = new byte[theBlockSize];
-        theRandom.nextBytes(myVector);
-
         /* Access the current set of bytes */
         byte[] myCurBytes = pBytes;
 
         /* Determine the encryption mode */
-        EncryptionMode myMode = new EncryptionMode(theNumSteps, theRandom);
-        SymKeyType[] myKeyTypes = myMode.getSymKeyTypes();
+        CipherSetKey myKey = new CipherSetKey(theGenerator);
+        SymKeyType[] myKeyTypes = myKey.getSymKeyTypes();
+        byte[] myVector = myKey.getInitVector();
 
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
@@ -361,11 +327,8 @@ public class CipherSet {
             myCurBytes = myCipher.encryptBytes(myCurBytes, myVector);
         }
 
-        /* hide the encryptionMode */
-        EncryptModeNeedle myNeedle = new EncryptModeNeedle(myMode, myVector, myCurBytes);
-
         /* Return the encrypted bytes */
-        return myNeedle.getExternal();
+        return myKey.buildExternal(myCurBytes);
     }
 
     /**
@@ -386,11 +349,10 @@ public class CipherSet {
      */
     public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
         /* Parse the bytes into the separate parts */
-        EncryptModeNeedle myNeedle = new EncryptModeNeedle(pBytes);
-        byte[] myVector = myNeedle.getInitVector();
-        byte[] myBytes = myNeedle.getEncryptedBytes();
-        EncryptionMode myMode = myNeedle.getEncryptionMode();
-        SymKeyType[] myTypes = myMode.getSymKeyTypes();
+        CipherSetKey myKey = new CipherSetKey(theGenerator, pBytes);
+        SymKeyType[] myTypes = myKey.getSymKeyTypes();
+        byte[] myVector = myKey.getInitVector();
+        byte[] myBytes = myKey.getBytes();
 
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {
@@ -415,16 +377,13 @@ public class CipherSet {
      * @throws JDataException on error
      */
     public byte[] wrapBytes(final byte[] pBytes) throws JDataException {
-        /* Allocate a new initialisation vector */
-        byte[] myVector = new byte[theBlockSize];
-        theRandom.nextBytes(myVector);
-
         /* Access the current set of bytes */
         byte[] myCurBytes = pBytes;
 
         /* Determine the encryption mode */
-        EncryptionMode myMode = new EncryptionMode(theNumSteps, theRandom);
-        SymKeyType[] myKeyTypes = myMode.getSymKeyTypes();
+        CipherSetKey myKey = new CipherSetKey(theGenerator);
+        SymKeyType[] myKeyTypes = myKey.getSymKeyTypes();
+        byte[] myVector = myKey.getInitVector();
 
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
@@ -438,11 +397,8 @@ public class CipherSet {
             myCurBytes = myCipher.wrapBytes(myCurBytes, myVector);
         }
 
-        /* hide the encryptionMode */
-        EncryptModeNeedle myNeedle = new EncryptModeNeedle(myMode, myVector, myCurBytes);
-
-        /* Return the encrypted bytes */
-        return myNeedle.getExternal();
+        /* Return the wrapped bytes */
+        return myKey.buildExternal(myCurBytes);
     }
 
     /**
@@ -453,11 +409,10 @@ public class CipherSet {
      */
     public byte[] unwrapBytes(final byte[] pBytes) throws JDataException {
         /* Parse the bytes into the separate parts */
-        EncryptModeNeedle myNeedle = new EncryptModeNeedle(pBytes);
-        byte[] myVector = myNeedle.getInitVector();
-        byte[] myBytes = myNeedle.getEncryptedBytes();
-        EncryptionMode myMode = myNeedle.getEncryptionMode();
-        SymKeyType[] myTypes = myMode.getSymKeyTypes();
+        CipherSetKey myKey = new CipherSetKey(theGenerator, pBytes);
+        SymKeyType[] myTypes = myKey.getSymKeyTypes();
+        byte[] myVector = myKey.getInitVector();
+        byte[] myBytes = myKey.getBytes();
 
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {
