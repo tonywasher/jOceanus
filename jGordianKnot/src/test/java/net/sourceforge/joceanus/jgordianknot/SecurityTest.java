@@ -76,8 +76,8 @@ public class SecurityTest {
         try {
             // listAlgorithms(SecurityProvider.BC);
             // TestStream();
-            // checkAlgorithms();
-            testSecurity();
+            checkAlgorithms();
+            // testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
             // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
@@ -177,7 +177,7 @@ public class SecurityTest {
 
         try {
             /* Access the Zip file */
-            myZipFile = new ZipReadFile(pZipFile);
+            myZipFile = new ZipReadFile(pZipFile, theLogger);
 
             /* Check for security */
             byte[] myHashBytes = myZipFile.getHashBytes();
@@ -247,7 +247,7 @@ public class SecurityTest {
         /* Secure the keys */
         byte[] mySymSafe = myHash.secureSymmetricKey(mySym);
         byte[] myAsymSafe = myHash.securePrivateKey(myAsym);
-        byte[] myAsymPublic = myAsym.getExternalDef();
+        byte[] myAsymPublic = myAsym.getExternalPublic();
         byte[] mySymSafe2 = myAsym.secureSymmetricKey(mySym);
 
         /* Create a data digest */
@@ -376,21 +376,34 @@ public class SecurityTest {
             myGenerator.generateMac(myDigest, "Hello".getBytes());
         }
 
+        /* Create instance of each cipher Mac */
+        for (SymKeyType myType : SymKeyType.values()) {
+            if (!myType.isStdBlock()) {
+                continue;
+            }
+            myGenerator.generateMac(MacType.GMAC, myType);
+            myGenerator.generateMac(MacType.POLY1305, myType);
+        }
+        myGenerator.generateMac(MacType.SKEIN);
+        myGenerator.generateMac(MacType.VMPC);
+
         /* Create instance of each symmetric key */
         for (SymKeyType myType : SymKeyType.values()) {
-            myGenerator.generateSymmetricKey(myType);
+            SymmetricKey myKey = myGenerator.generateSymmetricKey(myType);
+            myKey.getDataCipher();
         }
 
         /* Create instance of each stream key */
         for (StreamKeyType myType : StreamKeyType.values()) {
-            myGenerator.generateStreamKey(myType);
+            StreamKey myKey = myGenerator.generateStreamKey(myType);
+            myKey.getStreamCipher();
         }
 
         /* Create instance of each asymmetric key */
-        // for (AsymKeyType myType : AsymKeyType.values()) {
-        // AsymmetricKey myKey = myGenerator.generateAsymmetricKey(myType);
-        // myKey..accessSignature(myType.getSignature());
-        // }
+        for (AsymKeyType myType : AsymKeyType.values()) {
+            AsymmetricKey myKey = myGenerator.generateAsymmetricKey(myType);
+            myKey.getSignature(true);
+        }
     }
 
     /**
@@ -411,8 +424,9 @@ public class SecurityTest {
             byte[] myXtra = Arrays.copyOf(myStart, myStart.length + 5);
             byte[] myWrapped = mySet.wrapBytes(myXtra);
             byte[] myEnd = mySet.unwrapBytes(myWrapped);
-            boolean res = Arrays.areEqual(myXtra, myEnd);
-            String myStr = null;
+            if (!Arrays.areEqual(myXtra, myEnd)) {
+                mySet = null;
+            }
 
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.CRYPTO, "FF", e);

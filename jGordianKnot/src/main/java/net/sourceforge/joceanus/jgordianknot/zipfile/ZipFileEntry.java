@@ -41,6 +41,21 @@ import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
  */
 public class ZipFileEntry {
     /**
+     * The Header Error text.
+     */
+    private static final String ERROR_HEADER = "Entry is a header";
+
+    /**
+     * The NonHeader Error text.
+     */
+    private static final String ERROR_NONHEADER = "Entry is not a header";
+
+    /**
+     * The Signature Error Text.
+     */
+    private static final String ERROR_SIGN = "Failed to calculate signature";
+
+    /**
      * The User property prefix.
      */
     private static final String PROP_USERPFIX = "User";
@@ -488,7 +503,7 @@ public class ZipFileEntry {
      */
     protected void setPublicKey(final byte[] pPublicKey) {
         if (!isHeader) {
-            throw new IllegalArgumentException("Entry is not a header");
+            throw new IllegalArgumentException(ERROR_NONHEADER);
         }
         thePublicKey = Arrays.copyOf(pPublicKey, pPublicKey.length);
     }
@@ -499,7 +514,7 @@ public class ZipFileEntry {
      */
     protected void setPrivateKey(final byte[] pPrivateKey) {
         if (!isHeader) {
-            throw new IllegalArgumentException("Entry is not a header");
+            throw new IllegalArgumentException(ERROR_NONHEADER);
         }
         thePrivateKey = Arrays.copyOf(pPrivateKey, pPrivateKey.length);
     }
@@ -510,7 +525,7 @@ public class ZipFileEntry {
      */
     protected void setDigests(final DigestOutputStream[] pDigests) {
         if (isHeader) {
-            throw new IllegalArgumentException("Entry is a header");
+            throw new IllegalArgumentException(ERROR_HEADER);
         }
 
         /* Allocate new arrays */
@@ -538,7 +553,7 @@ public class ZipFileEntry {
     protected void setSecretKeys(final EncryptionOutputStream[] pEncrypts,
                                  final AsymmetricKey pAsymKey) throws JDataException {
         if (isHeader) {
-            throw new IllegalArgumentException("Entry is a header");
+            throw new IllegalArgumentException(ERROR_HEADER);
         }
 
         /* Allocate new arrays */
@@ -563,7 +578,7 @@ public class ZipFileEntry {
      */
     protected void setSignature(final byte[] pSignature) {
         if (isHeader) {
-            throw new IllegalArgumentException("Entry is a header");
+            throw new IllegalArgumentException(ERROR_HEADER);
         }
         theSignature = Arrays.copyOf(pSignature, pSignature.length);
     }
@@ -611,7 +626,7 @@ public class ZipFileEntry {
 
             /* Catch exceptions */
         } catch (SignatureException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_SIGN, e);
         }
     }
 
@@ -637,7 +652,7 @@ public class ZipFileEntry {
             }
             /* Catch exceptions */
         } catch (IllegalStateException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
+            throw new JDataException(ExceptionClass.CRYPTO, ERROR_SIGN, e);
         }
     }
 }

@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Password Hash implementation.
- * @author Tony Washer
  */
 public class PasswordHash {
     /**

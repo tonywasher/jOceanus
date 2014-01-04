@@ -29,7 +29,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Available security providers.
- * @author Tony Washer
  */
 public enum SecurityProvider {
     /**

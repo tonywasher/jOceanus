@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
  * passwords will be attempted. If no match is found, then the user will be prompted for the password.
- * @author Tony Washer
  */
 public class SecureManager {
     /**

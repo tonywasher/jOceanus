@@ -39,6 +39,11 @@ import org.bouncycastle.util.Arrays;
 public class MacInputStream
         extends InputStream {
     /**
+     * Invalid Mac error.
+     */
+    private static final String ERROR_MAC = "Invalid Mac";
+
+    /**
      * Buffer size for skip reads.
      */
     private static final int BUFSIZE = 1024;
@@ -101,7 +106,7 @@ public class MacInputStream
 
         /* Check valid digest */
         if (Arrays.areEqual(myMac, pExpected)) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid Mac");
+            throw new JDataException(ExceptionClass.DATA, ERROR_MAC);
         }
     }
 
@@ -120,7 +125,7 @@ public class MacInputStream
 
                 /* Check valid mac */
                 if (!Arrays.areEqual(myMac, theExpectedMac)) {
-                    throw new IOException("Invalid Mac");
+                    throw new IOException(ERROR_MAC);
                 }
             }
         }

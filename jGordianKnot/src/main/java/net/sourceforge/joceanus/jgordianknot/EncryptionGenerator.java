@@ -59,9 +59,13 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedUnits;
 
 /**
  * Encrypted field generator.
- * @author Tony Washer
  */
 public class EncryptionGenerator {
+    /**
+     * Invalid class error text.
+     */
+    private static final String ERROR_CLASS = "Invalid Object Class for Encryption ";
+
     /**
      * The CipherSet to use for generation.
      */
@@ -183,7 +187,7 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JDataException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
+        throw new JDataException(ExceptionClass.LOGIC, ERROR_CLASS
                                                        + pValue.getClass().getCanonicalName());
     }
 
@@ -262,7 +266,7 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JDataException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
+        throw new JDataException(ExceptionClass.LOGIC, ERROR_CLASS
                                                        + pClass.getCanonicalName());
     }
 

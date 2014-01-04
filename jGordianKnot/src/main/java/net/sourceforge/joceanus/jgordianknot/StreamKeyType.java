@@ -134,49 +134,6 @@ public enum StreamKeyType {
     }
 
     /**
-     * Check the number of types.
-     * @param pNumTypes the number of stream keys
-     */
-    private static void checkNumTypes(final int pNumTypes) {
-        /* Access the values */
-        StreamKeyType[] myValues = values();
-        int myNumTypes = myValues.length;
-
-        /* Validate number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > myNumTypes)) {
-            /* Throw exception */
-            throw new IllegalArgumentException("Invalid number of stream keys");
-        }
-    }
-
-    /**
-     * Determine bound of random integer for choice of random StreamKeys.
-     * @param pNumTypes the number of digests
-     * @return the bound of the random integer.
-     */
-    public static int getRandomBound(final int pNumTypes) {
-        /* Validate number of types */
-        checkNumTypes(pNumTypes);
-
-        /* Access the values */
-        StreamKeyType[] myValues = values();
-        int myNumTypes = myValues.length;
-
-        /* Initialise the bounds */
-        int myBound = myNumTypes--;
-
-        /* Loop through the types */
-        for (int i = 1; i < pNumTypes; i++) {
-            /* Factor in additional types */
-            myBound *= myNumTypes--;
-        }
-
-        /* Return the bound */
-        return myBound;
-    }
-
-    /**
      * Get random unique set of stream key types.
      * @param pNumTypes the number of types
      * @param pRandom the random generator
@@ -188,7 +145,6 @@ public enum StreamKeyType {
         /* Access the values */
         StreamKeyType[] myValues = values();
         int iNumValues = myValues.length;
-        int iIndex;
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
@@ -203,7 +159,7 @@ public enum StreamKeyType {
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {
             /* Access the next random index */
-            iIndex = pRandom.nextInt(iNumValues);
+            int iIndex = pRandom.nextInt(iNumValues);
 
             /* Store the type */
             myTypes[i] = myValues[iIndex];

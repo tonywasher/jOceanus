@@ -148,7 +148,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
             isBackup = true;
 
             /* Access the zip file */
-            ZipReadFile myFile = new ZipReadFile(pFile);
+            ZipReadFile myFile = new ZipReadFile(pFile, theTask.getLogger());
 
             /* Obtain the hash bytes from the file */
             byte[] myHashBytes = myFile.getHashBytes();

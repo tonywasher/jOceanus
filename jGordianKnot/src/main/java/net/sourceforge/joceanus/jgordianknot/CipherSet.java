@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
 
 /**
  * Set of DataCiphers used for encryption.
@@ -58,11 +58,6 @@ public class CipherSet {
      * The Number of Steps.
      */
     private final int theNumSteps;
-
-    /**
-     * Cipher digest.
-     */
-    private final DigestType theDigest;
 
     /**
      * The Salt bytes.
@@ -99,15 +94,12 @@ public class CipherSet {
      * Constructor.
      * @param pGenerator the security generator
      * @param pSaltBytes the salt bytes
-     * @param pKeyMode the Asymmetric Key Mode
      */
     public CipherSet(final SecurityGenerator pGenerator,
-                     final byte[] pSaltBytes,
-                     final AsymKeyMode pKeyMode) {
+                     final byte[] pSaltBytes) {
         /* Store parameters */
         theGenerator = pGenerator;
         theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
-        theDigest = pKeyMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
         theNumSteps = pGenerator.getNumCipherSteps();
@@ -127,7 +119,6 @@ public class CipherSet {
         theGenerator = pGenerator;
         byte[] myIV = pHashKey.getInitVector();
         theSaltBytes = Arrays.copyOf(myIV, myIV.length);
-        theDigest = pHashKey.getCipherDigest();
 
         /* Determine the number of cipher steps */
         theNumSteps = pGenerator.getNumCipherSteps();
@@ -214,37 +205,10 @@ public class CipherSet {
      */
     private void buildCipher(final SymKeyType pKeyType,
                              final byte[] pSecret) throws JDataException {
-        /* Determine the key length in bytes */
-        int myKeyLen = theGenerator.getKeyLen()
-                       / Byte.SIZE;
-
-        /* Create a buffer to hold the resulting key and # of bytes built */
-        byte[] myKeyBytes = new byte[myKeyLen];
-        int myBuilt = 0;
-
-        /* Create the Mac and standard data */
-        ByteArrayInteger myCount = new ByteArrayInteger();
-        DataMac myMac = theGenerator.generateMac(theDigest, pSecret);
-
-        /* while we need to generate more bytes */
-        while (myBuilt < myKeyLen) {
-            /* Build the cipher section */
-            byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pKeyType);
-
-            /* Determine how many bytes of this hash should be used */
-            int myNeeded = myKeyLen
-                           - myBuilt;
-            if (myNeeded > mySection.length) {
-                myNeeded = mySection.length;
-            }
-
-            /* Copy bytes across */
-            System.arraycopy(mySection, 0, myKeyBytes, myBuilt, myNeeded);
-            myBuilt += myNeeded;
-        }
-
-        /* Build the secret key specification */
-        SecretKey myKeyDef = new SecretKeySpec(myKeyBytes, pKeyType.getAlgorithm());
+        /* Generate a new Secret Key from the secret */
+        SecurityRegister myRegister = theGenerator.getRegister();
+        SymmetricRegister myReg = myRegister.getSymRegistration(pKeyType, theGenerator.getKeyLen());
+        SecretKey myKeyDef = myReg.buildSecretKey(pSecret, theSaltBytes);
 
         /* Create the Symmetric Key */
         SymmetricKey myKey = new SymmetricKey(theGenerator, pKeyType, myKeyDef);
@@ -257,47 +221,6 @@ public class CipherSet {
 
         /* adjust the block length */
         adjustBlockLength(myCipher);
-    }
-
-    /**
-     * Build Secret Key section.
-     * @param pMac the Mac to utilise
-     * @param pSection the section count
-     * @param pKeyType the Key type
-     * @return the section
-     * @throws JDataException on error
-     */
-    private byte[] buildCipherSection(final DataMac pMac,
-                                      final byte[] pSection,
-                                      final SymKeyType pKeyType) throws JDataException {
-        /* Declare initial value */
-        byte[] myResult = null;
-        byte[] myHash = theSaltBytes;
-
-        /* Access number of iterations */
-        int iIterations = theGenerator.getNumHashIterations() >>> 1;
-
-        /* Create the standard data */
-        byte[] myAlgo = DataConverter.stringToByteArray(pKeyType.getAlgorithm());
-        byte[] mySeed = theGenerator.getSecurityBytes();
-
-        /* Update with security bytes, algorithm and section */
-        pMac.update(mySeed);
-        pMac.update(myAlgo);
-        pMac.update(pSection);
-
-        /* Loop through the iterations */
-        for (int i = 0; i < iIterations; i++) {
-            /* Add the existing result to hash */
-            pMac.update(myHash);
-
-            /* Calculate Mac */
-            myHash = pMac.finish();
-            myResult = DataConverter.combineHashes(myHash, myResult);
-        }
-
-        /* Return the result */
-        return myResult;
     }
 
     /**
@@ -349,7 +272,7 @@ public class CipherSet {
      */
     public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
         /* Parse the bytes into the separate parts */
-        CipherSetKey myKey = new CipherSetKey(theGenerator, pBytes);
+        CipherSetKey myKey = new CipherSetKey(pBytes);
         SymKeyType[] myTypes = myKey.getSymKeyTypes();
         byte[] myVector = myKey.getInitVector();
         byte[] myBytes = myKey.getBytes();
@@ -409,7 +332,7 @@ public class CipherSet {
      */
     public byte[] unwrapBytes(final byte[] pBytes) throws JDataException {
         /* Parse the bytes into the separate parts */
-        CipherSetKey myKey = new CipherSetKey(theGenerator, pBytes);
+        CipherSetKey myKey = new CipherSetKey(pBytes);
         SymKeyType[] myTypes = myKey.getSymKeyTypes();
         byte[] myVector = myKey.getInitVector();
         byte[] myBytes = myKey.getBytes();
@@ -542,18 +465,15 @@ public class CipherSet {
      */
     public byte[] securePrivateKey(final AsymmetricKey pKey) throws JDataException {
         /* Access the Private Key */
-        PrivateKey myPrivate = pKey.getPrivateKey();
+        byte[] myPrivate = pKey.getExternalPrivate();
 
         /* Reject if there is no PrivateKey */
         if (myPrivate == null) {
             throw new JDataException(ExceptionClass.DATA, "No PrivateKey");
         }
 
-        /* Extract the encoded version of the key */
-        byte[] myEncoded = myPrivate.getEncoded();
-
         /* Encode the key */
-        byte[] myEncrypted = encryptBytes(myEncoded);
+        byte[] myEncrypted = encryptBytes(myPrivate);
 
         /* Check whether the SecuredKey is too large */
         if (myEncrypted.length > AsymmetricKey.PRIVATESIZE) {
@@ -574,15 +494,19 @@ public class CipherSet {
      */
     public AsymmetricKey deriveAsymmetricKey(final byte[] pEncrypted,
                                              final byte[] pPublicKey) throws JDataException {
-        /* Decrypt the encoded bytes */
-        byte[] myEncoded = (pEncrypted == null)
-                ? null
-                : decryptBytes(pEncrypted);
-
         /* Create the Asymmetric Key */
-        AsymmetricKey myKey = new AsymmetricKey(theGenerator, myEncoded, pPublicKey);
+        byte[] myEncoded = decryptBytes(pEncrypted);
+        return new AsymmetricKey(theGenerator, myEncoded, pPublicKey);
+    }
 
-        /* Return the key */
-        return myKey;
+    /**
+     * derive AsymmetricKey.
+     * @param pPublicKey the public key
+     * @return the Asymmetric key
+     * @throws JDataException on error
+     */
+    public AsymmetricKey deriveAsymmetricKey(final byte[] pPublicKey) throws JDataException {
+        /* Create the Asymmetric Key */
+        return new AsymmetricKey(theGenerator, pPublicKey);
     }
 }

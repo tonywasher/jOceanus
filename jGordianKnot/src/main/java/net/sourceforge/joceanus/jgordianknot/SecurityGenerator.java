@@ -22,22 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-import javax.crypto.KeyAgreement;
-
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
 
 /**
  * Generator class for various security primitives.
- * @author Tony Washer
  */
 public class SecurityGenerator {
     /**
@@ -121,6 +113,14 @@ public class SecurityGenerator {
      */
     protected SecurityProvider getProvider() {
         return theProvider;
+    }
+
+    /**
+     * Access the Security provider name.
+     * @return the security provider name
+     */
+    protected String getProviderName() {
+        return theProviderName;
     }
 
     /**
@@ -383,15 +383,23 @@ public class SecurityGenerator {
 
     /**
      * Generate a new Asymmetric Key of a random type.
+     * @param pKeyType the Asymmetric Key type
+     * @return the newly created Asymmetric Key
+     * @throws JDataException on error
+     */
+    public AsymmetricKey generateAsymmetricKey(final AsymKeyType pKeyType) throws JDataException {
+        /* Create the new Asymmetric Key */
+        return AsymmetricKey.generateAsymmetricKey(this, pKeyType);
+    }
+
+    /**
+     * Generate a new Asymmetric Key of a specified type.
      * @return the newly created Asymmetric Key
      * @throws JDataException on error
      */
     public AsymmetricKey generateAsymmetricKey() throws JDataException {
-        /* Generate the new asymmetric key mode */
-        AsymKeyMode myMode = new AsymKeyMode(useRestricted(), theRandom);
-
         /* Create the new Asymmetric Key */
-        return new AsymmetricKey(this, myMode);
+        return AsymmetricKey.generateAsymmetricKey(this);
     }
 
     /**
@@ -402,61 +410,10 @@ public class SecurityGenerator {
      */
     public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws JDataException {
         /* Determine the new keyMode */
-        AsymKeyMode myMode = new AsymKeyMode(useRestricted(), pPartner.getKeyMode());
+        byte[] myExternalPublic = pPartner.getExternalPublic();
 
         /* Create the new Asymmetric Key */
-        return new AsymmetricKey(this, myMode);
-    }
-
-    /**
-     * Generate new KeyPair.
-     * @param pKeyType the key type
-     * @return the KeyPair
-     * @throws JDataException on error
-     */
-    protected KeyPair generateKeyPair(final AsymKeyType pKeyType) throws JDataException {
-        /* Obtain the registration */
-        AsymmetricRegister myReg = theRegister.getAsymRegistration(pKeyType);
-
-        /* Generate the KeyPair */
-        return myReg.generateKeyPair();
-    }
-
-    /**
-     * Derive the KeyPair from encoded forms.
-     * @param pKeyType the key type
-     * @param pPrivate the Encoded private form (may be null for public-only)
-     * @param pPublic the Encoded public form
-     * @return the KeyPair
-     * @throws JDataException on error
-     */
-    protected KeyPair deriveKeyPair(final AsymKeyType pKeyType,
-                                    final byte[] pPrivate,
-                                    final byte[] pPublic) throws JDataException {
-        /* Obtain the registration */
-        AsymmetricRegister myReg = theRegister.getAsymRegistration(pKeyType);
-
-        /* Derive the KeyPair */
-        return myReg.deriveKeyPair(pPrivate, pPublic);
-    }
-
-    /**
-     * Obtain a KeyAgreement.
-     * @param pAlgorithm the algorithm required
-     * @return the key agreement
-     * @throws JDataException on error
-     */
-    protected KeyAgreement accessKeyAgreement(final String pAlgorithm) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Return the key agreement for the algorithm */
-            return KeyAgreement.getInstance(pAlgorithm, theProviderName);
-
-            /* Catch exceptions */
-        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
-        }
+        return new AsymmetricKey(this, myExternalPublic);
     }
 
     /**

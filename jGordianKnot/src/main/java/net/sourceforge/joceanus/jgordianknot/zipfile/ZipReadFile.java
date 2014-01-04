@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Signature;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -49,6 +51,11 @@ public class ZipReadFile {
      * The extension size for the buffer.
      */
     private static final int BUFFERSIZE = 1024;
+
+    /**
+     * Logger.
+     */
+    private final Logger theLogger;
 
     /**
      * HashBytes for this zip file.
@@ -107,9 +114,14 @@ public class ZipReadFile {
     /**
      * Constructor.
      * @param pFile the file to read
+     * @param pLogger the logger
      * @throws JDataException on error
      */
-    public ZipReadFile(final File pFile) throws JDataException {
+    public ZipReadFile(final File pFile,
+                       final Logger pLogger) throws JDataException {
+        /* Store the logger */
+        theLogger = pLogger;
+
         /* Protect against exceptions */
         try {
             /* Store the zipFile name */
@@ -229,7 +241,7 @@ public class ZipReadFile {
                     theHdrStream.close();
                 }
             } catch (IOException e) {
-                theHdrStream = null;
+                theLogger.log(Level.SEVERE, "Failed to close file", e);
             }
             theHdrStream = null;
         }

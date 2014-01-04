@@ -156,6 +156,19 @@ public enum SymKeyType {
     }
 
     /**
+     * Does this KeyType use a standard block size?
+     * @return true/false
+     */
+    public boolean isStdBlock() {
+        switch (this) {
+            case THREEFISH:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
@@ -169,49 +182,6 @@ public enum SymKeyType {
         }
         throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: "
                                                       + id);
-    }
-
-    /**
-     * Check the number of types.
-     * @param pNumTypes the number of symmetric keys
-     */
-    private static void checkNumTypes(final int pNumTypes) {
-        /* Access the values */
-        SymKeyType[] myValues = values();
-        int myNumTypes = myValues.length;
-
-        /* Validate number of types */
-        if ((pNumTypes < 1)
-            || (pNumTypes > myNumTypes)) {
-            /* Throw exception */
-            throw new IllegalArgumentException("Invalid number of symmetric keys");
-        }
-    }
-
-    /**
-     * Determine bound of random integer for choice of random SymKeyTypes.
-     * @param pNumTypes the number of Symmetric keys
-     * @return the bound of the random integer.
-     */
-    public static int getRandomBound(final int pNumTypes) {
-        /* Validate number of types */
-        checkNumTypes(pNumTypes);
-
-        /* Access the values */
-        SymKeyType[] myValues = values();
-        int myNumTypes = myValues.length;
-
-        /* Initialise the bounds */
-        int myBound = myNumTypes--;
-
-        /* Loop through the types */
-        for (int i = 1; i < pNumTypes; i++) {
-            /* Factor in additional types */
-            myBound *= myNumTypes--;
-        }
-
-        /* Return the bound */
-        return myBound;
     }
 
     /**
@@ -241,7 +211,6 @@ public enum SymKeyType {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
-        int iIndex;
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
@@ -254,14 +223,15 @@ public enum SymKeyType {
         SymKeyType[] myTypes = new SymKeyType[pNumTypes];
 
         /* Loop through the types */
-        for (int i = 0; i < pNumTypes;) {
+        int i = 0;
+        while (i < pNumTypes) {
             /* Access the next random index */
-            iIndex = pRandom.nextInt(iNumValues);
+            int iIndex = pRandom.nextInt(iNumValues);
 
             /* If we are using all keyTypes or else this is not ThreeFish */
             SymKeyType myType = myValues[iIndex];
             if ((!pStdBlock)
-                || (myType != SymKeyType.THREEFISH)) {
+                || myType.isStdBlock()) {
                 /* Store the type */
                 myTypes[i++] = myValues[iIndex];
             }

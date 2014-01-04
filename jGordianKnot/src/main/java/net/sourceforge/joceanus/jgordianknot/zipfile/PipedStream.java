@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 
 /**
  * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and reading from an input stream.
- * @author Tony Washer
  */
 public class PipedStream {
     /**

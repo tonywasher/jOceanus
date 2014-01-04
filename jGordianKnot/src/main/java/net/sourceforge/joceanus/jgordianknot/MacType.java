@@ -124,15 +124,15 @@ public enum MacType {
     public String getAlgorithm(final SymKeyType pKeyType) {
         switch (this) {
             case GMAC:
-                return (pKeyType == SymKeyType.THREEFISH)
-                        ? null
-                        : pKeyType.name()
-                          + "-GMAC";
+                return (pKeyType.isStdBlock())
+                        ? pKeyType.name()
+                          + "-GMAC"
+                        : null;
             case POLY1305:
-                return (pKeyType == SymKeyType.THREEFISH)
-                        ? null
-                        : "POLY1305-"
-                          + pKeyType.name();
+                return (pKeyType.isStdBlock())
+                        ? "POLY1305-"
+                          + pKeyType.name()
+                        : null;
             default:
                 return null;
         }
@@ -148,10 +148,28 @@ public enum MacType {
             case VMPC:
                 return "VMPC-MAC";
             case SKEIN:
-                return DigestType.SKEIN.getMacAlgorithm(bLong)
-                       + "-MAC";
+                return "SKEIN-MAC-"
+                       + ((bLong)
+                               ? "512-512"
+                               : "256-256");
             default:
                 return null;
+        }
+    }
+
+    /**
+     * Obtain the IV length.
+     * @return the IV Length
+     */
+    public int getIVLen() {
+        switch (this) {
+            case VMPC:
+            case GMAC:
+                return CipherSet.IVSIZE;
+            case POLY1305:
+                return CipherSet.IVSIZE >> 1;
+            default:
+                return 0;
         }
     }
 
@@ -183,7 +201,6 @@ public enum MacType {
         /* Access the values */
         MacType[] myValues = values();
         int iNumValues = myValues.length;
-        int iIndex;
 
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
@@ -198,7 +215,7 @@ public enum MacType {
         /* Loop through the types */
         for (int i = 0; i < pNumTypes; i++) {
             /* Access the next random index */
-            iIndex = pRandom.nextInt(iNumValues);
+            int iIndex = pRandom.nextInt(iNumValues);
 
             /* Store the type */
             myTypes[i] = myValues[iIndex];

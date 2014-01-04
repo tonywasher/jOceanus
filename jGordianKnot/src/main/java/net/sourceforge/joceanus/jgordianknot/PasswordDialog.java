@@ -50,7 +50,6 @@ import net.sourceforge.joceanus.jlayoutmanager.SpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
- * @author Tony Washer
  */
 public class PasswordDialog
         extends JDialog

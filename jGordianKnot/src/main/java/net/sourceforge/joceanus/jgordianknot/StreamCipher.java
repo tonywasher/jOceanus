@@ -106,9 +106,8 @@ public class StreamCipher {
         try {
             /* Create a new cipher */
             SecurityGenerator myGenerator = pKey.getGenerator();
-            SecurityProvider myProvider = myGenerator.getProvider();
             SymKeyType myKeyType = pKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myProvider.getProvider());
+            theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
         }
@@ -128,9 +127,8 @@ public class StreamCipher {
         try {
             /* Create a new cipher */
             SecurityGenerator myGenerator = pKey.getGenerator();
-            SecurityProvider myProvider = myGenerator.getProvider();
             StreamKeyType myKeyType = pKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getAlgorithm(myGenerator.useRestricted()), myProvider.getProvider());
+            theCipher = Cipher.getInstance(myKeyType.getAlgorithm(myGenerator.useRestricted()), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
         }

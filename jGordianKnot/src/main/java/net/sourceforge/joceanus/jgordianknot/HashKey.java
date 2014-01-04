@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -39,7 +40,7 @@ public class HashKey {
     /**
      * KeyBytes length.
      */
-    private static final int KEYBYTES_LEN = 3;
+    private static final int KEYBYTES_LEN = 2;
 
     /**
      * Hash margins.
@@ -96,14 +97,6 @@ public class HashKey {
     }
 
     /**
-     * Obtain the Cipher Digest type.
-     * @return the digest type
-     */
-    public DigestType getCipherDigest() {
-        return theParams.getCipherDigest();
-    }
-
-    /**
      * Obtain the Adjustment.
      * @return the adjustment
      */
@@ -116,7 +109,9 @@ public class HashKey {
      * @return the initialisation vector
      */
     public byte[] getInitVector() {
-        return theInitVector;
+        return (theInitVector == null)
+                ? null
+                : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -124,7 +119,9 @@ public class HashKey {
      * @return the Hash
      */
     public byte[] getHash() {
-        return theHash;
+        return (theHash == null)
+                ? null
+                : Arrays.copyOf(theHash, theHash.length);
     }
 
     /**
@@ -240,11 +237,6 @@ public class HashKey {
         private final DigestType theSecretDigest;
 
         /**
-         * The Cipher Digest type.
-         */
-        private final DigestType theCipherDigest;
-
-        /**
          * The Adjustment.
          */
         private final int theAdjust;
@@ -274,14 +266,6 @@ public class HashKey {
         }
 
         /**
-         * Obtain the Cipher Digest type.
-         * @return the digest type
-         */
-        public DigestType getCipherDigest() {
-            return theCipherDigest;
-        }
-
-        /**
          * Obtain the Adjustment.
          * @return the adjustment
          */
@@ -298,23 +282,18 @@ public class HashKey {
             /* Obtain Digest list */
             DigestType[] myDigest = DigestType.getRandomTypes(NUM_DIGESTS, pRandom);
 
-            /* Obtain CipherSet Digest */
-            DigestType[] mySetDigest = DigestType.getRandomTypes(1, pRandom);
-
             /* Store Digest types */
             thePrimeDigest = myDigest[0];
             theAlternateDigest = myDigest[1];
             theSecretDigest = myDigest[2];
-            theCipherDigest = mySetDigest[0];
 
             /* Access random adjustment value */
-            theAdjust = pRandom.nextInt(DataConverter.BYTE_MASK);
+            theAdjust = pRandom.nextInt(DataConverter.NYBBLE_MASK + 1);
 
             /* Build the key bytes */
             int i = 0;
             theKeyBytes[i++] = (byte) ((thePrimeDigest.getId() << DataConverter.NYBBLE_SHIFT) + theAlternateDigest.getId());
-            theKeyBytes[i++] = (byte) ((theSecretDigest.getId() << DataConverter.NYBBLE_SHIFT) + theCipherDigest.getId());
-            theKeyBytes[i] = (byte) theAdjust;
+            theKeyBytes[i] = (byte) ((theSecretDigest.getId() << DataConverter.NYBBLE_SHIFT) + theAdjust);
         }
 
         /**
@@ -337,13 +316,8 @@ public class HashKey {
             myId = (myValue >> DataConverter.NYBBLE_SHIFT)
                    & DataConverter.NYBBLE_MASK;
             theSecretDigest = DigestType.fromId(myId);
-            myId = myValue
-                   & DataConverter.NYBBLE_MASK;
-            theCipherDigest = DigestType.fromId(myId);
-
-            /* Access adjust value */
-            theAdjust = theKeyBytes[i]
-                        & DataConverter.BYTE_MASK;
+            theAdjust = myValue
+                        & DataConverter.NYBBLE_MASK;
         }
     }
 }

@@ -44,6 +44,11 @@ import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
  */
 public class ZipWriteFile {
     /**
+     * The Create ZipFile Error text.
+     */
+    private static final String ERROR_CREATE = "Failed to create ZipFile";
+
+    /**
      * The FileName prefix.
      */
     protected static final String FILE_PREFIX = "File";
@@ -174,7 +179,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, ERROR_CREATE, e);
         }
     }
 
@@ -202,7 +207,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception creating new Zip file", e);
+            throw new JDataException(ExceptionClass.DATA, ERROR_CREATE, e);
         }
     }
 
@@ -352,7 +357,7 @@ public class ZipWriteFile {
                     ZipFileEntry myEntry = theContents.addZipFileHeader();
 
                     /* Add the public key properties */
-                    myEntry.setPublicKey(theAsymKey.getExternalDef());
+                    myEntry.setPublicKey(theAsymKey.getExternalPublic());
 
                     /* Add the wrapped private key property */
                     myEntry.setPrivateKey(theHash.securePrivateKey(theAsymKey));

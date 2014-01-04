@@ -45,8 +45,8 @@ import javax.crypto.ShortBufferException;
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.DataHayStack.AsymModeNeedle;
 import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
+import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
 
 /**
  * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to limitations in the RSA implementation. The Asymmetric Keys
@@ -57,6 +57,16 @@ public class AsymmetricKey {
      * Cipher initialisation failure.
      */
     private static final String ERROR_CIPHER = "Failed to initialise Cipher";
+
+    /**
+     * Invalid elliptic partner error.
+     */
+    private static final String ERROR_ELPARTNER = "Shared Keys require both partners to be similar Elliptic";
+
+    /**
+     * Invalid partner error.
+     */
+    private static final String ERROR_PARTNER = "Asymmetric Encryption must be between similar partners";
 
     /**
      * Encoded Size for Public Keys.
@@ -74,11 +84,6 @@ public class AsymmetricKey {
     private final KeyPair theKeyPair;
 
     /**
-     * The Key Mode.
-     */
-    private final AsymKeyMode theKeyMode;
-
-    /**
      * The Key Type.
      */
     private final AsymKeyType theKeyType;
@@ -94,9 +99,14 @@ public class AsymmetricKey {
     private KeyAgreement theKeyAgreement = null;
 
     /**
-     * The External Definition.
+     * The External Public Definition.
      */
-    private final byte[] theExternalKeyDef;
+    private final byte[] theExternalPublic;
+
+    /**
+     * The External Private Definition.
+     */
+    private final byte[] theExternalPrivate;
 
     /**
      * The Encoded Public Key.
@@ -133,15 +143,7 @@ public class AsymmetricKey {
      * @return the key type
      */
     public AsymKeyType getKeyType() {
-        return theKeyMode.getAsymKeyType();
-    }
-
-    /**
-     * Obtain the Asymmetric Key mode.
-     * @return the key mode
-     */
-    public AsymKeyMode getKeyMode() {
-        return theKeyMode;
+        return theKeyType;
     }
 
     /**
@@ -156,7 +158,7 @@ public class AsymmetricKey {
      * Obtain the Private Key.
      * @return the private key
      */
-    protected PrivateKey getPrivateKey() {
+    private PrivateKey getPrivateKey() {
         return theKeyPair.getPrivate();
     }
 
@@ -169,128 +171,181 @@ public class AsymmetricKey {
     }
 
     /**
-     * Obtain the External Key definition.
+     * Obtain the External Public Key definition.
      * @return the key definition
      */
-    public byte[] getExternalDef() {
-        return Arrays.copyOf(theExternalKeyDef, theExternalKeyDef.length);
+    public byte[] getExternalPublic() {
+        return Arrays.copyOf(theExternalPublic, theExternalPublic.length);
+    }
+
+    /**
+     * Obtain the External Private Key definition.
+     * @return the key definition
+     */
+    protected byte[] getExternalPrivate() {
+        return Arrays.copyOf(theExternalPrivate, theExternalPrivate.length);
+    }
+
+    /**
+     * AsymmetricKey Generator.
+     * @param pGenerator the security generator
+     * @return the new AsymmetricKey
+     * @throws JDataException on error
+     */
+    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom);
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return generateAsymmetricKey(pGenerator, myType[0]);
+    }
+
+    /**
+     * AsymmetricKey Generator.
+     * @param pGenerator the security generator
+     * @param pKeyType the Asymmetric Key type
+     * @return the new AsymmetricKey
+     * @throws JDataException on error
+     */
+    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator,
+                                                         final AsymKeyType pKeyType) throws JDataException {
+        /* Obtain the registration */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        AsymmetricRegister myReg = myRegister.getAsymRegistration(pKeyType);
+
+        /* Generate the KeyPair */
+        KeyPair myPair = myReg.generateKeyPair();
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return new AsymmetricKey(pGenerator, pKeyType, myPair);
     }
 
     /**
      * Constructor for new key.
      * @param pGenerator the security generator
-     * @param pKeyMode the key mode
+     * @param pKeyType the key type
+     * @param pPair the key pair
      * @throws JDataException on error
      */
-    protected AsymmetricKey(final SecurityGenerator pGenerator,
-                            final AsymKeyMode pKeyMode) throws JDataException {
+    private AsymmetricKey(final SecurityGenerator pGenerator,
+                          final AsymKeyType pKeyType,
+                          final KeyPair pPair) throws JDataException {
         /* Store the key mode and the generator */
-        theKeyMode = pKeyMode;
-        theKeyType = theKeyMode.getAsymKeyType();
+        theKeyType = pKeyType;
         theGenerator = pGenerator;
-
-        /* Generate the new KeyPair */
-        theKeyPair = theGenerator.generateKeyPair(theKeyType);
-
-        /* Generate the salt bytes */
-        SecureRandom myRandom = theGenerator.getRandom();
-        theSaltBytes = new byte[HashKey.INITVECTOR_LEN];
-        myRandom.nextBytes(theSaltBytes);
+        theKeyPair = pPair;
 
         /* Access the encoded formats */
         thePrivateKeyDef = getPrivateKey().getEncoded();
         thePublicKeyDef = getPublicKey().getEncoded();
 
-        /* Determine the external definition */
-        AsymModeNeedle myNeedle = new AsymModeNeedle(theKeyMode, theSaltBytes, thePublicKeyDef);
-        theExternalKeyDef = myNeedle.getExternal();
+        /* Determine the external PublicKey definition */
+        int myLen = thePublicKeyDef.length;
+        theExternalPublic = new byte[myLen + 1];
+        System.arraycopy(thePublicKeyDef, 0, theExternalPublic, 1, myLen);
+        theExternalPublic[0] = (byte) theKeyType.getId();
 
-        /* Create the map for elliptic keys */
+        /* If the key is elliptic */
         if (theKeyType.isElliptic()) {
+            /* Create cipher key and SaltBytes */
             theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
+            theSaltBytes = theGenerator.getRandomBytes(HashKey.INITVECTOR_LEN);
+
+            /* Build external private */
+            myLen = thePrivateKeyDef.length
+                    + HashKey.INITVECTOR_LEN;
+            theExternalPrivate = new byte[myLen];
+            System.arraycopy(theSaltBytes, 0, theExternalPrivate, 0, HashKey.INITVECTOR_LEN);
+            System.arraycopy(thePrivateKeyDef, 0, theExternalPrivate, HashKey.INITVECTOR_LEN, thePrivateKeyDef.length);
+
+            /* else non-elliptic */
         } else {
+            /* No need for cipherMap/saltBytes or different Private KeyDef */
             theCipherMap = null;
+            theSaltBytes = null;
+            theExternalPrivate = thePrivateKeyDef;
         }
 
         /* Build the SymmetricKey map */
         theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
 
         /* Check whether the PublicKey is too large */
-        if (theExternalKeyDef.length > PUBLICSIZE) {
+        if (theExternalPublic.length > PUBLICSIZE) {
             throw new JDataException(ExceptionClass.DATA, "PublicKey too large: "
-                                                          + theExternalKeyDef.length);
+                                                          + theExternalPublic.length);
         }
     }
 
     /**
      * Constructor from public KeySpec.
      * @param pGenerator the security generator
-     * @param pKeySpec the public KeySpec
+     * @param pExternalPublic the public KeySpec
      * @throws JDataException on error
      */
     protected AsymmetricKey(final SecurityGenerator pGenerator,
-                            final byte[] pKeySpec) throws JDataException {
-        /* Parse the KeySpec */
-        AsymModeNeedle myNeedle = new AsymModeNeedle(pKeySpec);
-
+                            final byte[] pExternalPublic) throws JDataException {
         /* Store the key mode and the generator */
-        theKeyMode = myNeedle.getAsymKeyMode();
-        theKeyType = theKeyMode.getAsymKeyType();
         theGenerator = pGenerator;
-        theExternalKeyDef = Arrays.copyOf(pKeySpec, pKeySpec.length);
+        thePrivateKeyDef = null;
+        theExternalPrivate = null;
+        theSaltBytes = null;
+        theCipherMap = null;
+        theSymKeyMap = null;
+
+        /* Obtain KeyType and Public KeyDef from ExternalPublic */
+        theKeyType = AsymKeyType.fromId(pExternalPublic[0]);
+        theExternalPublic = Arrays.copyOf(pExternalPublic, pExternalPublic.length);
+        thePublicKeyDef = Arrays.copyOfRange(pExternalPublic, 1, pExternalPublic.length);
+
+        /* Obtain the registration */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        AsymmetricRegister myReg = myRegister.getAsymRegistration(theKeyType);
 
         /* Derive the KeyPair */
-        theKeyPair = theGenerator.deriveKeyPair(theKeyType, null, myNeedle.getPublicKey());
-
-        /* Access the encoded formats */
-        thePublicKeyDef = getPublicKey().getEncoded();
-        thePrivateKeyDef = null;
-        theSaltBytes = myNeedle.getSalt();
-
-        /* Create the map for elliptic keys */
-        if (theKeyType.isElliptic()) {
-            theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-        } else {
-            theCipherMap = null;
-        }
-
-        /* Build the SymmetricKey map */
-        theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
+        theKeyPair = myReg.deriveKeyPair(null, thePublicKeyDef);
     }
 
     /**
      * Constructor from full specification.
      * @param pGenerator the security generator
-     * @param pPrivateKey the private KeySpec
-     * @param pKeySpec the public KeySpec
+     * @param pExternalPrivate the private KeySpec
+     * @param pExternalPublic the public KeySpec
      * @throws JDataException on error
      */
     protected AsymmetricKey(final SecurityGenerator pGenerator,
-                            final byte[] pPrivateKey,
-                            final byte[] pKeySpec) throws JDataException {
-        /* Parse the KeySpec */
-        AsymModeNeedle myNeedle = new AsymModeNeedle(pKeySpec);
-
+                            final byte[] pExternalPrivate,
+                            final byte[] pExternalPublic) throws JDataException {
         /* Store the key mode and the generator */
-        theKeyMode = myNeedle.getAsymKeyMode();
-        theKeyType = theKeyMode.getAsymKeyType();
         theGenerator = pGenerator;
-        theExternalKeyDef = Arrays.copyOf(pKeySpec, pKeySpec.length);
+
+        /* Obtain KeyType and Public KeyDef from ExternalPublic */
+        theKeyType = AsymKeyType.fromId(pExternalPublic[0]);
+        theExternalPublic = Arrays.copyOf(pExternalPublic, pExternalPublic.length);
+        thePublicKeyDef = Arrays.copyOfRange(pExternalPublic, 1, pExternalPublic.length);
+        theExternalPrivate = Arrays.copyOf(pExternalPrivate, pExternalPrivate.length);
+
+        /* If the key is elliptic */
+        if (theKeyType.isElliptic()) {
+            /* Obtain private keyDef and saltBytes */
+            thePrivateKeyDef = Arrays.copyOfRange(pExternalPrivate, HashKey.INITVECTOR_LEN, pExternalPrivate.length);
+            theSaltBytes = Arrays.copyOf(pExternalPrivate, HashKey.INITVECTOR_LEN);
+            theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
+
+            /* else non-elliptic */
+        } else {
+            /* No need for cipherMap/saltBytes or different Private KeyDef */
+            thePrivateKeyDef = Arrays.copyOf(pExternalPrivate, pExternalPrivate.length);
+            theCipherMap = null;
+            theSaltBytes = null;
+        }
+
+        /* Obtain the registration */
+        SecurityRegister myRegister = pGenerator.getRegister();
+        AsymmetricRegister myReg = myRegister.getAsymRegistration(theKeyType);
 
         /* Derive the KeyPair */
-        theKeyPair = theGenerator.deriveKeyPair(theKeyType, pPrivateKey, myNeedle.getPublicKey());
-
-        /* Access the encoded formats */
-        thePrivateKeyDef = getPrivateKey().getEncoded();
-        thePublicKeyDef = getPublicKey().getEncoded();
-        theSaltBytes = myNeedle.getSalt();
-
-        /* Create the map for elliptic keys */
-        if (theKeyType.isElliptic()) {
-            theCipherMap = new HashMap<AsymmetricKey, CipherSet>();
-        } else {
-            theCipherMap = null;
-        }
+        theKeyPair = myReg.deriveKeyPair(thePrivateKeyDef, thePublicKeyDef);
 
         /* Build the SymmetricKey map */
         theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
@@ -304,7 +359,7 @@ public class AsymmetricKey {
             hashCode += Arrays.hashCode(thePrivateKeyDef);
         }
         hashCode *= SecurityGenerator.HASH_PRIME;
-        hashCode += theKeyMode.hashCode();
+        hashCode += theKeyType.getId();
         hashCode *= SecurityGenerator.HASH_PRIME;
         hashCode += Arrays.hashCode(thePublicKeyDef);
         return hashCode;
@@ -328,8 +383,8 @@ public class AsymmetricKey {
         /* Access the target Key */
         AsymmetricKey myThat = (AsymmetricKey) pThat;
 
-        /* Not equal if different modes */
-        if (!myThat.getKeyMode().equals(theKeyMode)) {
+        /* Not equal if different types */
+        if (theKeyType != myThat.getKeyType()) {
             return false;
         }
 
@@ -352,7 +407,7 @@ public class AsymmetricKey {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (pPartner.getKeyType() != theKeyType)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Shared Keys require both partners to be similar Elliptic");
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_ELPARTNER);
         }
 
         /* Look for an already resolved CipherSet */
@@ -367,7 +422,7 @@ public class AsymmetricKey {
         byte[] mySecret = getSharedSecret(pPartner);
 
         /* Build the CipherSet */
-        mySet = new CipherSet(theGenerator, pSaltBytes, theKeyMode);
+        mySet = new CipherSet(theGenerator, pSaltBytes);
 
         /* Apply the Secret */
         mySet.buildCiphers(mySecret);
@@ -409,7 +464,7 @@ public class AsymmetricKey {
             /* Create a new cipher */
             return Cipher.getInstance(bWrap
                     ? theKeyType.getAlgorithm()
-                    : theKeyType.getCipher(), theGenerator.getProvider().getProvider());
+                    : theKeyType.getCipher(), theGenerator.getProviderName());
 
             /* catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
@@ -476,10 +531,8 @@ public class AsymmetricKey {
      * @throws JDataException on error
      */
     public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
-        byte[] myWrappedKey;
-
         /* Look for an entry in the map and return it if found */
-        myWrappedKey = theSymKeyMap.get(pKey);
+        byte[] myWrappedKey = theSymKeyMap.get(pKey);
         if (myWrappedKey != null) {
             return Arrays.copyOf(myWrappedKey, myWrappedKey.length);
         }
@@ -528,8 +581,8 @@ public class AsymmetricKey {
     private synchronized byte[] getSharedSecret(final AsymmetricKey pPartner) throws JDataException {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
-            || (!theKeyMode.equals(pPartner.getKeyMode()))) {
-            throw new JDataException(ExceptionClass.LOGIC, "Shared Keys require both partners to be similar Elliptic");
+            || (theKeyType != pPartner.getKeyType())) {
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_ELPARTNER);
         }
 
         /* Cannot generate unless we have the private key */
@@ -542,7 +595,7 @@ public class AsymmetricKey {
             /* If we do not currently have a key Agreement */
             if (theKeyAgreement == null) {
                 /* Create the key agreement */
-                theKeyAgreement = theGenerator.accessKeyAgreement("ECDH");
+                theKeyAgreement = KeyAgreement.getInstance("ECDH", theGenerator.getProviderName());
             }
 
             /* Process the key agreement */
@@ -553,7 +606,7 @@ public class AsymmetricKey {
             return theKeyAgreement.generateSecret();
 
             /* Handle exceptions */
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to negotiate key agreement", e);
         }
     }
@@ -574,7 +627,7 @@ public class AsymmetricKey {
         /* Protect against exceptions */
         try {
             /* Create a signature */
-            Signature mySignature = Signature.getInstance(theKeyType.getSignature(), theGenerator.getProvider().getProvider());
+            Signature mySignature = Signature.getInstance(theKeyType.getSignature(), theGenerator.getProviderName());
             if (bSign) {
                 mySignature.initSign(getPrivateKey(), theGenerator.getRandom());
             } else {
@@ -602,8 +655,8 @@ public class AsymmetricKey {
                                 final byte[] pSaltBytes,
                                 final AsymmetricKey pTarget) throws JDataException {
         /* Target must be identical key type */
-        if (!theKeyMode.equals(pTarget.getKeyMode())) {
-            throw new JDataException(ExceptionClass.LOGIC, "Asymmetric Encryption must be between similar partners");
+        if (theKeyType != pTarget.getKeyType()) {
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_PARTNER);
         }
 
         /* If we are elliptic */
@@ -701,8 +754,8 @@ public class AsymmetricKey {
         }
 
         /* Source must be identical key type */
-        if (!theKeyMode.equals(pSource.getKeyMode())) {
-            throw new JDataException(ExceptionClass.LOGIC, "Asymmetric Encryption must be between similar partners");
+        if (theKeyType != pSource.getKeyType()) {
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_PARTNER);
         }
 
         /* If we are elliptic */

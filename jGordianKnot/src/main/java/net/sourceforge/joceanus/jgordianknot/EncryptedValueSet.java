@@ -34,6 +34,11 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 public class EncryptedValueSet
         extends ValueSet {
     /**
+     * Field access error text.
+     */
+    private static final String ERROR_ACCESS = "Encrypted access for non-encrypted field ";
+
+    /**
      * Constructor.
      * @param pItem the item
      */
@@ -68,7 +73,7 @@ public class EncryptedValueSet
 
         /* Handle bad usage */
         if (!EncryptedField.class.isInstance(myObject)) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+            throw new IllegalArgumentException(ERROR_ACCESS
                                                + pField.getName());
         }
 
@@ -94,7 +99,7 @@ public class EncryptedValueSet
 
         /* Handle bad usage */
         if (!EncryptedField.class.isInstance(myObject)) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+            throw new IllegalArgumentException(ERROR_ACCESS
                                                + pField.getName());
         }
 

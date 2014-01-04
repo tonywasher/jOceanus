@@ -147,7 +147,7 @@ public class Backup {
         /* Protect against exceptions */
         try {
             /* Access the zipFile */
-            ZipReadFile myFile = new ZipReadFile(pZipFile);
+            ZipReadFile myFile = new ZipReadFile(pZipFile, theTask.getLogger());
 
             /* Obtain the hash bytes from the file */
             byte[] myHashBytes = myFile.getHashBytes();

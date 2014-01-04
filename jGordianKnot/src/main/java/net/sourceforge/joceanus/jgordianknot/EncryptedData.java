@@ -48,18 +48,22 @@ import net.sourceforge.joceanus.jdecimal.JUnits;
 
 /**
  * Encrypted data types.
- * @author Tony Washer
  */
 public final class EncryptedData {
     /**
      * Encrypted data conversion failure message.
      */
-    private static final String MSG_BYTES_CONVERT = "Failed to convert value from bytes";
+    private static final String ERROR_BYTES_CONVERT = "Failed to convert value from bytes";
 
     /**
      * Encrypted data conversion failure message.
      */
-    private static final String MSG_VALUE_CONVERT = "Failed to convert value to bytes";
+    private static final String ERROR_VALUE_CONVERT = "Failed to convert value to bytes";
+
+    /**
+     * Encryption not initialised failure message.
+     */
+    private static final String ERROR_INIT = "Encryption is not initialised";
 
     /**
      * Private constructor to avoid instantiation.
@@ -173,7 +177,7 @@ public final class EncryptedData {
 
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new JDataException(ExceptionClass.LOGIC, "Encryption is not initialised");
+                throw new JDataException(ExceptionClass.LOGIC, ERROR_INIT);
             }
 
             /* Decrypt the Bytes */
@@ -190,7 +194,7 @@ public final class EncryptedData {
         private void encryptValue() throws JDataException {
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new JDataException(ExceptionClass.LOGIC, "Encryption is not initialised");
+                throw new JDataException(ExceptionClass.LOGIC, ERROR_INIT);
             }
 
             /* Obtain the bytes representation of the value */
@@ -427,7 +431,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -440,7 +444,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -485,9 +489,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -500,7 +504,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -545,9 +549,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -560,7 +564,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -605,9 +609,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -620,7 +624,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -665,9 +669,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -680,7 +684,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -725,9 +729,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -740,7 +744,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -785,7 +789,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -798,7 +802,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -860,9 +864,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -876,7 +880,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -938,9 +942,9 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -954,7 +958,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -1038,7 +1042,7 @@ public final class EncryptedData {
                 return new BigInteger(pBytes);
                 /* Catch Exceptions */
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -1085,9 +1089,9 @@ public final class EncryptedData {
                 return new BigDecimal(DataConverter.byteArrayToString(pBytes));
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -1171,7 +1175,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -1195,7 +1199,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -1243,7 +1247,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
 
@@ -1252,7 +1256,7 @@ public final class EncryptedData {
             try {
                 return getDecimalParser().parseMoneyValue(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1293,7 +1297,7 @@ public final class EncryptedData {
             try {
                 return new JUnits(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1335,7 +1339,7 @@ public final class EncryptedData {
                 return new JRate(pValue);
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1383,7 +1387,7 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
             }
         }
 
@@ -1392,7 +1396,7 @@ public final class EncryptedData {
             try {
                 return getDecimalParser().parsePriceValue(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1433,7 +1437,7 @@ public final class EncryptedData {
             try {
                 return new JDilution(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1474,7 +1478,7 @@ public final class EncryptedData {
             try {
                 return new JRatio(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
             }
         }
     }

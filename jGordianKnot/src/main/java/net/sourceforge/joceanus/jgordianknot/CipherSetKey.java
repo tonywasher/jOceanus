@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
@@ -74,7 +75,9 @@ public class CipherSetKey {
      * @return the initialisation vector
      */
     public byte[] getInitVector() {
-        return theInitVector;
+        return (theInitVector == null)
+                ? null
+                : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -82,7 +85,9 @@ public class CipherSetKey {
      * @return the bytes
      */
     public byte[] getBytes() {
-        return theBytes;
+        return (theBytes == null)
+                ? null
+                : Arrays.copyOf(theBytes, theBytes.length);
     }
 
     /**
@@ -126,12 +131,10 @@ public class CipherSetKey {
 
     /**
      * Constructor for external form parse.
-     * @param pGenerator the security generator
      * @param pExternal the external form
      * @throws JDataException on error
      */
-    protected CipherSetKey(final SecurityGenerator pGenerator,
-                           final byte[] pExternal) throws JDataException {
+    protected CipherSetKey(final byte[] pExternal) throws JDataException {
         /* Determine whether we have an IV */
         byte myStart = pExternal[0];
         boolean hasIV = (myStart & NOIV_FLAG) == 0;

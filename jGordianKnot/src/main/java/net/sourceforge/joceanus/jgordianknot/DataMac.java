@@ -131,7 +131,9 @@ public class DataMac {
      * @return the initialisation vector
      */
     public byte[] getInitVector() {
-        return theInitVector;
+        return (theInitVector == null)
+                ? null
+                : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -243,7 +245,10 @@ public class DataMac {
         SecretKey myKey = myReg.generateKey();
 
         /* Generate an initialisation vector */
-        byte[] myInitVector = pGenerator.getRandomBytes(CipherSet.IVSIZE);
+        int myIVLen = pMacType.getIVLen();
+        byte[] myInitVector = (myIVLen != 0)
+                ? pGenerator.getRandomBytes(myIVLen)
+                : null;
 
         /* Generate the Mac */
         return new DataMac(pGenerator, pMacType, myKey, myInitVector);
@@ -266,7 +271,7 @@ public class DataMac {
         SecretKey myKey = myReg.generateKey();
 
         /* Generate an initialisation vector */
-        byte[] myInitVector = pGenerator.getRandomBytes(CipherSet.IVSIZE);
+        byte[] myInitVector = pGenerator.getRandomBytes(pMacType.getIVLen());
 
         /* Generate the Mac */
         return new DataMac(pGenerator, pMacType, pKeyType, myKey, myInitVector);
@@ -295,8 +300,7 @@ public class DataMac {
 
         /* Protect against exceptions */
         try {
-            String myProviderName = pGenerator.getProvider().getProvider();
-            theMac = Mac.getInstance(theAlgo, myProviderName);
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
             if (theKey != null) {
                 theMac.init(theKey);
             }
@@ -322,8 +326,8 @@ public class DataMac {
                     final SymKeyType pKeyType,
                     final SecretKey pKey,
                     final byte[] pVector) throws JDataException {
-        /* Not allowed for ThreeFish */
-        if (pKeyType == SymKeyType.THREEFISH) {
+        /* Not allowed for non standard block size */
+        if (!pKeyType.isStdBlock()) {
             throw new UnsupportedOperationException();
         }
 
@@ -337,9 +341,8 @@ public class DataMac {
 
         /* Protect against exceptions */
         try {
-            /* Return a digest for the algorithm */
-            String myProviderName = pGenerator.getProvider().getProvider();
-            theMac = Mac.getInstance(theAlgo, myProviderName);
+            /* Return a Mac for the algorithm */
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
             theMac.init(theKey, new IvParameterSpec(pVector));
 
             /* Catch exceptions */
@@ -366,7 +369,9 @@ public class DataMac {
         theMacType = pMacType;
         theDigestType = null;
         theKeyType = null;
-        theInitVector = Arrays.copyOf(pVector, pVector.length);
+        theInitVector = (pVector == null)
+                ? null
+                : Arrays.copyOf(pVector, pVector.length);
 
         /* Determine the algorithm */
         boolean useLongHash = pGenerator.useLongHash();
@@ -374,10 +379,13 @@ public class DataMac {
 
         /* Protect against exceptions */
         try {
-            /* Return a digest for the algorithm */
-            String myProviderName = pGenerator.getProvider().getProvider();
-            theMac = Mac.getInstance(theAlgo, myProviderName);
-            theMac.init(theKey, new IvParameterSpec(pVector));
+            /* Return a Mac for the algorithm */
+            theMac = Mac.getInstance(theAlgo, pGenerator.getProviderName());
+            if (pVector != null) {
+                theMac.init(theKey, new IvParameterSpec(pVector));
+            } else {
+                theMac.init(theKey);
+            }
 
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
@@ -399,8 +407,8 @@ public class DataMac {
 
         /* Protect against exceptions */
         try {
-            theKey = new SecretKeySpec(pKeyBytes, theAlgo);
-            theMac.init(theKey);
+            SecretKey myKey = new SecretKeySpec(pKeyBytes, theAlgo);
+            theMac.init(myKey);
 
             /* Catch exceptions */
         } catch (InvalidKeyException e) {

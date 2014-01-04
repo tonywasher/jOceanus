@@ -36,12 +36,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
@@ -49,6 +52,11 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  * Factory and Key Generator register.
  */
 public class SecurityRegister {
+    /**
+     * The Security generator.
+     */
+    private final SecurityGenerator theGenerator;
+
     /**
      * The Security provider name.
      */
@@ -90,9 +98,9 @@ public class SecurityRegister {
      */
     protected SecurityRegister(final SecurityGenerator pGenerator) {
         /* Initialise values */
-        SecurityProvider myProvider = pGenerator.getProvider();
+        theGenerator = pGenerator;
         theRandom = pGenerator.getRandom();
-        theProviderName = myProvider.getProvider();
+        theProviderName = pGenerator.getProviderName();
         useLongHash = pGenerator.useLongHash();
 
         /* Allocate the lists */
@@ -219,7 +227,7 @@ public class SecurityRegister {
         }
 
         /* Create the new registration */
-        return new MacRegister(pMacType, pKeyLen);
+        return new MacRegister(pMacType, pKeyType, pKeyLen);
     }
 
     /**
@@ -306,10 +314,8 @@ public class SecurityRegister {
 
             /* Protect against exceptions */
             try {
-                PrivateKey myPrivate = null;
-                PublicKey myPublic = null;
-
                 /* if we have a private key */
+                PrivateKey myPrivate = null;
                 if (pPrivate != null) {
                     /* Build the private key */
                     PKCS8EncodedKeySpec myPrivSpec = new PKCS8EncodedKeySpec(pPrivate);
@@ -318,7 +324,7 @@ public class SecurityRegister {
 
                 /* Build the public key */
                 X509EncodedKeySpec myPubSpec = new X509EncodedKeySpec(pPublic);
-                myPublic = theFactory.generatePublic(myPubSpec);
+                PublicKey myPublic = theFactory.generatePublic(myPubSpec);
 
                 /* Return the private key */
                 return new KeyPair(myPublic, myPrivate);
@@ -371,7 +377,7 @@ public class SecurityRegister {
          */
         protected boolean isMatch(final AsymKeyType pKeyType) {
             /* Check identity */
-            return theKeyType == pKeyType;
+            return theKeyType.equals(pKeyType);
         }
     }
 
@@ -392,7 +398,7 @@ public class SecurityRegister {
         /**
          * Key Generator for Secret Key.
          */
-        private KeyGenerator theGenerator;
+        private KeyGenerator theKeyGenerator;
 
         /**
          * Set the algorithm.
@@ -412,7 +418,6 @@ public class SecurityRegister {
 
         /**
          * Constructor.
-         * @param pAlgorithm the algorithm
          * @param pKeyLen the key length
          */
         private SecretRegister(final int pKeyLen) {
@@ -427,12 +432,12 @@ public class SecurityRegister {
          */
         protected SecretKey generateKey() throws JDataException {
             /* If we have not allocated the generator */
-            if (theGenerator == null) {
+            if (theKeyGenerator == null) {
                 /* Protect against Exceptions */
                 try {
                     /* Create the key generator */
-                    theGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
-                    theGenerator.init(theKeyLen, theRandom);
+                    theKeyGenerator = KeyGenerator.getInstance(theAlgorithm, theProviderName);
+                    theKeyGenerator.init(theKeyLen, theRandom);
                 } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
                     /* Throw the exception */
                     throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
@@ -440,7 +445,7 @@ public class SecurityRegister {
             }
 
             /* Generate the Secret key */
-            return theGenerator.generateKey();
+            return theKeyGenerator.generateKey();
         }
 
         /**
@@ -463,7 +468,99 @@ public class SecurityRegister {
          */
         protected boolean isMatch(final int pKeyLen) {
             /* Check identity */
-            return (theKeyLen == pKeyLen);
+            return theKeyLen == pKeyLen;
+        }
+
+        /**
+         * Build Secret Key from a Secret.
+         * @param pSecret the derived Secret
+         * @param pInitVector the initialisation vector
+         * @return the new Secret Key
+         * @throws JDataException on error
+         */
+        protected SecretKey buildSecretKey(final byte[] pSecret,
+                                           final byte[] pInitVector) throws JDataException {
+            /* Determine the key length in bytes */
+            int myKeyLen = theKeyLen
+                           / Byte.SIZE;
+
+            /* Create a buffer to hold the resulting key and # of bytes built */
+            byte[] myKeyBytes = new byte[myKeyLen];
+            int myBuilt = 0;
+
+            /* Access the last 8-bytes of the secret as a long */
+            int myLen = pSecret.length;
+            byte[] mySalt = Arrays.copyOfRange(pSecret, myLen
+                                                        - DataConverter.BYTES_LONG, myLen);
+            long mySeed = DataConverter.byteArrayToLong(mySalt);
+
+            /* Calculate the DigestType to use */
+            DigestType[] myDigest = DigestType.getSeedTypes(1, mySeed);
+
+            /* Create the Mac and standard data */
+            ByteArrayInteger myCount = new ByteArrayInteger();
+            DataMac myMac = theGenerator.generateMac(myDigest[0], pSecret);
+
+            /* while we need to generate more bytes */
+            while (myBuilt < myKeyLen) {
+                /* Build the key section */
+                byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pInitVector);
+
+                /* Determine how many bytes of this hash should be used */
+                int myNeeded = myKeyLen
+                               - myBuilt;
+                if (myNeeded > mySection.length) {
+                    myNeeded = mySection.length;
+                }
+
+                /* Copy bytes across */
+                System.arraycopy(mySection, 0, myKeyBytes, myBuilt, myNeeded);
+                myBuilt += myNeeded;
+            }
+
+            /* Return the secret key specification */
+            return new SecretKeySpec(myKeyBytes, theAlgorithm);
+        }
+
+        /**
+         * Build Secret Key section.
+         * @param pMac the Mac to utilise
+         * @param pSection the section count
+         * @param pInitVector the initialisation vector
+         * @return the section
+         * @throws JDataException on error
+         */
+        private byte[] buildCipherSection(final DataMac pMac,
+                                          final byte[] pSection,
+                                          final byte[] pInitVector) throws JDataException {
+            /* Declare initial value */
+            byte[] myResult = null;
+            byte[] myHash = pInitVector;
+
+            /* Access number of iterations */
+            int iIterations = theGenerator.getNumHashIterations() >>> 1;
+
+            /* Create the standard data */
+            byte[] myAlgo = DataConverter.stringToByteArray(theAlgorithm);
+            byte[] mySeed = theGenerator.getSecurityBytes();
+
+            /* Update with security bytes, algorithm and section */
+            pMac.update(mySeed);
+            pMac.update(myAlgo);
+            pMac.update(pSection);
+
+            /* Loop through the iterations */
+            for (int i = 0; i < iIterations; i++) {
+                /* Add the existing result to hash */
+                pMac.update(myHash);
+
+                /* Calculate Mac */
+                myHash = pMac.finish();
+                myResult = DataConverter.combineHashes(myHash, myResult);
+            }
+
+            /* Return the result */
+            return myResult;
         }
     }
 
@@ -504,7 +601,7 @@ public class SecurityRegister {
         private boolean isMatch(final SymKeyType pKeyType,
                                 final int pKeyLen) {
             /* Ignore wrong key types */
-            if (theKeyType != pKeyType) {
+            if (!theKeyType.equals(pKeyType)) {
                 return false;
             }
 
@@ -550,7 +647,7 @@ public class SecurityRegister {
         private boolean isMatch(final StreamKeyType pKeyType,
                                 final int pKeyLen) {
             /* Ignore wrong key types */
-            if (theKeyType != pKeyType) {
+            if (!theKeyType.equals(pKeyType)) {
                 return false;
             }
 
@@ -634,7 +731,7 @@ public class SecurityRegister {
         private boolean isMatch(final DigestType pDigestType,
                                 final int pKeyLen) {
             /* Ignore non-HMacs */
-            if (theMacType != MacType.HMAC) {
+            if (!theMacType.equals(MacType.HMAC)) {
                 return false;
             }
 
@@ -653,7 +750,7 @@ public class SecurityRegister {
                                 final SymKeyType pKeyType,
                                 final int pKeyLen) {
             /* Ignore wrong types */
-            if (theMacType != pMacType) {
+            if (!theMacType.equals(pMacType)) {
                 return false;
             }
 
@@ -670,7 +767,7 @@ public class SecurityRegister {
         private boolean isMatch(final MacType pMacType,
                                 final int pKeyLen) {
             /* Ignore wrong types */
-            if (theMacType != pMacType) {
+            if (!theMacType.equals(pMacType)) {
                 return false;
             }
 

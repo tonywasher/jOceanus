@@ -92,7 +92,7 @@ public class DataDigest {
         try {
             /* Return a digest for the algorithm */
             boolean useLongHash = pGenerator.useLongHash();
-            String myProviderName = pGenerator.getProvider().getProvider();
+            String myProviderName = pGenerator.getProviderName();
             theDigest = MessageDigest.getInstance(theDigestType.getAlgorithm(useLongHash), myProviderName);
 
             /* Catch exceptions */

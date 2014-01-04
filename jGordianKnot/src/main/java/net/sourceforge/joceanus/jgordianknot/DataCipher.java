@@ -141,8 +141,7 @@ public class DataCipher {
         try {
             /* Create a new cipher */
             SecurityGenerator myGenerator = theSymKey.getGenerator();
-            SecurityProvider myProvider = myGenerator.getProvider();
-            String myProviderName = myProvider.getProvider();
+            String myProviderName = myGenerator.getProviderName();
             SymKeyType myKeyType = theSymKey.getKeyType();
             theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myProviderName);
             theWrapCipher = Cipher.getInstance(myKeyType.getWrapCipher(), myProviderName);
@@ -316,8 +315,8 @@ public class DataCipher {
                     byte[] myResult = theWrapCipher.doFinal(myBuffer);
 
                     /* Adjust the result using the count as a mask */
-                    for (int myMask = myCount++, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE) {
-                        myResult[myIndex--] ^= (byte) myMask;
+                    for (int myMask = myCount++, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
+                        myResult[myIndex] ^= (byte) myMask;
                     }
 
                     /* Restore encrypted data */
@@ -379,8 +378,8 @@ public class DataCipher {
                     System.arraycopy(myData, myOffset, myBuffer, myBlockLen, myBlockLen);
 
                     /* Adjust the buffer using the count as a mask */
-                    for (int myMask = myCount--, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE) {
-                        myBuffer[myIndex--] ^= (byte) myMask;
+                    for (int myMask = myCount--, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
+                        myBuffer[myIndex] ^= (byte) myMask;
                     }
 
                     /* Decrypt the byte array */
