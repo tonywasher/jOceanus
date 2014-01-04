@@ -29,34 +29,34 @@ public enum AccountType {
     /**
      * Valued account (Savings/Loan).
      */
-    Valued,
+    VALUED,
 
     /**
      * Priced account (unit based).
      */
-    Priced,
+    PRICED,
 
     /**
      * NonAsset (payee/institution etc.).
      */
-    NonAsset,
+    NONASSET,
 
     /**
      * AutoExpense.
      */
-    AutoExpense,
+    AUTOEXPENSE,
 
     /**
      * Illegal.
      */
-    Illegal;
+    ILLEGAL;
 
     /**
      * Is the account a nonAsset?
      * @return true/false
      */
     public boolean isNonAsset() {
-        return this == NonAsset;
+        return this == NONASSET;
     }
 
     /**
@@ -73,7 +73,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isPriced() {
-        return this == Priced;
+        return this == PRICED;
     }
 
     /**
@@ -81,7 +81,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isValued() {
-        return this == Valued;
+        return this == VALUED;
     }
 
     /**
@@ -89,7 +89,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isAutoExpense() {
-        return this == AutoExpense;
+        return this == AUTOEXPENSE;
     }
 
     /**
@@ -97,7 +97,7 @@ public enum AccountType {
      * @return true/false
      */
     public boolean isIllegal() {
-        return this == Illegal;
+        return this == ILLEGAL;
     }
 
     /**
@@ -109,30 +109,30 @@ public enum AccountType {
         /* Handle illegal accounts */
         if ((isIllegal())
             || (pPartner.isIllegal())) {
-            return TransactionType.Illegal;
+            return TransactionType.ILLEGAL;
         }
         boolean toAsset = pPartner.isAsset();
         if (isAsset()) {
             if (isAutoExpense()) {
                 if (pPartner.isAutoExpense()) {
-                    return TransactionType.Illegal;
+                    return TransactionType.ILLEGAL;
                 }
                 return (toAsset)
-                        ? TransactionType.CashDeposit
-                        : TransactionType.CashPayment;
+                        ? TransactionType.CASHDEPOSIT
+                        : TransactionType.CASHPAYMENT;
             }
             return (toAsset)
                     ? pPartner.isAutoExpense()
-                            ? TransactionType.CashWithdrawal
-                            : TransactionType.Transfer
-                    : TransactionType.Expense;
+                            ? TransactionType.CASHWITHDRAWAL
+                            : TransactionType.TRANSFER
+                    : TransactionType.EXPENSE;
         } else {
             if (!toAsset) {
-                return TransactionType.Illegal;
+                return TransactionType.ILLEGAL;
             }
             return pPartner.isAutoExpense()
-                    ? TransactionType.CashRecovery
-                    : TransactionType.Income;
+                    ? TransactionType.CASHRECOVERY
+                    : TransactionType.INCOME;
         }
     }
 
@@ -149,11 +149,11 @@ public enum AccountType {
             case CREDITCARD:
             case PRIVATELOAN:
             case LOAN:
-                return Valued;
+                return VALUED;
             case CASH:
                 return (pAccount.getAutoExpense() != null)
-                        ? Valued
-                        : AutoExpense;
+                        ? VALUED
+                        : AUTOEXPENSE;
             case SHARES:
             case UNITTRUST:
             case LIFEBOND:
@@ -161,7 +161,7 @@ public enum AccountType {
             case ASSET:
             case PROPERTY:
             case VEHICLE:
-                return Priced;
+                return PRICED;
             case EMPLOYER:
             case PAYEE:
             case TAXMAN:
@@ -169,14 +169,14 @@ public enum AccountType {
             case PORTFOLIO:
             case INSTITUTION:
             case INDIVIDUAL:
-                return NonAsset;
+                return NONASSET;
             case SAVINGSTOTALS:
             case CASHTOTALS:
             case PRICEDTOTALS:
             case LOANTOTALS:
             case TOTALS:
             default:
-                return Illegal;
+                return ILLEGAL;
         }
     }
 }

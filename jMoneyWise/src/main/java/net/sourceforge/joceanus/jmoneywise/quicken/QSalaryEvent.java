@@ -78,30 +78,30 @@ public class QSalaryEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        addDecimalLine(QEventLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEventLineType.Reference, myRef);
+            addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Payee is the debit account */
-        addAccountLine(QEventLineType.Payee, myEvent.getDebit());
+        addAccountLine(QEventLineType.PAYEE, myEvent.getDebit());
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEventLineType.Comment, myDesc);
+            addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* If no split is necessary */
@@ -109,7 +109,7 @@ public class QSalaryEvent
             && (!isNatIns)
             && (!isBenefit)) {
             /* Add the standard category */
-            addCategoryLine(QEventLineType.Category, myCategory);
+            addCategoryLine(QEventLineType.CATEGORY, myCategory);
         } else {
             /* Add a Split */
             myValue = new JDecimal(myAmount);
@@ -122,28 +122,28 @@ public class QSalaryEvent
             if (isBenefit) {
                 myValue.addValue(myBenefit);
             }
-            addCategoryLine(QEventLineType.SplitCategory, myCategory);
-            addDecimalLine(QEventLineType.SplitAmount, myValue);
+            addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+            addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             if (isTaxCredit) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
-                addCategoryLine(QEventLineType.SplitCategory, myCategory);
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isNatIns) {
                 myValue = new JDecimal(myNatIns);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
-                addCategoryLine(QEventLineType.SplitCategory, myCategory);
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isBenefit) {
                 myValue = new JDecimal(myBenefit);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
-                addCategoryLine(QEventLineType.SplitCategory, myCategory);
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
         }
 

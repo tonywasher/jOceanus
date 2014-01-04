@@ -143,23 +143,23 @@ public class QIFEventCategory
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Name:
+                    case NAME:
                         addLine(new QIFCategoryNameLine(myData));
                         myName = myData;
                         break;
-                    case Description:
+                    case DESCRIPTION:
                         addLine(new QIFCategoryDescLine(myData));
                         myDesc = myData;
                         break;
-                    case Income:
+                    case INCOME:
                         addLine(new QIFCategoryIncomeLine());
-                        myTType = TransactionType.Income;
+                        myTType = TransactionType.INCOME;
                         break;
-                    case Expense:
+                    case EXPENSE:
                         addLine(new QIFCategoryExpenseLine());
-                        myTType = TransactionType.Expense;
+                        myTType = TransactionType.EXPENSE;
                         break;
-                    case Tax:
+                    case TAX:
                     default:
                         break;
                 }
@@ -179,7 +179,7 @@ public class QIFEventCategory
             extends QIFStringLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.Name;
+            return QCategoryLineType.NAME;
         }
 
         /**
@@ -207,7 +207,7 @@ public class QIFEventCategory
             extends QIFStringLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.Description;
+            return QCategoryLineType.DESCRIPTION;
         }
 
         /**
@@ -235,7 +235,7 @@ public class QIFEventCategory
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.Income;
+            return QCategoryLineType.INCOME;
         }
 
         /**
@@ -257,7 +257,7 @@ public class QIFEventCategory
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.Expense;
+            return QCategoryLineType.EXPENSE;
         }
 
         /**
@@ -279,7 +279,7 @@ public class QIFEventCategory
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.Income;
+            return QCategoryLineType.INCOME;
         }
 
         /**

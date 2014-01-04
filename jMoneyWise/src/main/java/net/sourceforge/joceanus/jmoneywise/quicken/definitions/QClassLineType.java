@@ -29,12 +29,12 @@ public enum QClassLineType implements QLineType {
     /**
      * Name.
      */
-    Name("N"),
+    NAME("N"),
 
     /**
      * Description.
      */
-    Description("D");
+    DESCRIPTION("D");
 
     /**
      * The symbol.

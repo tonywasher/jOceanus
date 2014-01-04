@@ -29,17 +29,17 @@ public enum QSecurityLineType implements QLineType {
     /**
      * Name.
      */
-    Name("N"),
+    NAME("N"),
 
     /**
      * Symbol.
      */
-    Symbol("S"),
+    SYMBOL("S"),
 
     /**
      * Security Type.
      */
-    SecType("T");
+    SECTYPE("T");
 
     /**
      * The symbol.

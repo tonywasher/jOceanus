@@ -207,7 +207,7 @@ public class QIFSplitEvent
             extends QIFXferAccountLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.SplitCategory;
+            return QEventLineType.SPLITCATEGORY;
         }
 
         /**
@@ -238,7 +238,7 @@ public class QIFSplitEvent
             extends QIFCategoryLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.SplitCategory;
+            return QEventLineType.SPLITCATEGORY;
         }
 
         /**
@@ -269,7 +269,7 @@ public class QIFSplitEvent
             extends QIFMoneyLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.SplitAmount;
+            return QEventLineType.SPLITAMOUNT;
         }
 
         /**
@@ -297,7 +297,7 @@ public class QIFSplitEvent
             extends QIFRateLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.SplitPercent;
+            return QEventLineType.SPLITPERCENT;
         }
 
         /**
@@ -325,7 +325,7 @@ public class QIFSplitEvent
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.SplitComment;
+            return QEventLineType.SPLITCOMMENT;
         }
 
         /**

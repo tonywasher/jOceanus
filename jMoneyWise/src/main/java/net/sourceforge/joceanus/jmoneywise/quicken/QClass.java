@@ -96,13 +96,13 @@ public final class QClass
         reset();
 
         /* Add the Class name */
-        addStringLine(QClassLineType.Name, theClass.getName());
+        addStringLine(QClassLineType.NAME, theClass.getName());
 
         /* If we have a description */
         String myDesc = theClass.getDesc();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QCategoryLineType.Description, myDesc);
+            addStringLine(QCategoryLineType.DESCRIPTION, myDesc);
         }
 
         /* Return the result */

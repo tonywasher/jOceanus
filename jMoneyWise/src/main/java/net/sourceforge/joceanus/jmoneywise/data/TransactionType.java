@@ -29,42 +29,42 @@ public enum TransactionType {
     /**
      * Transfer.
      */
-    Transfer,
+    TRANSFER,
 
     /**
      * Income.
      */
-    Income,
+    INCOME,
 
     /**
      * Expense.
      */
-    Expense,
+    EXPENSE,
 
     /**
      * CashWithdrawal.
      */
-    CashWithdrawal,
+    CASHWITHDRAWAL,
 
     /**
      * CashDeposit.
      */
-    CashDeposit,
+    CASHDEPOSIT,
 
     /**
      * CashPayment.
      */
-    CashPayment,
+    CASHPAYMENT,
 
     /**
      * CashRecovery.
      */
-    CashRecovery,
+    CASHRECOVERY,
 
     /**
      * Illegal.
      */
-    Illegal;
+    ILLEGAL;
 
     /**
      * Is the transaction a transfer?
@@ -72,9 +72,9 @@ public enum TransactionType {
      */
     public boolean isTransfer() {
         switch (this) {
-            case Transfer:
-            case CashDeposit:
-            case CashWithdrawal:
+            case TRANSFER:
+            case CASHDEPOSIT:
+            case CASHWITHDRAWAL:
                 return true;
             default:
                 return false;
@@ -87,8 +87,8 @@ public enum TransactionType {
      */
     public boolean isIncome() {
         switch (this) {
-            case Income:
-            case CashRecovery:
+            case INCOME:
+            case CASHRECOVERY:
                 return true;
             default:
                 return false;
@@ -101,8 +101,8 @@ public enum TransactionType {
      */
     public boolean isExpense() {
         switch (this) {
-            case Expense:
-            case CashPayment:
+            case EXPENSE:
+            case CASHPAYMENT:
                 return true;
             default:
                 return false;
@@ -115,10 +115,10 @@ public enum TransactionType {
      */
     public boolean isAutoExpense() {
         switch (this) {
-            case CashRecovery:
-            case CashPayment:
-            case CashWithdrawal:
-            case CashDeposit:
+            case CASHRECOVERY:
+            case CASHPAYMENT:
+            case CASHWITHDRAWAL:
+            case CASHDEPOSIT:
                 return true;
             default:
                 return false;
@@ -130,7 +130,7 @@ public enum TransactionType {
      * @return true/false
      */
     public boolean isIllegal() {
-        return this == Illegal;
+        return this == ILLEGAL;
     }
 
     /**
@@ -139,14 +139,14 @@ public enum TransactionType {
      */
     public TransactionType getRecovered() {
         switch (this) {
-            case Expense:
-                return Income;
-            case CashPayment:
-                return CashRecovery;
-            case CashWithdrawal:
-                return CashDeposit;
+            case EXPENSE:
+                return INCOME;
+            case CASHPAYMENT:
+                return CASHRECOVERY;
+            case CASHWITHDRAWAL:
+                return CASHDEPOSIT;
             default:
-                return Illegal;
+                return ILLEGAL;
         }
     }
 
@@ -173,7 +173,7 @@ public enum TransactionType {
             case INHERITED:
             case MARKETGROWTH:
             case CAPITALGAIN:
-                return Income;
+                return INCOME;
             case TRANSFER:
             case STOCKSPLIT:
             case STOCKADJUST:
@@ -181,11 +181,11 @@ public enum TransactionType {
             case STOCKRIGHTSWAIVED:
             case STOCKDEMERGER:
             case STOCKTAKEOVER:
-                return Transfer;
+                return TRANSFER;
             case INCOMETOTALS:
             case EXPENSETOTALS:
             case TOTALS:
-                return Illegal;
+                return ILLEGAL;
             case EXPENSE:
             case WRITEOFF:
             case LOCALTAXES:
@@ -197,7 +197,7 @@ public enum TransactionType {
             case CHARITYDONATION:
             case LOANINTERESTCHARGED:
             default:
-                return Expense;
+                return EXPENSE;
         }
     }
 }

@@ -155,20 +155,20 @@ public class QIFAccount
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Name:
+                    case NAME:
                         addLine(new QIFAccountNameLine(myData));
                         myName = myData;
                         break;
-                    case Description:
+                    case DESCRIPTION:
                         addLine(new QIFAccountDescLine(myData));
                         myDesc = myData;
                         break;
-                    case Type:
+                    case TYPE:
                         QIFAccountTypeLine myQLine = new QIFAccountTypeLine(myData);
                         addLine(myQLine);
                         myClass = myQLine.getAccountClass();
                         break;
-                    case CreditLimit:
+                    case CREDITLIMIT:
                         JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
                         addLine(new QIFAccountLimitLine(myMoney));
                         break;
@@ -191,7 +191,7 @@ public class QIFAccount
             extends QIFStringLine<QAccountLineType> {
         @Override
         public QAccountLineType getLineType() {
-            return QAccountLineType.Name;
+            return QAccountLineType.NAME;
         }
 
         /**
@@ -219,7 +219,7 @@ public class QIFAccount
             extends QIFStringLine<QAccountLineType> {
         @Override
         public QAccountLineType getLineType() {
-            return QAccountLineType.Description;
+            return QAccountLineType.DESCRIPTION;
         }
 
         /**
@@ -247,7 +247,7 @@ public class QIFAccount
             extends QIFStringLine<QAccountLineType> {
         @Override
         public QAccountLineType getLineType() {
-            return QAccountLineType.Type;
+            return QAccountLineType.TYPE;
         }
 
         /**
@@ -308,7 +308,7 @@ public class QIFAccount
             extends QIFMoneyLine<QAccountLineType> {
         @Override
         public QAccountLineType getLineType() {
-            return QAccountLineType.CreditLimit;
+            return QAccountLineType.CREDITLIMIT;
         }
 
         /**

@@ -94,40 +94,40 @@ public class QInterestEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         if (!isReinvested) {
             myValue.setZero();
         }
-        addDecimalLine(QEventLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEventLineType.Reference, myRef);
+            addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Payee is the parent of the account */
         Account myParent = myEvent.getDebit().getParent();
-        addAccountLine(QEventLineType.Payee, myParent);
+        addAccountLine(QEventLineType.PAYEE, myParent);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEventLineType.Comment, myDesc);
+            addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* If we are not using splits */
         if (!useSplits) {
             /* Just add the standard category */
-            addCategoryLine(QEventLineType.Category, myCategory);
+            addCategoryLine(QEventLineType.CATEGORY, myCategory);
         } else {
             /* Add a Split */
             myValue = new JDecimal(myAmount);
@@ -137,27 +137,27 @@ public class QInterestEvent
             if (isDonation) {
                 myValue.addValue(myDonation);
             }
-            addCategoryLine(QEventLineType.SplitCategory, myCategory);
-            addDecimalLine(QEventLineType.SplitAmount, myValue);
+            addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+            addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             if (!isTaxFree) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
-                addCategoryLine(QEventLineType.SplitCategory, myCategory);
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isDonation) {
                 myValue = new JDecimal(myDonation);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.CHARITYDONATION);
-                addCategoryLine(QEventLineType.SplitCategory, myCategory);
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (!isReinvested) {
                 myValue = new JDecimal(myAmount);
                 myValue.negate();
-                addXferAccountLine(QEventLineType.SplitCategory, myEvent.getCredit());
-                addDecimalLine(QEventLineType.SplitAmount, myValue);
+                addXferAccountLine(QEventLineType.SPLITCATEGORY, myEvent.getCredit());
+                addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
         }
 
@@ -180,23 +180,23 @@ public class QInterestEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
-        addDecimalLine(QEventLineType.Amount, new JDecimal(myEvent.getAmount()));
+        addDecimalLine(QEventLineType.AMOUNT, new JDecimal(myEvent.getAmount()));
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEventLineType.Reference, myRef);
+            addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Payee is the debit account */
-        addLineType(QEventLineType.Payee);
+        addLineType(QEventLineType.PAYEE);
         append(QIF_XFER);
         if (!getQIFType().useSimpleTransfer()) {
             append(QIF_XFERFROM);
@@ -208,11 +208,11 @@ public class QInterestEvent
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEventLineType.Comment, myDesc);
+            addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* Add the transfer details */
-        addXferAccountLine(QEventLineType.Category, myEvent.getDebit());
+        addXferAccountLine(QEventLineType.CATEGORY, myEvent.getDebit());
 
         /* Return the result */
         return completeItem();

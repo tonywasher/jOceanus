@@ -29,27 +29,27 @@ public enum QCategoryLineType implements QLineType {
     /**
      * Name.
      */
-    Name("N"),
+    NAME("N"),
 
     /**
      * Description.
      */
-    Description("D"),
+    DESCRIPTION("D"),
 
     /**
      * Income flag.
      */
-    Income("I"),
+    INCOME("I"),
 
     /**
      * Expense flag.
      */
-    Expense("E"),
+    EXPENSE("E"),
 
     /**
      * Tax flag.
      */
-    Tax("T");
+    TAX("T");
 
     /**
      * The symbol.

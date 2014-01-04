@@ -190,48 +190,48 @@ public class QIFPortfolioEvent
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Date:
+                    case DATE:
                         JDateDay myDateDay = myDateParser.parseDateDay(myData);
                         addLine(new QIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
-                    case Cleared:
+                    case CLEARED:
                         Boolean myFlag = Boolean.parseBoolean(myData);
                         addLine(new QIFPortfolioClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
-                    case Amount:
+                    case AMOUNT:
                         JMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioAmountLine(myMoney));
                         myAmount = myMoney;
                         break;
-                    case Comment:
+                    case COMMENT:
                         addLine(new QIFPortfolioCommentLine(myData));
                         myComment = myData;
                         break;
-                    case Action:
+                    case ACTION:
                         myAction = QActionType.parseLine(myData);
                         addLine(new QIFPortfolioActionLine(myAction));
                         break;
-                    case Price:
+                    case PRICE:
                         JPrice myPrice = myDecParser.parsePriceValue(myData);
                         addLine(new QIFPortfolioPriceLine(myPrice));
                         break;
-                    case Commission:
+                    case COMMISSION:
                         myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioCommissionLine(myMoney));
                         break;
-                    case Payee:
+                    case PAYEE:
                         addLine(new QIFPortfolioPayeeDescLine(myData));
                         break;
-                    case Quantity:
+                    case QUANTITY:
                         JUnits myUnits = myDecParser.parseUnitsValue(myData);
                         addLine(new QIFPortfolioQuantityLine(myUnits));
                         break;
-                    case Security:
+                    case SECURITY:
                         addLine(new QIFPortfolioSecurityLine(pFile.getSecurity(myData)));
                         break;
-                    case TransferAccount:
+                    case XFERACCOUNT:
                         /* Look for account, category and classes */
                         QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
                         QIFEventCategory myCategory = QIFCategoryLine.parseCategory(pFile, myData);
@@ -245,7 +245,7 @@ public class QIFPortfolioEvent
                             addLine(new QIFPortfolioCategoryAccountLine(myCategory, myAccount, myClasses));
                         }
                         break;
-                    case TransferAmount:
+                    case XFERAMOUNT:
                         myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioXferAmountLine(myMoney));
                         break;
@@ -330,7 +330,7 @@ public class QIFPortfolioEvent
             extends QIFDateLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Date;
+            return QPortfolioLineType.DATE;
         }
 
         /**
@@ -350,7 +350,7 @@ public class QIFPortfolioEvent
             extends QIFStringLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Comment;
+            return QPortfolioLineType.COMMENT;
         }
 
         /**
@@ -378,7 +378,7 @@ public class QIFPortfolioEvent
             extends QIFClearedLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Cleared;
+            return QPortfolioLineType.CLEARED;
         }
 
         /**
@@ -398,7 +398,7 @@ public class QIFPortfolioEvent
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Amount;
+            return QPortfolioLineType.AMOUNT;
         }
 
         /**
@@ -426,7 +426,7 @@ public class QIFPortfolioEvent
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Commission;
+            return QPortfolioLineType.COMMISSION;
         }
 
         /**
@@ -454,7 +454,7 @@ public class QIFPortfolioEvent
             extends QIFPriceLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Price;
+            return QPortfolioLineType.PRICE;
         }
 
         /**
@@ -474,7 +474,7 @@ public class QIFPortfolioEvent
             extends QIFUnitsLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Quantity;
+            return QPortfolioLineType.QUANTITY;
         }
 
         /**
@@ -494,7 +494,7 @@ public class QIFPortfolioEvent
             extends QIFRatioLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Quantity;
+            return QPortfolioLineType.QUANTITY;
         }
 
         /**
@@ -519,7 +519,7 @@ public class QIFPortfolioEvent
 
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Security;
+            return QPortfolioLineType.SECURITY;
         }
 
         /**
@@ -554,7 +554,7 @@ public class QIFPortfolioEvent
             extends QIFSecurityLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Security;
+            return QPortfolioLineType.SECURITY;
         }
 
         /**
@@ -574,7 +574,7 @@ public class QIFPortfolioEvent
             extends QIFPayeeLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Payee;
+            return QPortfolioLineType.PAYEE;
         }
 
         /**
@@ -594,7 +594,7 @@ public class QIFPortfolioEvent
             extends QIFStringLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.Payee;
+            return QPortfolioLineType.PAYEE;
         }
 
         /**
@@ -614,7 +614,7 @@ public class QIFPortfolioEvent
             extends QIFXferAccountLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.TransferAccount;
+            return QPortfolioLineType.XFERACCOUNT;
         }
 
         /**
@@ -645,7 +645,7 @@ public class QIFPortfolioEvent
             extends QIFCategoryLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.TransferAccount;
+            return QPortfolioLineType.XFERACCOUNT;
         }
 
         /**
@@ -676,7 +676,7 @@ public class QIFPortfolioEvent
             extends QIFCategoryAccountLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.TransferAccount;
+            return QPortfolioLineType.XFERACCOUNT;
         }
 
         /**
@@ -711,7 +711,7 @@ public class QIFPortfolioEvent
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.TransferAmount;
+            return QPortfolioLineType.XFERAMOUNT;
         }
 
         /**

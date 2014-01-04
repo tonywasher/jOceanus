@@ -168,23 +168,23 @@ public class QEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.Date, theEvent.getDate());
+        addDateLine(QEventLineType.DATE, theEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(theEvent.getAmount());
         if (!isCredit) {
             myValue.negate();
         }
-        addDecimalLine(QEventLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEventLineType.Reference, myRef);
+            addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Determine partner account */
@@ -201,10 +201,10 @@ public class QEvent
         EventCategory myAutoExpense = myPayee.getAutoExpense();
         if (myAutoExpense != null) {
             /* Add the autoExpense payee */
-            addAutoAccountLine(QEventLineType.Payee, myPayee);
+            addAutoAccountLine(QEventLineType.PAYEE, myPayee);
         } else {
             /* Add standard payee */
-            addLineType(QEventLineType.Payee);
+            addLineType(QEventLineType.PAYEE);
 
             /* If this is a transfer */
             if (isTransfer) {
@@ -232,19 +232,19 @@ public class QEvent
         String myDesc = theEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEventLineType.Comment, myDesc);
+            addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* If the payee is autoExpense */
         if (myAutoExpense != null) {
             /* Add the autoExpense */
-            addCategoryLine(QEventLineType.Category, myAutoExpense);
+            addCategoryLine(QEventLineType.CATEGORY, myAutoExpense);
             /* else if its a transfer */
         } else if (isTransfer) {
-            addXferAccountLine(QEventLineType.Category, myPayee);
+            addXferAccountLine(QEventLineType.CATEGORY, myPayee);
             /* else standard category */
         } else {
-            addCategoryLine(QEventLineType.Category, theEvent.getCategory());
+            addCategoryLine(QEventLineType.CATEGORY, theEvent.getCategory());
         }
 
         /* Return the result */
@@ -276,23 +276,23 @@ public class QEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.Date, pStartDate);
+        addDateLine(QEventLineType.DATE, pStartDate);
 
         /* Add the Amount (as a simple decimal) */
-        addDecimalLine(QEventLineType.Amount, new JDecimal(pBalance));
+        addDecimalLine(QEventLineType.AMOUNT, new JDecimal(pBalance));
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, QIF_RECONCILED);
+        addStringLine(QEventLineType.CLEARED, QIF_RECONCILED);
 
         /* Add the payee */
-        addStringLine(QEventLineType.Payee, "Opening Balance");
+        addStringLine(QEventLineType.PAYEE, "Opening Balance");
 
         if (getQIFType().selfOpeningBalance()) {
             /* Add the category as self-Opening */
-            addXferAccountLine(QEventLineType.Category, pAccount);
+            addXferAccountLine(QEventLineType.CATEGORY, pAccount);
         } else {
             /* Add the explicit category */
-            addStringLine(QEventLineType.Category, "Income:OpeningBalance");
+            addStringLine(QEventLineType.CATEGORY, "Income:OpeningBalance");
         }
 
         /* Return the result */
@@ -305,23 +305,23 @@ public class QEvent
      */
     protected void buildAutoExpenseCorrectionQIF(final boolean doCredit) {
         /* Add the Date */
-        addDateLine(QEventLineType.Date, theEvent.getDate());
+        addDateLine(QEventLineType.DATE, theEvent.getDate());
 
         /* Add the Amount */
         JDecimal myValue = new JDecimal(theEvent.getAmount());
         if (!doCredit) {
             myValue.negate();
         }
-        addDecimalLine(QEventLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEventLineType.Cleared, QIF_RECONCILED);
+        addStringLine(QEventLineType.CLEARED, QIF_RECONCILED);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEventLineType.Reference, myRef);
+            addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Determine this account and partner account */
@@ -337,20 +337,20 @@ public class QEvent
 
         /* Add the payee */
         if (isCredit == doCredit) {
-            addAccountLine(QEventLineType.Payee, myPayee);
+            addAccountLine(QEventLineType.PAYEE, myPayee);
         } else {
-            addAutoAccountLine(QEventLineType.Payee, myAccount);
+            addAutoAccountLine(QEventLineType.PAYEE, myAccount);
         }
 
         /* If we have a description */
         String myDesc = theEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEventLineType.Comment, myDesc);
+            addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* Set the category */
-        addCategoryLine(QEventLineType.Category, (isCredit == doCredit)
+        addCategoryLine(QEventLineType.CATEGORY, (isCredit == doCredit)
                 ? theEvent.getCategory()
                 : myAutoExpense);
 

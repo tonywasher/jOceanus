@@ -69,7 +69,7 @@ public class QIFPreference
     /**
      * Default value for BackupType.
      */
-    private static final QIFType DEFAULT_QIFTYPE = QIFType.AceMoney;
+    private static final QIFType DEFAULT_QIFTYPE = QIFType.ACEMONEY;
 
     /**
      * Default value for Last Event.

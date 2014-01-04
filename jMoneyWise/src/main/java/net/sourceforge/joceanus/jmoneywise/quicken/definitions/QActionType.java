@@ -25,141 +25,160 @@ package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 /**
  * Quicken Action Types.
  */
-public enum QActionType {
+public enum QActionType implements QLineType {
     /**
      * Buy.
      */
-    Buy,
+    BUY("Buy"),
 
     /**
      * BuyX.
      */
-    BuyX,
+    BUYX("BuyX"),
 
     /**
      * Sell.
      */
-    Sell,
+    SELL("Sell"),
 
     /**
      * SellX.
      */
-    SellX,
+    SELLX("SellX"),
 
     /**
      * StockSplit.
      */
-    StkSplit,
+    STKSPLIT("StkSplit"),
 
     /**
      * SharesIn.
      */
-    ShrsIn,
+    SHRSIN("ShrsIn"),
 
     /**
      * SharesOut.
      */
-    ShrsOut,
+    SHRSOUT("ShrsOut"),
 
     /**
      * Dividend.
      */
-    Div,
+    DIV("Div"),
 
     /**
      * DividendX.
      */
-    DivX,
+    DIVX("DivX"),
 
     /**
      * Reinvested Dividend.
      */
-    ReinvDiv,
+    REINVDIV("ReinvDiv"),
 
     /**
      * Return of Capital.
      */
-    RtrnCap,
+    RTRNCAP("RtrnCap"),
 
     /**
      * Return of CapitalX.
      */
-    RtrnCapX,
+    RTRNCAPX("RtrnCapX"),
 
     /**
      * Transfer In.
      */
-    XIn,
+    XIN("XIn"),
 
     /**
      * Transfer Out.
      */
-    XOut,
+    XOUT("XOut"),
 
     /**
      * Miscellaneous Income.
      */
-    MiscInc,
+    MISCINC("MiscInc"),
 
     /**
      * Miscellaneous IncomeX.
      */
-    MiscIncX,
+    MISCINCX("MiscIncX"),
 
     /**
      * Miscellaneous Expense.
      */
-    MiscExp,
+    MISCEXP("MiscExp"),
 
     /**
      * Miscellaneous ExpenseX.
      */
-    MiscExpX,
+    MISCEXPX("MiscExpX"),
 
     /**
      * Cash/Miscellaneous Expense.
      */
-    Cash,
+    CASH("Cash"),
 
     /**
      * Options Grant.
      */
-    Grant,
+    GRANT("Grant"),
 
     /**
      * Options Vest.
      */
-    Vest,
+    VEST("Vest"),
 
     /**
      * Options Exercise.
      */
-    Exercise,
+    EXERCISE("Exercise"),
 
     /**
      * Options ExercisX.
      */
-    ExercisX,
+    EXERCISEX("ExercisX"),
 
     /**
      * Options Expire.
      */
-    Expire,
+    EXPIRE("Expire"),
 
     /**
      * Short Sell.
      */
-    ShtSell,
+    SHTSELL("ShtSell"),
 
     /**
      * Cover ShortSell.
      */
-    CvrShrt,
+    CVRSHRT("CvrShrt"),
 
     /**
      * Cover ShortSellX.
      */
-    CvrShrtX;
+    CVRSHRTX("CvrShrtX");
+
+    /**
+     * The symbol.
+     */
+    private final String theSymbol;
+
+    @Override
+    public String getSymbol() {
+        return theSymbol;
+    }
+
+    /**
+     * Constructor.
+     * @param pSymbol the symbol
+     */
+    private QActionType(final String pSymbol) {
+        /* Store symbol */
+        theSymbol = pSymbol;
+    }
 
     /**
      * Parse a line to find the portfolio action type.
@@ -170,7 +189,7 @@ public enum QActionType {
         /* Loop through the values */
         for (QActionType myType : values()) {
             /* Look for match */
-            if (pLine.equals(myType.toString())) {
+            if (pLine.equals(myType.getSymbol())) {
                 /* Return match if found */
                 return myType;
             }

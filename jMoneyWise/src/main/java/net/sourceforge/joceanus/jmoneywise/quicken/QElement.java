@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
 
@@ -316,12 +317,12 @@ public abstract class QElement {
     }
 
     /**
-     * Add String Line.
+     * Add Action Line.
      * @param pType the line type
-     * @param pEnum the enum
+     * @param pAction the action
      */
-    protected void addEnumLine(final QLineType pType,
-                               final Enum<?> pEnum) {
-        addStringLine(pType, pEnum.toString());
+    protected void addActionLine(final QLineType pType,
+                                 final QActionType pAction) {
+        addStringLine(pType, pAction.getSymbol());
     }
 }

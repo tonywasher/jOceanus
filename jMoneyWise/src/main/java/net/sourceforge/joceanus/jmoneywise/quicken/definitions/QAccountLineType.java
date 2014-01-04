@@ -29,22 +29,22 @@ public enum QAccountLineType implements QLineType {
     /**
      * Name.
      */
-    Name("N"),
+    NAME("N"),
 
     /**
      * Account Type.
      */
-    Type("T"),
+    TYPE("T"),
 
     /**
      * Description.
      */
-    Description("D"),
+    DESCRIPTION("D"),
 
     /**
      * Credit Limit.
      */
-    CreditLimit("L");
+    CREDITLIMIT("L");
 
     /**
      * The symbol.

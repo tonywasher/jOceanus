@@ -151,47 +151,47 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (useBuyX)
-                ? QActionType.BuyX
-                : QActionType.Buy);
+        addActionLine(QPortfolioLineType.ACTION, (useBuyX)
+                ? QActionType.BUYX
+                : QActionType.BUY);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, mySecurity);
+        addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = new JDecimal(myUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
         AccountPriceList myPrices = getAnalysis().getDataSet().getPrices();
         AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
-        addDecimalLine(QPortfolioLineType.Price, myPriceValue);
+        addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* If we are using BuyX */
         if (useBuyX) {
             /* Add Transfer Category */
-            addCategoryLine(QPortfolioLineType.TransferAccount, myEvent.getCategory());
+            addCategoryLine(QPortfolioLineType.XFERACCOUNT, myEvent.getCategory());
 
             /* Add Transfer Amount */
-            addDecimalLine(QPortfolioLineType.TransferAmount, myValue);
+            addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
         }
 
         /* Return the detail */
@@ -230,50 +230,50 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (useBuyX4Event)
-                ? QActionType.BuyX
-                : QActionType.Buy);
+        addActionLine(QPortfolioLineType.ACTION, (useBuyX4Event)
+                ? QActionType.BUYX
+                : QActionType.BUY);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, mySecurity);
+        addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
                 ? new JDecimal(1)
                 : new JDecimal(myUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
         AccountPriceList myPrices = getAnalysis().getDataSet().getPrices();
         AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
-        addDecimalLine(QPortfolioLineType.Price, myPriceValue);
+        addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* If we are using BuyX */
         if (useBuyX4Event) {
             /* Add the account */
-            addXferAccountLine(QPortfolioLineType.TransferAccount, myDebit);
+            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myDebit);
 
             /* Add the value */
             myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.TransferAmount, myValue);
+            addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
         }
 
         /* If we need to autoCorrect */
@@ -282,24 +282,24 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsOut);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSOUT);
 
             /* Add the Security */
-            addAccountLine(QPortfolioLineType.Security, mySecurity);
+            addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the quantity */
-            addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
             /* If we have a description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -337,26 +337,26 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, zeroUnits
+        addActionLine(QPortfolioLineType.ACTION, zeroUnits
                 ? useSellX4Event
-                        ? QActionType.RtrnCapX
-                        : QActionType.RtrnCap
+                        ? QActionType.RTRNCAPX
+                        : QActionType.RTRNCAP
                 : useSellX4Event
-                        ? QActionType.SellX
-                        : QActionType.Sell);
+                        ? QActionType.SELLX
+                        : QActionType.SELL);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, mySecurity);
+        addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* If we have units */
         if (!zeroUnits) {
@@ -364,24 +364,24 @@ public class QPortfolioEvent
             JDecimal myUnitValue = (autoCorrectZeroUnits)
                     ? new JDecimal(1)
                     : new JDecimal(myUnits);
-            addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
         }
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* If we are using SellX/RtrnCapX */
         if (useSellX4Event) {
             /* Add the account */
-            addXferAccountLine(QPortfolioLineType.TransferAccount, myCredit);
+            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myCredit);
 
             /* Add the value */
             myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.TransferAmount, myValue);
+            addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
         }
 
         /* If we need to autoCorrect */
@@ -390,24 +390,24 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsIn);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSIN);
 
             /* Add the Security */
-            addAccountLine(QPortfolioLineType.Security, mySecurity);
+            addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the quantity */
-            addDecimalLine(QPortfolioLineType.Quantity, new JDecimal(1));
+            addDecimalLine(QPortfolioLineType.QUANTITY, new JDecimal(1));
 
             /* If we have a description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -433,39 +433,39 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myEvent.getDate());
+        addDateLine(QPortfolioLineType.DATE, myEvent.getDate());
 
         /* Add the action */
         if (useSplits) {
-            addEnumLine(QPortfolioLineType.Action, QActionType.StkSplit);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.STKSPLIT);
         } else if (myUnits != null) {
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsIn);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSIN);
         } else {
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsOut);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSOUT);
             myUnits = myEvent.getDebitUnits();
         }
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myEvent.getDebit());
+        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add quantity */
         if (useSplits) {
             /* Access dilution, invert it and increase factor */
             JDecimal myValue = myDilution.getInverseRatio();
             myValue.multiply(JDecimal.RADIX_TEN);
-            addDecimalLine(QPortfolioLineType.Quantity, myValue);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
         } else {
-            addDecimalLine(QPortfolioLineType.Quantity, myUnits);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myUnits);
         }
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* Return the detail */
@@ -493,28 +493,28 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myEvent.getDate());
+        addDateLine(QPortfolioLineType.DATE, myEvent.getDate());
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (isDebit)
-                ? QActionType.ShrsOut
-                : QActionType.ShrsIn);
+        addActionLine(QPortfolioLineType.ACTION, (isDebit)
+                ? QActionType.SHRSOUT
+                : QActionType.SHRSIN);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myEvent.getDebit());
+        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* Return the detail */
@@ -563,48 +563,48 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (isReinvested)
-                ? QActionType.ReinvDiv
+        addActionLine(QPortfolioLineType.ACTION, (isReinvested)
+                ? QActionType.REINVDIV
                 : (useDivX4Event)
-                        ? QActionType.DivX
-                        : QActionType.Div);
+                        ? QActionType.DIVX
+                        : QActionType.DIV);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, mySecurity);
+        addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         if (myTaxCredit != null) {
             myValue.addValue(myTaxCredit);
         }
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
                 ? new JDecimal(1)
                 : new JDecimal(myUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* If we are using DivX */
         if (useDivX4Event) {
             /* Add the account */
-            addXferAccountLine(QPortfolioLineType.TransferAccount, myCredit);
+            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myCredit);
 
             /* Add the value */
             myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.TransferAmount, myValue);
+            addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
         }
 
         /* If we need to autoCorrect */
@@ -613,24 +613,24 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsOut);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSOUT);
 
             /* Add the Security */
-            addAccountLine(QPortfolioLineType.Security, mySecurity);
+            addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the quantity */
-            addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
             /* If we have a description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -640,25 +640,25 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.MiscInc);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.MISCINC);
 
             /* Add the Security */
-            addAccountLine(QPortfolioLineType.Security, mySecurity);
+            addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
 
             /* Add the Amount (as a simple decimal) */
             myValue = new JDecimal(myTaxCredit);
-            addDecimalLine(QPortfolioLineType.Amount, myValue);
+            addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -668,25 +668,25 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.XOut);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.XOUT);
 
             /* Add the Amount (as a simple decimal) */
             myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.Amount, myValue);
+            addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the transfer line */
-            addXferAccountLine(QPortfolioLineType.TransferAccount, myCredit);
+            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myCredit);
 
             /* Add description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -728,22 +728,22 @@ public class QPortfolioEvent
         myDeltaCost.negate();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, (!zeroUnits)
-                ? QActionType.Sell
-                : QActionType.RtrnCap);
+        addActionLine(QPortfolioLineType.ACTION, (!zeroUnits)
+                ? QActionType.SELL
+                : QActionType.RTRNCAP);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myDebit);
+        addAccountLine(QPortfolioLineType.SECURITY, myDebit);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myDeltaCost);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* If we have units */
         if (!zeroUnits) {
@@ -751,13 +751,13 @@ public class QPortfolioEvent
             JDecimal myUnitValue = (autoCorrectZeroUnits)
                     ? new JDecimal(1)
                     : new JDecimal(myDebitUnits);
-            addDecimalLine(QPortfolioLineType.Quantity, myUnitValue);
+            addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
         }
 
         /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* If we need to autoCorrect */
@@ -766,24 +766,24 @@ public class QPortfolioEvent
             endItem();
 
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.ShrsIn);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSIN);
 
             /* Add the Security */
-            addAccountLine(QPortfolioLineType.Security, myDebit);
+            addAccountLine(QPortfolioLineType.SECURITY, myDebit);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the quantity */
-            addDecimalLine(QPortfolioLineType.Quantity, new JDecimal(1));
+            addDecimalLine(QPortfolioLineType.QUANTITY, new JDecimal(1));
 
             /* If we have a description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
         }
 
@@ -791,28 +791,28 @@ public class QPortfolioEvent
         endItem();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, QActionType.Buy);
+        addActionLine(QPortfolioLineType.ACTION, QActionType.BUY);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myEvent.getCredit());
+        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getCredit());
 
         /* Add the Amount (as a simple decimal) */
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myCreditUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
         /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* Return the detail */
@@ -841,13 +841,13 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, QActionType.Sell);
+        addActionLine(QPortfolioLineType.ACTION, QActionType.SELL);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myDebit);
+        addAccountLine(QPortfolioLineType.SECURITY, myDebit);
 
         /* Access Investment Analysis for Debit */
         SecurityBucket myDebitBucket = getSecurityBucket(myDebit);
@@ -860,20 +860,20 @@ public class QPortfolioEvent
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(mySaleValue);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myDebitBucket.getUnitsDeltaForEvent(myEvent, SecurityAttribute.UNITS));
         myValue.negate();
-        addDecimalLine(QPortfolioLineType.Quantity, myValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
         /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* End the initial item */
@@ -883,28 +883,28 @@ public class QPortfolioEvent
         if ((myThirdParty != null)
             && (getQIFType().canXferPortfolioDirect())) {
             /* Add the Date */
-            addDateLine(QPortfolioLineType.Date, myDate);
+            addDateLine(QPortfolioLineType.DATE, myDate);
 
             /* Add the action */
-            addEnumLine(QPortfolioLineType.Action, QActionType.XOut);
+            addActionLine(QPortfolioLineType.ACTION, QActionType.XOUT);
 
             /* Add the Amount (as a simple decimal) */
             myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.Amount, myValue);
+            addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.Cleared, myReconciled);
+            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
             /* Add the Transfer Account */
-            addXferAccountLine(QPortfolioLineType.TransferAccount, myThirdParty);
+            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myThirdParty);
 
             /* Add the Transfer Amount */
-            addDecimalLine(QPortfolioLineType.TransferAmount, myValue);
+            addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
 
             /* If we have a description */
             if (myDesc != null) {
                 /* Add the Description */
-                addStringLine(QPortfolioLineType.Comment, myDesc);
+                addStringLine(QPortfolioLineType.COMMENT, myDesc);
             }
 
             /* End the initial item */
@@ -912,29 +912,29 @@ public class QPortfolioEvent
         }
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.Date, myDate);
+        addDateLine(QPortfolioLineType.DATE, myDate);
 
         /* Add the action */
-        addEnumLine(QPortfolioLineType.Action, QActionType.Buy);
+        addActionLine(QPortfolioLineType.ACTION, QActionType.BUY);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.Security, myCredit);
+        addAccountLine(QPortfolioLineType.SECURITY, myCredit);
 
         /* Add the Amount (as a simple decimal) */
         myValue = new JDecimal(myStockValue);
-        addDecimalLine(QPortfolioLineType.Amount, myValue);
+        addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QPortfolioLineType.Cleared, myReconciled);
+        addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myCreditUnits);
-        addDecimalLine(QPortfolioLineType.Quantity, myValue);
+        addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
         /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QPortfolioLineType.Comment, myDesc);
+            addStringLine(QPortfolioLineType.COMMENT, myDesc);
         }
 
         /* Return the detail */

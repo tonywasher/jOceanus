@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
+import java.util.ResourceBundle;
+
 /**
  * Output types.
  */
@@ -29,17 +31,17 @@ public enum QIFType {
     /**
      * AceMoney.
      */
-    AceMoney,
+    ACEMONEY,
 
     /**
      * BankTree.
      */
-    BankTree,
+    BANKTREE,
 
     /**
      * MoneyDance.
      */
-    MoneyDance,
+    MONEYDANCE,
 
     /**
      * YouNeedABudget.
@@ -52,6 +54,28 @@ public enum QIFType {
     public static final String QIF_SUFFIX = ".qif";
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(QIFType.class.getName());
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = NLS_BUNDLE.getString(name());
+        }
+
+        /* return the name */
+        return theName;
+    }
+
+    /**
      * Should we use a consolidated file?
      * <p>
      * This is required to handle programs who cannot handle a consolidated file.
@@ -59,9 +83,9 @@ public enum QIFType {
      */
     public boolean useConsolidatedFile() {
         switch (this) {
-            case AceMoney:
-            case BankTree:
-            case MoneyDance:
+            case ACEMONEY:
+            case BANKTREE:
+            case MONEYDANCE:
             case YNAB:
                 return true;
             default:
@@ -77,11 +101,11 @@ public enum QIFType {
      */
     public boolean useSimpleTransfer() {
         switch (this) {
-            case BankTree:
+            case BANKTREE:
             case YNAB:
-            case MoneyDance:
+            case MONEYDANCE:
                 return true;
-            case AceMoney:
+            case ACEMONEY:
             default:
                 return false;
         }
@@ -95,10 +119,10 @@ public enum QIFType {
      */
     public boolean hideBalancingSplitTransfer() {
         switch (this) {
-            case AceMoney:
-            case MoneyDance:
+            case ACEMONEY:
+            case MONEYDANCE:
                 return true;
-            case BankTree:
+            case BANKTREE:
             case YNAB:
             default:
                 return false;
@@ -114,9 +138,9 @@ public enum QIFType {
      */
     public boolean selfOpeningBalance() {
         switch (this) {
-            case AceMoney:
-            case BankTree:
-            case MoneyDance:
+            case ACEMONEY:
+            case BANKTREE:
+            case MONEYDANCE:
             case YNAB:
                 return false;
             default:
@@ -133,10 +157,10 @@ public enum QIFType {
      */
     public boolean useInvestmentHolding4Category() {
         switch (this) {
-            case AceMoney:
-            case MoneyDance:
+            case ACEMONEY:
+            case MONEYDANCE:
                 return true;
-            case BankTree:
+            case BANKTREE:
             case YNAB:
             default:
                 return false;
@@ -151,11 +175,11 @@ public enum QIFType {
      */
     public boolean useStockSplit() {
         switch (this) {
-            case AceMoney:
-            case BankTree:
+            case ACEMONEY:
+            case BANKTREE:
             case YNAB:
                 return false;
-            case MoneyDance:
+            case MONEYDANCE:
             default:
                 return true;
         }
@@ -169,10 +193,10 @@ public enum QIFType {
      */
     public boolean canInvestCapital() {
         switch (this) {
-            case AceMoney:
+            case ACEMONEY:
                 return false;
-            case MoneyDance:
-            case BankTree:
+            case MONEYDANCE:
+            case BANKTREE:
             case YNAB:
             default:
                 return true;
@@ -188,10 +212,10 @@ public enum QIFType {
      */
     public boolean canReturnCapital() {
         switch (this) {
-            case MoneyDance:
-            case AceMoney:
+            case MONEYDANCE:
+            case ACEMONEY:
                 return false;
-            case BankTree:
+            case BANKTREE:
             case YNAB:
             default:
                 return true;
@@ -206,10 +230,10 @@ public enum QIFType {
      */
     public boolean canXferPortfolioDirect() {
         switch (this) {
-            case AceMoney:
+            case ACEMONEY:
                 return false;
-            case MoneyDance:
-            case BankTree:
+            case MONEYDANCE:
+            case BANKTREE:
             case YNAB:
             default:
                 return true;
@@ -225,10 +249,10 @@ public enum QIFType {
      */
     public boolean canXferPortfolioLinked() {
         switch (this) {
-            case AceMoney:
+            case ACEMONEY:
                 return false;
-            case MoneyDance:
-            case BankTree:
+            case MONEYDANCE:
+            case BANKTREE:
             case YNAB:
             default:
                 return true;
@@ -241,11 +265,11 @@ public enum QIFType {
      */
     public String getFileName() {
         switch (this) {
-            case AceMoney:
+            case ACEMONEY:
                 return "all accounts"
                        + QIF_SUFFIX;
-            case BankTree:
-            case MoneyDance:
+            case BANKTREE:
+            case MONEYDANCE:
             case YNAB:
             default:
                 return toString()

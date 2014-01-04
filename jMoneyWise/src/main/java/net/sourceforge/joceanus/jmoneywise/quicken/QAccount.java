@@ -156,16 +156,16 @@ public final class QAccount
         reset();
 
         /* Add the Account name */
-        addAccountLine(QAccountLineType.Name, theAccount);
+        addAccountLine(QAccountLineType.NAME, theAccount);
 
         /* Add the AccountType */
-        addStringLine(QAccountLineType.Type, getAccountType());
+        addStringLine(QAccountLineType.TYPE, getAccountType());
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QAccountLineType.Description, myDesc);
+            addStringLine(QAccountLineType.DESCRIPTION, myDesc);
         }
 
         /* Return the result */
@@ -194,17 +194,17 @@ public final class QAccount
         endLine();
 
         /* Add the Account name */
-        addAccountLine(QAccountLineType.Name, theAccount);
+        addAccountLine(QAccountLineType.NAME, theAccount);
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QAccountLineType.Description, myDesc);
+            addStringLine(QAccountLineType.DESCRIPTION, myDesc);
         }
 
         /* Add the Account type */
-        addStringLine(QAccountLineType.Type, myType);
+        addStringLine(QAccountLineType.TYPE, myType);
 
         /* Add the End indicator */
         endItem();

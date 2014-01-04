@@ -113,11 +113,11 @@ public class QIFClass
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Name:
+                    case NAME:
                         addLine(new QIFClassNameLine(myData));
                         myName = myData;
                         break;
-                    case Description:
+                    case DESCRIPTION:
                         addLine(new QIFClassDescLine(myData));
                         myDesc = myData;
                         break;
@@ -139,7 +139,7 @@ public class QIFClass
             extends QIFStringLine<QClassLineType> {
         @Override
         public QClassLineType getLineType() {
-            return QClassLineType.Name;
+            return QClassLineType.NAME;
         }
 
         /**
@@ -167,7 +167,7 @@ public class QIFClass
             extends QIFStringLine<QClassLineType> {
         @Override
         public QClassLineType getLineType() {
-            return QClassLineType.Description;
+            return QClassLineType.DESCRIPTION;
         }
 
         /**

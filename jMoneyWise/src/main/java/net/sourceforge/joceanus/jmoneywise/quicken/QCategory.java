@@ -110,19 +110,19 @@ public final class QCategory
         reset();
 
         /* Add the Category name */
-        addCategoryLine(QCategoryLineType.Name, theCategory);
+        addCategoryLine(QCategoryLineType.NAME, theCategory);
 
         /* If we have a description */
         String myDesc = theCategory.getDesc();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QCategoryLineType.Description, myDesc);
+            addStringLine(QCategoryLineType.DESCRIPTION, myDesc);
         }
 
         /* Determine Income/Expense flag */
         addFlag((theType.isIncome())
-                ? QCategoryLineType.Income
-                : QCategoryLineType.Expense);
+                ? QCategoryLineType.INCOME
+                : QCategoryLineType.EXPENSE);
 
         /* Return the result */
         return completeItem();

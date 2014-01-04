@@ -146,15 +146,15 @@ public class QIFSecurity
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Name:
+                    case NAME:
                         addLine(new QIFSecurityNameLine(myData));
                         myName = myData;
                         break;
-                    case Symbol:
+                    case SYMBOL:
                         addLine(new QIFSecuritySymbolLine(myData));
                         mySymbol = myData;
                         break;
-                    case SecType:
+                    case SECTYPE:
                         QIFSecurityTypeLine myQLine = new QIFSecurityTypeLine(myData);
                         addLine(myQLine);
                         myClass = myQLine.getAccountClass();
@@ -178,7 +178,7 @@ public class QIFSecurity
             extends QIFStringLine<QSecurityLineType> {
         @Override
         public QSecurityLineType getLineType() {
-            return QSecurityLineType.Name;
+            return QSecurityLineType.NAME;
         }
 
         /**
@@ -206,7 +206,7 @@ public class QIFSecurity
             extends QIFStringLine<QSecurityLineType> {
         @Override
         public QSecurityLineType getLineType() {
-            return QSecurityLineType.Symbol;
+            return QSecurityLineType.SYMBOL;
         }
 
         /**
@@ -234,7 +234,7 @@ public class QIFSecurity
             extends QIFStringLine<QSecurityLineType> {
         @Override
         public QSecurityLineType getLineType() {
-            return QSecurityLineType.SecType;
+            return QSecurityLineType.SECTYPE;
         }
 
         /**

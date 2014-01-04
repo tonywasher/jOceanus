@@ -29,62 +29,62 @@ public enum QEventLineType implements QLineType {
     /**
      * Date.
      */
-    Date("D"),
+    DATE("D"),
 
     /**
      * Amount.
      */
-    Amount("T"),
+    AMOUNT("T"),
 
     /**
      * Cleared Status.
      */
-    Cleared("C"),
+    CLEARED("C"),
 
     /**
      * Comment.
      */
-    Comment("M"),
+    COMMENT("M"),
 
     /**
      * Reference.
      */
-    Reference("N"),
+    REFERENCE("N"),
 
     /**
      * Address.
      */
-    Address("A"),
+    ADDRESS("A"),
 
     /**
      * Payee.
      */
-    Payee("P"),
+    PAYEE("P"),
 
     /**
      * Category.
      */
-    Category("L"),
+    CATEGORY("L"),
 
     /**
      * SplitCategory.
      */
-    SplitCategory("S"),
+    SPLITCATEGORY("S"),
 
     /**
      * SplitComment.
      */
-    SplitComment("E"),
+    SPLITCOMMENT("E"),
 
     /**
      * SplitAmount.
      */
-    SplitAmount("$"),
+    SPLITAMOUNT("$"),
 
     /**
      * SplitPercent.
      */
-    SplitPercent("%");
+    SPLITPERCENT("%");
 
     /**
      * The symbol.

@@ -29,62 +29,62 @@ public enum QPortfolioLineType implements QLineType {
     /**
      * Date.
      */
-    Date("D"),
+    DATE("D"),
 
     /**
      * Action.
      */
-    Action("N"),
+    ACTION("N"),
 
     /**
      * Security.
      */
-    Security("Y"),
+    SECURITY("Y"),
 
     /**
      * Price.
      */
-    Price("I"),
+    PRICE("I"),
 
     /**
      * Quantity.
      */
-    Quantity("Q"),
+    QUANTITY("Q"),
 
     /**
      * Amount.
      */
-    Amount("T"),
+    AMOUNT("T"),
 
     /**
      * Cleared Status.
      */
-    Cleared("C"),
+    CLEARED("C"),
 
     /**
      * Comment.
      */
-    Comment("M"),
+    COMMENT("M"),
 
     /**
      * Payee.
      */
-    Payee("P"),
+    PAYEE("P"),
 
     /**
      * Commission.
      */
-    Commission("O"),
+    COMMISSION("O"),
 
     /**
      * TransferAccount.
      */
-    TransferAccount("L"),
+    XFERACCOUNT("L"),
 
     /**
      * TransferAmount.
      */
-    TransferAmount("$");
+    XFERAMOUNT("$");
 
     /**
      * The symbol.

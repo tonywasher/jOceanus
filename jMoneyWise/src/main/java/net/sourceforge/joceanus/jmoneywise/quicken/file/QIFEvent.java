@@ -188,33 +188,33 @@ public class QIFEvent
 
                 /* Switch on line type */
                 switch (myType) {
-                    case Date:
+                    case DATE:
                         JDateDay myDateDay = myDateParser.parseDateDay(myData);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
-                    case Cleared:
+                    case CLEARED:
                         Boolean myFlag = Boolean.parseBoolean(myData);
                         addLine(new QIFEventClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
-                    case Amount:
+                    case AMOUNT:
                         JMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFEventAmountLine(myMoney));
                         myAmount = myMoney;
                         break;
-                    case Comment:
+                    case COMMENT:
                         addLine(new QIFEventCommentLine(myData));
                         myComment = myData;
                         break;
-                    case Reference:
+                    case REFERENCE:
                         addLine(new QIFEventReferenceLine(myData));
                         myReference = myData;
                         break;
-                    case Payee:
+                    case PAYEE:
                         addLine(new QIFEventPayeeDescLine(myData));
                         break;
-                    case Category:
+                    case CATEGORY:
                         /* Check for account and category */
                         QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
                         QIFEventCategory myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
@@ -228,7 +228,7 @@ public class QIFEvent
                             addLine(new QIFEventCategoryLine(myCategory, myClasses));
                         }
                         break;
-                    case SplitCategory:
+                    case SPLITCATEGORY:
                         /* Check for account */
                         myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
                         myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
@@ -245,15 +245,15 @@ public class QIFEvent
                         /* Record new split record */
                         addRecord(mySplit);
                         break;
-                    case SplitAmount:
+                    case SPLITAMOUNT:
                         myMoney = myDecParser.parseMoneyValue(myData);
                         mySplit.setSplitAmount(myMoney);
                         break;
-                    case SplitPercent:
+                    case SPLITPERCENT:
                         JRate myRate = myDecParser.parseRateValue(myData);
                         mySplit.setSplitPercentage(myRate);
                         break;
-                    case SplitComment:
+                    case SPLITCOMMENT:
                         mySplit.setSplitComment(myData);
                         break;
                     default:
@@ -344,7 +344,7 @@ public class QIFEvent
             extends QIFDateLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Date;
+            return QEventLineType.DATE;
         }
 
         /**
@@ -364,7 +364,7 @@ public class QIFEvent
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Reference;
+            return QEventLineType.REFERENCE;
         }
 
         /**
@@ -392,7 +392,7 @@ public class QIFEvent
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Comment;
+            return QEventLineType.COMMENT;
         }
 
         /**
@@ -420,7 +420,7 @@ public class QIFEvent
             extends QIFClearedLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Cleared;
+            return QEventLineType.CLEARED;
         }
 
         /**
@@ -440,7 +440,7 @@ public class QIFEvent
             extends QIFPayeeLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Payee;
+            return QEventLineType.PAYEE;
         }
 
         /**
@@ -460,7 +460,7 @@ public class QIFEvent
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Payee;
+            return QEventLineType.PAYEE;
         }
 
         /**
@@ -480,7 +480,7 @@ public class QIFEvent
             extends QIFMoneyLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Amount;
+            return QEventLineType.AMOUNT;
         }
 
         /**
@@ -508,7 +508,7 @@ public class QIFEvent
             extends QIFXferAccountLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Category;
+            return QEventLineType.CATEGORY;
         }
 
         /**
@@ -539,7 +539,7 @@ public class QIFEvent
             extends QIFCategoryLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
-            return QEventLineType.Category;
+            return QEventLineType.CATEGORY;
         }
 
         /**

@@ -128,17 +128,17 @@ public final class QSecurity
         endLine();
 
         /* Add the Security name */
-        addStringLine(QSecurityLineType.Name, theSecurity.getName());
+        addStringLine(QSecurityLineType.NAME, theSecurity.getName());
 
         /* If we have a symbol */
         String mySymbol = theSecurity.getSymbol();
         if (mySymbol != null) {
             /* Add the Security symbol */
-            addStringLine(QSecurityLineType.Symbol, mySymbol);
+            addStringLine(QSecurityLineType.SYMBOL, mySymbol);
         }
 
         /* Add the Security type */
-        addStringLine(QSecurityLineType.SecType, getSecurityType());
+        addStringLine(QSecurityLineType.SECTYPE, getSecurityType());
 
         /* Return the result */
         return completeItem();
