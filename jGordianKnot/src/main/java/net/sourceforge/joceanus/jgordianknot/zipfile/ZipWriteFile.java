@@ -31,6 +31,7 @@ import java.security.Signature;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
@@ -380,7 +381,8 @@ public class ZipWriteFile {
                     String myHeader = theContents.encodeContents();
 
                     /* Write the bytes to the zip file and close the entry */
-                    theStream.write(theHash.encryptString(myHeader));
+                    byte[] myBytes = DataConverter.stringToByteArray(myHeader);
+                    theStream.write(theHash.encryptBytes(myBytes));
                     theStream.closeEntry();
                 }
 

@@ -42,10 +42,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
 
 /**
@@ -76,7 +74,7 @@ public class AsymmetricKey {
     /**
      * Encrypted Size for Private Keys.
      */
-    public static final int PRIVATESIZE = 1280;
+    public static final int PRIVATESIZE = 1568;
 
     /**
      * The Public/Private Key Pair.
@@ -132,11 +130,6 @@ public class AsymmetricKey {
      * The CipherSet map.
      */
     private final Map<AsymmetricKey, CipherSet> theCipherMap;
-
-    /**
-     * The Symmetric Key Map.
-     */
-    private final Map<SymmetricKey, byte[]> theSymKeyMap;
 
     /**
      * Obtain the Asymmetric Key type.
@@ -267,9 +260,6 @@ public class AsymmetricKey {
             theExternalPrivate = thePrivateKeyDef;
         }
 
-        /* Build the SymmetricKey map */
-        theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
-
         /* Check whether the PublicKey is too large */
         if (theExternalPublic.length > PUBLICSIZE) {
             throw new JDataException(ExceptionClass.DATA, "PublicKey too large: "
@@ -291,7 +281,6 @@ public class AsymmetricKey {
         theExternalPrivate = null;
         theSaltBytes = null;
         theCipherMap = null;
-        theSymKeyMap = null;
 
         /* Obtain KeyType and Public KeyDef from ExternalPublic */
         theKeyType = AsymKeyType.fromId(pExternalPublic[0]);
@@ -346,9 +335,6 @@ public class AsymmetricKey {
 
         /* Derive the KeyPair */
         theKeyPair = myReg.deriveKeyPair(thePrivateKeyDef, thePublicKeyDef);
-
-        /* Build the SymmetricKey map */
-        theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
     }
 
     @Override
@@ -475,10 +461,12 @@ public class AsymmetricKey {
     /**
      * derive a SymmetricKey from secured key definition.
      * @param pSecuredKeyDef the secured key definition
+     * @param pKeyType the key type
      * @return the Symmetric key
      * @throws JDataException on error
      */
-    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws JDataException {
+    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef,
+                                           final SymKeyType pKeyType) throws JDataException {
         SymmetricKey mySymKey;
 
         /* Cannot unwrap unless we have the private key */
@@ -494,7 +482,7 @@ public class AsymmetricKey {
                 CipherSet mySet = getCipherSet();
 
                 /* Unwrap the Key */
-                mySymKey = mySet.deriveSymmetricKey(pSecuredKeyDef);
+                mySymKey = mySet.deriveSymmetricKey(pSecuredKeyDef, pKeyType);
 
                 /* else we use RAS semantics */
             } else {
@@ -502,23 +490,16 @@ public class AsymmetricKey {
                 Cipher myCipher = getCipher(true);
                 myCipher.init(Cipher.UNWRAP_MODE, getPrivateKey());
 
-                /* Parse the KeySpec */
-                SymKeyNeedle myNeedle = new SymKeyNeedle(pSecuredKeyDef);
-
                 /* unwrap the key */
-                SymKeyType myType = myNeedle.getSymKeyType();
-                SecretKey myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(), myType.getAlgorithm(), Cipher.SECRET_KEY);
+                SecretKey myKey = (SecretKey) myCipher.unwrap(pSecuredKeyDef, pKeyType.getAlgorithm(), Cipher.SECRET_KEY);
 
                 /* Build the symmetric key */
-                mySymKey = new SymmetricKey(theGenerator, myType, myKey);
+                mySymKey = new SymmetricKey(theGenerator, pKeyType, myKey);
             }
 
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to unwrap key", e);
         }
-
-        /* Add the key definition to the map */
-        theSymKeyMap.put(mySymKey, Arrays.copyOf(pSecuredKeyDef, pSecuredKeyDef.length));
 
         /* Return the new key */
         return mySymKey;
@@ -531,12 +512,6 @@ public class AsymmetricKey {
      * @throws JDataException on error
      */
     public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
-        /* Look for an entry in the map and return it if found */
-        byte[] myWrappedKey = theSymKeyMap.get(pKey);
-        if (myWrappedKey != null) {
-            return Arrays.copyOf(myWrappedKey, myWrappedKey.length);
-        }
-
         /* Protect against exceptions */
         try {
             /* If we are elliptic */
@@ -545,7 +520,7 @@ public class AsymmetricKey {
                 CipherSet mySet = getCipherSet();
 
                 /* Wrap the Key */
-                myWrappedKey = mySet.secureSymmetricKey(pKey);
+                return mySet.secureSymmetricKey(pKey);
 
                 /* else we are using RSA semantics */
             } else {
@@ -554,22 +529,12 @@ public class AsymmetricKey {
                 myCipher.init(Cipher.WRAP_MODE, getPublicKey());
 
                 /* wrap the key */
-                myWrappedKey = myCipher.wrap(pKey.getSecretKey());
-
-                /* Determine the external definition */
-                SymKeyNeedle myNeedle = new SymKeyNeedle(pKey.getKeyType(), myWrappedKey);
-                myWrappedKey = myNeedle.getExternal();
+                return myCipher.wrap(pKey.getSecretKey());
             }
 
         } catch (InvalidKeyException | IllegalBlockSizeException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to wrap key", e);
         }
-
-        /* Add the key definition to the map */
-        theSymKeyMap.put(pKey, Arrays.copyOf(myWrappedKey, myWrappedKey.length));
-
-        /* Return to caller */
-        return myWrappedKey;
     }
 
     /**
@@ -644,16 +609,16 @@ public class AsymmetricKey {
     }
 
     /**
-     * Encrypt string.
-     * @param pString string to encrypt
+     * Encrypt bytes.
+     * @param pBytes bytes to encrypt
      * @param pSaltBytes the salt bytes
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
      * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString,
-                                final byte[] pSaltBytes,
-                                final AsymmetricKey pTarget) throws JDataException {
+    public byte[] encryptBytes(final byte[] pBytes,
+                               final byte[] pSaltBytes,
+                               final AsymmetricKey pTarget) throws JDataException {
         /* Target must be identical key type */
         if (theKeyType != pTarget.getKeyType()) {
             throw new JDataException(ExceptionClass.LOGIC, ERROR_PARTNER);
@@ -665,39 +630,36 @@ public class AsymmetricKey {
             CipherSet mySet = getCipherSet(pTarget, pSaltBytes);
 
             /* Encrypt the string */
-            return mySet.encryptString(pString);
+            return mySet.encryptBytes(pBytes);
 
             /* else handle RSA semantics */
         } else {
-            return encryptRSAString(pString, pTarget);
+            return encryptStandardBytes(pBytes, pTarget);
         }
 
     }
 
     /**
-     * Encrypt RSA string.
-     * @param pString string to encrypt
+     * Encrypt Standard bytes.
+     * @param pBytes bytes to encrypt
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
      * @throws JDataException on error
      */
-    private byte[] encryptRSAString(final String pString,
-                                    final AsymmetricKey pTarget) throws JDataException {
+    private byte[] encryptStandardBytes(final byte[] pBytes,
+                                        final AsymmetricKey pTarget) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
             Cipher myCipher = getCipher(false);
             myCipher.init(Cipher.ENCRYPT_MODE, pTarget.getPublicKey());
 
-            /* Convert the string to a byte array */
-            byte[] myBytes = DataConverter.stringToByteArray(pString);
-
             /* Determine the block sizes */
             int iBlockSize = myCipher.getBlockSize();
             int iOutSize = myCipher.getOutputSize(iBlockSize);
 
             /* Determine the number of blocks */
-            int iDataLen = myBytes.length;
+            int iDataLen = pBytes.length;
             int iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
 
             /* Allocate the output buffer */
@@ -717,7 +679,7 @@ public class AsymmetricKey {
                 }
 
                 /* Encrypt the data */
-                iOutSize = myCipher.doFinal(myBytes, iOffset, iNumBytes, myOutput, iOutOffs);
+                iOutSize = myCipher.doFinal(pBytes, iOffset, iNumBytes, myOutput, iOutOffs);
 
                 /* Adjust offsets */
                 iDataLen -= iNumBytes;
@@ -738,16 +700,16 @@ public class AsymmetricKey {
     }
 
     /**
-     * Decrypt string.
-     * @param pBytes encrypted string to decrypt
+     * Decrypt bytes.
+     * @param pBytes bytes to decrypt
      * @param pSaltBytes the salt bytes
      * @param pSource source partner of encryption
-     * @return Decrypted string
+     * @return Decrypted bytes
      * @throws JDataException on error
      */
-    public String decryptString(final byte[] pBytes,
-                                final byte[] pSaltBytes,
-                                final AsymmetricKey pSource) throws JDataException {
+    public byte[] decryptBytes(final byte[] pBytes,
+                               final byte[] pSaltBytes,
+                               final AsymmetricKey pSource) throws JDataException {
         /* Cannot decrypt unless we have the private key */
         if (isPublicOnly()) {
             throw new JDataException(ExceptionClass.LOGIC, "Cannot decrypt without private key");
@@ -764,21 +726,21 @@ public class AsymmetricKey {
             CipherSet mySet = getCipherSet(pSource, pSaltBytes);
 
             /* Decrypt the string */
-            return mySet.decryptString(pBytes);
+            return mySet.decryptBytes(pBytes);
 
             /* else handle RSA semantics */
         } else {
-            return decryptRSAString(pBytes);
+            return decryptStandardBytes(pBytes);
         }
     }
 
     /**
-     * Decrypt RSA string.
-     * @param pBytes encrypted string to decrypt
-     * @return Decrypted string
+     * Decrypt Standard bytes.
+     * @param pBytes bytes to decrypt
+     * @return Decrypted bytes
      * @throws JDataException on error
      */
-    private String decryptRSAString(final byte[] pBytes) throws JDataException {
+    private byte[] decryptStandardBytes(final byte[] pBytes) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
@@ -824,7 +786,7 @@ public class AsymmetricKey {
             }
 
             /* Create the string */
-            return DataConverter.byteArrayToString(myOutput);
+            return myOutput;
         } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         }

@@ -162,7 +162,7 @@ public class CipherSetKey {
             int myOffSet = pExternal[myKeyLen]
                            & DataConverter.NYBBLE_MASK;
             myOffSet += CIPHER_MARGIN;
-            myOffSet = Math.max(myOffSet, myDataLen
+            myOffSet = Math.min(myOffSet, myDataLen
                                           - CIPHER_MARGIN);
 
             /* Copy Data into buffers */
@@ -217,7 +217,7 @@ public class CipherSetKey {
             int myOffSet = pData[0]
                            & DataConverter.NYBBLE_MASK;
             myOffSet += CIPHER_MARGIN;
-            myOffSet = Math.max(myOffSet, myDataLen
+            myOffSet = Math.min(myOffSet, myDataLen
                                           - CIPHER_MARGIN);
 
             /* Copy Data into buffer */

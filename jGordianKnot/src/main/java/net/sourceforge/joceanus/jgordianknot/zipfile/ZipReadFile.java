@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
@@ -214,7 +215,8 @@ public class ZipReadFile {
             myBuffer = Arrays.copyOf(myBuffer, myLen);
 
             /* Parse the decrypted header */
-            theContents = new ZipFileContents(myHash.decryptString(myBuffer));
+            byte[] myBytes = myHash.decryptBytes(myBuffer);
+            theContents = new ZipFileContents(DataConverter.byteArrayToString(myBytes));
 
             /* Access the security details */
             ZipFileEntry myHeader = theContents.getHeader();
@@ -313,7 +315,7 @@ public class ZipReadFile {
                 /* For each decryption stream */
                 for (int iDecrypt = 0; iDecrypt < mySecretKeys.length; iDecrypt++) {
                     /* Create the decryption stream */
-                    SymmetricKey myKey = theAsymKey.deriveSymmetricKey(mySecretKeys[iDecrypt]);
+                    SymmetricKey myKey = theAsymKey.deriveSymmetricKey(mySecretKeys[iDecrypt], null);
                     myCurrent = new DecryptionInputStream(myKey, myInitVectors[iDecrypt], myCurrent);
                 }
 

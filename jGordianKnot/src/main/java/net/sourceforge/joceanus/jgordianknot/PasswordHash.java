@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.DataConverter;
@@ -70,11 +68,6 @@ public class PasswordHash {
      * The secure random generator.
      */
     private final SecureRandom theRandom;
-
-    /**
-     * The Symmetric Key Map.
-     */
-    private final Map<SymmetricKey, byte[]> theSymKeyMap;
 
     /**
      * Hash Bytes.
@@ -145,9 +138,6 @@ public class PasswordHash {
 
         /* Build hash from password */
         setPassword(pPassword);
-
-        /* Build the SymmetricKey map */
-        theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
     }
 
     /**
@@ -173,9 +163,6 @@ public class PasswordHash {
 
         /* Validate the password */
         attemptPassword(pPassword);
-
-        /* Build the SymmetricKey map */
-        theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
     }
 
     /**
@@ -197,19 +184,20 @@ public class PasswordHash {
 
         /* Protect against exceptions */
         char[] myPassword = null;
+        byte[] myBytes = null;
         try {
             /* Access the original password */
-            myPassword = mySet.decryptChars(pSource.thePassword);
+            myBytes = mySet.decryptBytes(pSource.thePassword);
+            myPassword = DataConverter.bytesToCharArray(myBytes);
 
             /* Build hash from password */
             setPassword(myPassword);
-
-            /* Build the SymmetricKey map */
-            theSymKeyMap = new HashMap<SymmetricKey, byte[]>();
-
         } finally {
             if (myPassword != null) {
                 Arrays.fill(myPassword, (char) 0);
+            }
+            if (myBytes != null) {
+                Arrays.fill(myBytes, (byte) 0);
             }
         }
     }
@@ -265,11 +253,19 @@ public class PasswordHash {
         theCipherSet = new CipherSet(theGenerator, theHashKey);
         theCipherSet.buildCiphers(theSecretHash);
 
-        /* Encrypt the password */
-        thePassword = theCipherSet.encryptChars(pPassword);
-
-        /* Clear out the password */
-        Arrays.fill(pPassword, (char) 0);
+        /* Protect against exceptions */
+        byte[] myBytes = null;
+        try {
+            /* Encrypt the password */
+            myBytes = DataConverter.charsToByteArray(pPassword);
+            thePassword = theCipherSet.encryptBytes(myBytes);
+        } finally {
+            /* Clear out the password */
+            Arrays.fill(pPassword, (char) 0);
+            if (myBytes != null) {
+                Arrays.fill(myBytes, (byte) 0);
+            }
+        }
     }
 
     /**
@@ -292,11 +288,19 @@ public class PasswordHash {
         theCipherSet = new CipherSet(theGenerator, theHashKey);
         theCipherSet.buildCiphers(theSecretHash);
 
-        /* Encrypt the password */
-        thePassword = theCipherSet.encryptChars(pPassword);
-
-        /* Clear out the password */
-        Arrays.fill(pPassword, (char) 0);
+        /* Protect against exceptions */
+        byte[] myBytes = null;
+        try {
+            /* Encrypt the password */
+            myBytes = DataConverter.charsToByteArray(pPassword);
+            thePassword = theCipherSet.encryptBytes(myBytes);
+        } finally {
+            /* Clear out the password */
+            Arrays.fill(pPassword, (char) 0);
+            if (myBytes != null) {
+                Arrays.fill(myBytes, (byte) 0);
+            }
+        }
     }
 
     /**
@@ -431,18 +435,14 @@ public class PasswordHash {
     /**
      * derive a SymmetricKey from secured key definition.
      * @param pSecuredKeyDef the secured key definition
+     * @param pKeyType the key type
      * @return the Symmetric key
      * @throws JDataException on error
      */
-    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef) throws JDataException {
+    public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef,
+                                           final SymKeyType pKeyType) throws JDataException {
         /* Derive the symmetric key */
-        SymmetricKey mySymKey = theCipherSet.deriveSymmetricKey(pSecuredKeyDef);
-
-        /* Add the key definition to the map */
-        theSymKeyMap.put(mySymKey, Arrays.copyOf(pSecuredKeyDef, pSecuredKeyDef.length));
-
-        /* Return the new key */
-        return mySymKey;
+        return theCipherSet.deriveSymmetricKey(pSecuredKeyDef, pKeyType);
     }
 
     /**
@@ -452,44 +452,78 @@ public class PasswordHash {
      * @throws JDataException on error
      */
     public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
-        byte[] myWrappedKey;
-
-        /* Look for an entry in the map and return it if found */
-        myWrappedKey = theSymKeyMap.get(pKey);
-        if (myWrappedKey != null) {
-            return Arrays.copyOf(myWrappedKey, myWrappedKey.length);
-        }
-
         /* Wrap the Key */
-        myWrappedKey = theCipherSet.secureSymmetricKey(pKey);
-
-        /* Add the key definition to the map */
-        theSymKeyMap.put(pKey, Arrays.copyOf(myWrappedKey, myWrappedKey.length));
-
-        /* Return to caller */
-        return myWrappedKey;
+        return theCipherSet.secureSymmetricKey(pKey);
     }
 
     /**
-     * Encrypt string.
-     * @param pString the string to encrypt
+     * derive a StreamKey from secured key definition.
+     * @param pSecuredKeyDef the secured key definition
+     * @param pKeyType the key type
+     * @return the Stream key
+     * @throws JDataException on error
+     */
+    public StreamKey deriveStreamKey(final byte[] pSecuredKeyDef,
+                                     final StreamKeyType pKeyType) throws JDataException {
+        /* Derive the stream key */
+        return theCipherSet.deriveStreamKey(pSecuredKeyDef, pKeyType);
+    }
+
+    /**
+     * Get the Secured Key Definition for a Stream Key.
+     * @param pKey the Stream Key to secure
+     * @return the secured key definition
+     * @throws JDataException on error
+     */
+    public byte[] secureStreamKey(final StreamKey pKey) throws JDataException {
+        /* Wrap the Key */
+        return theCipherSet.secureStreamKey(pKey);
+    }
+
+    /**
+     * derive a DataMac from secured definition.
+     * @param pSecuredMacDef the secured definition
+     * @param pMacSpec the Mac Spec
+     * @return the Data Mac
+     * @throws JDataException on error
+     */
+    public DataMac deriveDataMac(final byte[] pSecuredMacDef,
+                                 final MacSpec pMacSpec) throws JDataException {
+        /* Derive the data mac */
+        return theCipherSet.deriveDataMac(pSecuredMacDef, pMacSpec);
+    }
+
+    /**
+     * Get the Secured Definition for a DataMac.
+     * @param pMac the Data Mac to secure
+     * @return the secured key definition
+     * @throws JDataException on error
+     */
+    public byte[] secureDataMac(final DataMac pMac) throws JDataException {
+        /* Wrap the Mac */
+        return theCipherSet.secureDataMac(pMac);
+    }
+
+    /**
+     * Encrypt bytes.
+     * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
      * @throws JDataException on error
      */
-    public byte[] encryptString(final String pString) throws JDataException {
+    public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
         /* Encrypt the string */
-        return theCipherSet.encryptString(pString);
+        return theCipherSet.encryptBytes(pBytes);
     }
 
     /**
-     * Decrypt string.
-     * @param pBytes the string to decrypt
-     * @return the decrypted string
+     * Decrypt bytes.
+     * @param pBytes the bytes to decrypt
+     * @return the decrypted bytes
      * @throws JDataException on error
      */
-    public String decryptString(final byte[] pBytes) throws JDataException {
+    public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
         /* Decrypt the bytes */
-        return theCipherSet.decryptString(pBytes);
+        return theCipherSet.decryptBytes(pBytes);
     }
 
     /**
@@ -498,12 +532,13 @@ public class PasswordHash {
      * @return the new PasswordHash if successful, otherwise null
      */
     protected final PasswordHash attemptPassword(final byte[] pHashBytes) {
-        char[] myPassword = null;
-
         /* Protect against exceptions */
+        char[] myPassword = null;
+        byte[] myBytes = null;
         try {
             /* Access the original password */
-            myPassword = theCipherSet.decryptChars(thePassword);
+            myBytes = theCipherSet.decryptBytes(thePassword);
+            myPassword = DataConverter.bytesToCharArray(myBytes);
 
             /* Try to initialise the hash */
             PasswordHash myHash = new PasswordHash(theGenerator, pHashBytes, myPassword);
@@ -520,6 +555,9 @@ public class PasswordHash {
         } finally {
             if (myPassword != null) {
                 Arrays.fill(myPassword, (char) 0);
+            }
+            if (myBytes != null) {
+                Arrays.fill(myBytes, (byte) 0);
             }
         }
     }

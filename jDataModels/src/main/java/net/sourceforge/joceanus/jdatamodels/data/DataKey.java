@@ -357,7 +357,7 @@ public class DataKey
             /* Create the Symmetric Key from the wrapped data */
             PasswordHash myHash = myControlKey.getPasswordHash();
             CipherSet myCipher = myHash.getCipherSet();
-            SymmetricKey myKey = myCipher.deriveSymmetricKey(pSecurityKey);
+            SymmetricKey myKey = myCipher.deriveSymmetricKey(pSecurityKey, getKeyType());
             setValueDataKey(myKey);
             setValuePasswordHash(myHash);
 

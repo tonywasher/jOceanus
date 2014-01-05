@@ -417,6 +417,14 @@ public class SecurityRegister {
         }
 
         /**
+         * Obtain the Algorithm.
+         * @return the algorithm
+         */
+        protected String getAlgorithm() {
+            return theAlgorithm;
+        }
+
+        /**
          * Constructor.
          * @param pKeyLen the key length
          */
@@ -720,6 +728,15 @@ public class SecurityRegister {
 
             /* Add it to the registrations */
             theMacRegister.add(this);
+        }
+
+        /**
+         * Resolve KeySpec.
+         * @param pKeySpec the Key specification.
+         * @return the SecretKey
+         */
+        protected SecretKey resolveKeySpec(final byte[] pKeySpec) {
+            return new SecretKeySpec(pKeySpec, getAlgorithm());
         }
 
         /**

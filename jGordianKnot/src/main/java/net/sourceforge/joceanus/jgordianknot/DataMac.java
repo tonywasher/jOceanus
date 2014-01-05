@@ -95,6 +95,11 @@ public class DataMac {
     private final byte[] theInitVector;
 
     /**
+     * The Encoded Key.
+     */
+    private final byte[] theEncoded;
+
+    /**
      * Obtain the mac type.
      * @return the mac type
      */
@@ -119,11 +124,11 @@ public class DataMac {
     }
 
     /**
-     * Obtain the secret key.
-     * @return the secret key
+     * Obtain the encoded key.
+     * @return the encoded key
      */
-    protected SecretKey getSecretKey() {
-        return theKey;
+    protected byte[] getEncoded() {
+        return theEncoded;
     }
 
     /**
@@ -134,6 +139,14 @@ public class DataMac {
         return (theInitVector == null)
                 ? null
                 : Arrays.copyOf(theInitVector, theInitVector.length);
+    }
+
+    /**
+     * Obtain the Mac Specification.
+     * @return the MacSpec
+     */
+    protected MacSpec getMacSpec() {
+        return new MacSpec(this);
     }
 
     /**
@@ -278,6 +291,50 @@ public class DataMac {
     }
 
     /**
+     * DataMac Derivation.
+     * @param pGenerator the security generator
+     * @param pMacSpec the MacSpec
+     * @param pKeySpec the KeySpec
+     * @return the new Mac
+     * @throws JDataException on error
+     */
+    protected static DataMac deriveMac(final SecurityGenerator pGenerator,
+                                       final MacSpec pMacSpec,
+                                       final byte[] pKeySpec) throws JDataException {
+        /* Access Security register */
+        SecurityRegister myRegister = pGenerator.getRegister();
+
+        /* Access MacType */
+        MacType myType = pMacSpec.getMacType();
+        int myIVLen = myType.getIVLen();
+
+        /* Extract IV if present */
+        byte[] myKey = pKeySpec;
+        byte[] myIV = null;
+        if (myIVLen > 0) {
+            myIV = Arrays.copyOf(pKeySpec, myIVLen);
+            myKey = Arrays.copyOfRange(pKeySpec, myIVLen, pKeySpec.length);
+        }
+
+        /* Switch on MacType */
+        MacRegister myReg;
+        switch (myType) {
+            case HMAC:
+                DigestType myDigest = pMacSpec.getDigestType();
+                myReg = myRegister.getMacRegistration(myDigest, pGenerator.getKeyLen());
+                return new DataMac(pGenerator, myDigest, myReg.resolveKeySpec(myKey));
+            case GMAC:
+            case POLY1305:
+                SymKeyType myKeyType = pMacSpec.getKeyType();
+                myReg = myRegister.getMacRegistration(myType, myKeyType, pGenerator.getKeyLen());
+                return new DataMac(pGenerator, myType, myKeyType, myReg.resolveKeySpec(myKey), myIV);
+            default:
+                myReg = myRegister.getMacRegistration(myType, pGenerator.getKeyLen());
+                return new DataMac(pGenerator, myType, myReg.resolveKeySpec(myKey), myIV);
+        }
+    }
+
+    /**
      * Constructor for a new HMac digest of specified parameters.
      * @param pGenerator the security generator
      * @param pDigestType DigestType
@@ -310,6 +367,11 @@ public class DataMac {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
         }
+
+        /* Create encoded form */
+        theEncoded = (theKey != null)
+                ? createEncoded()
+                : null;
     }
 
     /**
@@ -350,6 +412,9 @@ public class DataMac {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
         }
+
+        /* Create encoded form */
+        theEncoded = createEncoded();
     }
 
     /**
@@ -392,6 +457,9 @@ public class DataMac {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
         }
+
+        /* Create encoded form */
+        theEncoded = createEncoded();
     }
 
     /**
@@ -415,6 +483,32 @@ public class DataMac {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
         }
+    }
+
+    /**
+     * Create encoded version of mac.
+     * @return the encoded key
+     */
+    private byte[] createEncoded() {
+        /* Extract the encoded version of the key */
+        byte[] myEncoded = theKey.getEncoded();
+
+        /* If there is an InitVector */
+        if (theInitVector != null) {
+            /* Allocate new encoded */
+            byte[] myNew = new byte[myEncoded.length
+                                    + theInitVector.length];
+
+            /* Build the buffer */
+            System.arraycopy(theInitVector, 0, myNew, 0, theInitVector.length);
+            System.arraycopy(myEncoded, 0, myNew, theInitVector.length, myEncoded.length);
+
+            /* Swap the value */
+            myEncoded = myNew;
+        }
+
+        /* Return the encoded value */
+        return myEncoded;
     }
 
     /**

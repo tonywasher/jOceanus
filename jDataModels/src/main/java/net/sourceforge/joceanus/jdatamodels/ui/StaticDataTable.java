@@ -335,7 +335,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         public JDataField getFieldForCell(final T pItem,
                                           final int pColIndex) {
             /* Obtain the column field */
-            return theColumns.getFieldForCell(pItem, pColIndex);
+            return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
@@ -561,12 +561,10 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
 
         /**
          * Obtain the field for the column index.
-         * @param pItem the item
          * @param pColIndex column index
          * @return the field
          */
-        private JDataField getFieldForCell(final T pItem,
-                                           final int pColIndex) {
+        private JDataField getFieldForCell(final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_CLASS:

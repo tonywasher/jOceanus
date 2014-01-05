@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
@@ -75,9 +76,8 @@ public class SecurityTest {
     public static void createAndShowGUI() {
         try {
             // listAlgorithms(SecurityProvider.BC);
-            // TestStream();
-            checkAlgorithms();
-            // testSecurity();
+            // checkAlgorithms();
+            testSecurity();
             /* Test zip file creation */
             // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
             // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
@@ -241,40 +241,77 @@ public class SecurityTest {
         SecurityGenerator myGen = myHash.getSecurityGenerator();
 
         /* Create new symmetric key and asymmetric Key */
-        SymmetricKey mySym = myGen.generateSymmetricKey(SymKeyType.AES);
+        SymmetricKey mySym = myGen.generateSymmetricKey();
+        StreamKey myStream = myGen.generateStreamKey();
         AsymmetricKey myAsym = myGen.generateAsymmetricKey();
 
         /* Secure the keys */
         byte[] mySymSafe = myHash.secureSymmetricKey(mySym);
+        byte[] myStreamSafe = myHash.secureStreamKey(myStream);
         byte[] myAsymSafe = myHash.securePrivateKey(myAsym);
         byte[] myAsymPublic = myAsym.getExternalPublic();
         byte[] mySymSafe2 = myAsym.secureSymmetricKey(mySym);
 
+        /* Encrypt some bytes */
+        String myTest = "TestString";
+        byte[] myBytes = DataConverter.stringToByteArray(myTest);
+        byte[] myEncrypt = myHash.encryptBytes(myBytes);
+
         /* Create a data digest */
         DataDigest myDigest = new DataDigest(myGen);
         myDigest.update(mySymSafe);
+        myDigest.update(myStreamSafe);
         myDigest.update(myAsymSafe);
         myDigest.update(myAsymPublic);
         myDigest.update(mySymSafe2);
-        // byte[] myDigestBytes = myDigest.digest();
+        byte[] myDigestBytes = myDigest.finish();
+
+        /* Create a data Mac */
+        DataMac myMac = DataMac.generateRandomMac(myGen);
+        myMac.update(mySymSafe);
+        myMac.update(myStreamSafe);
+        myMac.update(myAsymSafe);
+        myMac.update(myAsymPublic);
+        myMac.update(mySymSafe2);
+        byte[] myMacBytes = myMac.finish();
+
+        /* Secure the keys */
+        byte[] myMacSafe = myHash.secureDataMac(myMac);
 
         /* Start a new session */
         myManager = new SecureManager(theLogger);
         PasswordHash myNewHash = myManager.resolvePasswordHash(myHash.getHashBytes(), "Test");
         myGen = myHash.getSecurityGenerator();
 
+        /* Derive the Mac */
+        myMac = myNewHash.deriveDataMac(myMacSafe, myMac.getMacSpec());
+        myMac.update(mySymSafe);
+        myMac.update(myStreamSafe);
+        myMac.update(myAsymSafe);
+        myMac.update(myAsymPublic);
+        myMac.update(mySymSafe2);
+        byte[] myMac1Bytes = myMac.finish();
+
         /* Create a message digest */
         myDigest = new DataDigest(myGen, myDigest.getDigestType());
         myDigest.update(mySymSafe);
+        myDigest.update(myStreamSafe);
         myDigest.update(myAsymSafe);
         myDigest.update(myAsymPublic);
         myDigest.update(mySymSafe2);
-        // myDigest.validateDigest();
+        byte[] myNewBytes = myDigest.finish();
+
+        /* Check the digests are the same */
+        if (!Arrays.areEqual(myDigestBytes, myNewBytes))
+            System.out.println("Failed to recalculate digest");
+        if (!Arrays.areEqual(myMacBytes, myMac1Bytes))
+            System.out.println("Failed to recalculate mac");
 
         /* Derive the keys */
         AsymmetricKey myAsym1 = myNewHash.deriveAsymmetricKey(myAsymSafe, myAsymPublic);
-        SymmetricKey mySym1 = myNewHash.deriveSymmetricKey(mySymSafe);
-        SymmetricKey mySym2 = myAsym1.deriveSymmetricKey(mySymSafe2);
+        SymmetricKey mySym1 = myNewHash.deriveSymmetricKey(mySymSafe, mySym.getKeyType());
+        StreamKey myStm1 = myNewHash.deriveStreamKey(myStreamSafe, myStream.getKeyType());
+        SymmetricKey mySym2 = myAsym1.deriveSymmetricKey(mySymSafe2, mySym.getKeyType());
 
         /* Check the keys are the same */
         if (!myAsym1.equals(myAsym))
@@ -283,6 +320,14 @@ public class SecurityTest {
             System.out.println("Failed to decrypt SymmetricKey via Hash");
         if (!mySym2.equals(mySym))
             System.out.println("Failed to decrypt SymmetricKey via Asym Key");
+        if (!myStm1.equals(myStream))
+            System.out.println("Failed to decrypt StreamKey via Hash");
+
+        /* Decrypt the bytes */
+        byte[] myResult = myHash.decryptBytes(myEncrypt);
+        String myAnswer = DataConverter.byteArrayToString(myResult);
+        if (!myAnswer.equals(myTest))
+            System.out.println("Failed to decrypt test string");
     }
 
     /**
@@ -403,33 +448,6 @@ public class SecurityTest {
         for (AsymKeyType myType : AsymKeyType.values()) {
             AsymmetricKey myKey = myGenerator.generateAsymmetricKey(myType);
             myKey.getSignature(true);
-        }
-    }
-
-    /**
-     * Test stream ciphers.
-     * @throws JDataException
-     */
-    protected static void TestStream() throws JDataException {
-        try {
-            /* Create new Password Hash */
-            SecureManager myManager = new SecureManager(theLogger);
-            PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
-            SecurityGenerator myGen = myHash.getSecurityGenerator();
-
-            /* Create a new SymmetricKey */
-            SymmetricKey myKey = myGen.generateSymmetricKey();
-            CipherSet mySet = myHash.getCipherSet();
-            byte[] myStart = myKey.getSecretKey().getEncoded();
-            byte[] myXtra = Arrays.copyOf(myStart, myStart.length + 5);
-            byte[] myWrapped = mySet.wrapBytes(myXtra);
-            byte[] myEnd = mySet.unwrapBytes(myWrapped);
-            if (!Arrays.areEqual(myXtra, myEnd)) {
-                mySet = null;
-            }
-
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "FF", e);
         }
     }
 }

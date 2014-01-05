@@ -73,16 +73,6 @@ public enum SymKeyType {
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SymKeyType.class.getName());
 
     /**
-     * Symmetric data algorithm.
-     */
-    private static final String DATAALGORITHM = "/CBC/PKCS5PADDING";
-
-    /**
-     * Symmetric wrap algorithm.
-     */
-    private static final String WRAPALGORITHM = "/CBC/NOPADDING";
-
-    /**
      * The external Id of the algorithm.
      */
     private final int theId;
@@ -131,20 +121,28 @@ public enum SymKeyType {
 
     /**
      * Obtain the data cipher name.
+     * @param pMode the cipher mode
      * @return the data cipher name
      */
-    public String getDataCipher() {
+    public String getDataCipher(final CipherMode pMode) {
         return getAlgorithm()
-               + DATAALGORITHM;
+               + "/"
+               + pMode.getCipherMode()
+               + getPadding(pMode);
     }
 
     /**
-     * Obtain the wrap cipher name.
-     * @return the wrap cipher name
+     * Obtain the padding.
+     * @param pMode the cipher mode
+     * @return the data cipher name
      */
-    public String getWrapCipher() {
-        return getAlgorithm()
-               + WRAPALGORITHM;
+    private String getPadding(final CipherMode pMode) {
+        switch (pMode) {
+            case CBC:
+                return "/PKCS7PADDING";
+            default:
+                return "/NOPADDING";
+        }
     }
 
     /**
@@ -228,7 +226,7 @@ public enum SymKeyType {
             /* Access the next random index */
             int iIndex = pRandom.nextInt(iNumValues);
 
-            /* If we are using all keyTypes or else this is not ThreeFish */
+            /* If we are using all keyTypes or else this is a standard block */
             SymKeyType myType = myValues[iIndex];
             if ((!pStdBlock)
                 || myType.isStdBlock()) {

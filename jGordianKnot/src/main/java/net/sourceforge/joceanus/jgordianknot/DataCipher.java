@@ -27,6 +27,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -57,14 +59,14 @@ import org.bouncycastle.util.Arrays;
  */
 public class DataCipher {
     /**
+     * Cipher creation failure error text.
+     */
+    private static final String ERROR_CREATE = "Failed to create Cipher";
+
+    /**
      * Data length error text.
      */
     private static final String ERROR_DATALEN = "Invalid data length";
-
-    /**
-     * Failed to initialise Cipher.
-     */
-    private static final String ERROR_INIT = "Failed to initialise cipher";
 
     /**
      * Wrap failure error text.
@@ -94,12 +96,17 @@ public class DataCipher {
     /**
      * The cipher.
      */
-    private final Cipher theCipher;
+    private final Map<CipherMode, Cipher> theCipherMap;
 
     /**
-     * The wrap cipher.
+     * The Provider Name.
      */
-    private final Cipher theWrapCipher;
+    private final String theProviderName;
+
+    /**
+     * The Block Size.
+     */
+    private final int theBlockSize;
 
     /**
      * The SymmetricKey.
@@ -124,7 +131,7 @@ public class DataCipher {
      * @return the block size
      */
     protected int getBlockSize() {
-        return theCipher.getBlockSize();
+        return theBlockSize;
     }
 
     /**
@@ -137,17 +144,14 @@ public class DataCipher {
         theSymKey = pKey;
         theSecretKey = theSymKey.getSecretKey();
 
-        /* protect against exceptions */
-        try {
-            /* Create a new cipher */
-            SecurityGenerator myGenerator = theSymKey.getGenerator();
-            String myProviderName = myGenerator.getProviderName();
-            SymKeyType myKeyType = theSymKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getDataCipher(), myProviderName);
-            theWrapCipher = Cipher.getInstance(myKeyType.getWrapCipher(), myProviderName);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create cipher", e);
-        }
+        /* Create the Cipher Map */
+        theCipherMap = new EnumMap<CipherMode, Cipher>(CipherMode.class);
+
+        /* Allocate an initial Cipher */
+        SecurityGenerator myGenerator = theSymKey.getGenerator();
+        theProviderName = myGenerator.getProviderName();
+        Cipher myCipher = getCipher(CipherMode.CBC);
+        theBlockSize = myCipher.getBlockSize();
     }
 
     @Override
@@ -180,78 +184,60 @@ public class DataCipher {
     /**
      * Encrypt bytes.
      * @param pBytes bytes to encrypt
+     * @param pMode the cipher mode
      * @param pVector initialisation vector
      * @return Encrypted bytes
      * @throws JDataException on error
      */
     public byte[] encryptBytes(final byte[] pBytes,
+                               final CipherMode pMode,
                                final byte[] pVector) throws JDataException {
+        /* Obtain the Cipher */
+        Cipher myCipher = getCipher(pMode);
+
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
+
         /* Protect against exceptions */
         try {
-            /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(pVector);
-
             /* Initialise the cipher using the shifted vector */
-            initialiseEncryption(myShift);
+            AlgorithmParameterSpec myParms = new IvParameterSpec(myShift);
+            myCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
 
             /* Encrypt the byte array */
-            return theCipher.doFinal(pBytes);
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            return myCipher.doFinal(pBytes);
+        } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
-        }
-    }
-
-    /**
-     * Initialise encryption.
-     * @param pVector initialisation vector
-     * @throws JDataException on error
-     */
-    private void initialiseEncryption(final byte[] pVector) throws JDataException {
-        try {
-            /* Initialise the cipher using the vector */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
         }
     }
 
     /**
      * Decrypt bytes.
      * @param pBytes bytes to decrypt
+     * @param pMode the cipher mode
      * @param pVector initialisation vector
      * @return Decrypted bytes
      * @throws JDataException on error
      */
     public byte[] decryptBytes(final byte[] pBytes,
+                               final CipherMode pMode,
                                final byte[] pVector) throws JDataException {
+        /* Obtain the Cipher */
+        Cipher myCipher = getCipher(pMode);
+
+        /* Access the shifted vector */
+        byte[] myShift = getShiftedVector(pVector);
+
         /* Protect against exceptions */
         try {
-            /* Access the shifted vector */
-            byte[] myShift = getShiftedVector(pVector);
-
             /* Initialise the cipher using the vector */
-            initialiseDecryption(myShift);
+            AlgorithmParameterSpec myParms = new IvParameterSpec(myShift);
+            myCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
 
             /* Encrypt the byte array */
-            return theCipher.doFinal(pBytes);
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            return myCipher.doFinal(pBytes);
+        } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
-        }
-    }
-
-    /**
-     * Initialise decryption.
-     * @param pVector initialisation vector
-     * @throws JDataException on error
-     */
-    private void initialiseDecryption(final byte[] pVector) throws JDataException {
-        try {
-            /* Initialise the cipher using the vector */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
-            theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
-        } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
         }
     }
 
@@ -265,7 +251,7 @@ public class DataCipher {
     protected byte[] wrapBytes(final byte[] pBytes,
                                final byte[] pVector) throws JDataException {
         /* Determine the block length */
-        int myBlockLen = theWrapCipher.getBlockSize() >> 1;
+        int myBlockLen = getBlockSize() >> 1;
 
         /* Determine number of blocks */
         int myDataLen = pBytes.length;
@@ -298,10 +284,13 @@ public class DataCipher {
         myData[myCheckLen] = (byte) myZeroLen;
         System.arraycopy(pBytes, 0, myData, myBlockLen, myDataLen);
 
+        /* Access Cipher */
+        Cipher myCipher = getCipher(CipherMode.OFB);
+
         /* Initialise the cipher */
         try {
             /* Initialise the cipher */
-            theWrapCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
+            myCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
 
             /* Loop WRAP_COUNT times */
             for (int myCycle = 0, myCount = 1; myCycle < WRAP_COUNT; myCycle++) {
@@ -312,7 +301,7 @@ public class DataCipher {
                     System.arraycopy(myData, myOffset, myBuffer, myBlockLen, myBlockLen);
 
                     /* Encrypt the byte array */
-                    byte[] myResult = theWrapCipher.doFinal(myBuffer);
+                    byte[] myResult = myCipher.doFinal(myBuffer);
 
                     /* Adjust the result using the count as a mask */
                     for (int myMask = myCount++, myIndex = myBlockLen - 1; myMask != 0; myMask >>>= Byte.SIZE, myIndex--) {
@@ -342,7 +331,7 @@ public class DataCipher {
     protected byte[] unwrapBytes(final byte[] pBytes,
                                  final byte[] pVector) throws JDataException {
         /* Determine the block length */
-        int myBlockLen = theWrapCipher.getBlockSize() >> 1;
+        int myBlockLen = getBlockSize() >> 1;
 
         /* Determine number of blocks */
         int myDataLen = pBytes.length
@@ -362,10 +351,13 @@ public class DataCipher {
         byte[] myData = Arrays.copyOf(pBytes, pBytes.length);
         byte[] myBuffer = new byte[myBlockLen << 1];
 
+        /* Access Cipher */
+        Cipher myCipher = getCipher(CipherMode.OFB);
+
         /* Protect against exceptions */
         try {
             /* Initialise the cipher */
-            theWrapCipher.init(Cipher.DECRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
+            myCipher.init(Cipher.DECRYPT_MODE, theSecretKey, new IvParameterSpec(myShift));
 
             /* Loop WRAP_COUNT times */
             for (int myCycle = WRAP_COUNT - 1, myCount = myNumBlocks
@@ -383,7 +375,7 @@ public class DataCipher {
                     }
 
                     /* Decrypt the byte array */
-                    byte[] myResult = theWrapCipher.doFinal(myBuffer);
+                    byte[] myResult = myCipher.doFinal(myBuffer);
 
                     /* Restore decrypted data */
                     System.arraycopy(myResult, 0, myData, 0, myBlockLen);
@@ -430,7 +422,7 @@ public class DataCipher {
     private byte[] getShiftedVector(final byte[] pVector) {
         /* Determine length of input and output vectors */
         int myVectorLen = pVector.length;
-        int myLen = theCipher.getBlockSize();
+        int myLen = getBlockSize();
         SymKeyType myType = theSymKey.getKeyType();
         byte[] myNew = new byte[myLen];
 
@@ -456,5 +448,34 @@ public class DataCipher {
 
         /* return the shifted vector */
         return myNew;
+    }
+
+    /**
+     * Obtain Cipher for mode.
+     * @param pMode the Cipher Mode
+     * @return the Cipher
+     * @throws JDataException on error
+     */
+    private Cipher getCipher(final CipherMode pMode) throws JDataException {
+        /* Look up Cipher in map */
+        Cipher myCipher = theCipherMap.get(pMode);
+
+        /* If we have not used this cipher before */
+        if (myCipher == null) {
+            try {
+                /* Allocate the Cipher */
+                SymKeyType myKeyType = theSymKey.getKeyType();
+                myCipher = Cipher.getInstance(myKeyType.getDataCipher(pMode), theProviderName);
+
+                /* Store the Cipher in the map */
+                theCipherMap.put(pMode, myCipher);
+
+            } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+            }
+        }
+
+        /* Return the cipher */
+        return myCipher;
     }
 }

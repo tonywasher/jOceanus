@@ -31,7 +31,10 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
  * Asymmetric Key Types. Available Algorithms
  */
 public enum AsymKeyType {
-    // RSA(1, 2048),
+    /**
+     * RSA.
+     */
+    RSA(1, 2048),
 
     /**
      * Elliptic Curve 1.
@@ -149,7 +152,7 @@ public enum AsymKeyType {
         if (isElliptic) {
             return "EC";
         }
-        return toString();
+        return name();
     }
 
     /**
@@ -228,6 +231,21 @@ public enum AsymKeyType {
      */
     public static AsymKeyType[] getRandomTypes(final int pNumTypes,
                                                final SecureRandom pRandom) throws JDataException {
+        /* Use all values */
+        return getRandomTypes(pNumTypes, pRandom, false);
+    }
+
+    /**
+     * Get random unique set of asymmetric key types.
+     * @param pNumTypes the number of types
+     * @param pRandom the random generator
+     * @param pElliptic use only elliptic keys
+     * @return the random set
+     * @throws JDataException on error
+     */
+    public static AsymKeyType[] getRandomTypes(final int pNumTypes,
+                                               final SecureRandom pRandom,
+                                               final boolean pElliptic) throws JDataException {
         /* Access the values */
         AsymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -243,12 +261,18 @@ public enum AsymKeyType {
         AsymKeyType[] myTypes = new AsymKeyType[pNumTypes];
 
         /* Loop through the types */
-        for (int i = 0; i < pNumTypes; i++) {
+        int i = 0;
+        while (i < pNumTypes) {
             /* Access the next random index */
             int iIndex = pRandom.nextInt(iNumValues);
 
-            /* Store the type */
-            myTypes[i] = myValues[iIndex];
+            /* If we are using all keyTypes or else this is elliptic */
+            AsymKeyType myType = myValues[iIndex];
+            if ((!pElliptic)
+                || myType.isElliptic()) {
+                /* Store the type */
+                myTypes[i++] = myValues[iIndex];
+            }
 
             /* Shift last value down in place of the one thats been used */
             myValues[iIndex] = myValues[iNumValues - 1];

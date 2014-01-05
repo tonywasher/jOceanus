@@ -29,10 +29,8 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jgordianknot.DataHayStack.SymKeyNeedle;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
 
 /**
@@ -48,6 +46,11 @@ public class CipherSet {
      * Maximum number of encryption steps.
      */
     public static final int MAXSTEPS = SymKeyType.values().length - 1;
+
+    /**
+     * Maximum number of modes.
+     */
+    public static final int MAXMODES = 4;
 
     /**
      * Key Id byte allowance.
@@ -238,16 +241,21 @@ public class CipherSet {
         SymKeyType[] myKeyTypes = myKey.getSymKeyTypes();
         byte[] myVector = myKey.getInitVector();
 
+        /* Access Cipher Modes */
+        CipherMode[] myModes = CipherMode.values();
+
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
             /* Access the Key Type */
             SymKeyType myType = myKeyTypes[i];
+            CipherMode myMode = myModes[i
+                                        % MAXMODES];
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
 
             /* Encrypt the bytes */
-            myCurBytes = myCipher.encryptBytes(myCurBytes, myVector);
+            myCurBytes = myCipher.encryptBytes(myCurBytes, myMode, myVector);
         }
 
         /* Return the encrypted bytes */
@@ -277,16 +285,21 @@ public class CipherSet {
         byte[] myVector = myKey.getInitVector();
         byte[] myBytes = myKey.getBytes();
 
+        /* Access Cipher Modes */
+        CipherMode[] myModes = CipherMode.values();
+
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {
             /* Access the Key Type */
             SymKeyType myType = myTypes[i];
+            CipherMode myMode = myModes[i
+                                        % MAXMODES];
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
 
             /* Decrypt the bytes */
-            myBytes = myCipher.decryptBytes(myBytes, myVector);
+            myBytes = myCipher.decryptBytes(myBytes, myMode, myVector);
         }
 
         /* Return the decrypted bytes */
@@ -354,68 +367,6 @@ public class CipherSet {
     }
 
     /**
-     * Encrypt string.
-     * @param pString the string to encrypt
-     * @return the encrypted bytes
-     * @throws JDataException on error
-     */
-    public byte[] encryptString(final String pString) throws JDataException {
-        /* Access the bytes */
-        byte[] myBytes = DataConverter.stringToByteArray(pString);
-
-        /* Encrypt the bytes */
-        return encryptBytes(myBytes);
-    }
-
-    /**
-     * Decrypt string.
-     * @param pBytes the string to decrypt
-     * @return the decrypted string
-     * @throws JDataException on error
-     */
-    public String decryptString(final byte[] pBytes) throws JDataException {
-        /* Decrypt the bytes */
-        byte[] myBytes = decryptBytes(pBytes);
-
-        /* ReBuild the string */
-        return DataConverter.byteArrayToString(myBytes);
-    }
-
-    /**
-     * Encrypt character array.
-     * @param pChars Characters to encrypt
-     * @return Encrypted bytes
-     * @throws JDataException on error
-     */
-    public byte[] encryptChars(final char[] pChars) throws JDataException {
-        /* Convert the characters to a byte array */
-        byte[] myRawBytes = DataConverter.charsToByteArray(pChars);
-
-        /* Encrypt the characters */
-        return encryptBytes(myRawBytes);
-    }
-
-    /**
-     * Decrypt bytes into a character array.
-     * @param pBytes Bytes to decrypt
-     * @return Decrypted character array
-     * @throws JDataException on error
-     */
-    public char[] decryptChars(final byte[] pBytes) throws JDataException {
-        /* Decrypt the bytes */
-        byte[] myBytes = decryptBytes(pBytes);
-
-        /* Convert the bytes to characters */
-        char[] myChars = DataConverter.bytesToCharArray(myBytes);
-
-        /* Clear out the bytes */
-        Arrays.fill(myBytes, (byte) 0);
-
-        /* Return to caller */
-        return myChars;
-    }
-
-    /**
      * secure SymmetricKey.
      * @param pKey the key to wrap
      * @return the wrapped symmetric key
@@ -425,36 +376,93 @@ public class CipherSet {
         /* Extract the encoded version of the key */
         byte[] myEncoded = pKey.getSecretKey().getEncoded();
 
-        /* Encode the key */
-        byte[] myEncrypted = encryptBytes(myEncoded);
-
-        /* Determine the external definition */
-        SymKeyNeedle myNeedle = new SymKeyNeedle(pKey.getKeyType(), myEncrypted);
-        return myNeedle.getExternal();
+        /* Wrap the key */
+        return wrapBytes(myEncoded);
     }
 
     /**
      * derive SymmetricKey.
      * @param pKeySpec the wrapped symmetric key
+     * @param pKeyType the key type
      * @return the symmetric key
      * @throws JDataException on error
      */
-    public SymmetricKey deriveSymmetricKey(final byte[] pKeySpec) throws JDataException {
-        /* Parse the KeySpec */
-        SymKeyNeedle myNeedle = new SymKeyNeedle(pKeySpec);
-
-        /* Decrypt the encoded bytes */
-        byte[] myEncoded = decryptBytes(myNeedle.getEncodedKey());
-        SymKeyType myType = myNeedle.getSymKeyType();
+    public SymmetricKey deriveSymmetricKey(final byte[] pKeySpec,
+                                           final SymKeyType pKeyType) throws JDataException {
+        /* Unwrap the encoded bytes */
+        byte[] myEncoded = unwrapBytes(pKeySpec);
 
         /* Create the Secret Key */
-        SecretKey mySecret = new SecretKeySpec(myEncoded, myType.getAlgorithm());
+        SecretKey mySecret = new SecretKeySpec(myEncoded, pKeyType.getAlgorithm());
 
         /* Create the Symmetric Key */
-        SymmetricKey myKey = new SymmetricKey(theGenerator, myType, mySecret);
+        SymmetricKey myKey = new SymmetricKey(theGenerator, pKeyType, mySecret);
 
         /* Return the key */
         return myKey;
+    }
+
+    /**
+     * secure StreamKey.
+     * @param pKey the key to wrap
+     * @return the wrapped stream key
+     * @throws JDataException on error
+     */
+    public byte[] secureStreamKey(final StreamKey pKey) throws JDataException {
+        /* Extract the encoded version of the key */
+        byte[] myEncoded = pKey.getSecretKey().getEncoded();
+
+        /* Wrap the key */
+        return wrapBytes(myEncoded);
+    }
+
+    /**
+     * derive StreamKey.
+     * @param pKeySpec the wrapped stream key
+     * @param pKeyType the key type
+     * @return the stream key
+     * @throws JDataException on error
+     */
+    public StreamKey deriveStreamKey(final byte[] pKeySpec,
+                                     final StreamKeyType pKeyType) throws JDataException {
+        /* Unwrap the encoded bytes */
+        byte[] myEncoded = unwrapBytes(pKeySpec);
+
+        /* Create the Secret Key */
+        SecretKey mySecret = new SecretKeySpec(myEncoded, pKeyType.getAlgorithm(theGenerator.useRestricted()));
+
+        /* Create the Symmetric Key */
+        return new StreamKey(theGenerator, pKeyType, mySecret);
+    }
+
+    /**
+     * secure DataMac.
+     * @param pMac the Mac to wrap
+     * @return the wrapped DataMac
+     * @throws JDataException on error
+     */
+    public byte[] secureDataMac(final DataMac pMac) throws JDataException {
+        /* Extract the encoded version of the key */
+        byte[] myEncoded = pMac.getEncoded();
+
+        /* Wrap the key */
+        return wrapBytes(myEncoded);
+    }
+
+    /**
+     * derive DataMac.
+     * @param pKeySpec the wrapped dataMac
+     * @param pMacSpec the MacSpec
+     * @return the DataMac
+     * @throws JDataException on error
+     */
+    public DataMac deriveDataMac(final byte[] pKeySpec,
+                                 final MacSpec pMacSpec) throws JDataException {
+        /* Unwrap the encoded bytes */
+        byte[] myEncoded = unwrapBytes(pKeySpec);
+
+        /* Derive the DataMac */
+        return DataMac.deriveMac(theGenerator, pMacSpec, myEncoded);
     }
 
     /**

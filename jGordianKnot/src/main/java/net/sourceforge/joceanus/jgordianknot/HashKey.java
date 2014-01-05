@@ -165,8 +165,8 @@ public class HashKey {
         theHash = new byte[myHashLen];
 
         /* Determine offset position */
-        int myOffSet = Math.min(pPassLength, HASH_MARGIN);
-        myOffSet = Math.max(myOffSet, myHashLen
+        int myOffSet = Math.max(pPassLength, HASH_MARGIN);
+        myOffSet = Math.min(myOffSet, myHashLen
                                       - HASH_MARGIN);
 
         /* Copy Data into buffers */
@@ -199,8 +199,8 @@ public class HashKey {
         byte[] myBuffer = new byte[myLen];
 
         /* Determine offset position */
-        int myOffSet = Math.min(pPassLength, HASH_MARGIN);
-        myOffSet = Math.max(myOffSet, myHashLen
+        int myOffSet = Math.max(pPassLength, HASH_MARGIN);
+        myOffSet = Math.min(myOffSet, myHashLen
                                       - HASH_MARGIN);
 
         /* Copy Data into buffer */
