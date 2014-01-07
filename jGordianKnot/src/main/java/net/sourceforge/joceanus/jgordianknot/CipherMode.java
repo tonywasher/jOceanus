@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
+import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+
 /**
  * Cipher Modes. Available algorithms.
  */
@@ -29,32 +32,53 @@ public enum CipherMode {
     /**
      * CBC Mode.
      */
-    CBC,
+    CBC(1),
 
     /**
      * OFB Mode.
      */
-    OFB,
+    OFB(2),
 
     /**
      * CFB Mode.
      */
-    CFB,
+    CFB(3),
 
     /**
      * SIC(CTR) Mode.
      */
-    SIC,
+    SIC(4),
 
     /**
      * GCM Mode.
      */
-    GCM,
+    GCM(5),
 
     /**
      * EAX Mode.
      */
-    EAX;
+    EAX(6);
+
+    /**
+     * The external Id of the cipherMode.
+     */
+    private final int theId;
+
+    /**
+     * Obtain the external Id.
+     * @return the external Id
+     */
+    public int getId() {
+        return theId;
+    }
+
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    private CipherMode(final int id) {
+        theId = id;
+    }
 
     /**
      * Obtain cipher mode.
@@ -69,5 +93,35 @@ public enum CipherMode {
             default:
                 return name();
         }
+    }
+
+    /**
+     * Does this cipher mode need a StdBlock.
+     * @return true/false
+     */
+    public boolean needsStdBlock() {
+        switch (this) {
+            case GCM:
+            case EAX:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * get value from id.
+     * @param id the id value
+     * @return the corresponding enumeration object
+     * @throws JDataException on error
+     */
+    public static CipherMode fromId(final int id) throws JDataException {
+        for (CipherMode myType : values()) {
+            if (myType.getId() == id) {
+                return myType;
+            }
+        }
+        throw new JDataException(ExceptionClass.DATA, "Invalid CipherMode: "
+                                                      + id);
     }
 }

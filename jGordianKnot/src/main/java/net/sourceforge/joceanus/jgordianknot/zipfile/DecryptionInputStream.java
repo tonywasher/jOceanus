@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
@@ -79,18 +80,20 @@ public class DecryptionInputStream
     /**
      * Construct the decryption input stream.
      * @param pKey the symmetric key
+     * @param pMode the cipher mode to use
      * @param pInitVector the initialisation vector
      * @param pStream the stream to decrypt from
      * @throws JDataException on error
      */
     public DecryptionInputStream(final SymmetricKey pKey,
+                                 final CipherMode pMode,
                                  final byte[] pInitVector,
                                  final InputStream pStream) throws JDataException {
         /* record the input stream */
         theStream = pStream;
 
         /* Initialise the cipher */
-        theCipher = new StreamCipher(pKey);
+        theCipher = new StreamCipher(pKey, pMode);
         theCipher.initialiseDecryption(pInitVector);
     }
 

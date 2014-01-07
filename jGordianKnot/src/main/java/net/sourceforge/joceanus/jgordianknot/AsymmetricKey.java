@@ -195,6 +195,21 @@ public class AsymmetricKey {
     }
 
     /**
+     * AsymmetricKey Generator for Elliptic only.
+     * @param pGenerator the security generator
+     * @return the new AsymmetricKey
+     * @throws JDataException on error
+     */
+    protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+        /* Access random generator */
+        SecureRandom myRandom = pGenerator.getRandom();
+        AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom, true);
+
+        /* Generate a AsymmetricKey for the AsymKey type */
+        return generateAsymmetricKey(pGenerator, myType[0]);
+    }
+
+    /**
      * AsymmetricKey Generator.
      * @param pGenerator the security generator
      * @param pKeyType the Asymmetric Key type

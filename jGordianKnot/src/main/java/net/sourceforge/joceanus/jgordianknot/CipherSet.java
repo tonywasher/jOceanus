@@ -48,11 +48,6 @@ public class CipherSet {
     public static final int MAXSTEPS = SymKeyType.values().length - 1;
 
     /**
-     * Maximum number of modes.
-     */
-    public static final int MAXMODES = 4;
-
-    /**
      * Key Id byte allowance.
      */
     public static final int KEYIDLEN = numKeyBytes(MAXSTEPS);
@@ -81,6 +76,14 @@ public class CipherSet {
      * The security generator.
      */
     private final SecurityGenerator theGenerator;
+
+    /**
+     * Obtain the SecurityGenerator.
+     * @return the SecurityGenerator
+     */
+    public SecurityGenerator getSecurityGenerator() {
+        return theGenerator;
+    }
 
     /**
      * Encryption length.
@@ -243,13 +246,17 @@ public class CipherSet {
 
         /* Access Cipher Modes */
         CipherMode[] myModes = CipherMode.values();
+        int myNumModes = myModes.length;
 
         /* Loop through the SymKeyTypes */
         for (int i = 0; i < myKeyTypes.length; i++) {
             /* Access the Key Type */
             SymKeyType myType = myKeyTypes[i];
+
+            /* Determine the mode */
             CipherMode myMode = myModes[i
-                                        % MAXMODES];
+                                        % myNumModes];
+            myMode = myType.adjustCipherMode(myMode);
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);
@@ -287,13 +294,17 @@ public class CipherSet {
 
         /* Access Cipher Modes */
         CipherMode[] myModes = CipherMode.values();
+        int myNumModes = myModes.length;
 
         /* Loop through the SymKeyTypes */
         for (int i = myTypes.length - 1; i >= 0; i--) {
             /* Access the Key Type */
             SymKeyType myType = myTypes[i];
+
+            /* Determine the mode */
             CipherMode myMode = myModes[i
-                                        % MAXMODES];
+                                        % myNumModes];
+            myMode = myType.adjustCipherMode(myMode);
 
             /* Access the DataCipher */
             DataCipher myCipher = theMap.get(myType);

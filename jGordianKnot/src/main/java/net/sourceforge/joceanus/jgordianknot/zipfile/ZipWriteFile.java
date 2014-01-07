@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.Signature;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -35,8 +34,11 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
@@ -105,16 +107,6 @@ public class ZipWriteFile {
     private OutputStream theOutput = null;
 
     /**
-     * The compressed output stream.
-     */
-    private DigestOutputStream[] theDigests = null;
-
-    /**
-     * The encryption output stream.
-     */
-    private EncryptionOutputStream[] theEncrypts = null;
-
-    /**
      * The fileNumber.
      */
     private int theFileNo = 0;
@@ -160,8 +152,8 @@ public class ZipWriteFile {
             /* reSeed the random number generator */
             theGenerator.reSeedRandom();
 
-            /* Create an asymmetric key */
-            theAsymKey = theGenerator.generateAsymmetricKey();
+            /* Create an Elliptic asymmetric key */
+            theAsymKey = theGenerator.generateEllipticAsymmetricKey();
             theNumEncrypts = theGenerator.getNumCipherSteps();
 
             /* Create the output streams */
@@ -250,39 +242,35 @@ public class ZipWriteFile {
 
             /* If we are encrypting */
             if (isEncrypted()) {
-                /* Determine number of digests */
-                int iNumDigest = 2;
-
-                /* Create the arrays */
-                theDigests = new DigestOutputStream[iNumDigest];
-                theEncrypts = new EncryptionOutputStream[theNumEncrypts];
-                int iDigest = 0;
-
                 /* Create an initial digest stream */
                 DigestOutputStream myDigest = new DigestOutputStream(theGenerator.generateDigest(), theOutput);
                 theOutput = myDigest;
-                theDigests[iDigest++] = myDigest;
 
                 /* Generate a list of encryption types */
-                SymKeyType[] myTypes = theGenerator.generateSymKeyTypes();
+                SymKeyType[] mySymKeyTypes = theGenerator.generateSymKeyTypes();
+                CipherMode[] myModes = CipherMode.values();
+                StreamKeyType[] myStreamKeyTypes = StreamKeyType.getRandomTypes(1, theGenerator.getRandom());
 
                 /* For each encryption stream */
                 for (int iEncrypt = 0; iEncrypt < theNumEncrypts; iEncrypt++) {
                     /* Create the encryption stream */
-                    SymmetricKey myKey = theGenerator.generateSymmetricKey(myTypes[iEncrypt]);
-                    EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, theOutput);
+                    SymmetricKey myKey = theGenerator.generateSymmetricKey(mySymKeyTypes[iEncrypt]);
+                    EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, myModes[iEncrypt], theOutput);
                     theOutput = myEncrypt;
-                    theEncrypts[iEncrypt] = myEncrypt;
                 }
+
+                /* Create the encryption stream for a stream key */
+                StreamKey myKey = theGenerator.generateStreamKey(myStreamKeyTypes[0]);
+                EncryptionOutputStream myEncrypt = new EncryptionOutputStream(myKey, theOutput);
+                theOutput = myEncrypt;
 
                 /* Attach an LZMA output stream onto the output */
                 LZMAOutputStream myZip = new LZMAOutputStream(theOutput);
                 theOutput = myZip;
 
-                /* Create a final digest stream */
-                myDigest = new DigestOutputStream(theGenerator.generateDigest(), theOutput);
-                theOutput = myDigest;
-                theDigests[iDigest++] = myDigest;
+                /* Create a final mac stream */
+                MacOutputStream myMac = new MacOutputStream(theGenerator.generateMac(), theOutput);
+                theOutput = myMac;
             }
 
             /* Catch exceptions */
@@ -311,15 +299,8 @@ public class ZipWriteFile {
 
                 /* If we have encryption */
                 if (isEncrypted()) {
-                    /* Record the digests */
-                    theFileEntry.setDigests(theDigests);
-
-                    /* Record the secret keys */
-                    theFileEntry.setSecretKeys(theEncrypts, theAsymKey);
-
-                    /* Calculate the signature and declare it */
-                    Signature mySignature = theAsymKey.getSignature(true);
-                    theFileEntry.signEntry(mySignature, false);
+                    /* Analyse the stream */
+                    theFileEntry.analyseOutputStream(theOutput, theAsymKey);
                 }
 
                 /* Release the entry */
@@ -330,8 +311,6 @@ public class ZipWriteFile {
 
             /* Reset streams */
             theOutput = null;
-            theDigests = null;
-            theEncrypts = null;
 
             /* Catch exceptions */
         } catch (JDataException e) {

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Signature;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,11 +37,7 @@ import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.DataDigest;
-import net.sourceforge.joceanus.jgordianknot.DigestType;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 
 /**
  * Class used to extract from a ZipFile.
@@ -82,11 +77,6 @@ public class ZipReadFile {
      * AsymmetricKey for this zip file.
      */
     private AsymmetricKey theAsymKey = null;
-
-    /**
-     * Security Generator for this zip file.
-     */
-    private SecurityGenerator theGenerator = null;
 
     /**
      * Is the ZipFile encrypted.
@@ -183,7 +173,6 @@ public class ZipReadFile {
 
             /* Store the hash and obtain the generator */
             PasswordHash myHash = pHash;
-            theGenerator = myHash.getSecurityGenerator();
 
             /* Initialise variables */
             int myLen = 0;
@@ -276,6 +265,7 @@ public class ZipReadFile {
             for (;;) {
                 /* Read the entry */
                 myEntry = myZipFile.getNextEntry();
+
                 /* Break if we reached EOF or found the correct entry */
                 if ((myEntry == null)
                     || (myEntry.getName().compareTo(myName) == 0)) {
@@ -292,39 +282,11 @@ public class ZipReadFile {
 
             /* Note the current input stream */
             InputStream myCurrent = myZipFile;
-            int iDigest = 0;
 
             /* If the file is encrypted */
             if (isEncrypted()) {
                 /* Verify Encryption details */
-                Signature mySignature = theAsymKey.getSignature(false);
-                pFile.signEntry(mySignature, true);
-
-                /* Access the digests */
-                byte[][] myDigests = pFile.getDigests();
-                DigestType[] myDigestTypes = pFile.getDigestTypes();
-
-                /* Access the secretKeys */
-                byte[][] mySecretKeys = pFile.getSecretKeys();
-                byte[][] myInitVectors = pFile.getInitVectors();
-
-                /* Wrap a digest input stream around the zip file */
-                DataDigest myDataDigest = theGenerator.generateDigest(myDigestTypes[iDigest]);
-                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest++], myCurrent);
-
-                /* For each decryption stream */
-                for (int iDecrypt = 0; iDecrypt < mySecretKeys.length; iDecrypt++) {
-                    /* Create the decryption stream */
-                    SymmetricKey myKey = theAsymKey.deriveSymmetricKey(mySecretKeys[iDecrypt], null);
-                    myCurrent = new DecryptionInputStream(myKey, myInitVectors[iDecrypt], myCurrent);
-                }
-
-                /* Wrap a LZMAInputStream around the stream */
-                myCurrent = new LZMAInputStream(myCurrent);
-
-                /* Wrap a digest input stream around the stream */
-                myDataDigest = theGenerator.generateDigest(myDigestTypes[iDigest]);
-                myCurrent = new DigestInputStream(myDataDigest, myDigests[iDigest], myCurrent);
+                myCurrent = pFile.buildInputStream(myCurrent, theAsymKey);
             }
 
             /* return the new stream */

@@ -27,9 +27,13 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 import net.sourceforge.joceanus.jgordianknot.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.zipfile.ZipStreamSpec.ZipStreamType;
 
 /**
  * Provide an encrypt OutputStream wrapper. This class simply wraps an output buffer and encrypts the data before passing it on.
@@ -57,9 +61,24 @@ public class EncryptionOutputStream
     private final byte[] theInitVector;
 
     /**
-     * The key.
+     * The Stream type.
      */
-    private final Object theKey;
+    private final ZipStreamType theStreamType;
+
+    /**
+     * The symmetric key.
+     */
+    private final SymmetricKey theSymKey;
+
+    /**
+     * The cipherMode.
+     */
+    private final CipherMode theMode;
+
+    /**
+     * The stream Key.
+     */
+    private final StreamKey theStreamKey;
 
     /**
      * A buffer for single byte writes.
@@ -67,11 +86,55 @@ public class EncryptionOutputStream
     private final byte[] theByte;
 
     /**
-     * Access the key.
+     * Access the symmetric key.
      * @return the key
      */
-    public Object getKey() {
-        return theKey;
+    public SymmetricKey getSymKey() {
+        return theSymKey;
+    }
+
+    /**
+     * Access the stream key.
+     * @return the key
+     */
+    public StreamKey getStreamKey() {
+        return theStreamKey;
+    }
+
+    /**
+     * Access the stream type.
+     * @return the stream type
+     */
+    public ZipStreamType getStreamType() {
+        return theStreamType;
+    }
+
+    /**
+     * Access the symKey type.
+     * @return the symKey type
+     */
+    public SymKeyType getSymKeyType() {
+        return (theSymKey == null)
+                ? null
+                : theSymKey.getKeyType();
+    }
+
+    /**
+     * Access the cipher mode.
+     * @return the mode
+     */
+    public CipherMode getCipherMode() {
+        return theMode;
+    }
+
+    /**
+     * Access the streamKey type.
+     * @return the streamKey type
+     */
+    public StreamKeyType getStreamKeyType() {
+        return (theStreamKey == null)
+                ? null
+                : theStreamKey.getKeyType();
     }
 
     /**
@@ -83,24 +146,37 @@ public class EncryptionOutputStream
     }
 
     /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theStream;
+    }
+
+    /**
      * Construct a symmetric key encryption output stream.
      * @param pKey the symmetric key to use
+     * @param pMode the cipher mode to use
      * @param pStream the stream to encrypt to
      * @throws JDataException on error
      */
     public EncryptionOutputStream(final SymmetricKey pKey,
+                                  final CipherMode pMode,
                                   final OutputStream pStream) throws JDataException {
         /* Store the key */
-        theKey = pKey;
+        theSymKey = pKey;
+        theStreamKey = null;
+        theMode = pMode;
 
         /* Create the byte buffer */
         theByte = new byte[1];
 
         /* record the output stream */
         theStream = pStream;
+        theStreamType = ZipStreamType.SYMMETRIC;
 
         /* Initialise the cipher */
-        theCipher = new StreamCipher(pKey);
+        theCipher = new StreamCipher(pKey, pMode);
         theInitVector = theCipher.initialiseEncryption(pKey.getRandom());
     }
 
@@ -113,13 +189,16 @@ public class EncryptionOutputStream
     public EncryptionOutputStream(final StreamKey pKey,
                                   final OutputStream pStream) throws JDataException {
         /* Store the key */
-        theKey = pKey;
+        theStreamKey = pKey;
+        theSymKey = null;
+        theMode = null;
 
         /* Create the byte buffer */
         theByte = new byte[1];
 
         /* record the output stream */
         theStream = pStream;
+        theStreamType = ZipStreamType.STREAM;
 
         /* Initialise the cipher */
         theCipher = new StreamCipher(pKey);

@@ -84,7 +84,7 @@ public class MacSpec {
      * @param pCode the encoded specification
      * @throws JDataException on error
      */
-    protected MacSpec(final int pCode) throws JDataException {
+    public MacSpec(final int pCode) throws JDataException {
         /* Determine MacType */
         int myId = pCode
                    & DataConverter.NYBBLE_MASK;
@@ -93,13 +93,13 @@ public class MacSpec {
         /* Switch on the MacType */
         switch (theMacType) {
             case HMAC:
-                theDigestType = DigestType.fromId(myId >> DataConverter.NYBBLE_SHIFT);
+                theDigestType = DigestType.fromId(pCode >> DataConverter.NYBBLE_SHIFT);
                 theKeyType = null;
                 break;
             case GMAC:
             case POLY1305:
                 theDigestType = null;
-                theKeyType = SymKeyType.fromId(myId >> DataConverter.NYBBLE_SHIFT);
+                theKeyType = SymKeyType.fromId(pCode >> DataConverter.NYBBLE_SHIFT);
                 break;
             default:
                 theDigestType = null;

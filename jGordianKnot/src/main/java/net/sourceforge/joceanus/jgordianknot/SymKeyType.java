@@ -120,11 +120,24 @@ public enum SymKeyType {
     }
 
     /**
+     * Adjust CipherMode.
+     * @param pMode the cipher mode
+     * @return the adjusted cipher mode
+     */
+    public CipherMode adjustCipherMode(final CipherMode pMode) {
+        /* If the mode needs a Standard block cipher and this is not one switch to OFB */
+        return (pMode.needsStdBlock() && !isStdBlock())
+                ? CipherMode.OFB
+                : pMode;
+    }
+
+    /**
      * Obtain the data cipher name.
      * @param pMode the cipher mode
      * @return the data cipher name
      */
     public String getDataCipher(final CipherMode pMode) {
+        /* Build the algorithm */
         return getAlgorithm()
                + "/"
                + pMode.getCipherMode()

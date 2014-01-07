@@ -77,11 +77,11 @@ public class SecurityTest {
         try {
             // listAlgorithms(SecurityProvider.BC);
             // checkAlgorithms();
-            testSecurity();
+            // testSecurity();
             /* Test zip file creation */
-            // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-            // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-            // extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+            File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+            createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
+            extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();

@@ -127,7 +127,7 @@ public class SecurityGenerator {
      * Access the Secure Random.
      * @return the secure random
      */
-    protected SecureRandom getRandom() {
+    public SecureRandom getRandom() {
         return theRandom;
     }
 
@@ -382,7 +382,7 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate a new Asymmetric Key of a random type.
+     * Generate a new Asymmetric Key of a specified type.
      * @param pKeyType the Asymmetric Key type
      * @return the newly created Asymmetric Key
      * @throws JDataException on error
@@ -393,13 +393,23 @@ public class SecurityGenerator {
     }
 
     /**
-     * Generate a new Asymmetric Key of a specified type.
+     * Generate a new Asymmetric Key of a random type.
      * @return the newly created Asymmetric Key
      * @throws JDataException on error
      */
     public AsymmetricKey generateAsymmetricKey() throws JDataException {
         /* Create the new Asymmetric Key */
         return AsymmetricKey.generateAsymmetricKey(this);
+    }
+
+    /**
+     * Generate a new Elliptic Asymmetric Key of a specified type.
+     * @return the newly created Asymmetric Key
+     * @throws JDataException on error
+     */
+    public AsymmetricKey generateEllipticAsymmetricKey() throws JDataException {
+        /* Create the new Asymmetric Key */
+        return AsymmetricKey.generateEllipticAsymmetricKey(this);
     }
 
     /**

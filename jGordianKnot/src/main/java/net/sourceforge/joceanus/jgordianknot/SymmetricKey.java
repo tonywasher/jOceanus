@@ -203,11 +203,12 @@ public class SymmetricKey {
 
     /**
      * Obtain stream cipher for encryption/decryption.
+     * @param pMode the cipher mode
      * @return the Stream Cipher
      * @throws JDataException on error
      */
-    public StreamCipher getStreamCipher() throws JDataException {
+    public StreamCipher getStreamCipher(final CipherMode pMode) throws JDataException {
         /* Create the Stream Cipher */
-        return new StreamCipher(this);
+        return new StreamCipher(this, pMode);
     }
 }

@@ -145,7 +145,7 @@ public class DataMac {
      * Obtain the Mac Specification.
      * @return the MacSpec
      */
-    protected MacSpec getMacSpec() {
+    public MacSpec getMacSpec() {
         return new MacSpec(this);
     }
 

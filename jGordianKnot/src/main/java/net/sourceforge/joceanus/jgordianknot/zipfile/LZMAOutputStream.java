@@ -56,6 +56,14 @@ public final class LZMAOutputStream
     private final EncoderThread theThread;
 
     /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theTarget;
+    }
+
+    /**
      * Constructor.
      * @param pOutput the output stream to wrap
      */

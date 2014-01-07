@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.DataMac;
+import net.sourceforge.joceanus.jgordianknot.MacSpec;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 
 /**
@@ -51,11 +52,48 @@ public class MacOutputStream
     private final DataMac theMac;
 
     /**
+     * The length of the data digested.
+     */
+    private long theDataLen = 0;
+
+    /**
+     * Access the Authentication Code of the data written.
+     * @return the Mac of data written
+     */
+    public byte[] getAuthCode() {
+        return theMac.finish();
+    }
+
+    /**
+     * Access the DataMac.
+     * @return the DataMac
+     */
+    protected DataMac getDataMac() {
+        return theMac;
+    }
+
+    /**
      * Access the Mac of the data written.
      * @return the Mac of data written
      */
-    public byte[] getMac() {
-        return theMac.finish();
+    protected MacSpec getMacSpec() {
+        return theMac.getMacSpec();
+    }
+
+    /**
+     * Access the data length.
+     * @return the data length
+     */
+    public long getDataLen() {
+        return theDataLen;
+    }
+
+    /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theStream;
     }
 
     /**
@@ -107,6 +145,9 @@ public class MacOutputStream
         /* Update the Mac */
         theMac.update(pBytes, pOffset, pLength);
 
+        /* Adjust the data length */
+        theDataLen += pLength;
+
         /* Write the bytes to the stream */
         theStream.write(pBytes, pOffset, pLength);
     }
@@ -126,6 +167,9 @@ public class MacOutputStream
 
         /* Update the data mac */
         theMac.update((byte) pByte);
+
+        /* Adjust the data length */
+        theDataLen++;
 
         /* Write the byte to the stream */
         theStream.write(pByte);

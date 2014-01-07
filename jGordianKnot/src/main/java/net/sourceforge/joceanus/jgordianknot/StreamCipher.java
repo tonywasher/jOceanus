@@ -95,9 +95,11 @@ public class StreamCipher {
     /**
      * Constructor.
      * @param pKey the symmetric key
+     * @param pMode the cipher mode
      * @throws JDataException on error
      */
-    public StreamCipher(final SymmetricKey pKey) throws JDataException {
+    public StreamCipher(final SymmetricKey pKey,
+                        final CipherMode pMode) throws JDataException {
         /* Record key */
         theSecretKey = pKey.getSecretKey();
         theBuffer = new byte[BUFSIZE];
@@ -107,7 +109,8 @@ public class StreamCipher {
             /* Create a new cipher */
             SecurityGenerator myGenerator = pKey.getGenerator();
             SymKeyType myKeyType = pKey.getKeyType();
-            theCipher = Cipher.getInstance(myKeyType.getDataCipher(CipherMode.CFB), myGenerator.getProviderName());
+            CipherMode myMode = myKeyType.adjustCipherMode(pMode);
+            theCipher = Cipher.getInstance(myKeyType.getDataCipher(myMode), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
             throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
         }

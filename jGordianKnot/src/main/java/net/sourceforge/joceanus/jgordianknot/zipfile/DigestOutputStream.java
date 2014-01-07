@@ -81,6 +81,14 @@ public class DigestOutputStream
     }
 
     /**
+     * Obtain the next stream.
+     * @return the stream
+     */
+    protected OutputStream getNextStream() {
+        return theStream;
+    }
+
+    /**
      * Construct the output stream.
      * @param pDigest the message digest
      * @param pStream the stream to write encrypted data to
