@@ -8,7 +8,7 @@ additionally download this library from the {{{http://www.bouncycastle.org/java.
   Encryption is performed using a set of keys called a <<CipherSet>> (one key for each supported algorithm). A subset of
 the keys is selected at random (using a SecureRandom instance) from the CipherSet, and the plaintext is encrypted 
 by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
-initialisation vector.
+initialisation vector. The cipher mode (CBC/OFB etc.) is changed for each turn.
 
   A CipherSet may be defined by a <<PasswordHash>>. This PasswordHash is build from a randomly selected set of three
 MessageDigest algorithms using an interleaved variant of PBKDF2. As the three hashes are calculated from the password,
@@ -16,8 +16,7 @@ intermediate results are periodically swapped between the hashes. Two of the res
 the external hash representation. The third hash is used to generate the key definitions for a CipherSet.
 
   Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to
-derive a CipherSet for a pair of AsymmetricKeys. RSA is not supported owing to issues with KeySize. It is in fact coded
-but disabled.
+derive a CipherSet for a pair of AsymmetricKeys. RSA keys are also available, but cannot be associated with a CipherSet.
 
   The following symmetric key algorithms are supported for 128/256 byte keys. You will only be able to use 256 byte keys
 if you are able to access the <<UNLIMITED>> strength JCE policy files.
@@ -36,6 +35,30 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * ThreeFish
 
+  The following modes are available for the above keys
+
+    * CBC
+ 
+    * OFB
+
+    * CFB
+
+    * SIC (CTR)
+
+    * GCM (for all symmetric algorithms except ThreeFish)
+
+    * EAX (for all symmetric algorithms except ThreeFish)
+
+  The following Stream Key algorithms are supported (bracketed versions used for 128 key bytes).
+
+    * ChaCha
+
+    * XSalsa20(Salsa20)
+
+    * HC256(HC128)
+
+    * VMPC 
+
   The following MessageDigest algorithms are supported.
 
     * SHA2
@@ -51,6 +74,18 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * SHA3
 
     * Skein
+
+  The following Mac Algorithms are supported
+
+    * HMac (for each supported message digest)
+
+    * GMac (for each symmetric algorithm except for ThreeFish)
+
+    * Poly1305 (for each symmetric algorithm except for ThreeFish)
+
+    * SkeinMAC
+
+    * VMPCMAC
 
   The following Elliptic Curves are supported (see BouncyCastle documentation for details)
 
