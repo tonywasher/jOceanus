@@ -29,6 +29,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -50,6 +52,11 @@ public class AboutBox
     private static final long serialVersionUID = -5518361782722672513L;
 
     /**
+     * Load error.
+     */
+    private static final String ERROR_LOAD = "Failed to load application properties";
+
+    /**
      * Border thickness.
      */
     private static final int BORDER_WIDTH = 3;
@@ -57,7 +64,7 @@ public class AboutBox
     /**
      * The properties.
      */
-    private static final Properties ABT_PROPERTIES = loadProperties();
+    private static Properties theProperties;
 
     /**
      * The OK button.
@@ -68,12 +75,16 @@ public class AboutBox
      * Constructor.
      * @param pParent the parent frame for the dialog
      * @param pTitle the title
+     * @param pLogger the logger
      */
     public AboutBox(final JFrame pParent,
-                    final String pTitle) {
+                    final String pTitle,
+                    final Logger pLogger) {
         /* Initialise the dialog (this calls dialogInit) */
         super(pParent, pTitle, true);
-        Properties myProperties = ABT_PROPERTIES;
+
+        /* Load properties */
+        Properties myProperties = loadProperties(pLogger);
 
         /* Set as undecorated */
         setUndecorated(true);
@@ -142,12 +153,17 @@ public class AboutBox
 
     /**
      * Load the project properties.
+     * @param pLogger the logger
      * @return the project properties.
      */
-    private static Properties loadProperties() {
-        InputStream in = null;
+    private Properties loadProperties(final Logger pLogger) {
+        /* Return previously cached value if available */
+        if (theProperties != null) {
+            return theProperties;
+        }
 
         /* Protect calls */
+        InputStream in = null;
         try {
             /* Create the properties */
             Properties myProperties = new Properties();
@@ -156,9 +172,13 @@ public class AboutBox
             in = AboutBox.class.getResourceAsStream("/META-INF/jMoneyWise.properties");
             myProperties.load(in);
 
+            /* Store properties */
+            theProperties = myProperties;
+
             /* Return the properties */
             return myProperties;
         } catch (IOException e) {
+            pLogger.log(Level.SEVERE, ERROR_LOAD, e);
             return new Properties();
         } finally {
             try {
@@ -166,7 +186,7 @@ public class AboutBox
                     in.close();
                 }
             } catch (IOException e) {
-                in = null;
+                pLogger.log(Level.SEVERE, ERROR_LOAD, e);
             }
         }
     }

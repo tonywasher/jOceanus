@@ -200,7 +200,7 @@ public class DataAnalyser
 
         /* Create a new analysis */
         theAnalysis = new Analysis(theData, pPreferenceMgr);
-        theManager = new AnalysisManager(theAnalysis);
+        theManager = new AnalysisManager(theAnalysis, pPreferenceMgr.getLogger());
 
         /* Access details from the analysis */
         theAccountBuckets = theAnalysis.getAccounts();

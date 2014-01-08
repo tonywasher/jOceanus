@@ -27,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
@@ -99,9 +101,9 @@ public class ReportTab
     private final ReportSelect theSelect;
 
     /**
-     * The Analysis Manager.
+     * The Logger.
      */
-    private transient AnalysisManager theAnalysisMgr = null;
+    private final transient Logger theLogger;
 
     /**
      * The Report entry.
@@ -136,6 +138,7 @@ public class ReportTab
     public ReportTab(final View pView) throws JDataException {
         /* Store the view */
         theView = pView;
+        theLogger = pView.getLogger();
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -147,7 +150,7 @@ public class ReportTab
         theSpotEntry.hideEntry();
 
         /* Create Report Manager */
-        theManager = new ReportManager();
+        theManager = new ReportManager(theLogger);
 
         /* Create the report builder */
         theBuilder = new ReportBuilder(theManager);
@@ -193,7 +196,7 @@ public class ReportTab
         thePrint.setDocument(myDoc);
 
         /* Create the Report Selection panel */
-        theSelect = new ReportSelect(theView);
+        theSelect = new ReportSelect();
         theSelect.addChangeListener(myListener);
         theSelect.addActionListener(myListener);
 
@@ -232,8 +235,7 @@ public class ReportTab
             theSpotEntry.hideEntry();
 
             /* Refresh the data */
-            theAnalysisMgr = theView.getAnalysisManager();
-            theSelect.refreshData(theAnalysisMgr);
+            theSelect.setRange(theView.getRange());
             buildReport();
 
             /* Create SavePoint */
@@ -260,7 +262,7 @@ public class ReportTab
             /* Print the report */
             thePrint.print();
         } catch (PrinterException e) {
-            e = null;
+            theLogger.log(Level.SEVERE, "Failed to print", e);
         }
     }
 

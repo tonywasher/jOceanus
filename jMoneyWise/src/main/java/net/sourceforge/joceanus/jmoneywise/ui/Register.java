@@ -800,44 +800,7 @@ public class Register
         @Override
         public boolean isCellEditable(final Event pEvent,
                                       final int pColIndex) {
-            /* Cannot edit if row is deleted or locked */
-            if (pEvent.isDeleted()
-                || pEvent.isLocked()) {
-                return false;
-            }
-
-            /* switch on column */
-            switch (pColIndex) {
-                case COLUMN_DATE:
-                    return true;
-                case COLUMN_CATEGORY:
-                    return pEvent.getDate() != null;
-                case COLUMN_DESC:
-                    return (pEvent.getDate() != null)
-                           && (pEvent.getCategory() != null);
-                default:
-                    if ((pEvent.getDate() == null)
-                        || (pEvent.getComments() == null)
-                        || (pEvent.getCategory() == null)) {
-                        return false;
-                    }
-                    switch (pColIndex) {
-                        case COLUMN_DEBUNITS:
-                            return (pEvent.getDebit() != null)
-                                   && (pEvent.getDebit().hasUnits());
-                        case COLUMN_CREDUNITS:
-                            return (pEvent.getCredit() != null)
-                                   && (pEvent.getCredit().hasUnits());
-                            // case COLUMN_YEARS:
-                            // return pEvent.isCategoryClass(EventCategoryClass.TaxableGain);
-                        case COLUMN_TAXCRED:
-                            return Event.needsTaxCredit(pEvent.getCategory(), pEvent.getDebit());
-                        case COLUMN_DILUTE:
-                            return Event.needsDilution(pEvent.getCategory());
-                        default:
-                            return true;
-                    }
-            }
+            return false;
         }
 
         @Override
@@ -1299,15 +1262,15 @@ public class Register
          */
         private void performNavigation(final String pCmd) {
             /* Access the action command */
-            String[] tokens = pCmd.split(":");
-            String myCmd = tokens[0];
-            String myName = null;
-            if (tokens.length > 1) {
-                myName = tokens[1];
-            }
+            // String[] tokens = pCmd.split(":");
+            // String myCmd = tokens[0];
+            // String myName = null;
+            // if (tokens.length > 1) {
+            // myName = tokens[1];
+            // }
 
             /* Access the correct account */
-            Account myAccount = theView.getData().getAccounts().findItemByName(myName);
+            // Account myAccount = theView.getData().getAccounts().findItemByName(myName);
 
             /* If this is an account view request */
             // if (myCmd.compareTo(POPUP_VIEW) == 0) {

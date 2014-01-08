@@ -712,6 +712,21 @@ public final class AccountBucket
         private final Analysis theAnalysis;
 
         /**
+         * The missing base values.
+         */
+        private final JMoney theMissingBase;
+
+        /**
+         * Obtain the missing base values.
+         * <p>
+         * These base values are missing because we discarded them for a dated analysis
+         * @return the missing base value
+         */
+        protected JMoney getMissingBase() {
+            return theMissingBase;
+        }
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -719,6 +734,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
+            theMissingBase = null;
         }
 
         /**
@@ -733,6 +749,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
+            theMissingBase = new JMoney();
 
             /* Loop through the buckets */
             Iterator<AccountBucket> myIterator = pBase.listIterator();
@@ -747,6 +764,13 @@ public final class AccountBucket
                     /* Record the rate and add to list */
                     myBucket.recordRate(pDate);
                     append(myBucket);
+
+                    /* Else for inactive buckets */
+                } else {
+                    /* Record any base value (since we are discarding it) */
+                    AccountValues myBaseValues = myBucket.getBaseValues();
+                    JMoney myValue = myBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+                    theMissingBase.addAmount(myValue);
                 }
             }
         }
@@ -763,6 +787,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
+            theMissingBase = null;
 
             /* Loop through the buckets */
             Iterator<AccountBucket> myIterator = pBase.listIterator();

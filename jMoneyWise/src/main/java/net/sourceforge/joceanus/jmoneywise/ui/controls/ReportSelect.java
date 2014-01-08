@@ -46,9 +46,7 @@ import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jdateday.JDatePeriod;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
  * Report selection panel.
@@ -90,11 +88,6 @@ public class ReportSelect
      * Text for Selection Title.
      */
     private static final String NLS_TITLE = NLS_BUNDLE.getString("SelectTitle");
-
-    /**
-     * Data view.
-     */
-    private final transient View theView;
 
     /**
      * Reports comboBox.
@@ -147,13 +140,9 @@ public class ReportSelect
 
     /**
      * Constructor.
-     * @param pView the data view
      */
-    public ReportSelect(final View pView) {
+    public ReportSelect() {
         ReportListener myListener = new ReportListener();
-
-        /* Store table and view details */
-        theView = pView;
 
         /* Create the range button */
         theReportButton = new JButton(ArrowIcon.DOWN);
@@ -167,9 +156,6 @@ public class ReportSelect
         /* Create initial state */
         theState = new ReportState();
         theState.setRange(theRangeSelect);
-
-        /* Initialise the data from the view */
-        refreshData(null);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
@@ -199,18 +185,6 @@ public class ReportSelect
         /* Add the listener for item changes */
         theReportButton.addActionListener(myListener);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
-    }
-
-    /**
-     * Refresh data.
-     * @param pAnalysis the analysis.
-     */
-    public final void refreshData(final AnalysisManager pAnalysis) {
-        /* Access the range */
-        JDateDayRange myRange = theView.getRange();
-
-        /* Set the range for the DateButton and RangeSelect */
-        setRange(myRange);
     }
 
     /**

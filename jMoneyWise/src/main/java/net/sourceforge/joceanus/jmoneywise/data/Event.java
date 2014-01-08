@@ -1103,7 +1103,13 @@ public class Event
                 JDateDay myDate = new JDateDay(myCurr.getDate());
 
                 /* Loop while we have an event to add */
-                while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
+                for (;;) {
+                    /* Access next event and break loop if no more */
+                    myEvent = myCurr.nextEvent(myList, pTaxYear, myDate);
+                    if (myEvent == null) {
+                        break;
+                    }
+
                     /* Add it to the extract */
                     myList.append(myEvent);
 

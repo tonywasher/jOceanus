@@ -568,13 +568,15 @@ public final class PayeeBucket
             myExpense.addAmount(myNatIns);
         }
 
-        /* Set new values */
+        /* If we have tax payments */
         if (myExpense != null) {
+            /* Set value */
             setValue(PayeeAttribute.EXPENSE, myExpense);
+
+            /* Register the event in the history */
+            theHistory.registerEvent(pEvent, theValues);
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**

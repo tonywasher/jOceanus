@@ -238,72 +238,19 @@ public class EventInfoSet
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
-                switch (myClass) {
-                    case TAXEDINCOME:
-                    case BENEFITINCOME:
-                        return JDataFieldRequired.MUSTEXIST;
-                    case GRANTINCOME:
-                        return JDataFieldRequired.CANEXIST;
-                    case INTEREST:
-                        return ((myDebit.isTaxFree()) || (myDebit.isGrossInterest()))
-                                ? JDataFieldRequired.NOTALLOWED
-                                : JDataFieldRequired.MUSTEXIST;
-                    case DIVIDEND:
-                        return (myDebit.isTaxFree())
-                                ? JDataFieldRequired.NOTALLOWED
-                                : JDataFieldRequired.MUSTEXIST;
-                    case TRANSFER:
-                        return myDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)
-                                ? JDataFieldRequired.MUSTEXIST
-                                : JDataFieldRequired.NOTALLOWED;
-                    default:
-                        return JDataFieldRequired.NOTALLOWED;
-                }
+                return isTaxCreditClassRequired(myDebit, myClass);
 
-                /* Handle debit units */
+                /* Handle debit units separately */
             case DEBITUNITS:
-                if (!myDebit.hasUnits()) {
-                    return JDataFieldRequired.NOTALLOWED;
-                }
-                switch (myClass) {
-                    case TRANSFER:
-                    case STOCKADJUST:
-                    case STOCKDEMERGER:
-                        return JDataFieldRequired.CANEXIST;
-                    default:
-                        return JDataFieldRequired.NOTALLOWED;
-                }
+                return isDebitUnitsClassRequired(myDebit, myClass);
 
+                /* Handle CreditUnits separately */
             case CREDITUNITS:
-                if (!myCredit.hasUnits()) {
-                    return JDataFieldRequired.NOTALLOWED;
-                }
-                switch (myClass) {
-                    case STOCKRIGHTSTAKEN:
-                    case STOCKDEMERGER:
-                    case STOCKTAKEOVER:
-                    case STOCKSPLIT:
-                        return JDataFieldRequired.MUSTEXIST;
-                    case TRANSFER:
-                    case INHERITED:
-                    case STOCKADJUST:
-                    case DIVIDEND:
-                        return JDataFieldRequired.CANEXIST;
-                    default:
-                        return JDataFieldRequired.NOTALLOWED;
-                }
+                return isCreditUnitsClassRequired(myCredit, myClass);
 
-                /* Dilution is only required for stock split/rights/deMerger */
+                /* Handle Dilution separately */
             case DILUTION:
-                switch (myClass) {
-                    case STOCKSPLIT:
-                    case STOCKRIGHTSWAIVED:
-                    case STOCKRIGHTSTAKEN:
-                    case STOCKDEMERGER:
-                        return JDataFieldRequired.MUSTEXIST;
-                    default:
-                        return JDataFieldRequired.NOTALLOWED;
-                }
+                return isDilutionClassRequired(myClass);
 
                 /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
@@ -311,19 +258,131 @@ public class EventInfoSet
                         ? JDataFieldRequired.MUSTEXIST
                         : JDataFieldRequired.NOTALLOWED;
 
-                /* Qualify Years is possible only for StockTakeOver */
+                /* Handle ThirdParty separately */
             case THIRDPARTY:
-                switch (myClass) {
-                    case STOCKTAKEOVER:
-                        return myEvent.getAmount().isNonZero()
-                                ? JDataFieldRequired.MUSTEXIST
-                                : JDataFieldRequired.NOTALLOWED;
-                    default:
-                        return JDataFieldRequired.NOTALLOWED;
-                }
+                return isThirdPartyClassRequired(myEvent, myClass);
 
             case PENSION:
             case CREDITAMOUNT:
+            default:
+                return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a TaxCredit infoSet class is required.
+     * @param pDebit the debit account
+     * @param pClass the category class
+     * @return the status
+     */
+    private JDataFieldRequired isTaxCreditClassRequired(final Account pDebit,
+                                                        final EventCategoryClass pClass) {
+        /* Switch on class */
+        switch (pClass) {
+            case TAXEDINCOME:
+            case BENEFITINCOME:
+                return JDataFieldRequired.MUSTEXIST;
+            case GRANTINCOME:
+                return JDataFieldRequired.CANEXIST;
+            case INTEREST:
+                return ((pDebit.isTaxFree()) || (pDebit.isGrossInterest()))
+                        ? JDataFieldRequired.NOTALLOWED
+                        : JDataFieldRequired.MUSTEXIST;
+            case DIVIDEND:
+                return (pDebit.isTaxFree())
+                        ? JDataFieldRequired.NOTALLOWED
+                        : JDataFieldRequired.MUSTEXIST;
+            case TRANSFER:
+                return pDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
+            default:
+                return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a DebitUnits infoSet class is required.
+     * @param pDebit the debit account
+     * @param pClass the category class
+     * @return the status
+     */
+    private JDataFieldRequired isDebitUnitsClassRequired(final Account pDebit,
+                                                         final EventCategoryClass pClass) {
+        /* Debit Account must have units */
+        if (!pDebit.hasUnits()) {
+            return JDataFieldRequired.NOTALLOWED;
+        }
+        switch (pClass) {
+            case TRANSFER:
+            case STOCKADJUST:
+            case STOCKDEMERGER:
+                return JDataFieldRequired.CANEXIST;
+            default:
+                return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a CreditUnits infoSet class is required.
+     * @param pCredit the credit account
+     * @param pClass the category class
+     * @return the status
+     */
+    private JDataFieldRequired isCreditUnitsClassRequired(final Account pCredit,
+                                                          final EventCategoryClass pClass) {
+        /* Credit Account must have units */
+        if (!pCredit.hasUnits()) {
+            return JDataFieldRequired.NOTALLOWED;
+        }
+        switch (pClass) {
+            case STOCKRIGHTSTAKEN:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
+            case STOCKSPLIT:
+                return JDataFieldRequired.MUSTEXIST;
+            case TRANSFER:
+            case INHERITED:
+            case STOCKADJUST:
+            case DIVIDEND:
+                return JDataFieldRequired.CANEXIST;
+            default:
+                return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a Dilution infoSet class is required.
+     * @param pClass the category class
+     * @return the status
+     */
+    private JDataFieldRequired isDilutionClassRequired(final EventCategoryClass pClass) {
+        /* Dilution is only required for stock split/rights/deMerger */
+        switch (pClass) {
+            case STOCKSPLIT:
+            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSTAKEN:
+            case STOCKDEMERGER:
+                return JDataFieldRequired.MUSTEXIST;
+            default:
+                return JDataFieldRequired.NOTALLOWED;
+        }
+    }
+
+    /**
+     * Determine if a ThirdParty infoSet class is required.
+     * @param pEvent the event
+     * @param pClass the category class
+     * @return the status
+     */
+    private JDataFieldRequired isThirdPartyClassRequired(final Event pEvent,
+                                                         final EventCategoryClass pClass) {
+        /* ThirdParty is possible only for StockTakeOver */
+        switch (pClass) {
+            case STOCKTAKEOVER:
+                return pEvent.getAmount().isNonZero()
+                        ? JDataFieldRequired.MUSTEXIST
+                        : JDataFieldRequired.NOTALLOWED;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

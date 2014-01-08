@@ -247,6 +247,7 @@ public class QIFEventCategory
         @Override
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
+            /* No data */
         }
     }
 
@@ -269,6 +270,7 @@ public class QIFEventCategory
         @Override
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
+            /* No data */
         }
     }
 
@@ -291,6 +293,7 @@ public class QIFEventCategory
         @Override
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
+            /* No data */
         }
     }
 }

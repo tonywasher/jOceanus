@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.xml.transform.OutputKeys;
@@ -81,6 +83,11 @@ public class ReportManager
     private BasicReport theReport = null;
 
     /**
+     * The Logger.
+     */
+    private final Logger theLogger;
+
+    /**
      * The Current text.
      */
     private String theText = null;
@@ -100,9 +107,13 @@ public class ReportManager
 
     /**
      * Constructor.
+     * @param pLogger the logger
      * @throws JDataException on error
      */
-    public ReportManager() throws JDataException {
+    public ReportManager(final Logger pLogger) throws JDataException {
+        /* Store parameters */
+        theLogger = pLogger;
+
         /* Create the builder */
         theBuilder = new HTMLBuilder();
 
@@ -188,6 +199,7 @@ public class ReportManager
                 return;
             }
         } catch (JDataException e) {
+            theLogger.log(Level.SEVERE, "Failed to process reference", e);
             myText = null;
         }
 

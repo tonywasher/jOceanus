@@ -238,7 +238,7 @@ public class PayeeAnalysisSelect
                 /* Create a new JMenuItem and add it to the popUp */
                 PayeeAction myAction = new PayeeAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                myPopUp.addMenuItem(myItem);
 
                 /* If this is the active payee */
                 if (myPayee.equals(myBucket)) {

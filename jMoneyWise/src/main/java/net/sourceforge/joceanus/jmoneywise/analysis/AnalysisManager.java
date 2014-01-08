@@ -22,9 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
@@ -61,6 +65,11 @@ public class AnalysisManager
     private final transient JDateDay theFirstDate;
 
     /**
+     * The logger.
+     */
+    private final transient Logger theLogger;
+
+    /**
      * Is the analysis manager idle?
      * @return true/false
      */
@@ -79,10 +88,13 @@ public class AnalysisManager
     /**
      * Constructor.
      * @param pAnalysis the new analysis
+     * @param pLogger the logger
      */
-    protected AnalysisManager(final Analysis pAnalysis) {
-        /* Store the analysis */
+    protected AnalysisManager(final Analysis pAnalysis,
+                              final Logger pLogger) {
+        /* Store the parameters */
         theAnalysis = pAnalysis;
+        theLogger = pLogger;
 
         /* Store the first date */
         FinanceData myData = theAnalysis.getData();
@@ -106,6 +118,9 @@ public class AnalysisManager
             myAnalysis = new Analysis(theAnalysis, pDate);
             produceTotals(myAnalysis);
 
+            /* Check the totals */
+            checkTotals(myAnalysis);
+
             /* Put it into the map */
             put(myRange, myAnalysis);
         }
@@ -126,6 +141,9 @@ public class AnalysisManager
             /* Create the new event analysis */
             myAnalysis = new Analysis(theAnalysis, pRange);
             produceTotals(myAnalysis);
+
+            /* Check the totals */
+            checkTotals(myAnalysis);
 
             /* Put it into the map */
             put(pRange, myAnalysis);
@@ -172,5 +190,47 @@ public class AnalysisManager
 
         /* Analyse the TaxBasis */
         myTaxBasis.produceTotals();
+    }
+
+    /**
+     * Check totals for an analysis.
+     * @param pAnalysis the analysis to check
+     */
+    private void checkTotals(final Analysis pAnalysis) {
+        /* Obtain Totals bucket */
+        AccountBucketList myAccount = pAnalysis.getAccounts();
+        AccountCategoryBucket myActCat = pAnalysis.getAccountCategories().getTotals();
+        PayeeBucket myPayee = pAnalysis.getPayees().getTotals();
+        EventCategoryBucket myEvent = pAnalysis.getEventCategories().getTotals();
+        TaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();
+
+        /* Handle null data */
+        if (myActCat == null) {
+            return;
+        }
+
+        /* Access totals */
+        JMoney myActTotal = myActCat.getValues().getMoneyValue(AccountAttribute.DELTA);
+        JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.DELTA);
+        JMoney myEvtTotal = myEvent.getValues().getMoneyValue(EventAttribute.DELTA);
+        JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
+
+        /* Adjust for Missing Base Values */
+        JMoney myMissingBase = myAccount.getMissingBase();
+        if (myMissingBase != null) {
+            myActTotal = new JMoney(myActTotal);
+            myActTotal.subtractAmount(myMissingBase);
+        }
+
+        /* Check identities */
+        if (!myActTotal.equals(myPayTotal)) {
+            theLogger.log(Level.SEVERE, "Payee total mismatch");
+        }
+        if (!myActTotal.equals(myEvtTotal)) {
+            theLogger.log(Level.SEVERE, "EventCategory total mismatch");
+        }
+        if (!myActTotal.equals(myTaxTotal)) {
+            theLogger.log(Level.SEVERE, "TaxBasis total mismatch");
+        }
     }
 }

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -288,7 +289,7 @@ public class FinanceSheet
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myStream = null;
+                pTask.getLogger().log(Level.SEVERE, "Failed to close stream", ex);
             }
         }
     }

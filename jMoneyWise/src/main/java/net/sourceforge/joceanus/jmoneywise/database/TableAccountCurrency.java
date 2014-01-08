@@ -73,6 +73,7 @@ public class TableAccountCurrency
                                final Integer pOrder,
                                final byte[] pType,
                                final byte[] pDesc) throws JDataException {
+        /* Note needed */
     }
 
     @Override

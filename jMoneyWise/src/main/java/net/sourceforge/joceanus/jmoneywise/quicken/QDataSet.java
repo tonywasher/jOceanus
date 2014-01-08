@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
@@ -47,6 +49,16 @@ public class QDataSet {
      * Quicken Date Format.
      */
     private static final String QIF_DATEFORMAT = "dd/MM/yy";
+
+    /**
+     * Windows CharacterSet.
+     */
+    private static final String NAME_CHARSET = "Windows-1252";
+
+    /**
+     * Write failure error text.
+     */
+    private static final String ERROR_WRITE = "Failed to write file";
 
     /**
      * Data Formatter.
@@ -105,16 +117,17 @@ public class QDataSet {
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
         } else {
-            return outputAccounts();
+            return outputAccounts(pStatus.getLogger());
         }
     }
 
     /**
      * Output all accounts.
+     * @param pLogger the logger
      * @return success true/false
      * @throws JDataException on error
      */
-    private boolean outputAccounts() throws JDataException {
+    private boolean outputAccounts(final Logger pLogger) throws JDataException {
         boolean bContinue = true;
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAnalysis.getAccountIterator();
@@ -123,7 +136,7 @@ public class QDataSet {
             QAccount myAccount = myIterator.next();
 
             /* Output the file */
-            bContinue = outputIndividualFile(myAccount);
+            bContinue = outputIndividualFile(pLogger, myAccount);
         }
 
         /* Return to the caller */
@@ -153,7 +166,7 @@ public class QDataSet {
             /* Create the Stream writer */
             myOutput = new FileOutputStream(myQIFFile);
             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer);
+            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET);
 
             /* Output the data */
             boolean bSuccess = theAnalysis.outputData(pStatus, myWriter);
@@ -181,18 +194,20 @@ public class QDataSet {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myOutput = null;
+                pStatus.getLogger().log(Level.SEVERE, ERROR_WRITE, ex);
             }
         }
     }
 
     /**
      * Output data to individual file.
+     * @param pLogger the logger
      * @param pAccount the account to dump
      * @return success true/false
      * @throws JDataException on error
      */
-    private boolean outputIndividualFile(final QAccount pAccount) throws JDataException {
+    private boolean outputIndividualFile(final Logger pLogger,
+                                         final QAccount pAccount) throws JDataException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 
@@ -210,7 +225,7 @@ public class QDataSet {
             /* Create the Stream writer */
             myOutput = new FileOutputStream(myQIFFile);
             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer);
+            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET);
 
             /* Output the data */
             pAccount.outputEvents(myWriter, theAnalysis.getStartDate());
@@ -238,7 +253,7 @@ public class QDataSet {
 
                 /* Ignore errors */
             } catch (IOException ex) {
-                myOutput = null;
+                pLogger.log(Level.SEVERE, ERROR_WRITE, ex);
             }
         }
     }

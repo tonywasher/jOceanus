@@ -74,7 +74,7 @@ public abstract class ZipStreamSpec {
 
     /**
      * Constructor.
-     * @param pStream the DigestOutputStream
+     * @param pType the StreamType
      */
     private ZipStreamSpec(final ZipStreamType pType) {
         theType = pType;
@@ -82,7 +82,8 @@ public abstract class ZipStreamSpec {
 
     /**
      * Obtain Encoded stream type.
-     * @param pStream the DigestOutputStream
+     * @param pValue the value to encode
+     * @return the encoded value
      */
     protected long getEncoded(final long pValue) {
         return (pValue << DataConverter.NYBBLE_SHIFT)
@@ -317,7 +318,7 @@ public abstract class ZipStreamSpec {
     /**
      * Zip symKeySpec.
      */
-    protected static class ZipSymKeySpec
+    protected static final class ZipSymKeySpec
             extends ZipStreamSpec {
         /**
          * SymKeyType.
@@ -419,7 +420,7 @@ public abstract class ZipStreamSpec {
     /**
      * Zip streamKeySpec.
      */
-    protected static class ZipStreamKeySpec
+    protected static final class ZipStreamKeySpec
             extends ZipStreamSpec {
         /**
          * StreamKeyType.
@@ -505,7 +506,7 @@ public abstract class ZipStreamSpec {
     /**
      * Zip digestSpec.
      */
-    protected static class ZipDigestSpec
+    protected static final class ZipDigestSpec
             extends ZipStreamSpec {
         /**
          * DigestType.
@@ -578,7 +579,7 @@ public abstract class ZipStreamSpec {
     /**
      * Zip macSpec.
      */
-    protected static class ZipMacSpec
+    protected static final class ZipMacSpec
             extends ZipStreamSpec {
         /**
          * MacSpec.
@@ -664,7 +665,7 @@ public abstract class ZipStreamSpec {
     /**
      * Zip LZMASpec.
      */
-    protected static class ZipLZMASpec
+    protected static final class ZipLZMASpec
             extends ZipStreamSpec {
         /**
          * Constructor.

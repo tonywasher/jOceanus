@@ -906,7 +906,7 @@ public class JDateDayRangeSelect
             /* Limit the buttons */
             theStartButton.setEarliestDateDay(theFirstDate);
             theStartButton.setLatestDateDay(theFinalDate);
-            theEndButton.setEarliestDateDay(theStartDate);
+            theEndButton.setEarliestDateDay(theFirstDate);
             theEndButton.setLatestDateDay(theFinalDate);
 
             /* Create the range */

@@ -535,7 +535,7 @@ public class MainTab
     @Override
     protected void displayAbout() {
         /* Create a new AboutBox */
-        AboutBox myAbout = new AboutBox(getFrame(), getFrameName());
+        AboutBox myAbout = new AboutBox(getFrame(), getFrameName(), theLogger);
 
         /* Show the box */
         myAbout.showDialog();
