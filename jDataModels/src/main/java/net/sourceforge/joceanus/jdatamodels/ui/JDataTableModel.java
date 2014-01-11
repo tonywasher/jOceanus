@@ -403,7 +403,8 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             /* If this is a data row */
             if (iRow >= 0) {
                 /* Access the row */
-                DataItem myRow = theTable.getList().get(iRow);
+                JDataTableModel<?> myModel = theTable.getTableModel();
+                DataItem myRow = myModel.getItemAtIndex(iRow);
                 JDataTableColumnModel myColModel = (JDataTableColumnModel) theTable.getColumnModel();
                 JDataField[] iFields = myColModel.getColumnFields();
 

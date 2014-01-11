@@ -29,6 +29,7 @@ package net.sourceforge.joceanus.jlayoutmanager;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
@@ -38,9 +39,12 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.MenuElement;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuKeyListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -77,7 +81,7 @@ public class JScrollPopupMenu
     /**
      * Default scroll delay when hovering over icon.
      */
-    protected static final int DEFAULT_SCROLLDELAY = 125;
+    protected static final int DEFAULT_SCROLLDELAY = 150;
 
     /**
      * List of menu items.
@@ -104,12 +108,12 @@ public class JScrollPopupMenu
     /**
      * The ScrollUp Item.
      */
-    private final ScrollItem theUpItem = new ScrollItem(ArrowIcon.UP, -1);
+    private final ScrollItem theUpItem;
 
     /**
      * The ScrollDown Item.
      */
-    private final ScrollItem theDownItem = new ScrollItem(ArrowIcon.DOWN, 1);
+    private final ScrollItem theDownItem;
 
     /**
      * Obtain the maximum # of items in the displayed PopUp window.
@@ -161,6 +165,10 @@ public class JScrollPopupMenu
         theMaxDisplayItems = pMaxDisplayItems;
         theScrollDelay = pScrollDelay;
 
+        /* Create the scroll items */
+        theUpItem = new ScrollItem(ArrowIcon.UP, -1);
+        theDownItem = new ScrollItem(ArrowIcon.DOWN, 1);
+
         /* Allocate the list */
         theMenuItems = new ArrayList<JMenuItem>();
 
@@ -168,6 +176,15 @@ public class JScrollPopupMenu
         ScrollListener myListener = new ScrollListener();
         addMouseWheelListener(myListener);
         addPopupMenuListener(myListener);
+        addMenuKeyListener(new ScrollKeyListener());
+
+        /* Access the input map */
+        // InputMap myMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        // ActionMap myActions = getActionMap();
+        // myActions.put("upAction", new ArrowAction(theUpItem, (Action) myMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0))));
+        // myActions.put("downAction", new ArrowAction(theUpItem, (Action) myMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0))));
+        // myMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "upAction");
+        // myMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "downAction");
     }
 
     /**
@@ -402,12 +419,10 @@ public class JScrollPopupMenu
                     myMaxIndex = myCount;
                 }
 
-                /* Determine whether the arrows are enabled */
-                theUpItem.setEnabled(theFirstIndex > 0);
-                theDownItem.setEnabled(myMaxIndex < myCount);
-
                 /* Add the top level item */
-                super.add(theUpItem);
+                if (theFirstIndex > 0) {
+                    super.add(theUpItem);
+                }
 
                 /* Loop through the items to add */
                 for (int i = theFirstIndex; i < myMaxIndex; i++) {
@@ -416,7 +431,9 @@ public class JScrollPopupMenu
                 }
 
                 /* Add the down item */
-                super.add(theDownItem);
+                if (myMaxIndex < myCount) {
+                    super.add(theDownItem);
+                }
             }
 
             /* Re-pack */
@@ -452,6 +469,51 @@ public class JScrollPopupMenu
         @Override
         public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
             /* Ignore */
+        }
+    }
+
+    /**
+     * Listener class.
+     */
+    private class ScrollKeyListener
+            implements MenuKeyListener {
+        @Override
+        public void menuKeyPressed(final MenuKeyEvent pEvent) {
+            /* Switch on KeyCode */
+            switch (pEvent.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    checkItem(pEvent, theUpItem);
+                    break;
+                case KeyEvent.VK_DOWN:
+                    checkItem(pEvent, theDownItem);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Check whether to ignore a keyStroke
+         * @param pEvent the keyEvent
+         * @param pItem the MenuItem to check
+         */
+        private void checkItem(final MenuKeyEvent pEvent,
+                               final JMenuItem pItem) {
+            MenuElement[] myElements = pEvent.getMenuSelectionManager().getSelectedPath();
+            MenuElement myActual = myElements[myElements.length - 1];
+            if (myActual.equals(pItem)) {
+                pEvent.consume();
+            }
+        }
+
+        @Override
+        public void menuKeyReleased(final MenuKeyEvent e) {
+            /* No action */
+        }
+
+        @Override
+        public void menuKeyTyped(final MenuKeyEvent e) {
+            /* No action */
         }
     }
 

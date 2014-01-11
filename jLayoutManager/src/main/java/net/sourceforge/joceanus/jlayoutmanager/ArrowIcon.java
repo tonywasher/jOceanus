@@ -51,7 +51,17 @@ public enum ArrowIcon implements Icon {
     /**
      * Right Arrow.
      */
-    RIGHT(new Point(1, 1), new Point(1, 9), new Point(9, 5));
+    RIGHT(new Point(1, 1), new Point(1, 9), new Point(9, 5)),
+
+    /**
+     * DoubleLeft Arrow.
+     */
+    DOUBLELEFT(new Point(1, 5), new Point(5, 1), new Point(5, 5), new Point(9, 1), new Point(9, 9), new Point(5, 5), new Point(5, 9)),
+
+    /**
+     * DoubleRight Arrow.
+     */
+    DOUBLERIGHT(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(5, 9), new Point(9, 5), new Point(5, 1), new Point(5, 5));
 
     /**
      * The size of the icon.

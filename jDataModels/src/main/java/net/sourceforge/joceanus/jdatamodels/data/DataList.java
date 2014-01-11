@@ -473,7 +473,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         /* If this is a Clone list */
         if (isClone) {
             /* Adjust the links */
-            resolveDataSetLinks();
+            pList.resolveDataSetLinks();
         }
     }
 

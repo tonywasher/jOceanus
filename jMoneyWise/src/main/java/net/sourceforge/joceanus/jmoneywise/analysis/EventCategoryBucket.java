@@ -1085,17 +1085,13 @@ public final class EventCategoryBucket
                         theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, pGains);
                     }
                 } else {
-                    /* Obtain normalised value */
-                    JMoney myGains = new JMoney(pGains);
-                    myGains.negate();
-
                     /* Adjust category */
                     if (mySecurity.isTaxFree()) {
                         theTaxFreeGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, myGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, pGains);
                     } else {
                         theCapitalGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, myGains);
+                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, pGains);
                     }
                 }
             }

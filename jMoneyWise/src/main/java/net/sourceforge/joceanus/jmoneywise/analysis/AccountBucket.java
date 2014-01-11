@@ -712,18 +712,18 @@ public final class AccountBucket
         private final Analysis theAnalysis;
 
         /**
-         * The missing base values.
+         * The hidden base total.
          */
-        private final JMoney theMissingBase;
+        private final JMoney theHiddenBaseTotal;
 
         /**
-         * Obtain the missing base values.
+         * Obtain the hidden base totals.
          * <p>
-         * These base values are missing because we discarded them for a dated analysis
-         * @return the missing base value
+         * These base totals are missing because we discarded them for a dated analysis. However they are needed to ensure that totals balance.
+         * @return the hidden base totals
          */
-        protected JMoney getMissingBase() {
-            return theMissingBase;
+        protected JMoney getHiddenBaseTotal() {
+            return theHiddenBaseTotal;
         }
 
         /**
@@ -734,7 +734,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
-            theMissingBase = null;
+            theHiddenBaseTotal = null;
         }
 
         /**
@@ -749,7 +749,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
-            theMissingBase = new JMoney();
+            theHiddenBaseTotal = new JMoney();
 
             /* Loop through the buckets */
             Iterator<AccountBucket> myIterator = pBase.listIterator();
@@ -770,7 +770,7 @@ public final class AccountBucket
                     /* Record any base value (since we are discarding it) */
                     AccountValues myBaseValues = myBucket.getBaseValues();
                     JMoney myValue = myBaseValues.getMoneyValue(AccountAttribute.VALUATION);
-                    theMissingBase.addAmount(myValue);
+                    theHiddenBaseTotal.addAmount(myValue);
                 }
             }
         }
@@ -787,7 +787,7 @@ public final class AccountBucket
             /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
-            theMissingBase = null;
+            theHiddenBaseTotal = null;
 
             /* Loop through the buckets */
             Iterator<AccountBucket> myIterator = pBase.listIterator();

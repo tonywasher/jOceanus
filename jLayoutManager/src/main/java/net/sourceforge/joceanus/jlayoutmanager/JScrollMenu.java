@@ -15,7 +15,7 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * Code for this module is based on the MenuScroller.java code that is available at
- * http://svn.apache.org/repos/asf/jmeter/trunk/src/jorphan/org/apache/jorphan/gui/MenuScroller.java
+ * 
  * under the Apache 2.0 license
  * ------------------------------------------------------------
  * SubVersion Revision Information:
@@ -35,7 +35,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * Scroll-able extension to JPopUpMenu.
+ * Scroll-able extension to JMenu.
  */
 public class JScrollMenu
         extends JMenu

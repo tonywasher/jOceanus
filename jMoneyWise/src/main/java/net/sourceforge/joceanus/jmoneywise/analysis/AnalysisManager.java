@@ -215,11 +215,11 @@ public class AnalysisManager
         JMoney myEvtTotal = myEvent.getValues().getMoneyValue(EventAttribute.DELTA);
         JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
-        /* Adjust for Missing Base Values */
-        JMoney myMissingBase = myAccount.getMissingBase();
-        if (myMissingBase != null) {
+        /* Adjust for Hidden Base Totals */
+        JMoney myHiddenBase = myAccount.getHiddenBaseTotal();
+        if (myHiddenBase != null) {
             myActTotal = new JMoney(myActTotal);
-            myActTotal.subtractAmount(myMissingBase);
+            myActTotal.subtractAmount(myHiddenBase);
         }
 
         /* Check identities */
