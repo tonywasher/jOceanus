@@ -641,7 +641,7 @@ public final class EventCategory
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         EventCategoryTypeList myTypes = myData.getEventCategoryTypes();
-        EventCategoryList myList = myData.getEventCategories();
+        EventCategoryList myList = getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Category type */

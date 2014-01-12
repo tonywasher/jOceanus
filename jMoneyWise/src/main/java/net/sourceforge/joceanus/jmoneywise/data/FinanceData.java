@@ -771,32 +771,32 @@ public class FinanceData
         myExtract.deriveCloneSet(this);
 
         /* Build the static extract */
-        myExtract.theActCatTypes = theActCatTypes.cloneList(this);
-        myExtract.theEvtCatTypes = theEvtCatTypes.cloneList(this);
-        myExtract.theTaxBases = theTaxBases.cloneList(this);
-        myExtract.theTaxCategories = theTaxCategories.cloneList(this);
-        myExtract.theCurrencies = theCurrencies.cloneList(this);
-        myExtract.theTaxRegimes = theTaxRegimes.cloneList(this);
-        myExtract.theFrequencys = theFrequencys.cloneList(this);
-        myExtract.theTaxInfoTypes = theTaxInfoTypes.cloneList(this);
-        myExtract.theActInfoTypes = theActInfoTypes.cloneList(this);
-        myExtract.theEventInfoTypes = theEventInfoTypes.cloneList(this);
+        myExtract.theActCatTypes = theActCatTypes.cloneList(myExtract);
+        myExtract.theEvtCatTypes = theEvtCatTypes.cloneList(myExtract);
+        myExtract.theTaxBases = theTaxBases.cloneList(myExtract);
+        myExtract.theTaxCategories = theTaxCategories.cloneList(myExtract);
+        myExtract.theCurrencies = theCurrencies.cloneList(myExtract);
+        myExtract.theTaxRegimes = theTaxRegimes.cloneList(myExtract);
+        myExtract.theFrequencys = theFrequencys.cloneList(myExtract);
+        myExtract.theTaxInfoTypes = theTaxInfoTypes.cloneList(myExtract);
+        myExtract.theActInfoTypes = theActInfoTypes.cloneList(myExtract);
+        myExtract.theEventInfoTypes = theEventInfoTypes.cloneList(myExtract);
 
         /* Build the data extract */
-        myExtract.theEventClasses = theEventClasses.cloneList(this);
-        myExtract.theActCategories = theActCategories.cloneList(this);
-        myExtract.theEvtCategories = theEvtCategories.cloneList(this);
-        myExtract.theTaxYears = theTaxYears.cloneList(this);
-        myExtract.theTaxInfo = theTaxInfo.cloneList(this);
-        myExtract.theExchangeRates = theExchangeRates.cloneList(this);
-        myExtract.theAccounts = theAccounts.cloneList(this);
-        myExtract.theRates = theRates.cloneList(this);
-        myExtract.thePrices = thePrices.cloneList(this);
-        myExtract.thePatterns = thePatterns.cloneList(this);
-        myExtract.theAccountInfo = theAccountInfo.cloneList(this);
-        myExtract.theEvents = theEvents.cloneList(this);
-        myExtract.theEventInfo = theEventInfo.cloneList(this);
-        myExtract.theEventClassLinks = theEventClassLinks.cloneList(this);
+        myExtract.theEventClasses = theEventClasses.cloneList(myExtract);
+        myExtract.theActCategories = theActCategories.cloneList(myExtract);
+        myExtract.theEvtCategories = theEvtCategories.cloneList(myExtract);
+        myExtract.theTaxYears = theTaxYears.cloneList(myExtract);
+        myExtract.theTaxInfo = theTaxInfo.cloneList(myExtract);
+        myExtract.theExchangeRates = theExchangeRates.cloneList(myExtract);
+        myExtract.theAccounts = theAccounts.cloneList(myExtract);
+        myExtract.theRates = theRates.cloneList(myExtract);
+        myExtract.thePrices = thePrices.cloneList(myExtract);
+        myExtract.thePatterns = thePatterns.cloneList(myExtract);
+        myExtract.theAccountInfo = theAccountInfo.cloneList(myExtract);
+        myExtract.theEvents = theEvents.cloneList(myExtract);
+        myExtract.theEventInfo = theEventInfo.cloneList(myExtract);
+        myExtract.theEventClassLinks = theEventClassLinks.cloneList(myExtract);
 
         /* Declare the lists */
         myExtract.declareLists();

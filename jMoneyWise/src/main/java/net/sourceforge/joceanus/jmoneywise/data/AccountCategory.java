@@ -605,7 +605,7 @@ public class AccountCategory
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-        AccountCategoryList myList = myData.getAccountCategories();
+        AccountCategoryList myList = getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Category type */
