@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class SheetEventClassLink
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventClassLink(final FinanceReader pReader) {
+    protected SheetEventClassLink(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_EVENTCLSLINKS);
 
@@ -70,7 +70,7 @@ public class SheetEventClassLink
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventClassLink(final FinanceWriter pWriter) {
+    protected SheetEventClassLink(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_EVENTCLSLINKS);
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
@@ -43,7 +43,7 @@ public class SheetTaxYearInfo
     /**
      * The DataSet.
      */
-    private FinanceData theData = null;
+    private MoneyWiseData theData = null;
 
     /**
      * TaxYear data list.
@@ -59,7 +59,7 @@ public class SheetTaxYearInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxYearInfo(final FinanceReader pReader) {
+    protected SheetTaxYearInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TAXYEARINFO);
 
@@ -74,7 +74,7 @@ public class SheetTaxYearInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxYearInfo(final FinanceWriter pWriter) {
+    protected SheetTaxYearInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TAXYEARINFO);
 

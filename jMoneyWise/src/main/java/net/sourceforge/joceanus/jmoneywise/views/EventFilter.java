@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventGroup;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
@@ -128,7 +128,7 @@ public class EventFilter
     /**
      * The DataSet.
      */
-    private FinanceData theDataSet;
+    private MoneyWiseData theDataSet;
 
     /**
      * Filtered Payee list.
@@ -231,7 +231,7 @@ public class EventFilter
      * Constructor.
      * @param pData the new dataSet
      */
-    public EventFilter(final FinanceData pData) {
+    public EventFilter(final MoneyWiseData pData) {
         /* Record the dataSet */
         theDataSet = pData;
 
@@ -246,7 +246,7 @@ public class EventFilter
      * Migrate filter to a new dataSet.
      * @param pData the new dataSet
      */
-    public void setDataSet(final FinanceData pData) {
+    public void setDataSet(final MoneyWiseData pData) {
         /* Record the dataSet */
         theDataSet = pData;
 

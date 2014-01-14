@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * SheetDataInfo extension for AccountInfo.
@@ -54,12 +54,12 @@ public class SheetAccountInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountInfo(final FinanceReader pReader) {
+    protected SheetAccountInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTINFO);
 
         /* Access the InfoType list */
-        FinanceData myData = pReader.getData();
+        MoneyWiseData myData = pReader.getData();
         theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();
         setDataList(theList);
@@ -69,12 +69,12 @@ public class SheetAccountInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountInfo(final FinanceWriter pWriter) {
+    protected SheetAccountInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTINFO);
 
         /* Access the InfoType list */
-        FinanceData myData = pWriter.getData();
+        MoneyWiseData myData = pWriter.getData();
         theList = myData.getAccountInfo();
         setDataList(theList);
     }

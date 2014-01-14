@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,7 +227,7 @@ public class Pattern
         setDate(myDate);
 
         /* Default to monthly frequency */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
         setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
     }
@@ -302,7 +302,7 @@ public class Pattern
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
         PatternList myPatterns = getList();
         ValueSet myValues = getValueSet();
@@ -373,7 +373,7 @@ public class Pattern
         int iAdjust;
 
         /* Access the Tax Year list */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
         /* If this is the first request for an event */
@@ -541,8 +541,8 @@ public class Pattern
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -567,7 +567,7 @@ public class Pattern
          * Construct an empty CORE pattern list.
          * @param pData the DataSet for the list
          */
-        protected PatternList(final FinanceData pData) {
+        protected PatternList(final MoneyWiseData pData) {
             super(pData, Pattern.class);
         }
 

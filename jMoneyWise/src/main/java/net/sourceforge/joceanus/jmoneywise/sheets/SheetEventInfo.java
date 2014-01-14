@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * SheetDataInfo extension for EventInfo.
@@ -54,12 +54,12 @@ public class SheetEventInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventInfo(final FinanceReader pReader) {
+    protected SheetEventInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_EVENTINFO);
 
         /* Access the InfoType list */
-        FinanceData myData = pReader.getData();
+        MoneyWiseData myData = pReader.getData();
         theEvents = myData.getEvents();
         theList = myData.getEventInfo();
         setDataList(theList);
@@ -69,7 +69,7 @@ public class SheetEventInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventInfo(final FinanceWriter pWriter) {
+    protected SheetEventInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_EVENTINFO);
 

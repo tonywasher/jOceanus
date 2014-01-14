@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jhelpmanager.HelpException;
 import net.sourceforge.joceanus.jhelpmanager.HelpModule;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jsvnmanager.threads.SubversionRestore;
  * @author Tony Washer
  */
 public class MainTab
-        extends MainWindow<FinanceData> {
+        extends MainWindow<MoneyWiseData> {
     /**
      * View Statement.
      */
@@ -371,7 +371,7 @@ public class MainTab
         FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
-        SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus, theView.getPreferenceMgr());
+        SubversionBackup<MoneyWiseData> myThread = new SubversionBackup<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -384,7 +384,7 @@ public class MainTab
         FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
-        SubversionRestore<FinanceData> myThread = new SubversionRestore<FinanceData>(myStatus, theView.getPreferenceMgr());
+        SubversionRestore<MoneyWiseData> myThread = new SubversionRestore<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

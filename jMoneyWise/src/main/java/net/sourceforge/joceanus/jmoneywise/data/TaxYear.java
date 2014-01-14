@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -865,7 +865,7 @@ public class TaxYear
          * Construct an empty CORE TaxYear list.
          * @param pData the DataSet for the list
          */
-        public TaxYearList(final FinanceData pData) {
+        public TaxYearList(final MoneyWiseData pData) {
             super(pData, TaxYear.class);
         }
 
@@ -930,7 +930,7 @@ public class TaxYear
             myList.theInfoList = myTaxInfo.getEmptyList(ListStyle.EDIT);
 
             /* Access the existing tax years */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
             TaxYearList myTaxYears = myData.getTaxYears();
             OrderedListIterator<TaxYear> myIterator = myTaxYears.listIterator();
 

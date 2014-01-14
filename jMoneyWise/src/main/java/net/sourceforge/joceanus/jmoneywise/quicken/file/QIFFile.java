@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * QIF File representation.
@@ -195,7 +195,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    public boolean writeFile(final ThreadStatus<FinanceData> pStatus,
+    public boolean writeFile(final ThreadStatus<MoneyWiseData> pStatus,
                              final OutputStreamWriter pStream) throws IOException {
         /* Write the classes */
         boolean bContinue = writeClasses(pStatus, pStream);
@@ -231,7 +231,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeClasses(final ThreadStatus<FinanceData> pStatus,
+    private boolean writeClasses(final ThreadStatus<MoneyWiseData> pStatus,
                                  final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -287,7 +287,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeCategories(final ThreadStatus<FinanceData> pStatus,
+    private boolean writeCategories(final ThreadStatus<MoneyWiseData> pStatus,
                                     final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -338,7 +338,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeAccounts(final ThreadStatus<FinanceData> pStatus,
+    private boolean writeAccounts(final ThreadStatus<MoneyWiseData> pStatus,
                                   final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -390,7 +390,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeSecurities(final ThreadStatus<FinanceData> pStatus,
+    private boolean writeSecurities(final ThreadStatus<MoneyWiseData> pStatus,
                                     final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -459,7 +459,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writePrices(final ThreadStatus<FinanceData> pStatus,
+    private boolean writePrices(final ThreadStatus<MoneyWiseData> pStatus,
                                 final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();

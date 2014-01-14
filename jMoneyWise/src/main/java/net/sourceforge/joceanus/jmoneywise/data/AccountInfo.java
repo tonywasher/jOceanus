@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,8 +147,8 @@ public class AccountInfo
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -213,7 +213,7 @@ public class AccountInfo
         /* Protect against exceptions */
         try {
             /* Look up the InfoType */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
             AccountInfoTypeList myTypes = myData.getActInfoTypes();
             AccountInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
@@ -356,7 +356,7 @@ public class AccountInfo
         super.resolveDataSetLinks();
 
         /* Access Accounts and InfoTypes */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
         AccountInfoTypeList myTypes = myData.getActInfoTypes();
 
@@ -454,7 +454,7 @@ public class AccountInfo
                     if (pValue instanceof String) {
                         DataItem myLink = null;
                         String myName = (String) pValue;
-                        FinanceData myData = getDataSet();
+                        MoneyWiseData myData = getDataSet();
                         switch (myType.getInfoClass()) {
                             case ALIAS:
                             case PARENT:
@@ -600,8 +600,8 @@ public class AccountInfo
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -618,7 +618,7 @@ public class AccountInfo
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */
-        protected AccountInfoList(final FinanceData pData) {
+        protected AccountInfoList(final MoneyWiseData pData) {
             super(AccountInfo.class, pData, ListStyle.CORE);
         }
 
@@ -716,7 +716,7 @@ public class AccountInfo
             }
 
             /* Access the data set */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);

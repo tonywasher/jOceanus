@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -544,8 +544,8 @@ public abstract class EventBase
     }
 
     @Override
-    public final FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public final MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -656,7 +656,7 @@ public abstract class EventBase
         /* Protect against exceptions */
         try {
             /* Access the parser */
-            FinanceData myDataSet = getDataSet();
+            MoneyWiseData myDataSet = getDataSet();
             JDataFormatter myFormatter = myDataSet.getDataFormatter();
             JDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -766,7 +766,7 @@ public abstract class EventBase
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
         EventCategoryList myCategories = myData.getEventCategories();
         ValueSet myValues = getValueSet();
@@ -1424,8 +1424,8 @@ public abstract class EventBase
         private JDateDayRange theRange = null;
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -1449,7 +1449,7 @@ public abstract class EventBase
          * @param pData the DataSet for the list
          * @param pClass the class of the item
          */
-        protected EventBaseList(final FinanceData pData,
+        protected EventBaseList(final MoneyWiseData pData,
                                 final Class<T> pClass) {
             super(pClass, pData, ListStyle.CORE);
         }

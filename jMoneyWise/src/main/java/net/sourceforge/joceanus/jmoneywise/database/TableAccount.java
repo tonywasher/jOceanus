@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.database.TableEncrypted;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * TableEncrypted extension for Account.
@@ -56,7 +56,7 @@ public class TableAccount
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccount(final Database<FinanceData> pDatabase) {
+    protected TableAccount(final Database<MoneyWiseData> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
@@ -74,7 +74,7 @@ public class TableAccount
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        FinanceData myData = (FinanceData) pData;
+        MoneyWiseData myData = (MoneyWiseData) pData;
         theList = myData.getAccounts();
         setList(theList);
     }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 /**
- * FinanceList Types.
+ * MoneyWiseList Types.
  */
-public enum FinanceList {
+public enum MoneyWiseList {
     /**
      * AccountTypes.
      */
@@ -151,7 +151,7 @@ public enum FinanceList {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(FinanceList.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseList.class.getName());
 
     /**
      * The String name.

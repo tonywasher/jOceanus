@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -86,7 +86,7 @@ public class QDataSet {
      * @param pView the dataView
      * @param pPreferences the preferences
      */
-    public QDataSet(final ThreadStatus<FinanceData> pStatus,
+    public QDataSet(final ThreadStatus<MoneyWiseData> pStatus,
                     final View pView,
                     final QIFPreference pPreferences) {
         /* Store parameters */
@@ -112,7 +112,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JDataException on error
      */
-    public boolean outputData(final ThreadStatus<FinanceData> pStatus) throws JDataException {
+    public boolean outputData(final ThreadStatus<MoneyWiseData> pStatus) throws JDataException {
         /* Determine whether to use consolidated file */
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
@@ -149,7 +149,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JDataException on error
      */
-    public boolean outputSingleFile(final ThreadStatus<FinanceData> pStatus) throws JDataException {
+    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData> pStatus) throws JDataException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 

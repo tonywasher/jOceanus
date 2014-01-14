@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,8 +106,8 @@ public class TaxYearInfo
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -170,7 +170,7 @@ public class TaxYearInfo
         super(pList, pId, pControlId, pInfoTypeId, pTaxYearId);
 
         /* Look up the EventType */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
         TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
         if (myType == null) {
@@ -286,7 +286,7 @@ public class TaxYearInfo
         super.resolveDataSetLinks();
 
         /* Access TaxYears and InfoTypes */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         TaxYearList myTaxYears = myData.getTaxYears();
         TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
 
@@ -340,7 +340,7 @@ public class TaxYearInfo
         TaxYearInfoType myType = getInfoType();
 
         /* Access the DataSet and parser */
-        FinanceData myDataSet = getDataSet();
+        MoneyWiseData myDataSet = getDataSet();
         JDataFormatter myFormatter = myDataSet.getDataFormatter();
         JDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -423,8 +423,8 @@ public class TaxYearInfo
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -441,7 +441,7 @@ public class TaxYearInfo
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */
-        protected TaxInfoList(final FinanceData pData) {
+        protected TaxInfoList(final MoneyWiseData pData) {
             super(TaxYearInfo.class, pData, ListStyle.CORE);
         }
 
@@ -539,7 +539,7 @@ public class TaxYearInfo
             }
 
             /* Access the data set */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);

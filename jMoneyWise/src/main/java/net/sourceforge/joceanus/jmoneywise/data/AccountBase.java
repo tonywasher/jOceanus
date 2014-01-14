@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -400,8 +400,8 @@ public abstract class AccountBase
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -556,7 +556,7 @@ public abstract class AccountBase
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         AccountCategoryList myCategories = myData.getAccountCategories();
         AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
         ValueSet myValues = getValueSet();
@@ -850,8 +850,8 @@ public abstract class AccountBase
         protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -859,7 +859,7 @@ public abstract class AccountBase
          * @param pData the DataSet for the list
          * @param pClass the class of the item
          */
-        protected AccountBaseList(final FinanceData pData,
+        protected AccountBaseList(final MoneyWiseData pData,
                                   final Class<T> pClass) {
             super(pClass, pData, ListStyle.CORE);
         }

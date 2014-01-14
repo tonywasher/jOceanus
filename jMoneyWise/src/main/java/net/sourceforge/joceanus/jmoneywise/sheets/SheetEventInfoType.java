@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
@@ -60,7 +60,7 @@ public class SheetEventInfoType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventInfoType(final FinanceReader pReader) {
+    protected SheetEventInfoType(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_EVENTINFOTYPES);
 
@@ -73,7 +73,7 @@ public class SheetEventInfoType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventInfoType(final FinanceWriter pWriter) {
+    protected SheetEventInfoType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
 
@@ -111,9 +111,9 @@ public class SheetEventInfoType
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */

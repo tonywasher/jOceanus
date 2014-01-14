@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1115,7 +1115,7 @@ public class Account
          * Construct an empty CORE Account list.
          * @param pData the DataSet for the list
          */
-        public AccountList(final FinanceData pData) {
+        public AccountList(final MoneyWiseData pData) {
             super(pData, Account.class);
         }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 
 /**
@@ -217,7 +217,7 @@ public class EventCategoryTable
      */
     public void refreshData() {
         /* Get the Events edit list */
-        FinanceData myData = theView.getData();
+        MoneyWiseData myData = theView.getData();
         EventCategoryList myCategories = myData.getEventCategories();
         theCategories = myCategories.deriveEditList();
         setList(theCategories);

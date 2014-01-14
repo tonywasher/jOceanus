@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
 
 /**
@@ -70,7 +70,7 @@ public abstract class AnalysisMaps {
          * Constructor.
          * @param pData the dataSet
          */
-        protected SecurityPriceMap(final FinanceData pData) {
+        protected SecurityPriceMap(final MoneyWiseData pData) {
             /* Loop through the prices */
             Iterator<AccountPrice> myIterator = pData.getPrices().iterator();
             while (myIterator.hasNext()) {
@@ -272,7 +272,7 @@ public abstract class AnalysisMaps {
          * Constructor.
          * @param pData the dataSet
          */
-        protected AccountRateMap(final FinanceData pData) {
+        protected AccountRateMap(final MoneyWiseData pData) {
             /* Loop through the rates */
             Iterator<AccountRate> myIterator = pData.getRates().iterator();
             while (myIterator.hasNext()) {

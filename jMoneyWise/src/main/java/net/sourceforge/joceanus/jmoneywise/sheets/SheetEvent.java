@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet.ArchiveYear;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet.YearRange;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
@@ -131,12 +131,12 @@ public class SheetEvent
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEvent(final FinanceReader pReader) {
+    protected SheetEvent(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_EVENTS);
 
         /* Access the Lists */
-        FinanceData myData = pReader.getData();
+        MoneyWiseData myData = pReader.getData();
         theList = myData.getEvents();
         theInfoList = myData.getEventInfo();
         setDataList(theList);
@@ -151,12 +151,12 @@ public class SheetEvent
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEvent(final FinanceWriter pWriter) {
+    protected SheetEvent(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_EVENTS);
 
         /* Access the Events list */
-        FinanceData myData = pWriter.getData();
+        MoneyWiseData myData = pWriter.getData();
         theList = myData.getEvents();
         theInfoList = myData.getEventInfo();
         setDataList(theList);
@@ -352,9 +352,9 @@ public class SheetEvent
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData,
+                                         final MoneyWiseData pData,
                                          final YearRange pRange,
                                          final JDateDay pLastEvent) throws JDataException {
         /* Protect against exceptions */

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -108,12 +108,12 @@ public class SheetAccount
      * Constructor for loading a spreadsheet.
      * @param pReader the input spreadsheet
      */
-    protected SheetAccount(final FinanceReader pReader) {
+    protected SheetAccount(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_ACCOUNTS);
 
         /* Access the Lists */
-        FinanceData myData = pReader.getData();
+        MoneyWiseData myData = pReader.getData();
         theList = myData.getAccounts();
         theInfoList = myData.getAccountInfo();
         setDataList(theList);
@@ -135,12 +135,12 @@ public class SheetAccount
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccount(final FinanceWriter pWriter) {
+    protected SheetAccount(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_ACCOUNTS);
 
         /* Access the Accounts list */
-        FinanceData myData = pWriter.getData();
+        MoneyWiseData myData = pWriter.getData();
         theList = myData.getAccounts();
         theInfoList = myData.getAccountInfo();
         setDataList(theList);
@@ -286,9 +286,9 @@ public class SheetAccount
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */

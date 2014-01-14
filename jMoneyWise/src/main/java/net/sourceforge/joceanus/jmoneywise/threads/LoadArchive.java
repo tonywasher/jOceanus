@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.threads.LoaderThread;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
  * @author Tony
  */
 public class LoadArchive
-        extends LoaderThread<FinanceData> {
+        extends LoaderThread<MoneyWiseData> {
     /**
      * Task description.
      */
@@ -51,13 +51,13 @@ public class LoadArchive
     /**
      * Thread status.
      */
-    private final ThreadStatus<FinanceData> theStatus;
+    private final ThreadStatus<MoneyWiseData> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public LoadArchive(final ThreadStatus<FinanceData> pStatus) {
+    public LoadArchive(final ThreadStatus<MoneyWiseData> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
@@ -70,13 +70,13 @@ public class LoadArchive
     }
 
     @Override
-    public FinanceData performTask() throws JDataException {
+    public MoneyWiseData performTask() throws JDataException {
         /* Initialise the status window */
         theStatus.initTask("Loading Extract");
 
         /* Load workbook */
         PreferenceManager myMgr = theControl.getPreferenceMgr();
-        FinanceData myData = FinanceSheet.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
+        MoneyWiseData myData = MoneyWiseSheet.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 
         /* Initialise the status window */
         theStatus.initTask("Analysing Data");
@@ -88,12 +88,12 @@ public class LoadArchive
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
-        Database<FinanceData> myDatabase = theControl.getDatabase();
+        Database<MoneyWiseData> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
             /* Load underlying database */
-            FinanceData myStore = myDatabase.loadDatabase(theStatus);
+            MoneyWiseData myStore = myDatabase.loadDatabase(theStatus);
 
             /* Check security on the database */
             myStore.checkSecurity(theStatus);

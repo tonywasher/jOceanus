@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,8 +231,8 @@ public abstract class TaxYearBase
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -338,7 +338,7 @@ public abstract class TaxYearBase
     @Override
     public void resolveDataSetLinks() throws JDataException {
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         TaxRegimeList myRegimes = myData.getTaxRegimes();
         ValueSet myValues = getValueSet();
 
@@ -461,8 +461,8 @@ public abstract class TaxYearBase
         protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -470,7 +470,7 @@ public abstract class TaxYearBase
          * @param pData the DataSet for the list
          * @param pClass the class of the item
          */
-        protected TaxYearBaseList(final FinanceData pData,
+        protected TaxYearBaseList(final MoneyWiseData pData,
                                   final Class<T> pClass) {
             super(pClass, pData, ListStyle.CORE);
         }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
@@ -70,7 +70,7 @@ public class SheetAccountPrice
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountPrice(final FinanceReader pReader) {
+    protected SheetAccountPrice(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PRICES);
 
@@ -83,7 +83,7 @@ public class SheetAccountPrice
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountPrice(final FinanceWriter pWriter) {
+    protected SheetAccountPrice(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PRICES);
 
@@ -183,9 +183,9 @@ public class SheetAccountPrice
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData,
+                                         final MoneyWiseData pData,
                                          final JDateDay pLastEvent) throws JDataException {
         /* Protect against exceptions */
         try {

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 
@@ -212,7 +212,7 @@ public final class QCategory
          * @return Continue? true/false
          * @throws IOException on error
          */
-        protected boolean outputCategories(final ThreadStatus<FinanceData> pStatus,
+        protected boolean outputCategories(final ThreadStatus<MoneyWiseData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
             if ((theParents.isEmpty())

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * TableEncrypted extension for AccountRate.
@@ -77,7 +77,7 @@ public class TableAccountRate
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        FinanceData myData = (FinanceData) pData;
+        MoneyWiseData myData = (MoneyWiseData) pData;
         theList = myData.getRates();
         setList(theList);
     }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -120,7 +120,7 @@ public class DataAnalyser
     /**
      * The dataSet being analysed.
      */
-    private final FinanceData theData;
+    private final MoneyWiseData theData;
 
     /**
      * The analysis.
@@ -189,7 +189,7 @@ public class DataAnalyser
      * @param pPreferenceMgr the preference manager
      * @throws JDataException on error
      */
-    public DataAnalyser(final FinanceData pData,
+    public DataAnalyser(final MoneyWiseData pData,
                         final PreferenceManager pPreferenceMgr) throws JDataException {
         /* Store the parameters */
         theData = pData;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
@@ -117,7 +117,7 @@ public final class AccountBucket
     /**
      * The dataSet.
      */
-    private final FinanceData theData;
+    private final MoneyWiseData theData;
 
     /**
      * Values.
@@ -234,7 +234,7 @@ public final class AccountBucket
      * Obtain the dataSet.
      * @return the dataSet
      */
-    protected FinanceData getDataSet() {
+    protected MoneyWiseData getDataSet() {
         return theData;
     }
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
 - * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.DatabaseTable;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
@@ -71,7 +71,7 @@ public class TableTaxYear
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        FinanceData myData = (FinanceData) pData;
+        MoneyWiseData myData = (MoneyWiseData) pData;
         theList = myData.getTaxYears();
         setList(theList);
     }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -632,7 +632,7 @@ public class Event
      * @return the calculated tax credit
      */
     public JMoney calculateTaxCredit() {
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
         /* Ignore unless tax credit is null/zero */
@@ -907,7 +907,7 @@ public class Event
          * @param pData the DataSet for the list
          * @param pClass the item class
          */
-        protected BaseEventList(final FinanceData pData,
+        protected BaseEventList(final MoneyWiseData pData,
                                 final Class<T> pClass) {
             super(pData, pClass);
         }
@@ -968,7 +968,7 @@ public class Event
          * Construct an empty CORE event list.
          * @param pData the DataSet for the list
          */
-        protected EventList(final FinanceData pData) {
+        protected EventList(final MoneyWiseData pData) {
             super(pData, Event.class);
         }
 

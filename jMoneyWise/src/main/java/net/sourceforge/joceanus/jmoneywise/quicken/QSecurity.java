@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QSecurityLineType;
 
@@ -258,7 +258,7 @@ public final class QSecurity
          * @param pPrices the price list
          * @param pDate the latest date for prices
          */
-        protected void buildPrices(final ThreadStatus<FinanceData> pStatus,
+        protected void buildPrices(final ThreadStatus<MoneyWiseData> pStatus,
                                    final AccountPriceList pPrices,
                                    final JDateDay pDate) {
             /* Access the number of reporting steps */
@@ -307,7 +307,7 @@ public final class QSecurity
          * @return success true/false
          * @throws IOException on error
          */
-        protected boolean outputSecurities(final ThreadStatus<FinanceData> pStatus,
+        protected boolean outputSecurities(final ThreadStatus<MoneyWiseData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* Ignore if there are no securities */
             if (theSecurities.isEmpty()) {
@@ -364,7 +364,7 @@ public final class QSecurity
          * @return success true/false
          * @throws IOException on error
          */
-        protected boolean outputPrices(final ThreadStatus<FinanceData> pStatus,
+        protected boolean outputPrices(final ThreadStatus<MoneyWiseData> pStatus,
                                        final OutputStreamWriter pStream) throws IOException {
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();

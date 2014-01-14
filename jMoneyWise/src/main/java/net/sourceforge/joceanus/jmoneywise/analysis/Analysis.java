@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
@@ -214,7 +214,7 @@ public class Analysis
     /**
      * The DataSet.
      */
-    private final FinanceData theData;
+    private final MoneyWiseData theData;
 
     /**
      * The Preference Manager.
@@ -290,7 +290,7 @@ public class Analysis
      * Obtain the data.
      * @return the data
      */
-    public FinanceData getData() {
+    public MoneyWiseData getData() {
         return theData;
     }
 
@@ -419,7 +419,7 @@ public class Analysis
      * @param pData the data to analyse events for
      * @param pPreferenceMgr the preference manager
      */
-    protected Analysis(final FinanceData pData,
+    protected Analysis(final MoneyWiseData pData,
                        final PreferenceManager pPreferenceMgr) {
         /* Store the data */
         theData = pData;

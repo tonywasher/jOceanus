@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,8 +128,8 @@ public class EventInfo
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -194,7 +194,7 @@ public class EventInfo
         /* Protect against exceptions */
         try {
             /* Look up the EventType */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
             EventInfoTypeList myTypes = myData.getEventInfoTypes();
             EventInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
@@ -335,7 +335,7 @@ public class EventInfo
         super.resolveDataSetLinks();
 
         /* Access Events and InfoTypes */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         EventList myEvents = myData.getEvents();
         EventInfoTypeList myTypes = myData.getEventInfoTypes();
 
@@ -414,7 +414,7 @@ public class EventInfo
         EventInfoType myType = getInfoType();
 
         /* Access the DataSet and parser */
-        FinanceData myDataSet = getDataSet();
+        MoneyWiseData myDataSet = getDataSet();
         JDataFormatter myFormatter = myDataSet.getDataFormatter();
         JDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -426,7 +426,7 @@ public class EventInfo
                     if (pValue instanceof String) {
                         DataItem myLink = null;
                         String myName = (String) pValue;
-                        FinanceData myData = getDataSet();
+                        MoneyWiseData myData = getDataSet();
                         switch (myType.getInfoClass()) {
                             case THIRDPARTY:
                                 myLink = myData.getAccounts().findItemByName(myName);
@@ -573,8 +573,8 @@ public class EventInfo
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
@@ -591,7 +591,7 @@ public class EventInfo
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */
-        protected EventInfoList(final FinanceData pData) {
+        protected EventInfoList(final MoneyWiseData pData) {
             super(EventInfo.class, pData, ListStyle.CORE);
         }
 
@@ -689,7 +689,7 @@ public class EventInfo
             }
 
             /* Access the data set */
-            FinanceData myData = getDataSet();
+            MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);

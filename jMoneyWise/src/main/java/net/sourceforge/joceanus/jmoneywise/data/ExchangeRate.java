@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -308,8 +308,8 @@ public final class ExchangeRate
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -433,7 +433,7 @@ public final class ExchangeRate
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
         ValueSet myValues = getValueSet();
 
@@ -677,15 +677,15 @@ public final class ExchangeRate
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
          * Construct an empty CORE ExchangeRate list.
          * @param pData the DataSet for the list
          */
-        protected ExchangeRateList(final FinanceData pData) {
+        protected ExchangeRateList(final MoneyWiseData pData) {
             super(ExchangeRate.class, pData, ListStyle.CORE);
         }
 

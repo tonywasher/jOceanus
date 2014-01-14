@@ -1,6 +1,6 @@
 /*******************************************************************************
 - * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetWriter;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
@@ -50,11 +50,11 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 
 /**
- * SpreadSheet extension for FinanceData.
+ * SpreadSheet extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class FinanceSheet
-        extends SpreadSheet<FinanceData> {
+public class MoneyWiseSheet
+        extends SpreadSheet<MoneyWiseData> {
     /**
      * Number of base archive load areas. 10xStatic,EventClasses,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
      */
@@ -81,9 +81,9 @@ public class FinanceSheet
      * @return the sheet reader
      */
     @Override
-    protected SheetReader<FinanceData> getSheetReader(final TaskControl<FinanceData> pTask) {
-        /* Create a Finance Reader object and return it */
-        return new FinanceReader(pTask);
+    protected SheetReader<MoneyWiseData> getSheetReader(final TaskControl<MoneyWiseData> pTask) {
+        /* Create a MoneyWise Reader object and return it */
+        return new MoneyWiseReader(pTask);
     }
 
     /**
@@ -92,9 +92,9 @@ public class FinanceSheet
      * @return the sheet writer
      */
     @Override
-    protected SheetWriter<FinanceData> getSheetWriter(final TaskControl<FinanceData> pTask) {
-        /* Create a Finance Writer object and return it */
-        return new FinanceWriter(pTask);
+    protected SheetWriter<MoneyWiseData> getSheetWriter(final TaskControl<MoneyWiseData> pTask) {
+        /* Create a MoneyWise Writer object and return it */
+        return new MoneyWiseWriter(pTask);
     }
 
     /**
@@ -215,9 +215,9 @@ public class FinanceSheet
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData,
+                                         final MoneyWiseData pData,
                                          final YearRange pRange) throws JDataException {
         /* Find the range of cells */
         DataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
@@ -250,8 +250,8 @@ public class FinanceSheet
      * @return the newly loaded data
      * @throws JDataException on error
      */
-    public static FinanceData loadArchive(final TaskControl<FinanceData> pTask,
-                                          final BackupPreferences pPreferences) throws JDataException {
+    public static MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
+                                            final BackupPreferences pPreferences) throws JDataException {
         InputStream myStream = null;
 
         /* Determine the archive name */
@@ -269,7 +269,7 @@ public class FinanceSheet
             WorkBookType myType = WorkBookType.determineType(myName);
 
             /* Load the data from the stream */
-            FinanceData myData = loadArchiveStream(pTask, myStream, myType, myLastEvent);
+            MoneyWiseData myData = loadArchiveStream(pTask, myStream, myType, myLastEvent);
 
             /* Close the Stream to force out errors */
             myStream.close();
@@ -303,14 +303,14 @@ public class FinanceSheet
      * @return the newly loaded data
      * @throws JDataException on error
      */
-    private static FinanceData loadArchiveStream(final TaskControl<FinanceData> pTask,
-                                                 final InputStream pStream,
-                                                 final WorkBookType pType,
-                                                 final JDateDay pLastEvent) throws JDataException {
+    private static MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
+                                                   final InputStream pStream,
+                                                   final WorkBookType pType,
+                                                   final JDateDay pLastEvent) throws JDataException {
         /* Protect the workbook retrieval */
         try {
             /* Create the Data */
-            FinanceData myData = pTask.getNewDataSet();
+            MoneyWiseData myData = pTask.getNewDataSet();
 
             /* Access the workbook from the stream */
             DataWorkBook myWorkbook = new DataWorkBook(pStream, pType);

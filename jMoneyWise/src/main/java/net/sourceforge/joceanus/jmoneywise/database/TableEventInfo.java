@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jdatamodels.database.TableDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * TableDataInfo extension for EventInfo.
@@ -65,7 +65,7 @@ public class TableEventInfo
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        FinanceData myData = (FinanceData) pData;
+        MoneyWiseData myData = (MoneyWiseData) pData;
         theEvents = myData.getEvents();
         theList = myData.getEventInfo();
         setList(theList);

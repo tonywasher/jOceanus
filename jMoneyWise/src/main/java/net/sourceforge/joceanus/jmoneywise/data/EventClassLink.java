@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,8 +178,8 @@ public class EventClassLink
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -278,7 +278,7 @@ public class EventClassLink
     @Override
     public void resolveDataSetLinks() throws JDataException {
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         EventList myEvents = myData.getEvents();
         EventClassList myTags = myData.getEventClasses();
         ValueSet myValues = getValueSet();
@@ -393,15 +393,15 @@ public class EventClassLink
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
          * Construct an empty CORE EventClassLink list.
          * @param pData the DataSet for the list
          */
-        protected EventClassLinkList(final FinanceData pData) {
+        protected EventClassLinkList(final MoneyWiseData pData) {
             super(EventClassLink.class, pData, ListStyle.CORE);
         }
 

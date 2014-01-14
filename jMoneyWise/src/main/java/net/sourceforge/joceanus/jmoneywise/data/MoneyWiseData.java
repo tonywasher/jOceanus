@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,15 +64,14 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
- * FinanceData dataSet.
- * @author Tony Washer
+ * MoneyWise dataSet.
  */
-public class FinanceData
-        extends DataSet<FinanceData, FinanceList> {
+public class MoneyWiseData
+        extends DataSet<MoneyWiseData, MoneyWiseList> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(FinanceData.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseData.class.getName());
 
     /**
      * Local Report fields.
@@ -82,7 +81,7 @@ public class FinanceData
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, FinanceList> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, FinanceList.class);
+    private static final Map<JDataField, MoneyWiseList> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, MoneyWiseList.class);
 
     @Override
     public JDataFields getDataFields() {
@@ -92,7 +91,7 @@ public class FinanceData
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle List fields */
-        FinanceList myType = FIELDSET_MAP.get(pField);
+        MoneyWiseList myType = FIELDSET_MAP.get(pField);
         if (myType != null) {
             /* Access the list */
             DataList<?> myList = getDataList(myType, DataList.class);
@@ -107,7 +106,7 @@ public class FinanceData
 
     @Override
     public String formatObject() {
-        return FinanceData.class.getSimpleName();
+        return MoneyWiseData.class.getSimpleName();
     }
 
     /**
@@ -125,7 +124,7 @@ public class FinanceData
      * @return the Account category types
      */
     public AccountCategoryTypeList getAccountCategoryTypes() {
-        return getDataList(FinanceList.ACCOUNTTYPES, AccountCategoryTypeList.class);
+        return getDataList(MoneyWiseList.ACCOUNTTYPES, AccountCategoryTypeList.class);
     }
 
     /**
@@ -133,7 +132,7 @@ public class FinanceData
      * @return the Event Category types
      */
     public EventCategoryTypeList getEventCategoryTypes() {
-        return getDataList(FinanceList.EVENTTYPES, EventCategoryTypeList.class);
+        return getDataList(MoneyWiseList.EVENTTYPES, EventCategoryTypeList.class);
     }
 
     /**
@@ -141,7 +140,7 @@ public class FinanceData
      * @return the Tax bases
      */
     public TaxBasisList getTaxBases() {
-        return getDataList(FinanceList.TAXBASES, TaxBasisList.class);
+        return getDataList(MoneyWiseList.TAXBASES, TaxBasisList.class);
     }
 
     /**
@@ -149,7 +148,7 @@ public class FinanceData
      * @return the Tax categories
      */
     public TaxCategoryList getTaxCategories() {
-        return getDataList(FinanceList.TAXTYPES, TaxCategoryList.class);
+        return getDataList(MoneyWiseList.TAXTYPES, TaxCategoryList.class);
     }
 
     /**
@@ -157,7 +156,7 @@ public class FinanceData
      * @return the Account Currencies
      */
     public AccountCurrencyList getAccountCurrencies() {
-        return getDataList(FinanceList.CURRENCIES, AccountCurrencyList.class);
+        return getDataList(MoneyWiseList.CURRENCIES, AccountCurrencyList.class);
     }
 
     /**
@@ -165,7 +164,7 @@ public class FinanceData
      * @return the TaxRegimes
      */
     public TaxRegimeList getTaxRegimes() {
-        return getDataList(FinanceList.TAXREGIMES, TaxRegimeList.class);
+        return getDataList(MoneyWiseList.TAXREGIMES, TaxRegimeList.class);
     }
 
     /**
@@ -173,7 +172,7 @@ public class FinanceData
      * @return the Frequencies
      */
     public FrequencyList getFrequencys() {
-        return getDataList(FinanceList.FREQUENCIES, FrequencyList.class);
+        return getDataList(MoneyWiseList.FREQUENCIES, FrequencyList.class);
     }
 
     /**
@@ -181,7 +180,7 @@ public class FinanceData
      * @return the TaxYear Info types
      */
     public TaxYearInfoTypeList getTaxInfoTypes() {
-        return getDataList(FinanceList.TAXINFOTYPES, TaxYearInfoTypeList.class);
+        return getDataList(MoneyWiseList.TAXINFOTYPES, TaxYearInfoTypeList.class);
     }
 
     /**
@@ -189,7 +188,7 @@ public class FinanceData
      * @return the Account Info types
      */
     public AccountInfoTypeList getActInfoTypes() {
-        return getDataList(FinanceList.ACCOUNTINFOTYPES, AccountInfoTypeList.class);
+        return getDataList(MoneyWiseList.ACCOUNTINFOTYPES, AccountInfoTypeList.class);
     }
 
     /**
@@ -197,7 +196,7 @@ public class FinanceData
      * @return the Event Info types
      */
     public EventInfoTypeList getEventInfoTypes() {
-        return getDataList(FinanceList.EVENTINFOTYPES, EventInfoTypeList.class);
+        return getDataList(MoneyWiseList.EVENTINFOTYPES, EventInfoTypeList.class);
     }
 
     /**
@@ -205,7 +204,7 @@ public class FinanceData
      * @return the EventClasses
      */
     public EventClassList getEventClasses() {
-        return getDataList(FinanceList.EVENTCLASSES, EventClassList.class);
+        return getDataList(MoneyWiseList.EVENTCLASSES, EventClassList.class);
     }
 
     /**
@@ -213,7 +212,7 @@ public class FinanceData
      * @return the Account categories
      */
     public AccountCategoryList getAccountCategories() {
-        return getDataList(FinanceList.ACCOUNTCATEGORIES, AccountCategoryList.class);
+        return getDataList(MoneyWiseList.ACCOUNTCATEGORIES, AccountCategoryList.class);
     }
 
     /**
@@ -221,7 +220,7 @@ public class FinanceData
      * @return the Event categories
      */
     public EventCategoryList getEventCategories() {
-        return getDataList(FinanceList.EVENTCATEGORIES, EventCategoryList.class);
+        return getDataList(MoneyWiseList.EVENTCATEGORIES, EventCategoryList.class);
     }
 
     /**
@@ -229,7 +228,7 @@ public class FinanceData
      * @return the TaxYears
      */
     public TaxYearList getTaxYears() {
-        return getDataList(FinanceList.TAXYEARS, TaxYearList.class);
+        return getDataList(MoneyWiseList.TAXYEARS, TaxYearList.class);
     }
 
     /**
@@ -237,7 +236,7 @@ public class FinanceData
      * @return the Tax Info
      */
     public TaxInfoList getTaxInfo() {
-        return getDataList(FinanceList.TAXYEARINFO, TaxInfoList.class);
+        return getDataList(MoneyWiseList.TAXYEARINFO, TaxInfoList.class);
     }
 
     /**
@@ -245,7 +244,7 @@ public class FinanceData
      * @return the ExchangeRates
      */
     public ExchangeRateList getExchangeRates() {
-        return getDataList(FinanceList.EXCHANGERATES, ExchangeRateList.class);
+        return getDataList(MoneyWiseList.EXCHANGERATES, ExchangeRateList.class);
     }
 
     /**
@@ -253,7 +252,7 @@ public class FinanceData
      * @return the Accounts
      */
     public AccountList getAccounts() {
-        return getDataList(FinanceList.ACCOUNTS, AccountList.class);
+        return getDataList(MoneyWiseList.ACCOUNTS, AccountList.class);
     }
 
     /**
@@ -261,7 +260,7 @@ public class FinanceData
      * @return the Account Info
      */
     public AccountInfoList getAccountInfo() {
-        return getDataList(FinanceList.ACCOUNTINFO, AccountInfoList.class);
+        return getDataList(MoneyWiseList.ACCOUNTINFO, AccountInfoList.class);
     }
 
     /**
@@ -269,7 +268,7 @@ public class FinanceData
      * @return the Account rates
      */
     public AccountRateList getRates() {
-        return getDataList(FinanceList.ACCOUNTRATES, AccountRateList.class);
+        return getDataList(MoneyWiseList.ACCOUNTRATES, AccountRateList.class);
     }
 
     /**
@@ -277,7 +276,7 @@ public class FinanceData
      * @return the Account prices
      */
     public AccountPriceList getPrices() {
-        return getDataList(FinanceList.ACCOUNTPRICES, AccountPriceList.class);
+        return getDataList(MoneyWiseList.ACCOUNTPRICES, AccountPriceList.class);
     }
 
     /**
@@ -285,7 +284,7 @@ public class FinanceData
      * @return the Patterns
      */
     public PatternList getPatterns() {
-        return getDataList(FinanceList.PATTERNS, PatternList.class);
+        return getDataList(MoneyWiseList.PATTERNS, PatternList.class);
     }
 
     /**
@@ -293,7 +292,7 @@ public class FinanceData
      * @return the Events
      */
     public EventList getEvents() {
-        return getDataList(FinanceList.EVENTS, EventList.class);
+        return getDataList(MoneyWiseList.EVENTS, EventList.class);
     }
 
     /**
@@ -301,7 +300,7 @@ public class FinanceData
      * @return the Event Info
      */
     public EventInfoList getEventInfo() {
-        return getDataList(FinanceList.EVENTINFO, EventInfoList.class);
+        return getDataList(MoneyWiseList.EVENTINFO, EventInfoList.class);
     }
 
     /**
@@ -309,7 +308,7 @@ public class FinanceData
      * @return the EventClass Links
      */
     public EventClassLinkList getEventClassLinks() {
-        return getDataList(FinanceList.EVENTCLASSLINKS, EventClassLinkList.class);
+        return getDataList(MoneyWiseList.EVENTCLASSLINKS, EventClassLinkList.class);
     }
 
     /**
@@ -334,14 +333,14 @@ public class FinanceData
      * @param pPreferenceMgr the preference manager
      * @param pFieldMgr the field manager
      */
-    public FinanceData(final SecureManager pSecurity,
-                       final PreferenceManager pPreferenceMgr,
-                       final JFieldManager pFieldMgr) {
+    public MoneyWiseData(final SecureManager pSecurity,
+                         final PreferenceManager pPreferenceMgr,
+                         final JFieldManager pFieldMgr) {
         /* Call Super-constructor */
-        super(FinanceList.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
+        super(MoneyWiseList.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
 
         /* Loop through the list types */
-        for (FinanceList myType : FinanceList.values()) {
+        for (MoneyWiseList myType : MoneyWiseList.values()) {
             /* Create the empty list */
             addList(myType, newList(myType));
         }
@@ -351,7 +350,7 @@ public class FinanceData
      * Constructor for a cloned DataSet.
      * @param pSource the source DataSet
      */
-    private FinanceData(final FinanceData pSource) {
+    private MoneyWiseData(final MoneyWiseData pSource) {
         super(pSource);
     }
 
@@ -360,7 +359,7 @@ public class FinanceData
      * @param pListType the list type
      * @return the new list
      */
-    private DataList<?> newList(final FinanceList pListType) {
+    private DataList<?> newList(final MoneyWiseList pListType) {
         /* Switch on list Type */
         switch (pListType) {
             case ACCOUNTTYPES:
@@ -417,9 +416,9 @@ public class FinanceData
     }
 
     @Override
-    public FinanceData deriveUpdateSet() throws JDataException {
+    public MoneyWiseData deriveUpdateSet() throws JDataException {
         /* Build an empty DataSet */
-        FinanceData myExtract = new FinanceData(this);
+        MoneyWiseData myExtract = new MoneyWiseData(this);
 
         /* Obtain underlying updates */
         myExtract.deriveUpdateSet(this);
@@ -429,9 +428,9 @@ public class FinanceData
     }
 
     @Override
-    public FinanceData deriveCloneSet() throws JDataException {
+    public MoneyWiseData deriveCloneSet() throws JDataException {
         /* Build an empty DataSet */
-        FinanceData myExtract = new FinanceData(this);
+        MoneyWiseData myExtract = new MoneyWiseData(this);
 
         /* Obtain underlying updates */
         myExtract.deriveCloneSet(this);
@@ -449,9 +448,9 @@ public class FinanceData
      * @throws JDataException on error
      */
     @Override
-    public FinanceData getDifferenceSet(final FinanceData pOld) throws JDataException {
+    public MoneyWiseData getDifferenceSet(final MoneyWiseData pOld) throws JDataException {
         /* Build an empty DataSet */
-        FinanceData myDiffers = new FinanceData(this);
+        MoneyWiseData myDiffers = new MoneyWiseData(this);
 
         /* Obtain underlying differences */
         myDiffers.deriveDifferences(this, pOld);
@@ -475,9 +474,9 @@ public class FinanceData
      */
     public void initialiseAnalysis() throws JDataException {
         /* Loop through the list types */
-        Iterator<Entry<FinanceList, DataList<?>>> myIterator = entryIterator();
+        Iterator<Entry<MoneyWiseList, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<FinanceList, DataList<?>> myEntry = myIterator.next();
+            Entry<MoneyWiseList, DataList<?>> myEntry = myIterator.next();
 
             /* Access list and switch on type */
             DataList<?> myList = myEntry.getValue();

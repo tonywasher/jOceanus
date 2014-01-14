@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet.ArchiveYear;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet.YearRange;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
@@ -68,7 +68,7 @@ public class SheetTaxYear
     /**
      * The DataSet.
      */
-    private FinanceData theData = null;
+    private MoneyWiseData theData = null;
 
     /**
      * TaxYear data list.
@@ -89,7 +89,7 @@ public class SheetTaxYear
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxYear(final FinanceReader pReader) {
+    protected SheetTaxYear(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_TAXYEARS);
 
@@ -109,12 +109,12 @@ public class SheetTaxYear
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxYear(final FinanceWriter pWriter) {
+    protected SheetTaxYear(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_TAXYEARS);
 
         /* Access the TaxYears list */
-        FinanceData myData = pWriter.getData();
+        MoneyWiseData myData = pWriter.getData();
         theList = myData.getTaxYears();
         theInfoList = myData.getTaxInfo();
         setDataList(theList);
@@ -229,9 +229,9 @@ public class SheetTaxYear
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
-    protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData,
+                                         final MoneyWiseData pData,
                                          final YearRange pRange) throws JDataException {
         /* Protect against exceptions */
         try {

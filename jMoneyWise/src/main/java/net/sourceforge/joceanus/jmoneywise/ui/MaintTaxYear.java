@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jfieldset.JFieldSet;
 import net.sourceforge.joceanus.jfieldset.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jlayoutmanager.SpringUtilities;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -714,7 +714,7 @@ public class MaintTaxYear
      */
     public void refreshData() {
         /* Access the data */
-        FinanceData myData = theView.getData();
+        MoneyWiseData myData = theView.getData();
 
         /* Access years and regimes */
         theTaxYears = myData.getTaxYears();

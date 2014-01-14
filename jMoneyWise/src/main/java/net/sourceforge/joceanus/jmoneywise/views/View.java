@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,22 +34,22 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.database.FinanceDatabase;
-import net.sourceforge.joceanus.jmoneywise.sheets.FinanceSheet;
+import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 
 /**
- * Data Control for FinanceApp.
+ * Data Control for MoneyWiseApp.
  * @author Tony Washer
  */
 public class View
-        extends DataControl<FinanceData> {
+        extends DataControl<MoneyWiseData> {
     /**
      * The DataSet.
      */
-    private FinanceData theData = null;
+    private MoneyWiseData theData = null;
 
     /**
      * The Date range for the view.
@@ -116,14 +116,14 @@ public class View
      * @return new DataSet
      */
     @Override
-    public final FinanceData getNewData() {
-        return new FinanceData(getSecurity(), getPreferenceMgr(), getFieldMgr());
+    public final MoneyWiseData getNewData() {
+        return new MoneyWiseData(getSecurity(), getPreferenceMgr(), getFieldMgr());
     }
 
     @Override
-    public Database<FinanceData> getDatabase() throws JDataException {
+    public Database<MoneyWiseData> getDatabase() throws JDataException {
         PreferenceManager myMgr = getPreferenceMgr();
-        return new FinanceDatabase(getLogger(), myMgr.getPreferenceSet(DatabasePreferences.class));
+        return new MoneyWiseDatabase(getLogger(), myMgr.getPreferenceSet(DatabasePreferences.class));
     }
 
     /**
@@ -131,8 +131,8 @@ public class View
      * @return new DataSet
      */
     @Override
-    public SpreadSheet<FinanceData> getSpreadSheet() {
-        return new FinanceSheet();
+    public SpreadSheet<MoneyWiseData> getSpreadSheet() {
+        return new MoneyWiseSheet();
     }
 
     /**
@@ -140,7 +140,7 @@ public class View
      * @param pData the new data set
      */
     @Override
-    public final void setData(final FinanceData pData) {
+    public final void setData(final MoneyWiseData pData) {
         /* Record the data */
         theData = pData;
         super.setData(pData);
@@ -152,7 +152,7 @@ public class View
      * @return the analysis
      * @throws JDataException on error
      */
-    public final DataAnalyser analyseData(final FinanceData pData) throws JDataException {
+    public final DataAnalyser analyseData(final MoneyWiseData pData) throws JDataException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 

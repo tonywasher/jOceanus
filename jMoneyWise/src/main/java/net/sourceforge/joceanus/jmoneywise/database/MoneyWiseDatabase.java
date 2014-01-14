@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,22 +27,22 @@ import java.util.logging.Logger;
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
- * Database extension for FinanceData.
+ * Database extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class FinanceDatabase
-        extends Database<FinanceData> {
+public class MoneyWiseDatabase
+        extends Database<MoneyWiseData> {
     /**
      * Construct a new Database class for load.
      * @param pLogger the logger
      * @param pPreferences the preferences
      * @throws JDataException on error
      */
-    public FinanceDatabase(final Logger pLogger,
-                           final DatabasePreferences pPreferences) throws JDataException {
+    public MoneyWiseDatabase(final Logger pLogger,
+                             final DatabasePreferences pPreferences) throws JDataException {
         /* Call super-constructor */
         super(pLogger, pPreferences);
 

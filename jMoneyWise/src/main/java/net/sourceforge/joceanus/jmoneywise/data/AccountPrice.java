@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -269,8 +269,8 @@ public class AccountPrice
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public MoneyWiseData getDataSet() {
+        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -321,7 +321,7 @@ public class AccountPrice
         /* Protect against exceptions */
         try {
             /* Access the DataSet and parser */
-            FinanceData myDataSet = getDataSet();
+            MoneyWiseData myDataSet = getDataSet();
             JDataFormatter myFormatter = myDataSet.getDataFormatter();
             JDecimalParser myParser = myFormatter.getDecimalParser();
 
@@ -412,7 +412,7 @@ public class AccountPrice
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        FinanceData myData = getDataSet();
+        MoneyWiseData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
         ValueSet myValues = getValueSet();
 
@@ -446,7 +446,7 @@ public class AccountPrice
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
         AccountPriceList myList = (AccountPriceList) getList();
-        FinanceData mySet = getDataSet();
+        MoneyWiseData mySet = getDataSet();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -591,15 +591,15 @@ public class AccountPrice
         }
 
         @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
+        public MoneyWiseData getDataSet() {
+            return (MoneyWiseData) super.getDataSet();
         }
 
         /**
          * Construct an empty CORE price list.
          * @param pData the DataSet for the list
          */
-        protected AccountPriceList(final FinanceData pData) {
+        protected AccountPriceList(final MoneyWiseData pData) {
             super(AccountPrice.class, pData);
         }
 

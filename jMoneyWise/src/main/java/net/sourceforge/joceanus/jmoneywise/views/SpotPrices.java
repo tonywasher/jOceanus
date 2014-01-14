@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * Extension of AccountPrice to cater for spot prices.
@@ -161,7 +161,7 @@ public class SpotPrices
      * Obtain dataSet.
      * @return the dataSet
      */
-    protected FinanceData getData() {
+    protected MoneyWiseData getData() {
         return theView.getData();
     }
 
@@ -338,7 +338,7 @@ public class SpotPrices
             thePortfolio = pPrices.getPortfolio();
 
             /* Loop through the Accounts */
-            FinanceData myData = theView.getData();
+            MoneyWiseData myData = theView.getData();
             Iterator<Account> myActIterator = myData.getAccounts().listIterator();
             while (myActIterator.hasNext()) {
                 Account myAccount = myActIterator.next();

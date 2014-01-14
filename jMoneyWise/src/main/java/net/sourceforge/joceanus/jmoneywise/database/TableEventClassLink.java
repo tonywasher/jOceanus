@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.database.DatabaseTable;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * DatabaseTable extension for EventClassLink.
@@ -66,7 +66,7 @@ public class TableEventClassLink
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        FinanceData myData = (FinanceData) pData;
+        MoneyWiseData myData = (MoneyWiseData) pData;
         theList = myData.getEventClassLinks();
         setList(theList);
     }

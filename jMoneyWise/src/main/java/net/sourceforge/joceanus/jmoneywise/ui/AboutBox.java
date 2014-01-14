@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ public class AboutBox
                                        + myProperties.getProperty("revision"));
         JLabel myBuild = new JLabel("builtOn: "
                                     + myProperties.getProperty("timeStamp"));
-        JLabel myCopyright = new JLabel("Copyright 2012,2013 Tony Washer");
+        JLabel myCopyright = new JLabel("Copyright 2012,2014 Tony Washer");
         myProduct.setAlignmentX(Component.CENTER_ALIGNMENT);
         myVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
         myRevision.setAlignmentX(Component.CENTER_ALIGNMENT);

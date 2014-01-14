@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,24 +24,24 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
- * SheetReader extension for FinanceData.
+ * SheetReader extension for MoneyWiseData.
  * @author Tony Washer
  */
-public class FinanceReader
-        extends SheetReader<FinanceData> {
+public class MoneyWiseReader
+        extends SheetReader<MoneyWiseData> {
     /**
      * Thread control.
      */
-    private final TaskControl<FinanceData> theTask;
+    private final TaskControl<MoneyWiseData> theTask;
 
     /**
      * Constructor.
      * @param pTask the Task control
      */
-    public FinanceReader(final TaskControl<FinanceData> pTask) {
+    public MoneyWiseReader(final TaskControl<MoneyWiseData> pTask) {
         /* Call super-constructor */
         super(pTask);
 
@@ -90,7 +90,7 @@ public class FinanceReader
     }
 
     @Override
-    protected FinanceData newDataSet() {
+    protected MoneyWiseData newDataSet() {
         /* Create the new DataSet */
         return theTask.getNewDataSet();
     }

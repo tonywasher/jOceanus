@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
@@ -117,7 +117,7 @@ public class QAnalysis
     /**
      * DataSet.
      */
-    private FinanceData theData = null;
+    private MoneyWiseData theData = null;
 
     /**
      * Analysis.
@@ -144,7 +144,7 @@ public class QAnalysis
      * Obtain data.
      * @return the data
      */
-    protected FinanceData getDataSet() {
+    protected MoneyWiseData getDataSet() {
         return theData;
     }
 
@@ -296,7 +296,7 @@ public class QAnalysis
      * @param pView the dataView
      * @param pLastEvent the date of the last event to process
      */
-    protected void analyseData(final ThreadStatus<FinanceData> pStatus,
+    protected void analyseData(final ThreadStatus<MoneyWiseData> pStatus,
                                final View pView,
                                final JDateDay pLastEvent) {
         /* Store data and analysis */
@@ -498,7 +498,7 @@ public class QAnalysis
      * @return success true/false
      * @throws IOException on error
      */
-    protected boolean outputData(final ThreadStatus<FinanceData> pStatus,
+    protected boolean outputData(final ThreadStatus<MoneyWiseData> pStatus,
                                  final OutputStreamWriter pStream) throws IOException {
         /* Access the number of reporting steps */
         int mySteps = pStatus.getReportingSteps();

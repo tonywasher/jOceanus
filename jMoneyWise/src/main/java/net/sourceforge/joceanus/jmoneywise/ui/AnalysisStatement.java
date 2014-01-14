@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012,2013 Tony Washer
+ * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.FinanceData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
@@ -327,7 +327,7 @@ public class AnalysisStatement
         EventInfoList myInfo = null;
         if (theRange != null) {
             /* Get the Events edit list */
-            FinanceData myData = theView.getData();
+            MoneyWiseData myData = theView.getData();
             EventList myEvents = myData.getEvents();
             theEvents = myEvents.deriveEditList(pRange);
             theHeader = new AnalysisHeader(theEvents);
