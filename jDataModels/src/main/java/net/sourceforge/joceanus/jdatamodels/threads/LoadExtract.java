@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class LoadExtract<T extends DataSet<T>>
+public class LoadExtract<T extends DataSet<T, ?>>
         extends LoaderThread<T> {
     /**
      * Task description.

@@ -292,7 +292,7 @@ public class AccountCurrency
          * Construct an empty CORE account currency list.
          * @param pData the DataSet for the list
          */
-        public AccountCurrencyList(final DataSet<?> pData) {
+        public AccountCurrencyList(final DataSet<?, ?> pData) {
             super(AccountCurrency.class, pData, ListStyle.CORE);
         }
 
@@ -312,18 +312,8 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrencyList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public AccountCurrencyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (AccountCurrencyList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public AccountCurrencyList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountCurrencyList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountCurrencyList deriveDifferences(final DataList<AccountCurrency> pOld) {
-            return (AccountCurrencyList) super.deriveDifferences(pOld);
         }
 
         @Override

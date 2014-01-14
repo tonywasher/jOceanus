@@ -200,7 +200,7 @@ public class TaxRegime
          * Construct an empty CORE tax regime list.
          * @param pData the DataSet for the list
          */
-        public TaxRegimeList(final DataSet<?> pData) {
+        public TaxRegimeList(final DataSet<?, ?> pData) {
             super(TaxRegime.class, pData, ListStyle.CORE);
         }
 
@@ -220,18 +220,8 @@ public class TaxRegime
         }
 
         @Override
-        public TaxRegimeList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public TaxRegimeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (TaxRegimeList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public TaxRegimeList deriveList(final ListStyle pStyle) throws JDataException {
-            return (TaxRegimeList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public TaxRegimeList deriveDifferences(final DataList<TaxRegime> pOld) {
-            return (TaxRegimeList) super.deriveDifferences(pOld);
         }
 
         /**

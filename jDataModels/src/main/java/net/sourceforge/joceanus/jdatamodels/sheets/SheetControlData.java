@@ -62,7 +62,7 @@ public class SheetControlData
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        DataSet<?> myData = pReader.getData();
+        DataSet<?, ?> myData = pReader.getData();
         theList = myData.getControlData();
         setDataList(theList);
     }

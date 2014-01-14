@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
@@ -612,18 +611,8 @@ public class EventInfo
         }
 
         @Override
-        public EventInfoList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public EventInfoList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (EventInfoList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public EventInfoList deriveList(final ListStyle pStyle) throws JDataException {
-            return (EventInfoList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public EventInfoList deriveDifferences(final DataList<EventInfo> pOld) {
-            return (EventInfoList) super.deriveDifferences(pOld);
         }
 
         @Override

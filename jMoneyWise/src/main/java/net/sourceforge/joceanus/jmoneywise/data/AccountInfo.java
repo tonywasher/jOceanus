@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -639,18 +638,8 @@ public class AccountInfo
         }
 
         @Override
-        public AccountInfoList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public AccountInfoList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (AccountInfoList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public AccountInfoList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountInfoList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountInfoList deriveDifferences(final DataList<AccountInfo> pOld) {
-            return (AccountInfoList) super.deriveDifferences(pOld);
         }
 
         @Override

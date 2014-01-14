@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class CreateBackup<T extends DataSet<T>>
+public class CreateBackup<T extends DataSet<T, ?>>
         extends LoaderThread<T> {
     /**
      * Buffer length.
@@ -142,7 +142,7 @@ public class CreateBackup<T extends DataSet<T>>
             myData = mySheet.loadBackup(theStatus, myFile);
 
             /* Create a difference set between the two data copies */
-            DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

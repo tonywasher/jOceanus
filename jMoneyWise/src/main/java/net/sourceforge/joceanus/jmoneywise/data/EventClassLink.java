@@ -413,7 +413,7 @@ public class EventClassLink
         }
 
         @Override
-        public EventClassLinkList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public EventClassLinkList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (EventClassLinkList) super.cloneList(pDataSet);
         }
 
@@ -423,16 +423,6 @@ public class EventClassLink
          */
         protected EventClassLinkList(final EventClassLinkList pSource) {
             super(pSource);
-        }
-
-        @Override
-        public EventClassLinkList deriveList(final ListStyle pStyle) throws JDataException {
-            return (EventClassLinkList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public EventClassLinkList deriveDifferences(final DataList<EventClassLink> pOld) {
-            return (EventClassLinkList) super.deriveDifferences(pOld);
         }
 
         /**

@@ -177,14 +177,6 @@ public class JScrollPopupMenu
         addMouseWheelListener(myListener);
         addPopupMenuListener(myListener);
         addMenuKeyListener(new ScrollKeyListener());
-
-        /* Access the input map */
-        // InputMap myMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        // ActionMap myActions = getActionMap();
-        // myActions.put("upAction", new ArrowAction(theUpItem, (Action) myMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0))));
-        // myActions.put("downAction", new ArrowAction(theUpItem, (Action) myMap.get(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0))));
-        // myMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "upAction");
-        // myMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "downAction");
     }
 
     /**
@@ -493,7 +485,7 @@ public class JScrollPopupMenu
         }
 
         /**
-         * Check whether to ignore a keyStroke
+         * Check whether to ignore a keyStroke.
          * @param pEvent the keyEvent
          * @param pItem the MenuItem to check
          */

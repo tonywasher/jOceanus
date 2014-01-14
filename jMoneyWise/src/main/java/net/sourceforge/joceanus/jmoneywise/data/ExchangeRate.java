@@ -697,7 +697,7 @@ public final class ExchangeRate
         }
 
         @Override
-        public ExchangeRateList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public ExchangeRateList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (ExchangeRateList) super.cloneList(pDataSet);
         }
 
@@ -707,16 +707,6 @@ public final class ExchangeRate
          */
         protected ExchangeRateList(final ExchangeRateList pSource) {
             super(pSource);
-        }
-
-        @Override
-        public ExchangeRateList deriveList(final ListStyle pStyle) throws JDataException {
-            return (ExchangeRateList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public ExchangeRateList deriveDifferences(final DataList<ExchangeRate> pOld) {
-            return (ExchangeRateList) super.deriveDifferences(pOld);
         }
 
         /**

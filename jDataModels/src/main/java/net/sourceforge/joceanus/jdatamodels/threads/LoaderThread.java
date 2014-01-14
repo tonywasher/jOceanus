@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class LoaderThread<T extends DataSet<T>>
+public abstract class LoaderThread<T extends DataSet<T, ?>>
         extends WorkerThread<T> {
     /**
      * Data Control.

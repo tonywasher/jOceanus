@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class LoadBackup<T extends DataSet<T>>
+public class LoadBackup<T extends DataSet<T, ?>>
         extends LoaderThread<T> {
     /**
      * Task description.

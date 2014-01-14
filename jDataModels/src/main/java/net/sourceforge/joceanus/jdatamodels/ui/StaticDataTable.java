@@ -250,7 +250,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
      */
     protected void refreshData() throws JDataException {
         /* Access data */
-        DataSet<?> myData = theControl.getData();
+        DataSet<?, ?> myData = theControl.getData();
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);

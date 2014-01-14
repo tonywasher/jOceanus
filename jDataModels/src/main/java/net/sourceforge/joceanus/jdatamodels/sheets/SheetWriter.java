@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class SheetWriter<T extends DataSet<T>> {
+public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Delete error text.
      */

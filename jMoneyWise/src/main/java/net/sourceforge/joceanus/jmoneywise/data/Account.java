@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -1136,18 +1135,8 @@ public class Account
         }
 
         @Override
-        public AccountList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public AccountList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (AccountList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public AccountList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountList deriveDifferences(final DataList<Account> pOld) {
-            return (AccountList) super.deriveDifferences(pOld);
         }
 
         /**

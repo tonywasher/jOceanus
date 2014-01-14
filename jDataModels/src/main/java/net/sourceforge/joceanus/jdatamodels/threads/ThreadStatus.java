@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class ThreadStatus<T extends DataSet<T>>
+public class ThreadStatus<T extends DataSet<T, ?>>
         implements TaskControl<T> {
     /**
      * Default Number of steps/stages.

@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
  * Provides top-level control of data.
  * @param <T> the DataSet type
  */
-public abstract class DataControl<T extends DataSet<T>>
+public abstract class DataControl<T extends DataSet<T, ?>>
         extends JEventObject {
     /**
      * Rewind action.

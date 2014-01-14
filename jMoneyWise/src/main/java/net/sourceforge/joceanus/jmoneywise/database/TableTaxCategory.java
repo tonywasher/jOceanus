@@ -55,7 +55,7 @@ public class TableTaxCategory
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet<?, ?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getTaxCategories();
         setList(theList);

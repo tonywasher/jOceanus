@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class StoreDatabase<T extends DataSet<T>>
+public class StoreDatabase<T extends DataSet<T, ?>>
         extends WorkerThread<Void> {
     /**
      * Task description.
@@ -86,7 +86,7 @@ public class StoreDatabase<T extends DataSet<T>>
             T myData = myDatabase.loadDatabase(theStatus);
 
             /* Create a difference set between the two data copies */
-            DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

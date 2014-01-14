@@ -80,7 +80,7 @@ public class TablePattern
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet<?, ?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getPatterns();
         setList(theList);

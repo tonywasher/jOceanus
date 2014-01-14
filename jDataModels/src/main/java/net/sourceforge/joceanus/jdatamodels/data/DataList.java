@@ -193,7 +193,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * The DataSet.
      */
-    private DataSet<?> theDataSet;
+    private DataSet<?, ?> theDataSet;
 
     /**
      * The granularity of the list.
@@ -232,7 +232,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Get the dataSet.
      * @return the dataSet
      */
-    public DataSet<?> getDataSet() {
+    public DataSet<?, ?> getDataSet() {
         return theDataSet;
     }
 
@@ -364,7 +364,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pStyle the new {@link ListStyle}
      */
     protected DataList(final Class<T> pBaseClass,
-                       final DataSet<?> pDataSet,
+                       final DataSet<?, ?> pDataSet,
                        final ListStyle pStyle) {
         super(pBaseClass, new IdManager<T>(pDataSet.getGranularity()));
         theStyle = pStyle;
@@ -407,7 +407,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return the cloned list
      * @throws JDataException on error
      */
-    public DataList<T> cloneList(final DataSet<?> pDataSet) throws JDataException {
+    protected DataList<T> cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(ListStyle.CLONE);
         myList.theDataSet = pDataSet;
@@ -499,24 +499,25 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Construct a difference extract between two DataLists. The difference extract will only have items that differ between the two lists. Items that are in
      * the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted. Items
      * that are in both list but differ will be viewed as changed
+     * @param pDataSet the difference DataSet
      * @param pOld The old list to compare to
      * @return the difference list
      */
-    public DataList<T> deriveDifferences(final DataList<T> pOld) {
+    public DataList<T> deriveDifferences(final DataSet<?, ?> pDataSet,
+                                         final DataList<?> pOld) {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(ListStyle.DIFFER);
+        myList.theDataSet = pDataSet;
 
         /* Access an Id Map of the old list */
-        Map<Integer, T> myOld = pOld.getIdMap();
-
-        /* Create an iterator for all items in the list */
-        Iterator<T> myIterator = iterator();
+        Map<Integer, ?> myOld = pOld.getIdMap();
 
         /* Loop through the new list */
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
             DataItem myCurr = myIterator.next();
-            DataItem myItem = myOld.get(myCurr.getId());
+            DataItem myItem = (DataItem) myOld.get(myCurr.getId());
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -541,13 +542,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             }
         }
 
-        /* Create an iterator for all remaining items in the old list */
-        myIterator = myOld.values().iterator();
-
         /* Loop through the remaining items in the old list */
-        while (myIterator.hasNext()) {
+        Iterator<?> myOldIterator = myOld.values().iterator();
+        while (myOldIterator.hasNext()) {
             /* Insert a new item */
-            DataItem myCurr = myIterator.next();
+            DataItem myCurr = (DataItem) myOldIterator.next();
             DataItem myItem = myList.addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setDeleted(true);
@@ -563,18 +562,16 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * differ will be viewed as changed
      * @param pBase The base list to re-base on
      */
-    public void reBase(final DataList<T> pBase) {
+    public void reBase(final DataList<?> pBase) {
         /* Access an Id Map of the old list */
-        Map<Integer, T> myBase = pBase.getIdMap();
-
-        /* Create an iterator for our new list */
-        Iterator<T> myIterator = iterator();
+        Map<Integer, ?> myBase = pBase.getIdMap();
 
         /* Loop through this list */
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the base list */
             T myCurr = myIterator.next();
-            T myItem = myBase.get(myCurr.getId());
+            DataItem myItem = (DataItem) myBase.get(myCurr.getId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
@@ -602,13 +599,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             }
         }
 
-        /* Create an iterator for the source base list */
-        myIterator = myBase.values().iterator();
-
         /* Loop through the remaining items in the base list */
-        while (myIterator.hasNext()) {
+        Iterator<?> myBaseIterator = myBase.values().iterator();
+        while (myBaseIterator.hasNext()) {
             /* Insert a new item */
-            T myCurr = myIterator.next();
+            DataItem myCurr = (DataItem) myBaseIterator.next();
             T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setHistory(myCurr);

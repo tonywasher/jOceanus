@@ -448,7 +448,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
          * @param pStyle the style of the list
          */
         public DataInfoList(final Class<T> pBaseClass,
-                            final DataSet<?> pData,
+                            final DataSet<?, ?> pData,
                             final ListStyle pStyle) {
             super(pBaseClass, pData, pStyle);
         }

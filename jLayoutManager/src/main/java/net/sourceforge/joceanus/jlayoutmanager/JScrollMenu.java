@@ -15,7 +15,7 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * Code for this module is based on the MenuScroller.java code that is available at
- * 
+ *
  * under the Apache 2.0 license
  * ------------------------------------------------------------
  * SubVersion Revision Information:

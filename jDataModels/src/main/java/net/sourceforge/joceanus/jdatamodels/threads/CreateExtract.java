@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class CreateExtract<T extends DataSet<T>>
+public class CreateExtract<T extends DataSet<T, ?>>
         extends WorkerThread<Void> {
     /**
      * Task description.
@@ -120,7 +120,7 @@ public class CreateExtract<T extends DataSet<T>>
             theStatus.initTask("Verifying Extract");
 
             /* Create a difference set between the two data copies */
-            DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jLayoutManager: Java Swing Layout Manager
+- * jLayoutManager: Java Swing Layout Manager
  * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,6 +52,16 @@ public enum ArrowIcon implements Icon {
      * Right Arrow.
      */
     RIGHT(new Point(1, 1), new Point(1, 9), new Point(9, 5)),
+
+    /**
+     * DoubleUp Arrow.
+     */
+    DOUBLEUP(new Point(1, 5), new Point(5, 1), new Point(9, 5), new Point(5, 5), new Point(9, 9), new Point(1, 9), new Point(5, 5)),
+
+    /**
+     * DoubleDown Arrow.
+     */
+    DOUBLEDOWN(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(9, 5), new Point(5, 9), new Point(1, 5), new Point(5, 5)),
 
     /**
      * DoubleLeft Arrow.

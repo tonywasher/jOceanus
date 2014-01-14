@@ -164,7 +164,7 @@ public abstract class EncryptedItem
         setValueControlKey(pControlId);
 
         /* Look up the Control keys */
-        DataSet<?> myData = getDataSet();
+        DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Look up the ControlKey */
@@ -249,7 +249,7 @@ public abstract class EncryptedItem
 
     @Override
     public void resolveDataSetLinks() throws JDataException {
-        DataSet<?> myData = getDataSet();
+        DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
         ValueSet myValues = getValueSet();
 
@@ -325,7 +325,7 @@ public abstract class EncryptedItem
          * @param pData the DataSet for the list
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?> pData) {
+                                final DataSet<?, ?> pData) {
             super(pBaseClass, pData, ListStyle.CORE);
         }
 
@@ -336,7 +336,7 @@ public abstract class EncryptedItem
          * @param pStyle the style of the list
          */
         public EncryptedList(final Class<T> pBaseClass,
-                             final DataSet<?> pData,
+                             final DataSet<?, ?> pData,
                              final ListStyle pStyle) {
             super(pBaseClass, pData, pStyle);
         }

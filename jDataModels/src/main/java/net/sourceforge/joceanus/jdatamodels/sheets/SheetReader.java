@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class SheetReader<T extends DataSet<T>> {
+public abstract class SheetReader<T extends DataSet<T, ?>> {
     /**
      * Close error text.
      */

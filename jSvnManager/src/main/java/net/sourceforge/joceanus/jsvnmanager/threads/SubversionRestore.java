@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jsvnmanager.tasks.Backup;
  * @author Tony Washer
  * @param <T> the dataset type
  */
-public class SubversionRestore<T extends DataSet<T>>
+public class SubversionRestore<T extends DataSet<T, ?>>
         extends WorkerThread<Void> {
     /**
      * Task description.
@@ -91,7 +91,7 @@ public class SubversionRestore<T extends DataSet<T>>
         theStatus.initTask("Restoring Subversion Backup");
 
         /* Create a clone of the security control */
-        DataSet<?> myData = theControl.getData();
+        DataSet<?, ?> myData = theControl.getData();
         SecureManager mySecure = myData.getSecurity();
 
         /* Access the BackUp preferences */

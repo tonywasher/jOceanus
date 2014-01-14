@@ -70,7 +70,7 @@ import net.sourceforge.joceanus.jhelpmanager.HelpWindow;
  * @author Tony Washer
  * @param <T> the data set type
  */
-public abstract class MainWindow<T extends DataSet<T>>
+public abstract class MainWindow<T extends DataSet<T, ?>>
         implements ThreadControl, ActionListener {
     /**
      * Resource Bundle.

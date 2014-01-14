@@ -340,7 +340,7 @@ public abstract class DataItem
      * Obtain the dataSet.
      * @return the dataSet
      */
-    public DataSet<?> getDataSet() {
+    public DataSet<?, ?> getDataSet() {
         return theList.getDataSet();
     }
 

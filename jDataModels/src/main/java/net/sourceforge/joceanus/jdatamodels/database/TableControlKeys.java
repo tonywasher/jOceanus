@@ -56,7 +56,7 @@ public class TableControlKeys
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet<?, ?> pData) {
         theList = pData.getControlKeys();
         setList(theList);
     }

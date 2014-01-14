@@ -283,7 +283,7 @@ public class ControlKey
             setValueHashBytes(pHashBytes);
 
             /* Access the Security manager */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
             JDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -322,7 +322,7 @@ public class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
             JDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -364,7 +364,7 @@ public class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
             JDataFormatter myFormatter = myData.getDataFormatter();
 
@@ -416,7 +416,7 @@ public class ControlKey
      * @param pData the DataSet
      * @throws JDataException on error
      */
-    private void allocateDataKeys(final DataSet<?> pData) throws JDataException {
+    private void allocateDataKeys(final DataSet<?, ?> pData) throws JDataException {
         /* Access the DataKey List */
         DataKeyList myKeys = pData.getDataKeys();
         setNewVersion();
@@ -522,7 +522,7 @@ public class ControlKey
          * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list
          */
-        protected ControlKeyList(final DataSet<?> pData) {
+        protected ControlKeyList(final DataSet<?, ?> pData) {
             super(ControlKey.class, pData, ListStyle.CORE);
         }
 
@@ -531,7 +531,7 @@ public class ControlKey
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlKeyList(final DataSet<?> pData,
+        protected ControlKeyList(final DataSet<?, ?> pData,
                                  final ListStyle pStyle) {
             super(ControlKey.class, pData, pStyle);
         }
@@ -552,7 +552,7 @@ public class ControlKey
         }
 
         @Override
-        public ControlKeyList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public ControlKeyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (ControlKeyList) super.cloneList(pDataSet);
         }
 
@@ -562,8 +562,9 @@ public class ControlKey
         }
 
         @Override
-        public ControlKeyList deriveDifferences(final DataList<ControlKey> pOld) {
-            return (ControlKeyList) super.deriveDifferences(pOld);
+        public ControlKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
+                                                final DataList<?> pOld) {
+            return (ControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
@@ -641,9 +642,9 @@ public class ControlKey
          * @param pDatabase the DataSet for the Database
          * @throws JDataException on error
          */
-        protected void initialiseSecurity(final DataSet<?> pDatabase) throws JDataException {
+        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws JDataException {
             /* Access the active control key from the database */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             ControlKey myDatabaseKey = pDatabase.getControlKey();
             ControlKey myKey;
 
@@ -667,7 +668,7 @@ public class ControlKey
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             ControlKey myKey = myData.getControlKey();
 
             /* Loop through the controlKeys */
@@ -693,7 +694,7 @@ public class ControlKey
             ControlKey myControl = addSecureItem(pControlKey.getId(), pControlKey.getHashBytes());
 
             /* Access the DataKey List */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             DataKeyList myKeys = myData.getDataKeys();
 
             /* Loop through the SymKeyType values */

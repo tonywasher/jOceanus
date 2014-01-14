@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class UpdatePassword<T extends DataSet<T>>
+public class UpdatePassword<T extends DataSet<T, ?>>
         extends LoaderThread<T> {
     /**
      * Task description.

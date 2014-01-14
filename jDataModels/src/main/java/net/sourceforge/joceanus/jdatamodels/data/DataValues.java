@@ -438,7 +438,7 @@ public class DataValues {
      * @param pData the data set
      */
     public static void createXML(final Document pDocument,
-                                 final DataSet<?> pData) {
+                                 final DataSet<?, ?> pData) {
         /* Create an element for the document */
         Element myElement = pDocument.createElement(pData.getClass().getSimpleName());
         pDocument.appendChild(myElement);

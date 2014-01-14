@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
  * Class that encapsulates a database connection.
  * @param <T> the dataSet type.
  */
-public abstract class Database<T extends DataSet<T>> {
+public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Number of update steps per table (INSERT/UPDATE/DELETE).
      */

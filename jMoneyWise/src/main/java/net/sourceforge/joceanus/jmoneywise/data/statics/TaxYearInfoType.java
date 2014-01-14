@@ -185,7 +185,7 @@ public class TaxYearInfoType
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public TaxYearInfoTypeList(final DataSet<?> pData) {
+        public TaxYearInfoTypeList(final DataSet<?, ?> pData) {
             super(TaxYearInfoType.class, pData, ListStyle.CORE);
         }
 
@@ -205,18 +205,8 @@ public class TaxYearInfoType
         }
 
         @Override
-        public TaxYearInfoTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public TaxYearInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (TaxYearInfoTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public TaxYearInfoTypeList deriveList(final ListStyle pStyle) throws JDataException {
-            return (TaxYearInfoTypeList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public TaxYearInfoTypeList deriveDifferences(final DataList<TaxYearInfoType> pOld) {
-            return (TaxYearInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

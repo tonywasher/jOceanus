@@ -182,7 +182,7 @@ public class EventCategoryType
          * Construct an empty CORE category type list.
          * @param pData the DataSet for the list
          */
-        public EventCategoryTypeList(final DataSet<?> pData) {
+        public EventCategoryTypeList(final DataSet<?, ?> pData) {
             super(EventCategoryType.class, pData, ListStyle.CORE);
         }
 
@@ -202,18 +202,8 @@ public class EventCategoryType
         }
 
         @Override
-        public EventCategoryTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public EventCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (EventCategoryTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public EventCategoryTypeList deriveList(final ListStyle pStyle) throws JDataException {
-            return (EventCategoryTypeList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public EventCategoryTypeList deriveDifferences(final DataList<EventCategoryType> pOld) {
-            return (EventCategoryTypeList) super.deriveDifferences(pOld);
         }
 
         /**

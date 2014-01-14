@@ -224,7 +224,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * Declare DataSet.
      * @param pData the Data set
      */
-    protected abstract void declareData(final DataSet<?> pData);
+    protected abstract void declareData(final DataSet<?, ?> pData);
 
     /**
      * Set the list of items.
@@ -280,7 +280,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected boolean loadItems(final TaskControl<?> pTask,
-                                final DataSet<?> pData) throws JDataException {
+                                final DataSet<?, ?> pData) throws JDataException {
         boolean bContinue = true;
         String myQuery;
         int mySteps;
@@ -377,7 +377,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected boolean insertItems(final TaskControl<?> pTask,
-                                  final DataSet<?> pData,
+                                  final DataSet<?, ?> pData,
                                   final BatchControl pBatch) throws JDataException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Inserting "

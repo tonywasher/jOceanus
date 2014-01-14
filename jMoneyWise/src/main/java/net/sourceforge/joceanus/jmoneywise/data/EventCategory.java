@@ -956,7 +956,7 @@ public final class EventCategory
         }
 
         @Override
-        public EventCategoryList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public EventCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (EventCategoryList) super.cloneList(pDataSet);
         }
 
@@ -966,16 +966,6 @@ public final class EventCategory
          */
         protected EventCategoryList(final EventCategoryList pSource) {
             super(pSource);
-        }
-
-        @Override
-        public EventCategoryList deriveList(final ListStyle pStyle) throws JDataException {
-            return (EventCategoryList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public EventCategoryList deriveDifferences(final DataList<EventCategory> pOld) {
-            return (EventCategoryList) super.deriveDifferences(pOld);
         }
 
         /**

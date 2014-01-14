@@ -64,7 +64,7 @@ public class TableAccountInfo
     }
 
     @Override
-    protected void declareData(final DataSet<?> pData) {
+    protected void declareData(final DataSet<?, ?> pData) {
         FinanceData myData = (FinanceData) pData;
         theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();

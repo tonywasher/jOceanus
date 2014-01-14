@@ -889,7 +889,7 @@ public class AccountCategory
         }
 
         @Override
-        public AccountCategoryList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public AccountCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (AccountCategoryList) super.cloneList(pDataSet);
         }
 
@@ -899,16 +899,6 @@ public class AccountCategory
          */
         protected AccountCategoryList(final AccountCategoryList pSource) {
             super(pSource);
-        }
-
-        @Override
-        public AccountCategoryList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountCategoryList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountCategoryList deriveDifferences(final DataList<AccountCategory> pOld) {
-            return (AccountCategoryList) super.deriveDifferences(pOld);
         }
 
         /**

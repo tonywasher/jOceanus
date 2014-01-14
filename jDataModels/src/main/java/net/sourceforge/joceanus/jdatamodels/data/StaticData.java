@@ -752,7 +752,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * @param pStyle the style of the list
          */
         public StaticList(final Class<T> pBaseClass,
-                          final DataSet<?> pData,
+                          final DataSet<?, ?> pData,
                           final ListStyle pStyle) {
             super(pBaseClass, pData, pStyle);
         }

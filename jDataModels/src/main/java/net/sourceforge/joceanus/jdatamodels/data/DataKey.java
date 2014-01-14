@@ -343,7 +343,7 @@ public class DataKey
             setValueKeyType(SymKeyType.fromId(pKeyTypeId));
 
             /* Look up the ControlKey */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControlKey = myKeys.findItemById(pControlId);
             if (myControlKey == null) {
@@ -456,7 +456,7 @@ public class DataKey
 
     @Override
     public void resolveDataSetLinks() {
-        DataSet<?> myData = getDataSet();
+        DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
@@ -516,7 +516,7 @@ public class DataKey
          * Construct an empty CORE DataKey list.
          * @param pData the DataSet for the list
          */
-        protected DataKeyList(final DataSet<?> pData) {
+        protected DataKeyList(final DataSet<?, ?> pData) {
             super(DataKey.class, pData, ListStyle.CORE);
         }
 
@@ -525,7 +525,7 @@ public class DataKey
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected DataKeyList(final DataSet<?> pData,
+        protected DataKeyList(final DataSet<?, ?> pData,
                               final ListStyle pStyle) {
             super(DataKey.class, pData, pStyle);
         }
@@ -546,7 +546,7 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public DataKeyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (DataKeyList) super.cloneList(pDataSet);
         }
 
@@ -556,8 +556,9 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList deriveDifferences(final DataList<DataKey> pOld) {
-            return (DataKeyList) super.deriveDifferences(pOld);
+        public DataKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
+                                             final DataList<?> pOld) {
+            return (DataKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override

@@ -210,7 +210,7 @@ public class TaxBasis
          * Construct an empty CORE tax bucket list.
          * @param pData the DataSet for the list
          */
-        public TaxBasisList(final DataSet<?> pData) {
+        public TaxBasisList(final DataSet<?, ?> pData) {
             super(TaxBasis.class, pData, ListStyle.CORE);
         }
 
@@ -230,18 +230,8 @@ public class TaxBasis
         }
 
         @Override
-        public TaxBasisList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public TaxBasisList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (TaxBasisList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public TaxBasisList deriveList(final ListStyle pStyle) throws JDataException {
-            return (TaxBasisList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public TaxBasisList deriveDifferences(final DataList<TaxBasis> pOld) {
-            return (TaxBasisList) super.deriveDifferences(pOld);
         }
 
         /**

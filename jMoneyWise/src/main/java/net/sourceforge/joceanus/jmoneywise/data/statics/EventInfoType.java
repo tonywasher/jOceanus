@@ -203,7 +203,7 @@ public class EventInfoType
          * Construct an empty CORE eventInfo list.
          * @param pData the DataSet for the list
          */
-        public EventInfoTypeList(final DataSet<?> pData) {
+        public EventInfoTypeList(final DataSet<?, ?> pData) {
             super(EventInfoType.class, pData, ListStyle.CORE);
         }
 
@@ -223,18 +223,8 @@ public class EventInfoType
         }
 
         @Override
-        public EventInfoTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public EventInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (EventInfoTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public EventInfoTypeList deriveList(final ListStyle pStyle) throws JDataException {
-            return (EventInfoTypeList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public EventInfoTypeList deriveDifferences(final DataList<EventInfoType> pOld) {
-            return (EventInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

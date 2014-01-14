@@ -195,7 +195,7 @@ public class ControlData
             setValueControlKey(pControlId);
 
             /* Look up the ControlKey */
-            DataSet<?> myData = getDataSet();
+            DataSet<?, ?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControl = myKeys.findItemById(pControlId);
             if (myControl == null) {
@@ -250,7 +250,7 @@ public class ControlData
 
     @Override
     public void resolveDataSetLinks() {
-        DataSet<?> myData = getDataSet();
+        DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
@@ -324,7 +324,7 @@ public class ControlData
          * Construct an empty CORE Control Data list.
          * @param pData the DataSet for the list
          */
-        protected ControlDataList(final DataSet<?> pData) {
+        protected ControlDataList(final DataSet<?, ?> pData) {
             super(ControlData.class, pData, ListStyle.CORE);
         }
 
@@ -333,7 +333,7 @@ public class ControlData
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected ControlDataList(final DataSet<?> pData,
+        protected ControlDataList(final DataSet<?, ?> pData,
                                   final ListStyle pStyle) {
             super(ControlData.class, pData, pStyle);
         }
@@ -354,7 +354,7 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public ControlDataList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (ControlDataList) super.cloneList(pDataSet);
         }
 
@@ -364,8 +364,9 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList deriveDifferences(final DataList<ControlData> pOld) {
-            return (ControlDataList) super.deriveDifferences(pOld);
+        public ControlDataList deriveDifferences(final DataSet<?, ?> pDataSet,
+                                                 final DataList<?> pOld) {
+            return (ControlDataList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override

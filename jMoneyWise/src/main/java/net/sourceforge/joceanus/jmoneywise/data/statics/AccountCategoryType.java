@@ -176,7 +176,7 @@ public class AccountCategoryType
          * Construct an empty CORE account category list.
          * @param pData the DataSet for the list
          */
-        public AccountCategoryTypeList(final DataSet<?> pData) {
+        public AccountCategoryTypeList(final DataSet<?, ?> pData) {
             super(AccountCategoryType.class, pData, ListStyle.CORE);
         }
 
@@ -193,21 +193,6 @@ public class AccountCategoryType
             AccountCategoryTypeList myList = new AccountCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public AccountCategoryTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
-            return (AccountCategoryTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public AccountCategoryTypeList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountCategoryTypeList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountCategoryTypeList deriveDifferences(final DataList<AccountCategoryType> pOld) {
-            return (AccountCategoryTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

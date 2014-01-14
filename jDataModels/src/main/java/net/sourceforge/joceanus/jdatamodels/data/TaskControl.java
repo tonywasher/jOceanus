@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jgordianknot.SecureManager;
  * @author Tony Washer
  * @param <T> the dataset type
  */
-public interface TaskControl<T extends DataSet<T>> {
+public interface TaskControl<T extends DataSet<T, ?>> {
     /**
      * Initialise task.
      * @param pTask task name

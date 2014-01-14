@@ -175,7 +175,7 @@ public class Frequency
          * Construct an empty CORE frequency list.
          * @param pData the DataSet for the list
          */
-        public FrequencyList(final DataSet<?> pData) {
+        public FrequencyList(final DataSet<?, ?> pData) {
             super(Frequency.class, pData, ListStyle.CORE);
         }
 
@@ -195,18 +195,8 @@ public class Frequency
         }
 
         @Override
-        public FrequencyList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public FrequencyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (FrequencyList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public FrequencyList deriveList(final ListStyle pStyle) throws JDataException {
-            return (FrequencyList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public FrequencyList deriveDifferences(final DataList<Frequency> pOld) {
-            return (FrequencyList) super.deriveDifferences(pOld);
         }
 
         /**

@@ -587,18 +587,8 @@ public class Pattern
         }
 
         @Override
-        public PatternList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public PatternList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (PatternList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public PatternList deriveList(final ListStyle pStyle) throws JDataException {
-            return (PatternList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public PatternList deriveDifferences(final DataList<Pattern> pOld) {
-            return (PatternList) super.deriveDifferences(pOld);
         }
 
         /**

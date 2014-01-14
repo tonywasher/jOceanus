@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -462,18 +461,8 @@ public class TaxYearInfo
         }
 
         @Override
-        public TaxInfoList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public TaxInfoList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (TaxInfoList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public TaxInfoList deriveList(final ListStyle pStyle) throws JDataException {
-            return (TaxInfoList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public TaxInfoList deriveDifferences(final DataList<TaxYearInfo> pOld) {
-            return (TaxInfoList) super.deriveDifferences(pOld);
         }
 
         @Override

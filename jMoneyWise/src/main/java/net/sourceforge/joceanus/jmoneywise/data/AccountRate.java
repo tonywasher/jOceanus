@@ -757,18 +757,8 @@ public class AccountRate
         }
 
         @Override
-        public AccountRateList cloneList(final DataSet<?> pDataSet) throws JDataException {
+        public AccountRateList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
             return (AccountRateList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public AccountRateList deriveList(final ListStyle pStyle) throws JDataException {
-            return (AccountRateList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public AccountRateList deriveDifferences(final DataList<AccountRate> pOld) {
-            return (AccountRateList) super.deriveDifferences(pOld);
         }
 
         /**
