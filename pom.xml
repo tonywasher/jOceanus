@@ -11,8 +11,7 @@
   <modules>
     <module>jMoneyWise</module>
     <module>jDataModels</module>
-    <module>jSvnManager</module>
-    <module>jJira</module>
+    <module>jthemis</module>
     <module>jGordianKnot</module>
     <module>jDataManager</module>
     <module>jSortedList</module>

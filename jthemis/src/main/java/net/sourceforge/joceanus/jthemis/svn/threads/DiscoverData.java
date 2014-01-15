@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.threads;
+package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.util.List;
 
@@ -28,10 +28,10 @@ import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
-import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
 
 /**
  * Thread to handle analysis of repository.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.ui;
+package net.sourceforge.joceanus.jthemis.svn.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,19 +39,19 @@ import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamanager.JDataWindow;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jsvnmanager.data.Branch;
-import net.sourceforge.joceanus.jsvnmanager.data.Branch.BranchOpType;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
-import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
-import net.sourceforge.joceanus.jsvnmanager.data.Tag;
-import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.joceanus.jsvnmanager.threads.CreateBranchTags;
-import net.sourceforge.joceanus.jsvnmanager.threads.CreateNewBranch;
-import net.sourceforge.joceanus.jsvnmanager.threads.CreateTagExtract;
-import net.sourceforge.joceanus.jsvnmanager.threads.CreateWorkingCopy;
-import net.sourceforge.joceanus.jsvnmanager.threads.DiscoverData;
-import net.sourceforge.joceanus.jsvnmanager.threads.RevertWorkingCopy;
-import net.sourceforge.joceanus.jsvnmanager.threads.UpdateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.svn.data.Branch;
+import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.svn.data.Tag;
+import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.threads.CreateBranchTags;
+import net.sourceforge.joceanus.jthemis.svn.threads.CreateNewBranch;
+import net.sourceforge.joceanus.jthemis.svn.threads.CreateTagExtract;
+import net.sourceforge.joceanus.jthemis.svn.threads.CreateWorkingCopy;
+import net.sourceforge.joceanus.jthemis.svn.threads.DiscoverData;
+import net.sourceforge.joceanus.jthemis.svn.threads.RevertWorkingCopy;
+import net.sourceforge.joceanus.jthemis.svn.threads.UpdateWorkingCopy;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 

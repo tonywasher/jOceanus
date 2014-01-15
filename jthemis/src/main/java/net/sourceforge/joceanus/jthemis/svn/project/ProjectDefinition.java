@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.project;
+package net.sourceforge.joceanus.jthemis.svn.project;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jsvnmanager.project.ProjectId.ProjectList;
+import net.sourceforge.joceanus.jthemis.svn.project.ProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;

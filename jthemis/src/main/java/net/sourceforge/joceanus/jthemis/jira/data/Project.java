@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jJira: Java Jira Link
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jjira.data;
+package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,13 +30,13 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jjira.data.Security.User;
-import net.sourceforge.joceanus.jjira.data.Server.IssueType;
-import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
-import net.sourceforge.joceanus.jjira.soap.RemoteComponent;
-import net.sourceforge.joceanus.jjira.soap.RemoteIssueType;
-import net.sourceforge.joceanus.jjira.soap.RemoteProject;
-import net.sourceforge.joceanus.jjira.soap.RemoteVersion;
+import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
+import net.sourceforge.joceanus.jthemis.jira.data.Server.IssueType;
+import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteComponent;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteIssueType;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteProject;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteVersion;
 
 /**
  * Represents a Jira project.

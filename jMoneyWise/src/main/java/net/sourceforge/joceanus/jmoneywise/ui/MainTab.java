@@ -52,8 +52,8 @@ import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jsvnmanager.threads.SubversionBackup;
-import net.sourceforge.joceanus.jsvnmanager.threads.SubversionRestore;
+import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
+import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 
 /**
  * Main Window for jMoneyWise.

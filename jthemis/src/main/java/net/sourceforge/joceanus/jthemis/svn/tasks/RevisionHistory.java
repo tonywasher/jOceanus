@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.tasks;
+package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNException;
@@ -51,11 +51,6 @@ public class RevisionHistory {
      * Repository.
      */
     private final Repository theRepository;
-
-    /**
-     * Report object.
-     */
-    // private final ReportStatus theReport;
 
     /**
      * Result set.

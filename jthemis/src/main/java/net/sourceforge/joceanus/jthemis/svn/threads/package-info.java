@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,5 +24,5 @@
  * Threads for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.joceanus.jsvnmanager.threads;
+package net.sourceforge.joceanus.jthemis.svn.threads;
 

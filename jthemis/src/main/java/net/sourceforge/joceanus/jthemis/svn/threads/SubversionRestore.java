@@ -1,4 +1,5 @@
-/* jSvnManager: Java SubVersion Management
+/*******************************************************************************
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.threads;
+package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 
@@ -34,8 +35,8 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
-import net.sourceforge.joceanus.jsvnmanager.tasks.Backup;
+import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
 /**
  * Thread to handle subVersion backups.

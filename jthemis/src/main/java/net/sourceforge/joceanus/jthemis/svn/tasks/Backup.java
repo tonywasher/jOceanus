@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.tasks;
+package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
-import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;

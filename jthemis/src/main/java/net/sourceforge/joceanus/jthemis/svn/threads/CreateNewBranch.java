@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.threads;
+package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 import java.util.Arrays;
@@ -31,14 +31,14 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jsvnmanager.data.Branch.BranchOpType;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
-import net.sourceforge.joceanus.jsvnmanager.data.Tag;
-import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.joceanus.jsvnmanager.tasks.Directory;
-import net.sourceforge.joceanus.jsvnmanager.tasks.VersionMgr;
+import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.Tag;
+import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
+import net.sourceforge.joceanus.jthemis.svn.tasks.VersionMgr;
 
 /**
  * Thread to handle creation of new branches.

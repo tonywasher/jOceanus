@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.data;
+package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,10 +38,10 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jsvnmanager.data.Component.ComponentList;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jsvnmanager.project.ProjectDefinition;
-import net.sourceforge.joceanus.jsvnmanager.project.ProjectId;
+import net.sourceforge.joceanus.jthemis.svn.data.Component.ComponentList;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
+import net.sourceforge.joceanus.jthemis.svn.project.ProjectId;
 
 import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;

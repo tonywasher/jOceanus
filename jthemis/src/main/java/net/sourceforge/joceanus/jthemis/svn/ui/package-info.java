@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Package to handle user interface for JSvnManager.
  */
-package net.sourceforge.joceanus.jsvnmanager.ui;
+package net.sourceforge.joceanus.jthemis.svn.ui;
 

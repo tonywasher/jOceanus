@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.tasks;
+package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jjira.data.Issue;
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jsvnmanager.data.Repository;
-import net.sourceforge.joceanus.jsvnmanager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.jira.data.Issue;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNCommitInfo;

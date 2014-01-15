@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jJira: Java Jira Link
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jjira;
+package net.sourceforge.joceanus.jthemis.jira;
 
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jjira.data.Server;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jthemis.jira.data.Server;
 
 /**
  * Jira test suite.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jJira: Java Jira Link
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jjira.data;
+package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.awt.Color;
 import java.net.MalformedURLException;
@@ -35,20 +35,20 @@ import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jjira.data.Security.Group;
-import net.sourceforge.joceanus.jjira.data.Security.Role;
-import net.sourceforge.joceanus.jjira.data.Security.User;
-import net.sourceforge.joceanus.jjira.soap.AbstractRemoteConstant;
-import net.sourceforge.joceanus.jjira.soap.JiraSoapService;
-import net.sourceforge.joceanus.jjira.soap.JiraSoapServiceServiceLocator;
-import net.sourceforge.joceanus.jjira.soap.RemoteFilter;
-import net.sourceforge.joceanus.jjira.soap.RemoteIssue;
-import net.sourceforge.joceanus.jjira.soap.RemoteIssueType;
-import net.sourceforge.joceanus.jjira.soap.RemotePriority;
-import net.sourceforge.joceanus.jjira.soap.RemoteProject;
-import net.sourceforge.joceanus.jjira.soap.RemoteResolution;
-import net.sourceforge.joceanus.jjira.soap.RemoteStatus;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jthemis.jira.data.Security.Group;
+import net.sourceforge.joceanus.jthemis.jira.data.Security.Role;
+import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
+import net.sourceforge.joceanus.jthemis.jira.soap.AbstractRemoteConstant;
+import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
+import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapServiceServiceLocator;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteFilter;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteIssue;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteIssueType;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemotePriority;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteProject;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteResolution;
+import net.sourceforge.joceanus.jthemis.jira.soap.RemoteStatus;
 
 import org.apache.log4j.PropertyConfigurator;
 

@@ -6,7 +6,7 @@
     <version>v1.2.1-SNAPSHOT</version>   
   </parent>
   <artifactId>jthemis</artifactId>
-  <name>jThemis</name>
+  <name>jThemis Project Framework</name>
   <description>Java Project Framework</description>
   <profiles>
     <profile>

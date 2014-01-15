@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSvnManager: Java SubVersion Management
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsvnmanager.ui;
+package net.sourceforge.joceanus.jthemis.svn.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -35,7 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jsvnmanager.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
 
 /**
  * Status window for SubVersion operations.

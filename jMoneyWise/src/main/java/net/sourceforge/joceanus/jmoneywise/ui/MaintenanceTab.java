@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jdatamodels.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jeventmanager.JEventPanel;
-import net.sourceforge.joceanus.jjira.data.JiraPreferences;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
@@ -63,7 +62,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferencesPanel;
-import net.sourceforge.joceanus.jsvnmanager.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
+import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
 /**
  * Maintenance Tab panel.

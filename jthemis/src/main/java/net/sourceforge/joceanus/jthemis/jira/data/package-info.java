@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jJira: Java Jira Link
+ * jThemis: Java Project Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Package to provide an easy to use link into Jira from Java.
  */
-package net.sourceforge.joceanus.jjira.data;
+package net.sourceforge.joceanus.jthemis.jira.data;
 
