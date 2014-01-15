@@ -1,0 +1,8 @@
+jThemis Project
+
+  jThemis is a subComponent of the jOceanus project, which looks after project management
+such as source code and issue management. It is named after the titaness Themis, who was viewed 
+as the embodiment of divine order, law, and custom.
+
+  It currently provides access to Jira functionality (using the Jira SOAP API) and Subversion (using the SvnKit API).
+It is intended to be extended to provide access to Git via the JGit API.
