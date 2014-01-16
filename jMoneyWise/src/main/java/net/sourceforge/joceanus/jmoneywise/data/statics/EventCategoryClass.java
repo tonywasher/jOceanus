@@ -270,11 +270,18 @@ public enum EventCategoryClass implements StaticInterface {
     EXPENSETOTALS(45, 44),
 
     /**
+     * Stock Parent.
+     * <p>
+     * This is used for categories which simply own a set of stock transfer sub-categories and is used purely for holding purposes.
+     */
+    STOCKPARENT(46, 45),
+
+    /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    TOTALS(46, 45);
+    TOTALS(47, 46);
 
     /**
      * Resource Bundle.
@@ -366,6 +373,7 @@ public enum EventCategoryClass implements StaticInterface {
             case TAXFREEGAIN:
             case INCOMETOTALS:
             case EXPENSETOTALS:
+            case STOCKPARENT:
             case TOTALS:
                 return true;
             default:
@@ -572,6 +580,7 @@ public enum EventCategoryClass implements StaticInterface {
         switch (this) {
             case INCOMETOTALS:
             case EXPENSETOTALS:
+            case STOCKPARENT:
             case TOTALS:
                 return true;
             default:
@@ -587,6 +596,7 @@ public enum EventCategoryClass implements StaticInterface {
         switch (this) {
             case INCOMETOTALS:
             case EXPENSETOTALS:
+            case STOCKPARENT:
                 return true;
             default:
                 return false;
@@ -610,6 +620,29 @@ public enum EventCategoryClass implements StaticInterface {
             case OPTIONSVEST:
             case OPTIONSEXERCISE:
             case OPTIONSEXPIRE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this event category a stock transfer?
+     * @return true/false
+     */
+    public boolean isStockTransfer() {
+        switch (this) {
+            case STOCKADJUST:
+            case STOCKSPLIT:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
+            case STOCKRIGHTSWAIVED:
+            case STOCKRIGHTSTAKEN:
+            case OPTIONSGRANT:
+            case OPTIONSVEST:
+            case OPTIONSEXERCISE:
+            case OPTIONSEXPIRE:
+            case STOCKPARENT:
                 return true;
             default:
                 return false;

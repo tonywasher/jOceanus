@@ -143,6 +143,12 @@ public final class EventCategory
         return formatObject();
     }
 
+    @Override
+    public boolean isActive() {
+        return super.isActive()
+               || isHidden();
+    }
+
     /**
      * Obtain Name.
      * @return the name
@@ -818,6 +824,7 @@ public final class EventCategory
                     break;
                 case INCOMETOTALS:
                 case EXPENSETOTALS:
+                case STOCKPARENT:
                     /* Check parent */
                     if (myParent == null) {
                         addError(ERROR_MISSING, FIELD_PARENT);
@@ -827,7 +834,7 @@ public final class EventCategory
                     break;
                 default:
                     /* Check parent requirement */
-                    boolean isTransfer = isTransfer();
+                    boolean isTransfer = myClass == EventCategoryClass.TRANSFER;
                     boolean hasParent = myParent != null;
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
@@ -841,7 +848,8 @@ public final class EventCategory
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
-                        if (myParentClass.isIncome() != myClass.isIncome()) {
+                        if ((myParentClass.isIncome() != myClass.isIncome())
+                            || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
                             addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 
@@ -854,7 +862,6 @@ public final class EventCategory
                     }
                     break;
             }
-
         }
 
         /* Set validation flag */
@@ -874,7 +881,6 @@ public final class EventCategory
         if (!(pCategory instanceof EventCategory)) {
             return false;
         }
-
         EventCategory myCategory = (EventCategory) pCategory;
 
         /* Store the current detail into history */

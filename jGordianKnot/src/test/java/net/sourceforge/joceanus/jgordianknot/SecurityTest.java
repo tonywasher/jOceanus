@@ -76,12 +76,12 @@ public class SecurityTest {
     public static void createAndShowGUI() {
         try {
             // listAlgorithms(SecurityProvider.BC);
-            // checkAlgorithms();
+            checkAlgorithms();
             // testSecurity();
             /* Test zip file creation */
-            File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
-            createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
-            extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
+            // File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
+            // createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);
+            // extractZipFile(myZipFile, new File("c:\\Users\\Tony\\testcomp"));
         } catch (Exception e) {
             System.out.println("Help");
             e.printStackTrace();
@@ -407,7 +407,7 @@ public class SecurityTest {
      */
     protected static void checkAlgorithms() throws JDataException {
         /* Create new Security Generator */
-        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, false);
+        SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
         SecureManager myManager = new SecureManager(theLogger, myParams);
         SecurityGenerator myGenerator = myManager.getSecurityGenerator();
 

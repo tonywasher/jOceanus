@@ -97,14 +97,9 @@ public class MaintenanceTab
     private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
 
     /**
-     * AccountCategory tab title.
+     * Category tab title.
      */
-    private static final String TITLE_ACCOUNTCAT = NLS_BUNDLE.getString("TabAccountCat");
-
-    /**
-     * EventCategory tab title.
-     */
-    private static final String TITLE_EVENTCAT = NLS_BUNDLE.getString("TabEventCat");
+    private static final String TITLE_CATEGORY = NLS_BUNDLE.getString("TabCategory");
 
     /**
      * Static tab title.
@@ -137,14 +132,9 @@ public class MaintenanceTab
     private final MaintTaxYear theTaxYearTab;
 
     /**
-     * The AccountCategory Panel.
+     * The Category Panel.
      */
-    private final AccountCategoryTable theAccountCatTab;
-
-    /**
-     * The EventCategory Panel.
-     */
-    private final EventCategoryTable theEventCatTab;
+    private final CategoryPanel theCategoryTab;
 
     /**
      * The Static Panel.
@@ -201,15 +191,10 @@ public class MaintenanceTab
         theTabs.addTab(TITLE_ACCOUNTS, theAccountTab);
         theAccountTab.addChangeListener(myListener);
 
-        /* Create the event category Tab and add it */
-        theAccountCatTab = new AccountCategoryTable(theView);
-        theTabs.addTab(TITLE_ACCOUNTCAT, theAccountCatTab.getPanel());
-        theAccountCatTab.addChangeListener(myListener);
-
-        /* Create the event category Tab and add it */
-        theEventCatTab = new EventCategoryTable(theView);
-        theTabs.addTab(TITLE_EVENTCAT, theEventCatTab.getPanel());
-        theEventCatTab.addChangeListener(myListener);
+        /* Create the category Tab and add it */
+        theCategoryTab = new CategoryPanel(theView);
+        theTabs.addTab(TITLE_CATEGORY, theCategoryTab);
+        theCategoryTab.addChangeListener(myListener);
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new MaintTaxYear(theView);
@@ -269,8 +254,7 @@ public class MaintenanceTab
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();
-            theAccountCatTab.refreshData();
-            theEventCatTab.refreshData();
+            theCategoryTab.refreshData();
             theTaxYearTab.refreshData();
             theStatic.refreshData();
 
@@ -290,10 +274,7 @@ public class MaintenanceTab
         /* Determine whether we have updates */
         boolean hasUpdates = theAccountTab.hasUpdates();
         if (!hasUpdates) {
-            hasUpdates = theAccountCatTab.hasUpdates();
-        }
-        if (!hasUpdates) {
-            hasUpdates = theEventCatTab.hasUpdates();
+            hasUpdates = theCategoryTab.hasUpdates();
         }
         if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
@@ -349,22 +330,13 @@ public class MaintenanceTab
                                          || theAccountTab.hasUpdates());
         }
 
-        /* Access the Account Category index */
-        iIndex = theTabs.indexOfTab(TITLE_ACCOUNTCAT);
+        /* Access the Category index */
+        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
 
-        /* Enable/Disable the Account Category tab */
+        /* Enable/Disable the Category tab */
         if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theAccountCatTab.hasUpdates());
-        }
-
-        /* Access the Event Category index */
-        iIndex = theTabs.indexOfTab(TITLE_EVENTCAT);
-
-        /* Enable/Disable the Event Category tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theEventCatTab.hasUpdates());
+                                         || theCategoryTab.hasUpdates());
         }
 
         /* Access the TaxYear index */
@@ -411,14 +383,9 @@ public class MaintenanceTab
             theAccountTab.determineFocus();
 
             /* If the selected component is AccountCategory */
-        } else if (myComponent.equals(theAccountCatTab)) {
+        } else if (myComponent.equals(theCategoryTab)) {
             /* Set the debug focus */
-            theAccountCatTab.determineFocus();
-
-            /* If the selected component is EventCategory */
-        } else if (myComponent.equals(theEventCatTab)) {
-            /* Set the debug focus */
-            theEventCatTab.determineFocus();
+            theCategoryTab.determineFocus();
 
             /* If the selected component is TaxYear */
         } else if (myComponent.equals(theTaxYearTab)) {
