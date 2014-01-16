@@ -1,0 +1,30 @@
+jTethys Project
+
+  jTethys is a subComponent of the jOceanus project. It provides various utilities for the jOceanus project.
+It is named after the titaness Tethys who was the embodiment of the waters of the world.
+
+  The following utilities are provided
+
+  * A generic <<JOceanusException>> exception class that accepts an associated object plus text.
+
+  * A <<DataConverter>> class.
+
+  * A generic EventManager.
+
+    This provides a <<JEventManager>> class which supports <<ActionEvents>> and <<ChangeEvents>> on a generic object.
+It is particularly useful for JPanels and JTables which only have the base capability of firing PropertyChangeEvents.
+Three classes <<JEventObject>>, <<JEventPanel>> and <<JEventTable>> are provided as extensions of Object, 
+JPanel and JTables respectively, with added ChangeEvent and ActionEvent support.
+
+    In addition a set of wrapper classes are provided to extend <<JTabbedPane>>, <<JPanel>> and <<JScrollPane>> such that
+it will pass the setEnabled() method on to all subcomponents.
+	
+  * A set of Swing Utilities
+
+      ** Utilities to help with SpringLayout (based on the Oracle SpringUtilities example), and GridBagLayout
+
+      ** A set of classes to enable Scrollable Menus
+
+      ** A class to provide simple sorting/filtering in a JTable
+  
+  * A simple Help Manager
