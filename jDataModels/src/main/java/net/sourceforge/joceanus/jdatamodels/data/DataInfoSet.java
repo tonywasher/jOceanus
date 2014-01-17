@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

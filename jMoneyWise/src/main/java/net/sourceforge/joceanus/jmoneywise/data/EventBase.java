@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedMoney;
+import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -35,8 +37,6 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedMoney;
-import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;

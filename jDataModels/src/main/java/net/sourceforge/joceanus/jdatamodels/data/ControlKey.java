@@ -27,13 +27,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.EncryptionGenerator;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.EncryptionGenerator;
 import net.sourceforge.joceanus.jgordianknot.HashKey;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;

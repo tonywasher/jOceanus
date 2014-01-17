@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jGordianKnot: Security Suite
+ * jDataManager: Java Data Manager
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,31 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBigDecimal;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBigInteger;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBoolean;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedCharArray;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDate;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDateDay;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDilution;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDouble;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedFloat;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedInteger;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedLong;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedMoney;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedPrice;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedRate;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedRatio;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedShort;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedString;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedUnits;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -35,25 +52,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBigDecimal;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBigInteger;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedBoolean;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedCharArray;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDate;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDateDay;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDilution;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedDouble;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedFloat;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedInteger;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedLong;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedMoney;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedPrice;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRate;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRatio;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedShort;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jgordianknot.CipherSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

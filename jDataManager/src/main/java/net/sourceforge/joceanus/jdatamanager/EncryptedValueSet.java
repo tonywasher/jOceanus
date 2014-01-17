@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jGordianKnot: Security Suite
+ * jDataManager: Java Data Manager
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jdatamanager;
 
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

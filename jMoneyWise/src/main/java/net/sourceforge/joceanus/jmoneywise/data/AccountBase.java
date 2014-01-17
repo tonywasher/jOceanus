@@ -26,13 +26,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedString;
+import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;

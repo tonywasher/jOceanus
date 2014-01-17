@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jdatamanager.ValueSetHistory;
 import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
 import net.sourceforge.joceanus.jfieldset.JFieldState;
-import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

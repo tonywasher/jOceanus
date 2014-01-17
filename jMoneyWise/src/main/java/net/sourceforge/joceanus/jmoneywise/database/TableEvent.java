@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
+import net.sourceforge.joceanus.jdatamanager.EncryptedData;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition;
@@ -31,7 +32,6 @@ import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jdatamodels.database.TableEncrypted;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;

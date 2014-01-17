@@ -27,6 +27,8 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedPrice;
+import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -38,8 +40,6 @@ import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JPrice;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedPrice;
-import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;

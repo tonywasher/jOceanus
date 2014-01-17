@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jfieldset;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -36,7 +37,6 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 
 /**
  * JFieldSet data model abstraction.

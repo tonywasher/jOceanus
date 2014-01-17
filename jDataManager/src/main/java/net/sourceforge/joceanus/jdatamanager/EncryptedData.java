@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jGordianKnot: Security Suite
+ * jDataManager: Java Data Manager
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jdatamanager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDiffers;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -42,6 +40,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jgordianknot.CipherSet;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -49,6 +48,11 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Encrypted data types.
  */
 public final class EncryptedData {
+    /**
+     * The Hash prime.
+     */
+    private static final int HASH_PRIME = 19;
+
     /**
      * Encrypted data conversion failure message.
      */
@@ -352,7 +356,7 @@ public final class EncryptedData {
         @Override
         public int hashCode() {
             /* Calculate hash allowing for field that has not been encrypted yet */
-            int myHashCode = SecurityGenerator.HASH_PRIME
+            int myHashCode = HASH_PRIME
                              * getValue().hashCode();
             if (theEncrypted != null) {
                 myHashCode += Arrays.hashCode(theEncrypted);

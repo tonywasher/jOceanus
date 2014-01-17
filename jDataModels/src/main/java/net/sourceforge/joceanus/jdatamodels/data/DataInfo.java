@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

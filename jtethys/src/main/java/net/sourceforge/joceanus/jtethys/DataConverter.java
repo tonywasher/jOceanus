@@ -279,8 +279,8 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JOceanusException(ERROR_HEXLEN
-                                        + pHexString);
+            throw new JTethysDataException(ERROR_HEXLEN
+                                           + pHexString);
         }
 
         /* Allocate the new bytes array */
@@ -294,8 +294,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JOceanusException(ERROR_HEXDIGIT
-                                            + pHexString);
+                throw new JTethysDataException(ERROR_HEXDIGIT
+                                               + pHexString);
             }
 
             /* Initialise result */
@@ -307,8 +307,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JOceanusException(ERROR_HEXDIGIT
-                                            + pHexString);
+                throw new JTethysDataException(ERROR_HEXDIGIT
+                                               + pHexString);
             }
 
             /* Add into result */
@@ -347,8 +347,8 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JOceanusException(ERROR_HEXLEN
-                                        + pHexString);
+            throw new JTethysDataException(ERROR_HEXLEN
+                                           + pHexString);
         }
 
         /* Loop through the string */
@@ -359,8 +359,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JOceanusException(ERROR_HEXDIGIT
-                                            + pHexString);
+                throw new JTethysDataException(ERROR_HEXDIGIT
+                                               + pHexString);
             }
 
             /* Add into the value */
@@ -393,7 +393,7 @@ public final class DataConverter {
             out.flush();
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JTethysDataException(e.getMessage(), e);
         }
     }
 
@@ -421,7 +421,7 @@ public final class DataConverter {
             /* Return the array */
             return myArray;
         } catch (IOException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JTethysDataException(e.getMessage(), e);
         }
     }
 
@@ -523,7 +523,7 @@ public final class DataConverter {
         try {
             return new String(pInput, ENCODING);
         } catch (IOException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JTethysDataException(e.getMessage(), e);
         }
     }
 
@@ -537,7 +537,7 @@ public final class DataConverter {
         try {
             return pInput.getBytes(ENCODING);
         } catch (IOException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JTethysDataException(e.getMessage(), e);
         }
     }
 
