@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,17 +30,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jgordianknot.CipherMode;
-import net.sourceforge.joceanus.jgordianknot.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.DataDigest;
-import net.sourceforge.joceanus.jgordianknot.DataMac;
-import net.sourceforge.joceanus.jgordianknot.DigestType;
-import net.sourceforge.joceanus.jgordianknot.MacSpec;
-import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.StreamKey;
-import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.DigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.MacSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

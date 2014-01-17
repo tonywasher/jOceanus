@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.awt.Color;
 import java.awt.Component;

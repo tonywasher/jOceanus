@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -29,7 +29,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.SymmetricRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

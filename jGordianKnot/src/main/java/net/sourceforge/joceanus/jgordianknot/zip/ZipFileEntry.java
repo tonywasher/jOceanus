@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,9 +29,9 @@ import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipStreamSpec.ZipStreamList;
+import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipStreamSpec.ZipStreamList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

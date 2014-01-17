@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,14 +30,14 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.CipherMode;
-import net.sourceforge.joceanus.jgordianknot.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.StreamKey;
-import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

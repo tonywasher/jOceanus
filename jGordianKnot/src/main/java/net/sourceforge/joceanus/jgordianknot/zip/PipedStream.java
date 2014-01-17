@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
 
 /**
  * Class to provide a pipe enabling data to be passed between threads via writing to an output stream and reading from an input stream.

@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jgordianknot.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,7 +36,7 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.MacRegister;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.MacRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

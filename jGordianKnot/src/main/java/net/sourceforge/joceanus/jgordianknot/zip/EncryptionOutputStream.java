@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.CipherMode;
-import net.sourceforge.joceanus.jgordianknot.StreamCipher;
-import net.sourceforge.joceanus.jgordianknot.StreamKey;
-import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipStreamSpec.ZipStreamType;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipStreamSpec.ZipStreamType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

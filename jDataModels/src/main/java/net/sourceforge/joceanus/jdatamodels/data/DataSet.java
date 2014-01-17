@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jdatamodels.preferences.DataListPreferences;
-import net.sourceforge.joceanus.jgordianknot.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

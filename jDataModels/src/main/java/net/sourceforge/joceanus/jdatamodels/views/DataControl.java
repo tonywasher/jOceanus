@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jdatamodels.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jdatamodels.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;

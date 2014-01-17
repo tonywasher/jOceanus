@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -42,7 +42,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.AsymmetricRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;

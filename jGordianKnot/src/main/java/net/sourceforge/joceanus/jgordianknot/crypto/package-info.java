@@ -24,5 +24,5 @@
  * JGordian Knot is a security suite that combines various encryption algorithms to provide a high level of security
  * It provides a simple external interface for applications looking to secure data.
  */
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 

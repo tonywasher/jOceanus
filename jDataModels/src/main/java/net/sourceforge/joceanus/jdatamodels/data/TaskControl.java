@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jdatamodels.data;
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.

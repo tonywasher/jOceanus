@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.joceanus.jgordianknot.DataDigest;
-import net.sourceforge.joceanus.jgordianknot.DigestType;
-import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.DigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

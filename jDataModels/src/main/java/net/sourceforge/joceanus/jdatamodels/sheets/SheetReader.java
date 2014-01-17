@@ -34,11 +34,11 @@ import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jgordianknot.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

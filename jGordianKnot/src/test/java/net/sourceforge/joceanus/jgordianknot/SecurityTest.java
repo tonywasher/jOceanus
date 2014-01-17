@@ -38,10 +38,25 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
-import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
+import net.sourceforge.joceanus.jgordianknot.crypto.AsymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.DigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.MacType;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -257,7 +272,7 @@ public class SecurityTest {
         byte[] myEncrypt = myHash.encryptBytes(myBytes);
 
         /* Create a data digest */
-        DataDigest myDigest = new DataDigest(myGen);
+        DataDigest myDigest = myGen.generateDigest();
         myDigest.update(mySymSafe);
         myDigest.update(myStreamSafe);
         myDigest.update(myAsymSafe);
@@ -266,7 +281,7 @@ public class SecurityTest {
         byte[] myDigestBytes = myDigest.finish();
 
         /* Create a data Mac */
-        DataMac myMac = DataMac.generateRandomMac(myGen);
+        DataMac myMac = myGen.generateMac();
         myMac.update(mySymSafe);
         myMac.update(myStreamSafe);
         myMac.update(myAsymSafe);
@@ -292,7 +307,7 @@ public class SecurityTest {
         byte[] myMac1Bytes = myMac.finish();
 
         /* Create a message digest */
-        myDigest = new DataDigest(myGen, myDigest.getDigestType());
+        myDigest = myGen.generateDigest(myDigest.getDigestType());
         myDigest.update(mySymSafe);
         myDigest.update(myStreamSafe);
         myDigest.update(myAsymSafe);

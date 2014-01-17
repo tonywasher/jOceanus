@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,8 +33,8 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
-import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

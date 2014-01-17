@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jdatamodels.preferences;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.SecurityParameters;
-import net.sourceforge.joceanus.jgordianknot.SecurityProvider;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityParameters;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityProvider;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

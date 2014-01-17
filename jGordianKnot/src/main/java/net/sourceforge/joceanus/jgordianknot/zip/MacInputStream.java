@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.zipfile;
+package net.sourceforge.joceanus.jgordianknot.zip;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jgordianknot.DataMac;
-import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;

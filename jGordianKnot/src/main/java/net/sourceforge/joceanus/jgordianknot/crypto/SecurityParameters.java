@@ -20,8 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
-
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 /**
  * Security Parameters.

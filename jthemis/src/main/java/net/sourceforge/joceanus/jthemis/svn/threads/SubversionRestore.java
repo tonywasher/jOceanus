@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jgordianknot.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

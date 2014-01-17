@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot;
+package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 
-import net.sourceforge.joceanus.jgordianknot.SecurityRegister.StreamRegister;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.StreamRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

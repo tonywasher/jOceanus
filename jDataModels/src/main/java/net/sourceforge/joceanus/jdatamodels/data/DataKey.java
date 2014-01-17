@@ -28,12 +28,12 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
-import net.sourceforge.joceanus.jgordianknot.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.DataCipher;
-import net.sourceforge.joceanus.jgordianknot.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.SymKeyType;
-import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.DataCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
