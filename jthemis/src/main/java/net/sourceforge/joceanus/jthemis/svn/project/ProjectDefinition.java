@@ -34,12 +34,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
@@ -142,10 +141,10 @@ public class ProjectDefinition
      * @param pLogger the logger
      * @param pFile file to load
      * @return project definition.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static ProjectDefinition parseProjectFile(final Logger pLogger,
-                                                     final File pFile) throws JDataException {
+                                                     final File pFile) throws JOceanusException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer = null;
 
@@ -159,15 +158,15 @@ public class ProjectDefinition
             return new ProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to load Project file for "
-                                                          + pFile.getAbsolutePath(), e);
+            throw new JOceanusException("Failed to load Project file for "
+                                        + pFile.getAbsolutePath(), e);
 
         } catch (IOException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to load Project file for "
-                                                          + pFile.getAbsolutePath(), e);
+            throw new JOceanusException("Failed to load Project file for "
+                                        + pFile.getAbsolutePath(), e);
 
         } finally {
             if (myInBuffer != null) {
@@ -183,9 +182,9 @@ public class ProjectDefinition
     /**
      * Parse project definition file.
      * @param pInput the project definition file as input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ProjectDefinition(final InputStream pInput) throws JDataException {
+    public ProjectDefinition(final InputStream pInput) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Parse the Project definition */
@@ -204,19 +203,19 @@ public class ProjectDefinition
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
+            throw new JOceanusException("Failed to parse Project file", e);
         } catch (XmlPullParserException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
+            throw new JOceanusException("Failed to parse Project file", e);
         }
     }
 
     /**
      * Constructor for a duplicate project definition.
      * @param pDefinition the definition to copy
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ProjectDefinition(final ProjectDefinition pDefinition) throws JDataException {
+    public ProjectDefinition(final ProjectDefinition pDefinition) throws JOceanusException {
         /* Clone the old model */
         theModel = pDefinition.getModel().clone();
 
@@ -228,9 +227,9 @@ public class ProjectDefinition
 
     /**
      * Parse dependencies.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void parseDependencies() throws JDataException {
+    private void parseDependencies() throws JOceanusException {
         /* Obtain the dependency list */
         List<Dependency> myDependencies = theModel.getDependencies();
 
@@ -263,9 +262,9 @@ public class ProjectDefinition
     /**
      * Write to file stream.
      * @param pFile the file to write to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void writeToFile(final File pFile) throws JDataException {
+    public void writeToFile(final File pFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* delete the file if it exists */
@@ -287,7 +286,7 @@ public class ProjectDefinition
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to write Project file", e);
+            throw new JOceanusException("Failed to write Project file", e);
         }
     }
 

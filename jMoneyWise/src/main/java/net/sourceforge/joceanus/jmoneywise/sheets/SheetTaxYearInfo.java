@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataInfo extension for TaxYearInfo.
@@ -89,13 +89,13 @@ public class SheetTaxYearInfo
                                      final Integer pControlId,
                                      final Integer pInfoTypeId,
                                      final Integer pOwnerId,
-                                     final byte[] pValue) throws JDataException {
+                                     final byte[] pValue) throws JOceanusException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Touch underlying items */
         theTaxYears.touchUnderlyingItems();
 

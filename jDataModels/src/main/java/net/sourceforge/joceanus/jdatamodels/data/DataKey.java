@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -36,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey. For a single control key, one DataKey is allocated
@@ -322,13 +321,13 @@ public class DataKey
      * @param pControlId the id of the ControlKey
      * @param pKeyTypeId the id of the KeyType
      * @param pSecurityKey the encrypted symmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private DataKey(final DataKeyList pList,
                     final Integer pId,
                     final Integer pControlId,
                     final Integer pKeyTypeId,
-                    final byte[] pSecurityKey) throws JDataException {
+                    final byte[] pSecurityKey) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -348,7 +347,7 @@ public class DataKey
             ControlKey myControlKey = myKeys.findItemById(pControlId);
             if (myControlKey == null) {
                 addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
 
             /* Store the keys */
@@ -368,9 +367,9 @@ public class DataKey
             myControlKey.registerDataKey(this);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -379,11 +378,11 @@ public class DataKey
      * @param pList the list to add to
      * @param pControlKey the ControlKey to which this key belongs
      * @param pKeyType the Key type of the new key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private DataKey(final DataKeyList pList,
                     final ControlKey pControlKey,
-                    final SymKeyType pKeyType) throws JDataException {
+                    final SymKeyType pKeyType) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -411,9 +410,9 @@ public class DataKey
             pControlKey.registerDataKey(this);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -422,11 +421,11 @@ public class DataKey
      * @param pList the list to add to
      * @param pControlKey the ControlKey to which this key belongs
      * @param pDataKey the DataKey to clone
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private DataKey(final DataKeyList pList,
                     final ControlKey pControlKey,
-                    final DataKey pDataKey) throws JDataException {
+                    final DataKey pDataKey) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -470,9 +469,9 @@ public class DataKey
 
     /**
      * Update password hash.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void updatePasswordHash() throws JDataException {
+    protected void updatePasswordHash() throws JOceanusException {
         /* Store the current detail into history */
         pushHistory();
 
@@ -546,12 +545,12 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public DataKeyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (DataKeyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public DataKeyList deriveList(final ListStyle pStyle) throws JDataException {
+        public DataKeyList deriveList(final ListStyle pStyle) throws JOceanusException {
             return (DataKeyList) super.deriveList(pStyle);
         }
 
@@ -586,19 +585,19 @@ public class DataKey
          * @param pKeyTypeId the id of the KeyType
          * @param pSecurityKey the encrypted symmetric key
          * @return the new item
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public DataKey addSecureItem(final Integer pId,
                                      final Integer pControlId,
                                      final Integer pKeyTypeId,
-                                     final byte[] pSecurityKey) throws JDataException {
+                                     final byte[] pSecurityKey) throws JOceanusException {
             /* Create the DataKey */
             DataKey myKey = new DataKey(this, pId, pControlId, pKeyTypeId, pSecurityKey);
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myKey, ERROR_DUPLICATE);
+                throw new JOceanusException(myKey, ERROR_DUPLICATE);
             }
 
             /* Add to the list */
@@ -611,10 +610,10 @@ public class DataKey
          * @param pControlKey the ControlKey
          * @param pKeyType the KeyType
          * @return the new DataKey
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public DataKey createNewKey(final ControlKey pControlKey,
-                                    final SymKeyType pKeyType) throws JDataException {
+                                    final SymKeyType pKeyType) throws JOceanusException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pControlKey, pKeyType);
 
@@ -628,10 +627,10 @@ public class DataKey
          * @param pControlKey the ControlKey
          * @param pDataKey the DataKey
          * @return the new DataKey
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public DataKey cloneItem(final ControlKey pControlKey,
-                                 final DataKey pDataKey) throws JDataException {
+                                 final DataKey pDataKey) throws JOceanusException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pControlKey, pDataKey);
 

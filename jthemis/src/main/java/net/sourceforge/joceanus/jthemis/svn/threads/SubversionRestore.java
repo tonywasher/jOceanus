@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
@@ -35,6 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
@@ -85,7 +84,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         Backup myAccess = null;
 
         /* Initialise the status window */
@@ -112,7 +111,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+            throw new JOceanusException("Operation Cancelled");
         }
 
         /* Determine the name of the repository */

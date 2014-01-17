@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TaxBasis data type.
@@ -93,10 +92,10 @@ public class TaxBasis
      * Basic Constructor.
      * @param pList The list to associate the Tax Basis with
      * @param pName Name of Tax Basis
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final String pName) throws JDataException {
+                     final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -104,10 +103,10 @@ public class TaxBasis
      * Basic constructor.
      * @param pList The list to associate the Tax Basis with
      * @param pClass Class of Tax Basis
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
-                     final TaxBasisClass pClass) throws JDataException {
+                     final TaxBasisClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -119,14 +118,14 @@ public class TaxBasis
      * @param pOrder the sort order
      * @param pName Name of Tax Basis
      * @param pDesc Description of Tax Basis
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
                      final Integer pId,
                      final Boolean isEnabled,
                      final Integer pOrder,
                      final String pName,
-                     final String pDesc) throws JDataException {
+                     final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -139,7 +138,7 @@ public class TaxBasis
      * @param pOrder the sort order
      * @param pName Encrypted Name of TaxBasis
      * @param pDesc Encrypted Description of TaxBasis
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxBasis(final TaxBasisList pList,
                      final Integer pId,
@@ -147,7 +146,7 @@ public class TaxBasis
                      final Boolean isEnabled,
                      final Integer pOrder,
                      final byte[] pName,
-                     final byte[] pDesc) throws JDataException {
+                     final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -230,7 +229,7 @@ public class TaxBasis
         }
 
         @Override
-        public TaxBasisList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public TaxBasisList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (TaxBasisList) super.cloneList(pDataSet);
         }
 
@@ -271,22 +270,22 @@ public class TaxBasis
         /**
          * Add a TaxBasis.
          * @param pTaxBasis the Name of the tax basis
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pTaxBasis) throws JDataException {
+        public void addBasicItem(final String pTaxBasis) throws JOceanusException {
             /* Create a new Tax Basis */
             TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
 
             /* Check that this TaxBasis has not been previously added */
             if (findItemByName(pTaxBasis) != null) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
 
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -297,7 +296,7 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
         }
 
@@ -308,20 +307,20 @@ public class TaxBasis
          * @param pOrder the sort order
          * @param pTaxBasis the Name of the tax basis
          * @param pDesc the Description of the tax basis
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pTaxBasis,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Tax Basis */
             TaxBasis myBasis = new TaxBasis(this, pId, isEnabled, pOrder, pTaxBasis, pDesc);
 
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(pId)) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -332,7 +331,7 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
         }
 
@@ -344,21 +343,21 @@ public class TaxBasis
          * @param pOrder the sort order
          * @param pTaxBasis the Encrypted Name of the tax basis
          * @param pDesc the Encrypted Description of the tax basis
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pTaxBasis,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Tax Basis */
             TaxBasis myBasis = new TaxBasis(this, pId, pControlId, isEnabled, pOrder, pTaxBasis, pDesc);
 
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(pId)) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -369,15 +368,15 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myBasis, ERROR_VALIDATION);
+                throw new JOceanusException(myBasis, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (TaxBasisClass myClass : TaxBasisClass.values()) {
                 /* Create new element */
@@ -391,7 +390,7 @@ public class TaxBasis
 
                 /* Handle validation failure */
                 if (myBasis.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myBasis, ERROR_VALIDATION);
+                    throw new JOceanusException(myBasis, ERROR_VALIDATION);
                 }
             }
 

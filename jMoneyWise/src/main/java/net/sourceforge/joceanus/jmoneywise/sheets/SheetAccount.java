@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for Account.
@@ -152,7 +151,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myCategoryId = loadInteger(COL_ACCOUNTCAT);
@@ -171,7 +170,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the Account */
         String myName = loadString(COL_NAME);
         String myCategory = loadString(COL_ACCOUNTCAT);
@@ -187,7 +186,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void loadSecondPass(final Integer pId) throws JDataException {
+    protected void loadSecondPass(final Integer pId) throws JOceanusException {
         /* Access the account */
         Account myAccount = theList.findItemById(pId);
 
@@ -196,7 +195,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void insertSecureItem(final Account pItem) throws JDataException {
+    protected void insertSecureItem(final Account pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_ACCOUNTCAT, pItem.getAccountCategoryId());
@@ -208,7 +207,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void insertOpenItem(final Account pItem) throws JDataException {
+    protected void insertOpenItem(final Account pItem) throws JOceanusException {
         /* Set the fields */
         writeString(COL_NAME, pItem.getName());
         writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
@@ -222,7 +221,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
         writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
@@ -236,7 +235,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_ACCOUNTCAT);
@@ -272,7 +271,7 @@ public class SheetAccount
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -284,11 +283,11 @@ public class SheetAccount
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -458,8 +457,8 @@ public class SheetAccount
             myList.touchUnderlyingItems();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Accounts", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load Accounts", e);
         }
 
         /* Return to caller */
@@ -485,7 +484,7 @@ public class SheetAccount
         }
 
         @Override
-        public void formatSheet() throws JDataException {
+        public void formatSheet() throws JOceanusException {
             /* Apply basic formatting */
             super.formatSheet();
 

@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Event data type.
@@ -456,18 +455,18 @@ public abstract class EventBase
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueAmount(final JMoney pValue) throws JDataException {
+    private void setValueAmount(final JMoney pValue) throws JOceanusException {
         setEncryptedValue(FIELD_AMOUNT, pValue);
     }
 
     /**
      * Set amount value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueAmount(final byte[] pBytes) throws JDataException {
+    private void setValueAmount(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_AMOUNT, pBytes, JMoney.class);
     }
 
@@ -586,7 +585,7 @@ public abstract class EventBase
      * @param pReconciled is the event reconciled
      * @param pSplit is the event split
      * @param pParent the parent id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer pId,
@@ -598,7 +597,7 @@ public abstract class EventBase
                         final Integer pCategory,
                         final Boolean pReconciled,
                         final Boolean pSplit,
-                        final Integer pParent) throws JDataException {
+                        final Integer pParent) throws JOceanusException {
         /* Initialise item */
         super(pList, pId);
 
@@ -620,9 +619,9 @@ public abstract class EventBase
             setValueAmount(pAmount);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -638,7 +637,7 @@ public abstract class EventBase
      * @param pReconciled is the event reconciled
      * @param pSplit is the event split
      * @param pParent the parent
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer uId,
@@ -649,7 +648,7 @@ public abstract class EventBase
                         final String pCategory,
                         final Boolean pReconciled,
                         final Boolean pSplit,
-                        final EventBase pParent) throws JDataException {
+                        final EventBase pParent) throws JOceanusException {
         /* Initialise item */
         super(pList, uId);
 
@@ -673,12 +672,12 @@ public abstract class EventBase
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -761,7 +760,7 @@ public abstract class EventBase
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -780,14 +779,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         } else if (myDebit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         }
@@ -801,14 +800,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         } else if (myCredit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         }
@@ -822,14 +821,14 @@ public abstract class EventBase
             EventCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             EventCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         }
@@ -1234,9 +1233,9 @@ public abstract class EventBase
     /**
      * Set a new amount.
      * @param pAmount the amount
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAmount(final JMoney pAmount) throws JDataException {
+    public void setAmount(final JMoney pAmount) throws JOceanusException {
         setValueAmount(pAmount);
     }
 

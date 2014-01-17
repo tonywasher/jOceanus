@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jthemis.jira;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Server;
 
 /**
@@ -45,7 +45,7 @@ public class TestJira {
         try {
             Server myServer = new Server(new PreferenceManager(theLogger));
             myServer.loadIssuesFromFilter("AllIssues");
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
         }
     }
 }

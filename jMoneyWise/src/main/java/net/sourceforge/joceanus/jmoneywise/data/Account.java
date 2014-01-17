@@ -27,8 +27,6 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -42,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Account DataItem utilising AccountInfo.
@@ -623,7 +622,7 @@ public class Account
      * @param isTaxFree is the account taxFree?
      * @param isGross is the account grossInterest?
      * @param uCurrencyId the Account currency id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Account(final AccountList pList,
                     final Integer pId,
@@ -633,7 +632,7 @@ public class Account
                     final Boolean isClosed,
                     final Boolean isTaxFree,
                     final Boolean isGross,
-                    final Integer uCurrencyId) throws JDataException {
+                    final Integer uCurrencyId) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, uCurrencyId);
 
@@ -653,7 +652,7 @@ public class Account
      * @param isTaxFree is the account taxFree?
      * @param isGross is the account grossInterest?
      * @param pCurrency the Account currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Account(final AccountList pList,
                     final Integer pId,
@@ -662,7 +661,7 @@ public class Account
                     final Boolean isClosed,
                     final Boolean isTaxFree,
                     final Boolean isGross,
-                    final String pCurrency) throws JDataException {
+                    final String pCurrency) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
 
@@ -688,9 +687,9 @@ public class Account
 
     /**
      * Adjust closed/maturity dates.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void adjustDates() throws JDataException {
+    public void adjustDates() throws JOceanusException {
         /* Adjust closed date */
         theStatus.adjustClosed();
 
@@ -745,153 +744,153 @@ public class Account
     /**
      * Set a new maturity date.
      * @param pDate the new date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setMaturity(final JDateDay pDate) throws JDataException {
+    public void setMaturity(final JDateDay pDate) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.MATURITY, pDate);
     }
 
     /**
      * Set a new parent.
      * @param pParent the new parent
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setParent(final Account pParent) throws JDataException {
+    public void setParent(final Account pParent) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.PARENT, pParent);
     }
 
     /**
      * Set a new alias.
      * @param pAlias the new alias
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAlias(final Account pAlias) throws JDataException {
+    public void setAlias(final Account pAlias) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.ALIAS, pAlias);
     }
 
     /**
      * Set a new portfolio.
      * @param pPortfolio the new portfolio
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setPortfolio(final Account pPortfolio) throws JDataException {
+    public void setPortfolio(final Account pPortfolio) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.PORTFOLIO, pPortfolio);
     }
 
     /**
      * Set a new holding.
      * @param pHolding the new holding
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHolding(final Account pHolding) throws JDataException {
+    public void setHolding(final Account pHolding) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.HOLDING, pHolding);
     }
 
     /**
      * Set a new symbol.
      * @param pSymbol the new symbol
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setSymbol(final String pSymbol) throws JDataException {
+    public void setSymbol(final String pSymbol) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.SYMBOL, pSymbol);
     }
 
     /**
      * Set new comments.
      * @param pComments the new comments
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setComments(final String pComments) throws JDataException {
+    public void setComments(final String pComments) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.COMMENTS, pComments);
     }
 
     /**
      * Set a new opening balance.
      * @param pBalance the new opening balance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setOpeningBalance(final JMoney pBalance) throws JDataException {
+    public void setOpeningBalance(final JMoney pBalance) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
     /**
      * Set a new autoExpense.
      * @param pCategory the new autoExpense
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAutoExpense(final EventCategory pCategory) throws JDataException {
+    public void setAutoExpense(final EventCategory pCategory) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
     }
 
     /**
      * Set a new WebSite.
      * @param pWebSite the new webSite
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setWebSite(final char[] pWebSite) throws JDataException {
+    public void setWebSite(final char[] pWebSite) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
     }
 
     /**
      * Set a new CustNo.
      * @param pCustNo the new custNo
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCustNo(final char[] pCustNo) throws JDataException {
+    public void setCustNo(final char[] pCustNo) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
     }
 
     /**
      * Set a new UserId.
      * @param pUserId the new userId
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setUserId(final char[] pUserId) throws JDataException {
+    public void setUserId(final char[] pUserId) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.USERID, pUserId);
     }
 
     /**
      * Set a new Password.
      * @param pPassword the new password
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setPassword(final char[] pPassword) throws JDataException {
+    public void setPassword(final char[] pPassword) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
     }
 
     /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setSortCode(final char[] pSortCode) throws JDataException {
+    public void setSortCode(final char[] pSortCode) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
     }
 
     /**
      * Set a new Account.
      * @param pAccount the new account
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAccount(final char[] pAccount) throws JDataException {
+    public void setAccount(final char[] pAccount) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setReference(final char[] pReference) throws JDataException {
+    public void setReference(final char[] pReference) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set a new Notes.
      * @param pNotes the new notes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setNotes(final char[] pNotes) throws JDataException {
+    public void setNotes(final char[] pNotes) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.NOTES, pNotes);
     }
 
@@ -907,13 +906,13 @@ public class Account
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void setInfoSetValue(final AccountInfoClass pInfoClass,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
+            throw new JOceanusException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1135,7 +1134,7 @@ public class Account
         }
 
         @Override
-        public AccountList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountList) super.cloneList(pDataSet);
         }
 
@@ -1143,9 +1142,9 @@ public class Account
          * Construct an edit extract for an Account.
          * @param pAccount the relevant account
          * @return the edit Extract
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public AccountList deriveEditList(final Account pAccount) throws JDataException {
+        public AccountList deriveEditList(final Account pAccount) throws JOceanusException {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1168,9 +1167,9 @@ public class Account
          * Construct an edit extract for an Account.
          * @param pCategory the account category
          * @return the edit Extract
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public AccountList deriveEditList(final AccountCategory pCategory) throws JDataException {
+        public AccountList deriveEditList(final AccountCategory pCategory) throws JOceanusException {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1233,7 +1232,7 @@ public class Account
          * @param isGross is the account gross Interest?
          * @param pCurrency the Account currency
          * @return the new account
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public Account addOpenItem(final Integer pId,
                                    final String pName,
@@ -1241,20 +1240,20 @@ public class Account
                                    final Boolean isClosed,
                                    final Boolean isTaxFree,
                                    final Boolean isGross,
-                                   final String pCurrency) throws JDataException {
+                                   final String pCurrency) throws JOceanusException {
             /* Create the new account */
             Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
+                throw new JOceanusException(myAccount, ERROR_VALIDATION);
             }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
+                throw new JOceanusException(myAccount, "Duplicate Account");
             }
 
             /* Add the Account to the list */
@@ -1272,7 +1271,7 @@ public class Account
          * @param isTaxFree is the account taxFree?
          * @param isGross is the account gross Interest?
          * @param pCurrencyId the Account currency id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
@@ -1281,20 +1280,20 @@ public class Account
                                   final Boolean isClosed,
                                   final Boolean isTaxFree,
                                   final Boolean isGross,
-                                  final Integer pCurrencyId) throws JDataException {
+                                  final Integer pCurrencyId) throws JOceanusException {
             /* Create the new account */
             Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, pCurrencyId);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
+                throw new JOceanusException(myAccount, ERROR_VALIDATION);
             }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
+                throw new JOceanusException(myAccount, ERROR_VALIDATION);
             }
 
             /* Add the Account to the list */

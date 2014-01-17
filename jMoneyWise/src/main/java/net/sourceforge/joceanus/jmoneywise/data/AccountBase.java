@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Account data type.
@@ -298,18 +297,18 @@ public abstract class AccountBase
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final String pValue) throws JDataException {
+    private void setValueName(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JDataException {
+    private void setValueName(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -431,7 +430,7 @@ public abstract class AccountBase
      * @param isTaxFree is the account taxFree?
      * @param isGross is the account grossInterest?
      * @param uCurrencyId the Account currency id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
                           final Integer uId,
@@ -441,7 +440,7 @@ public abstract class AccountBase
                           final Boolean isClosed,
                           final Boolean isTaxFree,
                           final Boolean isGross,
-                          final Integer uCurrencyId) throws JDataException {
+                          final Integer uCurrencyId) throws JOceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -463,9 +462,9 @@ public abstract class AccountBase
             setValueName(pName);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -479,7 +478,7 @@ public abstract class AccountBase
      * @param isTaxFree is the account taxFree?
      * @param isGross is the account grossInterest?
      * @param pCurrency the Account currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
                           final Integer uId,
@@ -488,7 +487,7 @@ public abstract class AccountBase
                           final Boolean isClosed,
                           final Boolean isTaxFree,
                           final Boolean isGross,
-                          final String pCurrency) throws JDataException {
+                          final String pCurrency) throws JOceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -509,9 +508,9 @@ public abstract class AccountBase
             setValueGrossInterest(isGross);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -551,7 +550,7 @@ public abstract class AccountBase
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -570,14 +569,14 @@ public abstract class AccountBase
             AccountCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             AccountCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
             if (myCat.getCategoryTypeClass().isNonAsset()) {
@@ -594,14 +593,14 @@ public abstract class AccountBase
             AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         } else if (myCurrency instanceof String) {
             AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         }
@@ -758,9 +757,9 @@ public abstract class AccountBase
     /**
      * Set a new account name.
      * @param pName the new name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAccountName(final String pName) throws JDataException {
+    public void setAccountName(final String pName) throws JOceanusException {
         setValueName(pName);
     }
 

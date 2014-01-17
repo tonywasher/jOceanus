@@ -30,14 +30,13 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
@@ -245,18 +244,18 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
     /**
      * Load an individual item from the result set.
      * @param pId the id of the item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void loadItem(Integer pId) throws JDataException;
+    protected abstract void loadItem(Integer pId) throws JOceanusException;
 
     /**
      * Set a field value for an item.
      * @param pItem the item to insert
      * @param pField the field id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void setFieldValue(final T pItem,
-                                 final JDataField pField) throws JDataException {
+                                 final JDataField pField) throws JOceanusException {
         /* Switch on field id */
         if (pField == DataItem.FIELD_ID) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
@@ -265,9 +264,9 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Post-Process on a load operation.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Sort the list */
         theList.reSort();
     }
@@ -277,10 +276,10 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @param pTask the task control
      * @param pData the data
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected boolean loadItems(final TaskControl<?> pTask,
-                                final DataSet<?, ?> pData) throws JDataException {
+                                final DataSet<?, ?> pData) throws JOceanusException {
         boolean bContinue = true;
         String myQuery;
         int mySteps;
@@ -333,8 +332,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             postProcessOnLoad();
 
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load "
-                                                               + getTableName(), e);
+            throw new JOceanusException("Failed to load "
+                                        + getTableName(), e);
         }
 
         /* Return to caller */
@@ -374,11 +373,11 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @param pData the data
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected boolean insertItems(final TaskControl<?> pTask,
                                   final DataSet<?, ?> pData,
-                                  final BatchControl pBatch) throws JDataException {
+                                  final BatchControl pBatch) throws JOceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Inserting "
                                + getTableName())) {
@@ -457,8 +456,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             closeStmt();
 
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert "
-                                                                       + getTableName(), e);
+            throw new JOceanusException(myCurr, "Failed to insert "
+                                                + getTableName(), e);
         }
 
         /* Return to caller */
@@ -470,10 +469,10 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected boolean updateItems(final TaskControl<?> pTask,
-                                  final BatchControl pBatch) throws JDataException {
+                                  final BatchControl pBatch) throws JOceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Updating "
                                + getTableName())) {
@@ -543,8 +542,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 }
             }
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update "
-                                                                       + getTableName(), e);
+            throw new JOceanusException(myCurr, "Failed to update "
+                                                + getTableName(), e);
         }
 
         /* Return to caller */
@@ -555,9 +554,9 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * Update the item.
      * @param pItem the item
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private boolean updateItem(final T pItem) throws JDataException {
+    private boolean updateItem(final T pItem) throws JOceanusException {
 
         /* Access the object and base */
         ValueSet myCurr = pItem.getValueSet();
@@ -596,10 +595,10 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @param pTask the task control
      * @param pBatch the batch control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected boolean deleteItems(final TaskControl<?> pTask,
-                                  final BatchControl pBatch) throws JDataException {
+                                  final BatchControl pBatch) throws JOceanusException {
         /* Declare the new stage */
         if (!pTask.setNewStage("Deleting "
                                + getTableName())) {
@@ -671,8 +670,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete "
-                                                                       + getTableName(), e);
+            throw new JOceanusException(myCurr, "Failed to delete "
+                                                + getTableName(), e);
         }
 
         /* Return to caller */
@@ -681,9 +680,9 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Create the table.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void createTable() throws JDataException {
+    protected void createTable() throws JOceanusException {
         String myCreate;
 
         /* Protect the create */
@@ -699,16 +698,16 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 executeStatement(myCreate);
             }
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create "
-                                                               + getTableName(), e);
+            throw new JOceanusException("Failed to create "
+                                        + getTableName(), e);
         }
     }
 
     /**
      * Drop the table.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void dropTable() throws JDataException {
+    protected void dropTable() throws JOceanusException {
         String myDrop;
 
         /* Protect the drop */
@@ -724,24 +723,24 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop "
-                                                               + getTableName(), e);
+            throw new JOceanusException("Failed to drop "
+                                        + getTableName(), e);
         }
     }
 
     /**
      * Truncate the table.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void purgeTable() throws JDataException {
+    protected void purgeTable() throws JOceanusException {
         /* Protect the truncate */
         try {
             /* Execute the purge statement */
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge "
-                                                               + getTableName(), e);
+            throw new JOceanusException("Failed to purge "
+                                        + getTableName(), e);
         }
     }
 }

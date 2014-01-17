@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jLayoutManager: Java Swing Layout Manager
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jlayoutmanager;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.awt.Component;
 

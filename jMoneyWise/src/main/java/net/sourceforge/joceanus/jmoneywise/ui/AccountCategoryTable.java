@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -42,7 +41,6 @@ import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
@@ -51,6 +49,8 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
  * Account Category Maintenance.
@@ -232,7 +232,7 @@ public class AccountCategoryTable
     }
 
     @Override
-    protected void setError(final JDataException pError) {
+    protected void setError(final JOceanusException pError) {
         theError.addError(pError);
     }
 

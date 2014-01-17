@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jdatamodels.sheets;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Spreadsheet control.
@@ -64,10 +64,10 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pTask Task Control for task
      * @param pFile the backup file to load from
      * @return the newly loaded data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public T loadBackup(final TaskControl<T> pTask,
-                        final File pFile) throws JDataException {
+                        final File pFile) throws JOceanusException {
         /* Create a sheet reader object */
         SheetReader<T> myReader = getSheetReader(pTask);
 
@@ -84,12 +84,12 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @param pType the workBookType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void createBackup(final TaskControl<T> pTask,
                              final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws JDataException {
+                             final WorkBookType pType) throws JOceanusException {
         /* Create a sheet writer object */
         SheetWriter<T> myWriter = getSheetWriter(pTask);
 
@@ -102,10 +102,10 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pTask Task Control for task
      * @param pFile the extract file to load from
      * @return the newly loaded data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public T loadExtract(final TaskControl<T> pTask,
-                         final File pFile) throws JDataException {
+                         final File pFile) throws JOceanusException {
         /* Create a Sheet Reader object */
         SheetReader<T> myReader = getSheetReader(pTask);
 
@@ -121,11 +121,11 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * @param pTask Task Control for task
      * @param pData Data to write out
      * @param pFile the extract file to write to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void createExtract(final TaskControl<T> pTask,
                               final T pData,
-                              final File pFile) throws JDataException {
+                              final File pFile) throws JOceanusException {
         /* Create a SheetWriter object */
         SheetWriter<T> myWriter = getSheetWriter(pTask);
 

@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.DataDigest;
 import net.sourceforge.joceanus.jgordianknot.DigestType;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Provides a digest OutputStream. This class simply calculates a digest of the data in the stream at this point and passes the data onto the next Output Stream
@@ -92,10 +92,10 @@ public class DigestOutputStream
      * Construct the output stream.
      * @param pDigest the message digest
      * @param pStream the stream to write encrypted data to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DigestOutputStream(final DataDigest pDigest,
-                              final OutputStream pStream) throws JDataException {
+                              final OutputStream pStream) throws JOceanusException {
         /* Store the data digest */
         theDigest = pDigest;
 

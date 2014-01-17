@@ -34,14 +34,8 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.MainWindow;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
-import net.sourceforge.joceanus.jhelpmanager.HelpException;
-import net.sourceforge.joceanus.jhelpmanager.HelpModule;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -52,6 +46,11 @@ import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.help.HelpException;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionBackup;
 import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
 
@@ -214,20 +213,20 @@ public class MainTab
     }
 
     @Override
-    protected HelpModule getHelpModule() throws JDataException {
+    protected HelpModule getHelpModule() throws JOceanusException {
         try {
             return new FinanceHelp(theLogger);
         } catch (HelpException e) {
-            throw new JDataException(ExceptionClass.DATA, "Unable to load help", e);
+            throw new JOceanusException("Unable to load help", e);
         }
     }
 
     /**
      * Constructor.
      * @param pLogger the logger
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public MainTab(final Logger pLogger) throws JDataException {
+    public MainTab(final Logger pLogger) throws JOceanusException {
         /* Store the logger */
         theLogger = pLogger;
 
@@ -242,7 +241,7 @@ public class MainTab
     }
 
     @Override
-    protected JComponent buildMainPanel() throws JDataException {
+    protected JComponent buildMainPanel() throws JOceanusException {
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 

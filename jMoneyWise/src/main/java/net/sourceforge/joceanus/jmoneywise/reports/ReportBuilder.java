@@ -26,8 +26,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.w3c.dom.Document;
 
@@ -74,9 +74,9 @@ public class ReportBuilder {
     /**
      * Constructor.
      * @param pManager the report manager
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ReportBuilder(final ReportManager pManager) throws JDataException {
+    public ReportBuilder(final ReportManager pManager) throws JOceanusException {
         /* Record the details */
         theManager = pManager;
 

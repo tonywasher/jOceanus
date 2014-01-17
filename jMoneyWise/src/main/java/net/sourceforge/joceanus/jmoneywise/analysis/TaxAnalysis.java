@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Calendar;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class to analyse tax liability.
@@ -120,9 +120,9 @@ public class TaxAnalysis {
 
         /**
          * Constructor.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public TaxPreferences() throws JDataException {
+        public TaxPreferences() throws JOceanusException {
             super();
         }
 

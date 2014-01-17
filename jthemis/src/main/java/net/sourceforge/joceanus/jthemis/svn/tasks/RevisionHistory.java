@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
@@ -80,9 +79,9 @@ public class RevisionHistory {
     /**
      * Obtain revision history.
      * @param pRevision the revision to get history for
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void getRevisionHistory(final long pRevision) throws JDataException {
+    public void getRevisionHistory(final long pRevision) throws JOceanusException {
         /* Access client */
         SVNLogClient myLog = theMgr.getLogClient();
         theResults.clear();
@@ -94,16 +93,16 @@ public class RevisionHistory {
             SVNRevision myRevision = SVNRevision.create(pRevision);
             myLog.doLog(myURL, null, myRevision, myRevision, myRevision, false, true, 0, new LogHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history", e);
+            throw new JOceanusException("Failed to get revision history", e);
         }
     }
 
     /**
      * Obtain file revision history.
      * @param pFile the file to get history for
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void getFileRevisionHistory(final SVNURL pFile) throws JDataException {
+    public void getFileRevisionHistory(final SVNURL pFile) throws JOceanusException {
         /* Access client */
         SVNLogClient myLog = theMgr.getLogClient();
         theResults.clear();
@@ -113,7 +112,7 @@ public class RevisionHistory {
             /* Obtain information about the revision */
             myLog.doLog(pFile, null, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, true, 0, new LogHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history", e);
+            throw new JOceanusException("Failed to get revision history", e);
         }
     }
 

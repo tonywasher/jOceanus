@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Symmetric Key Types. Available algorithms.
@@ -183,16 +182,16 @@ public enum SymKeyType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static SymKeyType fromId(final int id) throws JDataException {
+    public static SymKeyType fromId(final int id) throws JOceanusException {
         for (SymKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid SymKeyType: "
-                                                      + id);
+        throw new JOceanusException("Invalid SymKeyType: "
+                                    + id);
     }
 
     /**
@@ -200,10 +199,10 @@ public enum SymKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static SymKeyType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws JDataException {
+                                              final SecureRandom pRandom) throws JOceanusException {
         /* Use all values */
         return getRandomTypes(pNumTypes, pRandom, false);
     }
@@ -214,11 +213,11 @@ public enum SymKeyType {
      * @param pRandom the random generator
      * @param pStdBlock use only standard block size
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static SymKeyType[] getRandomTypes(final int pNumTypes,
                                               final SecureRandom pRandom,
-                                              final boolean pStdBlock) throws JDataException {
+                                              final boolean pStdBlock) throws JOceanusException {
         /* Access the values */
         SymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -226,8 +225,8 @@ public enum SymKeyType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of symmetric keys: "
-                                                           + pNumTypes);
+            throw new JOceanusException("Invalid number of symmetric keys: "
+                                        + pNumTypes);
         }
 
         /* Create the result set */

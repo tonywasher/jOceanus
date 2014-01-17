@@ -37,8 +37,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
 
@@ -137,9 +136,9 @@ public class DataCipher {
     /**
      * Constructor.
      * @param pKey the Symmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataCipher(final SymmetricKey pKey) throws JDataException {
+    protected DataCipher(final SymmetricKey pKey) throws JOceanusException {
         /* Record keys */
         theSymKey = pKey;
         theSecretKey = theSymKey.getSecretKey();
@@ -187,11 +186,11 @@ public class DataCipher {
      * @param pMode the cipher mode
      * @param pVector initialisation vector
      * @return Encrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public byte[] encryptBytes(final byte[] pBytes,
                                final CipherMode pMode,
-                               final byte[] pVector) throws JDataException {
+                               final byte[] pVector) throws JOceanusException {
         /* Obtain the Cipher */
         Cipher myCipher = getCipher(pMode);
 
@@ -207,7 +206,7 @@ public class DataCipher {
             /* Encrypt the byte array */
             return myCipher.doFinal(pBytes);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
+            throw new JOceanusException("Failed to encrypt bytes", e);
         }
     }
 
@@ -217,11 +216,11 @@ public class DataCipher {
      * @param pMode the cipher mode
      * @param pVector initialisation vector
      * @return Decrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public byte[] decryptBytes(final byte[] pBytes,
                                final CipherMode pMode,
-                               final byte[] pVector) throws JDataException {
+                               final byte[] pVector) throws JOceanusException {
         /* Obtain the Cipher */
         Cipher myCipher = getCipher(pMode);
 
@@ -237,7 +236,7 @@ public class DataCipher {
             /* Encrypt the byte array */
             return myCipher.doFinal(pBytes);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
+            throw new JOceanusException("Failed to decrypt bytes", e);
         }
     }
 
@@ -246,10 +245,10 @@ public class DataCipher {
      * @param pBytes the bytes to wrap
      * @param pVector initialisation vector
      * @return the wrapped bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected byte[] wrapBytes(final byte[] pBytes,
-                               final byte[] pVector) throws JDataException {
+                               final byte[] pVector) throws JOceanusException {
         /* Determine the block length */
         int myBlockLen = getBlockSize() >> 1;
 
@@ -314,7 +313,7 @@ public class DataCipher {
                 }
             }
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_WRAP, e);
+            throw new JOceanusException(ERROR_WRAP, e);
         }
 
         /* Return the wrapped data */
@@ -326,10 +325,10 @@ public class DataCipher {
      * @param pBytes the bytes to unwrap
      * @param pVector initialisation vector
      * @return the unwrapped bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected byte[] unwrapBytes(final byte[] pBytes,
-                                 final byte[] pVector) throws JDataException {
+                                 final byte[] pVector) throws JOceanusException {
         /* Determine the block length */
         int myBlockLen = getBlockSize() >> 1;
 
@@ -383,7 +382,7 @@ public class DataCipher {
                 }
             }
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_UNWRAP, e);
+            throw new JOceanusException(ERROR_UNWRAP, e);
         }
 
         /* Determine check values */
@@ -406,7 +405,7 @@ public class DataCipher {
 
         /* Reject if checks fail */
         if (!isCheckOK) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INTEGRITY);
+            throw new JOceanusException(ERROR_INTEGRITY);
         }
 
         /* Return unwrapped data */
@@ -454,9 +453,9 @@ public class DataCipher {
      * Obtain Cipher for mode.
      * @param pMode the Cipher Mode
      * @return the Cipher
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private Cipher getCipher(final CipherMode pMode) throws JDataException {
+    private Cipher getCipher(final CipherMode pMode) throws JOceanusException {
         /* Look up Cipher in map */
         Cipher myCipher = theCipherMap.get(pMode);
 
@@ -471,7 +470,7 @@ public class DataCipher {
                 theCipherMap.put(pMode, myCipher);
 
             } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+                throw new JOceanusException(ERROR_CREATE, e);
             }
         }
 

@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -39,6 +37,7 @@ import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -273,12 +272,12 @@ public abstract class TaxYearBase
      * @param pId the id
      * @param pRegimeId the regime id
      * @param pDate the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
                           final int pId,
                           final int pRegimeId,
-                          final JDateDay pDate) throws JDataException {
+                          final JDateDay pDate) throws JOceanusException {
         /* Initialise item */
         super(pList, pId);
 
@@ -293,12 +292,12 @@ public abstract class TaxYearBase
      * @param pId the id
      * @param pRegime the tax regime
      * @param pDate the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
                           final int pId,
                           final String pRegime,
-                          final JDateDay pDate) throws JDataException {
+                          final JDateDay pDate) throws JOceanusException {
         /* Initialise item */
         super(pList, pId);
 
@@ -336,7 +335,7 @@ public abstract class TaxYearBase
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Access Relevant lists */
         MoneyWiseData myData = getDataSet();
         TaxRegimeList myRegimes = myData.getTaxRegimes();
@@ -351,14 +350,14 @@ public abstract class TaxYearBase
             TaxRegime myReg = myRegimes.findItemById((Integer) myRegime);
             if (myReg == null) {
                 addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         } else if (myRegime instanceof String) {
             TaxRegime myReg = myRegimes.findItemByName((String) myRegime);
             if (myReg == null) {
                 addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         }

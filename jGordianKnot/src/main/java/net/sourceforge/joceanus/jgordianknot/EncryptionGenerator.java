@@ -27,8 +27,6 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -56,6 +54,7 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRatio;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedShort;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encrypted field generator.
@@ -102,10 +101,10 @@ public class EncryptionGenerator {
      * @param pCurrent the current encrypted value
      * @param pValue the new value to encrypt
      * @return the encrypted field
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public EncryptedField<?> encryptValue(final EncryptedField<?> pCurrent,
-                                          final Object pValue) throws JDataException {
+                                          final Object pValue) throws JOceanusException {
         /* If we are passed a null value just return null */
         if (pValue == null) {
             return null;
@@ -187,8 +186,8 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JDataException(ExceptionClass.LOGIC, ERROR_CLASS
-                                                       + pValue.getClass().getCanonicalName());
+        throw new JOceanusException(ERROR_CLASS
+                                    + pValue.getClass().getCanonicalName());
     }
 
     /**
@@ -196,10 +195,10 @@ public class EncryptionGenerator {
      * @param pEncrypted the encrypted value
      * @param pClass the class of the encrypted value
      * @return the encrypted field
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public EncryptedField<?> decryptValue(final byte[] pEncrypted,
-                                          final Class<?> pClass) throws JDataException {
+                                          final Class<?> pClass) throws JOceanusException {
         /* If we are passed a null value just return null */
         if (pEncrypted == null) {
             return null;
@@ -266,18 +265,18 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JDataException(ExceptionClass.LOGIC, ERROR_CLASS
-                                                       + pClass.getCanonicalName());
+        throw new JOceanusException(ERROR_CLASS
+                                    + pClass.getCanonicalName());
     }
 
     /**
      * Adopt Encryption.
      * @param pTarget the target field
      * @param pSource the source field
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void adoptEncryption(final EncryptedField<?> pTarget,
-                                final EncryptedField<?> pSource) throws JDataException {
+                                final EncryptedField<?> pSource) throws JOceanusException {
         /* Adopt the encryption */
         pTarget.adoptEncryption(theCipherSet, theFormatter, pSource);
     }

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -101,9 +101,9 @@ public class View
     /**
      * Constructor.
      * @param pLogger the logger.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public View(final Logger pLogger) throws JDataException {
+    public View(final Logger pLogger) throws JOceanusException {
         /* Call super-constructor */
         super(pLogger);
 
@@ -121,7 +121,7 @@ public class View
     }
 
     @Override
-    public Database<MoneyWiseData> getDatabase() throws JDataException {
+    public Database<MoneyWiseData> getDatabase() throws JOceanusException {
         PreferenceManager myMgr = getPreferenceMgr();
         return new MoneyWiseDatabase(getLogger(), myMgr.getPreferenceSet(DatabasePreferences.class));
     }
@@ -150,9 +150,9 @@ public class View
      * Analyse the data.
      * @param pData the data
      * @return the analysis
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public final DataAnalyser analyseData(final MoneyWiseData pData) throws JDataException {
+    public final DataAnalyser analyseData(final MoneyWiseData pData) throws JOceanusException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 
@@ -202,7 +202,7 @@ public class View
             deriveUpdates();
 
             /* Catch any exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             if (!bPreserve) {
                 addError(e);
             }

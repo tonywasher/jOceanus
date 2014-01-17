@@ -34,13 +34,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet.ErrorDisplay;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 /**
  * Error panel.
@@ -92,7 +92,7 @@ public class ErrorPanel
     /**
      * The error itself.
      */
-    private final DataErrorList<JDataException> theErrors;
+    private final DataErrorList<JOceanusException> theErrors;
 
     /**
      * Do we have an error?
@@ -115,7 +115,7 @@ public class ErrorPanel
         theDataError.hideEntry();
 
         /* Create the error list */
-        theErrors = new DataErrorList<JDataException>();
+        theErrors = new DataErrorList<JOceanusException>();
         theDataError.setObject(theErrors);
 
         /* Create the error field */
@@ -146,7 +146,7 @@ public class ErrorPanel
      * Set error indication for window.
      * @param pException the exception
      */
-    public void addError(final JDataException pException) {
+    public void addError(final JOceanusException pException) {
         /* If we do not currently have an error */
         if (!hasError()) {
             /* Show the debug */
@@ -167,7 +167,7 @@ public class ErrorPanel
     }
 
     @Override
-    public void setErrors(final DataErrorList<JDataException> pExceptions) {
+    public void setErrors(final DataErrorList<JOceanusException> pExceptions) {
         /* If we currently have an error */
         if (hasError()) {
             /* Clear the error */

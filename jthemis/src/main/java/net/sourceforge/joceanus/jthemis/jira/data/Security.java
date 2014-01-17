@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
 import net.sourceforge.joceanus.jthemis.jira.soap.RemoteGroup;
 import net.sourceforge.joceanus.jthemis.jira.soap.RemoteProjectRole;
@@ -67,9 +66,9 @@ public class Security {
     /**
      * Constructor.
      * @param pServer the server
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected Security(final Server pServer) throws JDataException {
+    protected Security(final Server pServer) throws JOceanusException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -87,9 +86,9 @@ public class Security {
      * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public User getUser(final String pName) throws JDataException {
+    public User getUser(final String pName) throws JOceanusException {
         /* Return an existing user if found in list */
         Iterator<User> myIterator = theUsers.iterator();
         while (myIterator.hasNext()) {
@@ -111,8 +110,8 @@ public class Security {
             return myUser;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load user "
-                                                          + pName, e);
+            throw new JOceanusException("Failed to load user "
+                                        + pName, e);
         }
     }
 
@@ -141,9 +140,9 @@ public class Security {
      * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Group getGroup(final String pName) throws JDataException {
+    public Group getGroup(final String pName) throws JOceanusException {
         /* Return an existing group if found in list */
         Iterator<Group> myIterator = theGroups.iterator();
         while (myIterator.hasNext()) {
@@ -165,8 +164,8 @@ public class Security {
             return myGroup;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load group "
-                                                          + pName, e);
+            throw new JOceanusException("Failed to load group "
+                                        + pName, e);
         }
     }
 
@@ -174,9 +173,9 @@ public class Security {
      * Obtain Role.
      * @param pId the id of the Role
      * @return the Role
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Role getRole(final long pId) throws JDataException {
+    public Role getRole(final long pId) throws JOceanusException {
         /* Return an existing role if found in list */
         Iterator<Role> myIterator = theRoles.iterator();
         while (myIterator.hasNext()) {
@@ -187,15 +186,15 @@ public class Security {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid RoleId "
-                                                      + pId);
+        throw new JOceanusException("Invalid RoleId "
+                                    + pId);
     }
 
     /**
      * Load Roles.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadRoles() throws JDataException {
+    private void loadRoles() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -211,7 +210,7 @@ public class Security {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load project roles", e);
+            throw new JOceanusException("Failed to load project roles", e);
         }
     }
 
@@ -309,10 +308,10 @@ public class Security {
          * Constructor.
          * @param pSecurity the security
          * @param pGroup the underlying group
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private Group(final Security pSecurity,
-                      final RemoteGroup pGroup) throws JDataException {
+                      final RemoteGroup pGroup) throws JOceanusException {
             /* Access the details */
             theGroup = pGroup;
             theName = pGroup.getName();

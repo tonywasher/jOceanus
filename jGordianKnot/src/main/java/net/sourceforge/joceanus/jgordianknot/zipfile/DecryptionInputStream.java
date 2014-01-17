@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it as a Zip file. It will read control information from the
@@ -83,12 +83,12 @@ public class DecryptionInputStream
      * @param pMode the cipher mode to use
      * @param pInitVector the initialisation vector
      * @param pStream the stream to decrypt from
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DecryptionInputStream(final SymmetricKey pKey,
                                  final CipherMode pMode,
                                  final byte[] pInitVector,
-                                 final InputStream pStream) throws JDataException {
+                                 final InputStream pStream) throws JOceanusException {
         /* record the input stream */
         theStream = pStream;
 
@@ -102,11 +102,11 @@ public class DecryptionInputStream
      * @param pKey the stream key
      * @param pInitVector the initialisation vector
      * @param pStream the stream to decrypt from
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DecryptionInputStream(final StreamKey pKey,
                                  final byte[] pInitVector,
-                                 final InputStream pStream) throws JDataException {
+                                 final InputStream pStream) throws JOceanusException {
         /* record the input stream */
         theStream = pStream;
 
@@ -234,7 +234,7 @@ public class DecryptionInputStream
             return iNumRead;
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IOException(e);
         }
     }
@@ -343,10 +343,10 @@ public class DecryptionInputStream
          * Decrypt bytes into the buffer and update the message digests.
          * @param pBuffer the buffer from which to store bytes
          * @param pLength the number of bytes read into the buffer (must not be zero)
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void storeBytes(final byte[] pBuffer,
-                               final int pLength) throws JDataException {
+                               final int pLength) throws JOceanusException {
             int iNumBytes = 0;
             int iLength = pLength;
 

@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped and redefined. Existing loaded data will be marked as new so
@@ -67,7 +67,7 @@ public class CreateDatabase<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Creating Database");
 

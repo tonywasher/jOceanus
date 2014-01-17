@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedRate;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountRate data type.
@@ -303,18 +302,18 @@ public class AccountRate
     /**
      * Set the rate.
      * @param pValue the rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueRate(final JRate pValue) throws JDataException {
+    private void setValueRate(final JRate pValue) throws JOceanusException {
         setEncryptedValue(FIELD_RATE, pValue);
     }
 
     /**
      * Set the rate.
      * @param pBytes the encrypted rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueRate(final byte[] pBytes) throws JDataException {
+    private void setValueRate(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_RATE, pBytes, JRate.class);
     }
 
@@ -329,18 +328,18 @@ public class AccountRate
     /**
      * Set the bonus rate.
      * @param pValue the bonus rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueBonus(final JRate pValue) throws JDataException {
+    private void setValueBonus(final JRate pValue) throws JOceanusException {
         setEncryptedValue(FIELD_BONUS, pValue);
     }
 
     /**
      * Set the encrypted bonus.
      * @param pBytes the encrypted bonus
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueBonus(final byte[] pBytes) throws JDataException {
+    private void setValueBonus(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_BONUS, pBytes, JRate.class);
     }
 
@@ -403,14 +402,14 @@ public class AccountRate
      * @param pEndDate the end date
      * @param pRate the rate
      * @param pBonus the bonus
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountRate(final AccountRateList pList,
                         final Integer uId,
                         final String pAccount,
                         final JDateDay pEndDate,
                         final String pRate,
-                        final String pBonus) throws JDataException {
+                        final String pBonus) throws JOceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -434,12 +433,12 @@ public class AccountRate
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -452,7 +451,7 @@ public class AccountRate
      * @param pEndDate the end date
      * @param pRate the rate
      * @param pBonus the bonus
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountRate(final AccountRateList pList,
                         final Integer uId,
@@ -460,7 +459,7 @@ public class AccountRate
                         final Integer uAccountId,
                         final JDateDay pEndDate,
                         final byte[] pRate,
-                        final byte[] pBonus) throws JDataException {
+                        final byte[] pBonus) throws JOceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -480,9 +479,9 @@ public class AccountRate
             setValueBonus(pBonus);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -518,7 +517,7 @@ public class AccountRate
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -536,14 +535,14 @@ public class AccountRate
             Account myAct = myAccounts.findItemById((Integer) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         } else if (myAccount instanceof String) {
             Account myAct = myAccounts.findItemByName((String) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         }
@@ -615,18 +614,18 @@ public class AccountRate
     /**
      * Set a new rate.
      * @param pRate the rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setRate(final JRate pRate) throws JDataException {
+    public void setRate(final JRate pRate) throws JOceanusException {
         setValueRate(pRate);
     }
 
     /**
      * Set a new bonus.
      * @param pBonus the rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBonus(final JRate pBonus) throws JDataException {
+    public void setBonus(final JRate pBonus) throws JOceanusException {
         setValueBonus(pBonus);
     }
 
@@ -757,7 +756,7 @@ public class AccountRate
         }
 
         @Override
-        public AccountRateList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountRateList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountRateList) super.cloneList(pDataSet);
         }
 
@@ -898,19 +897,19 @@ public class AccountRate
          * @param pRate the Rate
          * @param pDate the end date
          * @param pBonus the Bonus
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer uId,
                                 final String pAccount,
                                 final String pRate,
                                 final JDateDay pDate,
-                                final String pBonus) throws JDataException {
+                                final String pBonus) throws JOceanusException {
             /* Create the ratePeriod */
             AccountRate myRate = new AccountRate(this, uId, pAccount, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
+                throw new JOceanusException(myRate, "Duplicate RateId");
             }
 
             /* Add to the list */
@@ -925,20 +924,20 @@ public class AccountRate
          * @param pRate the Rate
          * @param pDate the end date
          * @param pBonus the Bonus
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer uId,
                                   final Integer uControlId,
                                   final Integer uAccountId,
                                   final byte[] pRate,
                                   final JDateDay pDate,
-                                  final byte[] pBonus) throws JDataException {
+                                  final byte[] pBonus) throws JOceanusException {
             /* Create the period */
             AccountRate myRate = new AccountRate(this, uId, uControlId, uAccountId, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
+                throw new JOceanusException(myRate, "Duplicate RateId");
             }
 
             /* Add to the list */

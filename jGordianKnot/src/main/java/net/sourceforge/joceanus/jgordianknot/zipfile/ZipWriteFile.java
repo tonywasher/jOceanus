@@ -30,9 +30,6 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
@@ -41,6 +38,8 @@ import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class used to build a ZipFile.
@@ -139,10 +138,10 @@ public class ZipWriteFile {
      * Constructor for new output zip file with security.
      * @param pHash the password hash to use
      * @param pFile the file details for the new zip file
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public ZipWriteFile(final PasswordHash pHash,
-                        final File pFile) throws JDataException {
+                        final File pFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Record hash and generator */
@@ -172,16 +171,16 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_CREATE, e);
+            throw new JOceanusException(ERROR_CREATE, e);
         }
     }
 
     /**
      * Constructor for new output zip file with no security.
      * @param pFile the file details for the new zip file
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ZipWriteFile(final File pFile) throws JDataException {
+    public ZipWriteFile(final File pFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* record the password hash */
@@ -200,7 +199,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_CREATE, e);
+            throw new JOceanusException(ERROR_CREATE, e);
         }
     }
 
@@ -208,17 +207,17 @@ public class ZipWriteFile {
      * Obtain an output stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the output stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public OutputStream getOutputStream(final File pFile) throws JDataException {
+    public OutputStream getOutputStream(final File pFile) throws JOceanusException {
         /* Reject call if we have closed the stream */
         if (theStream == null) {
-            throw new JDataException(ExceptionClass.LOGIC, "ZipFile is closed");
+            throw new JOceanusException("ZipFile is closed");
         }
 
         /* Reject call if we have an open stream */
         if (theOutput != null) {
-            throw new JDataException(ExceptionClass.LOGIC, "Output stream already open");
+            throw new JOceanusException("Output stream already open");
         }
 
         /* Increment file number */
@@ -275,7 +274,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception creating new Output stream", e);
+            throw new JOceanusException("Exception creating new Output stream", e);
         }
 
         /* return the new stream */
@@ -313,7 +312,7 @@ public class ZipWriteFile {
             theOutput = null;
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IOException(e);
         }
     }
@@ -371,7 +370,7 @@ public class ZipWriteFile {
                 theStream = null;
 
                 /* Catch exceptions */
-            } catch (JDataException e) {
+            } catch (JOceanusException e) {
                 throw new IOException(e);
             }
         }

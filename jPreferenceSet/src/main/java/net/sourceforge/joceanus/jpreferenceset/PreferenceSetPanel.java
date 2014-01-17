@@ -50,14 +50,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayButton;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jlayoutmanager.GridBagUtilities;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.BooleanPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.ColorPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.DatePreference;
@@ -65,6 +61,10 @@ import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.EnumPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.IntegerPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceItem;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.StringPreference;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
 
 /**
  * Preference Set panel.
@@ -281,9 +281,9 @@ public class PreferenceSetPanel
 
     /**
      * Store changes.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void storeChanges() throws JDataException {
+    public void storeChanges() throws JOceanusException {
         /* Reset changes and clear flag */
         thePreferences.storeChanges();
 

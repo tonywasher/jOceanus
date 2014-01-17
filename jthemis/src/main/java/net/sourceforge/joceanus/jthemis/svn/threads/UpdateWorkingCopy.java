@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -64,7 +64,7 @@ public class UpdateWorkingCopy
     /**
      * The Error.
      */
-    private JDataException theError;
+    private JOceanusException theError;
 
     /**
      * Obtain the working copy set.
@@ -78,7 +78,7 @@ public class UpdateWorkingCopy
      * Obtain the error.
      * @return the error
      */
-    public JDataException getError() {
+    public JOceanusException getError() {
         return theError;
     }
 
@@ -106,7 +106,7 @@ public class UpdateWorkingCopy
 
             /* Discover new workingSet details */
             theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

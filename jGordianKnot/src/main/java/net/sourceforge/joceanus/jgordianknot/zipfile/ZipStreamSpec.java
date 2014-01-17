@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.DataDigest;
@@ -44,6 +41,8 @@ import net.sourceforge.joceanus.jgordianknot.StreamKey;
 import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Zip Stream specification.
@@ -110,10 +109,10 @@ public abstract class ZipStreamSpec {
      * @param pCurrent the current input stream
      * @param pCipherSet the cipher set
      * @return the new input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract InputStream buildInputStream(final InputStream pCurrent,
-                                                    final CipherSet pCipherSet) throws JDataException;
+                                                    final CipherSet pCipherSet) throws JOceanusException;
 
     /**
      * ZipStream List.
@@ -141,11 +140,11 @@ public abstract class ZipStreamSpec {
          * Constructor.
          * @param pStream the output stream
          * @param pCipherSet the CipherSet
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         @SuppressWarnings("resource")
         protected ZipStreamList(final OutputStream pStream,
-                                final CipherSet pCipherSet) throws JDataException {
+                                final CipherSet pCipherSet) throws JOceanusException {
             /* Allocate the list */
             theStreams = new ArrayList<ZipStreamSpec>();
 
@@ -214,9 +213,9 @@ public abstract class ZipStreamSpec {
         /**
          * Constructor.
          * @param pProperties the properties
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected ZipStreamList(final ZipFileProperties pProperties) throws JDataException {
+        protected ZipStreamList(final ZipFileProperties pProperties) throws JOceanusException {
             /* Allocate the list */
             theStreams = new ArrayList<ZipStreamSpec>();
             theDataLength = -1;
@@ -296,10 +295,10 @@ public abstract class ZipStreamSpec {
          * @param pCurrent the current input stream
          * @param pCipherSet the CipherSet
          * @return the constructed input stream
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Loop through the streamSpecs */
             InputStream myCurrent = pCurrent;
             Iterator<ZipStreamSpec> myIterator = theStreams.iterator();
@@ -344,10 +343,10 @@ public abstract class ZipStreamSpec {
          * Constructor.
          * @param pStream the EncryptionOutputStream
          * @param pCipherSet the CipherSet
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipSymKeySpec(final EncryptionOutputStream pStream,
-                              final CipherSet pCipherSet) throws JDataException {
+                              final CipherSet pCipherSet) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.SYMMETRIC);
 
@@ -363,11 +362,11 @@ public abstract class ZipStreamSpec {
          * @param pProperties the Properties
          * @param pIndex the index
          * @param pEncodedId the EncodedId
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipSymKeySpec(final ZipFileProperties pProperties,
                               final int pIndex,
-                              final long pEncodedId) throws JDataException {
+                              final long pEncodedId) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.SYMMETRIC);
 
@@ -410,7 +409,7 @@ public abstract class ZipStreamSpec {
 
         @Override
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
             SymmetricKey myKey = pCipherSet.deriveSymmetricKey(theKeySpec, theKeyType);
             return new DecryptionInputStream(myKey, theCipherMode, theInitVector, pCurrent);
@@ -441,10 +440,10 @@ public abstract class ZipStreamSpec {
          * Constructor.
          * @param pStream the EncryptionOutputStream
          * @param pCipherSet the CipherSet
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipStreamKeySpec(final EncryptionOutputStream pStream,
-                                 final CipherSet pCipherSet) throws JDataException {
+                                 final CipherSet pCipherSet) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.STREAM);
 
@@ -459,11 +458,11 @@ public abstract class ZipStreamSpec {
          * @param pProperties the Properties
          * @param pIndex the index
          * @param pEncodedId the EncodedId
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipStreamKeySpec(final ZipFileProperties pProperties,
                                  final int pIndex,
-                                 final long pEncodedId) throws JDataException {
+                                 final long pEncodedId) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.STREAM);
 
@@ -496,7 +495,7 @@ public abstract class ZipStreamSpec {
 
         @Override
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
             StreamKey myKey = pCipherSet.deriveStreamKey(theKeySpec, theKeyType);
             return new DecryptionInputStream(myKey, theInitVector, pCurrent);
@@ -536,11 +535,11 @@ public abstract class ZipStreamSpec {
          * @param pProperties the Properties
          * @param pIndex the index
          * @param pEncodedId the EncodedId
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipDigestSpec(final ZipFileProperties pProperties,
                               final int pIndex,
-                              final long pEncodedId) throws JDataException {
+                              final long pEncodedId) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.DIGEST);
 
@@ -568,7 +567,7 @@ public abstract class ZipStreamSpec {
 
         @Override
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Create the digest stream */
             SecurityGenerator myGenerator = pCipherSet.getSecurityGenerator();
             DataDigest myDigest = myGenerator.generateDigest(theDigestType);
@@ -600,10 +599,10 @@ public abstract class ZipStreamSpec {
          * Constructor.
          * @param pStream the DigestOutputStream
          * @param pCipherSet the CipherSet
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipMacSpec(final MacOutputStream pStream,
-                           final CipherSet pCipherSet) throws JDataException {
+                           final CipherSet pCipherSet) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.MAC);
 
@@ -618,11 +617,11 @@ public abstract class ZipStreamSpec {
          * @param pProperties the Properties
          * @param pIndex the index
          * @param pEncodedId the EncodedId
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private ZipMacSpec(final ZipFileProperties pProperties,
                            final int pIndex,
-                           final long pEncodedId) throws JDataException {
+                           final long pEncodedId) throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.MAC);
 
@@ -655,7 +654,7 @@ public abstract class ZipStreamSpec {
 
         @Override
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Create the Mac stream */
             DataMac myMac = pCipherSet.deriveDataMac(theKeySpec, theMacSpec);
             return new MacInputStream(myMac, theAuthCode, pCurrent);
@@ -669,9 +668,9 @@ public abstract class ZipStreamSpec {
             extends ZipStreamSpec {
         /**
          * Constructor.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private ZipLZMASpec() throws JDataException {
+        private ZipLZMASpec() throws JOceanusException {
             /* Note type of stream */
             super(ZipStreamType.LZMA);
         }
@@ -691,7 +690,7 @@ public abstract class ZipStreamSpec {
 
         @Override
         protected InputStream buildInputStream(final InputStream pCurrent,
-                                               final CipherSet pCipherSet) throws JDataException {
+                                               final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
             return new LZMAInputStream(pCurrent);
         }
@@ -751,16 +750,16 @@ public abstract class ZipStreamSpec {
          * get value from id.
          * @param id the id value
          * @return the corresponding enumeration object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public static ZipStreamType fromId(final int id) throws JDataException {
+        public static ZipStreamType fromId(final int id) throws JOceanusException {
             for (ZipStreamType myType : values()) {
                 if (myType.getId() == id) {
                     return myType;
                 }
             }
-            throw new JDataException(ExceptionClass.DATA, "Invalid ZipStreamType: "
-                                                          + id);
+            throw new JOceanusException("Invalid ZipStreamType: "
+                                        + id);
         }
     }
 }

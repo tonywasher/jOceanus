@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableEncrypted extension for Event.
@@ -86,7 +86,7 @@ public class TableEvent
     /* Load the event */
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         JDateDay myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
@@ -104,7 +104,7 @@ public class TableEvent
 
     @Override
     protected void setFieldValue(final Event pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EventBase.FIELD_DATE.equals(iField)) {
@@ -129,7 +129,7 @@ public class TableEvent
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();

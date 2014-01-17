@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
+import net.sourceforge.joceanus.jtethys.DataConverter;
 
 import org.bouncycastle.util.Arrays;
 

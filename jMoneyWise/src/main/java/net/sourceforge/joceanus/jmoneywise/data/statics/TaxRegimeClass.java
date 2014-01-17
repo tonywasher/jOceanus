@@ -24,9 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of TaxRegime Classes.
@@ -109,16 +108,16 @@ public enum TaxRegimeClass implements StaticInterface {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static TaxRegimeClass fromId(final int id) throws JDataException {
+    public static TaxRegimeClass fromId(final int id) throws JOceanusException {
         for (TaxRegimeClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Tax Regime Class Id: "
-                                                      + id);
+        throw new JOceanusException("Invalid Tax Regime Class Id: "
+                                    + id);
     }
 
     /**

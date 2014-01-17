@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
@@ -42,13 +41,14 @@ import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
  * Static Data Table.
@@ -167,7 +167,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
     }
 
     @Override
-    protected void setError(final JDataException pError) {
+    protected void setError(final JOceanusException pError) {
         theError.addError(pError);
     }
 
@@ -246,9 +246,9 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void refreshData() throws JDataException {
+    protected void refreshData() throws JOceanusException {
         /* Access data */
         DataSet<?, ?> myData = theControl.getData();
 
@@ -355,7 +355,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         @Override
         public void setItemValue(final T pItem,
                                  final int pColIndex,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
@@ -515,11 +515,11 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
          * @param pItem the item
          * @param pColIndex column index
          * @param pValue the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private void setItemValue(final T pItem,
                                   final int pColIndex,
-                                  final Object pValue) throws JDataException {
+                                  final Object pValue) throws JOceanusException {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:

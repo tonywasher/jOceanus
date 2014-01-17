@@ -28,9 +28,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -135,9 +134,9 @@ public class ExcelWorkBook {
     /**
      * Constructor.
      * @param pInput the input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ExcelWorkBook(final InputStream pInput) throws JDataException {
+    public ExcelWorkBook(final InputStream pInput) throws JOceanusException {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
@@ -156,7 +155,7 @@ public class ExcelWorkBook {
             theExcelFormatter = new DataFormatter();
 
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
+            throw new JOceanusException("Failed to load workbook", e);
         }
     }
 
@@ -195,13 +194,13 @@ public class ExcelWorkBook {
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JDataException {
+    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
         try {
             theBook.write(pOutput);
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to save workbook", e);
+            throw new JOceanusException("Failed to save workbook", e);
         }
     }
 
@@ -250,9 +249,9 @@ public class ExcelWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range or null if range does not exist
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataView getRangeView(final String pName) throws JDataException {
+    protected DataView getRangeView(final String pName) throws JOceanusException {
         /* Find the range of cells */
         Name myName = theBook.getName(pName);
         if (myName == null) {
@@ -279,16 +278,16 @@ public class ExcelWorkBook {
      * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void declareRange(final String pName,
-                                final AreaReference pRange) throws JDataException {
+                                final AreaReference pRange) throws JOceanusException {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Name "
-                                                           + pName
-                                                           + " already exists in workbook");
+            throw new JOceanusException("Name "
+                                        + pName
+                                        + " already exists in workbook");
         }
 
         /* Build the basic name */
@@ -305,11 +304,11 @@ public class ExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String pValidRange) throws JDataException {
+                                       final String pValidRange) throws JOceanusException {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -331,11 +330,11 @@ public class ExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String[] pValueList) throws JDataException {
+                                       final String[] pValueList) throws JOceanusException {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -356,10 +355,10 @@ public class ExcelWorkBook {
      * Apply Data Filter.
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataFilter(final Sheet pSheet,
-                                   final CellRangeAddressList pRange) throws JDataException {
+                                   final CellRangeAddressList pRange) throws JOceanusException {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }

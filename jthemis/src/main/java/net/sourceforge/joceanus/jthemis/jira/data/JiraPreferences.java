@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira.data;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Jira Preferences.
@@ -93,9 +93,9 @@ public class JiraPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public JiraPreferences() throws JDataException {
+    public JiraPreferences() throws JOceanusException {
         super();
     }
 

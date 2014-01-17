@@ -29,9 +29,8 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Set of DataCiphers used for encryption.
@@ -193,9 +192,9 @@ public class CipherSet {
     /**
      * Build Secret Ciphers.
      * @param pSecret the Secret bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void buildCiphers(final byte[] pSecret) throws JDataException {
+    public void buildCiphers(final byte[] pSecret) throws JOceanusException {
         /* Loop through the Cipher values */
         for (SymKeyType myType : SymKeyType.values()) {
             /* Build the Cipher */
@@ -207,10 +206,10 @@ public class CipherSet {
      * Build Secret Cipher for a Key Type.
      * @param pKeyType the Key type
      * @param pSecret the derived Secret
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void buildCipher(final SymKeyType pKeyType,
-                             final byte[] pSecret) throws JDataException {
+                             final byte[] pSecret) throws JOceanusException {
         /* Generate a new Secret Key from the secret */
         SecurityRegister myRegister = theGenerator.getRegister();
         SymmetricRegister myReg = myRegister.getSymRegistration(pKeyType, theGenerator.getKeyLen());
@@ -233,9 +232,9 @@ public class CipherSet {
      * Encrypt item.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
+    public byte[] encryptBytes(final byte[] pBytes) throws JOceanusException {
         /* Access the current set of bytes */
         byte[] myCurBytes = pBytes;
 
@@ -283,9 +282,9 @@ public class CipherSet {
      * Decrypt item.
      * @param pBytes the bytes to decrypt
      * @return the decrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
+    public byte[] decryptBytes(final byte[] pBytes) throws JOceanusException {
         /* Parse the bytes into the separate parts */
         CipherSetKey myKey = new CipherSetKey(pBytes);
         SymKeyType[] myTypes = myKey.getSymKeyTypes();
@@ -321,9 +320,9 @@ public class CipherSet {
      * Wrap bytes.
      * @param pBytes the bytes to wrap
      * @return the wrapped bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] wrapBytes(final byte[] pBytes) throws JDataException {
+    public byte[] wrapBytes(final byte[] pBytes) throws JOceanusException {
         /* Access the current set of bytes */
         byte[] myCurBytes = pBytes;
 
@@ -352,9 +351,9 @@ public class CipherSet {
      * Unwrap Bytes.
      * @param pBytes the bytes to unwrap
      * @return the unwrapped bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] unwrapBytes(final byte[] pBytes) throws JDataException {
+    public byte[] unwrapBytes(final byte[] pBytes) throws JOceanusException {
         /* Parse the bytes into the separate parts */
         CipherSetKey myKey = new CipherSetKey(pBytes);
         SymKeyType[] myTypes = myKey.getSymKeyTypes();
@@ -381,9 +380,9 @@ public class CipherSet {
      * secure SymmetricKey.
      * @param pKey the key to wrap
      * @return the wrapped symmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JOceanusException {
         /* Extract the encoded version of the key */
         byte[] myEncoded = pKey.getSecretKey().getEncoded();
 
@@ -396,10 +395,10 @@ public class CipherSet {
      * @param pKeySpec the wrapped symmetric key
      * @param pKeyType the key type
      * @return the symmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public SymmetricKey deriveSymmetricKey(final byte[] pKeySpec,
-                                           final SymKeyType pKeyType) throws JDataException {
+                                           final SymKeyType pKeyType) throws JOceanusException {
         /* Unwrap the encoded bytes */
         byte[] myEncoded = unwrapBytes(pKeySpec);
 
@@ -417,9 +416,9 @@ public class CipherSet {
      * secure StreamKey.
      * @param pKey the key to wrap
      * @return the wrapped stream key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureStreamKey(final StreamKey pKey) throws JDataException {
+    public byte[] secureStreamKey(final StreamKey pKey) throws JOceanusException {
         /* Extract the encoded version of the key */
         byte[] myEncoded = pKey.getSecretKey().getEncoded();
 
@@ -432,10 +431,10 @@ public class CipherSet {
      * @param pKeySpec the wrapped stream key
      * @param pKeyType the key type
      * @return the stream key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public StreamKey deriveStreamKey(final byte[] pKeySpec,
-                                     final StreamKeyType pKeyType) throws JDataException {
+                                     final StreamKeyType pKeyType) throws JOceanusException {
         /* Unwrap the encoded bytes */
         byte[] myEncoded = unwrapBytes(pKeySpec);
 
@@ -450,9 +449,9 @@ public class CipherSet {
      * secure DataMac.
      * @param pMac the Mac to wrap
      * @return the wrapped DataMac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureDataMac(final DataMac pMac) throws JDataException {
+    public byte[] secureDataMac(final DataMac pMac) throws JOceanusException {
         /* Extract the encoded version of the key */
         byte[] myEncoded = pMac.getEncoded();
 
@@ -465,10 +464,10 @@ public class CipherSet {
      * @param pKeySpec the wrapped dataMac
      * @param pMacSpec the MacSpec
      * @return the DataMac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataMac deriveDataMac(final byte[] pKeySpec,
-                                 final MacSpec pMacSpec) throws JDataException {
+                                 final MacSpec pMacSpec) throws JOceanusException {
         /* Unwrap the encoded bytes */
         byte[] myEncoded = unwrapBytes(pKeySpec);
 
@@ -480,15 +479,15 @@ public class CipherSet {
      * secure AsymmetricKey (privateKey).
      * @param pKey the key to wrap
      * @return the wrapped Asymmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JDataException {
+    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JOceanusException {
         /* Access the Private Key */
         byte[] myPrivate = pKey.getExternalPrivate();
 
         /* Reject if there is no PrivateKey */
         if (myPrivate == null) {
-            throw new JDataException(ExceptionClass.DATA, "No PrivateKey");
+            throw new JOceanusException("No PrivateKey");
         }
 
         /* Encode the key */
@@ -496,8 +495,8 @@ public class CipherSet {
 
         /* Check whether the SecuredKey is too large */
         if (myEncrypted.length > AsymmetricKey.PRIVATESIZE) {
-            throw new JDataException(ExceptionClass.DATA, "PrivateKey too large: "
-                                                          + myEncrypted.length);
+            throw new JOceanusException("PrivateKey too large: "
+                                        + myEncrypted.length);
         }
 
         /* Return the wrapped key */
@@ -509,10 +508,10 @@ public class CipherSet {
      * @param pEncrypted the wrapped private key
      * @param pPublicKey the public key
      * @return the Asymmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public AsymmetricKey deriveAsymmetricKey(final byte[] pEncrypted,
-                                             final byte[] pPublicKey) throws JDataException {
+                                             final byte[] pPublicKey) throws JOceanusException {
         /* Create the Asymmetric Key */
         byte[] myEncoded = decryptBytes(pEncrypted);
         return new AsymmetricKey(theGenerator, myEncoded, pPublicKey);
@@ -522,9 +521,9 @@ public class CipherSet {
      * derive AsymmetricKey.
      * @param pPublicKey the public key
      * @return the Asymmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public AsymmetricKey deriveAsymmetricKey(final byte[] pPublicKey) throws JDataException {
+    public AsymmetricKey deriveAsymmetricKey(final byte[] pPublicKey) throws JOceanusException {
         /* Create the Asymmetric Key */
         return new AsymmetricKey(theGenerator, pPublicKey);
     }

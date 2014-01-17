@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * ExchangeRate class.
@@ -428,7 +427,7 @@ public final class ExchangeRate
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -446,14 +445,14 @@ public final class ExchangeRate
             AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueFromCurrency(myCurrency);
         } else if (myCurr instanceof String) {
             AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueFromCurrency(myCurrency);
         }
@@ -467,14 +466,14 @@ public final class ExchangeRate
             AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueToCurrency(myCurrency);
         } else if (myCurr instanceof String) {
             AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueToCurrency(myCurrency);
         }
@@ -697,7 +696,7 @@ public final class ExchangeRate
         }
 
         @Override
-        public ExchangeRateList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public ExchangeRateList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (ExchangeRateList) super.cloneList(pDataSet);
         }
 
@@ -782,20 +781,20 @@ public final class ExchangeRate
          * @param pFrom the from currency name
          * @param pTo the to currency name
          * @param pRate the exchangeRate parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final JDateDay pDate,
                                 final String pFrom,
                                 final String pTo,
-                                final JRatio pRate) throws JDataException {
+                                final JRatio pRate) throws JOceanusException {
             /* Create the rate */
             ExchangeRate myRate = new ExchangeRate(this, pId, pDate, pFrom, pTo, pRate);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myRate, ERROR_VALIDATION);
+                throw new JOceanusException(myRate, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -809,20 +808,20 @@ public final class ExchangeRate
          * @param pFromId the from currency id
          * @param pToId the to currency id
          * @param pRate the exchangeRate parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final JDateDay pDate,
                                   final Integer pFromId,
                                   final Integer pToId,
-                                  final JRatio pRate) throws JDataException {
+                                  final JRatio pRate) throws JOceanusException {
             /* Create the category */
             ExchangeRate myRate = new ExchangeRate(this, pId, pDate, pFromId, pToId, pRate);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myRate, ERROR_VALIDATION);
+                throw new JOceanusException(myRate, ERROR_VALIDATION);
             }
 
             /* Add to the list */

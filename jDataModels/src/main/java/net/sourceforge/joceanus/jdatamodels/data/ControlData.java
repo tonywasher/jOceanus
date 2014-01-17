@@ -24,12 +24,11 @@ package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
@@ -179,12 +178,12 @@ public class ControlData
      * @param pId the id
      * @param pVersion the data version
      * @param pControlId the control key id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private ControlData(final ControlDataList pList,
                         final Integer pId,
                         final Integer pVersion,
-                        final Integer pControlId) throws JDataException {
+                        final Integer pControlId) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -200,14 +199,14 @@ public class ControlData
             ControlKey myControl = myKeys.findItemById(pControlId);
             if (myControl == null) {
                 addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueControlKey(myControl);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -262,9 +261,9 @@ public class ControlData
     /**
      * Set a new ControlKey.
      * @param pControl the new control key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void setControlKey(final ControlKey pControl) throws JDataException {
+    protected void setControlKey(final ControlKey pControl) throws JOceanusException {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */
@@ -354,12 +353,12 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public ControlDataList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (ControlDataList) super.cloneList(pDataSet);
         }
 
         @Override
-        public ControlDataList deriveList(final ListStyle pStyle) throws JDataException {
+        public ControlDataList deriveList(final ListStyle pStyle) throws JOceanusException {
             return (ControlDataList) super.deriveList(pStyle);
         }
 
@@ -393,23 +392,23 @@ public class ControlData
          * @param pId the id
          * @param pVersion the version
          * @param pControlId the controlId
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pVersion,
-                                  final Integer pControlId) throws JDataException {
+                                  final Integer pControlId) throws JOceanusException {
             /* Create the ControlData */
             ControlData myControl = new ControlData(this, pId, pVersion, pControlId);
 
             /* Check that this ControlId has not been previously added */
             if (!isIdUnique(pId)) {
                 myControl.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_DUPLICATE);
+                throw new JOceanusException(myControl, ERROR_DUPLICATE);
             }
 
             /* Only one control data is allowed */
             if (theControl != null) {
-                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_CTLEXISTS);
+                throw new JOceanusException(myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */
@@ -421,16 +420,16 @@ public class ControlData
          * Add a ControlData item from insecure store.
          * @param pId the id
          * @param pVersion the version
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
-                                final Integer pVersion) throws JDataException {
+                                final Integer pVersion) throws JOceanusException {
             /* Create the ControlData */
             ControlData myControl = new ControlData(this, pId, pVersion);
 
             /* Only one static is allowed */
             if (theControl != null) {
-                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_CTLEXISTS);
+                throw new JOceanusException(myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */

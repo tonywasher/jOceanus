@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for EventClass.
@@ -80,7 +80,7 @@ public class SheetEventClassLink
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myEventId = loadInteger(COL_EVENT);
         Integer myClassId = loadInteger(COL_CLASS);
@@ -90,7 +90,7 @@ public class SheetEventClassLink
     }
 
     @Override
-    protected void insertSecureItem(final EventClassLink pItem) throws JDataException {
+    protected void insertSecureItem(final EventClassLink pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_EVENT, pItem.getEventId());
         writeInteger(COL_CLASS, pItem.getEventClassId());
@@ -103,7 +103,7 @@ public class SheetEventClassLink
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* reSort */
         theList.reSort();
 

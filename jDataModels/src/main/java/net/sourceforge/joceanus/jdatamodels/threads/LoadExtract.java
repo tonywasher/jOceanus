@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
@@ -34,6 +32,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so that a
@@ -76,7 +75,7 @@ public class LoadExtract<T extends DataSet<T, ?>>
     }
 
     @Override
-    public T performTask() throws JDataException {
+    public T performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Extract");
 
@@ -97,7 +96,7 @@ public class LoadExtract<T extends DataSet<T, ?>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+            throw new JOceanusException("Operation Cancelled");
         }
 
         /* Load workbook */

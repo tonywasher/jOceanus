@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -36,6 +34,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for Pattern.
@@ -135,7 +134,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
@@ -158,7 +157,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the Account */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
@@ -199,7 +198,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void insertSecureItem(final Pattern pItem) throws JDataException {
+    protected void insertSecureItem(final Pattern pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_DEBIT, pItem.getDebitId());
@@ -213,7 +212,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void insertOpenItem(final Pattern pItem) throws JDataException {
+    protected void insertOpenItem(final Pattern pItem) throws JOceanusException {
         /* Determine whether we are a child event */
         boolean isChild = pItem.getParent() == null;
 
@@ -247,7 +246,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
@@ -258,7 +257,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
@@ -283,7 +282,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -301,11 +300,11 @@ public class SheetPattern
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -406,8 +405,8 @@ public class SheetPattern
             myList.validateOnLoad();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Patterns", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load Patterns", e);
         }
 
         /* Return to caller */

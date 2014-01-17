@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TaxRegime data type.
@@ -89,10 +88,10 @@ public class TaxRegime
      * Basic Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param pName Name of TaxRegime
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final String pName) throws JDataException {
+                      final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -100,10 +99,10 @@ public class TaxRegime
      * Basic constructor.
      * @param pList The list to associate the Tax Regime with
      * @param pClass Class of Tax Regime
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final TaxRegimeClass pClass) throws JDataException {
+                      final TaxRegimeClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -115,14 +114,14 @@ public class TaxRegime
      * @param pOrder the sort order
      * @param pName Name of Tax Regime
      * @param pDesc Description of Tax Regime
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
                       final Integer pId,
                       final Boolean isEnabled,
                       final Integer pOrder,
                       final String pName,
-                      final String pDesc) throws JDataException {
+                      final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -135,7 +134,7 @@ public class TaxRegime
      * @param pOrder the sort order
      * @param pName Encrypted Name of TaxRegime
      * @param pDesc Encrypted Description of TaxRegime
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxRegime(final TaxRegimeList pList,
                       final Integer pId,
@@ -143,7 +142,7 @@ public class TaxRegime
                       final Boolean isEnabled,
                       final Integer pOrder,
                       final byte[] pName,
-                      final byte[] pDesc) throws JDataException {
+                      final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -220,7 +219,7 @@ public class TaxRegime
         }
 
         @Override
-        public TaxRegimeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public TaxRegimeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (TaxRegimeList) super.cloneList(pDataSet);
         }
 
@@ -261,22 +260,22 @@ public class TaxRegime
         /**
          * Add a TaxRegime.
          * @param pTaxRegime the Name of the tax regime
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pTaxRegime) throws JDataException {
+        public void addBasicItem(final String pTaxRegime) throws JOceanusException {
             /* Create a new tax regime */
             TaxRegime myTaxRegime = new TaxRegime(this, pTaxRegime);
 
             /* Check that this TaxRegime has not been previously added */
             if (findItemByName(pTaxRegime) != null) {
                 myTaxRegime.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myTaxRegime, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
             }
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxRegime.getId())) {
                 myTaxRegime.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myTaxRegime, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
             }
 
             /* Add the TaxRegime to the list */
@@ -287,7 +286,7 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxRegime.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxRegime, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
             }
         }
 
@@ -298,20 +297,20 @@ public class TaxRegime
          * @param pOrder the sort order
          * @param pTaxRegime the Name of the tax regime
          * @param pDesc the Description of the tax regime
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pTaxRegime,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Tax Regime */
             TaxRegime myTaxReg = new TaxRegime(this, pId, isEnabled, pOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myTaxReg, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
             }
 
             /* Add the Tax Regime to the list */
@@ -322,7 +321,7 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxReg.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxReg, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
             }
         }
 
@@ -334,21 +333,21 @@ public class TaxRegime
          * @param pOrder the sort order
          * @param pTaxRegime the Encrypted Name of the tax regime
          * @param pDesc the Encrypted Description of the tax regime
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pTaxRegime,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new tax regime */
             TaxRegime myTaxReg = new TaxRegime(this, pId, pControlId, isEnabled, pOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myTaxReg, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
             }
 
             /* Add the TaxRegime to the list */
@@ -359,15 +358,15 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxReg.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxReg, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (TaxRegimeClass myClass : TaxRegimeClass.values()) {
                 /* Create new element */
@@ -381,7 +380,7 @@ public class TaxRegime
 
                 /* Handle validation failure */
                 if (myRegime.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myRegime, ERROR_VALIDATION);
+                    throw new JOceanusException(myRegime, ERROR_VALIDATION);
                 }
             }
 

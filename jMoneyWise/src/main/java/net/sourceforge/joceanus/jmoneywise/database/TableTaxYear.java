@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition;
@@ -36,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DatabaseTable extension for TaxYear.
@@ -77,7 +77,7 @@ public class TableTaxYear
     }
 
     @Override
-    public void loadItem(final Integer pId) throws JDataException {
+    public void loadItem(final Integer pId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         JDateDay myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
@@ -89,7 +89,7 @@ public class TableTaxYear
 
     @Override
     protected void setFieldValue(final TaxYear pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (TaxYearBase.FIELD_TAXYEAR.equals(iField)) {
@@ -102,7 +102,7 @@ public class TableTaxYear
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();

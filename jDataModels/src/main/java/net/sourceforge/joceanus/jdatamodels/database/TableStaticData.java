@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jdatamodels.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should extend this class.
@@ -62,18 +62,18 @@ public abstract class TableStaticData<T extends StaticData<T, ?>>
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract void loadTheItem(final Integer pId,
                                         final Integer pControlId,
                                         final Boolean isEnabled,
                                         final Integer iOrder,
                                         final byte[] pName,
-                                        final byte[] pDesc) throws JDataException;
+                                        final byte[] pDesc) throws JOceanusException;
 
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
@@ -87,7 +87,7 @@ public abstract class TableStaticData<T extends StaticData<T, ?>>
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (StaticData.FIELD_ENABLED.equals(iField)) {

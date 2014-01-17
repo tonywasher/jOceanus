@@ -32,8 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Write control for spreadsheets.
@@ -131,11 +130,11 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * @param pData Data to write out
      * @param pFile the backup file to write to
      * @param pType the workBookType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void createBackup(final T pData,
                              final File pFile,
-                             final WorkBookType pType) throws JDataException {
+                             final WorkBookType pType) throws JOceanusException {
         OutputStream myStream = null;
         ZipWriteFile myZipFile = null;
         boolean bSuccess = false;
@@ -176,8 +175,8 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             bSuccess = true;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
-                                                           + pFile.getName(), e);
+            throw new JOceanusException("Failed to create Backup Workbook: "
+                                        + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -204,10 +203,10 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * Create an Extract Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void createExtract(final T pData,
-                              final File pFile) throws JDataException {
+                              final File pFile) throws JOceanusException {
         /* Declare variables */
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
@@ -241,8 +240,8 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             bSuccess = true;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
-                                                           + pFile.getName(), e);
+            throw new JOceanusException("Failed to create Editable Workbook: "
+                                        + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -273,9 +272,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Create the list of sheets to write.
      * @param pType the workBookType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void initialiseWorkBook(final WorkBookType pType) throws JDataException {
+    private void initialiseWorkBook(final WorkBookType pType) throws JOceanusException {
         /* Create the workbook attached to the output stream */
         theWorkBook = new DataWorkBook(pType);
 
@@ -299,10 +298,10 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * Write the WorkBook.
      * @param pStream the output stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      * @throws IOException on write error
      */
-    private void writeWorkBook(final OutputStream pStream) throws JDataException, IOException {
+    private void writeWorkBook(final OutputStream pStream) throws JOceanusException, IOException {
         SheetDataItem<?> mySheet;
 
         /* Access the iterator for the list */
@@ -334,7 +333,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+            throw new JOceanusException("Operation Cancelled");
         }
     }
 }

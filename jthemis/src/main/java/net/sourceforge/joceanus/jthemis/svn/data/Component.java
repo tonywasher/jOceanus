@@ -25,13 +25,12 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchList;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 
@@ -372,9 +371,9 @@ public final class Component
         /**
          * Discover component list from repository.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JDataException {
+        public void discover(final ReportStatus pReport) throws JOceanusException {
             /* Reset the list */
             clear();
 
@@ -390,8 +389,8 @@ public final class Component
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
-                                                                    + theRepository.getName(), e);
+                throw new JOceanusException("Failed to discover components for "
+                                            + theRepository.getName(), e);
             } finally {
                 theRepository.releaseClientManager(myMgr);
             }
@@ -546,9 +545,9 @@ public final class Component
         /**
          * registerDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private void registerDependencies(final ReportStatus pReport) throws JDataException {
+        private void registerDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Iterator<Component> myIterator = iterator();
 
@@ -566,9 +565,9 @@ public final class Component
         /**
          * propagateDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Iterator<Component> myIterator = iterator();
 

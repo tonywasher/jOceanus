@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jdatamodels.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -290,9 +290,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     /**
      * Set Value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void setValueValue(final Object pValue) throws JDataException {
+    protected void setValueValue(final Object pValue) throws JOceanusException {
         getValueSet().setDeletion(false);
         setEncryptedValue(FIELD_VALUE, pValue);
     }
@@ -312,10 +312,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param <X> the object type
      * @param pBytes the value
      * @param pClass the object class
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected <X> void setValueBytes(final byte[] pBytes,
-                                     final Class<X> pClass) throws JDataException {
+                                     final Class<X> pClass) throws JOceanusException {
         setEncryptedValue(FIELD_VALUE, pBytes, pClass);
     }
 
@@ -356,13 +356,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param uControlId the control id
      * @param uInfoTypeId the info id
      * @param uOwnerId the owner id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected DataInfo(final DataInfoList<T, O, I, E> pList,
                        final Integer uId,
                        final Integer uControlId,
                        final Integer uInfoTypeId,
-                       final Integer uOwnerId) throws JDataException {
+                       final Integer uOwnerId) throws JOceanusException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -377,9 +377,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     /**
      * Set value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setValue(final Object pValue) throws JDataException;
+    protected abstract void setValue(final Object pValue) throws JOceanusException;
 
     /**
      * Mark deleted.
@@ -479,11 +479,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
          * @param pOwner the owner of the info
          * @param pInfoClass the Class of the data info type
          * @param pValue the value of the data info
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public abstract void addOpenItem(final Integer uId,
                                          final O pOwner,
                                          final E pInfoClass,
-                                         final Object pValue) throws JDataException;
+                                         final Object pValue) throws JOceanusException;
     }
 }

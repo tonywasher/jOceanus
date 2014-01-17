@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Mac types. Available algorithms.
@@ -104,16 +103,16 @@ public enum MacType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enumeration object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static MacType fromId(final int id) throws JDataException {
+    public static MacType fromId(final int id) throws JOceanusException {
         for (MacType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid MacType: "
-                                                      + id);
+        throw new JOceanusException("Invalid MacType: "
+                                    + id);
     }
 
     /**
@@ -194,10 +193,10 @@ public enum MacType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static MacType[] getRandomTypes(final int pNumTypes,
-                                           final SecureRandom pRandom) throws JDataException {
+                                           final SecureRandom pRandom) throws JOceanusException {
         /* Access the values */
         MacType[] myValues = values();
         int iNumValues = myValues.length;
@@ -205,8 +204,8 @@ public enum MacType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of Macs: "
-                                                           + pNumTypes);
+            throw new JOceanusException("Invalid number of Macs: "
+                                        + pNumTypes);
         }
 
         /* Create the result set */

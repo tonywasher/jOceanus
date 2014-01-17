@@ -28,8 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchList;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
@@ -111,10 +110,10 @@ public class VersionMgr {
      * Create branch in temporary working copy.
      * @param pTarget the branch to create
      * @param pSource the tag to base the branch on
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void createBranch(final Branch pTarget,
-                                final Tag pSource) throws JDataException {
+                                final Tag pSource) throws JOceanusException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
@@ -146,8 +145,8 @@ public class VersionMgr {
             /* Clone the definition */
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create branch "
-                                                                + pTarget.getBranchName(), e);
+            throw new JOceanusException("Failed to create branch "
+                                        + pTarget.getBranchName(), e);
         }
     }
 
@@ -155,10 +154,10 @@ public class VersionMgr {
      * Create tag in temporary working copy.
      * @param pTarget the tag to create
      * @param pSource the branch to create the tag for
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void createTag(final Tag pTarget,
-                           final Branch pSource) throws JDataException {
+                           final Branch pSource) throws JOceanusException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
@@ -190,8 +189,8 @@ public class VersionMgr {
             /* Clone the definition */
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create tag "
-                                                                + pTarget.getTagName(), e);
+            throw new JOceanusException("Failed to create tag "
+                                        + pTarget.getTagName(), e);
         }
     }
 
@@ -199,9 +198,9 @@ public class VersionMgr {
      * Create new Tags to the specified directory.
      * @param pBranches the branches to tag.
      * @return the list of tags that were created
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public List<Tag> createTags(final Collection<Branch> pBranches) throws JDataException {
+    public List<Tag> createTags(final Collection<Branch> pBranches) throws JOceanusException {
         /* Create the list of tags */
         List<Tag> myList = new ArrayList<Tag>();
         Tag myTag;
@@ -238,10 +237,10 @@ public class VersionMgr {
      * @param pTags the tags to branch from.
      * @param pBranchType the type of branches to create
      * @return the list of branches that were created
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public List<Branch> createBranches(final Collection<Tag> pTags,
-                                       final BranchOpType pBranchType) throws JDataException {
+                                       final BranchOpType pBranchType) throws JOceanusException {
         /* Create the list of branches */
         List<Branch> myList = new ArrayList<Branch>();
 
@@ -270,9 +269,9 @@ public class VersionMgr {
     /**
      * Adjust dependencies.
      * @param pBranches the branches to adjust.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void adjustBranchDependencies(final List<Branch> pBranches) throws JDataException {
+    private void adjustBranchDependencies(final List<Branch> pBranches) throws JOceanusException {
         /* Loop through the branches */
         for (Branch myBranch : pBranches) {
             /* Access version */
@@ -303,9 +302,9 @@ public class VersionMgr {
     /**
      * Adjust dependencies.
      * @param pTags the tags to adjust.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void adjustTagDependencies(final List<Tag> pTags) throws JDataException {
+    private void adjustTagDependencies(final List<Tag> pTags) throws JOceanusException {
         /* Loop through the tags */
         for (Tag myTag : pTags) {
             /* Access version */

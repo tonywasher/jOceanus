@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jdatamodels.preferences;
 
 import java.awt.Color;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jfieldset.JFieldConfig;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Preferences for JFieldSet.
@@ -125,9 +125,9 @@ public class JFieldPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public JFieldPreferences() throws JDataException {
+    public JFieldPreferences() throws JOceanusException {
         super();
     }
 

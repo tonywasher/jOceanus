@@ -33,8 +33,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -51,7 +49,6 @@ import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JPrice;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
@@ -64,6 +61,8 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
  * SpotPrices panel.
@@ -160,7 +159,7 @@ public class PricePoint
     }
 
     @Override
-    protected void setError(final JDataException pError) {
+    protected void setError(final JOceanusException pError) {
         theError.addError(pError);
     }
 
@@ -316,7 +315,7 @@ public class PricePoint
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Show the error */
             theView.addError(e);
 
@@ -342,10 +341,10 @@ public class PricePoint
      * Set Selection to the specified portfolio and date.
      * @param pPortfolio the portfolio
      * @param pDate the Date for the extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setSelection(final Account pPortfolio,
-                             final JDateDay pDate) throws JDataException {
+                             final JDateDay pDate) throws JOceanusException {
         /* Record selection */
         theDate = pDate;
         thePortfolio = pPortfolio;
@@ -484,9 +483,9 @@ public class PricePoint
                         theSelect.createSavePoint();
 
                         /* Catch Exceptions */
-                    } catch (JDataException e) {
+                    } catch (JOceanusException e) {
                         /* Build the error */
-                        JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
+                        JOceanusException myError = new JOceanusException("Failed to change selection", e);
 
                         /* Show the error */
                         setError(myError);
@@ -673,7 +672,7 @@ public class PricePoint
         @Override
         public void setItemValue(final SpotPrice pSpot,
                                  final int pColIndex,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_PRICE:

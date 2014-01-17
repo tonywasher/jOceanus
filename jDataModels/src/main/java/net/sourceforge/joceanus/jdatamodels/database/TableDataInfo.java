@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for DataInfo Items. Each data type that represents DataInfo should extend this class.
@@ -59,17 +59,17 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?>>
      * @param pInfoTypeId the infoType id
      * @param pOwnerId the owner id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract void loadTheItem(final Integer pId,
                                         final Integer pControlId,
                                         final Integer pInfoTypeId,
                                         final Integer pOwnerId,
-                                        final byte[] pValue) throws JDataException;
+                                        final byte[] pValue) throws JOceanusException;
 
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Integer myInfoType = myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE);
@@ -82,7 +82,7 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?>>
 
     @Override
     protected void setFieldValue(final T pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DataInfo.FIELD_INFOTYPE.equals(iField)) {

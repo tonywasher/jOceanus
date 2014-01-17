@@ -19,6 +19,11 @@
       <artifactId>jGordianKnot</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
   <properties>
     <svnComponent>jFieldSet</svnComponent>

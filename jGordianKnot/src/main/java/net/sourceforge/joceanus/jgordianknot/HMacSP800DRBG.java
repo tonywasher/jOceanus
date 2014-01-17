@@ -44,8 +44,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
@@ -141,7 +141,7 @@ public class HMacSP800DRBG
             if (pSeed != null) {
                 updateState(pSeed, SEED_ID);
             }
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -150,10 +150,10 @@ public class HMacSP800DRBG
      * Update the state.
      * @param pSeed optional seed material
      * @param pCycle the cycle id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void updateState(final byte[] pSeed,
-                             final byte[] pCycle) throws JDataException {
+                             final byte[] pCycle) throws JOceanusException {
 
         /* Initialise the hMac */
         theHMac.setSecretKey(theKey);
@@ -249,7 +249,7 @@ public class HMacSP800DRBG
                 System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IllegalStateException(e);
         }
 

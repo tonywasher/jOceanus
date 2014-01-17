@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Main entry point for program.
@@ -57,7 +57,7 @@ public final class Control {
             theWindow = new MainTab(theLogger);
             theWindow.makeFrame();
 
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }

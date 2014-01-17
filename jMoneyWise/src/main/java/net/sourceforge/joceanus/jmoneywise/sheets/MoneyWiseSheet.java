@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
@@ -48,6 +46,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SpreadSheet extension for MoneyWiseData.
@@ -213,12 +212,12 @@ public class MoneyWiseSheet
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final YearRange pRange) throws JDataException {
+                                         final YearRange pRange) throws JOceanusException {
         /* Find the range of cells */
         DataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
@@ -248,10 +247,10 @@ public class MoneyWiseSheet
      * @param pTask Task Control for task
      * @param pPreferences the backup preferences
      * @return the newly loaded data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static MoneyWiseData loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                            final BackupPreferences pPreferences) throws JDataException {
+                                            final BackupPreferences pPreferences) throws JOceanusException {
         InputStream myStream = null;
 
         /* Determine the archive name */
@@ -277,8 +276,8 @@ public class MoneyWiseSheet
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: "
-                                                           + myArchive.getName(), e);
+            throw new JOceanusException("Failed to load Workbook: "
+                                        + myArchive.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -301,12 +300,12 @@ public class MoneyWiseSheet
      * @param pType the workBookType
      * @param pLastEvent the last event
      * @return the newly loaded data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private static MoneyWiseData loadArchiveStream(final TaskControl<MoneyWiseData> pTask,
                                                    final InputStream pStream,
                                                    final WorkBookType pType,
-                                                   final JDateDay pLastEvent) throws JDataException {
+                                                   final JDateDay pLastEvent) throws JOceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Create the Data */
@@ -401,14 +400,14 @@ public class MoneyWiseSheet
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JOceanusException("Operation Cancelled");
             }
 
             /* Return the data */
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook", e);
+            throw new JOceanusException("Failed to load Workbook", e);
         }
     }
 }

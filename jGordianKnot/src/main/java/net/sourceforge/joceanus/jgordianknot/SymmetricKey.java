@@ -27,8 +27,8 @@ import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.SymmetricRegister;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Symmetric Key implementation.
@@ -108,9 +108,9 @@ public class SymmetricKey {
      * SymmetricKey Generator.
      * @param pGenerator the security generator
      * @return the new SymmetricKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom);
@@ -124,10 +124,10 @@ public class SymmetricKey {
      * @param pGenerator the security generator
      * @param pKeyType Symmetric KeyType
      * @return the new SymmetricKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static SymmetricKey generateSymmetricKey(final SecurityGenerator pGenerator,
-                                                       final SymKeyType pKeyType) throws JDataException {
+                                                       final SymKeyType pKeyType) throws JOceanusException {
         /* Generate a new Secret Key */
         SecurityRegister myRegister = pGenerator.getRegister();
         SymmetricRegister myReg = myRegister.getSymRegistration(pKeyType, pGenerator.getKeyLen());
@@ -142,11 +142,11 @@ public class SymmetricKey {
      * @param pGenerator the security generator
      * @param pKeyType Symmetric KeyType
      * @param pKey Secret Key for algorithm
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected SymmetricKey(final SecurityGenerator pGenerator,
                            final SymKeyType pKeyType,
-                           final SecretKey pKey) throws JDataException {
+                           final SecretKey pKey) throws JOceanusException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
@@ -194,9 +194,9 @@ public class SymmetricKey {
     /**
      * Obtain data cipher for encryption/decryption.
      * @return the Data Cipher
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataCipher getDataCipher() throws JDataException {
+    public DataCipher getDataCipher() throws JOceanusException {
         /* Create the Data Cipher */
         return new DataCipher(this);
     }
@@ -205,9 +205,9 @@ public class SymmetricKey {
      * Obtain stream cipher for encryption/decryption.
      * @param pMode the cipher mode
      * @return the Stream Cipher
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public StreamCipher getStreamCipher(final CipherMode pMode) throws JDataException {
+    public StreamCipher getStreamCipher(final CipherMode pMode) throws JOceanusException {
         /* Create the Stream Cipher */
         return new StreamCipher(this, pMode);
     }

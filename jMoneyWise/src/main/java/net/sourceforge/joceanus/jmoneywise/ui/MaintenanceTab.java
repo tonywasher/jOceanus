@@ -29,14 +29,11 @@ import java.util.ResourceBundle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jdatamodels.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableTabbed;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
@@ -62,6 +59,9 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferencesPanel;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
@@ -260,7 +260,7 @@ public class MaintenanceTab
 
             /* Determine visibility */
             setVisibility();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Show the error */
             theView.addError(e);
         }

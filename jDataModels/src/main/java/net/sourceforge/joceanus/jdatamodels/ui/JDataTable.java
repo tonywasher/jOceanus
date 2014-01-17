@@ -37,17 +37,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
-import net.sourceforge.joceanus.jeventmanager.JEventTable;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxSelector;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jtablefilter.TableFilter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jtethys.event.JEventTable;
+import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 
 /**
  * Template class to provide a table to handle a data type.
@@ -216,7 +216,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      * Set the error details.
      * @param pError the error
      */
-    protected abstract void setError(final JDataException pError);
+    protected abstract void setError(final JOceanusException pError);
 
     /**
      * Increment version.

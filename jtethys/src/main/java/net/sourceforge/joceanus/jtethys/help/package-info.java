@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jHelpManager: Java Help Manager
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Simple help manager class.
  */
-package net.sourceforge.joceanus.jhelpmanager;
+package net.sourceforge.joceanus.jtethys.help;
 

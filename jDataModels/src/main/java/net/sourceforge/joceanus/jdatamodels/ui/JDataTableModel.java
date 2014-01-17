@@ -27,16 +27,15 @@ import java.util.ResourceBundle;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jfieldset.JFieldData;
 import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jfieldset.JFieldValue;
-import net.sourceforge.joceanus.jtablefilter.TableFilter;
-import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.swing.TableFilter;
+import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
 
 /**
  * Data Table model class.
@@ -196,16 +195,16 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             setItemValue(myItem, pColIndex, obj);
 
             /* Handle Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Reset values */
             myItem.popHistory();
 
             /* Build the error */
-            JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field at ("
-                                                                             + pRowIndex
-                                                                             + ","
-                                                                             + pColIndex
-                                                                             + ")", e);
+            JOceanusException myError = new JOceanusException("Failed to update field at ("
+                                                              + pRowIndex
+                                                              + ","
+                                                              + pColIndex
+                                                              + ")", e);
 
             /* Show the error */
             theTable.setError(myError);
@@ -228,11 +227,11 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
      * @param pItem the item
      * @param pColIndex the column
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setItemValue(final T pItem,
                              final int pColIndex,
-                             final Object pValue) throws JDataException {
+                             final Object pValue) throws JOceanusException {
     }
 
     /**

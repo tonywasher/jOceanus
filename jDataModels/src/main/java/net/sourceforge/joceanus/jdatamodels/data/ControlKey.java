@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -269,11 +268,11 @@ public class ControlKey
      * @param pList the list to which to add the key to
      * @param pId the id of the ControlKey
      * @param pHashBytes the hash bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private ControlKey(final ControlKeyList pList,
                        final Integer pId,
-                       final byte[] pHashBytes) throws JDataException {
+                       final byte[] pHashBytes) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -304,18 +303,18 @@ public class ControlKey
             theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
     /**
      * Constructor for a new ControlKey. This will create a set of DataKeys.
      * @param pList the list to which to add the key to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private ControlKey(final ControlKeyList pList) throws JDataException {
+    private ControlKey(final ControlKeyList pList) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -346,18 +345,18 @@ public class ControlKey
             allocateDataKeys(myData);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
     /**
      * Constructor for a new ControlKey with the same password. This will create a set of DataKeys.
      * @param pKey the key to copy
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private ControlKey(final ControlKey pKey) throws JDataException {
+    private ControlKey(final ControlKey pKey) throws JOceanusException {
         /* Initialise the item */
         super(pKey.getList(), 0);
 
@@ -391,9 +390,9 @@ public class ControlKey
             allocateDataKeys(myData);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -414,9 +413,9 @@ public class ControlKey
     /**
      * Allocate a new set of DataKeys.
      * @param pData the DataSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void allocateDataKeys(final DataSet<?, ?> pData) throws JDataException {
+    private void allocateDataKeys(final DataSet<?, ?> pData) throws JOceanusException {
         /* Access the DataKey List */
         DataKeyList myKeys = pData.getDataKeys();
         setNewVersion();
@@ -457,9 +456,9 @@ public class ControlKey
     /**
      * Update password hash.
      * @param pHash the new password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void updatePasswordHash(final PasswordHash pHash) throws JDataException {
+    protected void updatePasswordHash(final PasswordHash pHash) throws JOceanusException {
         /* Store the current detail into history */
         pushHistory();
 
@@ -552,12 +551,12 @@ public class ControlKey
         }
 
         @Override
-        public ControlKeyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public ControlKeyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (ControlKeyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public ControlKeyList deriveList(final ListStyle pStyle) throws JDataException {
+        public ControlKeyList deriveList(final ListStyle pStyle) throws JOceanusException {
             return (ControlKeyList) super.deriveList(pStyle);
         }
 
@@ -590,17 +589,17 @@ public class ControlKey
          * @param pId the id of the ControlKey
          * @param pHashBytes the HashBytes
          * @return the new item
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public ControlKey addSecureItem(final Integer pId,
-                                        final byte[] pHashBytes) throws JDataException {
+                                        final byte[] pHashBytes) throws JOceanusException {
             /* Create the ControlKey */
             ControlKey myKey = new ControlKey(this, pId, pHashBytes);
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myKey, ERROR_DUPLICATE);
+                throw new JOceanusException(myKey, ERROR_DUPLICATE);
             }
 
             /* Add to the list */
@@ -611,9 +610,9 @@ public class ControlKey
         /**
          * Create a new ControlKey (with associated DataKeys).
          * @return the new item
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public ControlKey createNewKeySet() throws JDataException {
+        public ControlKey createNewKeySet() throws JOceanusException {
             /* Create the key */
             ControlKey myKey = new ControlKey(this);
 
@@ -626,9 +625,9 @@ public class ControlKey
          * Add a cloned ControlKey (with associated DataKeys).
          * @param pSource the source key
          * @return the new item
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public ControlKey cloneItem(final ControlKey pSource) throws JDataException {
+        public ControlKey cloneItem(final ControlKey pSource) throws JOceanusException {
             /* Create the key */
             ControlKey myKey = new ControlKey(pSource);
 
@@ -640,9 +639,9 @@ public class ControlKey
         /**
          * Initialise Security from a DataBase for a SpreadSheet load.
          * @param pDatabase the DataSet for the Database
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws JDataException {
+        protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws JOceanusException {
             /* Access the active control key from the database */
             DataSet<?, ?> myData = getDataSet();
             ControlKey myDatabaseKey = pDatabase.getControlKey();
@@ -687,9 +686,9 @@ public class ControlKey
          * Clone Security from a DataBase.
          * @param pControlKey the ControlKey to clone
          * @return the new control key
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private ControlKey cloneControlKey(final ControlKey pControlKey) throws JDataException {
+        private ControlKey cloneControlKey(final ControlKey pControlKey) throws JOceanusException {
             /* Clone the control key */
             ControlKey myControl = addSecureItem(pControlKey.getId(), pControlKey.getHashBytes());
 

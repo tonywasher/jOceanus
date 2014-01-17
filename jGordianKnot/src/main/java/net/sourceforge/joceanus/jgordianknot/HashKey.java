@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class for assembling/disassembling Hashes.
@@ -127,9 +127,9 @@ public class HashKey {
     /**
      * Constructor for random choices.
      * @param pGenerator the security generator
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected HashKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected HashKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access the secureRandom */
         SecureRandom myRandom = pGenerator.getRandom();
 
@@ -149,10 +149,10 @@ public class HashKey {
      * Constructor for external form parse.
      * @param pPassLength the password length
      * @param pExternal the external form
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected HashKey(final int pPassLength,
-                      final byte[] pExternal) throws JDataException {
+                      final byte[] pExternal) throws JOceanusException {
         /* Determine hash length */
         int myLen = pExternal.length;
         int myHashLen = myLen
@@ -276,9 +276,9 @@ public class HashKey {
         /**
          * Construct the parameters from random.
          * @param pRandom the random generator
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private HashParameters(final SecureRandom pRandom) throws JDataException {
+        private HashParameters(final SecureRandom pRandom) throws JOceanusException {
             /* Obtain Digest list */
             DigestType[] myDigest = DigestType.getRandomTypes(NUM_DIGESTS, pRandom);
 
@@ -298,9 +298,9 @@ public class HashKey {
 
         /**
          * Construct the parameters from key bytes.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private HashParameters() throws JDataException {
+        private HashParameters() throws JOceanusException {
             /* Access prime and alternate digests */
             int i = 0;
             byte myValue = theKeyBytes[i++];

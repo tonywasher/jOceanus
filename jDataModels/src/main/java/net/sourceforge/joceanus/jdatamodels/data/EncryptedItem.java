@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -35,6 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jgordianknot.EncryptionGenerator;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encrypted Data Item and List.
@@ -157,9 +156,9 @@ public abstract class EncryptedItem
     /**
      * Set ControlKey id.
      * @param pControlId the Control Id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void setControlKey(final Integer pControlId) throws JDataException {
+    protected void setControlKey(final Integer pControlId) throws JOceanusException {
         /* Store the id */
         setValueControlKey(pControlId);
 
@@ -171,7 +170,7 @@ public abstract class EncryptedItem
         ControlKey myControl = myKeys.findItemById(pControlId);
         if (myControl == null) {
             addError(ERROR_UNKNOWN, FIELD_CONTROL);
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+            throw new JOceanusException(this, ERROR_RESOLUTION);
         }
 
         /* Store the ControlKey */
@@ -182,10 +181,10 @@ public abstract class EncryptedItem
      * Set encrypted value.
      * @param pField the field to set
      * @param pValue the value to set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void setEncryptedValue(final JDataField pField,
-                                     final Object pValue) throws JDataException {
+                                     final Object pValue) throws JOceanusException {
         /* Obtain the existing value */
         EncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
@@ -211,11 +210,11 @@ public abstract class EncryptedItem
      * @param pField the field to set
      * @param pEncrypted the encrypted value to set
      * @param pClass the class of the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void setEncryptedValue(final JDataField pField,
                                      final byte[] pEncrypted,
-                                     final Class<?> pClass) throws JDataException {
+                                     final Class<?> pClass) throws JOceanusException {
         /* Create the new encrypted value */
         EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
@@ -248,7 +247,7 @@ public abstract class EncryptedItem
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
         ValueSet myValues = getValueSet();
@@ -267,10 +266,10 @@ public abstract class EncryptedItem
      * Initialise security for all encrypted values.
      * @param pControl the new Control Key
      * @param pBase the base item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void adoptSecurity(final ControlKey pControl,
-                                 final EncryptedItem pBase) throws JDataException {
+                                 final EncryptedItem pBase) throws JOceanusException {
         /* Set the Control Key */
         setValueControlKey(pControl);
 
@@ -287,9 +286,9 @@ public abstract class EncryptedItem
     /**
      * Update security for all encrypted values.
      * @param pControl the new Control Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void updateSecurity(final ControlKey pControl) throws JDataException {
+    protected void updateSecurity(final ControlKey pControl) throws JOceanusException {
         /* Ignore call if we have the same control key */
         if (pControl.equals(getControlKey())) {
             return;
@@ -354,10 +353,10 @@ public abstract class EncryptedItem
          * @param pTask the task control
          * @param pControl the control key to apply
          * @return Continue <code>true/false</code>
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public boolean updateSecurity(final TaskControl<?> pTask,
-                                      final ControlKey pControl) throws JDataException {
+                                      final ControlKey pControl) throws JOceanusException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;
@@ -400,11 +399,11 @@ public abstract class EncryptedItem
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @return Continue <code>true/false</code>
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
-                                        final EncryptedList<?> pBase) throws JDataException {
+                                        final EncryptedList<?> pBase) throws JOceanusException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;

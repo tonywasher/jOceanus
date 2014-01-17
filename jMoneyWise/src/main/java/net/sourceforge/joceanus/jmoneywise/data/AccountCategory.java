@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -40,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Account Category class.
@@ -338,18 +337,18 @@ public class AccountCategory
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final String pValue) throws JDataException {
+    private void setValueName(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JDataException {
+    private void setValueName(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -364,18 +363,18 @@ public class AccountCategory
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JDataException {
+    private void setValueDesc(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
+    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -488,7 +487,7 @@ public class AccountCategory
      * @param pDesc the Encrypted Description of the category
      * @param pCatTypeId the id of the category type
      * @param pParentId the id of the parent category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AccountCategory(final AccountCategoryList pList,
                               final Integer pId,
@@ -496,7 +495,7 @@ public class AccountCategory
                               final byte[] pName,
                               final byte[] pDesc,
                               final Integer pCatTypeId,
-                              final Integer pParentId) throws JDataException {
+                              final Integer pParentId) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -517,9 +516,9 @@ public class AccountCategory
             resolveSubCategory();
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -531,14 +530,14 @@ public class AccountCategory
      * @param pDesc the description of the category
      * @param pCatType the Category type name
      * @param pParent the Parent Category name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AccountCategory(final AccountCategoryList pList,
                               final Integer pId,
                               final String pName,
                               final String pDesc,
                               final String pCatType,
-                              final String pParent) throws JDataException {
+                              final String pParent) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -556,9 +555,9 @@ public class AccountCategory
             resolveSubCategory();
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -598,7 +597,7 @@ public class AccountCategory
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -617,14 +616,14 @@ public class AccountCategory
             AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         } else if (myCatType instanceof String) {
             AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         }
@@ -638,14 +637,14 @@ public class AccountCategory
             AccountCategory myCat = myList.findItemById((Integer) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         } else if (myParent instanceof String) {
             AccountCategory myCat = myList.findItemByName((String) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         }
@@ -674,9 +673,9 @@ public class AccountCategory
     /**
      * Set a new category name.
      * @param pName the new name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCategoryName(final String pName) throws JDataException {
+    public void setCategoryName(final String pName) throws JOceanusException {
         setValueName(pName);
 
         /* Resolve the subCategory */
@@ -694,9 +693,9 @@ public class AccountCategory
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDescription(final String pDesc) throws JDataException {
+    public void setDescription(final String pDesc) throws JOceanusException {
         setValueDesc(pDesc);
     }
 
@@ -889,7 +888,7 @@ public class AccountCategory
         }
 
         @Override
-        public AccountCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountCategoryList) super.cloneList(pDataSet);
         }
 
@@ -1049,20 +1048,20 @@ public class AccountCategory
          * @param pDesc the description
          * @param pCategoryType the category type
          * @param pParent the parent category
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
                                 final String pCategoryType,
-                                final String pParent) throws JDataException {
+                                final String pParent) throws JOceanusException {
             /* Create the category */
             AccountCategory myCategory = new AccountCategory(this, pId, pName, pDesc, pCategoryType, pParent);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -1077,21 +1076,21 @@ public class AccountCategory
          * @param pDesc the encrypted description
          * @param pCategoryId the category id
          * @param pParentId the parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final byte[] pDesc,
                                   final Integer pCategoryId,
-                                  final Integer pParentId) throws JDataException {
+                                  final Integer pParentId) throws JOceanusException {
             /* Create the category */
             AccountCategory myCategory = new AccountCategory(this, pId, pControlId, pName, pDesc, pCategoryId, pParentId);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

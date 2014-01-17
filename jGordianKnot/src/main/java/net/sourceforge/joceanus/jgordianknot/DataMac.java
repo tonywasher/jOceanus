@@ -36,9 +36,8 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.MacRegister;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encapsulation of a Mac.
@@ -161,9 +160,9 @@ public class DataMac {
      * DataMac Generator.
      * @param pGenerator the security generator
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static DataMac generateRandomMac(final SecurityGenerator pGenerator) throws JDataException {
+    protected static DataMac generateRandomMac(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         MacType[] myType = MacType.getRandomTypes(1, myRandom);
@@ -177,10 +176,10 @@ public class DataMac {
      * @param pGenerator the security generator
      * @param pMacType the MacType
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac generateRandomMac(final SecurityGenerator pGenerator,
-                                               final MacType pMacType) throws JDataException {
+                                               final MacType pMacType) throws JOceanusException {
         /* Switch on MacType */
         switch (pMacType) {
             case HMAC:
@@ -197,9 +196,9 @@ public class DataMac {
      * DataMac Generator.
      * @param pGenerator the security generator
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator) throws JDataException {
+    protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
@@ -213,10 +212,10 @@ public class DataMac {
      * @param pGenerator the security generator
      * @param pDigestType the digest type
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac generateRandomDigestMac(final SecurityGenerator pGenerator,
-                                                     final DigestType pDigestType) throws JDataException {
+                                                     final DigestType pDigestType) throws JOceanusException {
         /* Generate a new Secret Key */
         SecurityRegister myRegister = pGenerator.getRegister();
         MacRegister myReg = myRegister.getMacRegistration(pDigestType, pGenerator.getKeyLen());
@@ -231,10 +230,10 @@ public class DataMac {
      * @param pGenerator the security generator
      * @param pMacType the MacType
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac generateRandomSymKeyMac(final SecurityGenerator pGenerator,
-                                                     final MacType pMacType) throws JDataException {
+                                                     final MacType pMacType) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         SymKeyType[] myType = SymKeyType.getRandomTypes(1, myRandom, true);
@@ -248,10 +247,10 @@ public class DataMac {
      * @param pGenerator the security generator
      * @param pMacType the MacType
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac generateRandomOtherMac(final SecurityGenerator pGenerator,
-                                                    final MacType pMacType) throws JDataException {
+                                                    final MacType pMacType) throws JOceanusException {
         /* Generate a new Secret Key */
         SecurityRegister myRegister = pGenerator.getRegister();
         MacRegister myReg = myRegister.getMacRegistration(pMacType, pGenerator.getKeyLen());
@@ -273,11 +272,11 @@ public class DataMac {
      * @param pMacType the MacType
      * @param pKeyType the SymKey type
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac generateRandomSymKeyMac(final SecurityGenerator pGenerator,
                                                      final MacType pMacType,
-                                                     final SymKeyType pKeyType) throws JDataException {
+                                                     final SymKeyType pKeyType) throws JOceanusException {
         /* Generate a new Secret Key */
         SecurityRegister myRegister = pGenerator.getRegister();
         MacRegister myReg = myRegister.getMacRegistration(pMacType, pKeyType, pGenerator.getKeyLen());
@@ -296,11 +295,11 @@ public class DataMac {
      * @param pMacSpec the MacSpec
      * @param pKeySpec the KeySpec
      * @return the new Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static DataMac deriveMac(final SecurityGenerator pGenerator,
                                        final MacSpec pMacSpec,
-                                       final byte[] pKeySpec) throws JDataException {
+                                       final byte[] pKeySpec) throws JOceanusException {
         /* Access Security register */
         SecurityRegister myRegister = pGenerator.getRegister();
 
@@ -339,11 +338,11 @@ public class DataMac {
      * @param pGenerator the security generator
      * @param pDigestType DigestType
      * @param pKey the secret Key (or null)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected DataMac(final SecurityGenerator pGenerator,
                       final DigestType pDigestType,
-                      final SecretKey pKey) throws JDataException {
+                      final SecretKey pKey) throws JOceanusException {
         /* Store the KeyType and the Generator */
         theMacType = MacType.HMAC;
         theDigestType = pDigestType;
@@ -365,7 +364,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+            throw new JOceanusException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -381,13 +380,13 @@ public class DataMac {
      * @param pKeyType the key type
      * @param pKey the secret key
      * @param pVector the initialisation vector
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private DataMac(final SecurityGenerator pGenerator,
                     final MacType pMacType,
                     final SymKeyType pKeyType,
                     final SecretKey pKey,
-                    final byte[] pVector) throws JDataException {
+                    final byte[] pVector) throws JOceanusException {
         /* Not allowed for non standard block size */
         if (!pKeyType.isStdBlock()) {
             throw new UnsupportedOperationException();
@@ -410,7 +409,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+            throw new JOceanusException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -423,12 +422,12 @@ public class DataMac {
      * @param pMacType the mac type
      * @param pKey the secret key
      * @param pVector the initialisation vector
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private DataMac(final SecurityGenerator pGenerator,
                     final MacType pMacType,
                     final SecretKey pKey,
-                    final byte[] pVector) throws JDataException {
+                    final byte[] pVector) throws JOceanusException {
         /* Store the KeyType and the Generator */
         theKey = pKey;
         theMacType = pMacType;
@@ -455,7 +454,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CREATE, e);
+            throw new JOceanusException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -465,9 +464,9 @@ public class DataMac {
     /**
      * Initialise an HMac object.
      * @param pKeyBytes the key bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setSecretKey(final byte[] pKeyBytes) throws JDataException {
+    public void setSecretKey(final byte[] pKeyBytes) throws JOceanusException {
         /* Only allowed for HMac */
         if (theMacType != MacType.HMAC) {
             throw new UnsupportedOperationException();
@@ -481,7 +480,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (InvalidKeyException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+            throw new JOceanusException(ERROR_INIT, e);
         }
     }
 
@@ -582,16 +581,16 @@ public class DataMac {
      * Calculate the MAC, and return it in the buffer provided.
      * @param pBuffer the buffer to return the mac in.
      * @param pOffset the offset in the buffer to store the MAC.
-     * @throws JDataException if buffer too short
+     * @throws JOceanusException if buffer too short
      */
     public void finish(final byte[] pBuffer,
-                       final int pOffset) throws JDataException {
+                       final int pOffset) throws JOceanusException {
         /* Calculate the mac */
         try {
             theMac.doFinal(pBuffer, pOffset);
         } catch (ShortBufferException | IllegalStateException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CALC, e);
+            throw new JOceanusException(ERROR_CALC, e);
         }
     }
 }

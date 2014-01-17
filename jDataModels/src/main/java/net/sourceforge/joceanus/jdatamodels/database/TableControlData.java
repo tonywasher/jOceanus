@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for ControlData.
@@ -63,7 +63,7 @@ public class TableControlData
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Integer myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);
@@ -75,7 +75,7 @@ public class TableControlData
 
     @Override
     protected void setFieldValue(final ControlData pItem,
-                                 final JDataField pField) throws JDataException {
+                                 final JDataField pField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_VERSION.equals(pField)) {

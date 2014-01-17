@@ -28,8 +28,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
 import net.sourceforge.joceanus.jthemis.jira.data.Server.IssueType;
 import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
@@ -168,10 +167,10 @@ public class Project {
      * Constructor.
      * @param pServer the server
      * @param pProject the underlying project
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected Project(final Server pServer,
-                      final RemoteProject pProject) throws JDataException {
+                      final RemoteProject pProject) throws JOceanusException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -202,9 +201,9 @@ public class Project {
      * Obtain IssueType.
      * @param pId the id of the IssueType
      * @return the IssueType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public IssueType getIssueType(final String pId) throws JDataException {
+    public IssueType getIssueType(final String pId) throws JOceanusException {
         /* Return an existing issue type if found in list */
         Iterator<IssueType> myIterator = theIssueTypes.iterator();
         while (myIterator.hasNext()) {
@@ -215,17 +214,17 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId "
-                                                      + pId);
+        throw new JOceanusException("Invalid IssueTypeId "
+                                    + pId);
     }
 
     /**
      * Obtain Component.
      * @param pId the id of the Component
      * @return the Component
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Component getComponent(final String pId) throws JDataException {
+    public Component getComponent(final String pId) throws JOceanusException {
         /* Return an existing component if found in list */
         Iterator<Component> myIterator = theComponents.iterator();
         while (myIterator.hasNext()) {
@@ -236,8 +235,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid ComponentId "
-                                                      + pId);
+        throw new JOceanusException("Invalid ComponentId "
+                                    + pId);
     }
 
     /**
@@ -261,9 +260,9 @@ public class Project {
      * Obtain Version.
      * @param pId the id of the Version
      * @return the Version
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Version getVersion(final String pId) throws JDataException {
+    public Version getVersion(final String pId) throws JOceanusException {
         /* Return an existing version if found in list */
         Iterator<Version> myIterator = theVersions.iterator();
         while (myIterator.hasNext()) {
@@ -274,8 +273,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid VersionId "
-                                                      + pId);
+        throw new JOceanusException("Invalid VersionId "
+                                    + pId);
     }
 
     /**
@@ -297,9 +296,9 @@ public class Project {
 
     /**
      * Load IssueTypes.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadIssueTypes() throws JDataException {
+    private void loadIssueTypes() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -324,15 +323,15 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load issue types", e);
+            throw new JOceanusException("Failed to load issue types", e);
         }
     }
 
     /**
      * Load Components.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadComponents() throws JDataException {
+    private void loadComponents() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -348,15 +347,15 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load components", e);
+            throw new JOceanusException("Failed to load components", e);
         }
     }
 
     /**
      * Load Versions.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadVersions() throws JDataException {
+    private void loadVersions() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -372,16 +371,16 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load versions", e);
+            throw new JOceanusException("Failed to load versions", e);
         }
     }
 
     /**
      * Add new Version.
      * @param pVersion the version to add
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void addVersion(final String pVersion) throws JDataException {
+    public void addVersion(final String pVersion) throws JOceanusException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theVersions.iterator();
         while (myIterator.hasNext()) {
@@ -407,7 +406,7 @@ public class Project {
             theVersions.add(new Version(this, myVersion));
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to link component", e);
+            throw new JOceanusException("Failed to link component", e);
         }
     }
 
@@ -573,9 +572,9 @@ public class Project {
         /**
          * Archive the version.
          * @param doArchive archive/restore version
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void setArchive(final boolean doArchive) throws JDataException {
+        public void setArchive(final boolean doArchive) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Ignore if already in correct state */
@@ -594,15 +593,15 @@ public class Project {
                 theVers.setArchived(doArchive);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JDataException(ExceptionClass.JIRA, ERROR_ARCH, e);
+                throw new JOceanusException(ERROR_ARCH, e);
             }
         }
 
         /**
          * Release the version.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void setReleased() throws JDataException {
+        public void setReleased() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Ignore if already in correct state */
@@ -625,7 +624,7 @@ public class Project {
                 theService.releaseVersion(myToken, theOwner.getId(), theVers);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JDataException(ExceptionClass.JIRA, ERROR_ARCH, e);
+                throw new JOceanusException(ERROR_ARCH, e);
             }
         }
     }

@@ -33,9 +33,8 @@ import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.Group;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.Role;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
@@ -133,9 +132,9 @@ public class Server {
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Server(final PreferenceManager pManager) throws JDataException {
+    public Server(final PreferenceManager pManager) throws JOceanusException {
         /* Store parameters */
         thePreferenceMgr = pManager;
 
@@ -180,20 +179,20 @@ public class Server {
             loadPriorities();
         } catch (MalformedURLException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_SERVICE, e);
+            throw new JOceanusException(ERROR_SERVICE, e);
 
         } catch (ServiceException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_SERVICE, e);
+            throw new JOceanusException(ERROR_SERVICE, e);
         }
     }
 
     /**
      * Get Authentication Token.
      * @return the authentication token
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public final String getAuthToken() throws JDataException {
+    public final String getAuthToken() throws JOceanusException {
         /* If we have a token, return it */
         if (theAuthToken != null) {
             return theAuthToken;
@@ -209,7 +208,7 @@ public class Server {
             return theAuthToken;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to login to server", e);
+            throw new JOceanusException("Failed to login to server", e);
         }
     }
 
@@ -217,9 +216,9 @@ public class Server {
      * Obtain Project.
      * @param pKey the key for the project
      * @return the Project
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Project getProject(final String pKey) throws JDataException {
+    public Project getProject(final String pKey) throws JOceanusException {
         /* Return an existing project if found in list */
         Iterator<Project> myIterator = theProjects.iterator();
         while (myIterator.hasNext()) {
@@ -241,17 +240,17 @@ public class Server {
             return myProject;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load project "
-                                                          + pKey, e);
+            throw new JOceanusException("Failed to load project "
+                                        + pKey, e);
         }
     }
 
     /**
      * Load Issues from Filter.
      * @param pFilter the filter name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void loadIssuesFromFilter(final String pFilter) throws JDataException {
+    public void loadIssuesFromFilter(final String pFilter) throws JOceanusException {
         /* Access the filter */
         Filter myFilter = null;
         Iterator<Filter> myIterator = theFilters.iterator();
@@ -266,8 +265,8 @@ public class Server {
         /* Handle filter not found */
         if (myFilter == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Filter does not exists "
-                                                          + pFilter);
+            throw new JOceanusException("Filter does not exists "
+                                        + pFilter);
         }
 
         /* Protect against exceptions */
@@ -285,7 +284,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load issues from filter", e);
+            throw new JOceanusException("Failed to load issues from filter", e);
         }
 
     }
@@ -294,9 +293,9 @@ public class Server {
      * Obtain User.
      * @param pName the name of the user
      * @return the User
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public User getUser(final String pName) throws JDataException {
+    public User getUser(final String pName) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pName);
     }
@@ -305,9 +304,9 @@ public class Server {
      * Obtain Group.
      * @param pName the name of the group
      * @return the Group
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Group getGroup(final String pName) throws JDataException {
+    public Group getGroup(final String pName) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getGroup(pName);
     }
@@ -316,9 +315,9 @@ public class Server {
      * Obtain Role.
      * @param pId the Id of the role
      * @return the Role
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Role getRole(final long pId) throws JDataException {
+    public Role getRole(final long pId) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getRole(pId);
     }
@@ -327,9 +326,9 @@ public class Server {
      * Obtain IssueType.
      * @param pId the id of the IssueType
      * @return the IssueType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public IssueType getIssueType(final String pId) throws JDataException {
+    public IssueType getIssueType(final String pId) throws JOceanusException {
         /* Return an existing issue type if found in list */
         Iterator<IssueType> myIterator = theIssueTypes.iterator();
         while (myIterator.hasNext()) {
@@ -340,17 +339,17 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid IssueTypeId "
-                                                      + pId);
+        throw new JOceanusException("Invalid IssueTypeId "
+                                    + pId);
     }
 
     /**
      * Obtain Status.
      * @param pId the id of the Status
      * @return the Status
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Status getStatus(final String pId) throws JDataException {
+    public Status getStatus(final String pId) throws JOceanusException {
         /* Return an existing status if found in list */
         Iterator<Status> myIterator = theStatuses.iterator();
         while (myIterator.hasNext()) {
@@ -361,17 +360,17 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid StatusId "
-                                                      + pId);
+        throw new JOceanusException("Invalid StatusId "
+                                    + pId);
     }
 
     /**
      * Obtain Resolution.
      * @param pId the id of the Resolution
      * @return the Resolution
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Resolution getResolution(final String pId) throws JDataException {
+    public Resolution getResolution(final String pId) throws JOceanusException {
         /* Return an existing resolution if found in list */
         Iterator<Resolution> myIterator = theResolutions.iterator();
         while (myIterator.hasNext()) {
@@ -382,17 +381,17 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid ResolutionId "
-                                                      + pId);
+        throw new JOceanusException("Invalid ResolutionId "
+                                    + pId);
     }
 
     /**
      * Obtain Priority.
      * @param pId the id of the Priority
      * @return the Priority
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Priority getPriority(final String pId) throws JDataException {
+    public Priority getPriority(final String pId) throws JOceanusException {
         /* Return an existing priority if found in list */
         Iterator<Priority> myIterator = thePriorities.iterator();
         while (myIterator.hasNext()) {
@@ -403,15 +402,15 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JDataException(ExceptionClass.JIRA, "Invalid PriorityId "
-                                                      + pId);
+        throw new JOceanusException("Invalid PriorityId "
+                                    + pId);
     }
 
     /**
      * Load Filters.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadFilters() throws JDataException {
+    private void loadFilters() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -427,15 +426,15 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load filters", e);
+            throw new JOceanusException("Failed to load filters", e);
         }
     }
 
     /**
      * Load IssueTypes.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadIssueTypes() throws JDataException {
+    private void loadIssueTypes() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -460,15 +459,15 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load issue types", e);
+            throw new JOceanusException("Failed to load issue types", e);
         }
     }
 
     /**
      * Load Statuses.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadStatuses() throws JDataException {
+    private void loadStatuses() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -484,15 +483,15 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load statuses", e);
+            throw new JOceanusException("Failed to load statuses", e);
         }
     }
 
     /**
      * Load Resolutions.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadResolutions() throws JDataException {
+    private void loadResolutions() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -508,15 +507,15 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load resolutions", e);
+            throw new JOceanusException("Failed to load resolutions", e);
         }
     }
 
     /**
      * Load Priorities.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void loadPriorities() throws JDataException {
+    private void loadPriorities() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the authorization token */
@@ -532,7 +531,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Failed to load priorities", e);
+            throw new JOceanusException("Failed to load priorities", e);
         }
     }
 

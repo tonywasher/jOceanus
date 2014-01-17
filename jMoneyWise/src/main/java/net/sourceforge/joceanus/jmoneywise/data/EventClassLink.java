@@ -23,8 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Event Class Link for an event.
@@ -276,7 +275,7 @@ public class EventClassLink
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Access Relevant lists */
         MoneyWiseData myData = getDataSet();
         EventList myEvents = myData.getEvents();
@@ -292,7 +291,7 @@ public class EventClassLink
             Event myEvent = myEvents.findItemById((Integer) myCurr);
             if (myEvent == null) {
                 addError(ERROR_UNKNOWN, FIELD_EVENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueEvent(myEvent);
         }
@@ -306,14 +305,14 @@ public class EventClassLink
             EventClass myClass = myTags.findItemById((Integer) myCurr);
             if (myClass == null) {
                 addError(ERROR_UNKNOWN, FIELD_CLASS);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueEventClass(myClass);
         } else if (myCurr instanceof String) {
             EventClass myClass = myTags.findItemByName((String) myCurr);
             if (myClass == null) {
                 addError(ERROR_UNKNOWN, FIELD_CLASS);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueEventClass(myClass);
         }
@@ -413,7 +412,7 @@ public class EventClassLink
         }
 
         @Override
-        public EventClassLinkList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventClassLinkList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventClassLinkList) super.cloneList(pDataSet);
         }
 
@@ -458,18 +457,18 @@ public class EventClassLink
          * @param pId the id
          * @param pEvent the event
          * @param pClass the eventClass name
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Event pEvent,
-                                final String pClass) throws JDataException {
+                                final String pClass) throws JOceanusException {
             /* Create the link */
             EventClassLink myLink = new EventClassLink(this, pId, pEvent, pClass);
 
             /* Check that this LinkId has not been previously added */
             if (!isIdUnique(pId)) {
                 myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myLink, ERROR_VALIDATION);
+                throw new JOceanusException(myLink, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -481,18 +480,18 @@ public class EventClassLink
          * @param pId the id
          * @param pEventId the event id
          * @param pClassId the class id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pEventId,
-                                  final Integer pClassId) throws JDataException {
+                                  final Integer pClassId) throws JOceanusException {
             /* Create the link */
             EventClassLink myLink = new EventClassLink(this, pId, pEventId, pClassId);
 
             /* Check that this LinkId has not been previously added */
             if (!isIdUnique(pId)) {
                 myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myLink, ERROR_VALIDATION);
+                throw new JOceanusException(myLink, ERROR_VALIDATION);
             }
 
             /* Add to the list */

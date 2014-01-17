@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Preferences for SubVersion.
@@ -153,9 +153,9 @@ public class SubVersionPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SubVersionPreferences() throws JDataException {
+    public SubVersionPreferences() throws JOceanusException {
         super();
     }
 

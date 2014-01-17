@@ -30,8 +30,6 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -51,6 +49,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -441,10 +440,10 @@ public class Event
      * Construct a new event from an Account pattern.
      * @param pList the list to build into
      * @param pLine The Line to copy
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected Event(final EventList pList,
-                    final Pattern pLine) throws JDataException {
+                    final Pattern pLine) throws JOceanusException {
         /* Set standard values */
         super(pList, pLine);
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -485,7 +484,7 @@ public class Event
      * @param pReconciled is the event reconciled
      * @param pSplit is the event split
      * @param pParent the parent id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected Event(final EventList pList,
                     final Integer pId,
@@ -497,7 +496,7 @@ public class Event
                     final Integer pCategory,
                     final Boolean pReconciled,
                     final Boolean pSplit,
-                    final Integer pParent) throws JDataException {
+                    final Integer pParent) throws JOceanusException {
         /* Initialise item */
         super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
@@ -519,7 +518,7 @@ public class Event
      * @param pReconciled is the event reconciled
      * @param pSplit is the event split
      * @param pParent the parent
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected Event(final EventList pList,
                     final Integer pId,
@@ -530,7 +529,7 @@ public class Event
                     final String pCategory,
                     final Boolean pReconciled,
                     final Boolean pSplit,
-                    final Event pParent) throws JDataException {
+                    final Event pParent) throws JOceanusException {
         /* Initialise item */
         super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
@@ -541,7 +540,7 @@ public class Event
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Event details */
         super.resolveDataSetLinks();
 
@@ -558,7 +557,7 @@ public class Event
             Event myEvent = myEvents.findItemById((Integer) myParent);
             if (myEvent == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueParent(myEvent);
         }
@@ -662,126 +661,126 @@ public class Event
     /**
      * Set a new Debit Units.
      * @param pUnits the new units
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDebitUnits(final JUnits pUnits) throws JDataException {
+    public void setDebitUnits(final JUnits pUnits) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DEBITUNITS, pUnits);
     }
 
     /**
      * Set a new Credit Units.
      * @param pUnits the new units
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCreditUnits(final JUnits pUnits) throws JDataException {
+    public void setCreditUnits(final JUnits pUnits) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITUNITS, pUnits);
     }
 
     /**
      * Set a new TaxCredit.
      * @param pCredit the new credit
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setTaxCredit(final JMoney pCredit) throws JDataException {
+    public void setTaxCredit(final JMoney pCredit) throws JOceanusException {
         setInfoSetValue(EventInfoClass.TAXCREDIT, pCredit);
     }
 
     /**
      * Set a new Dilution.
      * @param pDilution the new dilution
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDilution(final JDilution pDilution) throws JDataException {
+    public void setDilution(final JDilution pDilution) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DILUTION, pDilution);
     }
 
     /**
      * Set a new Qualifying Years.
      * @param pYears the new years
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setYears(final Integer pYears) throws JDataException {
+    public void setYears(final Integer pYears) throws JOceanusException {
         setInfoSetValue(EventInfoClass.QUALIFYYEARS, pYears);
     }
 
     /**
      * Set a new Credit Date.
      * @param pCreditDate the new credit date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCreditDate(final JDateDay pCreditDate) throws JDataException {
+    public void setCreditDate(final JDateDay pCreditDate) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITDATE, pCreditDate);
     }
 
     /**
      * Set a new NatInsurance.
      * @param pNatIns the new insurance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setNatInsurance(final JMoney pNatIns) throws JDataException {
+    public void setNatInsurance(final JMoney pNatIns) throws JOceanusException {
         setInfoSetValue(EventInfoClass.NATINSURANCE, pNatIns);
     }
 
     /**
      * Set a new Benefit.
      * @param pBenefit the new benefit
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBenefit(final JMoney pBenefit) throws JDataException {
+    public void setBenefit(final JMoney pBenefit) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
     /**
      * Set a new Pension.
      * @param pPension the new pension
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setPension(final JMoney pPension) throws JDataException {
+    public void setPension(final JMoney pPension) throws JOceanusException {
         setInfoSetValue(EventInfoClass.PENSION, pPension);
     }
 
     /**
      * Set a new Donation.
      * @param pDonation the new donation
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDonation(final JMoney pDonation) throws JDataException {
+    public void setDonation(final JMoney pDonation) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CHARITYDONATION, pDonation);
     }
 
     /**
      * Set a new Credit Amount.
      * @param pValue the new credit amount
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCreditAmount(final JMoney pValue) throws JDataException {
+    public void setCreditAmount(final JMoney pValue) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITAMOUNT, pValue);
     }
 
     /**
      * Set a new Reference.
      * @param pReference the new reference
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setReference(final String pReference) throws JDataException {
+    public void setReference(final String pReference) throws JOceanusException {
         setInfoSetValue(EventInfoClass.REFERENCE, pReference);
     }
 
     /**
      * Set new Comments.
      * @param pComments the new comments
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setComments(final String pComments) throws JDataException {
+    public void setComments(final String pComments) throws JOceanusException {
         setInfoSetValue(EventInfoClass.COMMENTS, pComments);
     }
 
     /**
      * Set a new ThirdParty.
      * @param pParty the new thirdParty
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setThirdParty(final Account pParty) throws JDataException {
+    public void setThirdParty(final Account pParty) throws JOceanusException {
         setInfoSetValue(EventInfoClass.THIRDPARTY, pParty);
     }
 
@@ -789,13 +788,13 @@ public class Event
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void setInfoSetValue(final EventInfoClass pInfoClass,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
+            throw new JOceanusException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -988,7 +987,7 @@ public class Event
         }
 
         @Override
-        public EventList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventList) super.cloneList(pDataSet);
         }
 
@@ -1061,9 +1060,9 @@ public class Event
          * Get an EditList for a new TaxYear.
          * @param pTaxYear the new TaxYear
          * @return the edit list
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public EventList deriveEditList(final TaxYear pTaxYear) throws JDataException {
+        public EventList deriveEditList(final TaxYear pTaxYear) throws JOceanusException {
             /* Build an empty List */
             EventList myList = getEmptyList(ListStyle.EDIT);
             myList.setRange(pTaxYear.getDateRange());
@@ -1199,7 +1198,7 @@ public class Event
          * @param pSplit is the event split
          * @param pParent the parent
          * @return the new event
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public Event addOpenItem(final Integer pId,
                                  final JDateDay pDate,
@@ -1209,14 +1208,14 @@ public class Event
                                  final String pCategory,
                                  final Boolean pReconciled,
                                  final Boolean pSplit,
-                                 final Event pParent) throws JDataException {
+                                 final Event pParent) throws JOceanusException {
             /* Create the new Event */
             Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
                 myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myEvent, ERROR_VALIDATION);
+                throw new JOceanusException(myEvent, ERROR_VALIDATION);
             }
 
             /* Add the Event to the list */
@@ -1236,7 +1235,7 @@ public class Event
          * @param pReconciled is the event reconciled
          * @param pSplit is the event split
          * @param pParentId the parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
@@ -1247,14 +1246,14 @@ public class Event
                                   final Integer pCatId,
                                   final Boolean pReconciled,
                                   final Boolean pSplit,
-                                  final Integer pParentId) throws JDataException {
+                                  final Integer pParentId) throws JOceanusException {
             /* Create the new Event */
             Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled, pSplit, pParentId);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
                 myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myEvent, ERROR_VALIDATION);
+                throw new JOceanusException(myEvent, ERROR_VALIDATION);
             }
 
             /* Add the Event to the list */

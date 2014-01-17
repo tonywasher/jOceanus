@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableDataInfo extension for TaxYearInfo.
@@ -82,13 +81,13 @@ public class TableTaxYearInfo
                                final Integer pControlId,
                                final Integer pInfoTypeId,
                                final Integer pOwnerId,
-                               final byte[] pValue) throws JDataException {
+                               final byte[] pValue) throws JOceanusException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Calculate the date range */
         theData.calculateDateRange();
 
@@ -98,7 +97,7 @@ public class TableTaxYearInfo
         /* Validate the tax years */
         DataErrorList<DataItem> myErrors = theTaxYears.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

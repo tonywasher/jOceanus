@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -37,6 +35,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Tag for an event.
@@ -204,18 +203,18 @@ public class EventClass
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final String pValue) throws JDataException {
+    private void setValueName(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JDataException {
+    private void setValueName(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -230,18 +229,18 @@ public class EventClass
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JDataException {
+    private void setValueDesc(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
+    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -286,13 +285,13 @@ public class EventClass
      * @param pControlId the control id
      * @param pName the Encrypted Name of the event class
      * @param pDesc the Encrypted Description of the event class
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventClass(final EventClassList pList,
                          final Integer pId,
                          final Integer pControlId,
                          final byte[] pName,
-                         final byte[] pDesc) throws JDataException {
+                         final byte[] pDesc) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -306,9 +305,9 @@ public class EventClass
             setValueDesc(pDesc);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -318,12 +317,12 @@ public class EventClass
      * @param pId the id
      * @param pName the Name of the event class
      * @param pDesc the description of the event class
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventClass(final EventClassList pList,
                          final Integer pId,
                          final String pName,
-                         final String pDesc) throws JDataException {
+                         final String pDesc) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -334,9 +333,9 @@ public class EventClass
             setValueDesc(pDesc);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -372,18 +371,18 @@ public class EventClass
     /**
      * Set a new tag name.
      * @param pName the new name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setName(final String pName) throws JDataException {
+    public void setName(final String pName) throws JOceanusException {
         setValueName(pName);
     }
 
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDescription(final String pDesc) throws JDataException {
+    public void setDescription(final String pDesc) throws JOceanusException {
         setValueDesc(pDesc);
     }
 
@@ -493,7 +492,7 @@ public class EventClass
         }
 
         @Override
-        public EventClassList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventClassList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventClassList) super.cloneList(pDataSet);
         }
 
@@ -581,18 +580,18 @@ public class EventClass
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create the tag */
             EventClass myClass = new EventClass(this, pId, pName, pDesc);
 
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(pId)) {
                 myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myClass, ERROR_VALIDATION);
+                throw new JOceanusException(myClass, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -605,19 +604,19 @@ public class EventClass
          * @param pControlId the control id
          * @param pName the encrypted name
          * @param pDesc the encrypted description
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create the tag */
             EventClass myClass = new EventClass(this, pId, pControlId, pName, pDesc);
 
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(pId)) {
                 myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myClass, ERROR_VALIDATION);
+                throw new JOceanusException(myClass, ERROR_VALIDATION);
             }
 
             /* Add to the list */

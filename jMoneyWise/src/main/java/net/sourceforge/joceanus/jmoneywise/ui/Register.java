@@ -37,8 +37,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -59,7 +57,6 @@ import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.DilutionCellEditor;
@@ -83,6 +80,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
  * Event Register Table.
@@ -279,7 +278,7 @@ public class Register
     }
 
     @Override
-    protected void setError(final JDataException pError) {
+    protected void setError(final JOceanusException pError) {
         theError.addError(pError);
     }
 
@@ -486,7 +485,7 @@ public class Register
 
             /* Touch the updateSet */
             theDataRegister.setObject(theUpdateSet);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Show the error */
             theView.addError(e);
 
@@ -516,9 +515,9 @@ public class Register
     /**
      * Set Selection to the specified date range.
      * @param pRange the Date range for the extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setSelection(final JDateDayRange pRange) throws JDataException {
+    public void setSelection(final JDateDayRange pRange) throws JOceanusException {
         theRange = pRange;
         theEvents = null;
         EventInfoList myInfo = null;
@@ -556,9 +555,9 @@ public class Register
             setSelection(theSelect.getRange());
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Build the error */
-            JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to select Range", e);
+            JOceanusException myError = new JOceanusException("Failed to select Range", e);
 
             /* Show the error */
             setError(myError);
@@ -637,9 +636,9 @@ public class Register
                     theSelect.createSavePoint();
 
                     /* Catch Exceptions */
-                } catch (JDataException e) {
+                } catch (JOceanusException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
+                    JOceanusException myError = new JOceanusException("Failed to change selection", e);
 
                     /* Show the error */
                     setError(myError);
@@ -838,7 +837,7 @@ public class Register
         @Override
         public void setItemValue(final Event pEvent,
                                  final int pColIndex,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
             /* Determine whether the line needs a tax credit */
             boolean needsTaxCredit = Event.needsTaxCredit(pEvent.getCategory(), pEvent.getDebit());
 

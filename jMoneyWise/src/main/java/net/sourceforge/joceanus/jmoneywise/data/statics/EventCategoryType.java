@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * EventCategoryType data type.
@@ -95,10 +94,10 @@ public class EventCategoryType
      * Basic Constructor.
      * @param pList The list to associate the Category Type with
      * @param pName Name of Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventCategoryType(final EventCategoryTypeList pList,
-                              final String pName) throws JDataException {
+                              final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -106,10 +105,10 @@ public class EventCategoryType
      * Basic constructor.
      * @param pList The list to associate the Event Category Type with
      * @param pClass Class of Event Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventCategoryType(final EventCategoryTypeList pList,
-                              final EventCategoryClass pClass) throws JDataException {
+                              final EventCategoryClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -121,14 +120,14 @@ public class EventCategoryType
      * @param uOrder the sort order
      * @param pName Name of Category Type
      * @param pDesc Description of Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventCategoryType(final EventCategoryTypeList pList,
                               final Integer uId,
                               final Boolean isEnabled,
                               final Integer uOrder,
                               final String pName,
-                              final String pDesc) throws JDataException {
+                              final String pDesc) throws JOceanusException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
@@ -141,7 +140,7 @@ public class EventCategoryType
      * @param uOrder the sort order
      * @param pName Encrypted Name of Category Type
      * @param pDesc Encrypted Description of Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventCategoryType(final EventCategoryTypeList pList,
                               final Integer uId,
@@ -149,7 +148,7 @@ public class EventCategoryType
                               final Boolean isEnabled,
                               final Integer uOrder,
                               final byte[] pName,
-                              final byte[] pDesc) throws JDataException {
+                              final byte[] pDesc) throws JOceanusException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
     }
 
@@ -202,7 +201,7 @@ public class EventCategoryType
         }
 
         @Override
-        public EventCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventCategoryTypeList) super.cloneList(pDataSet);
         }
 
@@ -243,22 +242,22 @@ public class EventCategoryType
         /**
          * Add a EventCategoryType.
          * @param pEventCategoryType the Name of the category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pEventCategoryType) throws JDataException {
+        public void addBasicItem(final String pEventCategoryType) throws JOceanusException {
             /* Create a new Category Type */
             EventCategoryType myCatType = new EventCategoryType(this, pEventCategoryType);
 
             /* Check that this EventCategoryType has not been previously added */
             if (findItemByName(pEventCategoryType) != null) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -269,7 +268,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -280,20 +279,20 @@ public class EventCategoryType
          * @param pOrder the sort order
          * @param pCatType the Name of the category type
          * @param pDesc the Description of the category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pCatType,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Category Type */
             EventCategoryType myCatType = new EventCategoryType(this, pId, isEnabled, pOrder, pCatType, pDesc);
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -304,7 +303,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -316,21 +315,21 @@ public class EventCategoryType
          * @param pOrder the sort order
          * @param pCatType the Encrypted Name of the category type
          * @param pDesc the Encrypted Description of the category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pCatType,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Category Type */
             EventCategoryType myCatType = new EventCategoryType(this, pId, pControlId, isEnabled, pOrder, pCatType, pDesc);
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -341,15 +340,15 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
+                throw new JOceanusException(myCatType, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (EventCategoryClass myClass : EventCategoryClass.values()) {
                 /* Create new element */
@@ -363,7 +362,7 @@ public class EventCategoryType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                    throw new JOceanusException(myType, ERROR_VALIDATION);
                 }
             }
 

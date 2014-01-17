@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encrypted ValueSet class.
@@ -112,9 +112,9 @@ public class EncryptedValueSet
     /**
      * Update security for the values.
      * @param pGenerator the generator
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void updateSecurity(final EncryptionGenerator pGenerator) throws JDataException {
+    public void updateSecurity(final EncryptionGenerator pGenerator) throws JOceanusException {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;
@@ -138,10 +138,10 @@ public class EncryptedValueSet
      * Adopt security for the values.
      * @param pGenerator the generator
      * @param pBaseValues the base values
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void adoptSecurity(final EncryptionGenerator pGenerator,
-                              final EncryptedValueSet pBaseValues) throws JDataException {
+                              final EncryptedValueSet pBaseValues) throws JOceanusException {
         /* Access the values */
         Object[] myValues = getValues();
         int iLen = myValues.length;

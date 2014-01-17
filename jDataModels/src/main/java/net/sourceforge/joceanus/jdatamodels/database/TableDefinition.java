@@ -33,8 +33,6 @@ import java.util.Map;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BinaryColumn;
@@ -59,6 +57,7 @@ import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database field definition class. Maps each dataType to a database field.
@@ -537,9 +536,9 @@ public class TableDefinition {
      * Insert values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void insertValues(final PreparedStatement pStmt) throws SQLException, JDataException {
+    protected void insertValues(final PreparedStatement pStmt) throws SQLException, JOceanusException {
         /* Store the Statement */
         theStatement = pStmt;
 
@@ -553,8 +552,8 @@ public class TableDefinition {
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
-                throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
-                                                               + " has no value for insert");
+                throw new JOceanusException(getColumnError(myDef)
+                                            + " has no value for insert");
             }
 
             myDef.storeValue(theStatement, myIndex++);
@@ -565,9 +564,9 @@ public class TableDefinition {
      * Update values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void updateValues(final PreparedStatement pStmt) throws SQLException, JDataException {
+    protected void updateValues(final PreparedStatement pStmt) throws SQLException, JOceanusException {
         ColumnDefinition myId = null;
 
         /* Store the Statement */
@@ -611,16 +610,16 @@ public class TableDefinition {
      * Get Integer value for column.
      * @param pId the column id
      * @return the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Integer getIntegerValue(final JDataField pId) throws JDataException {
+    public Integer getIntegerValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Integer type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Integer type");
         }
 
         /* Return the value */
@@ -632,16 +631,16 @@ public class TableDefinition {
      * Get Long value for column.
      * @param pId the column id
      * @return the long value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Long getLongValue(final JDataField pId) throws JDataException {
+    public Long getLongValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Long type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Long type");
         }
 
         /* Return the value */
@@ -653,16 +652,16 @@ public class TableDefinition {
      * Get Date value for column.
      * @param pId the column id
      * @return the Date value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public JDateDay getDateValue(final JDataField pId) throws JDataException {
+    public JDateDay getDateValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Date type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Date type");
         }
 
         /* Return the value */
@@ -674,17 +673,17 @@ public class TableDefinition {
      * Get Boolean value for column.
      * @param pId the column id
      * @return the boolean value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Boolean getBooleanValue(final JDataField pId) throws JDataException {
+    public Boolean getBooleanValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column "
-                                                           + getColumnError(myCol)
-                                                           + " is not Boolean type");
+            throw new JOceanusException("Column "
+                                        + getColumnError(myCol)
+                                        + " is not Boolean type");
         }
 
         /* Return the value */
@@ -696,16 +695,16 @@ public class TableDefinition {
      * Get String value for column.
      * @param pId the column id
      * @return the String value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public String getStringValue(final JDataField pId) throws JDataException {
+    public String getStringValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not String type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not String type");
         }
 
         /* Return the value */
@@ -718,17 +717,17 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Money value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public JMoney getMoneyValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JDataException {
+                                final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not money type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not money type");
         }
 
         /* Access the value */
@@ -741,17 +740,17 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the price value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public JPrice getPriceValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JDataException {
+                                final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a price column */
         if (!(myCol instanceof PriceColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Price type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Price type");
         }
 
         /* Access the value */
@@ -764,17 +763,17 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the rate value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public JRate getRateValue(final JDataField pId,
-                              final JDataFormatter pFormatter) throws JDataException {
+                              final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Rate type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Rate type");
         }
 
         /* Access the value */
@@ -787,17 +786,17 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Units value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public JUnits getUnitsValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JDataException {
+                                final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a units column */
         if (!(myCol instanceof UnitsColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Units type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Units type");
         }
 
         /* Access the value */
@@ -809,18 +808,18 @@ public class TableDefinition {
      * Get Dilution value for column.
      * @param pId the column id
      * @param pFormatter the data formatter
-     * @return the Diluution value
-     * @throws JDataException on error
+     * @return the Dilution value
+     * @throws JOceanusException on error
      */
     public JDilution getDilutionValue(final JDataField pId,
-                                      final JDataFormatter pFormatter) throws JDataException {
+                                      final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a dilution column */
         if (!(myCol instanceof DilutionColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Dilution type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Dilution type");
         }
 
         /* Access the value */
@@ -833,17 +832,17 @@ public class TableDefinition {
      * @param pId the column id
      * @param pFormatter the data formatter
      * @return the Ratio value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public JRatio getRatioValue(final JDataField pId,
-                                final JDataFormatter pFormatter) throws JDataException {
+                                final JDataFormatter pFormatter) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Ratio type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Ratio type");
         }
 
         /* Access the value */
@@ -855,16 +854,16 @@ public class TableDefinition {
      * Get Binary value for column.
      * @param pId the column id
      * @return the binary value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] getBinaryValue(final JDataField pId) throws JDataException {
+    public byte[] getBinaryValue(final JDataField pId) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Binary type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Binary type");
         }
 
         /* Return the value */
@@ -876,17 +875,17 @@ public class TableDefinition {
      * Set Integer value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setIntegerValue(final JDataField pId,
-                                final Integer pValue) throws JDataException {
+                                final Integer pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Integer type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Integer type");
         }
 
         /* Set the value */
@@ -898,17 +897,17 @@ public class TableDefinition {
      * Set Long value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setLongValue(final JDataField pId,
-                             final Long pValue) throws JDataException {
+                             final Long pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Long type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Long type");
         }
 
         /* Set the value */
@@ -920,17 +919,17 @@ public class TableDefinition {
      * Set Boolean value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setBooleanValue(final JDataField pId,
-                                final Boolean pValue) throws JDataException {
+                                final Boolean pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Boolean type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Boolean type");
         }
 
         /* Set the value */
@@ -942,17 +941,17 @@ public class TableDefinition {
      * Set Date value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setDateValue(final JDataField pId,
-                             final JDateDay pValue) throws JDataException {
+                             final JDateDay pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Date type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Date type");
         }
 
         /* Set the value */
@@ -964,17 +963,17 @@ public class TableDefinition {
      * Set String value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setStringValue(final JDataField pId,
-                               final String pValue) throws JDataException {
+                               final String pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not String type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not String type");
         }
 
         /* Set the value */
@@ -986,17 +985,17 @@ public class TableDefinition {
      * Set Binary value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setBinaryValue(final JDataField pId,
-                               final byte[] pValue) throws JDataException {
+                               final byte[] pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Binary type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Binary type");
         }
 
         /* Set the value */
@@ -1008,17 +1007,17 @@ public class TableDefinition {
      * Set Money value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setMoneyValue(final JDataField pId,
-                              final JMoney pValue) throws JDataException {
+                              final JMoney pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Money type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Money type");
         }
 
         /* Set the value */
@@ -1030,17 +1029,17 @@ public class TableDefinition {
      * Set Rate value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setRateValue(final JDataField pId,
-                             final JRate pValue) throws JDataException {
+                             final JRate pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Rate type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Rate type");
         }
 
         /* Set the value */
@@ -1052,17 +1051,17 @@ public class TableDefinition {
      * Set Ratio value for column.
      * @param pId the column id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setRatioValue(final JDataField pId,
-                              final JRatio pValue) throws JDataException {
+                              final JRatio pValue) throws JOceanusException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
-                                                           + " is not Ratio type");
+            throw new JOceanusException(getColumnError(myCol)
+                                        + " is not Ratio type");
         }
 
         /* Set the value */
@@ -1074,18 +1073,18 @@ public class TableDefinition {
      * Locate column for id.
      * @param pId the id of the column
      * @return the column
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private ColumnDefinition getColumnForId(final JDataField pId) throws JDataException {
+    private ColumnDefinition getColumnForId(final JDataField pId) throws JOceanusException {
         /* Access the definition */
         ColumnDefinition myDef = theMap.get(pId);
 
         /* Check that the id is in range and present */
         if (myDef == null) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid Column Id: "
-                                                           + pId
-                                                           + " for "
-                                                           + theTableName);
+            throw new JOceanusException("Invalid Column Id: "
+                                        + pId
+                                        + " for "
+                                        + theTableName);
         }
 
         /* Return the column definition */
@@ -1380,9 +1379,9 @@ public class TableDefinition {
     /**
      * Build the update string for a list of columns.
      * @return the SQL string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected String getUpdateString() throws JDataException {
+    protected String getUpdateString() throws JOceanusException {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial update */
@@ -1405,8 +1404,8 @@ public class TableDefinition {
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
-                    throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
-                                                                   + " has no value for update");
+                    throw new JOceanusException(getColumnError(myDef)
+                                                + " has no value for update");
                 }
 
                 /* Remember the column */

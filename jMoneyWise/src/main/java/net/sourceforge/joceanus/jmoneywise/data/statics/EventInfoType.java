@@ -23,13 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * EventInfoType data type.
@@ -116,10 +115,10 @@ public class EventInfoType
      * Basic Constructor.
      * @param pList The list to associate the EventInfoType with
      * @param pName Name of InfoType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final String pName) throws JDataException {
+                          final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -127,10 +126,10 @@ public class EventInfoType
      * Basic Constructor.
      * @param pList The list to associate the Event Info Type with
      * @param pClass Class of Event Info Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final EventInfoClass pClass) throws JDataException {
+                          final EventInfoClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -142,14 +141,14 @@ public class EventInfoType
      * @param pOrder the sort order
      * @param pName Name of InfoType
      * @param pDesc Description of InfoType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
                           final Integer pId,
                           final Boolean isEnabled,
                           final Integer pOrder,
                           final String pName,
-                          final String pDesc) throws JDataException {
+                          final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -162,7 +161,7 @@ public class EventInfoType
      * @param pOrder the sort order
      * @param pName Encrypted Name of InfoType
      * @param pDesc Encrypted Description of InfoType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
                           final Integer pId,
@@ -170,7 +169,7 @@ public class EventInfoType
                           final Boolean isEnabled,
                           final Integer pOrder,
                           final byte[] pName,
-                          final byte[] pDesc) throws JDataException {
+                          final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -223,7 +222,7 @@ public class EventInfoType
         }
 
         @Override
-        public EventInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventInfoTypeList) super.cloneList(pDataSet);
         }
 
@@ -255,22 +254,22 @@ public class EventInfoType
         /**
          * Add an InfoType.
          * @param pType the Name of the InfoType
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pType) throws JDataException {
+        public void addBasicItem(final String pType) throws JOceanusException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, pType);
 
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pType) != null) {
                 myType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
 
             /* Add the Type to the list */
@@ -281,7 +280,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
         }
 
@@ -292,20 +291,20 @@ public class EventInfoType
          * @param pOrder the sort order
          * @param pInfoType the Name of the InfoType
          * @param pDesc the Description of the InfoType
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pInfoType,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(pId)) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -316,7 +315,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
         }
 
@@ -328,21 +327,21 @@ public class EventInfoType
          * @param pOrder the sort order
          * @param pInfoType the Encrypted Name of the InfoType
          * @param pDesc the Encrypted Description of the InfoType
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pInfoType,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, pId, pControlId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -353,15 +352,15 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                throw new JOceanusException(myType, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (EventInfoClass myClass : EventInfoClass.values()) {
                 /* Create new element */
@@ -375,7 +374,7 @@ public class EventInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                    throw new JOceanusException(myType, ERROR_VALIDATION);
                 }
             }
 

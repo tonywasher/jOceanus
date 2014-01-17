@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -31,6 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * WorkerThread extension to create a QIF archive.
@@ -69,7 +68,7 @@ public class WriteQIF
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
@@ -90,14 +89,14 @@ public class WriteQIF
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
+                throw new JOceanusException("Operation Cancelled");
             }
 
             /* Catch any exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.LOGIC, "Failed", e);
+            throw new JOceanusException("Failed", e);
         }
 
         /* Return nothing */

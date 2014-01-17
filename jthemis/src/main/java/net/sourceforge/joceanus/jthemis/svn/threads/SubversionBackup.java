@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
@@ -30,6 +29,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
 /**
@@ -79,7 +79,7 @@ public class SubversionBackup<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         Backup myAccess = null;
 
         /* Initialise the status window */

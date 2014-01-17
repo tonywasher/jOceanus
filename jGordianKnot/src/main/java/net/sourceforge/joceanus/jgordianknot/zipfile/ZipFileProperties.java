@@ -27,9 +27,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -76,9 +75,9 @@ public class ZipFileProperties {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ZipFileProperties(final String pCodedString) throws JDataException {
+    protected ZipFileProperties(final String pCodedString) throws JOceanusException {
         /* Allocate the array */
         theList = new ArrayList<Property>();
 
@@ -107,10 +106,10 @@ public class ZipFileProperties {
      * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void setProperty(final String pName,
-                               final String pValue) throws JDataException {
+                               final String pValue) throws JOceanusException {
         /* Set the new value */
         setProperty(pName, DataConverter.stringToByteArray(pValue));
     }
@@ -193,9 +192,9 @@ public class ZipFileProperties {
      * Obtain the string value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected String getStringProperty(final String pName) throws JDataException {
+    protected String getStringProperty(final String pName) throws JOceanusException {
         /* Access the property */
         byte[] myValue = getByteProperty(pName);
 
@@ -313,16 +312,16 @@ public class ZipFileProperties {
     /**
      * Parse the encoded string representation to obtain the property.
      * @param pValue the encoded property
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void parseEncodedProperty(final String pValue) throws JDataException {
+    private void parseEncodedProperty(final String pValue) throws JOceanusException {
         /* Locate the Value separator in the string */
         int myLoc = pValue.indexOf(SEP_VALUE);
 
         /* Check that we found the value separator */
         if (myLoc == -1) {
-            throw new JDataException(ExceptionClass.DATA, "Missing value separator: "
-                                                          + pValue);
+            throw new JOceanusException("Missing value separator: "
+                                        + pValue);
         }
 
         /* Split the values and name */
@@ -332,8 +331,8 @@ public class ZipFileProperties {
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
-            throw new JDataException(ExceptionClass.DATA, "Duplicate name: "
-                                                          + pValue);
+            throw new JOceanusException("Duplicate name: "
+                                        + pValue);
         }
 
         /* Locate the Long separator in the string */
@@ -341,8 +340,8 @@ public class ZipFileProperties {
 
         /* Check that we found the long separator */
         if (myLoc == -1) {
-            throw new JDataException(ExceptionClass.DATA, "Missing long separator: "
-                                                          + pValue);
+            throw new JOceanusException("Missing long separator: "
+                                        + pValue);
         }
 
         /* Access the separate byte and long values */
@@ -356,8 +355,8 @@ public class ZipFileProperties {
         /* Must have at least one of Bytes/Long */
         if ((myBytes == null)
             && (myLong == null)) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid property: "
-                                                          + myName);
+            throw new JOceanusException("Invalid property: "
+                                        + myName);
         }
 
         /* Create a new property */

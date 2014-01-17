@@ -28,7 +28,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -66,13 +66,13 @@ public class CreateTagExtract
     /**
      * The Error.
      */
-    private JDataException theError = null;
+    private JOceanusException theError = null;
 
     /**
      * Obtain the error.
      * @return the error
      */
-    public JDataException getError() {
+    public JOceanusException getError() {
         return theError;
     }
 
@@ -98,7 +98,7 @@ public class CreateTagExtract
 
             /* Access tag list for extract */
             myTags = Tag.getTagMap(pTags).values();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
@@ -115,7 +115,7 @@ public class CreateTagExtract
             /* Check out the branches */
             CheckOut myCheckOut = new CheckOut(theRepository, theReport);
             myCheckOut.exportTags(theTags, theLocation);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jTableFilter: JTable RowFilter/Sorter
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
+
 /**
- * Table filter package.
+ * Java Utilities.
  */
-package net.sourceforge.joceanus.jtablefilter;
+package net.sourceforge.joceanus.jtethys;
 

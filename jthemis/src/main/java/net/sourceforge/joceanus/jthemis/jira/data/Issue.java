@@ -28,8 +28,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Project.Component;
 import net.sourceforge.joceanus.jthemis.jira.data.Project.Version;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
@@ -335,10 +334,10 @@ public class Issue {
      * Constructor.
      * @param pServer the server
      * @param pIssue the underlying issue
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public Issue(final Server pServer,
-                 final RemoteIssue pIssue) throws JDataException {
+                 final RemoteIssue pIssue) throws JOceanusException {
         /* Store parameters */
         theServer = pServer;
         theService = theServer.getService();
@@ -396,9 +395,9 @@ public class Issue {
     /**
      * Add Comment to issue.
      * @param pComment the comment to add
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void addComment(final String pComment) throws JDataException {
+    public void addComment(final String pComment) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Create the remote comment */
@@ -412,7 +411,7 @@ public class Issue {
             theService.addComment(myToken, theId, myComment);
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_ADDCOMM, e);
+            throw new JOceanusException(ERROR_ADDCOMM, e);
         }
     }
 
@@ -420,9 +419,9 @@ public class Issue {
      * Link Component to issue.
      * @param pComponent the component to link
      * @return the component
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Component linkComponent(final String pComponent) throws JDataException {
+    public Component linkComponent(final String pComponent) throws JOceanusException {
         /* Check whether the component is already linked */
         Iterator<Component> myIterator = theComponents.iterator();
         while (myIterator.hasNext()) {
@@ -436,8 +435,8 @@ public class Issue {
         Component myNewComp = theProject.getComponentByName(pComponent);
         if (myNewComp == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_COMP
-                                                          + pComponent);
+            throw new JOceanusException(ERROR_COMP
+                                        + pComponent);
         }
 
         /* Protect against exceptions */
@@ -468,7 +467,7 @@ public class Issue {
             return myNewComp;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKCOMP, e);
+            throw new JOceanusException(ERROR_LINKCOMP, e);
         }
     }
 
@@ -476,9 +475,9 @@ public class Issue {
      * Link Affects Version to issue.
      * @param pVersion the version to link
      * @return the version
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Version linkAffectsVersion(final String pVersion) throws JDataException {
+    public Version linkAffectsVersion(final String pVersion) throws JOceanusException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theAffectsVers.iterator();
         while (myIterator.hasNext()) {
@@ -492,8 +491,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_VERS
-                                                          + pVersion);
+            throw new JOceanusException(ERROR_VERS
+                                        + pVersion);
         }
 
         /* Protect against exceptions */
@@ -524,7 +523,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKVERS, e);
+            throw new JOceanusException(ERROR_LINKVERS, e);
         }
     }
 
@@ -532,9 +531,9 @@ public class Issue {
      * Link Fix Version to issue.
      * @param pVersion the version to link
      * @return the version
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Version linkFixVersion(final String pVersion) throws JDataException {
+    public Version linkFixVersion(final String pVersion) throws JOceanusException {
         /* Check whether the version is already linked */
         Iterator<Version> myIterator = theFixVers.iterator();
         while (myIterator.hasNext()) {
@@ -548,8 +547,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_VERS
-                                                          + pVersion);
+            throw new JOceanusException(ERROR_VERS
+                                        + pVersion);
         }
 
         /* Protect against exceptions */
@@ -580,7 +579,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, ERROR_LINKVERS, e);
+            throw new JOceanusException(ERROR_LINKVERS, e);
         }
     }
 }

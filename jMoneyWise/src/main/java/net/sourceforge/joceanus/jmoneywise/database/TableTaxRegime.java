@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.TableStaticData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableStaticData extension for TaxRegime.
@@ -67,7 +67,7 @@ public class TableTaxRegime
                                final Boolean isEnabled,
                                final Integer iOrder,
                                final byte[] pRegime,
-                               final byte[] pDesc) throws JDataException {
+                               final byte[] pDesc) throws JOceanusException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pRegime, pDesc);
     }

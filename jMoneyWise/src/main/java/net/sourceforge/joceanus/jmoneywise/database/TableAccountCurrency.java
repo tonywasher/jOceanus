@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
@@ -32,6 +31,7 @@ import net.sourceforge.joceanus.jdatamodels.database.TableStaticData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableStaticData extension for AccountCategoryType.
@@ -72,13 +72,13 @@ public class TableAccountCurrency
                                final Boolean isEnabled,
                                final Integer pOrder,
                                final byte[] pType,
-                               final byte[] pDesc) throws JDataException {
+                               final byte[] pDesc) throws JOceanusException {
         /* Note needed */
     }
 
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
@@ -93,7 +93,7 @@ public class TableAccountCurrency
 
     @Override
     protected void setFieldValue(final AccountCurrency pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (AccountCurrency.FIELD_DEFAULT.equals(iField)) {

@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.preferences;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Backup preferences.
@@ -125,9 +125,9 @@ public class BackupPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public BackupPreferences() throws JDataException {
+    public BackupPreferences() throws JOceanusException {
         super();
     }
 

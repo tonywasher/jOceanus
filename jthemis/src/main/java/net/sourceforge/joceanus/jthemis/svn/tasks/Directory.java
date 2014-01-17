@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Utility classes to manage directories.
@@ -41,25 +40,25 @@ public final class Directory {
     /**
      * Create a directory.
      * @param pDir the create
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static void createDirectory(final File pDir) throws JDataException {
+    public static void createDirectory(final File pDir) throws JOceanusException {
         /* Remove any existing directory */
         removeDirectory(pDir);
 
         /* Create the new directory */
         if (!pDir.mkdir()) {
-            throw new JDataException(ExceptionClass.DATA, "Failed to create directory: "
-                                                          + pDir.getAbsolutePath());
+            throw new JOceanusException("Failed to create directory: "
+                                        + pDir.getAbsolutePath());
         }
     }
 
     /**
      * Remove a directory and all of its contents.
      * @param pDir the directory to remove
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static void removeDirectory(final File pDir) throws JDataException {
+    public static void removeDirectory(final File pDir) throws JOceanusException {
         /* If the directory does not exist just return */
         if ((pDir == null)
             || (!pDir.exists())) {
@@ -71,17 +70,17 @@ public final class Directory {
 
         /* Delete the directory itself */
         if (!pDir.delete()) {
-            throw new JDataException(ExceptionClass.DATA, "Failed to delete directory: "
-                                                          + pDir.getAbsolutePath());
+            throw new JOceanusException("Failed to delete directory: "
+                                        + pDir.getAbsolutePath());
         }
     }
 
     /**
      * Clear a directory of all of its contents.
      * @param pDir the directory to clear
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static void clearDirectory(final File pDir) throws JDataException {
+    public static void clearDirectory(final File pDir) throws JOceanusException {
         /* Handle trivial operations */
         if ((pDir == null)
             || (!pDir.exists())) {
@@ -90,8 +89,8 @@ public final class Directory {
 
         /* Handle invalid call */
         if (!pDir.isDirectory()) {
-            throw new JDataException(ExceptionClass.DATA, "Attempt to clear non-directory: "
-                                                          + pDir.getAbsolutePath());
+            throw new JOceanusException("Attempt to clear non-directory: "
+                                        + pDir.getAbsolutePath());
         }
 
         /* Loop through all items */
@@ -103,8 +102,8 @@ public final class Directory {
 
                 /* else remove the file */
             } else if (!myFile.delete()) {
-                throw new JDataException(ExceptionClass.DATA, "Failed to delete file: "
-                                                              + myFile.getAbsolutePath());
+                throw new JOceanusException("Failed to delete file: "
+                                            + myFile.getAbsolutePath());
             }
         }
     }

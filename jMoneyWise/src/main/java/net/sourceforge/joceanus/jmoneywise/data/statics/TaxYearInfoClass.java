@@ -25,9 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of Tax Year Info Classes.
@@ -208,15 +207,15 @@ public enum TaxYearInfoClass implements DataInfoClass {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static TaxYearInfoClass fromId(final int id) throws JDataException {
+    public static TaxYearInfoClass fromId(final int id) throws JOceanusException {
         for (TaxYearInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid TaxYear Info Class Id: "
-                                                      + id);
+        throw new JOceanusException("Invalid TaxYear Info Class Id: "
+                                    + id);
     }
 }

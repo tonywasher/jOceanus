@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class for assembling/disassembling data encrypted by a CipherSet.
@@ -94,10 +94,10 @@ public class CipherSetKey {
      * Constructor for random choices.
      * @param pGenerator the security generator
      * @param pCreateIV create an IV
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected CipherSetKey(final SecurityGenerator pGenerator,
-                           final boolean pCreateIV) throws JDataException {
+                           final boolean pCreateIV) throws JOceanusException {
         /* Obtain the secureRandom and the cipher steps */
         SecureRandom myRandom = pGenerator.getRandom();
         int myCipherSteps = pGenerator.getNumCipherSteps();
@@ -122,9 +122,9 @@ public class CipherSetKey {
     /**
      * Constructor for random choices.
      * @param pGenerator the security generator
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected CipherSetKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected CipherSetKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Default to creating an IV */
         this(pGenerator, true);
     }
@@ -132,9 +132,9 @@ public class CipherSetKey {
     /**
      * Constructor for external form parse.
      * @param pExternal the external form
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected CipherSetKey(final byte[] pExternal) throws JDataException {
+    protected CipherSetKey(final byte[] pExternal) throws JOceanusException {
         /* Determine whether we have an IV */
         byte myStart = pExternal[0];
         boolean hasIV = (myStart & NOIV_FLAG) == 0;
@@ -269,9 +269,9 @@ public class CipherSetKey {
         /**
          * Construct the parameters from random key.
          * @param pGenerator the security generator
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private CipherParameters(final SecurityGenerator pGenerator) throws JDataException {
+        private CipherParameters(final SecurityGenerator pGenerator) throws JOceanusException {
             /* Obtain Digest list */
             int myNumCiphers = pGenerator.getNumCipherSteps();
             theSymKeyTypes = SymKeyType.getRandomTypes(pGenerator.getNumCipherSteps(), pGenerator.getRandom());
@@ -291,9 +291,9 @@ public class CipherSetKey {
 
         /**
          * Construct the parameters from key bytes.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private CipherParameters() throws JDataException {
+        private CipherParameters() throws JOceanusException {
             /* Determine number of cipher steps */
             int myCipherSteps = (theKeyBytes[0] >> DataConverter.NYBBLE_SHIFT)
                                 & DataConverter.NYBBLE_MASK;

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -32,6 +30,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -81,16 +80,16 @@ public class ExcelCell
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private <T> T parseValue(final String pSource,
-                             final Class<T> pClass) throws JDataException {
+                             final Class<T> pClass) throws JOceanusException {
         try {
             return theExcelRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(theExcelRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
-                                                                   + myAddress, e);
+            throw new JOceanusException(pSource, "Bad Value at Cell "
+                                                 + myAddress, e);
         }
     }
 
@@ -172,44 +171,44 @@ public class ExcelCell
     }
 
     @Override
-    public JMoney getMoneyValue() throws JDataException {
+    public JMoney getMoneyValue() throws JOceanusException {
         return parseValue(getStringValue(), JMoney.class);
     }
 
     @Override
-    public JPrice getPriceValue() throws JDataException {
+    public JPrice getPriceValue() throws JOceanusException {
         return parseValue(getStringValue(), JPrice.class);
     }
 
     @Override
-    public JRate getRateValue() throws JDataException {
+    public JRate getRateValue() throws JOceanusException {
         return parseValue(getStringValue(), JRate.class);
     }
 
     @Override
-    public JUnits getUnitsValue() throws JDataException {
+    public JUnits getUnitsValue() throws JOceanusException {
         return parseValue(getStringValue(), JUnits.class);
     }
 
     @Override
-    public JDilution getDilutionValue() throws JDataException {
+    public JDilution getDilutionValue() throws JOceanusException {
         return parseValue(getStringValue(), JDilution.class);
     }
 
     @Override
-    public JRatio getRatioValue() throws JDataException {
+    public JRatio getRatioValue() throws JOceanusException {
         return parseValue(getStringValue(), JRatio.class);
     }
 
     @Override
-    public void setNullValue() throws JDataException {
+    public void setNullValue() throws JOceanusException {
         if (!isReadOnly) {
             theExcelCell.setCellValue((String) null);
         }
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) throws JDataException {
+    protected void setBoolean(final Boolean pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -220,7 +219,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setDate(final JDateDay pValue) throws JDataException {
+    protected void setDate(final JDateDay pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.getDate());
@@ -231,7 +230,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setInteger(final Integer pValue) throws JDataException {
+    protected void setInteger(final Integer pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -242,7 +241,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setString(final String pValue) throws JDataException {
+    protected void setString(final String pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue);
@@ -253,7 +252,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setHeader(final String pValue) throws JDataException {
+    protected void setHeader(final String pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set as string value */
             theExcelCell.setCellValue(pValue);
@@ -264,7 +263,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setDecimal(final JDecimal pValue) throws JDataException {
+    protected void setDecimal(final JDecimal pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
             theExcelCell.setCellValue(pValue.doubleValue());
@@ -275,7 +274,7 @@ public class ExcelCell
     }
 
     @Override
-    protected void setMonetary(final JMoney pValue) throws JDataException {
+    protected void setMonetary(final JMoney pValue) throws JOceanusException {
         /* Pass through as decimal */
         setDecimal(pValue);
     }

@@ -42,7 +42,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.

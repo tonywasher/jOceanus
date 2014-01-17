@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Generator class for various security primitives.
@@ -200,9 +200,9 @@ public class SecurityGenerator {
     /**
      * Default Constructor.
      * @param pLogger the logger
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SecurityGenerator(final Logger pLogger) throws JDataException {
+    public SecurityGenerator(final Logger pLogger) throws JOceanusException {
         this(pLogger, new SecurityParameters());
     }
 
@@ -210,10 +210,10 @@ public class SecurityGenerator {
      * Constructor for explicit provider.
      * @param pLogger the logger
      * @param pParameters the Security parameters
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public SecurityGenerator(final Logger pLogger,
-                             final SecurityParameters pParameters) throws JDataException {
+                             final SecurityParameters pParameters) throws JOceanusException {
         /* Store the logger */
         theLogger = pLogger;
 
@@ -275,10 +275,10 @@ public class SecurityGenerator {
      * @param pType the digest type
      * @param isPredictionResistant true/false
      * @return the SecureRandom
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public final SecureRandom generateHashSecureRandom(final DigestType pType,
-                                                       final boolean isPredictionResistant) throws JDataException {
+                                                       final boolean isPredictionResistant) throws JOceanusException {
         /* Create the digest */
         DataDigest myDigest = generateDigest(pType);
 
@@ -292,11 +292,11 @@ public class SecurityGenerator {
      * @param pPassword the password in byte format
      * @param isPredictionResistant true/false
      * @return the SecureRandom
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public final SecureRandom generateHMacSecureRandom(final DigestType pType,
                                                        final byte[] pPassword,
-                                                       final boolean isPredictionResistant) throws JDataException {
+                                                       final boolean isPredictionResistant) throws JOceanusException {
         /* Create the mac */
         DataMac myMac = generateMac(pType, pPassword);
 
@@ -308,9 +308,9 @@ public class SecurityGenerator {
      * Generate a password Hash for the given password.
      * @param pPassword the password
      * @return the Password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public PasswordHash generatePasswordHash(final char[] pPassword) throws JDataException {
+    public PasswordHash generatePasswordHash(final char[] pPassword) throws JOceanusException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pPassword);
     }
@@ -320,11 +320,11 @@ public class SecurityGenerator {
      * @param pHashBytes the hash bytes
      * @param pPassword the password
      * @return the Password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      * @throws InvalidCredentialsException if password does not match
      */
     public PasswordHash derivePasswordHash(final byte[] pHashBytes,
-                                           final char[] pPassword) throws JDataException {
+                                           final char[] pPassword) throws JOceanusException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pHashBytes, pPassword);
     }
@@ -332,9 +332,9 @@ public class SecurityGenerator {
     /**
      * Determine a list of random symmetric key types.
      * @return the Symmetric Key types
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SymKeyType[] generateSymKeyTypes() throws JDataException {
+    public SymKeyType[] generateSymKeyTypes() throws JOceanusException {
         /* Create the new Symmetric Key */
         return SymKeyType.getRandomTypes(getNumCipherSteps(), theRandom);
     }
@@ -343,9 +343,9 @@ public class SecurityGenerator {
      * Generate a new Symmetric Key for the required KeyType.
      * @param pKeyType the Symmetric Key type
      * @return the newly created Symmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws JDataException {
+    public SymmetricKey generateSymmetricKey(final SymKeyType pKeyType) throws JOceanusException {
         /* Create the new Symmetric Key */
         return SymmetricKey.generateSymmetricKey(this, pKeyType);
     }
@@ -353,9 +353,9 @@ public class SecurityGenerator {
     /**
      * Generate a new Symmetric Key of a random type.
      * @return the newly created Symmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SymmetricKey generateSymmetricKey() throws JDataException {
+    public SymmetricKey generateSymmetricKey() throws JOceanusException {
         /* Create the new Symmetric Key */
         return SymmetricKey.generateSymmetricKey(this);
     }
@@ -364,9 +364,9 @@ public class SecurityGenerator {
      * Generate a new Stream Key for the required KeyType.
      * @param pKeyType the Stream Key type
      * @return the newly created Stream Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public StreamKey generateStreamKey(final StreamKeyType pKeyType) throws JDataException {
+    public StreamKey generateStreamKey(final StreamKeyType pKeyType) throws JOceanusException {
         /* Create the new Stream Key */
         return StreamKey.generateStreamKey(this, pKeyType);
     }
@@ -374,9 +374,9 @@ public class SecurityGenerator {
     /**
      * Generate a new Stream Key of a random type.
      * @return the newly created Stream Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public StreamKey generateStreamKey() throws JDataException {
+    public StreamKey generateStreamKey() throws JOceanusException {
         /* Create the new Stream Key */
         return StreamKey.generateStreamKey(this);
     }
@@ -385,9 +385,9 @@ public class SecurityGenerator {
      * Generate a new Asymmetric Key of a specified type.
      * @param pKeyType the Asymmetric Key type
      * @return the newly created Asymmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public AsymmetricKey generateAsymmetricKey(final AsymKeyType pKeyType) throws JDataException {
+    public AsymmetricKey generateAsymmetricKey(final AsymKeyType pKeyType) throws JOceanusException {
         /* Create the new Asymmetric Key */
         return AsymmetricKey.generateAsymmetricKey(this, pKeyType);
     }
@@ -395,9 +395,9 @@ public class SecurityGenerator {
     /**
      * Generate a new Asymmetric Key of a random type.
      * @return the newly created Asymmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public AsymmetricKey generateAsymmetricKey() throws JDataException {
+    public AsymmetricKey generateAsymmetricKey() throws JOceanusException {
         /* Create the new Asymmetric Key */
         return AsymmetricKey.generateAsymmetricKey(this);
     }
@@ -405,9 +405,9 @@ public class SecurityGenerator {
     /**
      * Generate a new Elliptic Asymmetric Key of a specified type.
      * @return the newly created Asymmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public AsymmetricKey generateEllipticAsymmetricKey() throws JDataException {
+    public AsymmetricKey generateEllipticAsymmetricKey() throws JOceanusException {
         /* Create the new Asymmetric Key */
         return AsymmetricKey.generateEllipticAsymmetricKey(this);
     }
@@ -416,9 +416,9 @@ public class SecurityGenerator {
      * Generate a new Asymmetric Key of the same type as the partner.
      * @param pPartner the partner asymmetric key
      * @return the newly created Asymmetric Key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws JDataException {
+    public AsymmetricKey generateAsymmetricKey(final AsymmetricKey pPartner) throws JOceanusException {
         /* Determine the new keyMode */
         byte[] myExternalPublic = pPartner.getExternalPublic();
 
@@ -430,9 +430,9 @@ public class SecurityGenerator {
      * Obtain a DataDigest of the specified type.
      * @param pDigestType the digest type required
      * @return the DataDigest
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public final DataDigest generateDigest(final DigestType pDigestType) throws JDataException {
+    public final DataDigest generateDigest(final DigestType pDigestType) throws JOceanusException {
         /* Return a digest for the algorithm */
         return new DataDigest(this, pDigestType);
     }
@@ -440,9 +440,9 @@ public class SecurityGenerator {
     /**
      * Obtain a DataDigest of a random type.
      * @return the DataDigest
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public final DataDigest generateDigest() throws JDataException {
+    public final DataDigest generateDigest() throws JOceanusException {
         /* Return a random digest */
         return DataDigest.generateRandomDigest(this);
     }
@@ -452,10 +452,10 @@ public class SecurityGenerator {
      * @param pDigestType the digest type required
      * @param pPassword the password in byte format
      * @return the HMac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataMac generateMac(final DigestType pDigestType,
-                               final byte[] pPassword) throws JDataException {
+                               final byte[] pPassword) throws JOceanusException {
         /* Create the mac */
         DataMac myMac = new DataMac(this, pDigestType, null);
         myMac.setSecretKey(pPassword);
@@ -466,9 +466,9 @@ public class SecurityGenerator {
      * Obtain a random HMac of specific type.
      * @param pDigestType the DigestType
      * @return the HMac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataMac generateMac(final DigestType pDigestType) throws JDataException {
+    public DataMac generateMac(final DigestType pDigestType) throws JOceanusException {
         /* Create the mac */
         return DataMac.generateRandomDigestMac(this, pDigestType);
     }
@@ -478,10 +478,10 @@ public class SecurityGenerator {
      * @param pMacType the MacType
      * @param pKeyType the KeyType
      * @return the MAC
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataMac generateMac(final MacType pMacType,
-                               final SymKeyType pKeyType) throws JDataException {
+                               final SymKeyType pKeyType) throws JOceanusException {
         /* Create the mac */
         return DataMac.generateRandomSymKeyMac(this, pMacType, pKeyType);
     }
@@ -490,9 +490,9 @@ public class SecurityGenerator {
      * Obtain a random MAC of specific type.
      * @param pMacType the MacType
      * @return the MAC
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataMac generateMac(final MacType pMacType) throws JDataException {
+    public DataMac generateMac(final MacType pMacType) throws JOceanusException {
         /* Create the mac */
         return DataMac.generateRandomMac(this, pMacType);
     }
@@ -500,9 +500,9 @@ public class SecurityGenerator {
     /**
      * Obtain a random MAC.
      * @return the MAC
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataMac generateMac() throws JDataException {
+    public DataMac generateMac() throws JOceanusException {
         /* Create the mac */
         return DataMac.generateRandomMac(this);
     }

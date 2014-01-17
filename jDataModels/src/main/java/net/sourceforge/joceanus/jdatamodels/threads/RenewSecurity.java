@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to renew security in the data set. A new ControlKey will be created using the same password as the existing security, together with a new set of
@@ -67,7 +67,7 @@ public class RenewSecurity<T extends DataSet<T, ?>>
     }
 
     @Override
-    public T performTask() throws JDataException {
+    public T performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Renewing Security");
 

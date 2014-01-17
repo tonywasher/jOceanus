@@ -26,11 +26,10 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * A wrapper for a worker thread.
@@ -52,7 +51,7 @@ public abstract class WorkerThread<T>
     /**
      * The errors for the operation.
      */
-    private final DataErrorList<JDataException> theErrors;
+    private final DataErrorList<JOceanusException> theErrors;
 
     /**
      * Constructor.
@@ -64,14 +63,14 @@ public abstract class WorkerThread<T>
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
-        theErrors = new DataErrorList<JDataException>();
+        theErrors = new DataErrorList<JOceanusException>();
     }
 
     /**
      * Add Error.
      * @param pError the Error for the task
      */
-    protected void addError(final JDataException pError) {
+    protected void addError(final JOceanusException pError) {
         /* Store the error */
         theErrors.add(pError);
     }
@@ -80,7 +79,7 @@ public abstract class WorkerThread<T>
      * Add Error List.
      * @param pErrors the Errors for the task
      */
-    protected void addErrorList(final DataErrorList<JDataException> pErrors) {
+    protected void addErrorList(final DataErrorList<JOceanusException> pErrors) {
         /* Store the errors */
         theErrors.addList(pErrors);
     }
@@ -111,9 +110,9 @@ public abstract class WorkerThread<T>
     /**
      * Task for worker thread.
      * @return the result
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract T performTask() throws JDataException;
+    protected abstract T performTask() throws JOceanusException;
 
     @Override
     public T doInBackground() {
@@ -128,7 +127,7 @@ public abstract class WorkerThread<T>
 
             /* Catch any exception to keep thread interface clean */
         } catch (Exception e) {
-            addError(new JDataException(ExceptionClass.DATA, "Failed to perform background task", e));
+            addError(new JOceanusException("Failed to perform background task", e));
             return null;
         }
     }

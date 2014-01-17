@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for AccountCategory.
@@ -102,7 +101,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myCatId = loadInteger(COL_TYPE);
@@ -117,7 +116,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the links */
         String myType = loadString(COL_TYPE);
         String myParent = loadString(COL_PARENT);
@@ -131,7 +130,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void insertSecureItem(final AccountCategory pItem) throws JDataException {
+    protected void insertSecureItem(final AccountCategory pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
@@ -141,7 +140,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void insertOpenItem(final AccountCategory pItem) throws JDataException {
+    protected void insertOpenItem(final AccountCategory pItem) throws JOceanusException {
         /* Set the fields */
         writeString(COL_TYPE, pItem.getCategoryTypeName());
         writeString(COL_PARENT, pItem.getParentCategoryName());
@@ -150,7 +149,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_TYPE, AccountCategory.FIELD_CATTYPE.getName());
         writeHeader(COL_PARENT, AccountCategory.FIELD_PARENT.getName());
@@ -159,7 +158,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
@@ -181,7 +180,7 @@ public class SheetAccountCategory
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -199,11 +198,11 @@ public class SheetAccountCategory
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -272,8 +271,8 @@ public class SheetAccountCategory
             myList.validateOnLoad();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load AccountCategories", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load AccountCategories", e);
         }
 
         /* Return to caller */

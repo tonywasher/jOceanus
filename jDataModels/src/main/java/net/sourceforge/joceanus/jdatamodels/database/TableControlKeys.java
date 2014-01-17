@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for ControlKey.
@@ -62,7 +62,7 @@ public class TableControlKeys
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         byte[] myHash = myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);
@@ -73,7 +73,7 @@ public class TableControlKeys
 
     @Override
     protected void setFieldValue(final ControlKey pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ControlKey.FIELD_PASSHASH.equals(iField)) {

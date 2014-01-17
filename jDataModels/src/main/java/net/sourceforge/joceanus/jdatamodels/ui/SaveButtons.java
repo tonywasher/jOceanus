@@ -32,7 +32,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 /**
  * Save buttons panel.

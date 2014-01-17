@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -32,6 +30,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute;
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute.Value;
@@ -147,17 +146,17 @@ public class OasisCell
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private <T> T parseValue(final String pSource,
-                             final Class<T> pClass) throws JDataException {
+                             final Class<T> pClass) throws JOceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
-                                                                   + myAddress, e);
+            throw new JOceanusException(pSource, ERROR_VALUE
+                                                 + myAddress, e);
         }
     }
 
@@ -167,17 +166,17 @@ public class OasisCell
      * @param pSource the double value.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private <T> T parseValue(final Double pSource,
-                             final Class<T> pClass) throws JDataException {
+                             final Class<T> pClass) throws JOceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
-                                                                   + myAddress, e);
+            throw new JOceanusException(pSource, ERROR_VALUE
+                                                 + myAddress, e);
         }
     }
 
@@ -188,18 +187,18 @@ public class OasisCell
      * @param pCurrCode the currency code.
      * @param pClass the value type class.
      * @return the parsed value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private <T> T parseValue(final Double pSource,
                              final String pCurrCode,
-                             final Class<T> pClass) throws JDataException {
+                             final Class<T> pClass) throws JOceanusException {
         OasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pCurrCode, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JDataException(ExceptionClass.DATA, pSource, ERROR_VALUE
-                                                                   + myAddress, e);
+            throw new JOceanusException(pSource, ERROR_VALUE
+                                                 + myAddress, e);
         }
     }
 
@@ -225,7 +224,7 @@ public class OasisCell
     }
 
     @Override
-    public JDateDay getDateValue() throws JDataException {
+    public JDateDay getDateValue() throws JOceanusException {
         switch (getValueType()) {
             case DATE:
                 return parseValue(theOasisCell.getOfficeDateValueAttribute(), JDateDay.class);
@@ -235,7 +234,7 @@ public class OasisCell
     }
 
     @Override
-    public Integer getIntegerValue() throws JDataException {
+    public Integer getIntegerValue() throws JOceanusException {
         switch (getValueType()) {
             case FLOAT:
                 return theOasisCell.getOfficeValueAttribute().intValue();
@@ -245,7 +244,7 @@ public class OasisCell
     }
 
     @Override
-    public JMoney getMoneyValue() throws JDataException {
+    public JMoney getMoneyValue() throws JOceanusException {
         switch (getValueType()) {
             case CURRENCY:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JMoney.class);
@@ -257,7 +256,7 @@ public class OasisCell
     }
 
     @Override
-    public JPrice getPriceValue() throws JDataException {
+    public JPrice getPriceValue() throws JOceanusException {
         switch (getValueType()) {
             case CURRENCY:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JPrice.class);
@@ -269,7 +268,7 @@ public class OasisCell
     }
 
     @Override
-    public JRate getRateValue() throws JDataException {
+    public JRate getRateValue() throws JOceanusException {
         switch (getValueType()) {
             case PERCENTAGE:
             case FLOAT:
@@ -280,7 +279,7 @@ public class OasisCell
     }
 
     @Override
-    public JUnits getUnitsValue() throws JDataException {
+    public JUnits getUnitsValue() throws JOceanusException {
         switch (getValueType()) {
             case FLOAT:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), JUnits.class);
@@ -290,7 +289,7 @@ public class OasisCell
     }
 
     @Override
-    public JDilution getDilutionValue() throws JDataException {
+    public JDilution getDilutionValue() throws JOceanusException {
         switch (getValueType()) {
             case FLOAT:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), JDilution.class);
@@ -300,7 +299,7 @@ public class OasisCell
     }
 
     @Override
-    public JRatio getRatioValue() throws JDataException {
+    public JRatio getRatioValue() throws JOceanusException {
         switch (getValueType()) {
             case FLOAT:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), JRatio.class);
@@ -327,7 +326,7 @@ public class OasisCell
     }
 
     @Override
-    public void setNullValue() throws JDataException {
+    public void setNullValue() throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove Cell content */
@@ -358,7 +357,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setBoolean(final Boolean pValue) throws JDataException {
+    protected void setBoolean(final Boolean pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -372,7 +371,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setDate(final JDateDay pValue) throws JDataException {
+    protected void setDate(final JDateDay pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -386,7 +385,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setInteger(final Integer pValue) throws JDataException {
+    protected void setInteger(final Integer pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -400,7 +399,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setString(final String pValue) throws JDataException {
+    protected void setString(final String pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -414,7 +413,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setDecimal(final JDecimal pValue) throws JDataException {
+    protected void setDecimal(final JDecimal pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -433,7 +432,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setMonetary(final JMoney pValue) throws JDataException {
+    protected void setMonetary(final JMoney pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -451,7 +450,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setHeader(final String pValue) throws JDataException {
+    protected void setHeader(final String pValue) throws JOceanusException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */

@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to load data from the database.
@@ -66,7 +66,7 @@ public class LoadDatabase<T extends DataSet<T, ?>>
     }
 
     @Override
-    public T performTask() throws JDataException {
+    public T performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Database");
 

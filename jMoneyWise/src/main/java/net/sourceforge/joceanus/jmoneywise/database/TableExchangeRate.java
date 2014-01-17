@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
@@ -40,6 +38,7 @@ import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableEncrypted extension for ExchangeRate.
@@ -90,7 +89,7 @@ public class TableExchangeRate
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         JDateDay myDate = myTableDef.getDateValue(ExchangeRate.FIELD_DATE);
@@ -104,7 +103,7 @@ public class TableExchangeRate
 
     @Override
     protected void setFieldValue(final ExchangeRate pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (ExchangeRate.FIELD_DATE.equals(iField)) {
@@ -121,7 +120,7 @@ public class TableExchangeRate
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -132,7 +131,7 @@ public class TableExchangeRate
         /* Validate the account categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

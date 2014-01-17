@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetStaticData extension for AccountCategoryType.
@@ -90,7 +89,7 @@ public class SheetAccountCategoryType
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     @Override
     protected void loadEncryptedItem(final Integer pId,
@@ -98,7 +97,7 @@ public class SheetAccountCategoryType
                                      final Boolean isEnabled,
                                      final Integer iOrder,
                                      final byte[] pName,
-                                     final byte[] pDesc) throws JDataException {
+                                     final byte[] pDesc) throws JOceanusException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
@@ -110,14 +109,14 @@ public class SheetAccountCategoryType
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     @Override
     protected void loadClearTextItem(final Integer uId,
                                      final Boolean isEnabled,
                                      final Integer iOrder,
                                      final String pName,
-                                     final String pDesc) throws JDataException {
+                                     final String pDesc) throws JOceanusException {
         /* Create the item */
         theList.addOpenItem(uId, isEnabled, iOrder, pName, pDesc);
     }
@@ -128,11 +127,11 @@ public class SheetAccountCategoryType
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -179,8 +178,8 @@ public class SheetAccountCategoryType
             myList.reSort();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Types", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load Account Types", e);
         }
 
         /* Return to caller */

@@ -29,8 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encapsulation of a MessageDigest.
@@ -66,9 +65,9 @@ public class DataDigest {
      * DataDigest Generator.
      * @param pGenerator the security generator
      * @return the new Digest
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JDataException {
+    protected static DataDigest generateRandomDigest(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         DigestType[] myType = DigestType.getRandomTypes(1, myRandom);
@@ -81,10 +80,10 @@ public class DataDigest {
      * Constructor for a new message digest.
      * @param pGenerator the security generator
      * @param pDigestType DigestType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected DataDigest(final SecurityGenerator pGenerator,
-                         final DigestType pDigestType) throws JDataException {
+                         final DigestType pDigestType) throws JOceanusException {
         /* Store the DigestType */
         theDigestType = pDigestType;
 
@@ -98,16 +97,16 @@ public class DataDigest {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Digest", e);
+            throw new JOceanusException("Failed to create Digest", e);
         }
     }
 
     /**
      * Constructor for a new message digest of random type.
      * @param pGenerator the security generator
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataDigest(final SecurityGenerator pGenerator) throws JDataException {
+    protected DataDigest(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Create digest for random digest type */
         this(pGenerator, DigestType.getRandomTypes(1, pGenerator.getRandom())[0]);
     }
@@ -185,17 +184,17 @@ public class DataDigest {
      * @param pOffset the offset in the buffer to store the digest.
      * @param pLen the number of bytes in the buffer available for the digest.
      * @return the number of bytes placed into buffer
-     * @throws JDataException if buffer too short
+     * @throws JOceanusException if buffer too short
      */
     public int finish(final byte[] pBuffer,
                       final int pOffset,
-                      final int pLen) throws JDataException {
+                      final int pLen) throws JOceanusException {
         /* Calculate the digest */
         try {
             return theDigest.digest(pBuffer, pOffset, pLen);
         } catch (DigestException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to calculate Digest", e);
+            throw new JOceanusException("Failed to calculate Digest", e);
         }
     }
 }

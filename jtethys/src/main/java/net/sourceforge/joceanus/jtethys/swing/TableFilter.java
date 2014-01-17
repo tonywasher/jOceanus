@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jTableFilter: JTable RowFilter/Sorter
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jtablefilter;
+package net.sourceforge.joceanus.jtethys.swing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.List;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
 
 /**
  * RowSorter to provide filtering capabilities with natural sorting.

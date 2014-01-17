@@ -37,10 +37,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -108,9 +107,9 @@ public class ReportManager
     /**
      * Constructor.
      * @param pLogger the logger
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ReportManager(final Logger pLogger) throws JDataException {
+    public ReportManager(final Logger pLogger) throws JOceanusException {
         /* Store parameters */
         theLogger = pLogger;
 
@@ -128,7 +127,7 @@ public class ReportManager
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.XML, "Failed to create", e);
+            throw new JOceanusException("Failed to create", e);
         }
     }
 
@@ -198,7 +197,7 @@ public class ReportManager
                 /* Return immediately */
                 return;
             }
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             theLogger.log(Level.SEVERE, "Failed to process reference", e);
             myText = null;
         }
@@ -217,9 +216,9 @@ public class ReportManager
      * Hide section.
      * @param pId the id of the section to hide.
      * @return the modified text
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private String hideSection(final String pId) throws JDataException {
+    private String hideSection(final String pId) throws JOceanusException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
@@ -316,9 +315,9 @@ public class ReportManager
      * Restore section.
      * @param pId the id of the section to restore.
      * @return the modified text
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public String restoreSection(final String pId) throws JDataException {
+    public String restoreSection(final String pId) throws JOceanusException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
@@ -346,9 +345,9 @@ public class ReportManager
     /**
      * Format XML.
      * @return the formatted XML
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public String formatXML() throws JDataException {
+    public String formatXML() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Transform the new document */
@@ -359,7 +358,7 @@ public class ReportManager
             /* Return the new text */
             return theText;
         } catch (TransformerException e) {
-            throw new JDataException(ExceptionClass.XML, "Failed to format", e);
+            throw new JOceanusException("Failed to format", e);
         }
     }
 

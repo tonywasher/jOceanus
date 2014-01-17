@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread Status.
@@ -289,9 +289,9 @@ public class ThreadStatus<T extends DataSet<T, ?>>
 
         /**
          * Constructor.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public ThreadStatusPreferences() throws JDataException {
+        public ThreadStatusPreferences() throws JOceanusException {
             super();
         }
 

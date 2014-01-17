@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jdatamodels.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
@@ -45,6 +43,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataSheet;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -189,9 +188,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * Load the DataItems from a spreadsheet.
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean loadSpreadSheet() throws JDataException {
+    public boolean loadSpreadSheet() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the workbook */
@@ -273,9 +272,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             postProcessOnLoad();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load "
-                                                           + theRangeName, e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load "
+                                        + theRangeName, e);
         }
 
         /* Return to caller */
@@ -285,9 +284,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * Write the DataItems to a spreadsheet.
      * @return continue to write <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected boolean writeSpreadSheet() throws JDataException {
+    protected boolean writeSpreadSheet() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Declare the new stage */
@@ -368,9 +367,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             if (theCurrRow > theBaseRow) {
                 nameRange();
             }
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to create "
-                                                           + theRangeName, e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to create "
+                                        + theRangeName, e);
         }
 
         /* Return to caller */
@@ -400,62 +399,62 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * Load secure item from spreadsheet.
      * @param pId the id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void loadSecureItem(final Integer pId) throws JDataException;
+    protected abstract void loadSecureItem(final Integer pId) throws JOceanusException;
 
     /**
      * Load open item from spreadsheet.
      * @param pId the id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
     }
 
     /**
      * Load second pass.
      * @param pId the id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void loadSecondPass(final Integer pId) throws JDataException {
+    protected void loadSecondPass(final Integer pId) throws JOceanusException {
     }
 
     /**
      * Insert secure item into spreadsheet.
      * @param pItem the item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void insertSecureItem(final T pItem) throws JDataException;
+    protected abstract void insertSecureItem(final T pItem) throws JOceanusException;
 
     /**
      * Insert open item into spreadsheet.
      * @param pItem the item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void insertOpenItem(final T pItem) throws JDataException {
+    protected void insertOpenItem(final T pItem) throws JOceanusException {
     }
 
     /**
      * PostProcess on load.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Sort the list */
         theList.reSort();
     }
 
     /**
      * Prepare sheet for writing.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
     }
 
     /**
      * Format sheet after writing.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
     }
 
     /**
@@ -466,9 +465,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Adjust for header.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void formatHeader() throws JDataException {
+    private void formatHeader() throws JOceanusException {
         /* Write the Id header */
         writeHeader(COL_ID, DataItem.FIELD_ID.getName());
 
@@ -482,9 +481,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Format sheet after data has been written.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void formatData() throws JDataException {
+    private void formatData() throws JOceanusException {
         /* Hide the ID column */
         setIntegerColumn(COL_ID);
         setHiddenColumn(COL_ID);
@@ -506,9 +505,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Name the basic range.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void nameRange() throws JDataException {
+    protected void nameRange() throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = getLastColumn();
         myCol = adjustColumn(myCol);
@@ -523,10 +522,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Name the column range.
      * @param pOffset offset of column
      * @param pName name of range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void nameColumnRange(final int pOffset,
-                                   final String pName) throws JDataException {
+                                   final String pName) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -540,10 +539,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Apply Data Validation.
      * @param pOffset offset of column
      * @param pList name of validation range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void applyDataValidation(final int pOffset,
-                                    final String pList) throws JDataException {
+                                    final String pList) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -565,9 +564,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * Freeze titles.
      * @param pOffset column offset to freeze at
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void applyDataFilter(final int pOffset) throws JDataException {
+    protected void applyDataFilter(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -712,9 +711,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access an integer from the WorkSheet.
      * @param pOffset the column offset
      * @return the integer
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected Integer loadInteger(final int pOffset) throws JDataException {
+    protected Integer loadInteger(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -749,9 +748,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a date from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JDateDay loadDate(final int pOffset) throws JDataException {
+    protected JDateDay loadDate(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -768,9 +767,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a money value from the WorkSheet.
      * @param pOffset the column offset
      * @return the money
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JMoney loadMoney(final int pOffset) throws JDataException {
+    protected JMoney loadMoney(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -787,9 +786,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a price value from the WorkSheet.
      * @param pOffset the column offset
      * @return the price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JPrice loadPrice(final int pOffset) throws JDataException {
+    protected JPrice loadPrice(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -806,9 +805,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a rate value from the WorkSheet.
      * @param pOffset the column offset
      * @return the rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JRate loadRate(final int pOffset) throws JDataException {
+    protected JRate loadRate(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -825,9 +824,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a units value from the WorkSheet.
      * @param pOffset the column offset
      * @return the units
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JUnits loadUnits(final int pOffset) throws JDataException {
+    protected JUnits loadUnits(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -844,9 +843,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a dilution value from the WorkSheet.
      * @param pOffset the column offset
      * @return the dilution
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JDilution loadDilution(final int pOffset) throws JDataException {
+    protected JDilution loadDilution(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -863,9 +862,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a ratio value from the WorkSheet.
      * @param pOffset the column offset
      * @return the ratio
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected JRatio loadRatio(final int pOffset) throws JDataException {
+    protected JRatio loadRatio(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -900,9 +899,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a byte array from the WorkSheet.
      * @param pOffset the column offset
      * @return the byte array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected byte[] loadBytes(final int pOffset) throws JDataException {
+    protected byte[] loadBytes(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -919,9 +918,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a char array from the WorkSheet.
      * @param pOffset the column offset
      * @return the char array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected char[] loadChars(final int pOffset) throws JDataException {
+    protected char[] loadChars(final int pOffset) throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -938,10 +937,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write an integer to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the integer
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeInteger(final int pOffset,
-                                final Integer pValue) throws JDataException {
+                                final Integer pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
@@ -957,10 +956,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a boolean to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the boolean
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeBoolean(final int pOffset,
-                                final Boolean pValue) throws JDataException {
+                                final Boolean pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
@@ -976,10 +975,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a date to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeDate(final int pOffset,
-                             final JDateDay pValue) throws JDataException {
+                             final JDateDay pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
@@ -995,10 +994,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a decimal to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the number
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeDecimal(final int pOffset,
-                                final JDecimal pValue) throws JDataException {
+                                final JDecimal pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
@@ -1014,10 +1013,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a Header to the WorkSheet.
      * @param pOffset the column offset
      * @param pHeader the header text
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeHeader(final int pOffset,
-                               final String pHeader) throws JDataException {
+                               final String pHeader) throws JOceanusException {
         /* If we have non-null value */
         if (pHeader != null) {
             /* Adjust column if necessary */
@@ -1033,10 +1032,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a string to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeString(final int pOffset,
-                               final String pValue) throws JDataException {
+                               final String pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
@@ -1052,10 +1051,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a byte array to the WorkSheet.
      * @param pOffset the column offset
      * @param pBytes the byte array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeBytes(final int pOffset,
-                              final byte[] pBytes) throws JDataException {
+                              final byte[] pBytes) throws JOceanusException {
         /* If we have non-null bytes */
         if (pBytes != null) {
             /* Adjust column if necessary */
@@ -1071,10 +1070,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a char array to the WorkSheet.
      * @param pOffset the column offset
      * @param pChars the char array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void writeChars(final int pOffset,
-                              final char[] pChars) throws JDataException {
+                              final char[] pChars) throws JOceanusException {
         /* If we have non-null chars */
         if (pChars != null) {
             /* Adjust column if necessary */

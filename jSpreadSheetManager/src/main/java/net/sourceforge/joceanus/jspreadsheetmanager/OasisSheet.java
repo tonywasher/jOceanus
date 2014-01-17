@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
@@ -213,7 +213,7 @@ public class OasisSheet
     @Override
     public void declareRange(final String pName,
                              final CellPosition pFirstCell,
-                             final CellPosition pLastCell) throws JDataException {
+                             final CellPosition pLastCell) throws JOceanusException {
         if (!isReadOnly) {
             /* Build the range */
             OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
@@ -226,7 +226,7 @@ public class OasisSheet
     @Override
     public void applyDataValidation(final CellPosition pFirstCell,
                                     final CellPosition pLastCell,
-                                    final String pName) throws JDataException {
+                                    final String pName) throws JOceanusException {
         if (!isReadOnly) {
             /* Declare to workBook */
             theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
@@ -235,7 +235,7 @@ public class OasisSheet
 
     @Override
     public void applyDataFilter(final CellPosition pBaseCell,
-                                final int pNumRows) throws JDataException {
+                                final int pNumRows) throws JOceanusException {
         if (!isReadOnly) {
             /* Build the range */
             CellPosition myEnd = new CellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);

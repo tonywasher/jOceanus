@@ -42,9 +42,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.AsymmetricRegister;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to limitations in the RSA implementation. The Asymmetric Keys
@@ -183,9 +182,9 @@ public class AsymmetricKey {
      * AsymmetricKey Generator.
      * @param pGenerator the security generator
      * @return the new AsymmetricKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom);
@@ -198,9 +197,9 @@ public class AsymmetricKey {
      * AsymmetricKey Generator for Elliptic only.
      * @param pGenerator the security generator
      * @return the new AsymmetricKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected static AsymmetricKey generateEllipticAsymmetricKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         AsymKeyType[] myType = AsymKeyType.getRandomTypes(1, myRandom, true);
@@ -214,10 +213,10 @@ public class AsymmetricKey {
      * @param pGenerator the security generator
      * @param pKeyType the Asymmetric Key type
      * @return the new AsymmetricKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static AsymmetricKey generateAsymmetricKey(final SecurityGenerator pGenerator,
-                                                         final AsymKeyType pKeyType) throws JDataException {
+                                                         final AsymKeyType pKeyType) throws JOceanusException {
         /* Obtain the registration */
         SecurityRegister myRegister = pGenerator.getRegister();
         AsymmetricRegister myReg = myRegister.getAsymRegistration(pKeyType);
@@ -234,11 +233,11 @@ public class AsymmetricKey {
      * @param pGenerator the security generator
      * @param pKeyType the key type
      * @param pPair the key pair
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AsymmetricKey(final SecurityGenerator pGenerator,
                           final AsymKeyType pKeyType,
-                          final KeyPair pPair) throws JDataException {
+                          final KeyPair pPair) throws JOceanusException {
         /* Store the key mode and the generator */
         theKeyType = pKeyType;
         theGenerator = pGenerator;
@@ -277,8 +276,8 @@ public class AsymmetricKey {
 
         /* Check whether the PublicKey is too large */
         if (theExternalPublic.length > PUBLICSIZE) {
-            throw new JDataException(ExceptionClass.DATA, "PublicKey too large: "
-                                                          + theExternalPublic.length);
+            throw new JOceanusException("PublicKey too large: "
+                                        + theExternalPublic.length);
         }
     }
 
@@ -286,10 +285,10 @@ public class AsymmetricKey {
      * Constructor from public KeySpec.
      * @param pGenerator the security generator
      * @param pExternalPublic the public KeySpec
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AsymmetricKey(final SecurityGenerator pGenerator,
-                            final byte[] pExternalPublic) throws JDataException {
+                            final byte[] pExternalPublic) throws JOceanusException {
         /* Store the key mode and the generator */
         theGenerator = pGenerator;
         thePrivateKeyDef = null;
@@ -315,11 +314,11 @@ public class AsymmetricKey {
      * @param pGenerator the security generator
      * @param pExternalPrivate the private KeySpec
      * @param pExternalPublic the public KeySpec
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected AsymmetricKey(final SecurityGenerator pGenerator,
                             final byte[] pExternalPrivate,
-                            final byte[] pExternalPublic) throws JDataException {
+                            final byte[] pExternalPublic) throws JOceanusException {
         /* Store the key mode and the generator */
         theGenerator = pGenerator;
 
@@ -401,14 +400,14 @@ public class AsymmetricKey {
      * @param pPartner partner asymmetric key
      * @param pSaltBytes the salt bytes
      * @return the new CipherSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public CipherSet getCipherSet(final AsymmetricKey pPartner,
-                                  final byte[] pSaltBytes) throws JDataException {
+                                  final byte[] pSaltBytes) throws JOceanusException {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (pPartner.getKeyType() != theKeyType)) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_ELPARTNER);
+            throw new JOceanusException(ERROR_ELPARTNER);
         }
 
         /* Look for an already resolved CipherSet */
@@ -438,9 +437,9 @@ public class AsymmetricKey {
     /**
      * Get CipherSet for internal Elliptic Curve.
      * @return the cipher set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public CipherSet getCipherSet() throws JDataException {
+    public CipherSet getCipherSet() throws JOceanusException {
         /* Return PreExisting set */
         if (theCipherSet != null) {
             return theCipherSet;
@@ -457,9 +456,9 @@ public class AsymmetricKey {
      * Obtain cipher.
      * @param bWrap initialise cipher for wrap true/false?
      * @return the Stream Cipher
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private Cipher getCipher(final boolean bWrap) throws JDataException {
+    private Cipher getCipher(final boolean bWrap) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -469,7 +468,7 @@ public class AsymmetricKey {
 
             /* catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+            throw new JOceanusException(ERROR_CIPHER, e);
         }
     }
 
@@ -478,15 +477,15 @@ public class AsymmetricKey {
      * @param pSecuredKeyDef the secured key definition
      * @param pKeyType the key type
      * @return the Symmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef,
-                                           final SymKeyType pKeyType) throws JDataException {
+                                           final SymKeyType pKeyType) throws JOceanusException {
         SymmetricKey mySymKey;
 
         /* Cannot unwrap unless we have the private key */
         if (isPublicOnly()) {
-            throw new JDataException(ExceptionClass.LOGIC, "Cannot unwrap without private key");
+            throw new JOceanusException("Cannot unwrap without private key");
         }
 
         /* Protect against exceptions */
@@ -513,7 +512,7 @@ public class AsymmetricKey {
             }
 
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to unwrap key", e);
+            throw new JOceanusException("Failed to unwrap key", e);
         }
 
         /* Return the new key */
@@ -524,9 +523,9 @@ public class AsymmetricKey {
      * Get the Secured Key Definition for a Symmetric Key.
      * @param pKey the Symmetric Key to secure
      * @return the secured key definition
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* If we are elliptic */
@@ -548,7 +547,7 @@ public class AsymmetricKey {
             }
 
         } catch (InvalidKeyException | IllegalBlockSizeException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to wrap key", e);
+            throw new JOceanusException("Failed to wrap key", e);
         }
     }
 
@@ -556,18 +555,18 @@ public class AsymmetricKey {
      * Obtain shared secret for partner Asymmetric Key.
      * @param pPartner partner asymmetric key
      * @return the shared secret
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private synchronized byte[] getSharedSecret(final AsymmetricKey pPartner) throws JDataException {
+    private synchronized byte[] getSharedSecret(final AsymmetricKey pPartner) throws JOceanusException {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (theKeyType != pPartner.getKeyType())) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_ELPARTNER);
+            throw new JOceanusException(ERROR_ELPARTNER);
         }
 
         /* Cannot generate unless we have the private key */
         if (isPublicOnly()) {
-            throw new JDataException(ExceptionClass.LOGIC, "Cannot generate secret without private key");
+            throw new JOceanusException("Cannot generate secret without private key");
         }
 
         /* Protect against exceptions */
@@ -587,7 +586,7 @@ public class AsymmetricKey {
 
             /* Handle exceptions */
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to negotiate key agreement", e);
+            throw new JOceanusException("Failed to negotiate key agreement", e);
         }
     }
 
@@ -595,13 +594,13 @@ public class AsymmetricKey {
      * Obtain a signature for this key.
      * @param bSign initialise for signature rather than verify
      * @return the signature object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Signature getSignature(final boolean bSign) throws JDataException {
+    public Signature getSignature(final boolean bSign) throws JOceanusException {
         /* Cannot sign unless we have the private key */
         if ((bSign)
             && (isPublicOnly())) {
-            throw new JDataException(ExceptionClass.LOGIC, "Cannot sign without private key");
+            throw new JOceanusException("Cannot sign without private key");
         }
 
         /* Protect against exceptions */
@@ -619,7 +618,7 @@ public class AsymmetricKey {
 
             /* Catch exceptions */
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception building signature", e);
+            throw new JOceanusException("Exception building signature", e);
         }
     }
 
@@ -629,14 +628,14 @@ public class AsymmetricKey {
      * @param pSaltBytes the salt bytes
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public byte[] encryptBytes(final byte[] pBytes,
                                final byte[] pSaltBytes,
-                               final AsymmetricKey pTarget) throws JDataException {
+                               final AsymmetricKey pTarget) throws JOceanusException {
         /* Target must be identical key type */
         if (theKeyType != pTarget.getKeyType()) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_PARTNER);
+            throw new JOceanusException(ERROR_PARTNER);
         }
 
         /* If we are elliptic */
@@ -659,10 +658,10 @@ public class AsymmetricKey {
      * @param pBytes bytes to encrypt
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private byte[] encryptStandardBytes(final byte[] pBytes,
-                                        final AsymmetricKey pTarget) throws JDataException {
+                                        final AsymmetricKey pTarget) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
@@ -710,7 +709,7 @@ public class AsymmetricKey {
             /* Return to caller */
             return myOutput;
         } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 
@@ -720,19 +719,19 @@ public class AsymmetricKey {
      * @param pSaltBytes the salt bytes
      * @param pSource source partner of encryption
      * @return Decrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public byte[] decryptBytes(final byte[] pBytes,
                                final byte[] pSaltBytes,
-                               final AsymmetricKey pSource) throws JDataException {
+                               final AsymmetricKey pSource) throws JOceanusException {
         /* Cannot decrypt unless we have the private key */
         if (isPublicOnly()) {
-            throw new JDataException(ExceptionClass.LOGIC, "Cannot decrypt without private key");
+            throw new JOceanusException("Cannot decrypt without private key");
         }
 
         /* Source must be identical key type */
         if (theKeyType != pSource.getKeyType()) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_PARTNER);
+            throw new JOceanusException(ERROR_PARTNER);
         }
 
         /* If we are elliptic */
@@ -753,9 +752,9 @@ public class AsymmetricKey {
      * Decrypt Standard bytes.
      * @param pBytes bytes to decrypt
      * @return Decrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private byte[] decryptStandardBytes(final byte[] pBytes) throws JDataException {
+    private byte[] decryptStandardBytes(final byte[] pBytes) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Create the cipher */
@@ -803,7 +802,7 @@ public class AsymmetricKey {
             /* Create the string */
             return myOutput;
         } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 }

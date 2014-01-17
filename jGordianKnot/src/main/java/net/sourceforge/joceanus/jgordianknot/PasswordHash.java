@@ -26,9 +26,8 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Password Hash implementation.
@@ -125,10 +124,10 @@ public class PasswordHash {
      * Constructor for a completely new password hash.
      * @param pGenerator the security generator
      * @param pPassword the password (cleared after usage)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
-                           final char[] pPassword) throws JDataException {
+                           final char[] pPassword) throws JOceanusException {
         /* Store the secure random generator */
         theGenerator = pGenerator;
         theRandom = theGenerator.getRandom();
@@ -146,11 +145,11 @@ public class PasswordHash {
      * @param pHashBytes the Hash bytes
      * @param pPassword the password (cleared after usage)
      * @throws InvalidCredentialsException if wrong password is given
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected PasswordHash(final SecurityGenerator pGenerator,
                            final byte[] pHashBytes,
-                           final char[] pPassword) throws JDataException {
+                           final char[] pPassword) throws JOceanusException {
         /* Store the hash bytes and extract the mode */
         theHashBytes = Arrays.copyOf(pHashBytes, pHashBytes.length);
 
@@ -168,9 +167,9 @@ public class PasswordHash {
     /**
      * Constructor for alternate password hash sharing same password.
      * @param pSource the source hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private PasswordHash(final PasswordHash pSource) throws JDataException {
+    private PasswordHash(final PasswordHash pSource) throws JOceanusException {
 
         /* Build the encryption cipher */
         CipherSet mySet = pSource.theCipherSet;
@@ -205,9 +204,9 @@ public class PasswordHash {
     /**
      * Clone this password hash.
      * @return the cloned hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public PasswordHash cloneHash() throws JDataException {
+    public PasswordHash cloneHash() throws JOceanusException {
         /* Return the cloned hash */
         return new PasswordHash(this);
     }
@@ -243,9 +242,9 @@ public class PasswordHash {
     /**
      * Build the password hash from the password.
      * @param pPassword the password (cleared after usage)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setPassword(final char[] pPassword) throws JDataException {
+    private void setPassword(final char[] pPassword) throws JOceanusException {
         /* Generate the HashBytes */
         theHashBytes = generateHashBytes(pPassword);
 
@@ -272,9 +271,9 @@ public class PasswordHash {
      * Attempt to match the password hash with the password.
      * @param pPassword the password (cleared after usage)
      * @throws InvalidCredentialsException on wrong password
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void attemptPassword(final char[] pPassword) throws JDataException {
+    private void attemptPassword(final char[] pPassword) throws JOceanusException {
         /* Generate the HashBytes */
         byte[] myHashBytes = generateHashBytes(pPassword);
 
@@ -307,9 +306,9 @@ public class PasswordHash {
      * Generate Hash bytes.
      * @param pPassword the password for the keys
      * @return the Salt and Hash array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private byte[] generateHashBytes(final char[] pPassword) throws JDataException {
+    private byte[] generateHashBytes(final char[] pPassword) throws JOceanusException {
         byte[] myPassBytes = null;
 
         /* Protect against exceptions */
@@ -394,8 +393,8 @@ public class PasswordHash {
 
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {
-                throw new JDataException(ExceptionClass.DATA, "Password Hash too large: "
-                                                              + myHashBytes.length);
+                throw new JOceanusException("Password Hash too large: "
+                                            + myHashBytes.length);
             }
 
             /* Return to caller */
@@ -412,9 +411,9 @@ public class PasswordHash {
      * Get the secured private key definition from an Asymmetric Key.
      * @param pKey the AsymmetricKey whose private key is to be secured
      * @return the secured key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JDataException {
+    public byte[] securePrivateKey(final AsymmetricKey pKey) throws JOceanusException {
         /* Secure the key */
         return theCipherSet.securePrivateKey(pKey);
     }
@@ -424,10 +423,10 @@ public class PasswordHash {
      * @param pSecuredPrivateKeyDef the Secured Private Key definition
      * @param pPublicKeyDef the Public KeyDef
      * @return the asymmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public AsymmetricKey deriveAsymmetricKey(final byte[] pSecuredPrivateKeyDef,
-                                             final byte[] pPublicKeyDef) throws JDataException {
+                                             final byte[] pPublicKeyDef) throws JOceanusException {
         /* derive the Asymmetric Key */
         return theCipherSet.deriveAsymmetricKey(pSecuredPrivateKeyDef, pPublicKeyDef);
     }
@@ -437,10 +436,10 @@ public class PasswordHash {
      * @param pSecuredKeyDef the secured key definition
      * @param pKeyType the key type
      * @return the Symmetric key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public SymmetricKey deriveSymmetricKey(final byte[] pSecuredKeyDef,
-                                           final SymKeyType pKeyType) throws JDataException {
+                                           final SymKeyType pKeyType) throws JOceanusException {
         /* Derive the symmetric key */
         return theCipherSet.deriveSymmetricKey(pSecuredKeyDef, pKeyType);
     }
@@ -449,9 +448,9 @@ public class PasswordHash {
      * Get the Secured Key Definition for a Symmetric Key.
      * @param pKey the Symmetric Key to secure
      * @return the secured key definition
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JDataException {
+    public byte[] secureSymmetricKey(final SymmetricKey pKey) throws JOceanusException {
         /* Wrap the Key */
         return theCipherSet.secureSymmetricKey(pKey);
     }
@@ -461,10 +460,10 @@ public class PasswordHash {
      * @param pSecuredKeyDef the secured key definition
      * @param pKeyType the key type
      * @return the Stream key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public StreamKey deriveStreamKey(final byte[] pSecuredKeyDef,
-                                     final StreamKeyType pKeyType) throws JDataException {
+                                     final StreamKeyType pKeyType) throws JOceanusException {
         /* Derive the stream key */
         return theCipherSet.deriveStreamKey(pSecuredKeyDef, pKeyType);
     }
@@ -473,9 +472,9 @@ public class PasswordHash {
      * Get the Secured Key Definition for a Stream Key.
      * @param pKey the Stream Key to secure
      * @return the secured key definition
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureStreamKey(final StreamKey pKey) throws JDataException {
+    public byte[] secureStreamKey(final StreamKey pKey) throws JOceanusException {
         /* Wrap the Key */
         return theCipherSet.secureStreamKey(pKey);
     }
@@ -485,10 +484,10 @@ public class PasswordHash {
      * @param pSecuredMacDef the secured definition
      * @param pMacSpec the Mac Spec
      * @return the Data Mac
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataMac deriveDataMac(final byte[] pSecuredMacDef,
-                                 final MacSpec pMacSpec) throws JDataException {
+                                 final MacSpec pMacSpec) throws JOceanusException {
         /* Derive the data mac */
         return theCipherSet.deriveDataMac(pSecuredMacDef, pMacSpec);
     }
@@ -497,9 +496,9 @@ public class PasswordHash {
      * Get the Secured Definition for a DataMac.
      * @param pMac the Data Mac to secure
      * @return the secured key definition
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] secureDataMac(final DataMac pMac) throws JDataException {
+    public byte[] secureDataMac(final DataMac pMac) throws JOceanusException {
         /* Wrap the Mac */
         return theCipherSet.secureDataMac(pMac);
     }
@@ -508,9 +507,9 @@ public class PasswordHash {
      * Encrypt bytes.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] encryptBytes(final byte[] pBytes) throws JDataException {
+    public byte[] encryptBytes(final byte[] pBytes) throws JOceanusException {
         /* Encrypt the string */
         return theCipherSet.encryptBytes(pBytes);
     }
@@ -519,9 +518,9 @@ public class PasswordHash {
      * Decrypt bytes.
      * @param pBytes the bytes to decrypt
      * @return the decrypted bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] decryptBytes(final byte[] pBytes) throws JDataException {
+    public byte[] decryptBytes(final byte[] pBytes) throws JOceanusException {
         /* Decrypt the bytes */
         return theCipherSet.decryptBytes(pBytes);
     }
@@ -547,7 +546,7 @@ public class PasswordHash {
             return myHash;
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             theGenerator.getLogger().log(Level.SEVERE, "Password attempt failed", e);
             return null;
         } catch (InvalidCredentialsException e) {

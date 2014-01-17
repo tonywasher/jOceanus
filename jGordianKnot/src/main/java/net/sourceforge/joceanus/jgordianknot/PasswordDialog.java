@@ -46,7 +46,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jlayoutmanager.SpringUtilities;
+import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.

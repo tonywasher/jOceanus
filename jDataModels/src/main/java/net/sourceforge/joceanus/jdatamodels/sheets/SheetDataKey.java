@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for DataKey.
@@ -81,7 +81,7 @@ public class SheetDataKey
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControl = loadInteger(COL_CONTROLID);
         Integer myKeyType = loadInteger(COL_KEYTYPE);
@@ -94,7 +94,7 @@ public class SheetDataKey
     }
 
     @Override
-    protected void insertSecureItem(final DataKey pItem) throws JDataException {
+    protected void insertSecureItem(final DataKey pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());

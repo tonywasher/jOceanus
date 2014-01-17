@@ -16,12 +16,9 @@
     <module>jDataManager</module>
     <module>jSortedList</module>
     <module>jSpreadSheetManager</module>
-    <module>jLayoutManager</module>
     <module>jDecimal</module>
     <module>jDateDay</module>
-    <module>jTableFilter</module>
-    <module>jHelpManager</module>
-    <module>jEventManager</module>
+    <module>jtethys</module>
     <module>jFieldSet</module>
     <module>jPreferenceSet</module>
   </modules>

@@ -45,17 +45,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
-import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
-import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Top level panel for static data.
@@ -287,9 +287,9 @@ public class StaticDataPanel
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void refreshData() throws JDataException {
+    public void refreshData() throws JOceanusException {
         /* Loop through the map */
         for (StaticDataTable<?, ?> myPanel : theMap.values()) {
             /* Refresh the panel */

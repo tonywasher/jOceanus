@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition;
@@ -35,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableEncrypted extension for Account.
@@ -81,7 +81,7 @@ public class TableAccount
 
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
@@ -97,7 +97,7 @@ public class TableAccount
 
     @Override
     protected void setFieldValue(final Account pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (AccountBase.FIELD_NAME.equals(iField)) {
@@ -118,7 +118,7 @@ public class TableAccount
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();

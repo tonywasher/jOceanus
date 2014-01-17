@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Mac Specification.
@@ -82,9 +82,9 @@ public class MacSpec {
     /**
      * Constructor from Code.
      * @param pCode the encoded specification
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public MacSpec(final int pCode) throws JDataException {
+    public MacSpec(final int pCode) throws JOceanusException {
         /* Determine MacType */
         int myId = pCode
                    & DataConverter.NYBBLE_MASK;

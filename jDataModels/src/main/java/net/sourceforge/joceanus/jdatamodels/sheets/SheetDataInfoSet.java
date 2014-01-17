@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Utility class to handle DataInfo associated with an owner.
@@ -72,9 +72,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
 
     /**
      * Fill in titles.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void prepareSheet() throws JDataException {
+    public void prepareSheet() throws JOceanusException {
         /* Loop through the class values */
         for (E myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
@@ -89,9 +89,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
 
     /**
      * Fill in titles.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void formatSheet() throws JDataException {
+    public void formatSheet() throws JOceanusException {
         /* Loop through the class values */
         for (E myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
@@ -139,10 +139,10 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * Apply Data Validation.
      * @param pClass the class to set
      * @param pList name of validation range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataValidation(final E pClass,
-                                       final String pList) throws JDataException {
+                                       final String pList) throws JOceanusException {
         /* Obtain the data column */
         int iCol = 1 + getIdColumn(pClass);
 
@@ -153,9 +153,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
     /**
      * Write data info set.
      * @param pInfoSet the DataInfoSet to write
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void writeDataInfoSet(final DataInfoSet<T, O, I, E> pInfoSet) throws JDataException {
+    public void writeDataInfoSet(final DataInfoSet<T, O, I, E> pInfoSet) throws JOceanusException {
         /* Loop through the items */
         for (T myInfo : pInfoSet) {
             /* Skip if deleted */
@@ -171,9 +171,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
     /**
      * Write data info.
      * @param pInfo the Data info to write
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void writeDataInfo(final T pInfo) throws JDataException {
+    private void writeDataInfo(final T pInfo) throws JOceanusException {
         /* Obtain the id and data columns */
         E myClass = pInfo.getInfoClass();
         int iCol = getIdColumn(myClass);
@@ -219,10 +219,10 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * Load data info set.
      * @param pInfoList the DataInfoList to add to
      * @param pOwner the owner of the info
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void loadDataInfoSet(final DataInfoList<T, O, I, E> pInfoList,
-                                final O pOwner) throws JDataException {
+                                final O pOwner) throws JOceanusException {
         /* Loop through the class values */
         for (E myClass : theClass.getEnumConstants()) {
             /* Access the id and data columns */

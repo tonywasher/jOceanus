@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
@@ -34,6 +32,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for EventClass.
@@ -88,7 +87,7 @@ public class SheetEventClass
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
 
@@ -101,7 +100,7 @@ public class SheetEventClass
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
         String myDesc = loadString(COL_DESC);
@@ -111,7 +110,7 @@ public class SheetEventClass
     }
 
     @Override
-    protected void insertSecureItem(final EventClass pItem) throws JDataException {
+    protected void insertSecureItem(final EventClass pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -119,21 +118,21 @@ public class SheetEventClass
     }
 
     @Override
-    protected void insertOpenItem(final EventClass pItem) throws JDataException {
+    protected void insertOpenItem(final EventClass pItem) throws JOceanusException {
         /* Set the fields */
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_NAME, EventCategory.FIELD_NAME.getName());
         writeHeader(COL_DESC, EventCategory.FIELD_DESC.getName());
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
@@ -146,7 +145,7 @@ public class SheetEventClass
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* reSort */
         theList.reSort();
 
@@ -160,11 +159,11 @@ public class SheetEventClass
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -218,8 +217,8 @@ public class SheetEventClass
             myList.validateOnLoad();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load EventClasses", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load EventClasses", e);
         }
 
         /* Return to caller */

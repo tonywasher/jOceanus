@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.help;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jhelpmanager.HelpException;
-import net.sourceforge.joceanus.jhelpmanager.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.HelpException;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
 
 /**
  * Help Module for FinanceApp.

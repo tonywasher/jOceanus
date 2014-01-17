@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -62,6 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * MoneyWise dataSet.
@@ -416,7 +416,7 @@ public class MoneyWiseData
     }
 
     @Override
-    public MoneyWiseData deriveUpdateSet() throws JDataException {
+    public MoneyWiseData deriveUpdateSet() throws JOceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myExtract = new MoneyWiseData(this);
 
@@ -428,7 +428,7 @@ public class MoneyWiseData
     }
 
     @Override
-    public MoneyWiseData deriveCloneSet() throws JDataException {
+    public MoneyWiseData deriveCloneSet() throws JOceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myExtract = new MoneyWiseData(this);
 
@@ -445,10 +445,10 @@ public class MoneyWiseData
      * that are in both lists but differ will be viewed as changed
      * @param pOld The DataSet to compare to
      * @return the difference extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     @Override
-    public MoneyWiseData getDifferenceSet(final MoneyWiseData pOld) throws JDataException {
+    public MoneyWiseData getDifferenceSet(final MoneyWiseData pOld) throws JOceanusException {
         /* Build an empty DataSet */
         MoneyWiseData myDiffers = new MoneyWiseData(this);
 
@@ -470,9 +470,9 @@ public class MoneyWiseData
 
     /**
      * Initialise the analysis.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void initialiseAnalysis() throws JDataException {
+    public void initialiseAnalysis() throws JOceanusException {
         /* Loop through the list types */
         Iterator<Entry<MoneyWiseList, DataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
@@ -517,9 +517,9 @@ public class MoneyWiseData
 
     /**
      * Complete the data analysis.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void completeAnalysis() throws JDataException {
+    public void completeAnalysis() throws JOceanusException {
         /* Note active accounts */
         getAccounts().validateOnLoad();
     }

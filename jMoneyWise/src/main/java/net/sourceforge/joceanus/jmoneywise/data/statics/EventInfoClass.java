@@ -25,9 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of EventInfo Classes..
@@ -212,16 +211,16 @@ public enum EventInfoClass implements DataInfoClass {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static EventInfoClass fromId(final int id) throws JDataException {
+    public static EventInfoClass fromId(final int id) throws JOceanusException {
         for (EventInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid EventInfo Class Id: "
-                                                      + id);
+        throw new JOceanusException("Invalid EventInfo Class Id: "
+                                    + id);
     }
 
     /**

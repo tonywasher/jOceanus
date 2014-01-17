@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Issue;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -122,10 +121,10 @@ public class CommitMgr {
      * Commit the changes to the repository.
      * @param pIssue the issue to commit against.
      * @param pComments the comments for the change
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void commitChanges(final Issue pIssue,
-                              final String pComments) throws JDataException {
+                              final String pComments) throws JOceanusException {
         /* Access commit client */
         SVNCommitClient myCommit = theMgr.getCommitClient();
 
@@ -151,7 +150,7 @@ public class CommitMgr {
 
             /* Ensure that there is only one packet */
             if (myPackets.length > 1) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Too many commit packets");
+                throw new JOceanusException("Too many commit packets");
             }
 
             /* Commit the changes */
@@ -161,7 +160,7 @@ public class CommitMgr {
             theRevision = SVNRevision.create(myInfo.getNewRevision());
 
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to commit changes", e);
+            throw new JOceanusException("Failed to commit changes", e);
         }
     }
 

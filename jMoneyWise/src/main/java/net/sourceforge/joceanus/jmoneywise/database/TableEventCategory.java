@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
@@ -38,6 +36,7 @@ import net.sourceforge.joceanus.jdatamodels.database.TableEncrypted;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TableEncrypted extension for Event Category.
@@ -83,7 +82,7 @@ public class TableEventCategory
 
     @Override
     protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JDataException {
+                            final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Integer myCategoryId = myTableDef.getIntegerValue(EventCategory.FIELD_CATTYPE);
@@ -97,7 +96,7 @@ public class TableEventCategory
 
     @Override
     protected void setFieldValue(final EventCategory pItem,
-                                 final JDataField iField) throws JDataException {
+                                 final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EventCategory.FIELD_CATTYPE.equals(iField)) {
@@ -114,7 +113,7 @@ public class TableEventCategory
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -125,7 +124,7 @@ public class TableEventCategory
         /* Validate the event categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

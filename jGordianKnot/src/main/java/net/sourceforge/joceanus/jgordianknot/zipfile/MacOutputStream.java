@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.DataMac;
 import net.sourceforge.joceanus.jgordianknot.MacSpec;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Provides a Mac OutputStream. This class simply calculates a Mac of the data in the stream at this point and passes the data onto the next Output Stream in
@@ -100,10 +100,10 @@ public class MacOutputStream
      * Construct the output stream.
      * @param pMac the data mac
      * @param pStream the stream to write encrypted data to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public MacOutputStream(final DataMac pMac,
-                           final OutputStream pStream) throws JDataException {
+                           final OutputStream pStream) throws JOceanusException {
         /* Store the data mac */
         theMac = pMac;
 

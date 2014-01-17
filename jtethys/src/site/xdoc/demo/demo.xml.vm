@@ -1,11 +1,11 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>${svnComponent} Demo</title>
+    <title>${svnComponent} TableFilter Demo</title>
   </properties>
   <body>
     <section name="Overview">
-      <p>Demo of ${svnComponent} capabilities.</p>
+      <p>Demo of ${svnComponent} TableFilter capabilities.</p>
       <p>Each row is the table comprises a name and a visibility indication. Clicking on the visibility indication of 
 a row will cause the row to be hidden from view.</p>
       <p>Right-clicking within the table rows (or on the table header) will bring up a popup menu allowing the user
@@ -20,7 +20,7 @@ to control the table.</p>
     </section>
 
     <section name="Demo">
-      <applet code = '${packageMain}' 
+      <applet code = '${appMain}' 
         archive = '${appJar}.jar'
         width = "450" 
         height = "300"></applet>      

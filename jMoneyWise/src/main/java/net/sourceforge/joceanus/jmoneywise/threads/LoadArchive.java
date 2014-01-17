@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.threads.LoaderThread;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -70,7 +70,7 @@ public class LoadArchive
     }
 
     @Override
-    public MoneyWiseData performTask() throws JDataException {
+    public MoneyWiseData performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Loading Extract");
 

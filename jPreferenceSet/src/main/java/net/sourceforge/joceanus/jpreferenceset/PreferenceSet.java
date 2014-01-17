@@ -31,17 +31,16 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
 import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
 import net.sourceforge.joceanus.jfieldset.JFieldState;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Wrapper class for java preferences.
@@ -100,9 +99,9 @@ public abstract class PreferenceSet
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public PreferenceSet() throws JDataException {
+    public PreferenceSet() throws JOceanusException {
         /* Access the handle */
         theHandle = Preferences.userNodeForPackage(this.getClass());
         theHandle = theHandle.node(this.getClass().getSimpleName());
@@ -114,7 +113,7 @@ public abstract class PreferenceSet
         try {
             theActive = theHandle.keys();
         } catch (BackingStoreException e) {
-            throw new JDataException(ExceptionClass.PREFERENCE, "Failed to access preferences", e);
+            throw new JOceanusException("Failed to access preferences", e);
         }
 
         /* Define the preferences */
@@ -551,9 +550,9 @@ public abstract class PreferenceSet
 
     /**
      * Store preference changes.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public final void storeChanges() throws JDataException {
+    public final void storeChanges() throws JOceanusException {
         /* Loop through all the preferences */
         for (PreferenceItem myPref : theMap.values()) {
             /* Store any changes */
@@ -568,7 +567,7 @@ public abstract class PreferenceSet
             /* Notify listeners */
             fireStateChanged();
         } catch (BackingStoreException e) {
-            throw new JDataException(ExceptionClass.PREFERENCE, "Failed to flush preferences to store", e);
+            throw new JOceanusException("Failed to flush preferences to store", e);
         }
     }
 

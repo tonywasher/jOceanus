@@ -31,7 +31,6 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -41,10 +40,11 @@ import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jdatamodels.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Provides top-level control of data.
@@ -110,7 +110,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
     /**
      * The Error List.
      */
-    private final DataErrorList<JDataException> theErrors;
+    private final DataErrorList<JOceanusException> theErrors;
 
     /**
      * The Frame.
@@ -163,9 +163,9 @@ public abstract class DataControl<T extends DataSet<T, ?>>
     /**
      * Constructor for default control.
      * @param pLogger the logger.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataControl(final Logger pLogger) throws JDataException {
+    protected DataControl(final Logger pLogger) throws JOceanusException {
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 
@@ -184,7 +184,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
         theSecurity = mySecurity.getSecurity(theLogger);
 
         /* Create the error list */
-        theErrors = new DataErrorList<JDataException>();
+        theErrors = new DataErrorList<JOceanusException>();
 
         /* Access the Field Preferences */
         theFieldPreferences = thePreferenceMgr.getPreferenceSet(JFieldPreferences.class);
@@ -241,9 +241,9 @@ public abstract class DataControl<T extends DataSet<T, ?>>
 
     /**
      * Derive update list.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void deriveUpdates() throws JDataException {
+    public void deriveUpdates() throws JOceanusException {
         /* Store the updates */
         theUpdates = theData.deriveUpdateSet();
 
@@ -264,7 +264,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
      * Add new Error.
      * @param pError the new Error
      */
-    public void addError(final JDataException pError) {
+    public void addError(final JOceanusException pError) {
         theErrors.add(pError);
     }
 
@@ -279,7 +279,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
      * Obtain current error.
      * @return the current Error
      */
-    public DataErrorList<JDataException> getErrors() {
+    public DataErrorList<JOceanusException> getErrors() {
         return theErrors;
     }
 
@@ -394,9 +394,9 @@ public abstract class DataControl<T extends DataSet<T, ?>>
     /**
      * Obtain Database object.
      * @return database object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract Database<T> getDatabase() throws JDataException;
+    public abstract Database<T> getDatabase() throws JOceanusException;
 
     /**
      * Obtain DataSet object.

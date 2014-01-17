@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TaxCategory data type.
@@ -93,10 +92,10 @@ public class TaxCategory
      * Basic Constructor.
      * @param pList The list to associate the Tax Category with
      * @param pName Name of Tax Category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final String pName) throws JDataException {
+                        final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -104,10 +103,10 @@ public class TaxCategory
      * Basic constructor.
      * @param pList The list to associate the Tax Category with
      * @param pClass Class of Tax Category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final TaxCategoryClass pClass) throws JDataException {
+                        final TaxCategoryClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -119,14 +118,14 @@ public class TaxCategory
      * @param pOrder the sort order
      * @param pName Name of Tax Category
      * @param pDesc Description of Tax Category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
                         final Integer pId,
                         final Boolean isEnabled,
                         final Integer pOrder,
                         final String pName,
-                        final String pDesc) throws JDataException {
+                        final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -139,7 +138,7 @@ public class TaxCategory
      * @param pOrder the sort order
      * @param pName Encrypted Name of TaxCategory
      * @param pDesc Encrypted Description of TaxCategory
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private TaxCategory(final TaxCategoryList pList,
                         final Integer pId,
@@ -147,7 +146,7 @@ public class TaxCategory
                         final Boolean isEnabled,
                         final Integer pOrder,
                         final byte[] pName,
-                        final byte[] pDesc) throws JDataException {
+                        final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -200,7 +199,7 @@ public class TaxCategory
         }
 
         @Override
-        public TaxCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public TaxCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (TaxCategoryList) super.cloneList(pDataSet);
         }
 
@@ -241,22 +240,22 @@ public class TaxCategory
         /**
          * Add a TaxCategory.
          * @param pTaxCategory the Name of the tax bucket
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pTaxCategory) throws JDataException {
+        public void addBasicItem(final String pTaxCategory) throws JOceanusException {
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pTaxCategory);
 
             /* Check that this TaxCategory has not been previously added */
             if (findItemByName(pTaxCategory) != null) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -267,7 +266,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -278,20 +277,20 @@ public class TaxCategory
          * @param pOrder the sort order
          * @param pTaxCategory the Name of the tax bucket
          * @param pDesc the Description of the tax bucket
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pTaxCategory,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pId, isEnabled, pOrder, pTaxCategory, pDesc);
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -302,7 +301,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -314,21 +313,21 @@ public class TaxCategory
          * @param pOrder the sort order
          * @param pTaxCategory the Encrypted Name of the tax bucket
          * @param pDesc the Encrypted Description of the tax bucket
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pTaxCategory,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pId, pControlId, isEnabled, pOrder, pTaxCategory, pDesc);
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -339,15 +338,15 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (TaxCategoryClass myClass : TaxCategoryClass.values()) {
                 /* Create new element */
@@ -361,7 +360,7 @@ public class TaxCategory
 
                 /* Handle validation failure */
                 if (myCategory.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
+                    throw new JOceanusException(myCategory, ERROR_VALIDATION);
                 }
             }
 

@@ -30,8 +30,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
@@ -56,9 +55,9 @@ public class SecureManager {
     /**
      * Constructor for default values.
      * @param pLogger the logger
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SecureManager(final Logger pLogger) throws JDataException {
+    public SecureManager(final Logger pLogger) throws JOceanusException {
         /* Access with defaults */
         this(pLogger, new SecurityParameters());
     }
@@ -67,10 +66,10 @@ public class SecureManager {
      * Constructor.
      * @param pLogger the logger
      * @param pParameters the Security parameters
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public SecureManager(final Logger pLogger,
-                         final SecurityParameters pParameters) throws JDataException {
+                         final SecurityParameters pParameters) throws JOceanusException {
         /* Allocate the security generator */
         theGenerator = new SecurityGenerator(pLogger, pParameters);
 
@@ -99,10 +98,10 @@ public class SecureManager {
      * @param pHashBytes the hash bytes to resolve
      * @param pSource the description of the secured resource
      * @return the password Hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public PasswordHash resolvePasswordHash(final byte[] pHashBytes,
-                                            final String pSource) throws JDataException {
+                                            final String pSource) throws JOceanusException {
         PasswordHash myHash = null;
 
         /* If the hash bytes exist try existing hashes for either absolute or password match */
@@ -168,7 +167,7 @@ public class SecureManager {
         /* If we did not get a password */
         if (!isPasswordOk) {
             /* Throw an exception */
-            throw new JDataException(ExceptionClass.DATA, "Invalid Password");
+            throw new JOceanusException("Invalid Password");
         }
 
         /* Return the password hash */
@@ -179,9 +178,9 @@ public class SecureManager {
      * clone password hash.
      * @param pHash the password hash to clone
      * @return the cloned password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws JDataException {
+    public PasswordHash clonePasswordHash(final PasswordHash pHash) throws JOceanusException {
         /* clone the hash */
         PasswordHash myHash = pHash.cloneHash();
 

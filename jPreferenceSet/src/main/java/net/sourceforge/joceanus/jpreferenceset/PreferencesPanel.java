@@ -48,15 +48,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jlayoutmanager.ArrowIcon;
-import net.sourceforge.joceanus.jlayoutmanager.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Preference maintenance panel.
@@ -309,7 +309,7 @@ public class PreferencesPanel
     public void saveUpdates() {
         try {
             theActive.storeChanges();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             theLogger.log(Level.SEVERE, ERROR_STORE, e);
         }
 

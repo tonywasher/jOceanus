@@ -34,8 +34,6 @@ import java.util.ListIterator;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
@@ -46,6 +44,7 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -985,13 +984,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JMoney getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JMoney getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JMoney.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Money Value", e);
+                throw new JOceanusException(getValue(), "Bad Money Value", e);
             }
         }
     }
@@ -1046,13 +1045,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JRate getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JRate getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JRate.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Rate Value", e);
+                throw new JOceanusException(getValue(), "Bad Rate Value", e);
             }
         }
     }
@@ -1096,13 +1095,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JPrice getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JPrice getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JPrice.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Price Value", e);
+                throw new JOceanusException(getValue(), "Bad Price Value", e);
             }
         }
     }
@@ -1146,13 +1145,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JUnits getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JUnits getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JUnits.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Units Value", e);
+                throw new JOceanusException(getValue(), "Bad Units Value", e);
             }
         }
     }
@@ -1196,13 +1195,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JDilution getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JDilution getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JDilution.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Dilution Value", e);
+                throw new JOceanusException(getValue(), "Bad Dilution Value", e);
             }
         }
     }
@@ -1246,13 +1245,13 @@ public abstract class ColumnDefinition {
          * Obtain the value.
          * @param pFormatter the data formatter
          * @return the money value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JRatio getValue(final JDataFormatter pFormatter) throws JDataException {
+        public JRatio getValue(final JDataFormatter pFormatter) throws JOceanusException {
             try {
                 return pFormatter.parseValue(getValue(), JRatio.class);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Ratio Value", e);
+                throw new JOceanusException(getValue(), "Bad Ratio Value", e);
             }
         }
     }

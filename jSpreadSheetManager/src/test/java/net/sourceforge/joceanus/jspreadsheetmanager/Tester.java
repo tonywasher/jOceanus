@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -18,6 +17,7 @@ import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
 import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 public class Tester {
     /**
@@ -128,7 +128,7 @@ public class Tester {
             myCell = null;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             e.printStackTrace();
         }
     }
@@ -185,7 +185,7 @@ public class Tester {
             }
         } catch (FileNotFoundException e) {
             e = null;
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             e = null;
         }
     }

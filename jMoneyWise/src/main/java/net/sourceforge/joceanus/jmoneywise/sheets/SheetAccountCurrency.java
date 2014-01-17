@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetStaticData extension for AccountCurrency.
@@ -93,7 +92,7 @@ public class SheetAccountCurrency
                                      final Boolean isEnabled,
                                      final Integer pOrder,
                                      final byte[] pName,
-                                     final byte[] pDesc) throws JDataException {
+                                     final byte[] pDesc) throws JOceanusException {
         /* Access the Default indication */
         Boolean isDefault = loadBoolean(COL_DEFAULT);
 
@@ -106,7 +105,7 @@ public class SheetAccountCurrency
                                      final Boolean isEnabled,
                                      final Integer pOrder,
                                      final String pName,
-                                     final String pDesc) throws JDataException {
+                                     final String pDesc) throws JOceanusException {
         /* Access the Default indication */
         Boolean isDefault = loadBoolean(COL_DEFAULT);
 
@@ -115,7 +114,7 @@ public class SheetAccountCurrency
     }
 
     @Override
-    protected void insertSecureItem(final AccountCurrency pItem) throws JDataException {
+    protected void insertSecureItem(final AccountCurrency pItem) throws JOceanusException {
         /* Insert standard fields */
         super.insertSecureItem(pItem);
 
@@ -124,7 +123,7 @@ public class SheetAccountCurrency
     }
 
     @Override
-    protected void insertOpenItem(final AccountCurrency pItem) throws JDataException {
+    protected void insertOpenItem(final AccountCurrency pItem) throws JOceanusException {
         /* Insert standard fields */
         super.insertOpenItem(pItem);
 
@@ -133,7 +132,7 @@ public class SheetAccountCurrency
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Prepare standard fields */
         super.prepareSheet();
 
@@ -142,7 +141,7 @@ public class SheetAccountCurrency
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Format standard fields */
         super.formatSheet();
 
@@ -162,11 +161,11 @@ public class SheetAccountCurrency
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JDataException {
+                                         final MoneyWiseData pData) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -216,8 +215,8 @@ public class SheetAccountCurrency
             myList.reSort();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Currencies", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load Account Currencies", e);
         }
 
         /* Return to caller */

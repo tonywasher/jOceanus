@@ -22,8 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Cipher Modes. Available algorithms.
@@ -113,15 +112,15 @@ public enum CipherMode {
      * get value from id.
      * @param id the id value
      * @return the corresponding enumeration object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static CipherMode fromId(final int id) throws JDataException {
+    public static CipherMode fromId(final int id) throws JOceanusException {
         for (CipherMode myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid CipherMode: "
-                                                      + id);
+        throw new JOceanusException("Invalid CipherMode: "
+                                    + id);
     }
 }

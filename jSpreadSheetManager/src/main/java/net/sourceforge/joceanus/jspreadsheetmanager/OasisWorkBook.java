@@ -28,11 +28,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.attribute.table.TableMessageTypeAttribute;
@@ -216,9 +215,9 @@ public class OasisWorkBook {
     /**
      * Constructor.
      * @param pInput the input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public OasisWorkBook(final InputStream pInput) throws JDataException {
+    public OasisWorkBook(final InputStream pInput) throws JOceanusException {
         try {
             /* Access book and contents */
             theBook = SpreadsheetDocument.loadDocument(pInput);
@@ -244,15 +243,15 @@ public class OasisWorkBook {
             buildSheetMap();
             buildRangeMap();
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, ERROR_LOAD, e);
+            throw new JOceanusException(ERROR_LOAD, e);
         }
     }
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public OasisWorkBook() throws JDataException {
+    public OasisWorkBook() throws JOceanusException {
         try {
             /* Create an empty document */
             theBook = SpreadsheetDocument.newSpreadsheetDocument();
@@ -282,20 +281,20 @@ public class OasisWorkBook {
             /* Create the cellStyles */
             createCellStyles();
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, ERROR_LOAD, e);
+            throw new JOceanusException(ERROR_LOAD, e);
         }
     }
 
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JDataException {
+    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
         try {
             theBook.save(pOutput);
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, ERROR_SAVE, e);
+            throw new JOceanusException(ERROR_SAVE, e);
         }
     }
 
@@ -366,9 +365,9 @@ public class OasisWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range or null if range does not exist
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataView getRangeView(final String pName) throws JDataException {
+    protected DataView getRangeView(final String pName) throws JOceanusException {
         /* Locate the named range in the map */
         TableNamedRangeElement myRange = theRangeMap.get(pName);
         if (myRange == null) {
@@ -384,9 +383,9 @@ public class OasisWorkBook {
         /* Obtain the sheet and reject if missing */
         DataSheet mySheet = getSheet(myFirstCell.getSheetName());
         if (mySheet == null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
-                                                           + pName
-                                                           + " not found in workbook");
+            throw new JOceanusException("Sheet for "
+                                        + pName
+                                        + " not found in workbook");
         }
 
         /* Return the view */
@@ -432,15 +431,15 @@ public class OasisWorkBook {
      * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void declareRange(final String pName,
-                                final OasisCellRange pRange) throws JDataException {
+                                final OasisCellRange pRange) throws JOceanusException {
         /* Check for existing range */
         if (theRangeMap.get(pName) != null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Name "
-                                                           + pName
-                                                           + "already exists in workbook");
+            throw new JOceanusException("Name "
+                                        + pName
+                                        + "already exists in workbook");
         }
 
         /* Protect against exceptions */
@@ -450,7 +449,7 @@ public class OasisWorkBook {
             myRange.setTableBaseCellAddressAttribute(pRange.getFirstCell().toString());
             theRangeMap.put(pName, myRange);
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to declare range", e);
+            throw new JOceanusException("Failed to declare range", e);
         }
     }
 
@@ -460,12 +459,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValidRange the name of the validation range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataValidation(final OasisSheet pSheet,
                                        final CellPosition pFirstCell,
                                        final CellPosition pLastCell,
-                                       final String pValidRange) throws JDataException {
+                                       final String pValidRange) throws JOceanusException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -486,12 +485,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValueList the value list
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void applyDataValidation(final OasisSheet pSheet,
                                        final CellPosition pFirstCell,
                                        final CellPosition pLastCell,
-                                       final String[] pValueList) throws JDataException {
+                                       final String[] pValueList) throws JOceanusException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -526,12 +525,12 @@ public class OasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pConstraint the constraint
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void applyDataConstraint(final OasisSheet pSheet,
                                      final CellPosition pFirstCell,
                                      final CellPosition pLastCell,
-                                     final TableContentValidationElement pConstraint) throws JDataException {
+                                     final TableContentValidationElement pConstraint) throws JOceanusException {
         /* Determine size of range */
         String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
@@ -554,9 +553,9 @@ public class OasisWorkBook {
      * Create Data Constraint.
      * @param pConstraint the constraint list
      * @return the constraint
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private TableContentValidationElement createDataConstraint(final String pConstraint) throws JDataException {
+    private TableContentValidationElement createDataConstraint(final String pConstraint) throws JOceanusException {
         /* Build the name */
         String myName = "val"
                         + ++theNumConstraints;
@@ -581,9 +580,9 @@ public class OasisWorkBook {
     /**
      * Apply Data Filter.
      * @param pRange the range to apply the filter to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void applyDataFilter(final OasisCellRange pRange) throws JDataException {
+    protected void applyDataFilter(final OasisCellRange pRange) throws JOceanusException {
         /* Create the new filter */
         TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
         myFilter.setTableNameAttribute("__Anonymous_Sheet_DB__14");

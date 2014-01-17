@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamanager;
+package net.sourceforge.joceanus.jtethys;
 
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 
 /**
  * Data Conversion utility functions.
@@ -273,16 +271,16 @@ public final class DataConverter {
      * parse a byte array from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static byte[] hexStringToBytes(final String pHexString) throws JDataException {
+    public static byte[] hexStringToBytes(final String pHexString) throws JOceanusException {
         /* Access the length of the hex string */
         int myLen = pHexString.length();
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_HEXLEN
-                                                          + pHexString);
+            throw new JOceanusException(ERROR_HEXLEN
+                                        + pHexString);
         }
 
         /* Allocate the new bytes array */
@@ -296,8 +294,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
-                                                              + pHexString);
+                throw new JOceanusException(ERROR_HEXDIGIT
+                                            + pHexString);
             }
 
             /* Initialise result */
@@ -309,8 +307,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
-                                                              + pHexString);
+                throw new JOceanusException(ERROR_HEXDIGIT
+                                            + pHexString);
             }
 
             /* Add into result */
@@ -331,9 +329,9 @@ public final class DataConverter {
      * parse a long from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static long hexStringToLong(final String pHexString) throws JDataException {
+    public static long hexStringToLong(final String pHexString) throws JOceanusException {
         /* Access the length of the hex string */
         String myHexString = pHexString;
         int myLen = myHexString.length();
@@ -349,8 +347,8 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_HEXLEN
-                                                          + pHexString);
+            throw new JOceanusException(ERROR_HEXLEN
+                                        + pHexString);
         }
 
         /* Loop through the string */
@@ -361,8 +359,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, ERROR_HEXDIGIT
-                                                              + pHexString);
+                throw new JOceanusException(ERROR_HEXDIGIT
+                                            + pHexString);
             }
 
             /* Add into the value */
@@ -383,9 +381,9 @@ public final class DataConverter {
      * Convert character array to byte array.
      * @param pChars the character array
      * @return the byte array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static byte[] charsToByteArray(final char[] pChars) throws JDataException {
+    public static byte[] charsToByteArray(final char[] pChars) throws JOceanusException {
         /* protect against exceptions */
         try {
             /* Transform the character array to a byte array */
@@ -395,7 +393,7 @@ public final class DataConverter {
             out.flush();
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 
@@ -403,9 +401,9 @@ public final class DataConverter {
      * Convert byte array to character array.
      * @param pBytes the byte array
      * @return the character array
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static char[] bytesToCharArray(final byte[] pBytes) throws JDataException {
+    public static char[] bytesToCharArray(final byte[] pBytes) throws JOceanusException {
         /* protect against exceptions */
         try {
             /* Allocate the character array allowing for one character per byte */
@@ -423,7 +421,7 @@ public final class DataConverter {
             /* Return the array */
             return myArray;
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 
@@ -519,13 +517,13 @@ public final class DataConverter {
      * get Bytes from String.
      * @param pInput the bytes to obtain the string from
      * @return the bytes representing the bytes
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static String byteArrayToString(final byte[] pInput) throws JDataException {
+    public static String byteArrayToString(final byte[] pInput) throws JOceanusException {
         try {
             return new String(pInput, ENCODING);
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 
@@ -533,13 +531,13 @@ public final class DataConverter {
      * get Bytes from String.
      * @param pInput the string to obtain the bytes from
      * @return the bytes representing the string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static byte[] stringToByteArray(final String pInput) throws JDataException {
+    public static byte[] stringToByteArray(final String pInput) throws JOceanusException {
         try {
             return pInput.getBytes(ENCODING);
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, e.getMessage(), e);
+            throw new JOceanusException(e.getMessage(), e);
         }
     }
 
@@ -548,10 +546,10 @@ public final class DataConverter {
      * @param pFirst the first Hash
      * @param pSecond the second Hash
      * @return the combined hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static byte[] combineHashes(final byte[] pFirst,
-                                       final byte[] pSecond) throws JDataException {
+                                       final byte[] pSecond) throws JOceanusException {
         /* Handle nulls */
         if (pFirst == null) {
             return pSecond;

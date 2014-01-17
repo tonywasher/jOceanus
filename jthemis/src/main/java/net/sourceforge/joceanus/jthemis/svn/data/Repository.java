@@ -31,13 +31,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Component.ComponentList;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -257,10 +256,10 @@ public class Repository
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public Repository(final PreferenceManager pPreferenceMgr,
-                      final ReportStatus pReport) throws JDataException {
+                      final ReportStatus pReport) throws JOceanusException {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
         theLogger = thePreferenceMgr.getLogger();
@@ -464,9 +463,9 @@ public class Repository
      * Get FileURL as input stream.
      * @param pPath the base URL path
      * @return the stream of null if file does not exists
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ProjectDefinition parseProjectURL(final String pPath) throws JDataException {
+    public ProjectDefinition parseProjectURL(final String pPath) throws JOceanusException {
         InputStream myInput = null;
         /* Build the URL */
         try {
@@ -496,8 +495,8 @@ public class Repository
             return myProject;
 
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to parse project file for "
-                                                                + pPath, e);
+            throw new JOceanusException("Failed to parse project file for "
+                                        + pPath, e);
         } finally {
             if (myInput != null) {
                 try {
@@ -513,9 +512,9 @@ public class Repository
      * Get FileURL as input stream.
      * @param pURL the URL to stream
      * @return the stream of null if file does not exists
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public InputStream getFileURLasInputStream(final SVNURL pURL) throws JDataException {
+    public InputStream getFileURLasInputStream(final SVNURL pURL) throws JOceanusException {
         /* Access client */
         SVNClientManager myMgr = getClientManager();
         SVNWCClient myClient = myMgr.getWCClient();
@@ -535,7 +534,7 @@ public class Repository
 
             /* Allow file not existing */
             if (myCode != SVNErrorCode.FS_NOT_FOUND) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Unable to read File URL", e);
+                throw new JOceanusException("Unable to read File URL", e);
             }
 
             /* Set stream to null */

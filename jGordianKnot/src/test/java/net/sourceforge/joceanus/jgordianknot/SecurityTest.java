@@ -38,13 +38,12 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
 
@@ -95,11 +94,11 @@ public class SecurityTest {
      * @param pDirectory the directory to archive
      * @param bSecure encrypt the zip file (true/false)
      * @return the contents of the zip file
-     * @throws JDataException
+     * @throws JOceanusException
      */
     protected static ZipFileContents createZipFile(File pZipFile,
                                                    File pDirectory,
-                                                   boolean bSecure) throws JDataException {
+                                                   boolean bSecure) throws JOceanusException {
         ZipWriteFile myZipFile;
 
         try {
@@ -126,7 +125,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new JDataException(ExceptionClass.LOGIC, "Invalid source directory");
+                throw new JOceanusException("Invalid source directory");
 
             /* Loop through the files is the directory */
             for (File myFile : pDirectory.listFiles()) {
@@ -158,10 +157,10 @@ public class SecurityTest {
             /* Return the zip file entries */
             return myZipFile.getContents();
 
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.DATA, "Failed to create Zip File", e);
+            throw new JOceanusException("Failed to create Zip File", e);
         }
     }
 
@@ -169,10 +168,10 @@ public class SecurityTest {
      * Extract a Zip File to a directory
      * @param pZipFile the name of the zip file to extract from
      * @param pDirectory the directory to extract to
-     * @throws JDataException
+     * @throws JOceanusException
      */
     protected static void extractZipFile(File pZipFile,
-                                         File pDirectory) throws JDataException {
+                                         File pDirectory) throws JOceanusException {
         ZipReadFile myZipFile;
 
         try {
@@ -198,7 +197,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new JDataException(ExceptionClass.LOGIC, "Invalid source directory");
+                throw new JOceanusException("Invalid source directory");
 
             Iterator<ZipFileEntry> myIterator = myContents.iterator();
             while (myIterator.hasNext()) {
@@ -223,18 +222,18 @@ public class SecurityTest {
                 myOutBuffer.close();
             }
 
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.DATA, "Failed to extract Zip File", e);
+            throw new JOceanusException("Failed to extract Zip File", e);
         }
     }
 
     /**
      * Test security algorithms
-     * @throws JDataException
+     * @throws JOceanusException
      */
-    protected static void testSecurity() throws JDataException {
+    protected static void testSecurity() throws JOceanusException {
         /* Create new Password Hash */
         SecureManager myManager = new SecureManager(theLogger);
         PasswordHash myHash = myManager.resolvePasswordHash(null, "New");
@@ -405,7 +404,7 @@ public class SecurityTest {
     /**
      * Check the supported algorithms
      */
-    protected static void checkAlgorithms() throws JDataException {
+    protected static void checkAlgorithms() throws JOceanusException {
         /* Create new Security Generator */
         SecurityParameters myParams = new SecurityParameters(SecurityProvider.BC, true);
         SecureManager myManager = new SecureManager(theLogger, myParams);

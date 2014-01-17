@@ -30,8 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -40,7 +38,8 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JUnits;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
@@ -242,121 +241,121 @@ public class JFieldSet<T extends JFieldSetItem>
          * @param <I> the value class
          * @param pClass the required class
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public <I> I getValue(final Class<I> pClass) throws JDataException {
+        public <I> I getValue(final Class<I> pClass) throws JOceanusException {
             try {
                 return pClass.cast(theValue);
             } catch (ClassCastException e) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid dataType", e);
+                throw new JOceanusException("Invalid dataType", e);
             }
         }
 
         /**
          * Obtain the value as String.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public String getString() throws JDataException {
+        public String getString() throws JOceanusException {
             return getValue(String.class);
         }
 
         /**
          * Obtain the value as Character Array.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public char[] getCharArray() throws JDataException {
+        public char[] getCharArray() throws JOceanusException {
             return getValue(char[].class);
         }
 
         /**
          * Obtain the value as Short.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public Short getShort() throws JDataException {
+        public Short getShort() throws JOceanusException {
             return getValue(Short.class);
         }
 
         /**
          * Obtain the value as Integer.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public Integer getInteger() throws JDataException {
+        public Integer getInteger() throws JOceanusException {
             return getValue(Integer.class);
         }
 
         /**
          * Obtain the value as Long.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public Long getLong() throws JDataException {
+        public Long getLong() throws JOceanusException {
             return getValue(Long.class);
         }
 
         /**
          * Obtain the value as Boolean.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public Boolean getBoolean() throws JDataException {
+        public Boolean getBoolean() throws JOceanusException {
             return getValue(Boolean.class);
         }
 
         /**
          * Obtain the value as DateDay.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JDateDay getDateDay() throws JDataException {
+        public JDateDay getDateDay() throws JOceanusException {
             return getValue(JDateDay.class);
         }
 
         /**
          * Obtain the value as Money.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JMoney getMoney() throws JDataException {
+        public JMoney getMoney() throws JOceanusException {
             return getValue(JMoney.class);
         }
 
         /**
          * Obtain the value as Rate.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JRate getRate() throws JDataException {
+        public JRate getRate() throws JOceanusException {
             return getValue(JRate.class);
         }
 
         /**
          * Obtain the value as Price.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JPrice getPrice() throws JDataException {
+        public JPrice getPrice() throws JOceanusException {
             return getValue(JPrice.class);
         }
 
         /**
          * Obtain the value as Units.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JUnits getUnits() throws JDataException {
+        public JUnits getUnits() throws JOceanusException {
             return getValue(JUnits.class);
         }
 
         /**
          * Obtain the value as Dilution.
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public JDilution getDilution() throws JDataException {
+        public JDilution getDilution() throws JOceanusException {
             return getValue(JDilution.class);
         }
 

@@ -32,8 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Load control for spreadsheets.
@@ -137,9 +136,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * Load a Backup Workbook.
      * @param pFile the backup file to write to
      * @return the loaded DataSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public T loadBackup(final File pFile) throws JDataException {
+    public T loadBackup(final File pFile) throws JOceanusException {
         InputStream myStream = null;
 
         /* Protect the workbook retrieval */
@@ -195,12 +194,12 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, ERROR_CANCEL);
+                throw new JOceanusException(ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
-                                                           + pFile.getName(), e);
+            throw new JOceanusException("Failed to load Backup Workbook: "
+                                        + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -223,9 +222,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * Load an Extract Workbook.
      * @param pFile the Extract file to load from
      * @return the loaded DataSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public T loadExtract(final File pFile) throws JDataException {
+    public T loadExtract(final File pFile) throws JOceanusException {
         InputStream myStream = null;
 
         /* Protect the workbook retrieval */
@@ -254,12 +253,12 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JDataException(ExceptionClass.EXCEL, ERROR_CANCEL);
+                throw new JOceanusException(ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
-                                                           + pFile.getName(), e);
+            throw new JOceanusException("Failed to load Edit-able Workbook: "
+                                        + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -294,11 +293,11 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @param pStream the input stream
      * @return continue true/false
      * @param pType the workBookType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      * @throws IOException on read error
      */
     private boolean initialiseWorkBook(final InputStream pStream,
-                                       final WorkBookType pType) throws JDataException, IOException {
+                                       final WorkBookType pType) throws JOceanusException, IOException {
         /* Create the new DataSet */
         theData = newDataSet();
 
@@ -338,9 +337,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     /**
      * Load the WorkBook.
      * @return continue true/false
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private boolean loadWorkBook() throws JDataException {
+    private boolean loadWorkBook() throws JOceanusException {
         SheetDataItem<?> mySheet;
 
         /* Access the iterator for the list */

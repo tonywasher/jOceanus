@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
@@ -60,14 +60,14 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract void loadEncryptedItem(final Integer pId,
                                               final Integer pControlId,
                                               final Boolean isEnabled,
                                               final Integer iOrder,
                                               final byte[] pName,
-                                              final byte[] pDesc) throws JDataException;
+                                              final byte[] pDesc) throws JOceanusException;
 
     /**
      * Load the static data from extract.
@@ -76,13 +76,13 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
      * @param iOrder the sort order
      * @param pName the name
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract void loadClearTextItem(final Integer pId,
                                               final Boolean isEnabled,
                                               final Integer iOrder,
                                               final String pName,
-                                              final String pDesc) throws JDataException;
+                                              final String pDesc) throws JOceanusException;
 
     /**
      * The name of the items.
@@ -117,7 +117,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Boolean myEnabled = loadBoolean(COL_ENABLED);
@@ -132,7 +132,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Boolean myEnabled = loadBoolean(COL_ENABLED);
         Integer myOrder = loadInteger(COL_ORDER);
@@ -146,7 +146,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void insertSecureItem(final T pItem) throws JDataException {
+    protected void insertSecureItem(final T pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeBoolean(COL_ENABLED, pItem.getEnabled());
@@ -156,7 +156,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void insertOpenItem(final T pItem) throws JDataException {
+    protected void insertOpenItem(final T pItem) throws JOceanusException {
         /* Set the fields */
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
@@ -165,7 +165,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_ORDER, StaticData.FIELD_ORDER.getName());
         writeHeader(COL_ENABLED, StaticData.FIELD_ENABLED.getName());
@@ -174,7 +174,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set default column types */
         setBooleanColumn(COL_ENABLED);
         setIntegerColumn(COL_ORDER);

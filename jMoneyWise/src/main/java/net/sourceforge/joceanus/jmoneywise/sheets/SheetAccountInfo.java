@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataInfo extension for AccountInfo.
@@ -84,13 +84,13 @@ public class SheetAccountInfo
                                      final Integer pControlId,
                                      final Integer pInfoTypeId,
                                      final Integer pOwnerId,
-                                     final byte[] pValue) throws JDataException {
+                                     final byte[] pValue) throws JOceanusException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();
 

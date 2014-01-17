@@ -27,8 +27,6 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.
@@ -334,9 +333,9 @@ public class TaxYear
 
     /**
      * adjust values after taxRegime change.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void adjustForTaxRegime() throws JDataException {
+    public void adjustForTaxRegime() throws JOceanusException {
         /* Access tax regime */
         TaxRegime myRegime = getTaxRegime();
 
@@ -361,180 +360,180 @@ public class TaxYear
     /**
      * Set a new allowance.
      * @param pAllowance the allowance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAllowance(final JMoney pAllowance) throws JDataException {
+    public void setAllowance(final JMoney pAllowance) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.ALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new rental allowance.
      * @param pAllowance the allowance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setRentalAllowance(final JMoney pAllowance) throws JDataException {
+    public void setRentalAllowance(final JMoney pAllowance) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.RENTALALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new capital allowance.
      * @param pAllowance the allowance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCapitalAllow(final JMoney pAllowance) throws JDataException {
+    public void setCapitalAllow(final JMoney pAllowance) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.CAPITALALLOWANCE, pAllowance);
     }
 
     /**
      * Set a new Low Tax Band.
      * @param pLoBand the Low Tax Band
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setLoBand(final JMoney pLoBand) throws JDataException {
+    public void setLoBand(final JMoney pLoBand) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.LOTAXBAND, pLoBand);
     }
 
     /**
      * Set a new Basic Tax Band.
      * @param pBasicBand the Basic Tax Band
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBasicBand(final JMoney pBasicBand) throws JDataException {
+    public void setBasicBand(final JMoney pBasicBand) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.BASICTAXBAND, pBasicBand);
     }
 
     /**
      * Set a new Low Age Allowance.
      * @param pLoAgeAllow the Low Age Allowance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setLoAgeAllow(final JMoney pLoAgeAllow) throws JDataException {
+    public void setLoAgeAllow(final JMoney pLoAgeAllow) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.LOAGEALLOWANCE, pLoAgeAllow);
     }
 
     /**
      * Set a new High Age Allowance.
      * @param pHiAgeAllow the High Age Allowance
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHiAgeAllow(final JMoney pHiAgeAllow) throws JDataException {
+    public void setHiAgeAllow(final JMoney pHiAgeAllow) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.HIAGEALLOWANCE, pHiAgeAllow);
     }
 
     /**
      * Set a new Age Allowance Limit.
      * @param pAgeAllowLimit the Age Allowance Limit
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAgeAllowLimit(final JMoney pAgeAllowLimit) throws JDataException {
+    public void setAgeAllowLimit(final JMoney pAgeAllowLimit) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.AGEALLOWANCELIMIT, pAgeAllowLimit);
     }
 
     /**
      * Set a new Additional Allowance Limit.
      * @param pAddAllowLimit the Additional Allowance Limit
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAddAllowLimit(final JMoney pAddAllowLimit) throws JDataException {
+    public void setAddAllowLimit(final JMoney pAddAllowLimit) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, pAddAllowLimit);
     }
 
     /**
      * Set a new Additional Income Boundary.
      * @param pAddIncBound the Additional Income Boundary
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAddIncBound(final JMoney pAddIncBound) throws JDataException {
+    public void setAddIncBound(final JMoney pAddIncBound) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, pAddIncBound);
     }
 
     /**
      * Set a new Low Tax Rate.
      * @param pRate the Low Tax Rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setLoTaxRate(final JRate pRate) throws JDataException {
+    public void setLoTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.LOTAXRATE, pRate);
     }
 
     /**
      * Set a new Basic tax rate.
      * @param pRate the Basic tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBasicTaxRate(final JRate pRate) throws JDataException {
+    public void setBasicTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.BASICTAXRATE, pRate);
     }
 
     /**
      * Set a new high tax rate.
      * @param pRate the high tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHiTaxRate(final JRate pRate) throws JDataException {
+    public void setHiTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.HITAXRATE, pRate);
     }
 
     /**
      * Set a new Interest Tax Rate.
      * @param pRate the Interest Tax Rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setIntTaxRate(final JRate pRate) throws JDataException {
+    public void setIntTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.INTERESTTAXRATE, pRate);
     }
 
     /**
      * Set a new Dividend tax rate.
      * @param pRate the Dividend tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDivTaxRate(final JRate pRate) throws JDataException {
+    public void setDivTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.DIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new high dividend tax rate.
      * @param pRate the high dividend tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHiDivTaxRate(final JRate pRate) throws JDataException {
+    public void setHiDivTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new additional tax rate.
      * @param pRate the additional tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAddTaxRate(final JRate pRate) throws JDataException {
+    public void setAddTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALTAXRATE, pRate);
     }
 
     /**
      * Set a new additional dividend tax rate.
      * @param pRate the additional dividend tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setAddDivTaxRate(final JRate pRate) throws JDataException {
+    public void setAddDivTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, pRate);
     }
 
     /**
      * Set a new capital tax rate.
      * @param pRate the capital tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCapTaxRate(final JRate pRate) throws JDataException {
+    public void setCapTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.CAPITALTAXRATE, pRate);
     }
 
     /**
      * Set a high capital tax rate.
      * @param pRate the high capital tax rate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHiCapTaxRate(final JRate pRate) throws JDataException {
+    public void setHiCapTaxRate(final JRate pRate) throws JOceanusException {
         setInfoSetValue(TaxYearInfoClass.HICAPITALTAXRATE, pRate);
     }
 
@@ -542,13 +541,13 @@ public class TaxYear
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void setInfoSetValue(final TaxYearInfoClass pInfoClass,
-                                 final Object pValue) throws JDataException {
+                                 final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
+            throw new JOceanusException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -715,12 +714,12 @@ public class TaxYear
      * @param pId the id
      * @param pRegimeId the regime id
      * @param pDate the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public TaxYear(final TaxYearList pList,
                    final Integer pId,
                    final Integer pRegimeId,
-                   final JDateDay pDate) throws JDataException {
+                   final JDateDay pDate) throws JOceanusException {
         /* Initialise item */
         super(pList, pId, pRegimeId, pDate);
 
@@ -736,12 +735,12 @@ public class TaxYear
      * @param pId the id
      * @param pRegime the tax regime
      * @param pDate the date
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public TaxYear(final TaxYearList pList,
                    final Integer pId,
                    final String pRegime,
-                   final JDateDay pDate) throws JDataException {
+                   final JDateDay pDate) throws JOceanusException {
         /* Initialise item */
         super(pList, pId, pRegime, pDate);
 
@@ -885,7 +884,7 @@ public class TaxYear
         }
 
         @Override
-        public TaxYearList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public TaxYearList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             /* Clone the list */
             return (TaxYearList) super.cloneList(pDataSet);
         }
@@ -981,24 +980,24 @@ public class TaxYear
          * @param pId the id
          * @param pRegimeId the regime id
          * @param pDate the date
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pRegimeId,
-                                  final JDateDay pDate) throws JDataException {
+                                  final JDateDay pDate) throws JOceanusException {
             /* Create the tax year */
             TaxYear myTaxYear = new TaxYear(this, pId, pRegimeId, pDate);
 
             /* Check that this TaxYearId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */
@@ -1011,18 +1010,18 @@ public class TaxYear
          * @param pRegime the regime
          * @param pDate the date
          * @return the taxYear
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public TaxYear addOpenItem(final Integer pId,
                                    final String pRegime,
-                                   final JDateDay pDate) throws JDataException {
+                                   final JDateDay pDate) throws JOceanusException {
             /* Create the tax year */
             TaxYear myTaxYear = new TaxYear(this, pId, pRegime, pDate);
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
+                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */

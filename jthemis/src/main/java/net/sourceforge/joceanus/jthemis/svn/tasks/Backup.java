@@ -29,8 +29,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
@@ -40,6 +38,7 @@ import net.sourceforge.joceanus.jgordianknot.zipfile.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipWriteFile;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
@@ -139,11 +138,11 @@ public class Backup {
      * @param pRepository the repository directory
      * @param pSecurity the secure manager
      * @param pZipFile the zipFile to load
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void loadRepository(final File pRepository,
                                final SecureManager pSecurity,
-                               final File pZipFile) throws JDataException {
+                               final File pZipFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the zipFile */
@@ -171,7 +170,7 @@ public class Backup {
             /* Read the data from the input stream */
             theAdminClient.doLoad(pRepository, myStream);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed", e);
+            throw new JOceanusException("Failed", e);
         }
 
         /* Return to caller */
@@ -208,12 +207,12 @@ public class Backup {
      * @param pHash the password hash
      * @param pRepository the repository directory
      * @param pBackupDir the backup directory
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void backUpRepository(final SecureManager pManager,
                                   final PasswordHash pHash,
                                   final File pRepository,
-                                  final File pBackupDir) throws JDataException {
+                                  final File pBackupDir) throws JOceanusException {
         ZipWriteFile myZipFile = null;
         OutputStream myStream = null;
         boolean bSuccess = true;
@@ -298,11 +297,11 @@ public class Backup {
 
             /* Handle other exceptions */
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to dump repository to zipfile", e);
+            throw new JOceanusException("Failed to dump repository to zipfile", e);
 
             /* Handle other exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to dump repository to zipfile", e);
+            throw new JOceanusException("Failed to dump repository to zipfile", e);
 
             /* Clean up on exit */
         } finally {
@@ -335,10 +334,10 @@ public class Backup {
      * Backup repositories.
      * @param pManager the secure manager
      * @param pHash the password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void backUpRepositories(final SecureManager pManager,
-                                   final PasswordHash pHash) throws JDataException {
+                                   final PasswordHash pHash) throws JOceanusException {
         int iNumStages = 0;
 
         /* Install an event handler */

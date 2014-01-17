@@ -28,14 +28,13 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Generic implementation of a DataList for DataItems.
@@ -405,9 +404,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Derive an cloned extract of this list.
      * @param pDataSet the new DataSet
      * @return the cloned list
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected DataList<T> cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+    protected DataList<T> cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(ListStyle.CLONE);
         myList.theDataSet = pDataSet;
@@ -427,9 +426,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Derive an extract of this list.
      * @param pStyle the Style of the extract
      * @return the derived list
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataList<T> deriveList(final ListStyle pStyle) throws JDataException {
+    public DataList<T> deriveList(final ListStyle pStyle) throws JOceanusException {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(pStyle);
 
@@ -443,9 +442,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * Populate a list extract.
      * @param pList the list to populate
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void populateList(final DataList<T> pList) throws JDataException {
+    protected void populateList(final DataList<T> pList) throws JOceanusException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = myStyle == ListStyle.UPDATE;
@@ -479,9 +478,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     /**
      * Adjust links.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Create an iterator for all items in the list */
         Iterator<? extends DataItem> myIterator = iterator();
 
@@ -768,13 +767,13 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     /**
      * Perform a validation on data load.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void validateOnLoad() throws JDataException {
+    public void validateOnLoad() throws JOceanusException {
         /* Validate the list */
         DataErrorList<DataItem> myErrors = validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 

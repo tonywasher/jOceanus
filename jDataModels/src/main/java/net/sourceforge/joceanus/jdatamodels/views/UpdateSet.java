@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -40,7 +39,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Provides control of a set of update-able DataLists.
@@ -347,7 +347,7 @@ public class UpdateSet
                 myEntry.prepareChanges();
             }
             return true;
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             Logger myLogger = theControl.getLogger();
             myLogger.log(Level.SEVERE, "Failed to prepare changes", e);
             return false;
@@ -489,7 +489,7 @@ public class UpdateSet
         }
 
         /* Access any error */
-        DataErrorList<JDataException> myErrors = theControl.getErrors();
+        DataErrorList<JOceanusException> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -505,6 +505,6 @@ public class UpdateSet
          * Set error list for window.
          * @param pExceptions the exceptions
          */
-        void setErrors(final DataErrorList<JDataException> pExceptions);
+        void setErrors(final DataErrorList<JOceanusException> pExceptions);
     }
 }

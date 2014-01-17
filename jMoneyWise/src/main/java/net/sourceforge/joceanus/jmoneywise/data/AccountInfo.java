@@ -26,8 +26,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -40,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Representation of an information extension of an account.
@@ -199,14 +198,14 @@ public class AccountInfo
      * @param pInfoTypeId the info id
      * @param pAccountId the Account id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfo(final AccountInfoList pList,
                         final Integer pId,
                         final Integer pControlId,
                         final Integer pInfoTypeId,
                         final Integer pAccountId,
-                        final byte[] pValue) throws JDataException {
+                        final byte[] pValue) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId, pControlId, pInfoTypeId, pAccountId);
 
@@ -218,7 +217,7 @@ public class AccountInfo
             AccountInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueInfoType(myType);
 
@@ -227,7 +226,7 @@ public class AccountInfo
             Account myOwner = myAccounts.findItemById(pAccountId);
             if (myOwner == null) {
                 addError(ERROR_UNKNOWN, FIELD_OWNER);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueOwner(myOwner);
 
@@ -252,7 +251,7 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                            throw new JOceanusException(this, ERROR_RESOLUTION);
                         }
                         setValueLink(myLink);
                     }
@@ -270,15 +269,15 @@ public class AccountInfo
                     setValueBytes(pValue, JMoney.class);
                     break;
                 default:
-                    throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
+                    throw new JOceanusException(this, ERROR_BADDATATYPE);
             }
 
             /* Access the AccountInfoSet and register this data */
             AccountInfoSet mySet = myOwner.getInfoSet();
             mySet.registerInfo(this);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -289,13 +288,13 @@ public class AccountInfo
      * @param pInfoType the info type
      * @param pAccount the Account
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfo(final AccountInfoList pList,
                         final Integer pId,
                         final AccountInfoType pInfoType,
                         final Account pAccount,
-                        final Object pValue) throws JDataException {
+                        final Object pValue) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId, pInfoType, pAccount);
 
@@ -306,9 +305,9 @@ public class AccountInfo
             /* Access the AccountInfoSet and register this data */
             AccountInfoSet mySet = pAccount.getInfoSet();
             mySet.registerInfo(this);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -351,7 +350,7 @@ public class AccountInfo
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -365,7 +364,7 @@ public class AccountInfo
         AccountInfoType myNewType = myTypes.findItemById(myType.getId());
         if (myNewType == null) {
             addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+            throw new JOceanusException(this, ERROR_RESOLUTION);
         }
         setValueInfoType(myNewType);
 
@@ -374,7 +373,7 @@ public class AccountInfo
         Account myOwner = myAccounts.findItemById(myAccount.getId());
         if (myOwner == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+            throw new JOceanusException(this, ERROR_RESOLUTION);
         }
         setValueOwner(myOwner);
 
@@ -399,7 +398,7 @@ public class AccountInfo
             /* Check link is valid */
             if (myNewLink == null) {
                 addError(ERROR_UNKNOWN, FIELD_LINK);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
 
             /* Update link value */
@@ -436,10 +435,10 @@ public class AccountInfo
     /**
      * Set Value.
      * @param pValue the Value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     @Override
-    protected void setValue(final Object pValue) throws JDataException {
+    protected void setValue(final Object pValue) throws JOceanusException {
         /* Access the info Type */
         AccountInfoType myType = getInfoType();
 
@@ -470,9 +469,9 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION
-                                                                                + " "
-                                                                                + myName);
+                            throw new JOceanusException(this, ERROR_VALIDATION
+                                                              + " "
+                                                              + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);
@@ -524,7 +523,7 @@ public class AccountInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
+            throw new JOceanusException(this, ERROR_BADDATATYPE);
         }
     }
 
@@ -638,7 +637,7 @@ public class AccountInfo
         }
 
         @Override
-        public AccountInfoList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountInfoList) super.cloneList(pDataSet);
         }
 
@@ -677,20 +676,20 @@ public class AccountInfo
          * @param pInfoTypeId the info type id
          * @param pAccountId the account id
          * @param pValue the data
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Integer pInfoTypeId,
                                   final Integer pAccountId,
-                                  final byte[] pValue) throws JDataException {
+                                  final byte[] pValue) throws JOceanusException {
             /* Create the info */
             AccountInfo myInfo = new AccountInfo(this, pId, pControlId, pInfoTypeId, pAccountId, pValue);
 
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
+                throw new JOceanusException(myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -698,7 +697,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
+                throw new JOceanusException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -709,7 +708,7 @@ public class AccountInfo
         public void addOpenItem(final Integer pId,
                                 final Account pAccount,
                                 final AccountInfoClass pInfoClass,
-                                final Object pValue) throws JDataException {
+                                final Object pValue) throws JOceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
                 return;
@@ -721,10 +720,10 @@ public class AccountInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pAccount, ERROR_BADINFOCLASS
-                                                                        + " ["
-                                                                        + pInfoClass
-                                                                        + "]");
+                throw new JOceanusException(pAccount, ERROR_BADINFOCLASS
+                                                      + " ["
+                                                      + pInfoClass
+                                                      + "]");
             }
 
             /* Create a new Account Info Type */
@@ -733,7 +732,7 @@ public class AccountInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
+                throw new JOceanusException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Info to the list */
@@ -744,7 +743,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
+                throw new JOceanusException(myInfo, ERROR_VALIDATION);
             }
         }
     }

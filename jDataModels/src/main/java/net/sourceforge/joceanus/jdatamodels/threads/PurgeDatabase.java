@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be marked as new so that it will be written to the database via the
@@ -67,7 +67,7 @@ public class PurgeDatabase<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Purging Database");
 

@@ -37,8 +37,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Wrapper class for a stream cipher.
@@ -96,10 +95,10 @@ public class StreamCipher {
      * Constructor.
      * @param pKey the symmetric key
      * @param pMode the cipher mode
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public StreamCipher(final SymmetricKey pKey,
-                        final CipherMode pMode) throws JDataException {
+                        final CipherMode pMode) throws JOceanusException {
         /* Record key */
         theSecretKey = pKey.getSecretKey();
         theBuffer = new byte[BUFSIZE];
@@ -112,16 +111,16 @@ public class StreamCipher {
             CipherMode myMode = myKeyType.adjustCipherMode(pMode);
             theCipher = Cipher.getInstance(myKeyType.getDataCipher(myMode), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+            throw new JOceanusException(ERROR_CIPHER, e);
         }
     }
 
     /**
      * Constructor.
      * @param pKey the stream key
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public StreamCipher(final StreamKey pKey) throws JDataException {
+    public StreamCipher(final StreamKey pKey) throws JOceanusException {
         /* Record key */
         theSecretKey = pKey.getSecretKey();
         theBuffer = new byte[BUFSIZE];
@@ -133,7 +132,7 @@ public class StreamCipher {
             StreamKeyType myKeyType = pKey.getKeyType();
             theCipher = Cipher.getInstance(myKeyType.getAlgorithm(myGenerator.useRestricted()), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_CIPHER, e);
+            throw new JOceanusException(ERROR_CIPHER, e);
         }
     }
 
@@ -141,9 +140,9 @@ public class StreamCipher {
      * Initialise encryption.
      * @param pRandom the random generator
      * @return the initialisation vector
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] initialiseEncryption(final SecureRandom pRandom) throws JDataException {
+    public byte[] initialiseEncryption(final SecureRandom pRandom) throws JOceanusException {
         try {
             /* Initialise the cipher using the vector */
             theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, pRandom);
@@ -152,37 +151,37 @@ public class StreamCipher {
             return theCipher.getIV();
 
         } catch (InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+            throw new JOceanusException(ERROR_INIT, e);
         }
     }
 
     /**
      * Initialise encryption.
      * @param pVector initialisation vector
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void initialiseEncryption(final byte[] pVector) throws JDataException {
+    public void initialiseEncryption(final byte[] pVector) throws JOceanusException {
         try {
             /* Initialise the cipher using the vector */
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
             theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+            throw new JOceanusException(ERROR_INIT, e);
         }
     }
 
     /**
      * Initialise decryption.
      * @param pVector initialisation vector
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void initialiseDecryption(final byte[] pVector) throws JDataException {
+    public void initialiseDecryption(final byte[] pVector) throws JOceanusException {
         try {
             /* Initialise the cipher using the vector */
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
             theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_INIT, e);
+            throw new JOceanusException(ERROR_INIT, e);
         }
     }
 
@@ -192,11 +191,11 @@ public class StreamCipher {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return number of bytes transferred to output buffer
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public int update(final byte[] pBytes,
                       final int pOffset,
-                      final int pLength) throws JDataException {
+                      final int pLength) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Check how long a buffer we need */
@@ -213,16 +212,16 @@ public class StreamCipher {
             /* Return to caller */
             return iNumBytes;
         } catch (ShortBufferException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_UPDATE, e);
+            throw new JOceanusException(ERROR_UPDATE, e);
         }
     }
 
     /**
      * Finish Cipher encrypting/decrypting any data buffered within the cipher.
      * @return number of bytes transferred to output buffer
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public int finish() throws JDataException {
+    public int finish() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Check how long a buffer we need to handle buffered data */
@@ -239,7 +238,7 @@ public class StreamCipher {
             /* Return to caller */
             return iNumBytes;
         } catch (IllegalBlockSizeException | BadPaddingException | ShortBufferException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_UPDATE, e);
+            throw new JOceanusException(ERROR_UPDATE, e);
         }
     }
 }

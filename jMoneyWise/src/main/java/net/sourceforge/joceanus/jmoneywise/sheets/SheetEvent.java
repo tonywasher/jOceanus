@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
@@ -45,6 +43,7 @@ import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for Event.
@@ -168,7 +167,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
@@ -191,7 +190,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the Account */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
@@ -239,7 +238,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void insertSecureItem(final Event pItem) throws JDataException {
+    protected void insertSecureItem(final Event pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeDate(COL_DATE, pItem.getDate());
@@ -253,7 +252,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void insertOpenItem(final Event pItem) throws JDataException {
+    protected void insertOpenItem(final Event pItem) throws JOceanusException {
         /* Determine whether we are a child event */
         boolean isChild = pItem.getParent() != null;
 
@@ -290,7 +289,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
@@ -304,7 +303,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
@@ -336,7 +335,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -350,13 +349,13 @@ public class SheetEvent
      * @param pRange the range of tax years
      * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final YearRange pRange,
-                                         final JDateDay pLastEvent) throws JDataException {
+                                         final JDateDay pLastEvent) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Access the number of reporting steps */
@@ -579,8 +578,8 @@ public class SheetEvent
             myList.validateOnLoad();
 
             /* Handle Exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Events", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to load Events", e);
         }
 
         /* Return to caller */
@@ -606,7 +605,7 @@ public class SheetEvent
         }
 
         @Override
-        public void formatSheet() throws JDataException {
+        public void formatSheet() throws JOceanusException {
             /* Apply basic formatting */
             super.formatSheet();
 

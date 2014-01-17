@@ -27,8 +27,6 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -36,6 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountCurrency data type.
@@ -135,10 +134,10 @@ public class AccountCurrency
      * Basic constructor.
      * @param pList The list to associate the Account Currency with
      * @param pName Name of Account Currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
-                            final String pName) throws JDataException {
+                            final String pName) throws JOceanusException {
         super(pList, pName);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.FALSE);
@@ -149,10 +148,10 @@ public class AccountCurrency
      * Basic constructor.
      * @param pList The list to associate the Account Currency with
      * @param pClass Class of Account Currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
-                            final AccountCurrencyClass pClass) throws JDataException {
+                            final AccountCurrencyClass pClass) throws JOceanusException {
         super(pList, pClass);
         setValueDefault(Boolean.FALSE);
         setValueEnabled(Boolean.FALSE);
@@ -168,7 +167,7 @@ public class AccountCurrency
      * @param pName Name of Account Currency
      * @param pDesc Description of Account Currency
      * @param pDefault is this the default currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
                             final Integer pId,
@@ -176,7 +175,7 @@ public class AccountCurrency
                             final Integer pOrder,
                             final String pName,
                             final String pDesc,
-                            final Boolean pDefault) throws JDataException {
+                            final Boolean pDefault) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
         setValueDefault(pDefault);
     }
@@ -191,7 +190,7 @@ public class AccountCurrency
      * @param pName Encrypted Name of Account Currency
      * @param pDesc Encrypted Description of Account Currency
      * @param pDefault is this the default currency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
                             final Integer pId,
@@ -200,7 +199,7 @@ public class AccountCurrency
                             final Integer pOrder,
                             final byte[] pName,
                             final byte[] pDesc,
-                            final Boolean pDefault) throws JDataException {
+                            final Boolean pDefault) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
         setValueDefault(pDefault);
     }
@@ -312,7 +311,7 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrencyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountCurrencyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountCurrencyList) super.cloneList(pDataSet);
         }
 
@@ -344,22 +343,22 @@ public class AccountCurrency
         /**
          * Add an AccountCurrency to the list.
          * @param pCurrency the Name of the account currency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pCurrency) throws JDataException {
+        public void addBasicItem(final String pCurrency) throws JOceanusException {
             /* Create a new Account Currency */
             AccountCurrency myCurr = new AccountCurrency(this, pCurrency);
 
             /* Check that this AccountCurrency has not been previously added */
             if (findItemByName(pCurrency) != null) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -370,7 +369,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -382,21 +381,21 @@ public class AccountCurrency
          * @param pCurrency the Name of the account currency
          * @param pDesc the Description of the account currency
          * @param pDefault is this the default currency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pCurrency,
                                 final String pDesc,
-                                final Boolean pDefault) throws JDataException {
+                                final Boolean pDefault) throws JOceanusException {
             /* Create a new Account Currency */
             AccountCurrency myCurr = new AccountCurrency(this, pId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
 
             /* Check that this AccountCurrencyTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -407,7 +406,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -420,7 +419,7 @@ public class AccountCurrency
          * @param pCurrency the encrypted Name of the account currency
          * @param pDesc the Encrypted Description of the account currency
          * @param pDefault is this the default currency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
@@ -428,14 +427,14 @@ public class AccountCurrency
                                   final Integer pOrder,
                                   final byte[] pCurrency,
                                   final byte[] pDesc,
-                                  final Boolean pDefault) throws JDataException {
+                                  final Boolean pDefault) throws JOceanusException {
             /* Create a new Account Currency */
             AccountCurrency myCurr = new AccountCurrency(this, pId, pControlId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the AccountCurrency to the list */
@@ -446,15 +445,15 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
+                throw new JOceanusException(myCurr, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (AccountCurrencyClass myClass : AccountCurrencyClass.values()) {
                 /* Create new element */
@@ -468,7 +467,7 @@ public class AccountCurrency
 
                 /* Handle validation failure */
                 if (myCurr.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
+                    throw new JOceanusException(myCurr, ERROR_VALIDATION);
                 }
             }
 

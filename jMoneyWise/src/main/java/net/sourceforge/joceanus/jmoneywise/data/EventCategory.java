@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
@@ -41,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Event Category class.
@@ -360,18 +359,18 @@ public final class EventCategory
     /**
      * Set name value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final String pValue) throws JDataException {
+    private void setValueName(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set name value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JDataException {
+    private void setValueName(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -386,18 +385,18 @@ public final class EventCategory
     /**
      * Set description value.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final String pValue) throws JDataException {
+    private void setValueDesc(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set description value.
      * @param pBytes the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
+    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -522,7 +521,7 @@ public final class EventCategory
      * @param pDesc the Encrypted Description of the category
      * @param pCatTypeId the id of the category type
      * @param pParentId the id of the parent category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventCategory(final EventCategoryList pList,
                             final Integer pId,
@@ -530,7 +529,7 @@ public final class EventCategory
                             final byte[] pName,
                             final byte[] pDesc,
                             final Integer pCatTypeId,
-                            final Integer pParentId) throws JDataException {
+                            final Integer pParentId) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -551,9 +550,9 @@ public final class EventCategory
             resolveSubCategory();
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -565,14 +564,14 @@ public final class EventCategory
      * @param pDesc the description of the category
      * @param pCategory the Category type
      * @param pParent the Parent Category
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected EventCategory(final EventCategoryList pList,
                             final Integer pId,
                             final String pName,
                             final String pDesc,
                             final String pCategory,
-                            final String pParent) throws JDataException {
+                            final String pParent) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -590,9 +589,9 @@ public final class EventCategory
             resolveSubCategory();
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -640,7 +639,7 @@ public final class EventCategory
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -659,14 +658,14 @@ public final class EventCategory
             EventCategoryType myType = myTypes.findItemById((Integer) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         } else if (myCatType instanceof String) {
             EventCategoryType myType = myTypes.findItemByName((String) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         }
@@ -680,14 +679,14 @@ public final class EventCategory
             EventCategory myCat = myList.findItemById((Integer) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         } else if (myParent instanceof String) {
             EventCategory myCat = myList.findItemByName((String) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         }
@@ -716,9 +715,9 @@ public final class EventCategory
     /**
      * Set a new category name.
      * @param pName the new name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCategoryName(final String pName) throws JDataException {
+    public void setCategoryName(final String pName) throws JOceanusException {
         setValueName(pName);
 
         /* Resolve the subCategory */
@@ -736,9 +735,9 @@ public final class EventCategory
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDescription(final String pDesc) throws JDataException {
+    public void setDescription(final String pDesc) throws JOceanusException {
         setValueDesc(pDesc);
     }
 
@@ -962,7 +961,7 @@ public final class EventCategory
         }
 
         @Override
-        public EventCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public EventCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (EventCategoryList) super.cloneList(pDataSet);
         }
 
@@ -1143,20 +1142,20 @@ public final class EventCategory
          * @param pDesc the description
          * @param pCategoryType the category type
          * @param pParent the parent category
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
                                 final String pCategoryType,
-                                final String pParent) throws JDataException {
+                                final String pParent) throws JOceanusException {
             /* Create the category */
             EventCategory myCategory = new EventCategory(this, pId, pName, pDesc, pCategoryType, pParent);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -1171,21 +1170,21 @@ public final class EventCategory
          * @param pDesc the encrypted description
          * @param pCategoryId the category id
          * @param pParentId the parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final byte[] pDesc,
                                   final Integer pCategoryId,
-                                  final Integer pParentId) throws JDataException {
+                                  final Integer pParentId) throws JOceanusException {
             /* Create the category */
             EventCategory myCategory = new EventCategory(this, pId, pControlId, pName, pDesc, pCategoryId, pParentId);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+                throw new JOceanusException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

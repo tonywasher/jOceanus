@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jspreadsheetmanager;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * WorkBook types.
@@ -77,9 +76,9 @@ public enum WorkBookType {
      * Determine workBookType of file.
      * @param pFileName the filename
      * @return the workBookType
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static WorkBookType determineType(final String pFileName) throws JDataException {
+    public static WorkBookType determineType(final String pFileName) throws JOceanusException {
         /* Loop through all values */
         for (WorkBookType myType : WorkBookType.values()) {
             /* If we have matched the type */
@@ -90,8 +89,8 @@ public enum WorkBookType {
         }
 
         /* Unrecognised type */
-        throw new JDataException(ExceptionClass.EXCEL, "Unrecognised file type "
-                                                       + pFileName);
+        throw new JOceanusException("Unrecognised file type "
+                                    + pFileName);
     }
 
     @Override

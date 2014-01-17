@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
 import net.sourceforge.joceanus.jdatamanager.ItemValidation;
 import net.sourceforge.joceanus.jdatamanager.ItemValidation.ErrorElement;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
 import net.sourceforge.joceanus.jfieldset.JFieldState;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
@@ -747,9 +747,9 @@ public abstract class DataItem
 
     /**
      * Resolve all references to current dataSet.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
     }
 
     /**

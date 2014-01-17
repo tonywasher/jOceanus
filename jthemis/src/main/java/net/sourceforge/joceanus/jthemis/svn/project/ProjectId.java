@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jthemis.svn.project;
 
 import java.util.ArrayList;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -160,9 +160,9 @@ public final class ProjectId
     /**
      * Constructor.
      * @param pModel the project model
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ProjectId(final Model pModel) throws JDataException {
+    protected ProjectId(final Model pModel) throws JOceanusException {
         /* Store model */
         theModel = pModel;
         theDependency = null;
@@ -177,9 +177,9 @@ public final class ProjectId
     /**
      * Constructor.
      * @param pDependency the project dependency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ProjectId(final Dependency pDependency) throws JDataException {
+    protected ProjectId(final Dependency pDependency) throws JOceanusException {
         /* Store dependency */
         theModel = null;
         theDependency = pDependency;

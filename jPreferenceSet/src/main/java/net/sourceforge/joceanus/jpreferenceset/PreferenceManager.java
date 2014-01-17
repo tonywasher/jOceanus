@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Manager class for preference sets.

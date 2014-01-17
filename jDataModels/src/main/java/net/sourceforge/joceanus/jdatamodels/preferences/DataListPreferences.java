@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.preferences;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DataList preferences.
@@ -48,9 +48,9 @@ public class DataListPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataListPreferences() throws JDataException {
+    public DataListPreferences() throws JOceanusException {
         super();
     }
 

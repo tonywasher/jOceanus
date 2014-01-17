@@ -25,9 +25,8 @@ package net.sourceforge.joceanus.jspreadsheetmanager;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * WorkBook class.
@@ -163,11 +162,11 @@ public class DataWorkBook {
 
     /**
      * Check for readOnly.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void checkReadOnly() throws JDataException {
+    private void checkReadOnly() throws JOceanusException {
         if (isReadOnly) {
-            throw new JDataException(ExceptionClass.LOGIC, "Attempt to modify readOnly Book");
+            throw new JOceanusException("Attempt to modify readOnly Book");
         }
     }
 
@@ -175,10 +174,10 @@ public class DataWorkBook {
      * Load Excel workBook from file.
      * @param pInput the input stream
      * @param pType the workbook type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataWorkBook(final InputStream pInput,
-                        final WorkBookType pType) throws JDataException {
+                        final WorkBookType pType) throws JOceanusException {
         /* This is a readOnly sheet */
         isReadOnly = true;
 
@@ -195,17 +194,17 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, ERROR_TYPE
-                                                               + pType);
+                throw new JOceanusException(ERROR_TYPE
+                                            + pType);
         }
     }
 
     /**
      * Create empty workBook.
      * @param pType the workbook type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataWorkBook(final WorkBookType pType) throws JDataException {
+    public DataWorkBook(final WorkBookType pType) throws JOceanusException {
         /* This is not a readOnly sheet */
         isReadOnly = false;
 
@@ -222,17 +221,17 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, ERROR_TYPE
-                                                               + pType);
+                throw new JOceanusException(ERROR_TYPE
+                                            + pType);
         }
     }
 
     /**
      * Save the workBook to output stream.
      * @param pOutput the output stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void saveToStream(final OutputStream pOutput) throws JDataException {
+    public void saveToStream(final OutputStream pOutput) throws JOceanusException {
         /* Switch on workbook type */
         switch (theBookType) {
             case EXCELXLS:
@@ -250,9 +249,9 @@ public class DataWorkBook {
      * Create a new Sheet with the given name.
      * @param pName the name of the new sheet
      * @return the new sheet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataSheet newSheet(final String pName) throws JDataException {
+    public DataSheet newSheet(final String pName) throws JOceanusException {
         /* Check for modification rights */
         checkReadOnly();
 
@@ -273,11 +272,11 @@ public class DataWorkBook {
      * @param pNumRows the number of rows to allocate
      * @param pNumCols the number of columns to allocate
      * @return the new sheet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataSheet newSheet(final String pName,
                               final int pNumRows,
-                              final int pNumCols) throws JDataException {
+                              final int pNumCols) throws JOceanusException {
         /* Check for modification rights */
         checkReadOnly();
 
@@ -313,9 +312,9 @@ public class DataWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DataView getRangeView(final String pName) throws JDataException {
+    public DataView getRangeView(final String pName) throws JOceanusException {
         /* Switch on workbook type */
         switch (theBookType) {
             case EXCELXLS:

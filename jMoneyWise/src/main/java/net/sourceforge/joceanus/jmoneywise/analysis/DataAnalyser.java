@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -57,6 +55,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class to analyse data.
@@ -187,10 +186,10 @@ public class DataAnalyser
      * Constructor for a full year set of accounts.
      * @param pData the Data to analyse
      * @param pPreferenceMgr the preference manager
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public DataAnalyser(final MoneyWiseData pData,
-                        final PreferenceManager pPreferenceMgr) throws JDataException {
+                        final PreferenceManager pPreferenceMgr) throws JOceanusException {
         /* Store the parameters */
         theData = pData;
 
@@ -269,9 +268,9 @@ public class DataAnalyser
 
     /**
      * Mark active accounts.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void markActiveAccounts() throws JDataException {
+    public void markActiveAccounts() throws JOceanusException {
         /* Access the iterator */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
         SecurityBucketList mySecurities = theAnalysis.getSecurities();
@@ -318,9 +317,9 @@ public class DataAnalyser
     /**
      * Process an event.
      * @param pEvent the event to process
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void processEvent(final Event pEvent) throws JDataException {
+    private void processEvent(final Event pEvent) throws JOceanusException {
         /* Access key details */
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
@@ -453,9 +452,9 @@ public class DataAnalyser
     /**
      * Process a security event.
      * @param pEvent the event to process
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void processSecurityEvent(final Event pEvent) throws JDataException {
+    private void processSecurityEvent(final Event pEvent) throws JOceanusException {
         /* Switch on the category */
         EventCategory myCat = pEvent.getCategory();
         switch (myCat.getCategoryTypeClass()) {
@@ -501,8 +500,8 @@ public class DataAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JDataException(ExceptionClass.LOGIC, "Unexpected category type: "
-                                                               + myCat.getCategoryTypeClass());
+                throw new JOceanusException("Unexpected category type: "
+                                            + myCat.getCategoryTypeClass());
         }
     }
 

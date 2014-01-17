@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData;
 import net.sourceforge.joceanus.jdatamodels.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for ControlData.
@@ -81,7 +81,7 @@ public class SheetControlData
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myVersion = loadInteger(COL_VERSION);
 
@@ -93,7 +93,7 @@ public class SheetControlData
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the specific values */
         Integer myVersion = loadInteger(COL_VERSION);
 
@@ -102,25 +102,25 @@ public class SheetControlData
     }
 
     @Override
-    protected void insertSecureItem(final ControlData pItem) throws JDataException {
+    protected void insertSecureItem(final ControlData pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_VERSION, pItem.getDataVersion());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
     @Override
-    protected void insertOpenItem(final ControlData pItem) throws JDataException {
+    protected void insertOpenItem(final ControlData pItem) throws JOceanusException {
         writeInteger(COL_VERSION, pItem.getDataVersion());
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_VERSION, ControlData.FIELD_VERSION.getName());
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set default column types */
         setIntegerColumn(COL_VERSION);
     }

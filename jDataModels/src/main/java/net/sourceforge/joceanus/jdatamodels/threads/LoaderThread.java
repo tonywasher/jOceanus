@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * A wrapper for a worker thread that loads a DataSet.
@@ -70,7 +69,7 @@ public abstract class LoaderThread<T extends DataSet<T, ?>>
             /* Catch any exception to keep thread interface clean */
         } catch (Exception e) {
             /* Report the failure */
-            addError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
+            addError(new JOceanusException("Failed to obtain and activate new data", e));
         }
 
         /* Update the Status Bar */

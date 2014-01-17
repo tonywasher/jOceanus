@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DataDigest types. Available algorithms.
@@ -118,16 +117,16 @@ public enum DigestType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enumeration object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static DigestType fromId(final int id) throws JDataException {
+    public static DigestType fromId(final int id) throws JOceanusException {
         for (DigestType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid DigestType: "
-                                                      + id);
+        throw new JOceanusException("Invalid DigestType: "
+                                    + id);
     }
 
     /**
@@ -173,10 +172,10 @@ public enum DigestType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static DigestType[] getRandomTypes(final int pNumTypes,
-                                              final SecureRandom pRandom) throws JDataException {
+                                              final SecureRandom pRandom) throws JOceanusException {
         /* Access the values */
         DigestType[] myValues = values();
         int iNumValues = myValues.length;
@@ -184,8 +183,8 @@ public enum DigestType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_NUMTYPES
-                                                           + pNumTypes);
+            throw new JOceanusException(ERROR_NUMTYPES
+                                        + pNumTypes);
         }
 
         /* Create the result set */
@@ -213,10 +212,10 @@ public enum DigestType {
      * @param pNumTypes the number of types
      * @param pKeySeed the seed to determine digest
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static DigestType[] getSeedTypes(final int pNumTypes,
-                                            final long pKeySeed) throws JDataException {
+                                            final long pKeySeed) throws JOceanusException {
         /* Access the values */
         DigestType[] myValues = values();
         long myKeySeed = pKeySeed;
@@ -225,8 +224,8 @@ public enum DigestType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, ERROR_NUMTYPES
-                                                           + pNumTypes);
+            throw new JOceanusException(ERROR_NUMTYPES
+                                        + pNumTypes);
         }
 
         /* Make sure that seed is positive */

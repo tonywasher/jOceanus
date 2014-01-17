@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
@@ -33,6 +31,7 @@ import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to create an encrypted backup of a data set.
@@ -83,7 +82,7 @@ public class CreateBackup<T extends DataSet<T, ?>>
     }
 
     @Override
-    public T performTask() throws JDataException {
+    public T performTask() throws JOceanusException {
         T myData = null;
         boolean doDelete = false;
         File myFile = null;
@@ -147,7 +146,7 @@ public class CreateBackup<T extends DataSet<T, ?>>
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JDataException(ExceptionClass.DATA, myDiff, "Backup is inconsistent");
+                throw new JOceanusException(myDiff, "Backup is inconsistent");
             }
 
             /* OK so switch off flag */

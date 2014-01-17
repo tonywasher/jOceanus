@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -240,10 +240,10 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * Set the value for the infoClass.
      * @param pInfoClass the Info Class
      * @param pValue the Value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setValue(final E pInfoClass,
-                         final Object pValue) throws JDataException {
+                         final Object pValue) throws JOceanusException {
         /* Determine whether this is a deletion */
         boolean bDelete = pValue == null;
 

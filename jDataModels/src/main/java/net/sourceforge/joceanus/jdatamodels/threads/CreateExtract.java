@@ -24,14 +24,13 @@ package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to create a extract spreadsheet of a data set.
@@ -72,7 +71,7 @@ public class CreateExtract<T extends DataSet<T, ?>>
     }
 
     @Override
-    public Void performTask() throws JDataException {
+    public Void performTask() throws JOceanusException {
         T myData = null;
         boolean doDelete = false;
         File myFile = null;
@@ -125,7 +124,7 @@ public class CreateExtract<T extends DataSet<T, ?>>
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JDataException(ExceptionClass.DATA, myDiff, "Extract is inconsistent");
+                throw new JOceanusException(myDiff, "Extract is inconsistent");
             }
 
             /* OK so switch off flag */

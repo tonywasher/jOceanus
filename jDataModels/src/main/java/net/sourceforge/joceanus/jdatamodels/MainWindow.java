@@ -43,7 +43,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataWindow;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
@@ -62,8 +61,9 @@ import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
 import net.sourceforge.joceanus.jdatamodels.ui.ThreadControl;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jhelpmanager.HelpModule;
-import net.sourceforge.joceanus.jhelpmanager.HelpWindow;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.help.HelpModule;
+import net.sourceforge.joceanus.jtethys.help.HelpWindow;
 
 /**
  * Main window for application.
@@ -362,9 +362,9 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
     /**
      * Build the main panel.
      * @return the main panel
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract JComponent buildMainPanel() throws JDataException;
+    protected abstract JComponent buildMainPanel() throws JOceanusException;
 
     /**
      * Obtain the frame name.
@@ -375,15 +375,15 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
     /**
      * Obtain the Help Module.
      * @return the help module
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract HelpModule getHelpModule() throws JDataException;
+    protected abstract HelpModule getHelpModule() throws JOceanusException;
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected MainWindow() throws JDataException {
+    protected MainWindow() throws JOceanusException {
         /* Create the Executor service */
         theExecutor = Executors.newSingleThreadExecutor();
     }
@@ -391,9 +391,9 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
     /**
      * Build the main window.
      * @param pView the Data view
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void buildMainWindow(final DataControl<T> pView) throws JDataException {
+    public void buildMainWindow(final DataControl<T> pView) throws JOceanusException {
         /* Store the view */
         theView = pView;
         theDataMgr = theView.getDataMgr();
@@ -553,9 +553,9 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
 
     /**
      * Make the frame.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void makeFrame() throws JDataException {
+    public void makeFrame() throws JOceanusException {
         /* Show the frame */
         theFrame.pack();
         theFrame.setLocationRelativeTo(null);
@@ -993,7 +993,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
 
             /* Display it */
             theHelpWdw.showDialog();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             Logger myLogger = theView.getLogger();
             myLogger.log(Level.SEVERE, "Failed to start Help Window", e);
             theHelpWdw = null;

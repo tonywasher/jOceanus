@@ -41,17 +41,12 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnableScroll;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
@@ -62,6 +57,10 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementS
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 import org.w3c.dom.Document;
 
@@ -133,9 +132,9 @@ public class ReportTab
     /**
      * Constructor for Report Window.
      * @param pView the data view
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public ReportTab(final View pView) throws JDataException {
+    public ReportTab(final View pView) throws JOceanusException {
         /* Store the view */
         theView = pView;
         theLogger = pView.getLogger();
@@ -240,7 +239,7 @@ public class ReportTab
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Show the error */
             theView.addError(e);
 
@@ -268,9 +267,9 @@ public class ReportTab
 
     /**
      * Build the report.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void buildReport() throws JDataException {
+    private void buildReport() throws JOceanusException {
 
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
@@ -414,9 +413,9 @@ public class ReportTab
                     theSelect.createSavePoint();
 
                     /* Catch Exceptions */
-                } catch (JDataException e) {
+                } catch (JOceanusException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
+                    JOceanusException myError = new JOceanusException("Failed to change selection", e);
 
                     /* Show the error */
                     theError.addError(myError);

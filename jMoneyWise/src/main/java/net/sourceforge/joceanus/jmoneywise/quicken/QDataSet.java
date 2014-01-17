@@ -31,8 +31,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdateday.JDateDay;
@@ -40,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Quicken DataSet Representation.
@@ -110,9 +109,9 @@ public class QDataSet {
      * Output data to file.
      * @param pStatus the thread status
      * @return success true/false
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean outputData(final ThreadStatus<MoneyWiseData> pStatus) throws JDataException {
+    public boolean outputData(final ThreadStatus<MoneyWiseData> pStatus) throws JOceanusException {
         /* Determine whether to use consolidated file */
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
@@ -125,9 +124,9 @@ public class QDataSet {
      * Output all accounts.
      * @param pLogger the logger
      * @return success true/false
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private boolean outputAccounts(final Logger pLogger) throws JDataException {
+    private boolean outputAccounts(final Logger pLogger) throws JOceanusException {
         boolean bContinue = true;
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAnalysis.getAccountIterator();
@@ -147,9 +146,9 @@ public class QDataSet {
      * Output data to single file.
      * @param pStatus the thread status
      * @return success true/false
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData> pStatus) throws JDataException {
+    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData> pStatus) throws JOceanusException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 
@@ -176,8 +175,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: "
-                                                           + myQIFFile.getName(), e);
+            throw new JOceanusException("Failed to write to file: "
+                                        + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -204,10 +203,10 @@ public class QDataSet {
      * @param pLogger the logger
      * @param pAccount the account to dump
      * @return success true/false
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private boolean outputIndividualFile(final Logger pLogger,
-                                         final QAccount pAccount) throws JDataException {
+                                         final QAccount pAccount) throws JOceanusException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 
@@ -235,8 +234,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: "
-                                                           + myQIFFile.getName(), e);
+            throw new JOceanusException("Failed to write to file: "
+                                        + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {

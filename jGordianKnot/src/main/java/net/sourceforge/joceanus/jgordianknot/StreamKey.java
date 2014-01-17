@@ -27,8 +27,8 @@ import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.SecurityRegister.StreamRegister;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Stream Key implementation.
@@ -103,9 +103,9 @@ public class StreamKey {
      * StreamKey Generator.
      * @param pGenerator the security generator
      * @return the new StreamKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator) throws JDataException {
+    protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator) throws JOceanusException {
         /* Access random generator */
         SecureRandom myRandom = pGenerator.getRandom();
         StreamKeyType[] myType = StreamKeyType.getRandomTypes(1, myRandom);
@@ -119,10 +119,10 @@ public class StreamKey {
      * @param pGenerator the security generator
      * @param pKeyType Stream KeyType
      * @return the new StreamKey
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static StreamKey generateStreamKey(final SecurityGenerator pGenerator,
-                                                 final StreamKeyType pKeyType) throws JDataException {
+                                                 final StreamKeyType pKeyType) throws JOceanusException {
         /* Generate a new Secret Key */
         SecurityRegister myRegister = pGenerator.getRegister();
         StreamRegister myReg = myRegister.getStreamRegistration(pKeyType, pGenerator.getKeyLen());
@@ -137,11 +137,11 @@ public class StreamKey {
      * @param pGenerator the security generator
      * @param pKeyType Stream KeyType
      * @param pKey Secret Key for algorithm
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected StreamKey(final SecurityGenerator pGenerator,
                         final StreamKeyType pKeyType,
-                        final SecretKey pKey) throws JDataException {
+                        final SecretKey pKey) throws JOceanusException {
         /* Store the KeyType and the Generator */
         theKeyType = pKeyType;
         theKeyLen = pKey.getEncoded().length;
@@ -189,9 +189,9 @@ public class StreamKey {
     /**
      * Obtain stream cipher for encryption/decryption.
      * @return the Stream Cipher
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public StreamCipher getStreamCipher() throws JDataException {
+    public StreamCipher getStreamCipher() throws JOceanusException {
         /* Return the Stream Cipher */
         return new StreamCipher(this);
     }

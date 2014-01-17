@@ -26,8 +26,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -42,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Pattern data type.
@@ -245,7 +244,7 @@ public class Pattern
      * @param pFreqId the frequency id
      * @param pSplit is the pattern split?
      * @param pParentId the parent id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Pattern(final PatternList pList,
                     final Integer pId,
@@ -257,7 +256,7 @@ public class Pattern
                     final byte[] pAmount,
                     final Integer pFreqId,
                     final Boolean pSplit,
-                    final Integer pParentId) throws JDataException {
+                    final Integer pParentId) throws JOceanusException {
         /* Initialise item assuming account as debit and partner as credit */
         super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE, pSplit, pParentId);
 
@@ -277,7 +276,7 @@ public class Pattern
      * @param pFrequency the frequency
      * @param pSplit is the pattern split?
      * @param pParent the parent
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Pattern(final PatternList pList,
                     final Integer pId,
@@ -288,7 +287,7 @@ public class Pattern
                     final String pAmount,
                     final String pFrequency,
                     final Boolean pSplit,
-                    final Pattern pParent) throws JDataException {
+                    final Pattern pParent) throws JOceanusException {
         /* Initialise item assuming account as debit and partner as credit */
         super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pSplit, pParent);
 
@@ -297,7 +296,7 @@ public class Pattern
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Event details */
         super.resolveDataSetLinks();
 
@@ -316,14 +315,14 @@ public class Pattern
             Frequency myFreq = myFrequencies.findItemById((Integer) myFrequency);
             if (myFreq == null) {
                 addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueFrequency(myFreq);
         } else if (myFrequency instanceof String) {
             Frequency myFreq = myFrequencies.findItemByName((String) myFrequency);
             if (myFreq == null) {
                 addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueFrequency(myFreq);
         }
@@ -337,7 +336,7 @@ public class Pattern
             Pattern myPattern = myPatterns.findItemById((Integer) myParent);
             if (myPattern == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JOceanusException(this, ERROR_VALIDATION);
             }
             setValueParent(myPattern);
         }
@@ -362,11 +361,11 @@ public class Pattern
      * @param pTaxYear the new tax year
      * @param pDate the date for the event
      * @return the new event
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public Event nextEvent(final EventList pEvents,
                            final TaxYear pTaxYear,
-                           final JDateDay pDate) throws JDataException {
+                           final JDateDay pDate) throws JOceanusException {
         /* Access the frequency */
         FrequencyClass myFreq = getFrequency().getFrequency();
         JDateDay myDate;
@@ -587,7 +586,7 @@ public class Pattern
         }
 
         @Override
-        public PatternList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public PatternList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (PatternList) super.cloneList(pDataSet);
         }
 
@@ -674,7 +673,7 @@ public class Pattern
          * @param pSplit is the pattern split
          * @param pParent the parent
          * @return the allocated pattern
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public Pattern addOpenItem(final Integer pId,
                                    final JDateDay pDate,
@@ -684,14 +683,14 @@ public class Pattern
                                    final String pCategory,
                                    final String pFrequency,
                                    final Boolean pSplit,
-                                   final Pattern pParent) throws JDataException {
+                                   final Pattern pParent) throws JOceanusException {
             /* Create the new pattern */
             Pattern myPattern = new Pattern(this, pId, pDate, pDebit, pCredit, pCategory, pAmount, pFrequency, pSplit, pParent);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
                 myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myPattern, ERROR_VALIDATION);
+                throw new JOceanusException(myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -711,7 +710,7 @@ public class Pattern
          * @param pAmount the amount
          * @param pSplit is the pattern split
          * @param pParentId the parent id
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
@@ -722,14 +721,14 @@ public class Pattern
                                   final Integer pCatId,
                                   final Integer pFreqId,
                                   final Boolean pSplit,
-                                  final Integer pParentId) throws JDataException {
+                                  final Integer pParentId) throws JOceanusException {
             /* Create the new pattern */
             Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDebitId, pCreditId, pCatId, pAmount, pFreqId, pSplit, pParentId);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
                 myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myPattern, ERROR_VALIDATION);
+                throw new JOceanusException(myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */

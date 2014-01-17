@@ -27,13 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Tag.TagList;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -560,9 +559,9 @@ public final class Branch
     /**
      * Clone the definition.
      * @param pDefinition the definition to clone
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void cloneDefinition(final ProjectDefinition pDefinition) throws JDataException {
+    public void cloneDefinition(final ProjectDefinition pDefinition) throws JOceanusException {
         /* clone the project definition */
         theProject = new ProjectDefinition(pDefinition);
         theProject.setSnapshotVersion(getBranchName());
@@ -622,9 +621,9 @@ public final class Branch
 
     /**
      * Discover last change from repository.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void discoverLastRevision() throws JDataException {
+    protected void discoverLastRevision() throws JOceanusException {
         /* Access a LogClient */
         SVNClientManager myMgr = theRepository.getClientManager();
         SVNLogClient myClient = myMgr.getLogClient();
@@ -641,8 +640,8 @@ public final class Branch
             /* List the members directories */
             myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY, SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for "
-                                                                + getBranchName(), e);
+            throw new JOceanusException("Failed to discover lastRevision for "
+                                        + getBranchName(), e);
         } finally {
             theRepository.releaseClientManager(myMgr);
         }
@@ -651,15 +650,15 @@ public final class Branch
     /**
      * resolveDependencies.
      * @param pReport the report object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void resolveDependencies(final ReportStatus pReport) throws JDataException {
+    private void resolveDependencies(final ReportStatus pReport) throws JOceanusException {
         /* Switch on status */
         switch (theProjectStatus) {
             case FINAL:
                 return;
             case MERGING:
-                throw new JDataException(ExceptionClass.DATA, this, "IllegalState for Tag");
+                throw new JOceanusException(this, "IllegalState for Tag");
             default:
                 break;
         }
@@ -694,7 +693,7 @@ public final class Branch
                 if (myExisting != null) {
                     /* Check it is identical */
                     if (!myExisting.equals(mySub)) {
-                        throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Branch");
+                        throw new JOceanusException(this, "Inconsistent dependency for Branch");
                     }
                 } else {
                     /* Add dependency */
@@ -705,7 +704,7 @@ public final class Branch
 
         /* Check that we are not dependent on a different version of this component */
         if (myNew.get(theComponent) != null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Branch");
+            throw new JOceanusException(this, "Inconsistent dependency for Branch");
         }
 
         /* Store new dependencies and mark as resolved */
@@ -732,9 +731,9 @@ public final class Branch
      * Obtain merged and validated branch map.
      * @param pBranches the core branches
      * @return the branch map
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static Map<Component, Branch> getBranchMap(final Branch[] pBranches) throws JDataException {
+    public static Map<Component, Branch> getBranchMap(final Branch[] pBranches) throws JOceanusException {
         /* Set default map */
         Map<Component, Branch> myResult = null;
         Repository myRepo = null;
@@ -755,7 +754,7 @@ public final class Branch
             /* Check this is the same repository */
             if (!myRepo.equals(myBranch.getRepository())) {
                 /* throw exception */
-                throw new JDataException(ExceptionClass.DATA, "Different repository for branch");
+                throw new JOceanusException("Different repository for branch");
             }
 
             /* Loop through map elements */
@@ -771,7 +770,7 @@ public final class Branch
                     /* else if the branch differs */
                 } else if (!myExisting.equals(myEntry.getValue())) {
                     /* throw exception */
-                    throw new JDataException(ExceptionClass.DATA, "Conflicting version for branch");
+                    throw new JOceanusException("Conflicting version for branch");
                 }
             }
         }
@@ -839,9 +838,9 @@ public final class Branch
         /**
          * Discover branch list from repository.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JDataException {
+        public void discover(final ReportStatus pReport) throws JOceanusException {
             /* Reset the list */
             clear();
 
@@ -877,8 +876,8 @@ public final class Branch
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
-                                                                    + theComponent.getName(), e);
+                throw new JOceanusException("Failed to discover branches for "
+                                            + theComponent.getName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -913,9 +912,9 @@ public final class Branch
         /**
          * registerDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void registerDependencies(final ReportStatus pReport) throws JDataException {
+        protected void registerDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Repository myRepo = theComponent.getRepository();
             Iterator<Branch> myIterator = iterator();
@@ -947,7 +946,7 @@ public final class Branch
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JDataException(ExceptionClass.DATA, myBranch, "Duplicate component dependency");
+                                throw new JOceanusException(myBranch, "Duplicate component dependency");
                             }
                         }
                     }
@@ -962,9 +961,9 @@ public final class Branch
         /**
          * propagateDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Iterator<Branch> myIterator = iterator();
 

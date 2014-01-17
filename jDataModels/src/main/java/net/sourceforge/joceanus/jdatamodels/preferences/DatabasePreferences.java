@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.preferences;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.database.BatchControl;
 import net.sourceforge.joceanus.jdatamodels.database.JDBCDriver;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Preferences for a database.
@@ -139,9 +139,9 @@ public class DatabasePreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public DatabasePreferences() throws JDataException {
+    public DatabasePreferences() throws JOceanusException {
         super();
     }
 

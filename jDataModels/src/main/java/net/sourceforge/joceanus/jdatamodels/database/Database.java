@@ -33,11 +33,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class that encapsulates a database connection.
@@ -96,10 +95,10 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * Construct a new Database class.
      * @param pLogger the logger
      * @param pPreferences the preferences
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public Database(final Logger pLogger,
-                    final DatabasePreferences pPreferences) throws JDataException {
+                    final DatabasePreferences pPreferences) throws JOceanusException {
         /* Create the connection */
         try {
             /* Store the logger */
@@ -137,10 +136,10 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
             theConn.setAutoCommit(false);
         } catch (ClassNotFoundException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to locate driver", e);
+            throw new JOceanusException("Failed to locate driver", e);
 
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load driver", e);
+            throw new JOceanusException("Failed to load driver", e);
         }
 
         /* Create table list and add the tables to the list */
@@ -209,9 +208,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * Load data from the database.
      * @param pTask the task control
      * @return the new DataSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public T loadDatabase(final TaskControl<T> pTask) throws JDataException {
+    public T loadDatabase(final TaskControl<T> pTask) throws JOceanusException {
         boolean bContinue = true;
 
         /* Set the number of stages */
@@ -243,7 +242,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JDataException(ExceptionClass.LOGIC, "Operation Cancelled");
+            throw new JOceanusException("Operation Cancelled");
         }
 
         /* Return the data */
@@ -254,10 +253,10 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * Update data into database.
      * @param pTask the task control
      * @param pData the data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void updateDatabase(final TaskControl<T> pTask,
-                               final T pData) throws JDataException {
+                               final T pData) throws JOceanusException {
         boolean bContinue = true;
         BatchControl myBatch = new BatchControl(theBatchSize);
 
@@ -311,7 +310,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
                 theConn.commit();
             } catch (SQLException e) {
                 close();
-                throw new JDataException(ExceptionClass.SQLSERVER, "Failed to commit transaction", e);
+                throw new JOceanusException("Failed to commit transaction", e);
             }
 
             /* Commit the batch */
@@ -320,16 +319,16 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JDataException(ExceptionClass.LOGIC, "Operation Cancelled");
+            throw new JOceanusException("Operation Cancelled");
         }
     }
 
     /**
      * Create tables.
      * @param pTask the task control
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void createTables(final TaskControl<T> pTask) throws JDataException {
+    public void createTables(final TaskControl<T> pTask) throws JOceanusException {
         /* Drop any existing tables */
         dropTables(pTask);
 
@@ -355,9 +354,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Drop tables.
      * @param pTask the task control
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void dropTables(final TaskControl<T> pTask) throws JDataException {
+    public void dropTables(final TaskControl<T> pTask) throws JOceanusException {
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {
             return;
@@ -380,9 +379,9 @@ public abstract class Database<T extends DataSet<T, ?>> {
     /**
      * Purge tables.
      * @param pTask the task control
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void purgeTables(final TaskControl<T> pTask) throws JDataException {
+    public void purgeTables(final TaskControl<T> pTask) throws JOceanusException {
 
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {

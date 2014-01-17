@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jdatamodels.preferences.DataListPreferences;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -333,16 +333,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Construct a Clone for a DataSet.
      * @return the extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract T deriveCloneSet() throws JDataException;
+    public abstract T deriveCloneSet() throws JOceanusException;
 
     /**
      * Construct a Clone for a DataSet.
      * @param pSource the source DataSet
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void deriveCloneSet(final DataSet<T, E> pSource) throws JDataException {
+    protected void deriveCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
         /* Clone the Security items */
         theControlKeys = pSource.getControlKeys().cloneList(this);
         theDataKeys = pSource.getDataKeys().cloneList(this);
@@ -365,16 +365,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Construct an update extract for a FinanceData Set.
      * @return the extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract T deriveUpdateSet() throws JDataException;
+    public abstract T deriveUpdateSet() throws JOceanusException;
 
     /**
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void deriveUpdateSet(final T pSource) throws JDataException {
+    protected void deriveUpdateSet(final T pSource) throws JOceanusException {
         /* Build the security extract */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
         theDataKeys = pSource.getDataKeys().deriveList(ListStyle.UPDATE);
@@ -400,9 +400,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Items that are in both list but differ will be viewed as changed
      * @param pOld The old list to extract from
      * @return the difference set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract T getDifferenceSet(final T pOld) throws JDataException;
+    public abstract T getDifferenceSet(final T pOld) throws JOceanusException;
 
     /**
      * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
@@ -410,10 +410,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Items that are in both list but differ will be viewed as changed
      * @param pNew The new list to compare
      * @param pOld The old list to compare
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected void deriveDifferences(final T pNew,
-                                     final T pOld) throws JDataException {
+                                     final T pOld) throws JOceanusException {
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
         theDataKeys = pNew.getDataKeys().deriveDifferences(this, pOld.getDataKeys());
@@ -440,9 +440,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * ReBase this data set against an earlier version.
      * @param pOld The old data to reBase against
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void reBase(final T pOld) throws JDataException {
+    public void reBase(final T pOld) throws JOceanusException {
         /* ReBase the security items */
         theControlKeys.reBase(pOld.getControlKeys());
         theDataKeys.reBase(pOld.getDataKeys());
@@ -751,10 +751,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pTask the task control
      * @param pBase the database data
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public boolean initialiseSecurity(final TaskControl<T> pTask,
-                                      final T pBase) throws JDataException {
+                                      final T pBase) throws JOceanusException {
         /* Set the number of stages */
         if (!pTask.setNumStages(1 + theNumEncrypted)) {
             return false;
@@ -796,9 +796,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Renew Security.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean renewSecurity(final TaskControl<T> pTask) throws JDataException {
+    public boolean renewSecurity(final TaskControl<T> pTask) throws JOceanusException {
         /* Access ControlData */
         ControlData myControl = getControl();
 
@@ -816,9 +816,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Check Security for multiple controlKeys.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean checkSecurity(final TaskControl<T> pTask) throws JDataException {
+    public boolean checkSecurity(final TaskControl<T> pTask) throws JOceanusException {
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
             /* Update to the selected controlKey */
@@ -833,9 +833,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Update Security.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public boolean updateSecurity(final TaskControl<T> pTask) throws JDataException {
+    public boolean updateSecurity(final TaskControl<T> pTask) throws JOceanusException {
         /* Access the control key */
         ControlKey myControl = getControlKey();
 
@@ -869,9 +869,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Get the Password Hash.
      * @return the password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public PasswordHash getPasswordHash() throws JDataException {
+    public PasswordHash getPasswordHash() throws JOceanusException {
         /* Access the active control key */
         ControlKey myKey = getControlKey();
 
@@ -885,10 +885,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Update data with a new password.
      * @param pTask the task control
      * @param pSource the source of the data
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void updatePasswordHash(final TaskControl<T> pTask,
-                                   final String pSource) throws JDataException {
+                                   final String pSource) throws JOceanusException {
         /* Obtain a new password hash */
         PasswordHash myHash = theSecurity.resolvePasswordHash(null, pSource);
 

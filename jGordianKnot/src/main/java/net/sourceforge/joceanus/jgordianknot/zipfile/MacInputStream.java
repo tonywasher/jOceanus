@@ -25,10 +25,9 @@ package net.sourceforge.joceanus.jgordianknot.zipfile;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.DataMac;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
 
@@ -98,15 +97,15 @@ public class MacInputStream
     /**
      * Validate the digest.
      * @param pExpected the expected digest
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void validateMac(final byte[] pExpected) throws JDataException {
+    public void validateMac(final byte[] pExpected) throws JOceanusException {
         /* Calculate mac */
         byte[] myMac = theMac.finish();
 
         /* Check valid digest */
         if (Arrays.areEqual(myMac, pExpected)) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_MAC);
+            throw new JOceanusException(ERROR_MAC);
         }
     }
 

@@ -43,8 +43,6 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
@@ -53,13 +51,9 @@ import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
-import net.sourceforge.joceanus.jeventmanager.ActionDetailEvent;
-import net.sourceforge.joceanus.jeventmanager.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jeventmanager.JEventPanel;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jfieldset.JFieldSet;
 import net.sourceforge.joceanus.jfieldset.JFieldSet.FieldUpdate;
-import net.sourceforge.joceanus.jlayoutmanager.SpringUtilities;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -71,6 +65,11 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.TaxYearSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * TaxYear maintenance panel.
@@ -973,12 +972,12 @@ public class MaintTaxYear
                 }
 
                 /* Handle Exceptions */
-            } catch (JDataException e) {
+            } catch (JOceanusException e) {
                 /* Reset values */
                 theTaxYear.popHistory();
 
                 /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
+                JOceanusException myError = new JOceanusException("Failed to update field", e);
 
                 /* Show the error */
                 theError.addError(myError);

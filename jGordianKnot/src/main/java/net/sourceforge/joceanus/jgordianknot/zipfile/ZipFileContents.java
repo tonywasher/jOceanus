@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class represents the contents of an encrypted Zip file.
@@ -85,9 +85,9 @@ public class ZipFileContents {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ZipFileContents(final String pCodedString) throws JDataException {
+    protected ZipFileContents(final String pCodedString) throws JOceanusException {
         /* Allocate the list */
         theList = new ArrayList<ZipFileEntry>();
 
@@ -227,9 +227,9 @@ public class ZipFileContents {
     /**
      * Encode the contents.
      * @return the encoded string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected String encodeContents() throws JDataException {
+    protected String encodeContents() throws JOceanusException {
         StringBuilder myString = new StringBuilder(BUFFER_LEN);
         ZipFileProperties myProperties;
 
@@ -267,9 +267,9 @@ public class ZipFileContents {
     /**
      * Add a File Entry from encoded string.
      * @param pCodedString the encoded string
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void parseEncodedEntry(final String pCodedString) throws JDataException {
+    private void parseEncodedEntry(final String pCodedString) throws JOceanusException {
         /* Parse the properties */
         ZipFileProperties myProperties = new ZipFileProperties(pCodedString);
 

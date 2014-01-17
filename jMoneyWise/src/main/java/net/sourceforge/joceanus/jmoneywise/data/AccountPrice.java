@@ -27,8 +27,6 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
@@ -46,6 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountPrice data type.
@@ -237,18 +236,18 @@ public class AccountPrice
     /**
      * Set the price.
      * @param pValue the price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValuePrice(final JPrice pValue) throws JDataException {
+    private void setValuePrice(final JPrice pValue) throws JOceanusException {
         setEncryptedValue(FIELD_PRICE, pValue);
     }
 
     /**
      * Set the encrypted price.
      * @param pBytes the encrypted price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValuePrice(final byte[] pBytes) throws JDataException {
+    private void setValuePrice(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_PRICE, pBytes, JPrice.class);
     }
 
@@ -308,13 +307,13 @@ public class AccountPrice
      * @param pAccount the account name
      * @param pDate the date
      * @param pPrice the price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Integer pId,
                          final String pAccount,
                          final JDateDay pDate,
-                         final String pPrice) throws JDataException {
+                         final String pPrice) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -333,12 +332,12 @@ public class AccountPrice
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -350,14 +349,14 @@ public class AccountPrice
      * @param pAccountId the account id
      * @param pDate the date
      * @param pPrice the price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Integer pId,
                          final Integer pControlId,
                          final Integer pAccountId,
                          final JDateDay pDate,
-                         final byte[] pPrice) throws JDataException {
+                         final byte[] pPrice) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -374,9 +373,9 @@ public class AccountPrice
             setValuePrice(pPrice);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -407,7 +406,7 @@ public class AccountPrice
     }
 
     @Override
-    public void resolveDataSetLinks() throws JDataException {
+    public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -425,14 +424,14 @@ public class AccountPrice
             Account myAct = myAccounts.findItemById((Integer) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         } else if (myAccount instanceof String) {
             Account myAct = myAccounts.findItemByName((String) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+                throw new JOceanusException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         }
@@ -483,9 +482,9 @@ public class AccountPrice
     /**
      * Set a new price.
      * @param pPrice the price
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setPrice(final JPrice pPrice) throws JDataException {
+    public void setPrice(final JPrice pPrice) throws JOceanusException {
         setValuePrice(pPrice);
     }
 
@@ -619,7 +618,7 @@ public class AccountPrice
         }
 
         @Override
-        public AccountPriceList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountPriceList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountPriceList) super.cloneList(pDataSet);
         }
 
@@ -768,19 +767,19 @@ public class AccountPrice
          * @param pDate the date
          * @param pAccount the account
          * @param pPrice the price
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final JDateDay pDate,
                                 final String pAccount,
-                                final String pPrice) throws JDataException {
+                                final String pPrice) throws JOceanusException {
             /* Create the PricePoint */
             AccountPrice myPrice = new AccountPrice(this, pId, pAccount, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
                 myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myPrice, ERROR_VALIDATION);
+                throw new JOceanusException(myPrice, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -794,20 +793,20 @@ public class AccountPrice
          * @param pDate the date
          * @param pAccountId the account id
          * @param pPrice the price
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final JDateDay pDate,
                                   final Integer pAccountId,
-                                  final byte[] pPrice) throws JDataException {
+                                  final byte[] pPrice) throws JOceanusException {
             /* Create the price and PricePoint */
             AccountPrice myPrice = new AccountPrice(this, pId, pControlId, pAccountId, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(pId)) {
                 myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myPrice, ERROR_VALIDATION);
+                throw new JOceanusException(myPrice, ERROR_VALIDATION);
             }
 
             /* Add to the list */

@@ -27,13 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectId;
@@ -355,9 +354,9 @@ public final class Tag
     /**
      * Clone the definition.
      * @param pDefinition the definition to clone
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void cloneDefinition(final ProjectDefinition pDefinition) throws JDataException {
+    public void cloneDefinition(final ProjectDefinition pDefinition) throws JOceanusException {
         /* clone the project definition */
         theProject = new ProjectDefinition(pDefinition);
         theProject.setSnapshotVersion(getTagName());
@@ -379,15 +378,15 @@ public final class Tag
     /**
      * resolveDependencies.
      * @param pReport the report object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void resolveDependencies(final ReportStatus pReport) throws JDataException {
+    private void resolveDependencies(final ReportStatus pReport) throws JOceanusException {
         /* Switch on status */
         switch (theProjectStatus) {
             case FINAL:
                 return;
             case MERGING:
-                throw new JDataException(ExceptionClass.DATA, this, "IllegalState for Tag");
+                throw new JOceanusException(this, "IllegalState for Tag");
             default:
                 break;
         }
@@ -422,7 +421,7 @@ public final class Tag
                 if (myExisting != null) {
                     /* Check it is identical */
                     if (!myExisting.equals(mySub)) {
-                        throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Tag");
+                        throw new JOceanusException(this, "Inconsistent dependency for Tag");
                     }
                 } else {
                     /* Add dependency */
@@ -433,7 +432,7 @@ public final class Tag
 
         /* Check that we are not dependent on a different version of this component */
         if (myNew.get(theComponent) != null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Tag");
+            throw new JOceanusException(this, "Inconsistent dependency for Tag");
         }
 
         /* Store new dependencies and mark as resolved */
@@ -445,9 +444,9 @@ public final class Tag
      * Obtain merged and validated tag map.
      * @param pTags the core tags
      * @return the tag map
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static Map<Component, Tag> getTagMap(final Tag[] pTags) throws JDataException {
+    public static Map<Component, Tag> getTagMap(final Tag[] pTags) throws JOceanusException {
         /* Set default map */
         Map<Component, Tag> myResult = null;
         Repository myRepo = null;
@@ -468,7 +467,7 @@ public final class Tag
             /* Check this is the same repository */
             if (!myRepo.equals(myTag.getRepository())) {
                 /* throw exception */
-                throw new JDataException(ExceptionClass.DATA, "Different repository for tag");
+                throw new JOceanusException("Different repository for tag");
             }
 
             /* Loop through map elements */
@@ -484,7 +483,7 @@ public final class Tag
                     /* else if the tag differs */
                 } else if (!myExisting.equals(myEntry.getValue())) {
                     /* throw exception */
-                    throw new JDataException(ExceptionClass.DATA, "Conflicting version for tag");
+                    throw new JOceanusException("Conflicting version for tag");
                 }
             }
         }
@@ -592,9 +591,9 @@ public final class Tag
         /**
          * Discover tag list from repository.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void discover(final ReportStatus pReport) throws JDataException {
+        public void discover(final ReportStatus pReport) throws JOceanusException {
             /* Reset the list */
             clear();
 
@@ -611,8 +610,8 @@ public final class Tag
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
-                                                                    + theBranch.getBranchName(), e);
+                throw new JOceanusException("Failed to discover tags for "
+                                            + theBranch.getBranchName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -643,9 +642,9 @@ public final class Tag
         /**
          * registerDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void registerDependencies(final ReportStatus pReport) throws JDataException {
+        protected void registerDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Repository myRepo = theComponent.getRepository();
             Iterator<Tag> myIterator = iterator();
@@ -677,7 +676,7 @@ public final class Tag
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JDataException(ExceptionClass.DATA, myTag, "Duplicate component dependency");
+                                throw new JOceanusException(myTag, "Duplicate component dependency");
                             }
                         }
                     }
@@ -688,9 +687,9 @@ public final class Tag
         /**
          * propagateDependencies.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
             /* Access list iterator */
             Iterator<Tag> myIterator = iterator();
 

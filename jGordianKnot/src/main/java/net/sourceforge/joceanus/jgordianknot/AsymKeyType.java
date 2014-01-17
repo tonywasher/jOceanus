@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jgordianknot;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Asymmetric Key Types. Available Algorithms
@@ -210,16 +209,16 @@ public enum AsymKeyType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException if id is invalid
+     * @throws JOceanusException if id is invalid
      */
-    public static AsymKeyType fromId(final int id) throws JDataException {
+    public static AsymKeyType fromId(final int id) throws JOceanusException {
         for (AsymKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid AsymKeyType: "
-                                                      + id);
+        throw new JOceanusException("Invalid AsymKeyType: "
+                                    + id);
     }
 
     /**
@@ -227,10 +226,10 @@ public enum AsymKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static AsymKeyType[] getRandomTypes(final int pNumTypes,
-                                               final SecureRandom pRandom) throws JDataException {
+                                               final SecureRandom pRandom) throws JOceanusException {
         /* Use all values */
         return getRandomTypes(pNumTypes, pRandom, false);
     }
@@ -241,11 +240,11 @@ public enum AsymKeyType {
      * @param pRandom the random generator
      * @param pElliptic use only elliptic keys
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static AsymKeyType[] getRandomTypes(final int pNumTypes,
                                                final SecureRandom pRandom,
-                                               final boolean pElliptic) throws JDataException {
+                                               final boolean pElliptic) throws JOceanusException {
         /* Access the values */
         AsymKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -253,8 +252,8 @@ public enum AsymKeyType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of asymmetric keys: "
-                                                           + pNumTypes);
+            throw new JOceanusException("Invalid number of asymmetric keys: "
+                                        + pNumTypes);
         }
 
         /* Create the result set */

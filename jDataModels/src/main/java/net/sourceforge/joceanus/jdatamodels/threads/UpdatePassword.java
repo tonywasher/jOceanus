@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to change the password. The user will be prompted for a new password and this will be used to create a new Password Hash. The controlKey will be
@@ -67,7 +67,7 @@ public class UpdatePassword<T extends DataSet<T, ?>>
     }
 
     @Override
-    public T performTask() throws JDataException {
+    public T performTask() throws JOceanusException {
         /* Initialise the status window */
         theStatus.initTask("Updating Password");
 

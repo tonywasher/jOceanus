@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -374,21 +373,21 @@ public final class DilutionEvent
          * @param pAccount the account to dilute
          * @param pDate the date of the price
          * @param pDilution the (possibly) diluted price
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addDilution(final String pAccount,
                                 final Date pDate,
-                                final String pDilution) throws JDataException {
+                                final String pDilution) throws JOceanusException {
             /* Access account list */
             AccountList myAccounts = theData.getAccounts();
 
             /* Search for the account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, ERROR_SECURITY
-                                                              + " ["
-                                                              + pAccount
-                                                              + "]");
+                throw new JOceanusException(ERROR_SECURITY
+                                            + " ["
+                                            + pAccount
+                                            + "]");
             }
 
             /* Create the date */
@@ -397,9 +396,9 @@ public final class DilutionEvent
             /* Record the dilution */
             JDilution myDilution = theParser.parseDilutionValue(pDilution);
             if (myDilution == null) {
-                throw new JDataException(ExceptionClass.DATA, ERROR_DILUTION
-                                                              + " "
-                                                              + pDilution);
+                throw new JOceanusException(ERROR_DILUTION
+                                            + " "
+                                            + pDilution);
             }
 
             /* Create the dilution event */

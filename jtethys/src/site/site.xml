@@ -18,6 +18,7 @@
 
     <menu name="jTethys">
       <item name="Introduction" href="index.html"/>
+      <item name="TableFilter Demo" href="demo/demo.html"/>
       <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 

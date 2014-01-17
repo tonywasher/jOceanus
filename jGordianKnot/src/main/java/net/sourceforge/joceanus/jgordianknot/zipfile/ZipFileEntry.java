@@ -29,11 +29,10 @@ import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipStreamSpec.ZipStreamList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class represents an encrypted file in the Zip file.
@@ -239,9 +238,9 @@ public class ZipFileEntry {
     /**
      * Standard constructor from properties.
      * @param pProperties the properties
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ZipFileEntry(final ZipFileProperties pProperties) throws JDataException {
+    protected ZipFileEntry(final ZipFileProperties pProperties) throws JOceanusException {
         /* Store the properties */
         theProperties = pProperties;
 
@@ -275,9 +274,9 @@ public class ZipFileEntry {
     /**
      * Set the properties of the file.
      * @return the properties
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected ZipFileProperties allocateProperties() throws JDataException {
+    protected ZipFileProperties allocateProperties() throws JOceanusException {
         /* Set the top-level details */
         theProperties.setProperty(PROP_NAME, theFileName);
         theProperties.setProperty(PROP_NAME, theFileSize);
@@ -309,10 +308,10 @@ public class ZipFileEntry {
      * Set User String property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setUserStringProperty(final String pPropertyName,
-                                      final String pPropertyValue) throws JDataException {
+                                      final String pPropertyValue) throws JOceanusException {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -322,10 +321,10 @@ public class ZipFileEntry {
      * Set User Long property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void setUserLongProperty(final String pPropertyName,
-                                    final Long pPropertyValue) throws JDataException {
+                                    final Long pPropertyValue) throws JOceanusException {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -335,9 +334,9 @@ public class ZipFileEntry {
      * Get User String property.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public String getUserStringProperty(final String pPropertyName) throws JDataException {
+    public String getUserStringProperty(final String pPropertyName) throws JOceanusException {
         /* Set the property */
         return theProperties.getStringProperty(PROP_USERPFIX
                                                + pPropertyName);
@@ -347,9 +346,9 @@ public class ZipFileEntry {
      * Get User String property.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public Long getUserLongProperty(final String pPropertyName) throws JDataException {
+    public Long getUserLongProperty(final String pPropertyName) throws JOceanusException {
         /* Set the property */
         return theProperties.getLongProperty(PROP_USERPFIX
                                              + pPropertyName);
@@ -417,10 +416,10 @@ public class ZipFileEntry {
      * Analyse the output stream.
      * @param pStream the output stream
      * @param pAsymKey the asymmetric key.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void analyseOutputStream(final OutputStream pStream,
-                                    final AsymmetricKey pAsymKey) throws JDataException {
+                                    final AsymmetricKey pAsymKey) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Update from the stream list */
@@ -435,7 +434,7 @@ public class ZipFileEntry {
 
             /* Catch exceptions */
         } catch (SignatureException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_SIGN, e);
+            throw new JOceanusException(ERROR_SIGN, e);
         }
     }
 
@@ -444,10 +443,10 @@ public class ZipFileEntry {
      * @param pStream the current input stream.
      * @param pAsymKey the asymmetric key.
      * @return the new input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public InputStream buildInputStream(final InputStream pStream,
-                                        final AsymmetricKey pAsymKey) throws JDataException {
+                                        final AsymmetricKey pAsymKey) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Calculate the signature and declare it */
@@ -457,7 +456,7 @@ public class ZipFileEntry {
             /* Check the signature */
             if (!mySignature.verify(getSignature())) {
                 /* Throw an exception */
-                throw new JDataException(ExceptionClass.CRYPTO, "Signature does not match");
+                throw new JOceanusException("Signature does not match");
             }
 
             /* Build the input stream */
@@ -466,7 +465,7 @@ public class ZipFileEntry {
 
             /* Catch exceptions */
         } catch (SignatureException e) {
-            throw new JDataException(ExceptionClass.CRYPTO, ERROR_SIGN, e);
+            throw new JOceanusException(ERROR_SIGN, e);
         }
     }
 }

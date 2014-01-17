@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountCategoryType data type.
@@ -89,10 +88,10 @@ public class AccountCategoryType
      * Basic constructor.
      * @param pList The list to associate the Account Category Type with
      * @param pName Name of Account Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final String pName) throws JDataException {
+                                final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -100,10 +99,10 @@ public class AccountCategoryType
      * Basic constructor.
      * @param pList The list to associate the Account Category Type with
      * @param pClass Class of Account Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final AccountCategoryClass pClass) throws JDataException {
+                                final AccountCategoryClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -115,14 +114,14 @@ public class AccountCategoryType
      * @param pOrder the sort order
      * @param pName Name of Account Category Type
      * @param pDesc Description of Account Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
                                 final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pName,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -135,7 +134,7 @@ public class AccountCategoryType
      * @param pOrder the sort order
      * @param pName Encrypted Name of Account Category Type
      * @param pDesc Encrypted Description of Account Category Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
                                 final Integer pId,
@@ -143,7 +142,7 @@ public class AccountCategoryType
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final byte[] pName,
-                                final byte[] pDesc) throws JDataException {
+                                final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -223,22 +222,22 @@ public class AccountCategoryType
         /**
          * Add an AccountCategoryType to the list.
          * @param pActCatType the Name of the account category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pActCatType) throws JDataException {
+        public void addBasicItem(final String pActCatType) throws JOceanusException {
             /* Create a new Account Category Type */
             AccountCategoryType myActType = new AccountCategoryType(this, pActCatType);
 
             /* Check that this AccountCategoryType has not been previously added */
             if (findItemByName(pActCatType) != null) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(myActType.getId())) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category to the list */
@@ -249,7 +248,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
         }
 
@@ -260,20 +259,20 @@ public class AccountCategoryType
          * @param pOrder the sort order
          * @param pActCatType the Name of the account category type
          * @param pDesc the Description of the account category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pActCatType,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Account Category Type */
             AccountCategoryType myActType = new AccountCategoryType(this, pId, isEnabled, pOrder, pActCatType, pDesc);
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category Type to the list */
@@ -284,7 +283,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
         }
 
@@ -296,21 +295,21 @@ public class AccountCategoryType
          * @param pOrder the sort order
          * @param pActCatType the encrypted Name of the account category type
          * @param pDesc the Encrypted Description of the account category type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pActCatType,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Account CategoryType */
             AccountCategoryType myActType = new AccountCategoryType(this, pId, pControlId, isEnabled, pOrder, pActCatType, pDesc);
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the AccountCategoryType to the list */
@@ -321,15 +320,15 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
+                throw new JOceanusException(myActType, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (AccountCategoryClass myClass : AccountCategoryClass.values()) {
                 /* Create new element */
@@ -343,7 +342,7 @@ public class AccountCategoryType
 
                 /* Handle validation failure */
                 if (myActType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
+                    throw new JOceanusException(myActType, ERROR_VALIDATION);
                 }
             }
 

@@ -8,9 +8,9 @@ set dirNames=%1
 goto :docopy
 
 :default
-set dirNames=jDataManager jDataModels jDateDay jDecimal jEventManager jFieldSet
-set dirNames=%dirNames% jGordianKnot jHelpManager jthemis jLayoutManager jMoneyWise
-set dirNames=%dirNames% jPreferenceSet jSortedList jSpreadSheetManager jTableFilter
+set dirNames=jDataManager jDataModels jDateDay jDecimal jtethys jFieldSet
+set dirNames=%dirNames% jGordianKnot jthemis jMoneyWise
+set dirNames=%dirNames% jPreferenceSet jSortedList jSpreadSheetManager 
 
 :docopy
 rem xcopy /Y %source%\pom.xml %target%\pom.xml

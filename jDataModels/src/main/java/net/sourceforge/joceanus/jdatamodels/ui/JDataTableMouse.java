@@ -36,8 +36,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Template class to provide mouse support for a table.
@@ -376,7 +376,7 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
                 /* set the null value */
                 myModel.setItemValue(myData, col, null);
             }
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             Logger myLogger = theTable.getLogger();
             myLogger.log(Level.SEVERE, "Failed to NULL column", e);
         }

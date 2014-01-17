@@ -27,13 +27,12 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.UpdateStatus.UpdateStatusList;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -222,11 +221,11 @@ public final class WorkingCopy
      * @param pLocation the location
      * @param pBranch the branch
      * @param pRevision the checked out revision
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private WorkingCopy(final File pLocation,
                         final Branch pBranch,
-                        final SVNRevision pRevision) throws JDataException {
+                        final SVNRevision pRevision) throws JOceanusException {
         /* Store parameters */
         theBranch = pBranch;
         theLocation = pLocation;
@@ -247,9 +246,9 @@ public final class WorkingCopy
     /**
      * Discover updates.
      * @param pReport the report object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void discoverUpdates(final ReportStatus pReport) throws JDataException {
+    public void discoverUpdates(final ReportStatus pReport) throws JOceanusException {
         /* Access client */
         Repository myRepository = theBranch.getRepository();
         SVNClientManager myMgr = myRepository.getClientManager();
@@ -260,7 +259,7 @@ public final class WorkingCopy
             /* Access status of the directory */
             myClient.doStatus(theLocation, SVNRevision.HEAD, SVNDepth.INFINITY, false, false, false, false, new UpdateHandler(this), null);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
+            throw new JOceanusException("Unable to get status", e);
         } finally {
             myRepository.releaseClientManager(myMgr);
         }
@@ -336,10 +335,10 @@ public final class WorkingCopy
      * @param pRepo the repository
      * @param pFile the file to get status for
      * @return the status (null if not under VC)
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static SVNStatus getFileStatus(final Repository pRepo,
-                                          final File pFile) throws JDataException {
+                                          final File pFile) throws JOceanusException {
         /* File must exist */
         if (!pFile.exists()) {
             return null;
@@ -363,7 +362,7 @@ public final class WorkingCopy
             /* Allow file/directory exists but is not WC */
             if ((myCode != SVNErrorCode.WC_NOT_FILE)
                 && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
+                throw new JOceanusException("Unable to get status", e);
             }
 
             /* Set status to null */
@@ -461,11 +460,11 @@ public final class WorkingCopy
          * @param pRepository the repository
          * @param pLocation the location
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public WorkingCopySet(final Repository pRepository,
                               final File pLocation,
-                              final ReportStatus pReport) throws JDataException {
+                              final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
             super(WorkingCopy.class);
 
@@ -481,10 +480,10 @@ public final class WorkingCopy
          * Constructor.
          * @param pRepository the repository
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public WorkingCopySet(final Repository pRepository,
-                              final ReportStatus pReport) throws JDataException {
+                              final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
             super(WorkingCopy.class);
 
@@ -503,9 +502,9 @@ public final class WorkingCopy
         /**
          * Analyse WorkingSet.
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private void analyseWorkingCopySet(final ReportStatus pReport) throws JDataException {
+        private void analyseWorkingCopySet(final ReportStatus pReport) throws JOceanusException {
             /* Report start of analysis */
             pReport.initTask("Analysing Working Copies");
 
@@ -539,10 +538,10 @@ public final class WorkingCopy
          * Locate working copies.
          * @param pLocation location
          * @param pReport the report object
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private void locateWorkingDirectories(final File pLocation,
-                                              final ReportStatus pReport) throws JDataException {
+                                              final ReportStatus pReport) throws JOceanusException {
             /* Return if file is not a directory */
             if (!pLocation.isDirectory()) {
                 return;

@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -171,7 +171,7 @@ public class ExcelSheet
     @Override
     public void declareRange(final String pName,
                              final CellPosition pFirstCell,
-                             final CellPosition pLastCell) throws JDataException {
+                             final CellPosition pLastCell) throws JOceanusException {
         if (!isReadOnly) {
             /* Build the area reference */
             String myName = getName();
@@ -187,7 +187,7 @@ public class ExcelSheet
     @Override
     public void applyDataValidation(final CellPosition pFirstCell,
                                     final CellPosition pLastCell,
-                                    final String pName) throws JDataException {
+                                    final String pName) throws JOceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
@@ -200,7 +200,7 @@ public class ExcelSheet
 
     @Override
     public void applyDataFilter(final CellPosition pBaseCell,
-                                final int pNumRows) throws JDataException {
+                                final int pNumRows) throws JOceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
             int myRow = pBaseCell.getRowIndex();

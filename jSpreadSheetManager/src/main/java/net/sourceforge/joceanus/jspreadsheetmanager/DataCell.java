@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -32,6 +30,8 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -114,58 +114,58 @@ public abstract class DataCell {
     /**
      * Obtain date value of the cell.
      * @return the date value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JDateDay getDateValue() throws JDataException;
+    public abstract JDateDay getDateValue() throws JOceanusException;
 
     /**
      * Obtain integer value of the cell.
      * @return the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract Integer getIntegerValue() throws JDataException;
+    public abstract Integer getIntegerValue() throws JOceanusException;
 
     /**
      * Obtain money value of the cell.
      * @return the money value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JMoney getMoneyValue() throws JDataException;
+    public abstract JMoney getMoneyValue() throws JOceanusException;
 
     /**
      * Obtain price value of the cell.
      * @return the price value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JPrice getPriceValue() throws JDataException;
+    public abstract JPrice getPriceValue() throws JOceanusException;
 
     /**
      * Obtain rate value of the cell.
      * @return the rate value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JRate getRateValue() throws JDataException;
+    public abstract JRate getRateValue() throws JOceanusException;
 
     /**
      * Obtain units value of the cell.
      * @return the units value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JUnits getUnitsValue() throws JDataException;
+    public abstract JUnits getUnitsValue() throws JOceanusException;
 
     /**
      * Obtain dilution value of the cell.
      * @return the dilution value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JDilution getDilutionValue() throws JDataException;
+    public abstract JDilution getDilutionValue() throws JOceanusException;
 
     /**
      * Obtain ratio value of the cell.
      * @return the ratio value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract JRatio getRatioValue() throws JDataException;
+    public abstract JRatio getRatioValue() throws JOceanusException;
 
     /**
      * Obtain string value of the cell.
@@ -176,9 +176,9 @@ public abstract class DataCell {
     /**
      * Obtain byte array value of the cell.
      * @return the byte array value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public byte[] getBytesValue() throws JDataException {
+    public byte[] getBytesValue() throws JOceanusException {
         String myValue = getStringValue();
         return (myValue == null)
                 ? null
@@ -188,9 +188,9 @@ public abstract class DataCell {
     /**
      * Obtain char array value of the cell.
      * @return the char array value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public char[] getCharArrayValue() throws JDataException {
+    public char[] getCharArrayValue() throws JOceanusException {
         byte[] myValue = getBytesValue();
         return (myValue == null)
                 ? null
@@ -199,16 +199,16 @@ public abstract class DataCell {
 
     /**
      * Set null value for the cell.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public abstract void setNullValue() throws JDataException;
+    public abstract void setNullValue() throws JOceanusException;
 
     /**
      * Set boolean value of the cell.
      * @param pValue the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBooleanValue(final Boolean pValue) throws JDataException {
+    public void setBooleanValue(final Boolean pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -221,23 +221,23 @@ public abstract class DataCell {
     /**
      * Set non-null boolean value of the cell.
      * @param pValue the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setBoolean(final Boolean pValue) throws JDataException;
+    protected abstract void setBoolean(final Boolean pValue) throws JOceanusException;
 
     /**
      * Set non-null date value of the cell.
      * @param pValue the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setDate(final JDateDay pValue) throws JDataException;
+    protected abstract void setDate(final JDateDay pValue) throws JOceanusException;
 
     /**
      * Set date value of the cell.
      * @param pValue the date value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDateValue(final JDateDay pValue) throws JDataException {
+    public void setDateValue(final JDateDay pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -250,9 +250,9 @@ public abstract class DataCell {
     /**
      * Set integer value of the cell.
      * @param pValue the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setIntegerValue(final Integer pValue) throws JDataException {
+    public void setIntegerValue(final Integer pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -265,16 +265,16 @@ public abstract class DataCell {
     /**
      * Set non-null integer value of the cell.
      * @param pValue the integer value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setInteger(final Integer pValue) throws JDataException;
+    protected abstract void setInteger(final Integer pValue) throws JOceanusException;
 
     /**
      * Set string value of the cell.
      * @param pValue the string value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setStringValue(final String pValue) throws JDataException {
+    public void setStringValue(final String pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -287,16 +287,16 @@ public abstract class DataCell {
     /**
      * Set non-null string value of the cell.
      * @param pValue the string value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setString(final String pValue) throws JDataException;
+    protected abstract void setString(final String pValue) throws JOceanusException;
 
     /**
      * Set decimal value of the cell.
      * @param pValue the decimal value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDecimalValue(final JDecimal pValue) throws JDataException {
+    public void setDecimalValue(final JDecimal pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -309,16 +309,16 @@ public abstract class DataCell {
     /**
      * Set non-null decimal value of the cell.
      * @param pValue the decimal value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setDecimal(final JDecimal pValue) throws JDataException;
+    protected abstract void setDecimal(final JDecimal pValue) throws JOceanusException;
 
     /**
      * Set monetary value of the cell.
      * @param pValue the monetary value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setMonetaryValue(final JMoney pValue) throws JDataException {
+    public void setMonetaryValue(final JMoney pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -331,16 +331,16 @@ public abstract class DataCell {
     /**
      * Set non-null monetary value of the cell.
      * @param pValue the monetary value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setMonetary(final JMoney pValue) throws JDataException;
+    protected abstract void setMonetary(final JMoney pValue) throws JOceanusException;
 
     /**
      * Set header value of the cell.
      * @param pValue the string value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setHeaderValue(final String pValue) throws JDataException {
+    public void setHeaderValue(final String pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -353,16 +353,16 @@ public abstract class DataCell {
     /**
      * Set non-null header value of the cell.
      * @param pValue the header value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected abstract void setHeader(final String pValue) throws JDataException;
+    protected abstract void setHeader(final String pValue) throws JOceanusException;
 
     /**
      * Set byte array value of the cell.
      * @param pValue the byte array value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setBytesValue(final byte[] pValue) throws JDataException {
+    public void setBytesValue(final byte[] pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -375,9 +375,9 @@ public abstract class DataCell {
     /**
      * Set char array value of the cell.
      * @param pValue the byte array value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setCharArrayValue(final char[] pValue) throws JDataException {
+    public void setCharArrayValue(final char[] pValue) throws JOceanusException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();

@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Frequency data type.
@@ -88,10 +87,10 @@ public class Frequency
      * Basic Constructor.
      * @param pList The list to associate the Frequency with
      * @param pName Name of Frequency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final String pName) throws JDataException {
+                      final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -99,10 +98,10 @@ public class Frequency
      * Basic constructor.
      * @param pList The list to associate the Frequency with
      * @param pClass Class of Frequency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Frequency(final FrequencyList pList,
-                      final FrequencyClass pClass) throws JDataException {
+                      final FrequencyClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -114,14 +113,14 @@ public class Frequency
      * @param pOrder the sort order
      * @param pName Name of Frequency
      * @param pDesc Description of Frequency
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Frequency(final FrequencyList pList,
                       final Integer pId,
                       final Boolean isEnabled,
                       final Integer pOrder,
                       final String pName,
-                      final String pDesc) throws JDataException {
+                      final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -134,7 +133,7 @@ public class Frequency
      * @param pOrder the sort order
      * @param pName Encrypted Name of Frequency
      * @param pDesc Encrypted Description of TaxRegime
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private Frequency(final FrequencyList pList,
                       final Integer pId,
@@ -142,7 +141,7 @@ public class Frequency
                       final Boolean isEnabled,
                       final Integer pOrder,
                       final byte[] pName,
-                      final byte[] pDesc) throws JDataException {
+                      final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -195,7 +194,7 @@ public class Frequency
         }
 
         @Override
-        public FrequencyList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public FrequencyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (FrequencyList) super.cloneList(pDataSet);
         }
 
@@ -236,22 +235,22 @@ public class Frequency
         /**
          * Add a Frequency.
          * @param pFrequency the Name of the frequency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pFrequency) throws JDataException {
+        public void addBasicItem(final String pFrequency) throws JOceanusException {
             /* Create a new Frequency */
             Frequency myFrequency = new Frequency(this, pFrequency);
 
             /* Check that this Frequency has not been previously added */
             if (findItemByName(pFrequency) != null) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myFrequency, ERROR_VALIDATION);
+                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
             }
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myFrequency, ERROR_VALIDATION);
+                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -262,7 +261,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFrequency.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFrequency, ERROR_VALIDATION);
+                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
             }
         }
 
@@ -273,20 +272,20 @@ public class Frequency
          * @param pOrder the sort order
          * @param pFrequency the Name of the frequency
          * @param pDesc the Description of the frequency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pFrequency,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Frequency */
             Frequency myFreq = new Frequency(this, pId, isEnabled, pOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myFreq, ERROR_VALIDATION);
+                throw new JOceanusException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -297,7 +296,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
+                throw new JOceanusException(myFreq, ERROR_VALIDATION);
             }
         }
 
@@ -309,21 +308,21 @@ public class Frequency
          * @param pOrder the sort order
          * @param pFrequency the Encrypted Name of the frequency
          * @param pDesc the Encrypted Description of the frequency
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pFrequency,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Frequency */
             Frequency myFreq = new Frequency(this, pId, pControlId, isEnabled, pOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myFreq, ERROR_VALIDATION);
+                throw new JOceanusException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -334,15 +333,15 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
+                throw new JOceanusException(myFreq, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (FrequencyClass myClass : FrequencyClass.values()) {
                 /* Create new element */
@@ -356,7 +355,7 @@ public class Frequency
 
                 /* Handle validation failure */
                 if (myFreq.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
+                    throw new JOceanusException(myFreq, ERROR_VALIDATION);
                 }
             }
 

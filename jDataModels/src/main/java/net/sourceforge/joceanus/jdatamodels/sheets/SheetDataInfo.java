@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfo;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a data info type.
@@ -54,13 +54,13 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
      * @param pInfoTypeId the info type id
      * @param pOwnerId the owner id
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected abstract void loadEncryptedItem(final Integer pId,
                                               final Integer pControlId,
                                               final Integer pInfoTypeId,
                                               final Integer pOwnerId,
-                                              final byte[] pValue) throws JDataException;
+                                              final byte[] pValue) throws JOceanusException;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -85,7 +85,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myInfoTypeId = loadInteger(COL_INFOTYPE);
@@ -99,7 +99,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
     }
 
     @Override
-    protected void insertSecureItem(final T pItem) throws JDataException {
+    protected void insertSecureItem(final T pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jEventManager: Java Event Manager
+ * jTethys: Java Utilities
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jeventmanager;
+package net.sourceforge.joceanus.jtethys.event;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

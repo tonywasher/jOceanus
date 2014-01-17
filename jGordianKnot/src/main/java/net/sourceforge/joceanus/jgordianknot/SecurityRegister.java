@@ -44,9 +44,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Factory and Key Generator register.
@@ -296,10 +295,10 @@ public class SecurityRegister {
          * @param pPrivate the Encoded private form (may be null for public-only)
          * @param pPublic the Encoded public form
          * @return the KeyPair
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected KeyPair deriveKeyPair(final byte[] pPrivate,
-                                        final byte[] pPublic) throws JDataException {
+                                        final byte[] pPublic) throws JOceanusException {
             /* If we have not allocated the factory */
             if (theFactory == null) {
                 /* Protect against Exceptions */
@@ -308,7 +307,7 @@ public class SecurityRegister {
                     theFactory = KeyFactory.getInstance(theAlgorithm, theProviderName);
                 } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
                     /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
+                    throw new JOceanusException("Failed to create key factory", e);
                 }
             }
 
@@ -332,16 +331,16 @@ public class SecurityRegister {
                 /* Catch exceptions */
             } catch (InvalidKeySpecException e) {
                 /* Throw the exception */
-                throw new JDataException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
+                throw new JOceanusException("Failed to re-build KeyPair", e);
             }
         }
 
         /**
          * Generate new KeyPair.
          * @return the KeyPair
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected KeyPair generateKeyPair() throws JDataException {
+        protected KeyPair generateKeyPair() throws JOceanusException {
             /* If we have not allocated the generator */
             if (theGenerator == null) {
                 /* Protect against Exceptions */
@@ -362,7 +361,7 @@ public class SecurityRegister {
                     }
                 } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
                     /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                    throw new JOceanusException(e.getMessage(), e);
                 }
             }
 
@@ -436,9 +435,9 @@ public class SecurityRegister {
         /**
          * Generate a new key of the required keyLength.
          * @return the Secret Key
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected SecretKey generateKey() throws JDataException {
+        protected SecretKey generateKey() throws JOceanusException {
             /* If we have not allocated the generator */
             if (theKeyGenerator == null) {
                 /* Protect against Exceptions */
@@ -448,7 +447,7 @@ public class SecurityRegister {
                     theKeyGenerator.init(theKeyLen, theRandom);
                 } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
                     /* Throw the exception */
-                    throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+                    throw new JOceanusException(e.getMessage(), e);
                 }
             }
 
@@ -484,10 +483,10 @@ public class SecurityRegister {
          * @param pSecret the derived Secret
          * @param pInitVector the initialisation vector
          * @return the new Secret Key
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected SecretKey buildSecretKey(final byte[] pSecret,
-                                           final byte[] pInitVector) throws JDataException {
+                                           final byte[] pInitVector) throws JOceanusException {
             /* Determine the key length in bytes */
             int myKeyLen = theKeyLen
                            / Byte.SIZE;
@@ -536,11 +535,11 @@ public class SecurityRegister {
          * @param pSection the section count
          * @param pInitVector the initialisation vector
          * @return the section
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private byte[] buildCipherSection(final DataMac pMac,
                                           final byte[] pSection,
-                                          final byte[] pInitVector) throws JDataException {
+                                          final byte[] pInitVector) throws JOceanusException {
             /* Declare initial value */
             byte[] myResult = null;
             byte[] myHash = pInitVector;

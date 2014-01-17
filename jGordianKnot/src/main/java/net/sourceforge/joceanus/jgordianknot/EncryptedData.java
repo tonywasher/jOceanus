@@ -27,10 +27,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDiffers;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
@@ -45,6 +42,8 @@ import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encrypted data types.
@@ -163,11 +162,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipher set
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
                                final JDataFormatter pFormatter,
-                               final byte[] pEncrypted) throws JDataException {
+                               final byte[] pEncrypted) throws JOceanusException {
             /* Store the cipherSet and formatter */
             theCipherSet = pCipherSet;
             theFormatter = pFormatter;
@@ -177,7 +176,7 @@ public final class EncryptedData {
 
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new JDataException(ExceptionClass.LOGIC, ERROR_INIT);
+                throw new JOceanusException(ERROR_INIT);
             }
 
             /* Decrypt the Bytes */
@@ -189,12 +188,12 @@ public final class EncryptedData {
 
         /**
          * Encrypt the value.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        private void encryptValue() throws JDataException {
+        private void encryptValue() throws JOceanusException {
             /* Reject if encryption is not initialised */
             if (theCipherSet == null) {
-                throw new JDataException(ExceptionClass.LOGIC, ERROR_INIT);
+                throw new JOceanusException(ERROR_INIT);
             }
 
             /* Obtain the bytes representation of the value */
@@ -209,11 +208,11 @@ public final class EncryptedData {
          * @param pCipherSet the CipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
                                final JDataFormatter pFormatter,
-                               final T pUnencrypted) throws JDataException {
+                               final T pUnencrypted) throws JOceanusException {
             /* Store the cipherSet and formatter */
             theCipherSet = pCipherSet;
             theFormatter = pFormatter;
@@ -271,23 +270,23 @@ public final class EncryptedData {
          * Parse the decrypted bytes.
          * @param pBytes the decrypted bytes
          * @return the decrypted value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected abstract T parseBytes(byte[] pBytes) throws JDataException;
+        protected abstract T parseBytes(byte[] pBytes) throws JOceanusException;
 
         /**
          * Obtain the bytes format to encrypt.
          * @return the bytes to encrypt
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected abstract byte[] getBytesForEncryption() throws JDataException;
+        protected abstract byte[] getBytesForEncryption() throws JOceanusException;
 
         /**
          * Apply fresh encryption to value.
          * @param pCipherSet the cipherSet
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected void applyEncryption(final CipherSet pCipherSet) throws JDataException {
+        protected void applyEncryption(final CipherSet pCipherSet) throws JOceanusException {
             /* Store the CipherSet */
             theCipherSet = pCipherSet;
 
@@ -300,11 +299,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the formatter
          * @param pField field to adopt encryption from
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected void adoptEncryption(final CipherSet pCipherSet,
                                        final JDataFormatter pFormatter,
-                                       final EncryptedField<?> pField) throws JDataException {
+                                       final EncryptedField<?> pField) throws JOceanusException {
             /* Store the CipherSet and formatter */
             theCipherSet = pCipherSet;
             theFormatter = pFormatter;
@@ -401,11 +400,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedString(final CipherSet pCipherSet,
                                   final JDataFormatter pFormatter,
-                                  final byte[] pEncrypted) throws JDataException {
+                                  final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -414,37 +413,37 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedString(final CipherSet pCipherSet,
                                   final JDataFormatter pFormatter,
-                                  final String pUnencrypted) throws JDataException {
+                                  final String pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected String parseBytes(final byte[] pBytes) throws JDataException {
+        protected String parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string */
                 return DataConverter.byteArrayToString(pBytes);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the string to a byte array */
                 return DataConverter.stringToByteArray(getValue());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -459,11 +458,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedShort(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -472,39 +471,39 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedShort(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final Short pUnencrypted) throws JDataException {
+                                 final Short pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Short parseBytes(final byte[] pBytes) throws JDataException {
+        protected Short parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a short */
                 return Short.parseShort(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the short to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -519,11 +518,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedInteger(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JDataException {
+                                   final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -532,39 +531,39 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedInteger(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final Integer pUnencrypted) throws JDataException {
+                                   final Integer pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Integer parseBytes(final byte[] pBytes) throws JDataException {
+        protected Integer parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
                 return Integer.parseInt(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the integer to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -579,11 +578,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedLong(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JDataException {
+                                final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -592,39 +591,39 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedLong(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final Long pUnencrypted) throws JDataException {
+                                final Long pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Long parseBytes(final byte[] pBytes) throws JDataException {
+        protected Long parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a long */
                 return Long.parseLong(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the long to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -639,11 +638,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedFloat(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -652,39 +651,39 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedFloat(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final Float pUnencrypted) throws JDataException {
+                                 final Float pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Float parseBytes(final byte[] pBytes) throws JDataException {
+        protected Float parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a float */
                 return Float.parseFloat(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the float to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -699,11 +698,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDouble(final CipherSet pCipherSet,
                                   final JDataFormatter pFormatter,
-                                  final byte[] pEncrypted) throws JDataException {
+                                  final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -712,39 +711,39 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDouble(final CipherSet pCipherSet,
                                   final JDataFormatter pFormatter,
-                                  final Double pUnencrypted) throws JDataException {
+                                  final Double pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Double parseBytes(final byte[] pBytes) throws JDataException {
+        protected Double parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a Double */
                 return Double.parseDouble(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the double to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -759,11 +758,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBoolean(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JDataException {
+                                   final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -772,37 +771,37 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBoolean(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final Boolean pUnencrypted) throws JDataException {
+                                   final Boolean pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Boolean parseBytes(final byte[] pBytes) throws JDataException {
+        protected Boolean parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
                 return Boolean.parseBoolean(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the boolean to a string and then a byte array */
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -833,11 +832,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDate(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JDataException {
+                                final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -846,16 +845,16 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDate(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final Date pUnencrypted) throws JDataException {
+                                final Date pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Date parseBytes(final byte[] pBytes) throws JDataException {
+        protected Date parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a date */
@@ -863,15 +862,15 @@ public final class EncryptedData {
                 return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
@@ -879,8 +878,8 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -911,11 +910,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDateDay(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final byte[] pEncrypted) throws JDataException {
+                                   final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -924,16 +923,16 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDateDay(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final JDateDay pUnencrypted) throws JDataException {
+                                   final JDateDay pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JDateDay parseBytes(final byte[] pBytes) throws JDataException {
+        protected JDateDay parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
@@ -942,14 +941,14 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
@@ -957,8 +956,8 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -973,11 +972,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedCharArray(final CipherSet pCipherSet,
                                      final JDataFormatter pFormatter,
-                                     final byte[] pEncrypted) throws JDataException {
+                                     final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -986,21 +985,21 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedCharArray(final CipherSet pCipherSet,
                                      final JDataFormatter pFormatter,
-                                     final char[] pUnencrypted) throws JDataException {
+                                     final char[] pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected char[] parseBytes(final byte[] pBytes) throws JDataException {
+        protected char[] parseBytes(final byte[] pBytes) throws JOceanusException {
             return DataConverter.bytesToCharArray(pBytes);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             return DataConverter.charsToByteArray(getValue());
         }
     }
@@ -1015,11 +1014,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBigInteger(final CipherSet pCipherSet,
                                       final JDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws JDataException {
+                                      final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1028,26 +1027,26 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBigInteger(final CipherSet pCipherSet,
                                       final JDataFormatter pFormatter,
-                                      final BigInteger pUnencrypted) throws JDataException {
+                                      final BigInteger pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected BigInteger parseBytes(final byte[] pBytes) throws JDataException {
+        protected BigInteger parseBytes(final byte[] pBytes) throws JOceanusException {
             try {
                 return new BigInteger(pBytes);
                 /* Catch Exceptions */
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             return getValue().toByteArray();
         }
     }
@@ -1062,11 +1061,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBigDecimal(final CipherSet pCipherSet,
                                       final JDataFormatter pFormatter,
-                                      final byte[] pEncrypted) throws JDataException {
+                                      final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1075,28 +1074,28 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedBigDecimal(final CipherSet pCipherSet,
                                       final JDataFormatter pFormatter,
-                                      final BigDecimal pUnencrypted) throws JDataException {
+                                      final BigDecimal pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected BigDecimal parseBytes(final byte[] pBytes) throws JDataException {
+        protected BigDecimal parseBytes(final byte[] pBytes) throws JOceanusException {
             try {
                 return new BigDecimal(DataConverter.byteArrayToString(pBytes));
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             } catch (NumberFormatException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             return DataConverter.stringToByteArray(getValue().toString());
         }
     }
@@ -1144,11 +1143,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1157,16 +1156,16 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final X pUnencrypted) throws JDataException {
+                                 final X pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected X parseBytes(final byte[] pBytes) throws JDataException {
+        protected X parseBytes(final byte[] pBytes) throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and parse it */
@@ -1174,8 +1173,8 @@ public final class EncryptedData {
                 return parseValue(myInput);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
 
@@ -1183,12 +1182,12 @@ public final class EncryptedData {
          * Parse a string value to get a value.
          * @param pValue the string value
          * @return the value
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        protected abstract X parseValue(final String pValue) throws JDataException;
+        protected abstract X parseValue(final String pValue) throws JOceanusException;
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
@@ -1198,8 +1197,8 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
     }
@@ -1214,11 +1213,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedMoney(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1227,16 +1226,16 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedMoney(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final JMoney pUnencrypted) throws JDataException {
+                                 final JMoney pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
@@ -1246,17 +1245,17 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
 
         @Override
-        protected JMoney parseValue(final String pValue) throws JDataException {
+        protected JMoney parseValue(final String pValue) throws JOceanusException {
             try {
                 return getDecimalParser().parseMoneyValue(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1271,11 +1270,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedUnits(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1284,20 +1283,20 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedUnits(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final JUnits pUnencrypted) throws JDataException {
+                                 final JUnits pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JUnits parseValue(final String pValue) throws JDataException {
+        protected JUnits parseValue(final String pValue) throws JOceanusException {
             try {
                 return new JUnits(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1312,11 +1311,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedRate(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final byte[] pEncrypted) throws JDataException {
+                                final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1325,21 +1324,21 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedRate(final CipherSet pCipherSet,
                                 final JDataFormatter pFormatter,
-                                final JRate pUnencrypted) throws JDataException {
+                                final JRate pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JRate parseValue(final String pValue) throws JDataException {
+        protected JRate parseValue(final String pValue) throws JOceanusException {
             try {
                 return new JRate(pValue);
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1354,11 +1353,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedPrice(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1367,16 +1366,16 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedPrice(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final JPrice pUnencrypted) throws JDataException {
+                                 final JPrice pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected byte[] getBytesForEncryption() throws JDataException {
+        protected byte[] getBytesForEncryption() throws JOceanusException {
             /* Protect against exceptions */
             try {
                 /* Format the value */
@@ -1386,17 +1385,17 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (JDataException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_VALUE_CONVERT, e);
+            } catch (JOceanusException e) {
+                throw new JOceanusException(ERROR_VALUE_CONVERT, e);
             }
         }
 
         @Override
-        protected JPrice parseValue(final String pValue) throws JDataException {
+        protected JPrice parseValue(final String pValue) throws JOceanusException {
             try {
                 return getDecimalParser().parsePriceValue(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1411,11 +1410,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDilution(final CipherSet pCipherSet,
                                     final JDataFormatter pFormatter,
-                                    final byte[] pEncrypted) throws JDataException {
+                                    final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1424,20 +1423,20 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedDilution(final CipherSet pCipherSet,
                                     final JDataFormatter pFormatter,
-                                    final JDilution pUnencrypted) throws JDataException {
+                                    final JDilution pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JDilution parseValue(final String pValue) throws JDataException {
+        protected JDilution parseValue(final String pValue) throws JOceanusException {
             try {
                 return new JDilution(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }
@@ -1452,11 +1451,11 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedRatio(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final byte[] pEncrypted) throws JDataException {
+                                 final byte[] pEncrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pEncrypted);
         }
 
@@ -1465,20 +1464,20 @@ public final class EncryptedData {
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         protected EncryptedRatio(final CipherSet pCipherSet,
                                  final JDataFormatter pFormatter,
-                                 final JRatio pUnencrypted) throws JDataException {
+                                 final JRatio pUnencrypted) throws JOceanusException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected JRatio parseValue(final String pValue) throws JDataException {
+        protected JRatio parseValue(final String pValue) throws JOceanusException {
             try {
                 return new JRatio(pValue);
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.CRYPTO, ERROR_BYTES_CONVERT, e);
+                throw new JOceanusException(ERROR_BYTES_CONVERT, e);
             }
         }
     }

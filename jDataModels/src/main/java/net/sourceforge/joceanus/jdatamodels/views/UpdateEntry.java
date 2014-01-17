@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jdatamodels.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Update entry items.
@@ -88,9 +88,9 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
 
     /**
      * Prepare changes in an edit view back into the core data.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void prepareChanges() throws JDataException {
+    public void prepareChanges() throws JOceanusException {
         /* Ignore if we have no list */
         if (theDataList == null) {
             return;

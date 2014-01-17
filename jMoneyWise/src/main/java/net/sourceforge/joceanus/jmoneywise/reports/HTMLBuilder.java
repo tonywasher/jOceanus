@@ -28,11 +28,10 @@ import javax.swing.text.html.StyleSheet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -275,9 +274,9 @@ public class HTMLBuilder {
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public HTMLBuilder() throws JDataException {
+    public HTMLBuilder() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Create the formatter */
@@ -288,7 +287,7 @@ public class HTMLBuilder {
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {
-            throw new JDataException(ExceptionClass.XML, "Failed to create", e);
+            throw new JOceanusException("Failed to create", e);
         }
     }
 

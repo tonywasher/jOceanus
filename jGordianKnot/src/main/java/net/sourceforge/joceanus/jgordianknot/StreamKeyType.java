@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jgordianknot;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Stream Key Type.
@@ -121,16 +120,16 @@ public enum StreamKeyType {
      * get value from id.
      * @param id the id value
      * @return the corresponding enum object
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public static StreamKeyType fromId(final int id) throws JDataException {
+    public static StreamKeyType fromId(final int id) throws JOceanusException {
         for (StreamKeyType myType : values()) {
             if (myType.getId() == id) {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid StreamKeyType: "
-                                                      + id);
+        throw new JOceanusException("Invalid StreamKeyType: "
+                                    + id);
     }
 
     /**
@@ -138,10 +137,10 @@ public enum StreamKeyType {
      * @param pNumTypes the number of types
      * @param pRandom the random generator
      * @return the random set
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public static StreamKeyType[] getRandomTypes(final int pNumTypes,
-                                                 final SecureRandom pRandom) throws JDataException {
+                                                 final SecureRandom pRandom) throws JOceanusException {
         /* Access the values */
         StreamKeyType[] myValues = values();
         int iNumValues = myValues.length;
@@ -149,8 +148,8 @@ public enum StreamKeyType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of StreamKeys: "
-                                                           + pNumTypes);
+            throw new JOceanusException("Invalid number of StreamKeys: "
+                                        + pNumTypes);
         }
 
         /* Create the result set */

@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
@@ -80,7 +80,7 @@ public class CreateNewBranch
     /**
      * The Error.
      */
-    private JDataException theError = null;
+    private JOceanusException theError = null;
 
     /**
      * Obtain the working copy set.
@@ -94,7 +94,7 @@ public class CreateNewBranch
      * Obtain the error.
      * @return the error
      */
-    public JDataException getError() {
+    public JOceanusException getError() {
         return theError;
     }
 
@@ -123,7 +123,7 @@ public class CreateNewBranch
 
             /* Store the tags */
             myTags = new HashSet<Tag>(Arrays.asList(pTags));
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
@@ -143,7 +143,7 @@ public class CreateNewBranch
 
             /* Discover workingSet details */
             theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

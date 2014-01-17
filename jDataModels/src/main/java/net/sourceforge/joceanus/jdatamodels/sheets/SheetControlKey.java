@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for ControlKey.
@@ -76,7 +76,7 @@ public class SheetControlKey
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the binary values */
         byte[] myHash = loadBytes(COL_KEYDATA);
 
@@ -85,7 +85,7 @@ public class SheetControlKey
     }
 
     @Override
-    protected void insertSecureItem(final ControlKey pItem) throws JDataException {
+    protected void insertSecureItem(final ControlKey pItem) throws JOceanusException {
         /* Set the fields */
         writeBytes(COL_KEYDATA, pItem.getHashBytes());
     }

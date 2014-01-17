@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
@@ -43,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for TaxYear.
@@ -126,7 +125,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myRegimeId = loadInteger(COL_REGIME);
 
@@ -138,7 +137,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the Strings */
         String myTaxRegime = loadString(COL_REGIME);
 
@@ -153,14 +152,14 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void insertSecureItem(final TaxYear pItem) throws JDataException {
+    protected void insertSecureItem(final TaxYear pItem) throws JOceanusException {
         /* Set the fields */
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeInteger(COL_REGIME, pItem.getTaxRegimeId());
     }
 
     @Override
-    protected void insertOpenItem(final TaxYear pItem) throws JDataException {
+    protected void insertOpenItem(final TaxYear pItem) throws JOceanusException {
         /* Set the fields */
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeString(COL_REGIME, pItem.getTaxRegimeName());
@@ -170,7 +169,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_TAXYEAR, TaxYearBase.FIELD_TAXYEAR.getName());
         writeHeader(COL_REGIME, TaxYearBase.FIELD_REGIME.getName());
@@ -180,7 +179,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setStringColumn(COL_REGIME);
         setDateColumn(COL_TAXYEAR);
@@ -193,7 +192,7 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
@@ -227,12 +226,12 @@ public class SheetTaxYear
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final YearRange pRange) throws JDataException {
+                                         final YearRange pRange) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -381,8 +380,8 @@ public class SheetTaxYear
             myList.validateOnLoad();
 
             /* Handle exceptions */
-        } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load TaxYears", e);
+        } catch (JOceanusException e) {
+            throw new JOceanusException("Failed to Load TaxYears", e);
         }
 
         /* Return to caller */

@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JRatio;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for ExchangeRate.
@@ -92,7 +92,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myFromId = loadInteger(COL_FROM);
         Integer myToId = loadInteger(COL_TO);
@@ -106,7 +106,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JOceanusException {
         /* Access the links */
         String myFrom = loadString(COL_FROM);
         String myTo = loadString(COL_TO);
@@ -120,7 +120,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void insertSecureItem(final ExchangeRate pItem) throws JDataException {
+    protected void insertSecureItem(final ExchangeRate pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_FROM, pItem.getFromCurrencyId());
         writeInteger(COL_TO, pItem.getToCurrencyId());
@@ -129,7 +129,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void insertOpenItem(final ExchangeRate pItem) throws JDataException {
+    protected void insertOpenItem(final ExchangeRate pItem) throws JOceanusException {
         /* Set the fields */
         writeString(COL_FROM, pItem.getFromCurrencyName());
         writeString(COL_TO, pItem.getToCurrencyName());
@@ -138,7 +138,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void prepareSheet() throws JDataException {
+    protected void prepareSheet() throws JOceanusException {
         /* Write titles */
         writeHeader(COL_FROM, ExchangeRate.FIELD_FROM.getName());
         writeHeader(COL_TO, ExchangeRate.FIELD_TO.getName());
@@ -147,7 +147,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void formatSheet() throws JDataException {
+    protected void formatSheet() throws JOceanusException {
         /* Set the column types */
         setDateColumn(COL_DATE);
         setStringColumn(COL_FROM);
@@ -166,7 +166,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void postProcessOnLoad() throws JDataException {
+    protected void postProcessOnLoad() throws JOceanusException {
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();

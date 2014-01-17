@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jdatamodels.preferences;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.SecurityParameters;
 import net.sourceforge.joceanus.jgordianknot.SecurityProvider;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Security preferences.
@@ -129,9 +129,9 @@ public class SecurityPreferences
 
     /**
      * Constructor.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SecurityPreferences() throws JDataException {
+    public SecurityPreferences() throws JOceanusException {
         super();
     }
 
@@ -139,9 +139,9 @@ public class SecurityPreferences
      * Get SecureManager.
      * @param pLogger the logger
      * @return Security Manager for these preferences
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SecureManager getSecurity(final Logger pLogger) throws JDataException {
+    public SecureManager getSecurity(final Logger pLogger) throws JOceanusException {
         return new SecureManager(pLogger, getParameters());
     }
 
@@ -149,9 +149,9 @@ public class SecurityPreferences
      * Get SecurityGenerator.
      * @param pLogger the logger
      * @return Security Generator for these preferences
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public SecurityGenerator getGenerator(final Logger pLogger) throws JDataException {
+    public SecurityGenerator getGenerator(final Logger pLogger) throws JOceanusException {
         return new SecurityGenerator(pLogger, getParameters());
     }
 

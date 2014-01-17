@@ -25,8 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -97,11 +96,11 @@ public class CheckOut {
      * @param pBranch the branch to check out.
      * @param pRevision the revision to check out
      * @param pPath the path to check out to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void checkOutBranch(final Branch pBranch,
                                 final SVNRevision pRevision,
-                                final File pPath) throws JDataException {
+                                final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -113,8 +112,8 @@ public class CheckOut {
             theReport.setNumStages(pBranch.getNumElements());
             myUpdate.doCheckout(myURL, pPath, SVNRevision.HEAD, pRevision, SVNDepth.INFINITY, false);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to checkOut branch "
-                                                                + pBranch.getBranchName(), e);
+            throw new JOceanusException("Failed to checkOut branch "
+                                        + pBranch.getBranchName(), e);
         }
     }
 
@@ -122,10 +121,10 @@ public class CheckOut {
      * Switch the Branch at the specified directory.
      * @param pBranch the branch to check out.
      * @param pPath the path to check out to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void switchBranch(final Branch pBranch,
-                              final File pPath) throws JDataException {
+                              final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -135,17 +134,17 @@ public class CheckOut {
             SVNURL myURL = pBranch.getURL();
             myUpdate.doSwitch(pPath, myURL, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, false, true);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to switch branch "
-                                                                + pBranch.getBranchName(), e);
+            throw new JOceanusException("Failed to switch branch "
+                                        + pBranch.getBranchName(), e);
         }
     }
 
     /**
      * Update working copy.
      * @param pPath the path to update.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void updateWorkingCopy(final File pPath) throws JDataException {
+    private void updateWorkingCopy(final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -154,17 +153,17 @@ public class CheckOut {
             /* Update the working copy */
             myUpdate.doUpdate(pPath, SVNRevision.HEAD, SVNDepth.INFINITY, true, true);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to update path "
-                                                                + pPath.getPath(), e);
+            throw new JOceanusException("Failed to update path "
+                                        + pPath.getPath(), e);
         }
     }
 
     /**
      * Revert working copy.
      * @param pPath the path to revert.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void revertWorkingCopy(final File pPath) throws JDataException {
+    private void revertWorkingCopy(final File pPath) throws JOceanusException {
         /* Access update client */
         SVNWCClient myClient = theMgr.getWCClient();
 
@@ -176,8 +175,8 @@ public class CheckOut {
             /* Revert the working copy */
             myClient.doRevert(myPaths, SVNDepth.INFINITY, null);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to revert path "
-                                                                + pPath.getPath(), e);
+            throw new JOceanusException("Failed to revert path "
+                                        + pPath.getPath(), e);
         }
     }
 
@@ -185,10 +184,10 @@ public class CheckOut {
      * Export the Tag to the specified directory.
      * @param pTag the tag to export.
      * @param pPath the path to export to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private void exportTag(final Tag pTag,
-                           final File pPath) throws JDataException {
+                           final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
 
@@ -198,8 +197,8 @@ public class CheckOut {
             SVNURL myURL = pTag.getURL();
             myUpdate.doExport(myURL, pPath, SVNRevision.HEAD, SVNRevision.HEAD, null, false, SVNDepth.INFINITY);
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to export tag "
-                                                                + pTag.getTagName(), e);
+            throw new JOceanusException("Failed to export tag "
+                                        + pTag.getTagName(), e);
         }
     }
 
@@ -208,16 +207,16 @@ public class CheckOut {
      * @param pBranches the branches to check out.
      * @param pRevision the revision to check out
      * @param pPath the path to export to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void checkOutBranches(final Collection<Branch> pBranches,
                                  final SVNRevision pRevision,
-                                 final File pPath) throws JDataException {
+                                 final File pPath) throws JOceanusException {
         /* Loop through branches */
         for (Branch myBranch : pBranches) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Operation Cancelled");
+                throw new JOceanusException("Operation Cancelled");
             }
 
             /* Build path */
@@ -232,10 +231,10 @@ public class CheckOut {
      * Switch the Branches in the specified directory.
      * @param pBranches the branches to switch.
      * @param pPath the path to export to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void switchBranches(final Collection<Branch> pBranches,
-                               final File pPath) throws JDataException {
+                               final File pPath) throws JOceanusException {
         /* Loop through branches */
         for (Branch myBranch : pBranches) {
             /* Build path */
@@ -249,9 +248,9 @@ public class CheckOut {
     /**
      * Update Working Set.
      * @param pSet the working set to update.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void updateWorkingCopySet(final WorkingCopySet pSet) throws JDataException {
+    public void updateWorkingCopySet(final WorkingCopySet pSet) throws JOceanusException {
         /* Loop through copies */
         for (WorkingCopy myCopy : pSet) {
             /* Access path */
@@ -265,9 +264,9 @@ public class CheckOut {
     /**
      * Revert Working Set.
      * @param pSet the working set to revert.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void revertWorkingCopySet(final WorkingCopySet pSet) throws JDataException {
+    public void revertWorkingCopySet(final WorkingCopySet pSet) throws JOceanusException {
         /* Loop through copies */
         for (WorkingCopy myCopy : pSet) {
             /* Access path */
@@ -282,15 +281,15 @@ public class CheckOut {
      * Export the Tags to the specified directory.
      * @param pTags the tags to export.
      * @param pPath the path to export to.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public void exportTags(final Collection<Tag> pTags,
-                           final File pPath) throws JDataException {
+                           final File pPath) throws JOceanusException {
         /* Loop through tags */
         for (Tag myTag : pTags) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Operation Cancelled");
+                throw new JOceanusException("Operation Cancelled");
             }
 
             /* Build path */

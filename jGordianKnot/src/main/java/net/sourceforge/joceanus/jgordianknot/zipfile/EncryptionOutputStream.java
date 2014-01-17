@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jgordianknot.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.StreamCipher;
 import net.sourceforge.joceanus.jgordianknot.StreamKey;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.StreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.SymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.zipfile.ZipStreamSpec.ZipStreamType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Provide an encrypt OutputStream wrapper. This class simply wraps an output buffer and encrypts the data before passing it on.
@@ -158,11 +158,11 @@ public class EncryptionOutputStream
      * @param pKey the symmetric key to use
      * @param pMode the cipher mode to use
      * @param pStream the stream to encrypt to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public EncryptionOutputStream(final SymmetricKey pKey,
                                   final CipherMode pMode,
-                                  final OutputStream pStream) throws JDataException {
+                                  final OutputStream pStream) throws JOceanusException {
         /* Store the key */
         theSymKey = pKey;
         theStreamKey = null;
@@ -184,10 +184,10 @@ public class EncryptionOutputStream
      * Construct a stream key encryption output stream.
      * @param pKey the stream key to use
      * @param pStream the stream to encrypt to
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public EncryptionOutputStream(final StreamKey pKey,
-                                  final OutputStream pStream) throws JDataException {
+                                  final OutputStream pStream) throws JOceanusException {
         /* Store the key */
         theStreamKey = pKey;
         theSymKey = null;
@@ -226,7 +226,7 @@ public class EncryptionOutputStream
             }
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IOException(e);
         }
     }
@@ -266,7 +266,7 @@ public class EncryptionOutputStream
             theStream.write(myBytes, 0, iNumBytes);
 
             /* Catch exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             throw new IOException(e);
         }
     }

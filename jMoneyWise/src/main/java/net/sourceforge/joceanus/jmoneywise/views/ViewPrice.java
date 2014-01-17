@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
@@ -39,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventL
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Extension of AccountPrice to cater for diluted prices.
@@ -198,7 +198,7 @@ public class ViewPrice
     }
 
     @Override
-    public void setPrice(final JPrice pPrice) throws JDataException {
+    public void setPrice(final JPrice pPrice) throws JOceanusException {
         super.setPrice(pPrice);
         calculateDiluted();
     }

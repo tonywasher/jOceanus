@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.sourceforge.jdatebutton.JDateFormatter;
-import net.sourceforge.joceanus.jeventmanager.JEventObject;
+import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Formatter for Date objects.

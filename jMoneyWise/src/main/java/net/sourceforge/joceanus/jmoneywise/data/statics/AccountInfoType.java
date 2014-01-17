@@ -23,13 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountInfoType data type.
@@ -126,10 +125,10 @@ public class AccountInfoType
      * Basic Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param pName Name of Account Info Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final String pName) throws JDataException {
+                            final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
@@ -137,10 +136,10 @@ public class AccountInfoType
      * Basic constructor.
      * @param pList The list to associate the Account Info Type with
      * @param pClass Class of Account Info Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final AccountInfoClass pClass) throws JDataException {
+                            final AccountInfoClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -152,14 +151,14 @@ public class AccountInfoType
      * @param pOrder the sort order
      * @param pName Name of Account Info Type
      * @param pDesc Description of Account Info Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
                             final Integer pId,
                             final Boolean isEnabled,
                             final Integer pOrder,
                             final String pName,
-                            final String pDesc) throws JDataException {
+                            final String pDesc) throws JOceanusException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -172,7 +171,7 @@ public class AccountInfoType
      * @param pOrder the sort order
      * @param pName Encrypted Name of Account Info Type
      * @param pDesc Encrypted Description of Account Info Type
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
                             final Integer pId,
@@ -180,7 +179,7 @@ public class AccountInfoType
                             final Boolean isEnabled,
                             final Integer pOrder,
                             final byte[] pName,
-                            final byte[] pDesc) throws JDataException {
+                            final byte[] pDesc) throws JOceanusException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
@@ -233,7 +232,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JDataException {
+        public AccountInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
             return (AccountInfoTypeList) super.cloneList(pDataSet);
         }
 
@@ -265,22 +264,22 @@ public class AccountInfoType
         /**
          * Add a Basic Open AccountInfoType to the list.
          * @param pInfoType the Name of the account info type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pInfoType) throws JDataException {
+        public void addBasicItem(final String pInfoType) throws JOceanusException {
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pInfoType) != null) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Account Info Type to the list */
@@ -291,7 +290,7 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -302,20 +301,20 @@ public class AccountInfoType
          * @param pOrder the sort order
          * @param pInfoType the Name of the account info type
          * @param pDesc the Description of the account info type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pInfoType,
-                                final String pDesc) throws JDataException {
+                                final String pDesc) throws JOceanusException {
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Account Info Type to the list */
@@ -326,7 +325,7 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -338,21 +337,21 @@ public class AccountInfoType
          * @param pOrder the sort order
          * @param pInfoType the encrypted Name of the account info type
          * @param pDesc the Encrypted Description of the account info type
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pInfoType,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc) throws JOceanusException {
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pId, pControlId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Info Type to the list */
@@ -363,15 +362,15 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
+                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
             }
         }
 
         /**
          * Populate default values.
-         * @throws JDataException on error
+         * @throws JOceanusException on error
          */
-        public void populateDefaults() throws JDataException {
+        public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (AccountInfoClass myClass : AccountInfoClass.values()) {
                 /* Create new element */
@@ -385,7 +384,7 @@ public class AccountInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
+                    throw new JOceanusException(myType, ERROR_VALIDATION);
                 }
             }
 

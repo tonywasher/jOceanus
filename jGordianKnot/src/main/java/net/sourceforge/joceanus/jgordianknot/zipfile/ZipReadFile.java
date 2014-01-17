@@ -33,11 +33,10 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.joceanus.jdatamanager.DataConverter;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jgordianknot.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.PasswordHash;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Class used to extract from a ZipFile.
@@ -106,10 +105,10 @@ public class ZipReadFile {
      * Constructor.
      * @param pFile the file to read
      * @param pLogger the logger
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public ZipReadFile(final File pFile,
-                       final Logger pLogger) throws JDataException {
+                       final Logger pLogger) throws JOceanusException {
         /* Store the logger */
         theLogger = pLogger;
 
@@ -149,16 +148,16 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception accessing Zip file", e);
+            throw new JOceanusException("Exception accessing Zip file", e);
         }
     }
 
     /**
      * Set the password hash.
      * @param pHash the password hash
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setPasswordHash(final PasswordHash pHash) throws JDataException {
+    public void setPasswordHash(final PasswordHash pHash) throws JOceanusException {
         /* Ignore if we have no security */
         if (!isEncrypted()) {
             return;
@@ -168,7 +167,7 @@ public class ZipReadFile {
         try {
             /* Reject this is the wrong security control */
             if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
-                throw new JDataException(ExceptionClass.LOGIC, "Password Hash does not match ZipFile Security.");
+                throw new JOceanusException("Password Hash does not match ZipFile Security.");
             }
 
             /* Store the hash and obtain the generator */
@@ -212,7 +211,7 @@ public class ZipReadFile {
 
             /* Reject if the entry is not found */
             if (myHeader == null) {
-                throw new JDataException(ExceptionClass.LOGIC, "Header record not found.");
+                throw new JOceanusException("Header record not found.");
             }
 
             /* Obtain encoded private/public keys */
@@ -224,7 +223,7 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception reading header of Zip file", e);
+            throw new JOceanusException("Exception reading header of Zip file", e);
         } finally {
             /* Close the file */
             try {
@@ -242,14 +241,14 @@ public class ZipReadFile {
      * Obtain an input stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the input stream
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public InputStream getInputStream(final ZipFileEntry pFile) throws JDataException {
+    public InputStream getInputStream(final ZipFileEntry pFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Check that entry belongs to this zip file */
             if (pFile.getParent() != theContents) {
-                throw new JDataException(ExceptionClass.DATA, "File does not belong to Zip file");
+                throw new JOceanusException("File does not belong to Zip file");
             }
 
             /* Open the zip file for reading */
@@ -276,8 +275,8 @@ public class ZipReadFile {
             /* Handle entry not found */
             if (myEntry == null) {
                 myZipFile.close();
-                throw new JDataException(ExceptionClass.DATA, "File not found - "
-                                                              + pFile.getFileName());
+                throw new JOceanusException("File not found - "
+                                            + pFile.getFileName());
             }
 
             /* Note the current input stream */
@@ -294,7 +293,7 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JDataException(ExceptionClass.DATA, "Exception creating new Input stream", e);
+            throw new JOceanusException("Exception creating new Input stream", e);
         }
     }
 }

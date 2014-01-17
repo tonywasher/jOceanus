@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database extension for MoneyWiseData.
@@ -39,10 +39,10 @@ public class MoneyWiseDatabase
      * Construct a new Database class for load.
      * @param pLogger the logger
      * @param pPreferences the preferences
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     public MoneyWiseDatabase(final Logger pLogger,
-                             final DatabasePreferences pPreferences) throws JDataException {
+                             final DatabasePreferences pPreferences) throws JOceanusException {
         /* Call super-constructor */
         super(pLogger, pPreferences);
 

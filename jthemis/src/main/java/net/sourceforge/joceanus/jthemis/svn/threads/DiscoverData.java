@@ -26,8 +26,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -63,7 +63,7 @@ public class DiscoverData
     /**
      * The Error.
      */
-    private JDataException theError = null;
+    private JOceanusException theError = null;
 
     /**
      * Obtain the repository.
@@ -85,7 +85,7 @@ public class DiscoverData
      * Obtain the error.
      * @return the error
      */
-    public JDataException getError() {
+    public JOceanusException getError() {
         return theError;
     }
 
@@ -109,7 +109,7 @@ public class DiscoverData
 
             /* Discover workingSet details */
             theWorkingCopySet = new WorkingCopySet(theRepository, this);
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Store the error */
             theError = e;
         } finally {

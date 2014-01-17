@@ -25,13 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Status of an account.
@@ -453,9 +453,9 @@ public class AccountStatus
 
     /**
      * Adjust closed date.
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected void adjustClosed() throws JDataException {
+    protected void adjustClosed() throws JOceanusException {
         /* Access latest activity date */
         JDateDay myCloseDate = (theLatest == null)
                 ? null

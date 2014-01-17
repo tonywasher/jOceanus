@@ -26,13 +26,12 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataException;
-import net.sourceforge.joceanus.jdatamanager.JDataException.ExceptionClass;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jgordianknot.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jgordianknot.EncryptedValueSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Template for a Static Data item and List.
@@ -285,18 +284,18 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Set the Name.
      * @param pValue the name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final String pValue) throws JDataException {
+    private void setValueName(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pValue);
     }
 
     /**
      * Set the Name.
      * @param pBytes the encrypted name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueName(final byte[] pBytes) throws JDataException {
+    private void setValueName(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_NAME, pBytes, String.class);
     }
 
@@ -311,18 +310,18 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Set the Description.
      * @param pValue the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    protected final void setValueDesc(final String pValue) throws JDataException {
+    protected final void setValueDesc(final String pValue) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
     /**
      * Set the Description.
      * @param pBytes the encrypted description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
+    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
         setEncryptedValue(FIELD_DESC, pBytes, String.class);
     }
 
@@ -451,10 +450,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Basic Constructor.
      * @param pList The list to associate the Static Data with
      * @param pValue the name of the new item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final String pValue) throws JDataException {
+                         final String pValue) throws JOceanusException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -471,10 +470,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Basic Constructor.
      * @param pList The list to associate the Static Data with
      * @param pClass the class of the new item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final E pClass) throws JDataException {
+                         final E pClass) throws JOceanusException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -501,14 +500,14 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pOrder the sort order
      * @param pValue the name of the new item
      * @param pDesc the description of the new item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected StaticData(final StaticList<T, E> pList,
                          final Integer pId,
                          final Boolean isEnabled,
                          final Integer pOrder,
                          final String pValue,
-                         final String pDesc) throws JDataException {
+                         final String pDesc) throws JOceanusException {
         /* Call super constructor */
         super(pList, pId);
 
@@ -525,9 +524,9 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             parseEnumId(pId);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -540,7 +539,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pOrder the sort order
      * @param pValue the encrypted name of the new item
      * @param pDesc the encrypted description of the new item
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
     protected StaticData(final StaticList<T, E> pList,
                          final Integer pId,
@@ -548,7 +547,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
                          final Boolean isEnabled,
                          final Integer pOrder,
                          final byte[] pValue,
-                         final byte[] pDesc) throws JDataException {
+                         final byte[] pDesc) throws JOceanusException {
         /* Call super constructor */
         super(pList, pId);
 
@@ -568,18 +567,18 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             parseEnumId(pId);
 
             /* Catch Exceptions */
-        } catch (JDataException e) {
+        } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
+            throw new JOceanusException(this, ERROR_CREATEITEM, e);
         }
     }
 
     /**
      * Parse enum type.
      * @param pValue the value
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void parseEnumValue(final String pValue) throws JDataException {
+    private void parseEnumValue(final String pValue) throws JOceanusException {
         Class<E> myClass = getEnumClass();
         E[] myEnums = myClass.getEnumConstants();
 
@@ -599,20 +598,20 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_BADNAME
-                                                          + " "
-                                                          + myClass.getSimpleName()
-                                                          + ": "
-                                                          + pValue);
+            throw new JOceanusException(ERROR_BADNAME
+                                        + " "
+                                        + myClass.getSimpleName()
+                                        + ": "
+                                        + pValue);
         }
     }
 
     /**
      * Parse enum id.
      * @param pId the id
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    private void parseEnumId(final int pId) throws JDataException {
+    private void parseEnumId(final int pId) throws JOceanusException {
         Class<E> myClass = getEnumClass();
         E[] myEnums = myClass.getEnumConstants();
 
@@ -628,11 +627,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, ERROR_BADID
-                                                          + " "
-                                                          + myClass.getSimpleName()
-                                                          + ": "
-                                                          + pId);
+            throw new JOceanusException(ERROR_BADID
+                                        + " "
+                                        + myClass.getSimpleName()
+                                        + ": "
+                                        + pId);
         }
     }
 
@@ -652,18 +651,18 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Set a new name.
      * @param pName the name
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setName(final String pName) throws JDataException {
+    public void setName(final String pName) throws JOceanusException {
         setValueName(pName);
     }
 
     /**
      * Set a new description.
      * @param pDesc the description
-     * @throws JDataException on error
+     * @throws JOceanusException on error
      */
-    public void setDescription(final String pDesc) throws JDataException {
+    public void setDescription(final String pDesc) throws JOceanusException {
         /* Set the appropriate value */
         setValueDesc(pDesc);
     }
