@@ -20,7 +20,7 @@ to control the table.</p>
     </section>
 
     <section name="Demo">
-      <applet code = '${appMain}' 
+      <applet code = '${tableMain}' 
         archive = '${appJar}.jar'
         width = "450" 
         height = "300"></applet>      

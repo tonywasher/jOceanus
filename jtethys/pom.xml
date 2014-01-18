@@ -11,7 +11,8 @@
   <properties>
     <svnComponent>jtethys</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
-    <appMain>${packageName}.swing.demo.DemoFilter</appMain>
+    <tableMain>${packageName}.swing.demo.DemoFilter</tableMain>
+    <dateMain>${packageName}.dateday.demo.JDateDayExample</dateMain>
     <appJar>${project.artifactId}-${project.version}</appJar>
     <appDir>${project.build.directory}/site/demo</appDir>
   </properties>
