@@ -12,11 +12,7 @@
     <module>jMoneyWise</module>
     <module>jthemis</module>
     <module>jprometheus</module>
-    <module>jSpreadSheetManager</module>
-    <module>jPreferenceSet</module>
-    <module>jFieldSet</module>
-    <module>jDataManager</module>
-    <module>jSortedList</module>
+    <module>jmetis</module>
     <module>jGordianKnot</module>
     <module>jtethys</module>
   </modules>
