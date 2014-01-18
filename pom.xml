@@ -10,17 +10,17 @@
   <packaging>pom</packaging>
   <modules>
     <module>jMoneyWise</module>
-    <module>jDataModels</module>
     <module>jthemis</module>
-    <module>jGordianKnot</module>
+    <module>jprometheus</module>
+    <module>jSpreadSheetManager</module>
+    <module>jPreferenceSet</module>
+    <module>jFieldSet</module>
     <module>jDataManager</module>
     <module>jSortedList</module>
-    <module>jSpreadSheetManager</module>
+    <module>jGordianKnot</module>
     <module>jDecimal</module>
     <module>jDateDay</module>
     <module>jtethys</module>
-    <module>jFieldSet</module>
-    <module>jPreferenceSet</module>
   </modules>
   <licenses>
     <license>

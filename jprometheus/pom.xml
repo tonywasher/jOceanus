@@ -5,19 +5,14 @@
     <artifactId>jOceanus</artifactId>
     <version>v1.2.1-SNAPSHOT</version>   
   </parent>
-  <artifactId>jMoneyWise</artifactId>
-  <name>jMoneyWise Personal Finance</name>
-  <description>Personal Finance Application</description>
+  <artifactId>jprometheus</artifactId>
+  <name>jPrometheus Application Framework</name>
+  <description>Java Application Framework</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jthemis</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jprometheus</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${PostGreSQLVersion}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -36,12 +31,22 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys</artifactId>
+      <artifactId>jFieldSet</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jPreferenceSet</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jSortedList</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jtethys</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -56,26 +61,14 @@
     </dependency>
   </dependencies>
   <properties>
-    <appDir>../../backup/</appDir>
-    <appLibDir>lib/</appLibDir>
-    <svnComponent>jMoneyWise</svnComponent>
-    <svnPackage>jmoneywise</svnPackage>
-    <packageName>${packageKey}.${svnPackage}</packageName>
-    <packageMain>${packageName}.ui.Control</packageMain>
+    <svnComponent>jprometheus</svnComponent>
+    <packageName>${packageKey}.${svnComponent}</packageName>
   </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>        
       </plugin>
     </plugins>
   </build>
