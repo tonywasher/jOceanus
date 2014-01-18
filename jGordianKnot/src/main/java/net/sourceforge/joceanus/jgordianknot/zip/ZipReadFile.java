@@ -33,6 +33,9 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianIOException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jtethys.DataConverter;
@@ -148,7 +151,7 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException("Exception accessing Zip file", e);
+            throw new JGordianIOException("Exception accessing Zip file", e);
         }
     }
 
@@ -167,7 +170,7 @@ public class ZipReadFile {
         try {
             /* Reject this is the wrong security control */
             if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
-                throw new JOceanusException("Password Hash does not match ZipFile Security.");
+                throw new JGordianLogicException("Password Hash does not match ZipFile Security.");
             }
 
             /* Store the hash and obtain the generator */
@@ -211,7 +214,7 @@ public class ZipReadFile {
 
             /* Reject if the entry is not found */
             if (myHeader == null) {
-                throw new JOceanusException("Header record not found.");
+                throw new JGordianDataException("Header record not found.");
             }
 
             /* Obtain encoded private/public keys */
@@ -223,7 +226,7 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException("Exception reading header of Zip file", e);
+            throw new JGordianIOException("Exception reading header of Zip file", e);
         } finally {
             /* Close the file */
             try {
@@ -248,7 +251,7 @@ public class ZipReadFile {
         try {
             /* Check that entry belongs to this zip file */
             if (pFile.getParent() != theContents) {
-                throw new JOceanusException("File does not belong to Zip file");
+                throw new JGordianDataException("File does not belong to Zip file");
             }
 
             /* Open the zip file for reading */
@@ -275,8 +278,8 @@ public class ZipReadFile {
             /* Handle entry not found */
             if (myEntry == null) {
                 myZipFile.close();
-                throw new JOceanusException("File not found - "
-                                            + pFile.getFileName());
+                throw new JGordianDataException("File not found - "
+                                                + pFile.getFileName());
             }
 
             /* Note the current input stream */
@@ -293,7 +296,7 @@ public class ZipReadFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException("Exception creating new Input stream", e);
+            throw new JGordianIOException("Exception creating new Input stream", e);
         }
     }
 }

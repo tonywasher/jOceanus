@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JPrice;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.CategoryType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
@@ -500,8 +501,8 @@ public class DataAnalyser
                 break;
             /* Throw an Exception */
             default:
-                throw new JOceanusException("Unexpected category type: "
-                                            + myCat.getCategoryTypeClass());
+                throw new JMoneyWiseLogicException("Unexpected category type: "
+                                                   + myCat.getCategoryTypeClass());
         }
     }
 

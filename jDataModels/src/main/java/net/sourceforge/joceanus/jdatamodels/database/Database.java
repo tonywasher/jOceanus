@@ -33,6 +33,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusLogicException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
@@ -136,10 +139,10 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
             theConn.setAutoCommit(false);
         } catch (ClassNotFoundException e) {
-            throw new JOceanusException("Failed to locate driver", e);
+            throw new JPrometheusIOException("Failed to locate driver", e);
 
         } catch (SQLException e) {
-            throw new JOceanusException("Failed to load driver", e);
+            throw new JPrometheusIOException("Failed to load driver", e);
         }
 
         /* Create table list and add the tables to the list */
@@ -242,7 +245,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JOceanusException("Operation Cancelled");
+            throw new JPrometheusLogicException("Operation Cancelled");
         }
 
         /* Return the data */
@@ -310,7 +313,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
                 theConn.commit();
             } catch (SQLException e) {
                 close();
-                throw new JOceanusException("Failed to commit transaction", e);
+                throw new JPrometheusIOException("Failed to commit transaction", e);
             }
 
             /* Commit the batch */
@@ -319,7 +322,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
 
         /* Check for cancellation */
         if (!bContinue) {
-            throw new JOceanusException("Operation Cancelled");
+            throw new JPrometheusCancelException("Operation Cancelled");
         }
     }
 

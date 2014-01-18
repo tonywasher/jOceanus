@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -381,7 +382,7 @@ public class SheetTaxYear
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load TaxYears", e);
+            throw new JMoneyWiseIOException("Failed to Load TaxYears", e);
         }
 
         /* Return to caller */

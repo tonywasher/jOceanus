@@ -140,7 +140,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new JOceanusException("Invalid source directory");
+                throw new JGordianDataException("Invalid source directory");
 
             /* Loop through the files is the directory */
             for (File myFile : pDirectory.listFiles()) {
@@ -175,7 +175,7 @@ public class SecurityTest {
         } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JOceanusException("Failed to create Zip File", e);
+            throw new JGordianIOException("Failed to create Zip File", e);
         }
     }
 
@@ -212,7 +212,7 @@ public class SecurityTest {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory())
-                throw new JOceanusException("Invalid source directory");
+                throw new JGordianDataException("Invalid source directory");
 
             Iterator<ZipFileEntry> myIterator = myContents.iterator();
             while (myIterator.hasNext()) {
@@ -240,7 +240,7 @@ public class SecurityTest {
         } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JOceanusException("Failed to extract Zip File", e);
+            throw new JGordianIOException("Failed to extract Zip File", e);
         }
     }
 

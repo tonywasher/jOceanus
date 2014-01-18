@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
@@ -180,7 +181,7 @@ public class SheetTaxRegime
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to load Tax Regimes", e);
+            throw new JMoneyWiseIOException("Failed to load Tax Regimes", e);
         }
 
         /* Return to caller */

@@ -69,6 +69,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
@@ -557,7 +558,7 @@ public class Register
             /* Catch exceptions */
         } catch (JOceanusException e) {
             /* Build the error */
-            JOceanusException myError = new JOceanusException("Failed to select Range", e);
+            JOceanusException myError = new JMoneyWiseDataException("Failed to select Range", e);
 
             /* Show the error */
             setError(myError);
@@ -638,7 +639,7 @@ public class Register
                     /* Catch Exceptions */
                 } catch (JOceanusException e) {
                     /* Build the error */
-                    JOceanusException myError = new JOceanusException("Failed to change selection", e);
+                    JOceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
                     /* Show the error */
                     setError(myError);

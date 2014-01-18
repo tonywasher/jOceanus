@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jdatamodels.database.TableEncrypted;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
@@ -141,7 +142,7 @@ public class TablePattern
         /* Validate the events */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

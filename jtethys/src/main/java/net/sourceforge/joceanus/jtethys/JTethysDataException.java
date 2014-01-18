@@ -33,7 +33,7 @@ public class JTethysDataException
     private static final long serialVersionUID = 2151352291553530453L;
 
     /**
-     * Create a new Exception object based on a string and a known exception type.
+     * Create a new Exception object based on a string.
      * @param s the description of the exception
      */
     public JTethysDataException(final String s) {
@@ -41,7 +41,7 @@ public class JTethysDataException
     }
 
     /**
-     * Create a new Exception object based on a string and a known exception type.
+     * Create a new Exception object based on a string and an underlying exception.
      * @param s the description of the exception
      * @param c the underlying exception
      */

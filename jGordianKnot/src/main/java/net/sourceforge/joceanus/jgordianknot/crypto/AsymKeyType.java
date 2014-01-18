@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -217,8 +219,8 @@ public enum AsymKeyType {
                 return myType;
             }
         }
-        throw new JOceanusException("Invalid AsymKeyType: "
-                                    + id);
+        throw new JGordianDataException("Invalid AsymKeyType: "
+                                        + id);
     }
 
     /**
@@ -252,8 +254,8 @@ public enum AsymKeyType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JOceanusException("Invalid number of asymmetric keys: "
-                                        + pNumTypes);
+            throw new JGordianLogicException("Invalid number of asymmetric keys: "
+                                             + pNumTypes);
         }
 
         /* Create the result set */

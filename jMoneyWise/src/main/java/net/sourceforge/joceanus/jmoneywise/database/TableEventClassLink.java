@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.DatabaseTable;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -107,7 +108,7 @@ public class TableEventClassLink
         /* Validate the account categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

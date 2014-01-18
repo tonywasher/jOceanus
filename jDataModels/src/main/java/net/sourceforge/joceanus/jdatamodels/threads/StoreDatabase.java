@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jdatamodels.threads;
 
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
@@ -90,7 +91,7 @@ public class StoreDatabase<T extends DataSet<T, ?>>
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JOceanusException(myDiff, "DataStore is inconsistent");
+                throw new JPrometheusDataException(myDiff, "DataStore is inconsistent");
             }
 
             /* Derive new update list */

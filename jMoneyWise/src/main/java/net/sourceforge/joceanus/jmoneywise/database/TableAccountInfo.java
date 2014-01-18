@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.TableDataInfo;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
@@ -88,7 +89,7 @@ public class TableAccountInfo
         /* Validate the events */
         DataErrorList<DataItem> myErrors = theAccounts.validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

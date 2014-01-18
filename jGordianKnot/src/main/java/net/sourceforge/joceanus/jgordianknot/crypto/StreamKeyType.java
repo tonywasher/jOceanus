@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -128,8 +130,8 @@ public enum StreamKeyType {
                 return myType;
             }
         }
-        throw new JOceanusException("Invalid StreamKeyType: "
-                                    + id);
+        throw new JGordianDataException("Invalid StreamKeyType: "
+                                        + id);
     }
 
     /**
@@ -148,8 +150,8 @@ public enum StreamKeyType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JOceanusException("Invalid number of StreamKeys: "
-                                        + pNumTypes);
+            throw new JGordianLogicException("Invalid number of StreamKeys: "
+                                             + pNumTypes);
         }
 
         /* Create the result set */

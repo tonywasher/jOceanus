@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -287,7 +288,7 @@ public class HTMLBuilder {
             theBuilder = myDocFactory.newDocumentBuilder();
 
         } catch (Exception e) {
-            throw new JOceanusException("Failed to create", e);
+            throw new JMoneyWiseIOException("Failed to create", e);
         }
     }
 

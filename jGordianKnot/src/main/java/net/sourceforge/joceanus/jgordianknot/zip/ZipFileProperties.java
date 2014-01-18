@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -320,8 +321,8 @@ public class ZipFileProperties {
 
         /* Check that we found the value separator */
         if (myLoc == -1) {
-            throw new JOceanusException("Missing value separator: "
-                                        + pValue);
+            throw new JGordianDataException("Missing value separator: "
+                                            + pValue);
         }
 
         /* Split the values and name */
@@ -331,8 +332,8 @@ public class ZipFileProperties {
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
-            throw new JOceanusException("Duplicate name: "
-                                        + pValue);
+            throw new JGordianDataException("Duplicate name: "
+                                            + pValue);
         }
 
         /* Locate the Long separator in the string */
@@ -340,8 +341,8 @@ public class ZipFileProperties {
 
         /* Check that we found the long separator */
         if (myLoc == -1) {
-            throw new JOceanusException("Missing long separator: "
-                                        + pValue);
+            throw new JGordianDataException("Missing long separator: "
+                                            + pValue);
         }
 
         /* Access the separate byte and long values */
@@ -355,8 +356,8 @@ public class ZipFileProperties {
         /* Must have at least one of Bytes/Long */
         if ((myBytes == null)
             && (myLong == null)) {
-            throw new JOceanusException("Invalid property: "
-                                        + myName);
+            throw new JGordianDataException("Invalid property: "
+                                            + myName);
         }
 
         /* Create a new property */

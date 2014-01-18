@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -269,13 +270,13 @@ public class TaxRegime
             /* Check that this TaxRegime has not been previously added */
             if (findItemByName(pTaxRegime) != null) {
                 myTaxRegime.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
             }
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxRegime.getId())) {
                 myTaxRegime.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
             }
 
             /* Add the TaxRegime to the list */
@@ -286,7 +287,7 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxRegime.hasErrors()) {
-                throw new JOceanusException(myTaxRegime, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
             }
         }
 
@@ -310,7 +311,7 @@ public class TaxRegime
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
 
             /* Add the Tax Regime to the list */
@@ -321,7 +322,7 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxReg.hasErrors()) {
-                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
         }
 
@@ -347,7 +348,7 @@ public class TaxRegime
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
 
             /* Add the TaxRegime to the list */
@@ -358,7 +359,7 @@ public class TaxRegime
 
             /* Handle validation failure */
             if (myTaxReg.hasErrors()) {
-                throw new JOceanusException(myTaxReg, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
         }
 
@@ -380,7 +381,7 @@ public class TaxRegime
 
                 /* Handle validation failure */
                 if (myRegime.hasErrors()) {
-                    throw new JOceanusException(myRegime, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
                 }
             }
 

@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jfieldset.JFieldSet;
 import net.sourceforge.joceanus.jfieldset.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
@@ -977,7 +978,7 @@ public class MaintTaxYear
                 theTaxYear.popHistory();
 
                 /* Build the error */
-                JOceanusException myError = new JOceanusException("Failed to update field", e);
+                JOceanusException myError = new JMoneyWiseDataException("Failed to update field", e);
 
                 /* Show the error */
                 theError.addError(myError);

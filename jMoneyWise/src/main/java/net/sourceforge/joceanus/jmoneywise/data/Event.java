@@ -44,6 +44,8 @@ import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRate;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -557,7 +559,7 @@ public class Event
             Event myEvent = myEvents.findItemById((Integer) myParent);
             if (myEvent == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueParent(myEvent);
         }
@@ -794,7 +796,7 @@ public class Event
                                  final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JOceanusException(ERROR_BADINFOSET);
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1215,7 +1217,7 @@ public class Event
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
                 myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myEvent, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myEvent, ERROR_VALIDATION);
             }
 
             /* Add the Event to the list */
@@ -1253,7 +1255,7 @@ public class Event
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
                 myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myEvent, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myEvent, ERROR_VALIDATION);
             }
 
             /* Add the Event to the list */

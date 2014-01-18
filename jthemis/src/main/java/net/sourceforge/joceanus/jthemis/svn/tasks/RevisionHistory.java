@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
@@ -93,7 +94,7 @@ public class RevisionHistory {
             SVNRevision myRevision = SVNRevision.create(pRevision);
             myLog.doLog(myURL, null, myRevision, myRevision, myRevision, false, true, 0, new LogHandler());
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to get revision history", e);
+            throw new JThemisIOException("Failed to get revision history", e);
         }
     }
 
@@ -112,7 +113,7 @@ public class RevisionHistory {
             /* Obtain information about the revision */
             myLog.doLog(pFile, null, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, true, 0, new LogHandler());
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to get revision history", e);
+            throw new JThemisIOException("Failed to get revision history", e);
         }
     }
 

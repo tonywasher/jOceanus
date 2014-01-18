@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -251,13 +252,13 @@ public class EventCategoryType
             /* Check that this EventCategoryType has not been previously added */
             if (findItemByName(pEventCategoryType) != null) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -268,7 +269,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -292,7 +293,7 @@ public class EventCategoryType
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -303,7 +304,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -329,7 +330,7 @@ public class EventCategoryType
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -340,7 +341,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JOceanusException(myCatType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -362,7 +363,7 @@ public class EventCategoryType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JOceanusException(myType, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
                 }
             }
 

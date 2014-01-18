@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
@@ -518,7 +519,7 @@ public class AccountCategory
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -557,7 +558,7 @@ public class AccountCategory
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -616,14 +617,14 @@ public class AccountCategory
             AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         } else if (myCatType instanceof String) {
             AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         }
@@ -637,14 +638,14 @@ public class AccountCategory
             AccountCategory myCat = myList.findItemById((Integer) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         } else if (myParent instanceof String) {
             AccountCategory myCat = myList.findItemByName((String) myParent);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         }
@@ -1061,7 +1062,7 @@ public class AccountCategory
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -1090,7 +1091,7 @@ public class AccountCategory
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

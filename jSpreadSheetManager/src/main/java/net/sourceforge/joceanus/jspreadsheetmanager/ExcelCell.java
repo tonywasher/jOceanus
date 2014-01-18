@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
+import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -88,8 +89,8 @@ public class ExcelCell
             return theExcelRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(theExcelRow.getSheet().getName(), getPosition());
-            throw new JOceanusException(pSource, "Bad Value at Cell "
-                                                 + myAddress, e);
+            throw new JMetisDataException(pSource, "Bad Value at Cell "
+                                                   + myAddress, e);
         }
     }
 

@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
@@ -489,7 +490,7 @@ public class UpdateSet
         }
 
         /* Access any error */
-        DataErrorList<JOceanusException> myErrors = theControl.getErrors();
+        DataErrorList<JMetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -505,6 +506,6 @@ public class UpdateSet
          * Set error list for window.
          * @param pExceptions the exceptions
          */
-        void setErrors(final DataErrorList<JOceanusException> pExceptions);
+        void setErrors(final DataErrorList<JMetisExceptionWrapper> pExceptions);
     }
 }

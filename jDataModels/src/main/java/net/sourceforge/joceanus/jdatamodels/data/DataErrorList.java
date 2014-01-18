@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
  * Report-able object list.
  * @param <T> the object type
  */
-public class DataErrorList<T>
+public class DataErrorList<T extends JDataContents>
         extends ArrayList<T>
         implements JDataContents {
     /**

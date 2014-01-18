@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jdatamodels.database.TableEncrypted;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -104,7 +105,7 @@ public class TableEventClass
         /* Validate the event tags */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

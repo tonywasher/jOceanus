@@ -27,6 +27,8 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusLogicException;
 import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -199,14 +201,14 @@ public class ControlData
             ControlKey myControl = myKeys.findItemById(pControlId);
             if (myControl == null) {
                 addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
             }
             setValueControlKey(myControl);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -403,12 +405,12 @@ public class ControlData
             /* Check that this ControlId has not been previously added */
             if (!isIdUnique(pId)) {
                 myControl.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myControl, ERROR_DUPLICATE);
+                throw new JPrometheusDataException(myControl, ERROR_DUPLICATE);
             }
 
             /* Only one control data is allowed */
             if (theControl != null) {
-                throw new JOceanusException(myControl, ERROR_CTLEXISTS);
+                throw new JPrometheusLogicException(myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */
@@ -429,7 +431,7 @@ public class ControlData
 
             /* Only one static is allowed */
             if (theControl != null) {
-                throw new JOceanusException(myControl, ERROR_CTLEXISTS);
+                throw new JPrometheusLogicException(myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */

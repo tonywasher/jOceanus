@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -120,7 +121,7 @@ public enum CipherMode {
                 return myType;
             }
         }
-        throw new JOceanusException("Invalid CipherMode: "
-                                    + id);
+        throw new JGordianDataException("Invalid CipherMode: "
+                                        + id);
     }
 }

@@ -42,6 +42,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.AsymmetricRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -276,8 +279,8 @@ public class AsymmetricKey {
 
         /* Check whether the PublicKey is too large */
         if (theExternalPublic.length > PUBLICSIZE) {
-            throw new JOceanusException("PublicKey too large: "
-                                        + theExternalPublic.length);
+            throw new JGordianDataException("PublicKey too large: "
+                                            + theExternalPublic.length);
         }
     }
 
@@ -407,7 +410,7 @@ public class AsymmetricKey {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (pPartner.getKeyType() != theKeyType)) {
-            throw new JOceanusException(ERROR_ELPARTNER);
+            throw new JGordianLogicException(ERROR_ELPARTNER);
         }
 
         /* Look for an already resolved CipherSet */
@@ -468,7 +471,7 @@ public class AsymmetricKey {
 
             /* catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
-            throw new JOceanusException(ERROR_CIPHER, e);
+            throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }
 
@@ -485,7 +488,7 @@ public class AsymmetricKey {
 
         /* Cannot unwrap unless we have the private key */
         if (isPublicOnly()) {
-            throw new JOceanusException("Cannot unwrap without private key");
+            throw new JGordianLogicException("Cannot unwrap without private key");
         }
 
         /* Protect against exceptions */
@@ -512,7 +515,7 @@ public class AsymmetricKey {
             }
 
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new JOceanusException("Failed to unwrap key", e);
+            throw new JGordianCryptoException("Failed to unwrap key", e);
         }
 
         /* Return the new key */
@@ -547,7 +550,7 @@ public class AsymmetricKey {
             }
 
         } catch (InvalidKeyException | IllegalBlockSizeException e) {
-            throw new JOceanusException("Failed to wrap key", e);
+            throw new JGordianCryptoException("Failed to wrap key", e);
         }
     }
 
@@ -561,12 +564,12 @@ public class AsymmetricKey {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (theKeyType != pPartner.getKeyType())) {
-            throw new JOceanusException(ERROR_ELPARTNER);
+            throw new JGordianLogicException(ERROR_ELPARTNER);
         }
 
         /* Cannot generate unless we have the private key */
         if (isPublicOnly()) {
-            throw new JOceanusException("Cannot generate secret without private key");
+            throw new JGordianLogicException("Cannot generate secret without private key");
         }
 
         /* Protect against exceptions */
@@ -586,7 +589,7 @@ public class AsymmetricKey {
 
             /* Handle exceptions */
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new JOceanusException("Failed to negotiate key agreement", e);
+            throw new JGordianCryptoException("Failed to negotiate key agreement", e);
         }
     }
 
@@ -600,7 +603,7 @@ public class AsymmetricKey {
         /* Cannot sign unless we have the private key */
         if ((bSign)
             && (isPublicOnly())) {
-            throw new JOceanusException("Cannot sign without private key");
+            throw new JGordianLogicException("Cannot sign without private key");
         }
 
         /* Protect against exceptions */
@@ -618,7 +621,7 @@ public class AsymmetricKey {
 
             /* Catch exceptions */
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new JOceanusException("Exception building signature", e);
+            throw new JGordianCryptoException("Exception building signature", e);
         }
     }
 
@@ -635,7 +638,7 @@ public class AsymmetricKey {
                                final AsymmetricKey pTarget) throws JOceanusException {
         /* Target must be identical key type */
         if (theKeyType != pTarget.getKeyType()) {
-            throw new JOceanusException(ERROR_PARTNER);
+            throw new JGordianLogicException(ERROR_PARTNER);
         }
 
         /* If we are elliptic */
@@ -709,7 +712,7 @@ public class AsymmetricKey {
             /* Return to caller */
             return myOutput;
         } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JGordianCryptoException(e.getMessage(), e);
         }
     }
 
@@ -726,12 +729,12 @@ public class AsymmetricKey {
                                final AsymmetricKey pSource) throws JOceanusException {
         /* Cannot decrypt unless we have the private key */
         if (isPublicOnly()) {
-            throw new JOceanusException("Cannot decrypt without private key");
+            throw new JGordianLogicException("Cannot decrypt without private key");
         }
 
         /* Source must be identical key type */
         if (theKeyType != pSource.getKeyType()) {
-            throw new JOceanusException(ERROR_PARTNER);
+            throw new JGordianLogicException(ERROR_PARTNER);
         }
 
         /* If we are elliptic */
@@ -802,7 +805,7 @@ public class AsymmetricKey {
             /* Create the string */
             return myOutput;
         } catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            throw new JOceanusException(e.getMessage(), e);
+            throw new JGordianCryptoException(e.getMessage(), e);
         }
     }
 }

@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
@@ -216,7 +217,7 @@ public class SheetAccountCurrency
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load Account Currencies", e);
+            throw new JMoneyWiseIOException("Failed to Load Account Currencies", e);
         }
 
         /* Return to caller */

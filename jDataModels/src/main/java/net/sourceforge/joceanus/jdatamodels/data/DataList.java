@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -773,7 +774,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         /* Validate the list */
         DataErrorList<DataItem> myErrors = validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 

@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -111,8 +113,8 @@ public enum MacType {
                 return myType;
             }
         }
-        throw new JOceanusException("Invalid MacType: "
-                                    + id);
+        throw new JGordianDataException("Invalid MacType: "
+                                        + id);
     }
 
     /**
@@ -204,8 +206,8 @@ public enum MacType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JOceanusException("Invalid number of Macs: "
-                                        + pNumTypes);
+            throw new JGordianLogicException("Invalid number of Macs: "
+                                             + pNumTypes);
         }
 
         /* Create the result set */

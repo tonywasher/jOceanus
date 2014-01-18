@@ -33,6 +33,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisDataException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectId;
@@ -386,7 +388,7 @@ public final class Tag
             case FINAL:
                 return;
             case MERGING:
-                throw new JOceanusException(this, "IllegalState for Tag");
+                throw new JThemisDataException(this, "IllegalState for Tag");
             default:
                 break;
         }
@@ -421,7 +423,7 @@ public final class Tag
                 if (myExisting != null) {
                     /* Check it is identical */
                     if (!myExisting.equals(mySub)) {
-                        throw new JOceanusException(this, "Inconsistent dependency for Tag");
+                        throw new JThemisDataException(this, "Inconsistent dependency for Tag");
                     }
                 } else {
                     /* Add dependency */
@@ -432,7 +434,7 @@ public final class Tag
 
         /* Check that we are not dependent on a different version of this component */
         if (myNew.get(theComponent) != null) {
-            throw new JOceanusException(this, "Inconsistent dependency for Tag");
+            throw new JThemisDataException(this, "Inconsistent dependency for Tag");
         }
 
         /* Store new dependencies and mark as resolved */
@@ -467,7 +469,7 @@ public final class Tag
             /* Check this is the same repository */
             if (!myRepo.equals(myTag.getRepository())) {
                 /* throw exception */
-                throw new JOceanusException("Different repository for tag");
+                throw new JThemisDataException("Different repository for tag");
             }
 
             /* Loop through map elements */
@@ -483,7 +485,7 @@ public final class Tag
                     /* else if the tag differs */
                 } else if (!myExisting.equals(myEntry.getValue())) {
                     /* throw exception */
-                    throw new JOceanusException("Conflicting version for tag");
+                    throw new JThemisDataException("Conflicting version for tag");
                 }
             }
         }
@@ -610,8 +612,8 @@ public final class Tag
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JOceanusException("Failed to discover tags for "
-                                            + theBranch.getBranchName(), e);
+                throw new JThemisIOException("Failed to discover tags for "
+                                             + theBranch.getBranchName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -676,7 +678,7 @@ public final class Tag
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JOceanusException(myTag, "Duplicate component dependency");
+                                throw new JThemisDataException(myTag, "Duplicate component dependency");
                             }
                         }
                     }

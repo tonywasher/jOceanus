@@ -44,6 +44,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -307,7 +308,7 @@ public class SecurityRegister {
                     theFactory = KeyFactory.getInstance(theAlgorithm, theProviderName);
                 } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
                     /* Throw the exception */
-                    throw new JOceanusException("Failed to create key factory", e);
+                    throw new JGordianCryptoException("Failed to create key factory", e);
                 }
             }
 
@@ -331,7 +332,7 @@ public class SecurityRegister {
                 /* Catch exceptions */
             } catch (InvalidKeySpecException e) {
                 /* Throw the exception */
-                throw new JOceanusException("Failed to re-build KeyPair", e);
+                throw new JGordianCryptoException("Failed to re-build KeyPair", e);
             }
         }
 
@@ -361,7 +362,7 @@ public class SecurityRegister {
                     }
                 } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
                     /* Throw the exception */
-                    throw new JOceanusException(e.getMessage(), e);
+                    throw new JGordianCryptoException(e.getMessage(), e);
                 }
             }
 
@@ -447,7 +448,7 @@ public class SecurityRegister {
                     theKeyGenerator.init(theKeyLen, theRandom);
                 } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
                     /* Throw the exception */
-                    throw new JOceanusException(e.getMessage(), e);
+                    throw new JGordianCryptoException(e.getMessage(), e);
                 }
             }
 

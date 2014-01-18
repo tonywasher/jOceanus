@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -864,7 +865,7 @@ public enum AccountCurrencyClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JOceanusException("Invalid Account Currency Class Id: "
-                                    + id);
+        throw new JMoneyWiseDataException("Invalid Account Currency Class Id: "
+                                          + id);
     }
 }

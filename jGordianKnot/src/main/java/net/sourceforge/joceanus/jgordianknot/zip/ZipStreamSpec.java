@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.DataDigest;
@@ -758,8 +759,8 @@ public abstract class ZipStreamSpec {
                     return myType;
                 }
             }
-            throw new JOceanusException("Invalid ZipStreamType: "
-                                        + id);
+            throw new JGordianDataException("Invalid ZipStreamType: "
+                                            + id);
         }
     }
 }

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -352,13 +353,13 @@ public class AccountCurrency
             /* Check that this AccountCurrency has not been previously added */
             if (findItemByName(pCurrency) != null) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -369,7 +370,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -395,7 +396,7 @@ public class AccountCurrency
             /* Check that this AccountCurrencyTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -406,7 +407,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -434,7 +435,7 @@ public class AccountCurrency
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
 
             /* Add the AccountCurrency to the list */
@@ -445,7 +446,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -467,7 +468,7 @@ public class AccountCurrency
 
                 /* Handle validation failure */
                 if (myCurr.hasErrors()) {
-                    throw new JOceanusException(myCurr, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
                 }
             }
 

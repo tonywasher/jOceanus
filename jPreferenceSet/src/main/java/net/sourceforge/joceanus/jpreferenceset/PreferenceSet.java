@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
 import net.sourceforge.joceanus.jfieldset.JFieldState;
@@ -113,7 +114,7 @@ public abstract class PreferenceSet
         try {
             theActive = theHandle.keys();
         } catch (BackingStoreException e) {
-            throw new JOceanusException("Failed to access preferences", e);
+            throw new JMetisDataException("Failed to access preferences", e);
         }
 
         /* Define the preferences */
@@ -567,7 +568,7 @@ public abstract class PreferenceSet
             /* Notify listeners */
             fireStateChanged();
         } catch (BackingStoreException e) {
-            throw new JOceanusException("Failed to flush preferences to store", e);
+            throw new JMetisDataException("Failed to flush preferences to store", e);
         }
     }
 

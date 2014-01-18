@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
 import net.sourceforge.joceanus.jthemis.jira.data.Server.IssueType;
 import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
@@ -214,8 +216,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid IssueTypeId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid IssueTypeId "
+                                        + pId);
     }
 
     /**
@@ -235,8 +237,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid ComponentId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid ComponentId "
+                                        + pId);
     }
 
     /**
@@ -273,8 +275,8 @@ public class Project {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid VersionId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid VersionId "
+                                        + pId);
     }
 
     /**
@@ -323,7 +325,7 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load issue types", e);
+            throw new JThemisIOException("Failed to load issue types", e);
         }
     }
 
@@ -347,7 +349,7 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load components", e);
+            throw new JThemisIOException("Failed to load components", e);
         }
     }
 
@@ -371,7 +373,7 @@ public class Project {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load versions", e);
+            throw new JThemisIOException("Failed to load versions", e);
         }
     }
 
@@ -406,7 +408,7 @@ public class Project {
             theVersions.add(new Version(this, myVersion));
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to link component", e);
+            throw new JThemisIOException("Failed to link component", e);
         }
     }
 
@@ -593,7 +595,7 @@ public class Project {
                 theVers.setArchived(doArchive);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JOceanusException(ERROR_ARCH, e);
+                throw new JThemisIOException(ERROR_ARCH, e);
             }
         }
 
@@ -624,7 +626,7 @@ public class Project {
                 theService.releaseVersion(myToken, theOwner.getId(), theVers);
             } catch (RemoteException e) {
                 /* Pass the exception on */
-                throw new JOceanusException(ERROR_ARCH, e);
+                throw new JThemisIOException(ERROR_ARCH, e);
             }
         }
     }

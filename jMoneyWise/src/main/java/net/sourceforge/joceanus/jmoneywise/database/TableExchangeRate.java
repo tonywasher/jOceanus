@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamodels.database.DatabaseTable;
 import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -131,7 +132,7 @@ public class TableExchangeRate
         /* Validate the account categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JOceanusException(myErrors, DataItem.ERROR_VALIDATION);
+            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

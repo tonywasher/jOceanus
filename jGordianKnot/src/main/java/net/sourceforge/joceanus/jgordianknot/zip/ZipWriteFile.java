@@ -30,6 +30,8 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianIOException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
@@ -171,7 +173,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException(ERROR_CREATE, e);
+            throw new JGordianIOException(ERROR_CREATE, e);
         }
     }
 
@@ -199,7 +201,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException(ERROR_CREATE, e);
+            throw new JGordianIOException(ERROR_CREATE, e);
         }
     }
 
@@ -212,12 +214,12 @@ public class ZipWriteFile {
     public OutputStream getOutputStream(final File pFile) throws JOceanusException {
         /* Reject call if we have closed the stream */
         if (theStream == null) {
-            throw new JOceanusException("ZipFile is closed");
+            throw new JGordianLogicException("ZipFile is closed");
         }
 
         /* Reject call if we have an open stream */
         if (theOutput != null) {
-            throw new JOceanusException("Output stream already open");
+            throw new JGordianLogicException("Output stream already open");
         }
 
         /* Increment file number */
@@ -274,7 +276,7 @@ public class ZipWriteFile {
 
             /* Catch exceptions */
         } catch (IOException e) {
-            throw new JOceanusException("Exception creating new Output stream", e);
+            throw new JGordianIOException("Exception creating new Output stream", e);
         }
 
         /* return the new stream */

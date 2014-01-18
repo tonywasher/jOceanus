@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
@@ -415,7 +416,7 @@ public class ReportTab
                     /* Catch Exceptions */
                 } catch (JOceanusException e) {
                     /* Build the error */
-                    JOceanusException myError = new JOceanusException("Failed to change selection", e);
+                    JOceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
                     /* Show the error */
                     theError.addError(myError);

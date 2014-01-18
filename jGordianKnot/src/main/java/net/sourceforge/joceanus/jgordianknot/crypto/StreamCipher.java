@@ -37,6 +37,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -111,7 +112,7 @@ public class StreamCipher {
             CipherMode myMode = myKeyType.adjustCipherMode(pMode);
             theCipher = Cipher.getInstance(myKeyType.getDataCipher(myMode), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
-            throw new JOceanusException(ERROR_CIPHER, e);
+            throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }
 
@@ -132,7 +133,7 @@ public class StreamCipher {
             StreamKeyType myKeyType = pKey.getKeyType();
             theCipher = Cipher.getInstance(myKeyType.getAlgorithm(myGenerator.useRestricted()), myGenerator.getProviderName());
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | NoSuchProviderException e) {
-            throw new JOceanusException(ERROR_CIPHER, e);
+            throw new JGordianCryptoException(ERROR_CIPHER, e);
         }
     }
 
@@ -151,7 +152,7 @@ public class StreamCipher {
             return theCipher.getIV();
 
         } catch (InvalidKeyException e) {
-            throw new JOceanusException(ERROR_INIT, e);
+            throw new JGordianCryptoException(ERROR_INIT, e);
         }
     }
 
@@ -166,7 +167,7 @@ public class StreamCipher {
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
             theCipher.init(Cipher.ENCRYPT_MODE, theSecretKey, myParms);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JOceanusException(ERROR_INIT, e);
+            throw new JGordianCryptoException(ERROR_INIT, e);
         }
     }
 
@@ -181,7 +182,7 @@ public class StreamCipher {
             AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
             theCipher.init(Cipher.DECRYPT_MODE, theSecretKey, myParms);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException e) {
-            throw new JOceanusException(ERROR_INIT, e);
+            throw new JGordianCryptoException(ERROR_INIT, e);
         }
     }
 
@@ -212,7 +213,7 @@ public class StreamCipher {
             /* Return to caller */
             return iNumBytes;
         } catch (ShortBufferException e) {
-            throw new JOceanusException(ERROR_UPDATE, e);
+            throw new JGordianCryptoException(ERROR_UPDATE, e);
         }
     }
 
@@ -238,7 +239,7 @@ public class StreamCipher {
             /* Return to caller */
             return iNumBytes;
         } catch (IllegalBlockSizeException | BadPaddingException | ShortBufferException e) {
-            throw new JOceanusException(ERROR_UPDATE, e);
+            throw new JGordianCryptoException(ERROR_UPDATE, e);
         }
     }
 }

@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
+import net.sourceforge.joceanus.jdatamanager.JMetisIOException;
+import net.sourceforge.joceanus.jdatamanager.JMetisLogicException;
 import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -243,7 +246,7 @@ public class OasisWorkBook {
             buildSheetMap();
             buildRangeMap();
         } catch (Exception e) {
-            throw new JOceanusException(ERROR_LOAD, e);
+            throw new JMetisIOException(ERROR_LOAD, e);
         }
     }
 
@@ -281,7 +284,7 @@ public class OasisWorkBook {
             /* Create the cellStyles */
             createCellStyles();
         } catch (Exception e) {
-            throw new JOceanusException(ERROR_LOAD, e);
+            throw new JMetisIOException(ERROR_LOAD, e);
         }
     }
 
@@ -294,7 +297,7 @@ public class OasisWorkBook {
         try {
             theBook.save(pOutput);
         } catch (Exception e) {
-            throw new JOceanusException(ERROR_SAVE, e);
+            throw new JMetisIOException(ERROR_SAVE, e);
         }
     }
 
@@ -383,9 +386,9 @@ public class OasisWorkBook {
         /* Obtain the sheet and reject if missing */
         DataSheet mySheet = getSheet(myFirstCell.getSheetName());
         if (mySheet == null) {
-            throw new JOceanusException("Sheet for "
-                                        + pName
-                                        + " not found in workbook");
+            throw new JMetisLogicException("Sheet for "
+                                           + pName
+                                           + " not found in workbook");
         }
 
         /* Return the view */
@@ -437,9 +440,9 @@ public class OasisWorkBook {
                                 final OasisCellRange pRange) throws JOceanusException {
         /* Check for existing range */
         if (theRangeMap.get(pName) != null) {
-            throw new JOceanusException("Name "
-                                        + pName
-                                        + "already exists in workbook");
+            throw new JMetisLogicException("Name "
+                                           + pName
+                                           + "already exists in workbook");
         }
 
         /* Protect against exceptions */
@@ -449,7 +452,7 @@ public class OasisWorkBook {
             myRange.setTableBaseCellAddressAttribute(pRange.getFirstCell().toString());
             theRangeMap.put(pName, myRange);
         } catch (Exception e) {
-            throw new JOceanusException("Failed to declare range", e);
+            throw new JMetisDataException("Failed to declare range", e);
         }
     }
 

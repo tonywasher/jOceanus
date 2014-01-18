@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchList;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 
@@ -389,8 +390,8 @@ public final class Component
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JOceanusException("Failed to discover components for "
-                                            + theRepository.getName(), e);
+                throw new JThemisIOException("Failed to discover components for "
+                                             + theRepository.getName(), e);
             } finally {
                 theRepository.releaseClientManager(myMgr);
             }

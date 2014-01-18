@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -249,13 +250,13 @@ public class TaxCategory
             /* Check that this TaxCategory has not been previously added */
             if (findItemByName(pTaxCategory) != null) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -266,7 +267,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -290,7 +291,7 @@ public class TaxCategory
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -301,7 +302,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -327,7 +328,7 @@ public class TaxCategory
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -338,7 +339,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -360,7 +361,7 @@ public class TaxCategory
 
                 /* Handle validation failure */
                 if (myCategory.hasErrors()) {
-                    throw new JOceanusException(myCategory, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
                 }
             }
 

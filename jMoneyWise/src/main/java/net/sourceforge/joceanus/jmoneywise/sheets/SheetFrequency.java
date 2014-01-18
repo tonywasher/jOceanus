@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
@@ -180,7 +181,7 @@ public class SheetFrequency
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to load Frequencies", e);
+            throw new JMoneyWiseIOException("Failed to load Frequencies", e);
         }
 
         /* Return to caller */

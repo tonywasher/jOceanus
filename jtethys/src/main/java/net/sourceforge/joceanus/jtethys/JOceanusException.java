@@ -26,7 +26,7 @@ package net.sourceforge.joceanus.jtethys;
  * Exception extension class. Provides capability of attaching ExceptionClass and Causing object to exception.
  * @author Tony Washer
  */
-public class JOceanusException
+public abstract class JOceanusException
         extends Exception {
     /**
      * Required serialisation field.
@@ -47,10 +47,10 @@ public class JOceanusException
     }
 
     /**
-     * Create a wrapped Exception object based on a string and class.
+     * Create a wrapped Exception object based on an underlying exception.
      * @param c the underlying exception TODO
      */
-    public JOceanusException(final Throwable c) {
+    protected JOceanusException(final Throwable c) {
         super(c);
         theObject = null;
     }
@@ -59,19 +59,19 @@ public class JOceanusException
      * Create a new Exception object based on a string and class.
      * @param s the description of the exception
      */
-    public JOceanusException(final String s) {
+    protected JOceanusException(final String s) {
         super(s);
         theObject = null;
         fillInStackTrace();
     }
 
     /**
-     * Create a new Exception object based on a string and a known exception type.
+     * Create a new Exception object based on a string and an underlying exception.
      * @param s the description of the exception
      * @param c the underlying exception
      */
-    public JOceanusException(final String s,
-                             final Throwable c) {
+    protected JOceanusException(final String s,
+                                final Throwable c) {
         super(s, c);
         theObject = null;
     }
@@ -81,15 +81,15 @@ public class JOceanusException
      * @param o the associated object
      * @param s the description of the exception
      */
-    public JOceanusException(final Object o,
-                             final String s) {
+    protected JOceanusException(final Object o,
+                                final String s) {
         super(s);
         theObject = o;
         fillInStackTrace();
     }
 
     /**
-     * Create a new Exception object based on a string an object and a known exception type.
+     * Create a new Exception object based on a string, an object and an underlying exception.
      * @param o the associated object
      * @param s the description of the exception
      * @param c the underlying exception

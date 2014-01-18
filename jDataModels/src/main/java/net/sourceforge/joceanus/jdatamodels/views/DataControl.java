@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
@@ -110,7 +111,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
     /**
      * The Error List.
      */
-    private final DataErrorList<JOceanusException> theErrors;
+    private final DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
      * The Frame.
@@ -184,7 +185,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
         theSecurity = mySecurity.getSecurity(theLogger);
 
         /* Create the error list */
-        theErrors = new DataErrorList<JOceanusException>();
+        theErrors = new DataErrorList<JMetisExceptionWrapper>();
 
         /* Access the Field Preferences */
         theFieldPreferences = thePreferenceMgr.getPreferenceSet(JFieldPreferences.class);
@@ -265,7 +266,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
      * @param pError the new Error
      */
     public void addError(final JOceanusException pError) {
-        theErrors.add(pError);
+        theErrors.add(new JMetisExceptionWrapper(pError));
     }
 
     /**
@@ -279,7 +280,7 @@ public abstract class DataControl<T extends DataSet<T, ?>>
      * Obtain current error.
      * @return the current Error
      */
-    public DataErrorList<JOceanusException> getErrors() {
+    public DataErrorList<JMetisExceptionWrapper> getErrors() {
         return theErrors;
     }
 

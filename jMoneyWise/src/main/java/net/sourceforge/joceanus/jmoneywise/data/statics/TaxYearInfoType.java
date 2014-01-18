@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -245,13 +246,13 @@ public class TaxYearInfoType
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pInfoType) != null) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Check that this TaxYearTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info Type to the list */
@@ -262,7 +263,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -286,7 +287,7 @@ public class TaxYearInfoType
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info Type to the list */
@@ -297,7 +298,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -323,7 +324,7 @@ public class TaxYearInfoType
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Info Type to the list */
@@ -334,7 +335,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JOceanusException(myInfoType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -356,7 +357,7 @@ public class TaxYearInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JOceanusException(myType, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
                 }
             }
 

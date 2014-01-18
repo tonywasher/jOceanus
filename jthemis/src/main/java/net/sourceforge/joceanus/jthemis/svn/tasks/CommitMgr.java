@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 import java.io.File;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.Issue;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -150,7 +152,7 @@ public class CommitMgr {
 
             /* Ensure that there is only one packet */
             if (myPackets.length > 1) {
-                throw new JOceanusException("Too many commit packets");
+                throw new JThemisLogicException("Too many commit packets");
             }
 
             /* Commit the changes */
@@ -160,7 +162,7 @@ public class CommitMgr {
             theRevision = SVNRevision.create(myInfo.getNewRevision());
 
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to commit changes", e);
+            throw new JThemisIOException("Failed to commit changes", e);
         }
     }
 

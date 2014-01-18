@@ -28,6 +28,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jfieldset.JFieldData;
@@ -200,11 +201,11 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             myItem.popHistory();
 
             /* Build the error */
-            JOceanusException myError = new JOceanusException("Failed to update field at ("
-                                                              + pRowIndex
-                                                              + ","
-                                                              + pColIndex
-                                                              + ")", e);
+            JOceanusException myError = new JPrometheusDataException("Failed to update field at ("
+                                                                     + pRowIndex
+                                                                     + ","
+                                                                     + pColIndex
+                                                                     + ")", e);
 
             /* Show the error */
             theTable.setError(myError);

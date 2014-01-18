@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
@@ -194,12 +196,12 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JOceanusException(ERROR_CANCEL);
+                throw new JPrometheusCancelException(ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to load Backup Workbook: "
-                                        + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to load Backup Workbook: "
+                                             + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -253,12 +255,12 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JOceanusException(ERROR_CANCEL);
+                throw new JPrometheusCancelException(ERROR_CANCEL);
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to load Edit-able Workbook: "
-                                        + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to load Edit-able Workbook: "
+                                             + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {

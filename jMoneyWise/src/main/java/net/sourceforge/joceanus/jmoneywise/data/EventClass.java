@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -307,7 +308,7 @@ public class EventClass
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -335,7 +336,7 @@ public class EventClass
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -591,7 +592,7 @@ public class EventClass
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(pId)) {
                 myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myClass, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -616,7 +617,7 @@ public class EventClass
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(pId)) {
                 myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myClass, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
             }
 
             /* Add to the list */

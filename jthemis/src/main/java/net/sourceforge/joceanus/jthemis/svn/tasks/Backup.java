@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
@@ -170,7 +171,7 @@ public class Backup {
             /* Read the data from the input stream */
             theAdminClient.doLoad(pRepository, myStream);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed", e);
+            throw new JThemisIOException("Failed", e);
         }
 
         /* Return to caller */
@@ -296,12 +297,8 @@ public class Backup {
             bSuccess = true;
 
             /* Handle other exceptions */
-        } catch (SVNException e) {
-            throw new JOceanusException("Failed to dump repository to zipfile", e);
-
-            /* Handle other exceptions */
-        } catch (IOException e) {
-            throw new JOceanusException("Failed to dump repository to zipfile", e);
+        } catch (SVNException | IOException e) {
+            throw new JThemisIOException("Failed to dump repository to zipfile", e);
 
             /* Clean up on exit */
         } finally {

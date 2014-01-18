@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
@@ -218,7 +219,7 @@ public class SheetEventClass
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load EventClasses", e);
+            throw new JMoneyWiseIOException("Failed to Load EventClasses", e);
         }
 
         /* Return to caller */

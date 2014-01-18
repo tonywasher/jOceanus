@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -263,13 +264,13 @@ public class EventInfoType
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pType) != null) {
                 myType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add the Type to the list */
@@ -280,7 +281,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
         }
 
@@ -304,7 +305,7 @@ public class EventInfoType
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(pId)) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -315,7 +316,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
         }
 
@@ -341,7 +342,7 @@ public class EventInfoType
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -352,7 +353,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JOceanusException(myType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
         }
 
@@ -374,7 +375,7 @@ public class EventInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JOceanusException(myType, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
                 }
             }
 

@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.soap.JiraSoapService;
 import net.sourceforge.joceanus.jthemis.jira.soap.RemoteGroup;
 import net.sourceforge.joceanus.jthemis.jira.soap.RemoteProjectRole;
@@ -110,8 +112,8 @@ public class Security {
             return myUser;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load user "
-                                        + pName, e);
+            throw new JThemisIOException("Failed to load user "
+                                         + pName, e);
         }
     }
 
@@ -164,8 +166,8 @@ public class Security {
             return myGroup;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load group "
-                                        + pName, e);
+            throw new JThemisIOException("Failed to load group "
+                                         + pName, e);
         }
     }
 
@@ -186,8 +188,8 @@ public class Security {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid RoleId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid RoleId "
+                                        + pId);
     }
 
     /**
@@ -210,7 +212,7 @@ public class Security {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load project roles", e);
+            throw new JThemisIOException("Failed to load project roles", e);
         }
     }
 

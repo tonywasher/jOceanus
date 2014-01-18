@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -279,13 +280,13 @@ public class TaxBasis
             /* Check that this TaxBasis has not been previously added */
             if (findItemByName(pTaxBasis) != null) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -296,7 +297,7 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
         }
 
@@ -320,7 +321,7 @@ public class TaxBasis
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(pId)) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -331,7 +332,7 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
         }
 
@@ -357,7 +358,7 @@ public class TaxBasis
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(pId)) {
                 myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
             /* Add the Tax Basis to the list */
@@ -368,7 +369,7 @@ public class TaxBasis
 
             /* Handle validation failure */
             if (myBasis.hasErrors()) {
-                throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
         }
 
@@ -390,7 +391,7 @@ public class TaxBasis
 
                 /* Handle validation failure */
                 if (myBasis.hasErrors()) {
-                    throw new JOceanusException(myBasis, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
                 }
             }
 

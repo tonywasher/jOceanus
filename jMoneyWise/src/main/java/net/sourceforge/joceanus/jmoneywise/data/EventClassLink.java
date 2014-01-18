@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -291,7 +292,7 @@ public class EventClassLink
             Event myEvent = myEvents.findItemById((Integer) myCurr);
             if (myEvent == null) {
                 addError(ERROR_UNKNOWN, FIELD_EVENT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueEvent(myEvent);
         }
@@ -305,14 +306,14 @@ public class EventClassLink
             EventClass myClass = myTags.findItemById((Integer) myCurr);
             if (myClass == null) {
                 addError(ERROR_UNKNOWN, FIELD_CLASS);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueEventClass(myClass);
         } else if (myCurr instanceof String) {
             EventClass myClass = myTags.findItemByName((String) myCurr);
             if (myClass == null) {
                 addError(ERROR_UNKNOWN, FIELD_CLASS);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueEventClass(myClass);
         }
@@ -468,7 +469,7 @@ public class EventClassLink
             /* Check that this LinkId has not been previously added */
             if (!isIdUnique(pId)) {
                 myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myLink, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myLink, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -491,7 +492,7 @@ public class EventClassLink
             /* Check that this LinkId has not been previously added */
             if (!isIdUnique(pId)) {
                 myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myLink, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myLink, ERROR_VALIDATION);
             }
 
             /* Add to the list */

@@ -36,6 +36,7 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -990,7 +991,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JMoney.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Money Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Money Value", e);
             }
         }
     }
@@ -1051,7 +1052,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JRate.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Rate Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Rate Value", e);
             }
         }
     }
@@ -1101,7 +1102,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JPrice.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Price Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Price Value", e);
             }
         }
     }
@@ -1151,7 +1152,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JUnits.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Units Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Units Value", e);
             }
         }
     }
@@ -1201,7 +1202,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JDilution.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Dilution Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Dilution Value", e);
             }
         }
     }
@@ -1251,7 +1252,7 @@ public abstract class ColumnDefinition {
             try {
                 return pFormatter.parseValue(getValue(), JRatio.class);
             } catch (IllegalArgumentException e) {
-                throw new JOceanusException(getValue(), "Bad Ratio Value", e);
+                throw new JPrometheusDataException(getValue(), "Bad Ratio Value", e);
             }
         }
     }

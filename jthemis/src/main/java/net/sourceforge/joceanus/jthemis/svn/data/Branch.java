@@ -33,6 +33,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisDataException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Tag.TagList;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -640,8 +642,8 @@ public final class Branch
             /* List the members directories */
             myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY, SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to discover lastRevision for "
-                                        + getBranchName(), e);
+            throw new JThemisIOException("Failed to discover lastRevision for "
+                                         + getBranchName(), e);
         } finally {
             theRepository.releaseClientManager(myMgr);
         }
@@ -658,7 +660,7 @@ public final class Branch
             case FINAL:
                 return;
             case MERGING:
-                throw new JOceanusException(this, "IllegalState for Tag");
+                throw new JThemisDataException(this, "IllegalState for Tag");
             default:
                 break;
         }
@@ -693,7 +695,7 @@ public final class Branch
                 if (myExisting != null) {
                     /* Check it is identical */
                     if (!myExisting.equals(mySub)) {
-                        throw new JOceanusException(this, "Inconsistent dependency for Branch");
+                        throw new JThemisDataException(this, "Inconsistent dependency for Branch");
                     }
                 } else {
                     /* Add dependency */
@@ -704,7 +706,7 @@ public final class Branch
 
         /* Check that we are not dependent on a different version of this component */
         if (myNew.get(theComponent) != null) {
-            throw new JOceanusException(this, "Inconsistent dependency for Branch");
+            throw new JThemisDataException(this, "Inconsistent dependency for Branch");
         }
 
         /* Store new dependencies and mark as resolved */
@@ -754,7 +756,7 @@ public final class Branch
             /* Check this is the same repository */
             if (!myRepo.equals(myBranch.getRepository())) {
                 /* throw exception */
-                throw new JOceanusException("Different repository for branch");
+                throw new JThemisDataException("Different repository for branch");
             }
 
             /* Loop through map elements */
@@ -770,7 +772,7 @@ public final class Branch
                     /* else if the branch differs */
                 } else if (!myExisting.equals(myEntry.getValue())) {
                     /* throw exception */
-                    throw new JOceanusException("Conflicting version for branch");
+                    throw new JThemisDataException("Conflicting version for branch");
                 }
             }
         }
@@ -876,8 +878,8 @@ public final class Branch
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
             } catch (SVNException e) {
-                throw new JOceanusException("Failed to discover branches for "
-                                            + theComponent.getName(), e);
+                throw new JThemisIOException("Failed to discover branches for "
+                                             + theComponent.getName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -946,7 +948,7 @@ public final class Branch
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JOceanusException(myBranch, "Duplicate component dependency");
+                                throw new JThemisDataException(myBranch, "Duplicate component dependency");
                             }
                         }
                     }

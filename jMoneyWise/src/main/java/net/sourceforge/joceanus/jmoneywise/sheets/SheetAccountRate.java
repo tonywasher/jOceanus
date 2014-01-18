@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -271,7 +272,7 @@ public class SheetAccountRate
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load Rates", e);
+            throw new JMoneyWiseIOException("Failed to Load Rates", e);
         }
 
         /* Return to caller */

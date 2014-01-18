@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -272,7 +273,7 @@ public class SheetAccountCategory
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load AccountCategories", e);
+            throw new JMoneyWiseIOException("Failed to Load AccountCategories", e);
         }
 
         /* Return to caller */

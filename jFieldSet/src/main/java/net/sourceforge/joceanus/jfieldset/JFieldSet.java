@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
@@ -247,7 +248,7 @@ public class JFieldSet<T extends JFieldSetItem>
             try {
                 return pClass.cast(theValue);
             } catch (ClassCastException e) {
-                throw new JOceanusException("Invalid dataType", e);
+                throw new JMetisDataException("Invalid dataType", e);
             }
         }
 

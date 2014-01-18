@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
@@ -160,7 +161,7 @@ public class SheetEventInfoType
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to load EventInfoTypes", e);
+            throw new JMoneyWiseIOException("Failed to load EventInfoTypes", e);
         }
 
         /* Return to caller */

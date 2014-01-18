@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -314,7 +315,7 @@ public enum TaxCategoryClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JOceanusException("Invalid Tax Class Id: "
-                                    + id);
+        throw new JMoneyWiseDataException("Invalid Tax Class Id: "
+                                          + id);
     }
 }

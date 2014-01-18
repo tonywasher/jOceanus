@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -912,7 +914,7 @@ public class Account
                                  final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JOceanusException(ERROR_BADINFOSET);
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -1247,13 +1249,13 @@ public class Account
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myAccount, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
             }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myAccount, "Duplicate Account");
+                throw new JMoneyWiseDataException(myAccount, "Duplicate Account");
             }
 
             /* Add the Account to the list */
@@ -1287,13 +1289,13 @@ public class Account
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myAccount, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
             }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
                 myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myAccount, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
             }
 
             /* Add the Account to the list */

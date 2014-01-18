@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
@@ -179,7 +180,7 @@ public class SheetTaxCategory
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load Tax Buckets", e);
+            throw new JMoneyWiseIOException("Failed to Load Tax Buckets", e);
         }
 
         /* Return to caller */

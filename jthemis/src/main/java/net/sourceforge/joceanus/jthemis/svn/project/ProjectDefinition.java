@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
@@ -158,15 +159,10 @@ public class ProjectDefinition
             return new ProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
-        } catch (JOceanusException e) {
+        } catch (JOceanusException | IOException e) {
             /* Throw Exception */
-            throw new JOceanusException("Failed to load Project file for "
-                                        + pFile.getAbsolutePath(), e);
-
-        } catch (IOException e) {
-            /* Throw Exception */
-            throw new JOceanusException("Failed to load Project file for "
-                                        + pFile.getAbsolutePath(), e);
+            throw new JThemisIOException("Failed to load Project file for "
+                                         + pFile.getAbsolutePath(), e);
 
         } finally {
             if (myInBuffer != null) {
@@ -201,12 +197,9 @@ public class ProjectDefinition
             parseDependencies();
 
             /* Catch exceptions */
-        } catch (IOException e) {
+        } catch (IOException | XmlPullParserException e) {
             /* Throw Exception */
-            throw new JOceanusException("Failed to parse Project file", e);
-        } catch (XmlPullParserException e) {
-            /* Throw Exception */
-            throw new JOceanusException("Failed to parse Project file", e);
+            throw new JThemisIOException("Failed to parse Project file", e);
         }
     }
 
@@ -286,7 +279,7 @@ public class ProjectDefinition
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw Exception */
-            throw new JOceanusException("Failed to write Project file", e);
+            throw new JThemisIOException("Failed to write Project file", e);
         }
     }
 

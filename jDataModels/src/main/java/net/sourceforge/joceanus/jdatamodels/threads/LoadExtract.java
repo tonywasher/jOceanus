@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jdatamodels.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.database.Database;
 import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
@@ -96,7 +97,7 @@ public class LoadExtract<T extends DataSet<T, ?>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JOceanusException("Operation Cancelled");
+            throw new JPrometheusCancelException("Operation Cancelled");
         }
 
         /* Load workbook */

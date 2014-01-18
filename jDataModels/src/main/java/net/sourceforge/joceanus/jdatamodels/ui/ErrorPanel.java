@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jdatamodels.views.UpdateSet.ErrorDisplay;
@@ -92,7 +93,7 @@ public class ErrorPanel
     /**
      * The error itself.
      */
-    private final DataErrorList<JOceanusException> theErrors;
+    private final DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
      * Do we have an error?
@@ -115,7 +116,7 @@ public class ErrorPanel
         theDataError.hideEntry();
 
         /* Create the error list */
-        theErrors = new DataErrorList<JOceanusException>();
+        theErrors = new DataErrorList<JMetisExceptionWrapper>();
         theDataError.setObject(theErrors);
 
         /* Create the error field */
@@ -154,7 +155,7 @@ public class ErrorPanel
         }
 
         /* Record the error */
-        theErrors.add(pException);
+        theErrors.add(new JMetisExceptionWrapper(pException));
 
         /* Set the string for the error field */
         theErrorField.setText(pException.getMessage());
@@ -167,7 +168,7 @@ public class ErrorPanel
     }
 
     @Override
-    public void setErrors(final DataErrorList<JOceanusException> pExceptions) {
+    public void setErrors(final DataErrorList<JMetisExceptionWrapper> pExceptions) {
         /* If we currently have an error */
         if (hasError()) {
             /* Clear the error */

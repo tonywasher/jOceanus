@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels;
+package net.sourceforge.joceanus.jdatamodels.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,8 +58,6 @@ import net.sourceforge.joceanus.jdatamodels.threads.StoreDatabase;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdatamodels.threads.UpdatePassword;
 import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
-import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
-import net.sourceforge.joceanus.jdatamodels.ui.ThreadControl;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.help.HelpModule;

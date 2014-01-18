@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jsortedlist.OrderedList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.UpdateStatus.UpdateStatusList;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -259,7 +260,7 @@ public final class WorkingCopy
             /* Access status of the directory */
             myClient.doStatus(theLocation, SVNRevision.HEAD, SVNDepth.INFINITY, false, false, false, false, new UpdateHandler(this), null);
         } catch (SVNException e) {
-            throw new JOceanusException("Unable to get status", e);
+            throw new JThemisIOException("Unable to get status", e);
         } finally {
             myRepository.releaseClientManager(myMgr);
         }
@@ -362,7 +363,7 @@ public final class WorkingCopy
             /* Allow file/directory exists but is not WC */
             if ((myCode != SVNErrorCode.WC_NOT_FILE)
                 && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
-                throw new JOceanusException("Unable to get status", e);
+                throw new JThemisIOException("Unable to get status", e);
             }
 
             /* Set status to null */

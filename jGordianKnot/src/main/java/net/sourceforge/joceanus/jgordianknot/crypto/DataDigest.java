@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -97,7 +98,7 @@ public class DataDigest {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             /* Throw the exception */
-            throw new JOceanusException("Failed to create Digest", e);
+            throw new JGordianCryptoException("Failed to create Digest", e);
         }
     }
 
@@ -194,7 +195,7 @@ public class DataDigest {
             return theDigest.digest(pBuffer, pOffset, pLen);
         } catch (DigestException e) {
             /* Throw the exception */
-            throw new JOceanusException("Failed to calculate Digest", e);
+            throw new JGordianCryptoException("Failed to calculate Digest", e);
         }
     }
 }

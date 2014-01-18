@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRendere
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
@@ -485,7 +486,7 @@ public class PricePoint
                         /* Catch Exceptions */
                     } catch (JOceanusException e) {
                         /* Build the error */
-                        JOceanusException myError = new JOceanusException("Failed to change selection", e);
+                        JOceanusException myError = new JMoneyWiseDataException("Failed to change selection", e);
 
                         /* Show the error */
                         setError(myError);

@@ -29,6 +29,8 @@ import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.AsymmetricKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipStreamSpec.ZipStreamList;
@@ -434,7 +436,7 @@ public class ZipFileEntry {
 
             /* Catch exceptions */
         } catch (SignatureException e) {
-            throw new JOceanusException(ERROR_SIGN, e);
+            throw new JGordianCryptoException(ERROR_SIGN, e);
         }
     }
 
@@ -456,7 +458,7 @@ public class ZipFileEntry {
             /* Check the signature */
             if (!mySignature.verify(getSignature())) {
                 /* Throw an exception */
-                throw new JOceanusException("Signature does not match");
+                throw new JGordianDataException("Signature does not match");
             }
 
             /* Build the input stream */
@@ -465,7 +467,7 @@ public class ZipFileEntry {
 
             /* Catch exceptions */
         } catch (SignatureException e) {
-            throw new JOceanusException(ERROR_SIGN, e);
+            throw new JGordianCryptoException(ERROR_SIGN, e);
         }
     }
 }

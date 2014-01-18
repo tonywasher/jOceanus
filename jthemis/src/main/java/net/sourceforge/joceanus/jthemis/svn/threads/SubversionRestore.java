@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
@@ -111,7 +112,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            throw new JOceanusException("Operation Cancelled");
+            throw new JThemisCancelException("Operation Cancelled");
         }
 
         /* Determine the name of the repository */

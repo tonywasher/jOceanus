@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JDilution;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -384,10 +385,10 @@ public final class DilutionEvent
             /* Search for the account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JOceanusException(ERROR_SECURITY
-                                            + " ["
-                                            + pAccount
-                                            + "]");
+                throw new JMoneyWiseDataException(ERROR_SECURITY
+                                                  + " ["
+                                                  + pAccount
+                                                  + "]");
             }
 
             /* Create the date */
@@ -396,9 +397,9 @@ public final class DilutionEvent
             /* Record the dilution */
             JDilution myDilution = theParser.parseDilutionValue(pDilution);
             if (myDilution == null) {
-                throw new JOceanusException(ERROR_DILUTION
-                                            + " "
-                                            + pDilution);
+                throw new JMoneyWiseDataException(ERROR_DILUTION
+                                                  + " "
+                                                  + pDilution);
             }
 
             /* Create the dilution event */

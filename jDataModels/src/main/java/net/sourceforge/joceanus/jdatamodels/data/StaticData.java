@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -526,7 +527,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -569,7 +570,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -598,11 +599,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JOceanusException(ERROR_BADNAME
-                                        + " "
-                                        + myClass.getSimpleName()
-                                        + ": "
-                                        + pValue);
+            throw new JPrometheusDataException(ERROR_BADNAME
+                                               + " "
+                                               + myClass.getSimpleName()
+                                               + ": "
+                                               + pValue);
         }
     }
 
@@ -627,11 +628,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JOceanusException(ERROR_BADID
-                                        + " "
-                                        + myClass.getSimpleName()
-                                        + ": "
-                                        + pId);
+            throw new JPrometheusDataException(ERROR_BADID
+                                               + " "
+                                               + myClass.getSimpleName()
+                                               + ": "
+                                               + pId);
         }
     }
 

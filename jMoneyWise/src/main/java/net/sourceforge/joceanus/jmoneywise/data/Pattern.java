@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
@@ -315,14 +316,14 @@ public class Pattern
             Frequency myFreq = myFrequencies.findItemById((Integer) myFrequency);
             if (myFreq == null) {
                 addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueFrequency(myFreq);
         } else if (myFrequency instanceof String) {
             Frequency myFreq = myFrequencies.findItemByName((String) myFrequency);
             if (myFreq == null) {
                 addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueFrequency(myFreq);
         }
@@ -336,7 +337,7 @@ public class Pattern
             Pattern myPattern = myPatterns.findItemById((Integer) myParent);
             if (myPattern == null) {
                 addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueParent(myPattern);
         }
@@ -690,7 +691,7 @@ public class Pattern
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
                 myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myPattern, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -728,7 +729,7 @@ public class Pattern
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
                 myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myPattern, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */

@@ -37,6 +37,8 @@ import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
@@ -198,7 +200,7 @@ public class EventInfo
             EventInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueInfoType(myType);
 
@@ -207,7 +209,7 @@ public class EventInfo
             Event myOwner = myEvents.findItemById(pEventId);
             if (myOwner == null) {
                 addError(ERROR_UNKNOWN, FIELD_OWNER);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueOwner(myOwner);
 
@@ -226,7 +228,7 @@ public class EventInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JOceanusException(this, ERROR_RESOLUTION);
+                            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
                         }
                         setValueLink(myLink);
                     }
@@ -247,7 +249,7 @@ public class EventInfo
                     setValueBytes(pValue, String.class);
                     break;
                 default:
-                    throw new JOceanusException(this, ERROR_BADDATATYPE);
+                    throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
             }
 
             /* Access the EventInfoSet and register this data */
@@ -255,7 +257,7 @@ public class EventInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -286,7 +288,7 @@ public class EventInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -358,7 +360,7 @@ public class EventInfo
             /* Check link is valid */
             if (myNewLink == null) {
                 addError(ERROR_UNKNOWN, FIELD_LINK);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
 
             /* Update link value */
@@ -435,9 +437,9 @@ public class EventInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JOceanusException(this, ERROR_VALIDATION
-                                                              + " "
-                                                              + myName);
+                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION
+                                                                    + " "
+                                                                    + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);
@@ -502,7 +504,7 @@ public class EventInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JOceanusException(this, ERROR_BADDATATYPE);
+            throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
         }
     }
 
@@ -662,7 +664,7 @@ public class EventInfo
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -670,7 +672,7 @@ public class EventInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -693,10 +695,10 @@ public class EventInfo
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JOceanusException(pEvent, ERROR_BADINFOCLASS
-                                                    + " ["
-                                                    + pInfoClass
-                                                    + "]");
+                throw new JMoneyWiseDataException(pEvent, ERROR_BADINFOCLASS
+                                                          + " ["
+                                                          + pInfoClass
+                                                          + "]");
             }
 
             /* Create a new Event Info */
@@ -705,7 +707,7 @@ public class EventInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Event Info to the list */
@@ -716,7 +718,7 @@ public class EventInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
         }
     }

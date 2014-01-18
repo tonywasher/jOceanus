@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -167,7 +168,7 @@ public class SecureManager {
         /* If we did not get a password */
         if (!isPasswordOk) {
             /* Throw an exception */
-            throw new JOceanusException("Invalid Password");
+            throw new JGordianDataException("Invalid Password");
         }
 
         /* Return the password hash */

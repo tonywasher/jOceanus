@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -285,8 +286,8 @@ public enum AccountCategoryClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JOceanusException("Invalid Account Category Class Id: "
-                                    + id);
+        throw new JMoneyWiseDataException("Invalid Account Category Class Id: "
+                                          + id);
     }
 
     /**

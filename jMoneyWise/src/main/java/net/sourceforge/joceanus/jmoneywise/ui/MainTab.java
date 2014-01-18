@@ -34,8 +34,9 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamodels.MainWindow;
+import net.sourceforge.joceanus.jdatamodels.ui.MainWindow;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -217,7 +218,7 @@ public class MainTab
         try {
             return new FinanceHelp(theLogger);
         } catch (HelpException e) {
-            throw new JOceanusException("Unable to load help", e);
+            throw new JMoneyWiseIOException("Unable to load help", e);
         }
     }
 

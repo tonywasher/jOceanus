@@ -35,6 +35,7 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusLogicException;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BooleanColumn;
 import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.DateColumn;
@@ -552,8 +553,8 @@ public class TableDefinition {
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
-                throw new JOceanusException(getColumnError(myDef)
-                                            + " has no value for insert");
+                throw new JPrometheusLogicException(getColumnError(myDef)
+                                                    + " has no value for insert");
             }
 
             myDef.storeValue(theStatement, myIndex++);
@@ -618,8 +619,8 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Integer type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Integer type");
         }
 
         /* Return the value */
@@ -639,8 +640,8 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Long type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Long type");
         }
 
         /* Return the value */
@@ -660,8 +661,8 @@ public class TableDefinition {
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Date type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Date type");
         }
 
         /* Return the value */
@@ -681,9 +682,9 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JOceanusException("Column "
-                                        + getColumnError(myCol)
-                                        + " is not Boolean type");
+            throw new JPrometheusLogicException("Column "
+                                                + getColumnError(myCol)
+                                                + " is not Boolean type");
         }
 
         /* Return the value */
@@ -703,8 +704,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not String type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not String type");
         }
 
         /* Return the value */
@@ -726,8 +727,8 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not money type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not money type");
         }
 
         /* Access the value */
@@ -749,8 +750,8 @@ public class TableDefinition {
 
         /* Reject if this is not a price column */
         if (!(myCol instanceof PriceColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Price type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Price type");
         }
 
         /* Access the value */
@@ -772,8 +773,8 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Rate type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Rate type");
         }
 
         /* Access the value */
@@ -795,8 +796,8 @@ public class TableDefinition {
 
         /* Reject if this is not a units column */
         if (!(myCol instanceof UnitsColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Units type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Units type");
         }
 
         /* Access the value */
@@ -818,8 +819,8 @@ public class TableDefinition {
 
         /* Reject if this is not a dilution column */
         if (!(myCol instanceof DilutionColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Dilution type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Dilution type");
         }
 
         /* Access the value */
@@ -841,8 +842,8 @@ public class TableDefinition {
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Ratio type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Ratio type");
         }
 
         /* Access the value */
@@ -862,8 +863,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Binary type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Binary type");
         }
 
         /* Return the value */
@@ -884,8 +885,8 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Integer type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Integer type");
         }
 
         /* Set the value */
@@ -906,8 +907,8 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Long type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Long type");
         }
 
         /* Set the value */
@@ -928,8 +929,8 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Boolean type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Boolean type");
         }
 
         /* Set the value */
@@ -950,8 +951,8 @@ public class TableDefinition {
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Date type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Date type");
         }
 
         /* Set the value */
@@ -972,8 +973,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not String type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not String type");
         }
 
         /* Set the value */
@@ -994,8 +995,8 @@ public class TableDefinition {
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Binary type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Binary type");
         }
 
         /* Set the value */
@@ -1016,8 +1017,8 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Money type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Money type");
         }
 
         /* Set the value */
@@ -1038,8 +1039,8 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Rate type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Rate type");
         }
 
         /* Set the value */
@@ -1060,8 +1061,8 @@ public class TableDefinition {
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JOceanusException(getColumnError(myCol)
-                                        + " is not Ratio type");
+            throw new JPrometheusLogicException(getColumnError(myCol)
+                                                + " is not Ratio type");
         }
 
         /* Set the value */
@@ -1081,10 +1082,10 @@ public class TableDefinition {
 
         /* Check that the id is in range and present */
         if (myDef == null) {
-            throw new JOceanusException("Invalid Column Id: "
-                                        + pId
-                                        + " for "
-                                        + theTableName);
+            throw new JPrometheusLogicException("Invalid Column Id: "
+                                                + pId
+                                                + " for "
+                                                + theTableName);
         }
 
         /* Return the column definition */
@@ -1404,8 +1405,8 @@ public class TableDefinition {
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
-                    throw new JOceanusException(getColumnError(myDef)
-                                                + " has no value for update");
+                    throw new JPrometheusLogicException(getColumnError(myDef)
+                                                        + " has no value for update");
                 }
 
                 /* Remember the column */

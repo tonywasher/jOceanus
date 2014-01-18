@@ -37,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
@@ -127,7 +128,7 @@ public class ReportManager
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         } catch (Exception e) {
-            throw new JOceanusException("Failed to create", e);
+            throw new JMoneyWiseIOException("Failed to create", e);
         }
     }
 
@@ -358,7 +359,7 @@ public class ReportManager
             /* Return the new text */
             return theText;
         } catch (TransformerException e) {
-            throw new JOceanusException("Failed to format", e);
+            throw new JMoneyWiseIOException("Failed to format", e);
         }
     }
 

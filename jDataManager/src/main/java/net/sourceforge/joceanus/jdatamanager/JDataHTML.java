@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jtethys.DataConverter;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Data object formatting in HTML.
@@ -327,7 +326,7 @@ public final class JDataHTML {
         Object o = pObject;
         switch (getDataType(o)) {
             case EXCEPTION:
-                o = new JOceanusException((Throwable) o);
+                o = new JMetisExceptionWrapper((Throwable) o);
                 return formatHTMLDetail(pDetail, o);
             case CONTENTS:
                 return formatHTMLDetail(pDetail, o);

@@ -35,6 +35,8 @@ import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.Group;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.Role;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
@@ -177,13 +179,9 @@ public class Server {
             loadStatuses();
             loadResolutions();
             loadPriorities();
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ServiceException e) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_SERVICE, e);
-
-        } catch (ServiceException e) {
-            /* Pass the exception on */
-            throw new JOceanusException(ERROR_SERVICE, e);
+            throw new JThemisIOException(ERROR_SERVICE, e);
         }
     }
 
@@ -208,7 +206,7 @@ public class Server {
             return theAuthToken;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to login to server", e);
+            throw new JThemisIOException("Failed to login to server", e);
         }
     }
 
@@ -240,8 +238,8 @@ public class Server {
             return myProject;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load project "
-                                        + pKey, e);
+            throw new JThemisIOException("Failed to load project "
+                                         + pKey, e);
         }
     }
 
@@ -265,8 +263,8 @@ public class Server {
         /* Handle filter not found */
         if (myFilter == null) {
             /* Pass the exception on */
-            throw new JOceanusException("Filter does not exists "
-                                        + pFilter);
+            throw new JThemisLogicException("Filter does not exists "
+                                            + pFilter);
         }
 
         /* Protect against exceptions */
@@ -284,7 +282,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load issues from filter", e);
+            throw new JThemisIOException("Failed to load issues from filter", e);
         }
 
     }
@@ -339,8 +337,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid IssueTypeId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid IssueTypeId "
+                                        + pId);
     }
 
     /**
@@ -360,8 +358,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid StatusId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid StatusId "
+                                        + pId);
     }
 
     /**
@@ -381,8 +379,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid ResolutionId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid ResolutionId "
+                                        + pId);
     }
 
     /**
@@ -402,8 +400,8 @@ public class Server {
         }
 
         /* throw exception */
-        throw new JOceanusException("Invalid PriorityId "
-                                    + pId);
+        throw new JThemisLogicException("Invalid PriorityId "
+                                        + pId);
     }
 
     /**
@@ -426,7 +424,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load filters", e);
+            throw new JThemisIOException("Failed to load filters", e);
         }
     }
 
@@ -459,7 +457,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load issue types", e);
+            throw new JThemisIOException("Failed to load issue types", e);
         }
     }
 
@@ -483,7 +481,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load statuses", e);
+            throw new JThemisIOException("Failed to load statuses", e);
         }
     }
 
@@ -507,7 +505,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load resolutions", e);
+            throw new JThemisIOException("Failed to load resolutions", e);
         }
     }
 
@@ -531,7 +529,7 @@ public class Server {
             }
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException("Failed to load priorities", e);
+            throw new JThemisIOException("Failed to load priorities", e);
         }
     }
 

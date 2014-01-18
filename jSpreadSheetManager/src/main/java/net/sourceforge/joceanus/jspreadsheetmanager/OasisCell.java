@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jspreadsheetmanager;
 
+import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;
@@ -155,8 +156,8 @@ public class OasisCell
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JOceanusException(pSource, ERROR_VALUE
-                                                 + myAddress, e);
+            throw new JMetisDataException(pSource, ERROR_VALUE
+                                                   + myAddress, e);
         }
     }
 
@@ -175,8 +176,8 @@ public class OasisCell
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JOceanusException(pSource, ERROR_VALUE
-                                                 + myAddress, e);
+            throw new JMetisDataException(pSource, ERROR_VALUE
+                                                   + myAddress, e);
         }
     }
 
@@ -197,8 +198,8 @@ public class OasisCell
             return myRow.parseValue(pSource, pCurrCode, pClass);
         } catch (IllegalArgumentException e) {
             OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
-            throw new JOceanusException(pSource, ERROR_VALUE
-                                                 + myAddress, e);
+            throw new JMetisDataException(pSource, ERROR_VALUE
+                                                   + myAddress, e);
         }
     }
 

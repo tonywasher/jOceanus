@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JMetisIOException;
+import net.sourceforge.joceanus.jdatamanager.JMetisLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
@@ -155,7 +157,7 @@ public class ExcelWorkBook {
             theExcelFormatter = new DataFormatter();
 
         } catch (IOException e) {
-            throw new JOceanusException("Failed to load workbook", e);
+            throw new JMetisIOException("Failed to load workbook", e);
         }
     }
 
@@ -200,7 +202,7 @@ public class ExcelWorkBook {
         try {
             theBook.write(pOutput);
         } catch (IOException e) {
-            throw new JOceanusException("Failed to save workbook", e);
+            throw new JMetisIOException("Failed to save workbook", e);
         }
     }
 
@@ -285,9 +287,9 @@ public class ExcelWorkBook {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
-            throw new JOceanusException("Name "
-                                        + pName
-                                        + " already exists in workbook");
+            throw new JMetisLogicException("Name "
+                                           + pName
+                                           + " already exists in workbook");
         }
 
         /* Build the basic name */

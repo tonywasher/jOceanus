@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Component.ComponentList;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
@@ -495,8 +496,8 @@ public class Repository
             return myProject;
 
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to parse project file for "
-                                        + pPath, e);
+            throw new JThemisIOException("Failed to parse project file for "
+                                         + pPath, e);
         } finally {
             if (myInput != null) {
                 try {
@@ -534,7 +535,7 @@ public class Repository
 
             /* Allow file not existing */
             if (myCode != SVNErrorCode.FS_NOT_FOUND) {
-                throw new JOceanusException("Unable to read File URL", e);
+                throw new JThemisIOException("Unable to read File URL", e);
             }
 
             /* Set stream to null */

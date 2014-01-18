@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -621,7 +622,7 @@ public abstract class EventBase
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -670,14 +671,9 @@ public abstract class EventBase
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
             /* Catch Exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -779,14 +775,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         } else if (myDebit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         }
@@ -800,14 +796,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         } else if (myCredit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         }
@@ -821,14 +817,14 @@ public abstract class EventBase
             EventCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             EventCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         }

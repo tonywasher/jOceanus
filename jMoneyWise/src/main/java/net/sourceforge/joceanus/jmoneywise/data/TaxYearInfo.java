@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
@@ -174,7 +176,7 @@ public class TaxYearInfo
         TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
         if (myType == null) {
             addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueInfoType(myType);
 
@@ -183,7 +185,7 @@ public class TaxYearInfo
         TaxYear myOwner = myTaxYears.findItemById(pTaxYearId);
         if (myOwner == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueOwner(myOwner);
 
@@ -198,7 +200,7 @@ public class TaxYearInfo
                     setValueBytes(pValue, JRate.class);
                     break;
                 default:
-                    throw new JOceanusException(this, ERROR_BADDATATYPE);
+                    throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
             }
 
             /* Access the TaxInfoSet and register this data */
@@ -206,7 +208,7 @@ public class TaxYearInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -237,7 +239,7 @@ public class TaxYearInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -294,7 +296,7 @@ public class TaxYearInfo
         TaxYearInfoType myNewType = myTypes.findItemById(myType.getId());
         if (myNewType == null) {
             addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueInfoType(myNewType);
 
@@ -303,7 +305,7 @@ public class TaxYearInfo
         TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
         if (myNewYear == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueOwner(myNewYear);
 
@@ -370,7 +372,7 @@ public class TaxYearInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JOceanusException(this, ERROR_BADDATATYPE);
+            throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
         }
     }
 
@@ -512,7 +514,7 @@ public class TaxYearInfo
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -520,7 +522,7 @@ public class TaxYearInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -543,10 +545,10 @@ public class TaxYearInfo
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JOceanusException(pTaxYear, ERROR_BADINFOCLASS
-                                                      + " ["
-                                                      + pInfoClass
-                                                      + "]");
+                throw new JMoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS
+                                                            + " ["
+                                                            + pInfoClass
+                                                            + "]");
             }
 
             /* Create a new Tax Info */
@@ -555,7 +557,7 @@ public class TaxYearInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myTaxInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info to the list */
@@ -566,7 +568,7 @@ public class TaxYearInfo
 
             /* Handle validation failure */
             if (myTaxInfo.hasErrors()) {
-                throw new JOceanusException(myTaxInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
             }
         }
     }

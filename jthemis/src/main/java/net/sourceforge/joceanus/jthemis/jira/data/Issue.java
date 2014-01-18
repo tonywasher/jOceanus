@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.JThemisLogicException;
 import net.sourceforge.joceanus.jthemis.jira.data.Project.Component;
 import net.sourceforge.joceanus.jthemis.jira.data.Project.Version;
 import net.sourceforge.joceanus.jthemis.jira.data.Security.User;
@@ -411,7 +413,7 @@ public class Issue {
             theService.addComment(myToken, theId, myComment);
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_ADDCOMM, e);
+            throw new JThemisIOException(ERROR_ADDCOMM, e);
         }
     }
 
@@ -435,8 +437,8 @@ public class Issue {
         Component myNewComp = theProject.getComponentByName(pComponent);
         if (myNewComp == null) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_COMP
-                                        + pComponent);
+            throw new JThemisLogicException(ERROR_COMP
+                                            + pComponent);
         }
 
         /* Protect against exceptions */
@@ -467,7 +469,7 @@ public class Issue {
             return myNewComp;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_LINKCOMP, e);
+            throw new JThemisIOException(ERROR_LINKCOMP, e);
         }
     }
 
@@ -491,8 +493,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_VERS
-                                        + pVersion);
+            throw new JThemisLogicException(ERROR_VERS
+                                            + pVersion);
         }
 
         /* Protect against exceptions */
@@ -523,7 +525,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_LINKVERS, e);
+            throw new JThemisIOException(ERROR_LINKVERS, e);
         }
     }
 
@@ -547,8 +549,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_VERS
-                                        + pVersion);
+            throw new JThemisLogicException(ERROR_VERS
+                                            + pVersion);
         }
 
         /* Protect against exceptions */
@@ -579,7 +581,7 @@ public class Issue {
             return myNewVers;
         } catch (RemoteException e) {
             /* Pass the exception on */
-            throw new JOceanusException(ERROR_LINKVERS, e);
+            throw new JThemisIOException(ERROR_LINKVERS, e);
         }
     }
 }

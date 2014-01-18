@@ -32,6 +32,8 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jdatamanager.DataState;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
@@ -332,8 +334,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             postProcessOnLoad();
 
         } catch (SQLException e) {
-            throw new JOceanusException("Failed to load "
-                                        + getTableName(), e);
+            throw new JPrometheusIOException("Failed to load "
+                                             + getTableName(), e);
         }
 
         /* Return to caller */
@@ -456,8 +458,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             closeStmt();
 
         } catch (SQLException e) {
-            throw new JOceanusException(myCurr, "Failed to insert "
-                                                + getTableName(), e);
+            throw new JPrometheusDataException(myCurr, "Failed to insert "
+                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -542,8 +544,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 }
             }
         } catch (SQLException e) {
-            throw new JOceanusException(myCurr, "Failed to update "
-                                                + getTableName(), e);
+            throw new JPrometheusDataException(myCurr, "Failed to update "
+                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -670,8 +672,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
         } catch (SQLException e) {
-            throw new JOceanusException(myCurr, "Failed to delete "
-                                                + getTableName(), e);
+            throw new JPrometheusDataException(myCurr, "Failed to delete "
+                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -698,8 +700,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 executeStatement(myCreate);
             }
         } catch (SQLException e) {
-            throw new JOceanusException("Failed to create "
-                                        + getTableName(), e);
+            throw new JPrometheusIOException("Failed to create "
+                                             + getTableName(), e);
         }
     }
 
@@ -723,8 +725,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
         } catch (SQLException e) {
-            throw new JOceanusException("Failed to drop "
-                                        + getTableName(), e);
+            throw new JPrometheusIOException("Failed to drop "
+                                             + getTableName(), e);
         }
     }
 
@@ -739,8 +741,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
         } catch (SQLException e) {
-            throw new JOceanusException("Failed to purge "
-                                        + getTableName(), e);
+            throw new JPrometheusIOException("Failed to purge "
+                                             + getTableName(), e);
         }
     }
 }

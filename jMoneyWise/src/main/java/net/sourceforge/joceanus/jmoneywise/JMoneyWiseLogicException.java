@@ -22,56 +22,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Main entry point for program.
- * @author Tony Washer
+ * MoneyWise Logic Exception.
  */
-public final class Control {
+public class JMoneyWiseLogicException
+        extends JOceanusException {
     /**
-     * The Main window.
+     * SerialId.
      */
-    private static MainTab theWindow = null;
+    private static final long serialVersionUID = 7365752331990335281L;
 
     /**
-     * Logger.
+     * Create a new MoneyWise Exception object based on an object and a string.
+     * @param o the object
+     * @param s the description of the exception
      */
-    private static Logger theLogger = Logger.getLogger(Control.class.getName());
-
-    /**
-     * Private constructor to avoid instantiation.
-     */
-    private Control() {
+    public JMoneyWiseLogicException(final Object o,
+                                    final String s) {
+        super(o, s);
     }
 
     /**
-     * Create and show the GUI.
+     * Create a new MoneyWise Exception object based on a string.
+     * @param s the description of the exception
      */
-    private static void createAndShowGUI() {
-        try {
-            theWindow = new MainTab(theLogger);
-            theWindow.makeFrame();
-
-        } catch (JOceanusException e) {
-            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
-        }
-    }
-
-    /**
-     * Main entry point.
-     * @param args the command line arguments
-     */
-    public static void main(final String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+    public JMoneyWiseLogicException(final String s) {
+        super(s);
     }
 }

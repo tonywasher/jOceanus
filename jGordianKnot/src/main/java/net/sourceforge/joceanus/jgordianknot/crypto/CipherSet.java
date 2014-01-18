@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.SymmetricRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -487,7 +489,7 @@ public class CipherSet {
 
         /* Reject if there is no PrivateKey */
         if (myPrivate == null) {
-            throw new JOceanusException("No PrivateKey");
+            throw new JGordianLogicException("No PrivateKey");
         }
 
         /* Encode the key */
@@ -495,8 +497,8 @@ public class CipherSet {
 
         /* Check whether the SecuredKey is too large */
         if (myEncrypted.length > AsymmetricKey.PRIVATESIZE) {
-            throw new JOceanusException("PrivateKey too large: "
-                                        + myEncrypted.length);
+            throw new JGordianDataException("PrivateKey too large: "
+                                            + myEncrypted.length);
         }
 
         /* Return the wrapped key */

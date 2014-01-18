@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
@@ -579,7 +580,7 @@ public class SheetEvent
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to load Events", e);
+            throw new JMoneyWiseIOException("Failed to load Events", e);
         }
 
         /* Return to caller */

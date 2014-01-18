@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -217,7 +219,7 @@ public class AccountInfo
             AccountInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
                 addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueInfoType(myType);
 
@@ -226,7 +228,7 @@ public class AccountInfo
             Account myOwner = myAccounts.findItemById(pAccountId);
             if (myOwner == null) {
                 addError(ERROR_UNKNOWN, FIELD_OWNER);
-                throw new JOceanusException(this, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
             }
             setValueOwner(myOwner);
 
@@ -251,7 +253,7 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JOceanusException(this, ERROR_RESOLUTION);
+                            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
                         }
                         setValueLink(myLink);
                     }
@@ -269,7 +271,7 @@ public class AccountInfo
                     setValueBytes(pValue, JMoney.class);
                     break;
                 default:
-                    throw new JOceanusException(this, ERROR_BADDATATYPE);
+                    throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
             }
 
             /* Access the AccountInfoSet and register this data */
@@ -277,7 +279,7 @@ public class AccountInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -307,7 +309,7 @@ public class AccountInfo
             mySet.registerInfo(this);
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -364,7 +366,7 @@ public class AccountInfo
         AccountInfoType myNewType = myTypes.findItemById(myType.getId());
         if (myNewType == null) {
             addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueInfoType(myNewType);
 
@@ -373,7 +375,7 @@ public class AccountInfo
         Account myOwner = myAccounts.findItemById(myAccount.getId());
         if (myOwner == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         setValueOwner(myOwner);
 
@@ -398,7 +400,7 @@ public class AccountInfo
             /* Check link is valid */
             if (myNewLink == null) {
                 addError(ERROR_UNKNOWN, FIELD_LINK);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
 
             /* Update link value */
@@ -469,9 +471,9 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JOceanusException(this, ERROR_VALIDATION
-                                                              + " "
-                                                              + myName);
+                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION
+                                                                    + " "
+                                                                    + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);
@@ -523,7 +525,7 @@ public class AccountInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JOceanusException(this, ERROR_BADDATATYPE);
+            throw new JMoneyWiseDataException(this, ERROR_BADDATATYPE);
         }
     }
 
@@ -689,7 +691,7 @@ public class AccountInfo
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -697,7 +699,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -720,10 +722,10 @@ public class AccountInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JOceanusException(pAccount, ERROR_BADINFOCLASS
-                                                      + " ["
-                                                      + pInfoClass
-                                                      + "]");
+                throw new JMoneyWiseDataException(pAccount, ERROR_BADINFOCLASS
+                                                            + " ["
+                                                            + pInfoClass
+                                                            + "]");
             }
 
             /* Create a new Account Info Type */
@@ -732,7 +734,7 @@ public class AccountInfo
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Info to the list */
@@ -743,7 +745,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JOceanusException(myInfo, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
         }
     }

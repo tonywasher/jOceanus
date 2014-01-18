@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
 import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
@@ -305,7 +306,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -347,7 +348,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -392,7 +393,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -599,7 +600,7 @@ public class ControlKey
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myKey, ERROR_DUPLICATE);
+                throw new JPrometheusDataException(myKey, ERROR_DUPLICATE);
             }
 
             /* Add to the list */

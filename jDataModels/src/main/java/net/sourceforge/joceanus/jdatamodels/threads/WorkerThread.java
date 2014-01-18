@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
 import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
@@ -51,7 +53,7 @@ public abstract class WorkerThread<T>
     /**
      * The errors for the operation.
      */
-    private final DataErrorList<JOceanusException> theErrors;
+    private final DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
      * Constructor.
@@ -63,7 +65,7 @@ public abstract class WorkerThread<T>
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
-        theErrors = new DataErrorList<JOceanusException>();
+        theErrors = new DataErrorList<JMetisExceptionWrapper>();
     }
 
     /**
@@ -72,14 +74,14 @@ public abstract class WorkerThread<T>
      */
     protected void addError(final JOceanusException pError) {
         /* Store the error */
-        theErrors.add(pError);
+        theErrors.add(new JMetisExceptionWrapper(pError));
     }
 
     /**
      * Add Error List.
      * @param pErrors the Errors for the task
      */
-    protected void addErrorList(final DataErrorList<JOceanusException> pErrors) {
+    protected void addErrorList(final DataErrorList<JMetisExceptionWrapper> pErrors) {
         /* Store the errors */
         theErrors.addList(pErrors);
     }
@@ -127,7 +129,7 @@ public abstract class WorkerThread<T>
 
             /* Catch any exception to keep thread interface clean */
         } catch (Exception e) {
-            addError(new JOceanusException("Failed to perform background task", e));
+            addError(new JPrometheusIOException("Failed to perform background task", e));
             return null;
         }
     }

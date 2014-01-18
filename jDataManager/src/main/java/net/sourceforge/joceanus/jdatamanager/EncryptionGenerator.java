@@ -185,8 +185,8 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JOceanusException(ERROR_CLASS
-                                    + pValue.getClass().getCanonicalName());
+        throw new JMetisLogicException(ERROR_CLASS
+                                       + pValue.getClass().getCanonicalName());
     }
 
     /**
@@ -264,8 +264,8 @@ public class EncryptionGenerator {
         }
 
         /* Unsupported so reject */
-        throw new JOceanusException(ERROR_CLASS
-                                    + pClass.getCanonicalName());
+        throw new JMetisLogicException(ERROR_CLASS
+                                       + pClass.getCanonicalName());
     }
 
     /**

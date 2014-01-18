@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -152,7 +153,7 @@ public enum FrequencyClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JOceanusException("Invalid Frequency Class Id: "
-                                    + id);
+        throw new JMoneyWiseDataException("Invalid Frequency Class Id: "
+                                          + id);
     }
 }

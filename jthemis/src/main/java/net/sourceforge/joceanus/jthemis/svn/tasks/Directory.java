@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.tasks;
 import java.io.File;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 
 /**
  * Utility classes to manage directories.
@@ -48,8 +49,8 @@ public final class Directory {
 
         /* Create the new directory */
         if (!pDir.mkdir()) {
-            throw new JOceanusException("Failed to create directory: "
-                                        + pDir.getAbsolutePath());
+            throw new JThemisIOException("Failed to create directory: "
+                                         + pDir.getAbsolutePath());
         }
     }
 
@@ -70,8 +71,8 @@ public final class Directory {
 
         /* Delete the directory itself */
         if (!pDir.delete()) {
-            throw new JOceanusException("Failed to delete directory: "
-                                        + pDir.getAbsolutePath());
+            throw new JThemisIOException("Failed to delete directory: "
+                                         + pDir.getAbsolutePath());
         }
     }
 
@@ -89,8 +90,8 @@ public final class Directory {
 
         /* Handle invalid call */
         if (!pDir.isDirectory()) {
-            throw new JOceanusException("Attempt to clear non-directory: "
-                                        + pDir.getAbsolutePath());
+            throw new JThemisIOException("Attempt to clear non-directory: "
+                                         + pDir.getAbsolutePath());
         }
 
         /* Loop through all items */
@@ -102,8 +103,8 @@ public final class Directory {
 
                 /* else remove the file */
             } else if (!myFile.delete()) {
-                throw new JOceanusException("Failed to delete file: "
-                                            + myFile.getAbsolutePath());
+                throw new JThemisIOException("Failed to delete file: "
+                                             + myFile.getAbsolutePath());
             }
         }
     }

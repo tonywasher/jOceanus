@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.zip;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.DataMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.StreamCipher;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -105,7 +106,7 @@ public class MacInputStream
 
         /* Check valid digest */
         if (Arrays.areEqual(myMac, pExpected)) {
-            throw new JOceanusException(ERROR_MAC);
+            throw new JGordianDataException(ERROR_MAC);
         }
     }
 

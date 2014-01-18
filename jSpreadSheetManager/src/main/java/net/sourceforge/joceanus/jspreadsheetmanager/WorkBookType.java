@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jspreadsheetmanager;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jdatamanager.JMetisLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -89,8 +90,8 @@ public enum WorkBookType {
         }
 
         /* Unrecognised type */
-        throw new JOceanusException("Unrecognised file type "
-                                    + pFileName);
+        throw new JMetisLogicException("Unrecognised file type "
+                                       + pFileName);
     }
 
     @Override

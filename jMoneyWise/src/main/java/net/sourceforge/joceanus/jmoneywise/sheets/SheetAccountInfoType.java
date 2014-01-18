@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetStaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -160,7 +161,7 @@ public class SheetAccountInfoType
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to load AccountInfoTypes", e);
+            throw new JMoneyWiseIOException("Failed to load AccountInfoTypes", e);
         }
 
         /* Return to caller */

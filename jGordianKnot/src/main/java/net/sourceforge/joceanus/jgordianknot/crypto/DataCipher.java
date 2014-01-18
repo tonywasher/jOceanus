@@ -37,6 +37,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.bouncycastle.util.Arrays;
@@ -206,7 +208,7 @@ public class DataCipher {
             /* Encrypt the byte array */
             return myCipher.doFinal(pBytes);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            throw new JOceanusException("Failed to encrypt bytes", e);
+            throw new JGordianCryptoException("Failed to encrypt bytes", e);
         }
     }
 
@@ -236,7 +238,7 @@ public class DataCipher {
             /* Encrypt the byte array */
             return myCipher.doFinal(pBytes);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
-            throw new JOceanusException("Failed to decrypt bytes", e);
+            throw new JGordianCryptoException("Failed to decrypt bytes", e);
         }
     }
 
@@ -313,7 +315,7 @@ public class DataCipher {
                 }
             }
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new JOceanusException(ERROR_WRAP, e);
+            throw new JGordianCryptoException(ERROR_WRAP, e);
         }
 
         /* Return the wrapped data */
@@ -382,7 +384,7 @@ public class DataCipher {
                 }
             }
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new JOceanusException(ERROR_UNWRAP, e);
+            throw new JGordianCryptoException(ERROR_UNWRAP, e);
         }
 
         /* Determine check values */
@@ -405,7 +407,7 @@ public class DataCipher {
 
         /* Reject if checks fail */
         if (!isCheckOK) {
-            throw new JOceanusException(ERROR_INTEGRITY);
+            throw new JGordianDataException(ERROR_INTEGRITY);
         }
 
         /* Return unwrapped data */
@@ -470,7 +472,7 @@ public class DataCipher {
                 theCipherMap.put(pMode, myCipher);
 
             } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
-                throw new JOceanusException(ERROR_CREATE, e);
+                throw new JGordianCryptoException(ERROR_CREATE, e);
             }
         }
 

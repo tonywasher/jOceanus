@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimalParser;
 import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -431,14 +432,9 @@ public class AccountRate
             setValueBonus(myParser.parseRateValue(pBonus));
 
             /* Catch Exceptions */
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -481,7 +477,7 @@ public class AccountRate
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -535,14 +531,14 @@ public class AccountRate
             Account myAct = myAccounts.findItemById((Integer) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         } else if (myAccount instanceof String) {
             Account myAct = myAccounts.findItemByName((String) myAccount);
             if (myAct == null) {
                 addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         }
@@ -909,7 +905,7 @@ public class AccountRate
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
-                throw new JOceanusException(myRate, "Duplicate RateId");
+                throw new JMoneyWiseDataException(myRate, "Duplicate RateId");
             }
 
             /* Add to the list */
@@ -937,7 +933,7 @@ public class AccountRate
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JOceanusException(myRate, "Duplicate RateId");
+                throw new JMoneyWiseDataException(myRate, "Duplicate RateId");
             }
 
             /* Add to the list */

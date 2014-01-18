@@ -26,13 +26,14 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
 import net.sourceforge.joceanus.jdatamanager.EncryptionGenerator;
+import net.sourceforge.joceanus.jdatamanager.JDataFields;
+import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
+import net.sourceforge.joceanus.jdatamodels.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -170,7 +171,7 @@ public abstract class EncryptedItem
         ControlKey myControl = myKeys.findItemById(pControlId);
         if (myControl == null) {
             addError(ERROR_UNKNOWN, FIELD_CONTROL);
-            throw new JOceanusException(this, ERROR_RESOLUTION);
+            throw new JPrometheusDataException(this, ERROR_RESOLUTION);
         }
 
         /* Store the ControlKey */

@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
@@ -89,14 +91,14 @@ public class WriteQIF
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JOceanusException("Operation Cancelled");
+                throw new JMoneyWiseCancelException("Operation Cancelled");
             }
 
             /* Catch any exceptions */
         } catch (JOceanusException e) {
             throw e;
         } catch (Exception e) {
-            throw new JOceanusException("Failed", e);
+            throw new JMoneyWiseIOException("Failed", e);
         }
 
         /* Return nothing */

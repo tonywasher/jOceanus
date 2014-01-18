@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jdatamodels.sheets;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
 import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
@@ -273,8 +274,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load "
-                                        + theRangeName, e);
+            throw new JPrometheusIOException("Failed to Load "
+                                             + theRangeName, e);
         }
 
         /* Return to caller */
@@ -368,8 +369,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 nameRange();
             }
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to create "
-                                        + theRangeName, e);
+            throw new JPrometheusIOException("Failed to create "
+                                             + theRangeName, e);
         }
 
         /* Return to caller */

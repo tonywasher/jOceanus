@@ -26,6 +26,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -393,8 +394,8 @@ public class PasswordHash {
 
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {
-                throw new JOceanusException("Password Hash too large: "
-                                            + myHashBytes.length);
+                throw new JGordianDataException("Password Hash too large: "
+                                                + myHashBytes.length);
             }
 
             /* Return to caller */

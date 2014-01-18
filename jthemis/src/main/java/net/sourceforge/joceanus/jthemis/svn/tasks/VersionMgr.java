@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchList;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
@@ -145,8 +146,8 @@ public class VersionMgr {
             /* Clone the definition */
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to create branch "
-                                        + pTarget.getBranchName(), e);
+            throw new JThemisIOException("Failed to create branch "
+                                         + pTarget.getBranchName(), e);
         }
     }
 
@@ -189,8 +190,8 @@ public class VersionMgr {
             /* Clone the definition */
             pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to create tag "
-                                        + pTarget.getTagName(), e);
+            throw new JThemisIOException("Failed to create tag "
+                                         + pTarget.getTagName(), e);
         }
     }
 

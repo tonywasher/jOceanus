@@ -40,9 +40,9 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
 import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Status bar panel.
@@ -167,7 +167,7 @@ public class StatusBar {
     /**
      * Errors.
      */
-    private final DataErrorList<JOceanusException> theErrors;
+    private final DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
      * Timer.
@@ -209,7 +209,7 @@ public class StatusBar {
      * Get error.
      * @return the error
      */
-    public DataErrorList<JOceanusException> getErrors() {
+    public DataErrorList<JMetisExceptionWrapper> getErrors() {
         return theErrors;
     }
 
@@ -225,7 +225,7 @@ public class StatusBar {
 
         /* Store access to the Data Entry */
         theDataEntry = pData.getDataEntry(DataControl.DATA_ERROR);
-        theErrors = new DataErrorList<JOceanusException>();
+        theErrors = new DataErrorList<JMetisExceptionWrapper>();
 
         /* Create the boxes */
         theCancel = new JButton(NLS_CANCEL);
@@ -383,7 +383,7 @@ public class StatusBar {
      * @param pErrors the error list
      */
     public void setFailure(final String pOperation,
-                           final DataErrorList<JOceanusException> pErrors) {
+                           final DataErrorList<JMetisExceptionWrapper> pErrors) {
         /* Initialise the message */
         String myText = pOperation
                         + " "

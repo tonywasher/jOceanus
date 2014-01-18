@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -464,7 +465,7 @@ public abstract class AccountBase
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -510,7 +511,7 @@ public abstract class AccountBase
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
-            throw new JOceanusException(this, ERROR_CREATEITEM, e);
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -569,14 +570,14 @@ public abstract class AccountBase
             AccountCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             AccountCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
             if (myCat.getCategoryTypeClass().isNonAsset()) {
@@ -593,14 +594,14 @@ public abstract class AccountBase
             AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         } else if (myCurrency instanceof String) {
             AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         }

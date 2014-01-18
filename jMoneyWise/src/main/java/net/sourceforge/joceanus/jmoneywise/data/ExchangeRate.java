@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -445,14 +446,14 @@ public final class ExchangeRate
             AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueFromCurrency(myCurrency);
         } else if (myCurr instanceof String) {
             AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueFromCurrency(myCurrency);
         }
@@ -466,14 +467,14 @@ public final class ExchangeRate
             AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueToCurrency(myCurrency);
         } else if (myCurr instanceof String) {
             AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
             if (myCurrency == null) {
                 addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueToCurrency(myCurrency);
         }
@@ -794,7 +795,7 @@ public final class ExchangeRate
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myRate, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -821,7 +822,7 @@ public final class ExchangeRate
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myRate, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
             }
 
             /* Add to the list */

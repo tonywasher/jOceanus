@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
@@ -175,8 +176,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to write to file: "
-                                        + myQIFFile.getName(), e);
+            throw new JMoneyWiseIOException("Failed to write to file: "
+                                            + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -234,8 +235,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to write to file: "
-                                        + myQIFFile.getName(), e);
+            throw new JMoneyWiseIOException("Failed to write to file: "
+                                            + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {

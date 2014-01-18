@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamodels.data.DataInfoClass;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -219,8 +220,8 @@ public enum EventInfoClass implements DataInfoClass {
                 return myClass;
             }
         }
-        throw new JOceanusException("Invalid EventInfo Class Id: "
-                                    + id);
+        throw new JMoneyWiseDataException("Invalid EventInfo Class Id: "
+                                          + id);
     }
 
     /**

@@ -25,6 +25,8 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
+import net.sourceforge.joceanus.jgordianknot.JGordianLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -125,8 +127,8 @@ public enum DigestType {
                 return myType;
             }
         }
-        throw new JOceanusException("Invalid DigestType: "
-                                    + id);
+        throw new JGordianDataException("Invalid DigestType: "
+                                        + id);
     }
 
     /**
@@ -183,8 +185,8 @@ public enum DigestType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JOceanusException(ERROR_NUMTYPES
-                                        + pNumTypes);
+            throw new JGordianLogicException(ERROR_NUMTYPES
+                                             + pNumTypes);
         }
 
         /* Create the result set */
@@ -224,8 +226,8 @@ public enum DigestType {
         /* Reject call if invalid number of types */
         if ((pNumTypes < 1)
             || (pNumTypes > iNumValues)) {
-            throw new JOceanusException(ERROR_NUMTYPES
-                                        + pNumTypes);
+            throw new JGordianLogicException(ERROR_NUMTYPES
+                                             + pNumTypes);
         }
 
         /* Make sure that seed is positive */

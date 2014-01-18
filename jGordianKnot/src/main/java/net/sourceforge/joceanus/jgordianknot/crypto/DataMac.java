@@ -36,6 +36,7 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityRegister.MacRegister;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -364,7 +365,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
             /* Throw the exception */
-            throw new JOceanusException(ERROR_CREATE, e);
+            throw new JGordianCryptoException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -409,7 +410,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             /* Throw the exception */
-            throw new JOceanusException(ERROR_CREATE, e);
+            throw new JGordianCryptoException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -454,7 +455,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             /* Throw the exception */
-            throw new JOceanusException(ERROR_CREATE, e);
+            throw new JGordianCryptoException(ERROR_CREATE, e);
         }
 
         /* Create encoded form */
@@ -480,7 +481,7 @@ public class DataMac {
             /* Catch exceptions */
         } catch (InvalidKeyException e) {
             /* Throw the exception */
-            throw new JOceanusException(ERROR_INIT, e);
+            throw new JGordianCryptoException(ERROR_INIT, e);
         }
     }
 
@@ -590,7 +591,7 @@ public class DataMac {
             theMac.doFinal(pBuffer, pOffset);
         } catch (ShortBufferException | IllegalStateException e) {
             /* Throw the exception */
-            throw new JOceanusException(ERROR_CALC, e);
+            throw new JGordianCryptoException(ERROR_CALC, e);
         }
     }
 }

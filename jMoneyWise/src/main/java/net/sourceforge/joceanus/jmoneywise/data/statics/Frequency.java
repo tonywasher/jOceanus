@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -244,13 +245,13 @@ public class Frequency
             /* Check that this Frequency has not been previously added */
             if (findItemByName(pFrequency) != null) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
             }
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
                 myFrequency.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -261,7 +262,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFrequency.hasErrors()) {
-                throw new JOceanusException(myFrequency, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
             }
         }
 
@@ -285,7 +286,7 @@ public class Frequency
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myFreq, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -296,7 +297,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JOceanusException(myFreq, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
         }
 
@@ -322,7 +323,7 @@ public class Frequency
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
                 myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myFreq, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -333,7 +334,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JOceanusException(myFreq, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
         }
 
@@ -355,7 +356,7 @@ public class Frequency
 
                 /* Handle validation failure */
                 if (myFreq.hasErrors()) {
-                    throw new JOceanusException(myFreq, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
                 }
             }
 

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
@@ -350,14 +351,14 @@ public abstract class TaxYearBase
             TaxRegime myReg = myRegimes.findItemById((Integer) myRegime);
             if (myReg == null) {
                 addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         } else if (myRegime instanceof String) {
             TaxRegime myReg = myRegimes.findItemByName((String) myRegime);
             if (myReg == null) {
                 addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JOceanusException(this, ERROR_RESOLUTION);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         }

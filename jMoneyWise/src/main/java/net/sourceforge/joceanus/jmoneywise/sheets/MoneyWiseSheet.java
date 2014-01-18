@@ -40,6 +40,8 @@ import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetWriter;
 import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
@@ -276,8 +278,8 @@ public class MoneyWiseSheet
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to load Workbook: "
-                                        + myArchive.getName(), e);
+            throw new JMoneyWiseIOException("Failed to load Workbook: "
+                                            + myArchive.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -400,14 +402,14 @@ public class MoneyWiseSheet
 
             /* Check for cancellation */
             if (!bContinue) {
-                throw new JOceanusException("Operation Cancelled");
+                throw new JMoneyWiseCancelException("Operation Cancelled");
             }
 
             /* Return the data */
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JOceanusException("Failed to load Workbook", e);
+            throw new JMoneyWiseIOException("Failed to load Workbook", e);
         }
     }
 }

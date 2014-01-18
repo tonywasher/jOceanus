@@ -26,6 +26,8 @@ import java.io.File;
 import java.util.Collection;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisCancelException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;
@@ -112,8 +114,8 @@ public class CheckOut {
             theReport.setNumStages(pBranch.getNumElements());
             myUpdate.doCheckout(myURL, pPath, SVNRevision.HEAD, pRevision, SVNDepth.INFINITY, false);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to checkOut branch "
-                                        + pBranch.getBranchName(), e);
+            throw new JThemisIOException("Failed to checkOut branch "
+                                         + pBranch.getBranchName(), e);
         }
     }
 
@@ -134,8 +136,8 @@ public class CheckOut {
             SVNURL myURL = pBranch.getURL();
             myUpdate.doSwitch(pPath, myURL, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, false, true);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to switch branch "
-                                        + pBranch.getBranchName(), e);
+            throw new JThemisIOException("Failed to switch branch "
+                                         + pBranch.getBranchName(), e);
         }
     }
 
@@ -153,8 +155,8 @@ public class CheckOut {
             /* Update the working copy */
             myUpdate.doUpdate(pPath, SVNRevision.HEAD, SVNDepth.INFINITY, true, true);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to update path "
-                                        + pPath.getPath(), e);
+            throw new JThemisIOException("Failed to update path "
+                                         + pPath.getPath(), e);
         }
     }
 
@@ -175,8 +177,8 @@ public class CheckOut {
             /* Revert the working copy */
             myClient.doRevert(myPaths, SVNDepth.INFINITY, null);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to revert path "
-                                        + pPath.getPath(), e);
+            throw new JThemisIOException("Failed to revert path "
+                                         + pPath.getPath(), e);
         }
     }
 
@@ -197,8 +199,8 @@ public class CheckOut {
             SVNURL myURL = pTag.getURL();
             myUpdate.doExport(myURL, pPath, SVNRevision.HEAD, SVNRevision.HEAD, null, false, SVNDepth.INFINITY);
         } catch (SVNException e) {
-            throw new JOceanusException("Failed to export tag "
-                                        + pTag.getTagName(), e);
+            throw new JThemisIOException("Failed to export tag "
+                                         + pTag.getTagName(), e);
         }
     }
 
@@ -216,7 +218,7 @@ public class CheckOut {
         for (Branch myBranch : pBranches) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
-                throw new JOceanusException("Operation Cancelled");
+                throw new JThemisCancelException("Operation Cancelled");
             }
 
             /* Build path */
@@ -289,7 +291,7 @@ public class CheckOut {
         for (Tag myTag : pTags) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
-                throw new JOceanusException("Operation Cancelled");
+                throw new JThemisCancelException("Operation Cancelled");
             }
 
             /* Build path */

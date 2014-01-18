@@ -56,6 +56,7 @@ import net.sourceforge.joceanus.jdateday.JDateDayButton;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jfieldset.JFieldSet;
 import net.sourceforge.joceanus.jfieldset.JFieldSet.FieldUpdate;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
@@ -1085,7 +1086,7 @@ public class MaintAccount
                 theAccount.popHistory();
 
                 /* Build the error */
-                JOceanusException myError = new JOceanusException("Failed to update field", e);
+                JOceanusException myError = new JMoneyWiseDataException("Failed to update field", e);
 
                 /* Show the error */
                 theError.addError(myError);

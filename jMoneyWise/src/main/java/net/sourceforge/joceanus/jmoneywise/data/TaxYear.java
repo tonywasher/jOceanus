@@ -36,6 +36,8 @@ import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
@@ -547,7 +549,7 @@ public class TaxYear
                                  final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JOceanusException(ERROR_BADINFOSET);
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -991,13 +993,13 @@ public class TaxYear
             /* Check that this TaxYearId has not been previously added */
             if (!isIdUnique(pId)) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
-                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */
@@ -1021,7 +1023,7 @@ public class TaxYear
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
-                throw new JOceanusException(myTaxYear, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */

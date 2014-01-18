@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jdatamanager.JMetisLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -166,7 +167,7 @@ public class DataWorkBook {
      */
     private void checkReadOnly() throws JOceanusException {
         if (isReadOnly) {
-            throw new JOceanusException("Attempt to modify readOnly Book");
+            throw new JMetisLogicException("Attempt to modify readOnly Book");
         }
     }
 
@@ -194,8 +195,8 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JOceanusException(ERROR_TYPE
-                                            + pType);
+                throw new JMetisLogicException(ERROR_TYPE
+                                               + pType);
         }
     }
 
@@ -221,8 +222,8 @@ public class DataWorkBook {
                 theBookType = pType;
                 break;
             default:
-                throw new JOceanusException(ERROR_TYPE
-                                            + pType);
+                throw new JMetisLogicException(ERROR_TYPE
+                                               + pType);
         }
     }
 

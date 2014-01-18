@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
@@ -458,7 +459,7 @@ public class SheetAccount
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JOceanusException("Failed to Load Accounts", e);
+            throw new JMoneyWiseIOException("Failed to Load Accounts", e);
         }
 
         /* Return to caller */

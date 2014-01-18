@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jdatamodels.data.DataItem;
 import net.sourceforge.joceanus.jdatamodels.data.DataList;
 import net.sourceforge.joceanus.jdatamodels.data.DataSet;
 import net.sourceforge.joceanus.jdatamodels.data.StaticData;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -231,13 +232,13 @@ public class AccountCategoryType
             /* Check that this AccountCategoryType has not been previously added */
             if (findItemByName(pActCatType) != null) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(myActType.getId())) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category to the list */
@@ -248,7 +249,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
         }
 
@@ -272,7 +273,7 @@ public class AccountCategoryType
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category Type to the list */
@@ -283,7 +284,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
         }
 
@@ -309,7 +310,7 @@ public class AccountCategoryType
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
                 myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
 
             /* Add the AccountCategoryType to the list */
@@ -320,7 +321,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JOceanusException(myActType, ERROR_VALIDATION);
+                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
             }
         }
 
@@ -342,7 +343,7 @@ public class AccountCategoryType
 
                 /* Handle validation failure */
                 if (myActType.hasErrors()) {
-                    throw new JOceanusException(myActType, ERROR_VALIDATION);
+                    throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
                 }
             }
 
