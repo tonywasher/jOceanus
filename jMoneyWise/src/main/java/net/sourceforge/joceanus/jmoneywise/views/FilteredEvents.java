@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;

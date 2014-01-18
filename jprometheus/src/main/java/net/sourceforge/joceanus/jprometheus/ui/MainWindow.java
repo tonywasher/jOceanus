@@ -43,8 +43,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jdatamanager.JDataWindow;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.CreateDatabase;

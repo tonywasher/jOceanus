@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSpreadSheetManager: SpreadSheet management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jspreadsheetmanager;
+package net.sourceforge.joceanus.jmetis.sheet;
 
 /**
  * Utility class to parse/format ODS CellAddresses.
@@ -101,7 +101,7 @@ public class OasisCellAddress {
      * Obtain the Location.
      * @return the location
      */
-    protected CellPosition getPosition() {
+    public CellPosition getPosition() {
         return thePosition;
     }
 
@@ -403,7 +403,7 @@ public class OasisCellAddress {
          * Obtain the first cell Address.
          * @return the address
          */
-        protected OasisCellAddress getFirstCell() {
+        public OasisCellAddress getFirstCell() {
             return theFirstCell;
         }
 
@@ -411,7 +411,7 @@ public class OasisCellAddress {
          * Obtain the BottomRight Address.
          * @return the address
          */
-        protected OasisCellAddress getLastCell() {
+        public OasisCellAddress getLastCell() {
             return theLastCell;
         }
 
@@ -437,9 +437,9 @@ public class OasisCellAddress {
          * @param pFirstCell the first cell
          * @param pLastCell the last cell
          */
-        protected OasisCellRange(final String pSheetName,
-                                 final CellPosition pFirstCell,
-                                 final CellPosition pLastCell) {
+        public OasisCellRange(final String pSheetName,
+                              final CellPosition pFirstCell,
+                              final CellPosition pLastCell) {
             /* Store parameters */
             theFirstCell = new OasisCellAddress(pSheetName, pFirstCell);
             theLastCell = new OasisCellAddress(pSheetName, pLastCell);
@@ -452,8 +452,8 @@ public class OasisCellAddress {
          * @param pSheetName the sheet name
          * @param pSingleCell the single cell
          */
-        protected OasisCellRange(final String pSheetName,
-                                 final CellPosition pSingleCell) {
+        public OasisCellRange(final String pSheetName,
+                              final CellPosition pSingleCell) {
             /* Store parameters */
             theFirstCell = new OasisCellAddress(pSheetName, pSingleCell);
             theLastCell = theFirstCell;
@@ -466,8 +466,8 @@ public class OasisCellAddress {
          * @param pFirstCell the first cell
          * @param pLastCell the last cell
          */
-        protected OasisCellRange(final OasisCellAddress pFirstCell,
-                                 final OasisCellAddress pLastCell) {
+        public OasisCellRange(final OasisCellAddress pFirstCell,
+                              final OasisCellAddress pLastCell) {
             /* Store parameters */
             theFirstCell = pFirstCell;
             theLastCell = pLastCell;
@@ -479,7 +479,7 @@ public class OasisCellAddress {
          * Constructor.
          * @param pSingleCell the cell
          */
-        protected OasisCellRange(final OasisCellAddress pSingleCell) {
+        public OasisCellRange(final OasisCellAddress pSingleCell) {
             /* Store parameters */
             theFirstCell = pSingleCell;
             theLastCell = pSingleCell;
@@ -491,7 +491,7 @@ public class OasisCellAddress {
          * Constructor.
          * @param pAddress the cell address
          */
-        protected OasisCellRange(final String pAddress) {
+        public OasisCellRange(final String pAddress) {
             /* Locate the split */
             int iSplit = pAddress.indexOf(CHAR_COLON);
             isSingleCell = (iSplit == -1);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Java Swing Field Set.
  */
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 

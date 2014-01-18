@@ -31,19 +31,19 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 

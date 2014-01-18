@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPreferenceSet: PreferenceSet Management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jpreferenceset;
+package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**

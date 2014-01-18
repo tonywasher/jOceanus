@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jdatamanager.EncryptedData;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;

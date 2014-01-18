@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

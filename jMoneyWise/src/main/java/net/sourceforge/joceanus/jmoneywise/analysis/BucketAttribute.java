@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jmetis.viewer.DataType;
 
 /**
  * Methods for a Bucket Attribute.

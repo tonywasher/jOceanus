@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jmetis.viewer.DataType;
 
 /**
  * SecurityAttribute enumeration.

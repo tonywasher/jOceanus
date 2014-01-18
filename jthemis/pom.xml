@@ -63,7 +63,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jDataManager</artifactId>
+      <artifactId>jmetis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

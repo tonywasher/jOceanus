@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;

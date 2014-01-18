@@ -47,7 +47,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;

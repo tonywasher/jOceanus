@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;

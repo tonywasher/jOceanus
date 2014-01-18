@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,31 +20,34 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamanager;
+package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBigDecimal;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBigInteger;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedBoolean;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedCharArray;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDate;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDateDay;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDilution;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedDouble;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedFloat;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedInteger;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedLong;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedMoney;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedPrice;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedRate;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedRatio;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedShort;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jmetis.JMetisLogicException;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedBigDecimal;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedBigInteger;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedBoolean;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedCharArray;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedDate;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedDateDay;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedDilution;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedDouble;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedFloat;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedInteger;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedLong;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedMoney;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedPrice;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRate;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRatio;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedShort;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedUnits;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -52,8 +55,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Encrypted field generator.

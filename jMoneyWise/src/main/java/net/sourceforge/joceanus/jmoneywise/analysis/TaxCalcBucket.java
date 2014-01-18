@@ -27,10 +27,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
-import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
-import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 
 /**
  * The Tax Bucket class.

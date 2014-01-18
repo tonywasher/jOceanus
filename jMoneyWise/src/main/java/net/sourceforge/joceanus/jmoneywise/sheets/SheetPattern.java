@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

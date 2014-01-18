@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPreferenceSet: PreferenceSet Management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jpreferenceset;
+package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -47,10 +47,10 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;

@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jthemis.svn.project;
 
 import java.util.ArrayList;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.maven.model.Dependency;

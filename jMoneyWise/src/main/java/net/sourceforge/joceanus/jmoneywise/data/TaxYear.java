@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
+import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

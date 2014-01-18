@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;

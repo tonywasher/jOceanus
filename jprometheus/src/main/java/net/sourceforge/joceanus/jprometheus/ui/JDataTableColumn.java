@@ -28,8 +28,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
 
 /**
  * TableColumn extension class.

@@ -36,14 +36,14 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.joceanus.jdatamanager.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxSelector;
-import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventTable;

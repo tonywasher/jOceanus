@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamanager;
-
-import net.sourceforge.joceanus.jtethys.JOceanusException;
-
 /**
- * JMetis Logic Exception.
+ * Data Framework.
  */
-public class JMetisLogicException
-        extends JOceanusException {
-    /**
-     * SerialId.
-     */
-    private static final long serialVersionUID = 864554925186516604L;
+package net.sourceforge.joceanus.jmetis;
 
-    /**
-     * Create a new Metis Exception object based on a string.
-     * @param s the description of the exception
-     */
-    public JMetisLogicException(final String s) {
-        super(s);
-    }
-}

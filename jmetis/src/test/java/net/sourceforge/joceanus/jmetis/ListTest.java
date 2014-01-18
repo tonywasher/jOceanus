@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JSortedList: A random access linked list implementation
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jsortedlist;
+package net.sourceforge.joceanus.jmetis;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
+
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 
 /**
  * Test suite for jSortedList.

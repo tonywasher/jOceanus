@@ -40,7 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;

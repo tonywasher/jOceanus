@@ -1,4 +1,4 @@
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,7 +6,7 @@ import java.awt.Font;
 import javax.swing.border.Border;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 
 /**
  * The Render Data class.

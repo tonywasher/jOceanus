@@ -33,7 +33,7 @@ import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;

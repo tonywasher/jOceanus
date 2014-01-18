@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -41,12 +41,12 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.EnumMap;
 
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;

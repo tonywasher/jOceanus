@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;

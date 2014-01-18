@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.DataType;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 
 /**
  * Field Set. This handles a fields for an item, populating the field, rendering and parsing the data.

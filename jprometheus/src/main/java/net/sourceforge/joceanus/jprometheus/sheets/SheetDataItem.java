@@ -37,13 +37,13 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jspreadsheetmanager.CellPosition;
-import net.sourceforge.joceanus.jspreadsheetmanager.CellStyleType;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataSheet;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.CellPosition;
+import net.sourceforge.joceanus.jmetis.sheet.CellStyleType;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataSheet;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

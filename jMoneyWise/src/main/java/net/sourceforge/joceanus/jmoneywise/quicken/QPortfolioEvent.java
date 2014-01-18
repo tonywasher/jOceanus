@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 
 /**

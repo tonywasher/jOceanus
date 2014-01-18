@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 
 /**
  * Analysis manager.

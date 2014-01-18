@@ -35,10 +35,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamanager.JDataWindow;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch;
 import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;

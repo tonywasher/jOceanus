@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

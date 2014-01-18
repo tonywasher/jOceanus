@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSpreadSheetManager: SpreadSheet management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jspreadsheetmanager;
+package net.sourceforge.joceanus.jmetis.sheet;
 
-import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
+import net.sourceforge.joceanus.jmetis.JMetisDataException;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -31,7 +32,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute;
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute.Value;

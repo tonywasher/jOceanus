@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.ui.StatusBar;

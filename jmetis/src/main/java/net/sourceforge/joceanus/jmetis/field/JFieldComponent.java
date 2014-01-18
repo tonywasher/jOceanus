@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -45,14 +45,14 @@ import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jdatamanager.DataType;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.DataType;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
-import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelBoolean;
-import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelDateDay;
-import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelObject;
-import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelString;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelBoolean;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelDateDay;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelObject;
+import net.sourceforge.joceanus.jmetis.field.JFieldModel.JModelString;
 
 /**
  * Component classes for jFieldSet.

@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
 import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

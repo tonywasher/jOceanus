@@ -26,7 +26,7 @@ import java.io.File;
 
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

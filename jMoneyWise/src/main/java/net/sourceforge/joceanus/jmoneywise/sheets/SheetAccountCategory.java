@@ -28,10 +28,10 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

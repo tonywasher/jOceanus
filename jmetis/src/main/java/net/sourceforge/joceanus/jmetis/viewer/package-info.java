@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Class to provide a Data window allowing a user to walk the various data chains.
  */
-package net.sourceforge.joceanus.jdatamanager;
+package net.sourceforge.joceanus.jmetis.viewer;
 

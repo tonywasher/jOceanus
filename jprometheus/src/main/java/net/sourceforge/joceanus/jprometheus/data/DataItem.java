@@ -25,22 +25,22 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.ItemValidation;
-import net.sourceforge.joceanus.jdatamanager.ItemValidation.ErrorElement;
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataValues;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jdatamanager.ValueSetHistory;
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.ItemValidation;
+import net.sourceforge.joceanus.jmetis.viewer.ItemValidation.ErrorElement;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataValues;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSetHistory;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
-import net.sourceforge.joceanus.jfieldset.JFieldState;
-import net.sourceforge.joceanus.jdatamanager.EncryptedValueSet;
-import net.sourceforge.joceanus.jsortedlist.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

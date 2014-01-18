@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -28,25 +28,25 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.RateCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.RowCellRenderer;
-import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 
 /**
  * Class to determine rendering details for an item.

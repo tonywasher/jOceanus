@@ -27,11 +27,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.EncryptionGenerator;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;

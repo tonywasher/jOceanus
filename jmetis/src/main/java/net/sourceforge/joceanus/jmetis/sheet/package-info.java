@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSpreadSheetManager: SpreadSheet management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jspreadsheetmanager;
+package net.sourceforge.joceanus.jmetis.sheet;
 
 /**
  * Package to load/write spreadsheets.

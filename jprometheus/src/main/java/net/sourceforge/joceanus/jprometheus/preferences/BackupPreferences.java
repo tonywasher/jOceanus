@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.preferences;
 
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
-import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

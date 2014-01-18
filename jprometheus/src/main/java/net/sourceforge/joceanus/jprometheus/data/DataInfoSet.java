@@ -28,16 +28,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jdatamanager.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

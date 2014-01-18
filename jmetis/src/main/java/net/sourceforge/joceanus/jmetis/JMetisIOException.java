@@ -20,73 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.preference;
+package net.sourceforge.joceanus.jmetis;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Classes of ValueField.
+ * JMetis IO Exception.
  */
-public enum ValueClass {
+public class JMetisIOException
+        extends JOceanusException {
     /**
-     * String.
+     * SerialId.
      */
-    STRING,
-
-    /**
-     * Integer.
-     */
-    INTEGER,
+    private static final long serialVersionUID = 1642164880304226592L;
 
     /**
-     * Money.
+     * Create a new Metis Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
      */
-    MONEY,
-
-    /**
-     * Rate.
-     */
-    RATE,
-
-    /**
-     * Units.
-     */
-    UNITS,
-
-    /**
-     * Price.
-     */
-    PRICE,
-
-    /**
-     * Dilution.
-     */
-    DILUTION,
-
-    /**
-     * Char Array.
-     */
-    CHARARRAY;
-
-    /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ValueClass.class.getName());
-
-    /**
-     * The String name.
-     */
-    private String theName;
-
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = NLS_BUNDLE.getString(name());
-        }
-
-        /* return the name */
-        return theName;
+    public JMetisIOException(final String s,
+                             final Throwable e) {
+        super(s, e);
     }
 }

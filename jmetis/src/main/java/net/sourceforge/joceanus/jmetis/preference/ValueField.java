@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPreferenceSet: PreferenceSet Management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jpreferenceset;
+package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -31,14 +31,14 @@ import java.util.Arrays;
 
 import javax.swing.JTextField;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jfieldset.JFieldValue;
+import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira.data;
 
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

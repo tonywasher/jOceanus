@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jSortedList: A random access linked list implementation
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,5 +24,5 @@
  * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation
  * with the ability for objects to be hidden on the list.
  */
-package net.sourceforge.joceanus.jsortedlist;
+package net.sourceforge.joceanus.jmetis.list;
 

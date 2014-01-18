@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jprometheus.preferences;
 
 import java.awt.Color;
 
-import net.sourceforge.joceanus.jfieldset.JFieldConfig;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.field.JFieldConfig;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

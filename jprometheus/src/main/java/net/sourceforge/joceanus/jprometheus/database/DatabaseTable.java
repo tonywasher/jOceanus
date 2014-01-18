@@ -29,9 +29,9 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.ValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;

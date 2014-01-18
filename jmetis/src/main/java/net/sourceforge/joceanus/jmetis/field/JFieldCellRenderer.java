@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jfieldset;
+package net.sourceforge.joceanus.jmetis.field;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellRenderer;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 
 /**
  * Cell renderers.

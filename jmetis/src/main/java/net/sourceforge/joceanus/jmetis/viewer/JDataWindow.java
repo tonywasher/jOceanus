@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamanager;
+package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.awt.Dimension;
 
@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 
 /**
  * Data Window display class.

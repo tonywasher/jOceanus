@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
-import net.sourceforge.joceanus.jspreadsheetmanager.WorkBookType;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

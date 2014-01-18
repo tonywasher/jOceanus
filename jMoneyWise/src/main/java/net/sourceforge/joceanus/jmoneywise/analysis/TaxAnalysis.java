@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamanager;
+package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -50,7 +50,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 
 /**
  * Data Item.

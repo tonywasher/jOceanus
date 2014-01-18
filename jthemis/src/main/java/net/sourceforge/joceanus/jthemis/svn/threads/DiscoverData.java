@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;

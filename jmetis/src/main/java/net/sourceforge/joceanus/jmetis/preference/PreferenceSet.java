@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPreferenceSet: PreferenceSet Management
+ * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jpreferenceset;
+package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -31,16 +31,16 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
-import net.sourceforge.joceanus.jfieldset.JFieldState;
+import net.sourceforge.joceanus.jmetis.JMetisDataException;
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**

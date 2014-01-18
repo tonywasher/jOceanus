@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jSpreadSheetManager</artifactId>
+      <artifactId>jmetis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -31,17 +31,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jDataManager</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>jtethys</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jSortedList</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

@@ -27,13 +27,13 @@ import java.util.ResourceBundle;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jfieldset.JFieldData;
-import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jfieldset.JFieldValue;
+import net.sourceforge.joceanus.jmetis.field.JFieldData;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;

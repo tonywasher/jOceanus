@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.Repository;

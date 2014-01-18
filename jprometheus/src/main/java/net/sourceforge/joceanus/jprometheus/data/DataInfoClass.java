@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import net.sourceforge.joceanus.jdatamanager.DataType;
+import net.sourceforge.joceanus.jmetis.viewer.DataType;
 
 /**
  * DataInfoClass interface.

@@ -1,5 +1,5 @@
 /*******************************************************************************
-[] * jPreferenceSet: PreferenceSet Management
+[] * jMetis: Java Data Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jpreferenceset;
+package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -50,17 +50,17 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
-import net.sourceforge.joceanus.jfieldset.JFieldManager;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.BooleanPreference;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.ColorPreference;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.DatePreference;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.EnumPreference;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.IntegerPreference;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.PreferenceItem;
-import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.StringPreference;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.BooleanPreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.ColorPreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.DatePreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.EnumPreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.IntegerPreference;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.PreferenceItem;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.StringPreference;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;

@@ -1,4 +1,26 @@
-package net.sourceforge.joceanus.jspreadsheetmanager;
+/*******************************************************************************
+ * jMetis: Java Data Framework
+ * Copyright 2012,2014 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.joceanus.jmetis;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -9,6 +31,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Currency;
 
+import net.sourceforge.joceanus.jmetis.sheet.CellStyleType;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataSheet;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.OasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -16,10 +47,8 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jspreadsheetmanager.OasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
-public class Tester {
+public class SheetTest {
     /**
      * Main entry point.
      * @param args the command line arguments

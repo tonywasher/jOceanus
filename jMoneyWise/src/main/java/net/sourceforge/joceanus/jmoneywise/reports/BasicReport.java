@@ -27,7 +27,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jsortedlist.NestedHashMap;
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 
 import org.w3c.dom.Document;
 

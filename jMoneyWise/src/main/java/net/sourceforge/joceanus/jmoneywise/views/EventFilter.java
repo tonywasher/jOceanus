@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;

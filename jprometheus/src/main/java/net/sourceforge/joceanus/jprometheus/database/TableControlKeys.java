@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.database;
 
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;

@@ -38,9 +38,9 @@ import javax.swing.JProgressBar;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 

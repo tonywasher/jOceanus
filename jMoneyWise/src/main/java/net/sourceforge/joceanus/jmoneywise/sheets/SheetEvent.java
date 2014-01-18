@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jdatamanager.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -40,10 +40,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataCell;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataRow;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataView;
-import net.sourceforge.joceanus.jspreadsheetmanager.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

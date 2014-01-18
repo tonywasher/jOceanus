@@ -26,15 +26,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
-import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
-import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

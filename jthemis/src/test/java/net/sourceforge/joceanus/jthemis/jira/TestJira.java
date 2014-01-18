@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jthemis.jira;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.jira.data.Server;
 
