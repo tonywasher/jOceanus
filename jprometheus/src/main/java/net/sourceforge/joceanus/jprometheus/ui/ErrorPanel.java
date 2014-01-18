@@ -93,7 +93,7 @@ public class ErrorPanel
     /**
      * The error itself.
      */
-    private final DataErrorList<JMetisExceptionWrapper> theErrors;
+    private final transient DataErrorList<JMetisExceptionWrapper> theErrors;
 
     /**
      * Do we have an error?

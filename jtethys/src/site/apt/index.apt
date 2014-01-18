@@ -5,11 +5,17 @@ It is named after the titaness Tethys who was the embodiment of the waters of th
 
   The following utilities are provided
 
-  * A generic <<JOceanusException>> exception class that accepts an associated object plus text.
+* A generic <<JOceanusException>> exception class
 
-  * A <<DataConverter>> class.
+  This class extends a standard exception by allowing an object to be associated with the exception. This is particularly
+useful for data applications since the data that caused the exception can be associated with it.
 
-  * A generic EventManager.
+* A <<DataConverter>> class
+
+  This provides methods to convert between byteArrays and charArrays/longs/integers/strings and also methods to 
+format/parse a byteArray to/from hexStrings and Base64Strings.
+
+* A generic EventManager.
 
     This provides a <<JEventManager>> class which supports <<ActionEvents>> and <<ChangeEvents>> on a generic object.
 It is particularly useful for JPanels and JTables which only have the base capability of firing PropertyChangeEvents.
@@ -19,12 +25,14 @@ JPanel and JTables respectively, with added ChangeEvent and ActionEvent support.
     In addition a set of wrapper classes are provided to extend <<JTabbedPane>>, <<JPanel>> and <<JScrollPane>> such that
 it will pass the setEnabled() method on to all subcomponents.
 	
-  * A set of Swing Utilities
+* A set of Swing Utilities
 
-      ** Utilities to help with SpringLayout (based on the Oracle SpringUtilities example), and GridBagLayout
+    * Utilities to help with SpringLayout (based on the Oracle SpringUtilities example), and GridBagLayout
 
-      ** A set of classes to enable Scrollable Menus
+    * A set of classes to enable Scrollable Menus
 
-      ** A class to provide simple sorting/filtering in a JTable
+    * A class to provide simple sorting/filtering in a JTable
   
-  * A simple Help Manager
+* A simple Help Manager
+
+    This is still under development.

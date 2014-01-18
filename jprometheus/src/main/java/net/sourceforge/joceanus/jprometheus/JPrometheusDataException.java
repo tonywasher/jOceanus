@@ -63,7 +63,7 @@ public class JPrometheusDataException
      */
     public JPrometheusDataException(final String s,
                                     final Throwable e) {
-        super(s);
+        super(s, e);
     }
 
     /**

@@ -1,6 +1,6 @@
 JGordianKnot Project
 
-  jGordianKnot is a subComponent of the jOceanus project.
+  jGordianKnot is a subComponent of the jOceanus project. 
 
   jGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
@@ -17,6 +17,9 @@ the external hash representation. The third hash is used to generate the key def
 
   Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to
 derive a CipherSet for a pair of AsymmetricKeys. RSA keys are also available, but cannot be associated with a CipherSet.
+
+
+* Supported Algorithms
 
   The following symmetric key algorithms are supported for 128/256 byte keys. You will only be able to use 256 byte keys
 if you are able to access the <<UNLIMITED>> strength JCE policy files.
@@ -106,7 +109,7 @@ ZipFile support
   In addition to Encryption services, JGordianKnot also provides support for to creating and reading encrypted ZipFiles.
 This is built on top of the Java ZipFile support and utilises the encryption facilities of JGordianKnot to encrypt and
 decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly
-improved compression other the Deflation standard Java method.
+improved compression over the Deflation standard Java method.
 
   The ZipFile directory is additionally encrypted, so as to restrict information leakage.
 

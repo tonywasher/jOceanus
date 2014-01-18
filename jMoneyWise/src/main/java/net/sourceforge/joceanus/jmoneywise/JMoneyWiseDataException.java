@@ -63,7 +63,7 @@ public class JMoneyWiseDataException
      */
     public JMoneyWiseDataException(final String s,
                                    final Throwable e) {
-        super(s);
+        super(s, e);
     }
 
     /**
