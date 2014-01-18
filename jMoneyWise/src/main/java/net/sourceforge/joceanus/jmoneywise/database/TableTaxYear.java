@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.database.DatabaseTable;
-import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
+import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;

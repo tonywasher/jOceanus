@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +31,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 /**

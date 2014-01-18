@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamodels.data.StaticInterface;
+import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

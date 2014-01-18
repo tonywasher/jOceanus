@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.data;
+package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jsortedlist.OrderedIdList;
 import net.sourceforge.joceanus.jsortedlist.OrderedListIterator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

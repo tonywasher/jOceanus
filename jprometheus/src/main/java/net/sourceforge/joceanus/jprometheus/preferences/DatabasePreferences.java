@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.preferences;
+package net.sourceforge.joceanus.jprometheus.preferences;
 
-import net.sourceforge.joceanus.jdatamodels.database.BatchControl;
-import net.sourceforge.joceanus.jdatamodels.database.JDBCDriver;
+import net.sourceforge.joceanus.jprometheus.database.BatchControl;
+import net.sourceforge.joceanus.jprometheus.database.JDBCDriver;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

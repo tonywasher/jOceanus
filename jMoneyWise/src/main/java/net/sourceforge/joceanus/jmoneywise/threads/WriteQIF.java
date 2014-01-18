@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
-import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;

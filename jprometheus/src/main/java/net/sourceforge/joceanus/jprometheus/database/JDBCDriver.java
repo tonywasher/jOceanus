@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.database;
+package net.sourceforge.joceanus.jprometheus.database;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.ColumnType;
-import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ColumnType;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.

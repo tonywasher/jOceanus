@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.sheets;
+package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
-import net.sourceforge.joceanus.jdatamodels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDecimal;
 import net.sourceforge.joceanus.jdecimal.JDilution;

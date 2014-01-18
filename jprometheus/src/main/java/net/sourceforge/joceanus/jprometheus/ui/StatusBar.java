@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,8 +41,8 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 
 /**
  * Status bar panel.

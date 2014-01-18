@@ -34,7 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jdatamodels.ui.MainWindow;
+import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;

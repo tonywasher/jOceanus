@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.views;
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;

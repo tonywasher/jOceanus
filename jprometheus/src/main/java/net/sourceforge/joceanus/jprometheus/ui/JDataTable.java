@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -37,11 +37,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
 import net.sourceforge.joceanus.jdatamanager.EditState;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
-import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.RowColumnModel;
-import net.sourceforge.joceanus.jdatamodels.ui.JDataTableModel.RowTableModel;
-import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.RowColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel.RowTableModel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.ComboBoxSelector;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

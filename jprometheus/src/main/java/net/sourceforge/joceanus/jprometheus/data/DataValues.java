@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.data;
+package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jdatamodels.data.DataInfoSet.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

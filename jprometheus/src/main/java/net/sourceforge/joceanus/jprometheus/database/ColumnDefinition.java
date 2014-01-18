@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.database;
+package net.sourceforge.joceanus.jprometheus.database;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -36,8 +36,8 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;

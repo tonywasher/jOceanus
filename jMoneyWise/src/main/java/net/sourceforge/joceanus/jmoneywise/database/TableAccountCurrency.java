@@ -23,11 +23,11 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.data.StaticData;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.database.TableDefinition;
-import net.sourceforge.joceanus.jdatamodels.database.TableStaticData;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
+import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;

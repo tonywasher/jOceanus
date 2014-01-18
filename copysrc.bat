@@ -8,7 +8,7 @@ set dirNames=%1
 goto :docopy
 
 :default
-set dirNames=jDataManager jDataModels jDateDay jDecimal jtethys jFieldSet
+set dirNames=jDataManager jprometheus jDateDay jDecimal jtethys jFieldSet
 set dirNames=%dirNames% jGordianKnot jthemis jMoneyWise
 set dirNames=%dirNames% jPreferenceSet jSortedList jSpreadSheetManager 
 

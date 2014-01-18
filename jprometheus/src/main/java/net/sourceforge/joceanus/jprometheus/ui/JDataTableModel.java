@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.util.ResourceBundle;
 
@@ -28,9 +28,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jfieldset.JFieldData;
 import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jfieldset.JFieldValue;

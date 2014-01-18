@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jdatamodels.sheets.SheetReader;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetReader;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**

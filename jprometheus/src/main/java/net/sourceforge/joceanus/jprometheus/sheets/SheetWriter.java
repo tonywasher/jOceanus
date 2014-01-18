@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.sheets;
+package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -32,10 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;

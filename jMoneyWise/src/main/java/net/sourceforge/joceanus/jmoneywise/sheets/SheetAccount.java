@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;

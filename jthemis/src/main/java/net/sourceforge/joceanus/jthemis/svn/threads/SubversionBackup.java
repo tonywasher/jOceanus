@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
-import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;

@@ -30,10 +30,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
-import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jdatamodels.ui.StaticDataPanel;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;

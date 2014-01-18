@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.threads;
+package net.sourceforge.joceanus.jprometheus.threads;
 
-import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 
 /**
  * A wrapper for a worker thread that loads a DataSet.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.database;
+package net.sourceforge.joceanus.jprometheus.database;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jdatamanager.DataState;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.

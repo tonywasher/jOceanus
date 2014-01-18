@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.database;
+package net.sourceforge.joceanus.jprometheus.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,12 +33,12 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusLogicException;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

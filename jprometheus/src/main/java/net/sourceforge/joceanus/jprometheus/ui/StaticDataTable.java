@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.ui;
+package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -32,15 +32,15 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.data.StaticData;
-import net.sourceforge.joceanus.jdatamodels.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jdatamodels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
-import net.sourceforge.joceanus.jdatamodels.views.UpdateEntry;
-import net.sourceforge.joceanus.jdatamodels.views.UpdateSet;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.BooleanCellRenderer;

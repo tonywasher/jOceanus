@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.views;
+package net.sourceforge.joceanus.jprometheus.views;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +35,12 @@ import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.preferences.JFieldPreferences;
-import net.sourceforge.joceanus.jdatamodels.preferences.SecurityPreferences;
-import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;

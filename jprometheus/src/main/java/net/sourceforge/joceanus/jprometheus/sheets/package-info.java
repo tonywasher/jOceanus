@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * JDataModel.sheets is a package that simply maps data-types to and from backup spreadsheets.
  */
-package net.sourceforge.joceanus.jdatamodels.sheets;
+package net.sourceforge.joceanus.jprometheus.sheets;
 

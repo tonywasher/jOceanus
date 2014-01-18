@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamodels.data.DataGroup;
+import net.sourceforge.joceanus.jprometheus.data.DataGroup;
 import net.sourceforge.joceanus.jdecimal.JMoney;
 
 /**

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jdatamodels.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

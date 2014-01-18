@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.database;
+package net.sourceforge.joceanus.jprometheus.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,21 +35,21 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusLogicException;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BinaryColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.BooleanColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.DateColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.DilutionColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.IdColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.IntegerColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.LongColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.MoneyColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.PriceColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.RateColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.RatioColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.ReferenceColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.StringColumn;
-import net.sourceforge.joceanus.jdatamodels.database.ColumnDefinition.UnitsColumn;
+import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BinaryColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.BooleanColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.DateColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.DilutionColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.IdColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.IntegerColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.LongColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.MoneyColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.PriceColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.RateColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.RatioColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ReferenceColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.StringColumn;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.UnitsColumn;
 import net.sourceforge.joceanus.jdateday.JDateDay;
 import net.sourceforge.joceanus.jdecimal.JDilution;
 import net.sourceforge.joceanus.jdecimal.JMoney;

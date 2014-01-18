@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.views;
+package net.sourceforge.joceanus.jprometheus.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.threads;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.data.TaskControl;
-import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
-import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
+import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet;

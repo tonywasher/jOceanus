@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jdatamodels.threads.ThreadStatus;
-import net.sourceforge.joceanus.jdatamodels.threads.WorkerThread;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;

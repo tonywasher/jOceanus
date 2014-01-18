@@ -34,8 +34,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
-import net.sourceforge.joceanus.jdatamodels.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

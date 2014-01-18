@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.data;
+package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
 import net.sourceforge.joceanus.jdatamanager.ValueSet;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusDataException;
-import net.sourceforge.joceanus.jdatamodels.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;

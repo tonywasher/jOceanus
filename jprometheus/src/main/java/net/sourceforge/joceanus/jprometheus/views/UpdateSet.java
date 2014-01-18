@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.views;
+package net.sourceforge.joceanus.jprometheus.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,10 +36,10 @@ import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataList;
-import net.sourceforge.joceanus.jdatamodels.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 

@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

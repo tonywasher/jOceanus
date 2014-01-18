@@ -1,8 +1,9 @@
-jDataModels Project
+jPrometheus Project
 
-  jDataModels is a subComponent of the jOceanus project.
+  jPrometheus is a subComponent of the jOceanus project, which provides a framework for applications. It is named after the titan
+Proemtheus, who was viewed as the champion of mankind. 
 
-  jDataModels provides a framework for a secure application with data backed up by database and spreadsheet. It is 
+  jPrometheus provides a framework for a secure application with data backed up by database and spreadsheet. It is 
 primarily intended to support the <<jMoneyWise>> package, and comprises the generic parts of that application.
 
   The model used is that of a single set of encrypted data that is loaded into memory, and edited in situ.

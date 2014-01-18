@@ -43,8 +43,8 @@ import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jdatamanager.JDataManager;
 import net.sourceforge.joceanus.jdatamanager.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jdatamodels.ui.ErrorPanel;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jdateday.JDateDayRange;
 import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;

@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
-import net.sourceforge.joceanus.jdatamodels.data.DataItem;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.database.TableDataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.database.TableDataInfo;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;

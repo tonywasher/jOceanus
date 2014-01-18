@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.threads;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jdatamanager.JMetisExceptionWrapper;
-import net.sourceforge.joceanus.jdatamodels.JPrometheusIOException;
-import net.sourceforge.joceanus.jdatamodels.data.DataErrorList;
-import net.sourceforge.joceanus.jdatamodels.ui.StatusBar;
-import net.sourceforge.joceanus.jdatamodels.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
+import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
+import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

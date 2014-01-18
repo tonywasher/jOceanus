@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataModels: Data models
+ * jPrometheus: Application Framework
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jdatamodels.threads;
+package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jdatamodels.JPrometheusCancelException;
-import net.sourceforge.joceanus.jdatamodels.data.DataSet;
-import net.sourceforge.joceanus.jdatamodels.database.Database;
-import net.sourceforge.joceanus.jdatamodels.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jdatamodels.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jdatamodels.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jpreferenceset.FileSelector;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
