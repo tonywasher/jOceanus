@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdecimal.JRatio;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;

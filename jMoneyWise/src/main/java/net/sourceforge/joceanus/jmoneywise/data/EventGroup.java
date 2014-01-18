@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jdatamanager.Difference;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jprometheus.data.DataGroup;
-import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Event group type.

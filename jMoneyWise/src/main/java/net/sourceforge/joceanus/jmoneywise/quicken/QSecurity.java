@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;

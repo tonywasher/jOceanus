@@ -47,8 +47,8 @@ import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jdatamanager.DataType;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelBoolean;
 import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelDateDay;
 import net.sourceforge.joceanus.jfieldset.JFieldModel.JModelObject;

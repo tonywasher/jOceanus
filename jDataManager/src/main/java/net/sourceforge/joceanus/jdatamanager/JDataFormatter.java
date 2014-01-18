@@ -30,18 +30,18 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jdecimal.JDecimalParser;
-import net.sourceforge.joceanus.jdecimal.JDilution;
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JPrice;
-import net.sourceforge.joceanus.jdecimal.JRate;
-import net.sourceforge.joceanus.jdecimal.JRatio;
-import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 
 /**

@@ -41,9 +41,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jdatamanager.Difference;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
-import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jdateday.JDatePeriod;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;

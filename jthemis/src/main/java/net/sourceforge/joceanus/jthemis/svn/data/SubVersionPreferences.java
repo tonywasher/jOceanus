@@ -119,27 +119,27 @@ public class SubVersionPreferences
     /**
      * Default value for SubversionRepository Name.
      */
-    private static final String DEFAULT_SVN_NAME = "Finance";
+    private static final String DEFAULT_SVN_NAME = "Repository";
 
     /**
      * Default value for SubversionUser.
      */
-    private static final String DEFAULT_SVN_USER = "Tony";
+    private static final String DEFAULT_SVN_USER = "User";
 
     /**
      * Default value for SubversionPassword.
      */
-    private static final String DEFAULT_SVN_PASS = "c2Resmin";
+    private static final String DEFAULT_SVN_PASS = "Secret";
 
     /**
      * Default value for SubversionWorkSpace.
      */
-    private static final String DEFAULT_SVN_WORK = "C:\\Users\\Tony\\financeWorkSpace";
+    private static final String DEFAULT_SVN_WORK = "C:\\Users\\User\\WorkSpace";
 
     /**
      * Default value for SubversionBuildSpace.
      */
-    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\Tony\\TestWC";
+    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\User\\Build";
 
     /**
      * Default value for SubversionDirectory.

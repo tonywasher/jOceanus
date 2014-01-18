@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
-import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;

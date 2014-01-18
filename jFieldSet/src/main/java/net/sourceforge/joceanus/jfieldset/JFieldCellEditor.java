@@ -40,12 +40,12 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayCellEditor;
-import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellEditor;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 
 /**
  * Cell editors.

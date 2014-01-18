@@ -18,8 +18,6 @@
     <module>jDataManager</module>
     <module>jSortedList</module>
     <module>jGordianKnot</module>
-    <module>jDecimal</module>
-    <module>jDateDay</module>
     <module>jtethys</module>
   </modules>
   <licenses>

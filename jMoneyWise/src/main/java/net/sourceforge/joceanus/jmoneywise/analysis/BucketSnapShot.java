@@ -28,10 +28,10 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**

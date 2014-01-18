@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jfieldset.JFieldCellRenderer.StringCellRenderer;

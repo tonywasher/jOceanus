@@ -26,11 +26,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jdecimal.JDecimalParser;
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;

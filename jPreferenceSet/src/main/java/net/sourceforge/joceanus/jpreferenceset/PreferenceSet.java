@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jdatamanager.JDataFieldValue;
 import net.sourceforge.joceanus.jdatamanager.JDataFields;
 import net.sourceforge.joceanus.jdatamanager.JDataFields.JDataField;
 import net.sourceforge.joceanus.jdatamanager.JMetisDataException;
-import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jfieldset.JFieldSetItem;
 import net.sourceforge.joceanus.jfieldset.JFieldState;
 import net.sourceforge.joceanus.jtethys.DataConverter;

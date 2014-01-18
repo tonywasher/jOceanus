@@ -51,8 +51,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jdatamanager.JDataFormatter;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jfieldset.JFieldManager;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.BooleanPreference;
 import net.sourceforge.joceanus.jpreferenceset.PreferenceSet.ColorPreference;

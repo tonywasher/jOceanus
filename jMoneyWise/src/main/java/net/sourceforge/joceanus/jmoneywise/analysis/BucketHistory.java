@@ -27,11 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdateday.JDateDayRange;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**

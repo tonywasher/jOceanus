@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.EnumMap;
 
 import net.sourceforge.joceanus.jdatamanager.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JPrice;
-import net.sourceforge.joceanus.jdecimal.JRate;
-import net.sourceforge.joceanus.jdecimal.JUnits;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Values for a bucket.

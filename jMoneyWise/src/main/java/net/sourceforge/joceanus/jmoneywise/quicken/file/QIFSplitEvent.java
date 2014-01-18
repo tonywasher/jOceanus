@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jdecimal.JMoney;
-import net.sourceforge.joceanus.jdecimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;

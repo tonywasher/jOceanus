@@ -30,10 +30,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.joceanus.jdateday.JDateDayCellRenderer;
-import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jdecimal.JDecimal;
-import net.sourceforge.joceanus.jdecimal.JDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellRenderer;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
 import net.sourceforge.joceanus.jfieldset.JFieldManager.PopulateFieldData;
 
 /**

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.joceanus.jdateday.JDateDay;
-import net.sourceforge.joceanus.jdecimal.JMoney;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
