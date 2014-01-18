@@ -8,6 +8,13 @@
   <artifactId>jtethys</artifactId>
   <name>jTethys Java Utilities</name>
   <description>Java Utilities</description>
+  <dependencies>
+    <dependency>
+      <groupId>net.sourceforge.jdatebutton</groupId>
+      <artifactId>jdatebutton</artifactId>
+      <version>${JDateButtonVersion}</version>
+    </dependency>
+  </dependencies>
   <properties>
     <svnComponent>jtethys</svnComponent>
     <packageName>${packageKey}.${svnComponent}</packageName>
@@ -16,13 +23,6 @@
     <appJar>${project.artifactId}-${project.version}</appJar>
     <appDir>${project.build.directory}/site/demo</appDir>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-  </dependencies>
   <build>
     <plugins>
       <plugin>

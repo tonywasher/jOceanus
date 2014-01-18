@@ -32,7 +32,29 @@ it will pass the setEnabled() method on to all subcomponents.
     * A set of classes to enable Scrollable Menus
 
     * A class to provide simple sorting/filtering in a JTable
+
+* A DateDay class
+
+  This is an extension of the JDateButton project. It modifies JDateButton so that a JDateDay object is returned
+instead of a Calendar object. This JDateDay object has no concept of time of day, merely the date. All functionality
+of JDateButton is provided. 
   
+  In addition to the facilities provided by JDateButton, JDateDay provides a JDateDayRange class which handles
+a contiguous range of Dates with a start and an end. A small JPanel selector object is provided to enable selection
+of such ranges.
+  
+* A set of decimal classes
+
+  JDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal,
+except that the class is mutable, allowing for much faster arithmetic.
+
+  Rather than deal with arbitrarily large numbers, JDecimal stores the value as a simple long, and so is not suitable for
+extremely large values, since precision will be lost. Users should continue to use BigDecimal for these situations.
+
+  This implementation is particularly suited to financial applications since a monetary value of
+$10,000,000,000,000,000.00 can easily be accommodated within a long. As long as you are not dealing with the
+US National Debt, this will be sufficient for most purposes.
+
 * A simple Help Manager
 
     This is still under development.
