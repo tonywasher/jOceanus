@@ -71,14 +71,14 @@ public class JDateDayRangeSelect
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDayRangeSelect.class.getName());
 
     /**
-     * Text for Next Button.
+     * ToolTip for Next Button.
      */
-    private static final String NLS_NEXT = NLS_BUNDLE.getString("NextButton");
+    private static final String NLS_NEXTTIP = NLS_BUNDLE.getString("NextTip");
 
     /**
-     * Text for Previous Button.
+     * ToolTip for Previous Button.
      */
-    private static final String NLS_PREV = NLS_BUNDLE.getString("PrevButton");
+    private static final String NLS_PREVTIP = NLS_BUNDLE.getString("PrevTip");
 
     /**
      * Text for Start Label.
@@ -173,7 +173,7 @@ public class JDateDayRangeSelect
     /**
      * Should we use start button for periods.
      */
-    private boolean useStartButtonForPeriod = true;
+    private final boolean useStartButtonForPeriod;
 
     /**
      * The Locale.
@@ -236,15 +236,15 @@ public class JDateDayRangeSelect
         thePeriodLabel = new JLabel(NLS_PERIOD);
 
         /* Create the buttons */
-        theNextButton = new JButton(NLS_NEXT);
-        thePrevButton = new JButton(NLS_PREV);
+        theNextButton = new JButton(ArrowIcon.RIGHT);
+        thePrevButton = new JButton(ArrowIcon.LEFT);
+        theNextButton.setToolTipText(NLS_NEXTTIP);
+        thePrevButton.setToolTipText(NLS_PREVTIP);
 
         /* Create the panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePrevButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(thePeriodLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -253,13 +253,30 @@ public class JDateDayRangeSelect
         add(Box.createHorizontalGlue());
         add(theStartLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theStartButton);
+        if (useStartButtonForPeriod) {
+            add(thePrevButton);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theStartButton);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theNextButton);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        } else {
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theStartButton);
+        }
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theEndLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theEndButton);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theNextButton);
+        if (!useStartButtonForPeriod) {
+            add(thePrevButton);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theEndButton);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theNextButton);
+        } else {
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+            add(theEndButton);
+        }
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create initial state and limit the selection to the Range */

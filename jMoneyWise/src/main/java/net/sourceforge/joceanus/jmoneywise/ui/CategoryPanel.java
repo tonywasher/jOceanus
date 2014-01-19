@@ -60,7 +60,7 @@ public class CategoryPanel
     /**
      * Strut width.
      */
-    private static final int STRUT_WIDTH = 5;
+    protected static final int STRUT_WIDTH = 5;
 
     /**
      * Resource Bundle.
@@ -93,6 +93,16 @@ public class CategoryPanel
     private final CardLayout theLayout;
 
     /**
+     * The filter card panel.
+     */
+    private final JPanel theFilterCardPanel;
+
+    /**
+     * The filter card layout.
+     */
+    private final CardLayout theFilterLayout;
+
+    /**
      * The active panel.
      */
     private PanelName theActive;
@@ -122,17 +132,6 @@ public class CategoryPanel
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
-        /* Create the selection panel */
-        JPanel mySelect = new JPanel();
-        mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
-
-        /* Create the layout for the selection panel */
-        mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
-        mySelect.add(myLabel);
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.add(theSelectButton);
-        mySelect.add(Box.createHorizontalGlue());
-
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
         theLayout = new CardLayout();
@@ -143,6 +142,27 @@ public class CategoryPanel
         theCardPanel.add(theEventTable.getPanel(), PanelName.EVENTS.toString());
         theActive = PanelName.ACCOUNTS;
         theSelectButton.setText(theActive.toString());
+
+        /* Create the card panel */
+        theFilterCardPanel = new JEnablePanel();
+        theFilterLayout = new CardLayout();
+        theFilterCardPanel.setLayout(theFilterLayout);
+
+        /* Add to the card panels */
+        theFilterCardPanel.add(theAccountTable.getFilterPanel(), PanelName.ACCOUNTS.toString());
+        theFilterCardPanel.add(theEventTable.getFilterPanel(), PanelName.EVENTS.toString());
+
+        /* Create the selection panel */
+        JPanel mySelect = new JPanel();
+        mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
+
+        /* Create the layout for the selection panel */
+        mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
+        mySelect.add(myLabel);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.add(theSelectButton);
+        mySelect.add(Box.createHorizontalGlue());
+        mySelect.add(theFilterCardPanel);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -282,6 +302,7 @@ public class CategoryPanel
         public void actionPerformed(final ActionEvent e) {
             /* Move correct card to front */
             theLayout.show(theCardPanel, theName.toString());
+            theFilterLayout.show(theFilterCardPanel, theName.toString());
 
             /* Note the active panel */
             theActive = theName;

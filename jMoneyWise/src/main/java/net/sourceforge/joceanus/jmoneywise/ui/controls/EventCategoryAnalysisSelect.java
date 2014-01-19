@@ -118,7 +118,7 @@ public class EventCategoryAnalysisSelect
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
+        add(Box.createHorizontalGlue());
         add(myLabel);
         add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
         add(theButton);

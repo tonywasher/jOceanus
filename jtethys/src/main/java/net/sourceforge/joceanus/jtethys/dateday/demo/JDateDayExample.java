@@ -92,7 +92,7 @@ public class JDateDayExample
     /**
      * Scroll Width.
      */
-    private static final int SCROLL_WIDTH = 400;
+    private static final int SCROLL_WIDTH = 500;
 
     /**
      * Scroll Height.
@@ -584,7 +584,7 @@ public class JDateDayExample
         theEndDate = new JDateDayButton(theFormatter);
 
         /* Create the range selection */
-        theRangeSelect = new JDateDayRangeSelect(theFormatter, false);
+        theRangeSelect = new JDateDayRangeSelect(theFormatter, true);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */

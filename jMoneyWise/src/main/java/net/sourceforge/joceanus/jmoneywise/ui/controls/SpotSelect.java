@@ -44,14 +44,14 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
@@ -93,19 +93,19 @@ public class SpotSelect
     private static final String NLS_CLOSED = NLS_BUNDLE.getString("ShowClosed");
 
     /**
-     * Text for Next Button.
-     */
-    private static final String NLS_NEXT = NLS_BUNDLE.getString("NextButton");
-
-    /**
-     * Text for Prev Button.
-     */
-    private static final String NLS_PREV = NLS_BUNDLE.getString("PrevButton");
-
-    /**
      * Text for Title.
      */
     private static final String NLS_TITLE = NLS_BUNDLE.getString("SpotTitle");
+
+    /**
+     * Text for Next toolTip.
+     */
+    private static final String NLS_NEXTTIP = NLS_BUNDLE.getString("NextTip");
+
+    /**
+     * Text for Previous toolTip.
+     */
+    private static final String NLS_PREVTIP = NLS_BUNDLE.getString("PrevTip");
 
     /**
      * The data view.
@@ -209,8 +209,10 @@ public class SpotSelect
         theDateButton = new JDateDayButton();
 
         /* Create the Buttons */
-        theNext = new JButton(NLS_NEXT);
-        thePrev = new JButton(NLS_PREV);
+        theNext = new JButton(ArrowIcon.RIGHT);
+        thePrev = new JButton(ArrowIcon.LEFT);
+        theNext.setToolTipText(NLS_NEXTTIP);
+        thePrev.setToolTipText(NLS_PREVTIP);
 
         /* Create the portfolio button */
         thePortButton = new JButton(ArrowIcon.DOWN);
@@ -228,11 +230,11 @@ public class SpotSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(myDate);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(thePrev);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theDateButton);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theNext);
-        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(thePrev);
         add(Box.createHorizontalGlue());
         add(myPort);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -457,7 +459,7 @@ public class SpotSelect
                 /* Create a new JMenuItem and add it to the popUp */
                 PortfolioAction myAction = new PortfolioAction(myAccount);
                 JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                myPopUp.addMenuItem(myItem);
 
                 /* If this is the active portfolio */
                 if (myPortfolio.equals(myAccount)) {

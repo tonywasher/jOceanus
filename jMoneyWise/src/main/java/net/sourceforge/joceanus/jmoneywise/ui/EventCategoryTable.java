@@ -22,16 +22,36 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -41,15 +61,10 @@ import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Event Category Maintenance.
@@ -90,6 +105,16 @@ public class EventCategoryTable
      * Active Column Title.
      */
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
+
+    /**
+     * Filter Prompt.
+     */
+    private static final String TITLE_FILTER = NLS_BUNDLE.getString("PromptFilter");
+
+    /**
+     * Filter All Title.
+     */
+    private static final String FILTER_ALL = NLS_BUNDLE.getString("PromptFilterAll");
 
     /**
      * The data view.
@@ -142,9 +167,24 @@ public class EventCategoryTable
     private final JEnablePanel thePanel;
 
     /**
+     * The filter panel.
+     */
+    private final JEnablePanel theFilterPanel;
+
+    /**
+     * The select button.
+     */
+    private final JButton theSelectButton;
+
+    /**
      * Event Categories.
      */
     private transient EventCategoryList theCategories = null;
+
+    /**
+     * Active parent.
+     */
+    private transient EventCategory theParent = null;
 
     /**
      * Obtain the panel.
@@ -152,6 +192,14 @@ public class EventCategoryTable
      */
     public JPanel getPanel() {
         return thePanel;
+    }
+
+    /**
+     * Obtain the filter panel.
+     * @return the filter panel
+     */
+    protected JPanel getFilterPanel() {
+        return theFilterPanel;
     }
 
     /**
@@ -190,6 +238,22 @@ public class EventCategoryTable
         theColumns = new CategoryColumnModel(this);
         setColumnModel(theColumns);
 
+        /* Create the filter components */
+        JLabel myPrompt = new JLabel(TITLE_FILTER);
+        theSelectButton = new JButton(ArrowIcon.DOWN);
+        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSelectButton.setText(FILTER_ALL);
+
+        /* Create the filter panel */
+        theFilterPanel = new JEnablePanel();
+        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(myPrompt);
+        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+        theFilterPanel.add(theSelectButton);
+        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -200,6 +264,7 @@ public class EventCategoryTable
         /* Create listener */
         CategoryListener myListener = new CategoryListener();
         theView.addChangeListener(myListener);
+        theSelectButton.addActionListener(myListener);
     }
 
     /**
@@ -311,8 +376,15 @@ public class EventCategoryTable
 
         @Override
         public boolean includeRow(final EventCategory pRow) {
-            /* Return visibility of row */
-            return !pRow.isDeleted();
+            /* Ignore deleted rows */
+            if (pRow.isDeleted()) {
+                return false;
+            }
+
+            /* Handle filter */
+            return (theParent == null)
+                    ? true
+                    : theParent.equals(pRow.getParentCategory());
         }
     }
 
@@ -320,7 +392,7 @@ public class EventCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements ChangeListener {
+            implements ChangeListener, ActionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -331,6 +403,130 @@ public class EventCategoryTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* Show the select menu */
+            showSelectMenu();
+        }
+
+        /**
+         * Show Select menu.
+         */
+        private void showSelectMenu() {
+            /* Create a new popUp menu */
+            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+            /* Record active item */
+            JMenuItem myActive = null;
+
+            /* Create the no filter JMenuItem and add it to the popUp */
+            CategoryAction myAction = new CategoryAction(null, FILTER_ALL);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active parent */
+            if (theParent == null) {
+                /* Record it */
+                myActive = myItem;
+            }
+
+            /* Create the totals JMenuItem and add it to the popUp */
+            EventCategory myTotals = theCategories.getSingularClass(EventCategoryClass.TOTALS);
+            myAction = new CategoryAction(myTotals, myTotals.getName());
+            myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active parent */
+            if (myTotals.equals(theParent)) {
+                /* Record it */
+                myActive = myItem;
+            }
+
+            /* Loop through the available category values */
+            Iterator<EventCategory> myIterator = theCategories.iterator();
+            while (myIterator.hasNext()) {
+                EventCategory myCurr = myIterator.next();
+
+                /* Ignore category if it is not a subTotal */
+                EventCategoryClass myClass = myCurr.getCategoryTypeClass();
+                if (!myClass.isSubTotal()) {
+                    continue;
+                }
+
+                /* Create a new JMenuItem and add it to the popUp */
+                myAction = new CategoryAction(myCurr);
+                myItem = new JMenuItem(myAction);
+                myPopUp.addMenuItem(myItem);
+
+                /* If this is the active parent */
+                if (myCurr.equals(theParent)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            myPopUp.showItem(myActive);
+
+            /* Show the Select menu in the correct place */
+            Rectangle myLoc = theSelectButton.getBounds();
+            myPopUp.show(theSelectButton, 0, myLoc.height);
+        }
+    }
+
+    /**
+     * Category action class.
+     */
+    private final class CategoryAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -2773610987097456452L;
+
+        /**
+         * Category.
+         */
+        private final EventCategory theCategory;
+
+        /**
+         * Label.
+         */
+        private final String theLabel;
+
+        /**
+         * Constructor.
+         * @param pCategory the account category bucket
+         */
+        private CategoryAction(final EventCategory pCategory) {
+            super(pCategory.getName());
+            theCategory = pCategory;
+            theLabel = pCategory.getName();
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the account category bucket
+         * @param pLabel the label
+         */
+        private CategoryAction(final EventCategory pCategory,
+                               final String pName) {
+            super(pName);
+            theCategory = pCategory;
+            theLabel = pName;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If this is a different category */
+            if (!Difference.isEqual(theCategory, theParent)) {
+                /* Store new category */
+                theParent = theCategory;
+                theSelectButton.setText(theLabel);
+                theModel.fireNewDataEvents();
             }
         }
     }
