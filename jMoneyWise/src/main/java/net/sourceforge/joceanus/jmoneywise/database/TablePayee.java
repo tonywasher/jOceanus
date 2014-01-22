@@ -24,8 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -33,51 +36,45 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * TableEncrypted extension for AccountPrice.
- * @author Tony Washer
+ * TableEncrypted extension for Payee.
  */
-public class TableAccountPrice
-        extends TableEncrypted<AccountPrice> {
+public class TablePayee
+        extends TableEncrypted<Payee> {
     /**
-     * The name of the Prices table.
+     * The name of the table.
      */
-    protected static final String TABLE_NAME = AccountPrice.LIST_NAME;
+    protected static final String TABLE_NAME = Payee.LIST_NAME;
 
     /**
-     * The price list.
+     * The payee list.
      */
-    private AccountPriceList theList = null;
+    private PayeeList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccountPrice(final Database<?> pDatabase) {
+    protected TablePayee(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountPrice.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(AccountPrice.FIELD_DATE);
-        myTableDef.addEncryptedColumn(AccountPrice.FIELD_PRICE, EncryptedData.PRICELEN);
+        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
+        myTableDef.addEncryptedColumn(Payee.FIELD_NAME, Payee.NAMELEN);
+        myTableDef.addNullEncryptedColumn(Payee.FIELD_DESC, Payee.DESCLEN);
+        myTableDef.addBooleanColumn(Payee.FIELD_CLOSED);
 
         /* Declare Sort Columns */
-        myDateCol.setSortOrder(SortOrder.ASCENDING);
-        myActCol.setSortOrder(SortOrder.ASCENDING);
+        myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getPrices();
+        theList = myData.getPayees();
         setList(theList);
     }
 
@@ -86,25 +83,28 @@ public class TableAccountPrice
                             final Integer pControlId) throws JOceanusException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Integer myAccountId = myTableDef.getIntegerValue(AccountPrice.FIELD_ACCOUNT);
-        JDateDay myDate = myTableDef.getDateValue(AccountPrice.FIELD_DATE);
-        byte[] myPrice = myTableDef.getBinaryValue(AccountPrice.FIELD_PRICE);
+        Integer myTypeId = myTableDef.getIntegerValue(Payee.FIELD_PAYEETYPE);
+        byte[] myName = myTableDef.getBinaryValue(Payee.FIELD_NAME);
+        byte[] myDesc = myTableDef.getBinaryValue(Payee.FIELD_DESC);
+        Boolean isClosed = myTableDef.getBooleanValue(Payee.FIELD_CLOSED);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myAccountId, myPrice);
+        theList.addSecureItem(pId, pControlId, myName, myDesc, myTypeId, isClosed);
     }
 
     @Override
-    protected void setFieldValue(final AccountPrice pItem,
+    protected void setFieldValue(final Payee pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (AccountPrice.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAccountId());
-        } else if (AccountPrice.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getDate());
-        } else if (AccountPrice.FIELD_PRICE.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getPriceBytes());
+        if (Payee.FIELD_PAYEETYPE.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getPayeeTypeId());
+        } else if (Payee.FIELD_NAME.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getNameBytes());
+        } else if (Payee.FIELD_DESC.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
+        } else if (Payee.FIELD_CLOSED.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else {
             super.setFieldValue(pItem, iField);
         }
@@ -119,7 +119,7 @@ public class TableAccountPrice
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account prices */
+        /* Validate the account categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);

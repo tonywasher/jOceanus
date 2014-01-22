@@ -34,6 +34,16 @@ public enum MoneyWiseList {
     ACCOUNTTYPES,
 
     /**
+     * SecurityTypes.
+     */
+    SECURITYTYPES,
+
+    /**
+     * PayeeTypes.
+     */
+    PAYEETYPES,
+
+    /**
      * EventTypes.
      */
     EVENTTYPES,
@@ -109,9 +119,24 @@ public enum MoneyWiseList {
     EXCHANGERATES,
 
     /**
+     * Payees.
+     */
+    PAYEES,
+
+    /**
+     * Securities.
+     */
+    SECURITIES,
+
+    /**
      * Accounts.
      */
     ACCOUNTS,
+
+    /**
+     * Portfolios.
+     */
+    PORTFOLIOS,
 
     /**
      * AccountInfo.
@@ -124,9 +149,9 @@ public enum MoneyWiseList {
     ACCOUNTRATES,
 
     /**
-     * AccountPrices.
+     * SecurityPrices.
      */
-    ACCOUNTPRICES,
+    SECURITYPRICES,
 
     /**
      * Events.

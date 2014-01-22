@@ -316,7 +316,10 @@ public abstract class EncryptedItem
          * @return the active controlKey
          */
         public ControlKey getControlKey() {
-            return getDataSet().getControl().getControlKey();
+            ControlData myControl = getDataSet().getControl();
+            return (myControl == null)
+                    ? null
+                    : myControl.getControlKey();
         }
 
         /**

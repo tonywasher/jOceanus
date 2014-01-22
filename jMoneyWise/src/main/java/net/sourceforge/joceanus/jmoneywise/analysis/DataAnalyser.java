@@ -25,16 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.CategoryType;
@@ -46,17 +41,22 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Class to analyse data.
@@ -884,7 +884,7 @@ public class DataAnalyser
         /* Stock Right Waived is from the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        AccountPriceList myPrices = theData.getPrices();
+        SecurityPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
         JMoney myReduction;
 
@@ -901,7 +901,7 @@ public class DataAnalyser
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
-        AccountPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
+        SecurityPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
         JPrice myPrice = myActPrice.getPrice();
 
         /* Determine value of this stock at the current time */

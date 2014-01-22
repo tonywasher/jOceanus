@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Status of an account.
@@ -212,7 +212,7 @@ public class AccountStatus
     /**
      * Initial Price.
      */
-    private AccountPrice theInitPrice = null;
+    private SecurityPrice theInitPrice = null;
 
     /**
      * Is this closeable?
@@ -295,7 +295,7 @@ public class AccountStatus
      * Obtain Initial Price.
      * @return the price
      */
-    protected AccountPrice getInitPrice() {
+    protected SecurityPrice getInitPrice() {
         return theInitPrice;
     }
 
@@ -478,11 +478,11 @@ public class AccountStatus
             hasRates = true;
 
             /* If we are being touched by a price */
-        } else if (pObject instanceof AccountPrice) {
+        } else if (pObject instanceof SecurityPrice) {
             /* Note flags */
             hasPrices = true;
             if (theInitPrice == null) {
-                theInitPrice = (AccountPrice) pObject;
+                theInitPrice = (SecurityPrice) pObject;
             }
 
             /* If we are being touched by a pattern */

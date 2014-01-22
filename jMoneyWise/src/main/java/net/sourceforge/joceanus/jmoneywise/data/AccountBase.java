@@ -31,8 +31,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
@@ -40,6 +38,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -49,11 +49,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class AccountBase
         extends EncryptedItem
         implements Comparable<AccountBase> {
-    /**
-     * Account Name length.
-     */
-    public static final int NAMELEN = 30;
-
     /**
      * Resource Bundle.
      */

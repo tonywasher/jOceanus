@@ -29,20 +29,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
@@ -53,6 +50,9 @@ import net.sourceforge.joceanus.jmoneywise.quicken.QSecurity.QSecurityList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Quicken analysis.
@@ -397,7 +397,7 @@ public class QAnalysis
         }
 
         /* Update status bar and analyse prices */
-        AccountPriceList myPrices = theData.getPrices();
+        SecurityPriceList myPrices = theData.getPrices();
         if ((bContinue)
             && (pStatus.setNewStage("Analysing prices"))
             && (pStatus.setNumSteps(myPrices.size()))) {

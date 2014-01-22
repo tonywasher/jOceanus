@@ -23,20 +23,20 @@
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
 
 /**
  * Quicken Portfolio Event Representation.
@@ -173,8 +173,8 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        AccountPriceList myPrices = getAnalysis().getDataSet().getPrices();
-        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        SecurityPriceList myPrices = getAnalysis().getDataSet().getPrices();
+        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
@@ -254,8 +254,8 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        AccountPriceList myPrices = getAnalysis().getDataSet().getPrices();
-        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        SecurityPriceList myPrices = getAnalysis().getDataSet().getPrices();
+        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 

@@ -112,7 +112,7 @@ public class ReportBuilder {
                     myReport = new IncomeExpense(theManager);
                     break;
                 case PORTFOLIO:
-                    myReport = new Portfolio(theManager);
+                    myReport = new PortfolioView(theManager);
                     break;
                 case MARKETGROWTH:
                     myReport = new MarketGrowth(theManager);

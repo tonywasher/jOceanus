@@ -510,7 +510,7 @@ public class EventCategoryTable
         /**
          * Constructor.
          * @param pCategory the account category bucket
-         * @param pLabel the label
+         * @param pName the name
          */
         private CategoryAction(final EventCategory pCategory,
                                final String pName) {

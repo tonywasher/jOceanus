@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,12 +45,12 @@ import org.w3c.dom.Element;
 /**
  * Portfolio (Market) report builder.
  */
-public class Portfolio
+public class PortfolioView
         extends BasicReport {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PortfolioView.class.getName());
 
     /**
      * The Title text.
@@ -96,7 +96,7 @@ public class Portfolio
      * Constructor.
      * @param pManager the Report Manager
      */
-    protected Portfolio(final ReportManager pManager) {
+    protected PortfolioView(final ReportManager pManager) {
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();

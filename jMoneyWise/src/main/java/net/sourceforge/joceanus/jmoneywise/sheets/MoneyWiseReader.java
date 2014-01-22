@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetReader;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 
 /**
  * SheetReader extension for MoneyWiseData.
@@ -58,6 +58,8 @@ public class MoneyWiseReader
 
         /* Register the sheets */
         addSheet(new SheetAccountCategoryType(this));
+        addSheet(new SheetPayeeType(this));
+        addSheet(new SheetSecurityType(this));
         addSheet(new SheetEventCategoryType(this));
         addSheet(new SheetTaxBasis(this));
         addSheet(new SheetTaxCategory(this));
@@ -75,9 +77,12 @@ public class MoneyWiseReader
             addSheet(new SheetTaxYearInfo(this));
         }
         addSheet(new SheetExchangeRate(this));
+        addSheet(new SheetPayee(this));
+        addSheet(new SheetSecurity(this));
         addSheet(new SheetAccount(this));
+        addSheet(new SheetPortfolio(this));
         addSheet(new SheetAccountRate(this));
-        addSheet(new SheetAccountPrice(this));
+        addSheet(new SheetSecurityPrice(this));
         if (isBackup) {
             addSheet(new SheetAccountInfo(this));
         }

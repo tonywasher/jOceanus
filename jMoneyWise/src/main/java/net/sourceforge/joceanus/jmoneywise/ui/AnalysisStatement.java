@@ -28,24 +28,14 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
@@ -57,7 +47,17 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -431,6 +431,11 @@ public class AnalysisStatement
 
         @Override
         public boolean includeRow(final Event pRow) {
+            /* Handle no filter */
+            if (theFilter == null) {
+                return false;
+            }
+
             /* Return visibility of row */
             return !pRow.isDeleted()
                    && !theFilter.filterEvent(pRow);

@@ -34,16 +34,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
@@ -51,7 +41,17 @@ import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -465,7 +465,6 @@ public class Event
      */
     public Event(final BaseEventList<? extends Event> pList) {
         super(pList);
-        setControlKey(pList.getControlKey());
 
         /* Build InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -589,7 +588,7 @@ public class Event
         if ((myCredit != null)
             && (myCredit.hasUnits())) {
             /* If the date of this event is prior to the first price */
-            AccountPrice myPrice = myCredit.getInitPrice();
+            SecurityPrice myPrice = myCredit.getInitPrice();
             if ((myPrice != null)
                 && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_CREDIT);
@@ -601,7 +600,7 @@ public class Event
             && (myDebit.hasUnits())
             && (!Difference.isEqual(myCredit, myDebit))) {
             /* If the date of this event is prior to the first price */
-            AccountPrice myPrice = myDebit.getInitPrice();
+            SecurityPrice myPrice = myDebit.getInitPrice();
             if ((myPrice != null)
                 && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_DEBIT);

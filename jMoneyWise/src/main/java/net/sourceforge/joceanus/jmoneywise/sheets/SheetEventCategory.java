@@ -22,16 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class SheetEventCategory
         extends SheetDataItem<EventCategory> {
     /**
-     * NamedArea for Rates.
+     * NamedArea for EventCategories.
      */
     private static final String AREA_EVTCATEGORIES = "EventCategoryInfo";
 
@@ -83,7 +83,7 @@ public class SheetEventCategory
         /* Call super constructor */
         super(pReader, AREA_EVTCATEGORIES);
 
-        /* Access the Rates list */
+        /* Access the Categories list */
         theList = pReader.getData().getEventCategories();
         setDataList(theList);
     }
@@ -96,7 +96,7 @@ public class SheetEventCategory
         /* Call super constructor */
         super(pWriter, AREA_EVTCATEGORIES);
 
-        /* Access the Rates list */
+        /* Access the Categories list */
         theList = pWriter.getData().getEventCategories();
         setDataList(theList);
     }

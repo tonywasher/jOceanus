@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
 /**
  * QIF File representation.
@@ -142,7 +142,7 @@ public class QIFFile {
      * Register price.
      * @param pPrice the price
      */
-    public void registerPrice(final AccountPrice pPrice) {
+    public void registerPrice(final SecurityPrice pPrice) {
         /* Allocate price and add to list */
         QIFPrice myPrice = new QIFPrice(this, pPrice);
         thePrices.add(myPrice);

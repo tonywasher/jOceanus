@@ -32,10 +32,23 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
+import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -47,22 +60,9 @@ import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -568,7 +568,7 @@ public class PricePoint
         public boolean includeRow(final SpotPrice pRow) {
             /* Return visibility of row */
             return showAll()
-                   || !pRow.getAccount().isClosed();
+                   || !pRow.getSecurity().isClosed();
         }
 
         /**
@@ -625,9 +625,9 @@ public class PricePoint
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_ASSET:
-                    return AccountPrice.FIELD_ACCOUNT;
+                    return SecurityPrice.FIELD_SECURITY;
                 case COLUMN_PRICE:
-                    return AccountPrice.FIELD_PRICE;
+                    return SecurityPrice.FIELD_PRICE;
                 case COLUMN_PREVPRICE:
                     return SpotPrice.FIELD_PREVPRICE;
                 case COLUMN_PREVDATE:
@@ -658,7 +658,7 @@ public class PricePoint
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_ASSET:
-                    return pSpot.getAccount().getName();
+                    return pSpot.getSecurity().getName();
                 case COLUMN_PRICE:
                     return pSpot.getPrice();
                 case COLUMN_PREVPRICE:

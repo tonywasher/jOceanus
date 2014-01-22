@@ -30,14 +30,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QSecurityLineType;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Quicken Security.
@@ -153,7 +153,7 @@ public final class QSecurity
      * Add Price.
      * @param pPrice the price to add
      */
-    protected void addPrice(final AccountPrice pPrice) {
+    protected void addPrice(final SecurityPrice pPrice) {
         /* Add the price */
         QPrice myQIF = new QPrice(theAnalysis, pPrice);
         thePrices.add(myQIF);
@@ -259,16 +259,16 @@ public final class QSecurity
          * @param pDate the latest date for prices
          */
         protected void buildPrices(final ThreadStatus<MoneyWiseData> pStatus,
-                                   final AccountPriceList pPrices,
+                                   final SecurityPriceList pPrices,
                                    final JDateDay pDate) {
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();
             int myCount = 0;
 
-            /* Loop through the account prices */
-            Iterator<AccountPrice> myIterator = pPrices.iterator();
+            /* Loop through the security prices */
+            Iterator<SecurityPrice> myIterator = pPrices.iterator();
             while (myIterator.hasNext()) {
-                AccountPrice myPrice = myIterator.next();
+                SecurityPrice myPrice = myIterator.next();
 
                 /* If the price is too late */
                 if (pDate.compareTo(myPrice.getDate()) < 0) {
@@ -282,7 +282,7 @@ public final class QSecurity
                 }
 
                 /* Access the security */
-                QSecurity mySecurity = theSecurities.get(myPrice.getAccount());
+                QSecurity mySecurity = theSecurities.get(myPrice.getSecurity());
 
                 /* If we have a security */
                 if (mySecurity != null) {

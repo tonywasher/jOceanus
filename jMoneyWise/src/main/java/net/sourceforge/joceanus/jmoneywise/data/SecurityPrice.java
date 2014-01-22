@@ -33,31 +33,31 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
- * AccountPrice data type.
+ * SecurityPrice data type.
  * @author Tony Washer
  */
-public class AccountPrice
+public class SecurityPrice
         extends EncryptedItem
-        implements Comparable<AccountPrice> {
+        implements Comparable<SecurityPrice> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = AccountPrice.class.getSimpleName();
+    public static final String OBJECT_NAME = SecurityPrice.class.getSimpleName();
 
     /**
      * List name.
@@ -68,7 +68,7 @@ public class AccountPrice
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPrice.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityPrice.class.getName());
 
     /**
      * Local Report fields.
@@ -81,9 +81,9 @@ public class AccountPrice
     }
 
     /**
-     * Account Field Id.
+     * Security Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSecurity"));
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSecurity"));
 
     /**
      * Date Field Id.
@@ -128,42 +128,42 @@ public class AccountPrice
     }
 
     /**
-     * Obtain Account.
-     * @return the account
+     * Obtain Security.
+     * @return the security
      */
-    public Account getAccount() {
-        return getAccount(getValueSet());
+    public Account getSecurity() {
+        return getSecurity(getValueSet());
     }
 
     /**
-     * Obtain AccountId.
-     * @return the accountId
+     * Obtain SecurityId.
+     * @return the securityId
      */
-    public Integer getAccountId() {
-        Account myAccount = getAccount();
-        return (myAccount == null)
+    public Integer getSecurityId() {
+        Account mySecurity = getSecurity();
+        return (mySecurity == null)
                 ? null
-                : myAccount.getId();
+                : mySecurity.getId();
     }
 
     /**
-     * Obtain AccountName.
-     * @return the accountName
+     * Obtain SecurityName.
+     * @return the securityName
      */
-    public String getAccountName() {
-        Account myAccount = getAccount();
-        return (myAccount == null)
+    public String getSecurityName() {
+        Account mySecurity = getSecurity();
+        return (mySecurity == null)
                 ? null
-                : myAccount.getName();
+                : mySecurity.getName();
     }
 
     /**
-     * Obtain Account.
+     * Obtain Security.
      * @param pValueSet the valueSet
-     * @return the Account
+     * @return the Security
      */
-    public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+    public static Account getSecurity(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_SECURITY, Account.class);
     }
 
     /**
@@ -206,32 +206,32 @@ public class AccountPrice
      * Set the account.
      * @param pValue the account
      */
-    protected void setAccount(final Account pValue) {
-        setValueAccount(pValue);
+    protected void setSecurity(final Account pValue) {
+        setValueSecurity(pValue);
     }
 
     /**
-     * Set the account.
-     * @param pValue the account
+     * Set the security.
+     * @param pValue the security
      */
-    private void setValueAccount(final Account pValue) {
-        getValueSet().setValue(FIELD_ACCOUNT, pValue);
+    private void setValueSecurity(final Account pValue) {
+        getValueSet().setValue(FIELD_SECURITY, pValue);
     }
 
     /**
-     * Set the account id.
-     * @param pId the account id
+     * Set the security id.
+     * @param pId the security id
      */
-    private void setValueAccount(final Integer pId) {
-        getValueSet().setValue(FIELD_ACCOUNT, pId);
+    private void setValueSecurity(final Integer pId) {
+        getValueSet().setValue(FIELD_SECURITY, pId);
     }
 
     /**
-     * Set the account name.
-     * @param pName the account name
+     * Set the security name.
+     * @param pName the security name
      */
-    private void setValueAccount(final String pName) {
-        getValueSet().setValue(FIELD_ACCOUNT, pName);
+    private void setValueSecurity(final String pName) {
+        getValueSet().setValue(FIELD_SECURITY, pName);
     }
 
     /**
@@ -274,8 +274,8 @@ public class AccountPrice
     }
 
     @Override
-    public AccountPrice getBase() {
-        return (AccountPrice) super.getBase();
+    public SecurityPrice getBase() {
+        return (SecurityPrice) super.getBase();
     }
 
     /**
@@ -283,8 +283,8 @@ public class AccountPrice
      * @param pList the list
      * @param pPrice The Price
      */
-    protected AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                           final AccountPrice pPrice) {
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+                            final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
     }
@@ -292,29 +292,29 @@ public class AccountPrice
     /**
      * Edit Constructor.
      * @param pList the list
-     * @param pAccount the account
+     * @param pSecurity the security
      */
-    protected AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                           final Account pAccount) {
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+                            final Account pSecurity) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
-        setValueAccount(pAccount);
+        setValueSecurity(pSecurity);
     }
 
     /**
      * Open Constructor.
      * @param pList the list
      * @param pId the id
-     * @param pAccount the account name
+     * @param pSecurity the security name
      * @param pDate the date
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final Integer pId,
-                         final String pAccount,
-                         final JDateDay pDate,
-                         final String pPrice) throws JOceanusException {
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+                          final Integer pId,
+                          final String pSecurity,
+                          final JDateDay pDate,
+                          final String pPrice) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -325,8 +325,8 @@ public class AccountPrice
             JDataFormatter myFormatter = myDataSet.getDataFormatter();
             JDecimalParser myParser = myFormatter.getDecimalParser();
 
-            /* Record account, date and price */
-            setValueAccount(pAccount);
+            /* Record security, date and price */
+            setValueSecurity(pSecurity);
             setValueDate(pDate);
             setValuePrice(myParser.parsePriceValue(pPrice));
 
@@ -342,24 +342,24 @@ public class AccountPrice
      * @param pList the list
      * @param pId the id
      * @param pControlId the control id
-     * @param pAccountId the account id
+     * @param pSecurityId the security id
      * @param pDate the date
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final Integer pId,
-                         final Integer pControlId,
-                         final Integer pAccountId,
-                         final JDateDay pDate,
-                         final byte[] pPrice) throws JOceanusException {
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+                          final Integer pId,
+                          final Integer pControlId,
+                          final Integer pSecurityId,
+                          final JDateDay pDate,
+                          final byte[] pPrice) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Record the Id */
-            setValueAccount(pAccountId);
+            setValueSecurity(pSecurityId);
 
             /* Store the controlId */
             setControlKey(pControlId);
@@ -376,7 +376,7 @@ public class AccountPrice
     }
 
     @Override
-    public int compareTo(final AccountPrice pThat) {
+    public int compareTo(final SecurityPrice pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -391,8 +391,8 @@ public class AccountPrice
             return iDiff;
         }
 
-        /* Compare the accounts */
-        iDiff = getAccount().compareTo(pThat.getAccount());
+        /* Compare the securities */
+        iDiff = getSecurity().compareTo(pThat.getSecurity());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -411,25 +411,25 @@ public class AccountPrice
         AccountList myAccounts = myData.getAccounts();
         ValueSet myValues = getValueSet();
 
-        /* Adjust Account */
-        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
-        if (myAccount instanceof Account) {
-            myAccount = ((Account) myAccount).getId();
+        /* Adjust Security */
+        Object mySecurity = myValues.getValue(FIELD_SECURITY);
+        if (mySecurity instanceof Account) {
+            mySecurity = ((Account) mySecurity).getId();
         }
-        if (myAccount instanceof Integer) {
-            Account myAct = myAccounts.findItemById((Integer) myAccount);
-            if (myAct == null) {
-                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+        if (mySecurity instanceof Integer) {
+            Account mySec = myAccounts.findItemById((Integer) mySecurity);
+            if (mySec == null) {
+                addError(ERROR_UNKNOWN, FIELD_SECURITY);
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
-            setValueAccount(myAct);
-        } else if (myAccount instanceof String) {
-            Account myAct = myAccounts.findItemByName((String) myAccount);
-            if (myAct == null) {
-                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+            setValueSecurity(mySec);
+        } else if (mySecurity instanceof String) {
+            Account mySec = myAccounts.findItemByName((String) mySecurity);
+            if (mySec == null) {
+                addError(ERROR_UNKNOWN, FIELD_SECURITY);
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
-            setValueAccount(myAct);
+            setValueSecurity(mySec);
         }
     }
 
@@ -440,7 +440,7 @@ public class AccountPrice
     public void validate() {
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
-        AccountPriceList myList = (AccountPriceList) getList();
+        SecurityPriceList myList = (SecurityPriceList) getList();
         MoneyWiseData mySet = getDataSet();
 
         /* The date must be non-null */
@@ -449,8 +449,8 @@ public class AccountPrice
 
             /* else date is non-null */
         } else {
-            /* Date must be unique for this account */
-            if (myList.countInstances(myDate, getAccount()) > 1) {
+            /* Date must be unique for this security */
+            if (myList.countInstances(myDate, getSecurity()) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
 
@@ -494,8 +494,8 @@ public class AccountPrice
 
     @Override
     public void touchUnderlyingItems() {
-        /* touch the underlying account */
-        getAccount().touchItem(this);
+        /* touch the underlying security */
+        getSecurity().touchItem(this);
     }
 
     /**
@@ -508,8 +508,8 @@ public class AccountPrice
         if (pItem instanceof SpotPrice) {
             SpotPrice mySpot = (SpotPrice) pItem;
             return applyChanges(mySpot);
-        } else if (pItem instanceof AccountPrice) {
-            AccountPrice myPrice = (AccountPrice) pItem;
+        } else if (pItem instanceof SecurityPrice) {
+            SecurityPrice myPrice = (SecurityPrice) pItem;
             return applyChanges(myPrice);
         }
         return false;
@@ -520,7 +520,7 @@ public class AccountPrice
      * @param pPrice the price extract
      * @return whether changes have been made
      */
-    private boolean applyChanges(final AccountPrice pPrice) {
+    private boolean applyChanges(final SecurityPrice pPrice) {
         /* Store the current detail into history */
         pushHistory();
 
@@ -568,8 +568,8 @@ public class AccountPrice
     /**
      * Price List.
      */
-    public static class AccountPriceList
-            extends EncryptedList<AccountPrice> {
+    public static class SecurityPriceList
+            extends EncryptedList<SecurityPrice> {
         /**
          * Local Report fields.
          */
@@ -594,28 +594,28 @@ public class AccountPrice
          * Construct an empty CORE price list.
          * @param pData the DataSet for the list
          */
-        protected AccountPriceList(final MoneyWiseData pData) {
-            super(AccountPrice.class, pData);
+        protected SecurityPriceList(final MoneyWiseData pData) {
+            super(SecurityPrice.class, pData);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountPriceList(final AccountPriceList pSource) {
+        private SecurityPriceList(final SecurityPriceList pSource) {
             super(pSource);
         }
 
         @Override
-        protected AccountPriceList getEmptyList(final ListStyle pStyle) {
-            AccountPriceList myList = new AccountPriceList(this);
+        protected SecurityPriceList getEmptyList(final ListStyle pStyle) {
+            SecurityPriceList myList = new SecurityPriceList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public AccountPriceList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (AccountPriceList) super.cloneList(pDataSet);
+        public SecurityPriceList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (SecurityPriceList) super.cloneList(pDataSet);
         }
 
         /**
@@ -624,9 +624,9 @@ public class AccountPrice
          * @return the newly added item
          */
         @Override
-        public AccountPrice addCopyItem(final DataItem pPrice) {
-            if (pPrice instanceof AccountPrice) {
-                AccountPrice myPrice = new AccountPrice(this, (AccountPrice) pPrice);
+        public SecurityPrice addCopyItem(final DataItem pPrice) {
+            if (pPrice instanceof SecurityPrice) {
+                SecurityPrice myPrice = new SecurityPrice(this, (SecurityPrice) pPrice);
                 add(myPrice);
                 return myPrice;
             } else {
@@ -639,29 +639,29 @@ public class AccountPrice
          * @return the newly added item
          */
         @Override
-        public AccountPrice addNewItem() {
+        public SecurityPrice addNewItem() {
             throw new UnsupportedOperationException();
         }
 
         /**
          * Count the instances of a date.
          * @param pDate the date
-         * @param pAccount the account
+         * @param pSecurity the security
          * @return The Item if present (or null)
          */
         public int countInstances(final JDateDay pDate,
-                                  final Account pAccount) {
+                                  final Account pSecurity) {
             /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = iterator();
+            Iterator<SecurityPrice> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SecurityPrice myCurr = myIterator.next();
                 if (!pDate.equals(myCurr.getDate())) {
                     continue;
                 }
-                if (pAccount.equals(myCurr.getAccount())) {
+                if (pSecurity.equals(myCurr.getSecurity())) {
                     iCount++;
                 }
             }
@@ -672,28 +672,28 @@ public class AccountPrice
 
         /**
          * Obtain the most relevant price for a Date.
-         * @param pAccount the account
+         * @param pSecurity the security
          * @param pDate the date from which a price is required
          * @return The relevant Price record
          */
-        public AccountPrice getLatestPrice(final Account pAccount,
-                                           final JDateDay pDate) {
+        public SecurityPrice getLatestPrice(final Account pSecurity,
+                                            final JDateDay pDate) {
             /* Skip to alias if required */
-            Account myAccount = pAccount;
-            if (myAccount.getAlias() != null) {
-                myAccount = pAccount.getAlias();
+            Account mySecurity = pSecurity;
+            if (mySecurity.getAlias() != null) {
+                mySecurity = pSecurity.getAlias();
             }
 
             /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = iterator();
-            AccountPrice myPrice = null;
+            Iterator<SecurityPrice> myIterator = iterator();
+            SecurityPrice myPrice = null;
 
             /* Loop through the Prices */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SecurityPrice myCurr = myIterator.next();
 
-                /* Skip records that do not belong to this account */
-                if (!Difference.isEqual(myCurr.getAccount(), myAccount)) {
+                /* Skip records that do not belong to this security */
+                if (!Difference.isEqual(myCurr.getSecurity(), mySecurity)) {
                     continue;
                 }
 
@@ -727,7 +727,7 @@ public class AccountPrice
                 SpotPrice mySpot = myIterator.next();
 
                 /* Access the price for this date if it exists */
-                AccountPrice myPrice = mySpot.getBase();
+                SecurityPrice myPrice = mySpot.getBase();
                 EncryptedPrice myPoint = mySpot.getPriceField();
 
                 /* If the state is not clean */
@@ -740,7 +740,7 @@ public class AccountPrice
                         /* else if we have a new price with no underlying */
                     } else if (myPoint != null) {
                         /* Create the new Price */
-                        myPrice = new AccountPrice(this, mySpot.getAccount());
+                        myPrice = new SecurityPrice(this, mySpot.getSecurity());
 
                         /* Set the date and price */
                         myPrice.setDate(new JDateDay(myDate));
@@ -761,16 +761,16 @@ public class AccountPrice
          * Add a Price.
          * @param pId the id
          * @param pDate the date
-         * @param pAccount the account
+         * @param pSecurity the security
          * @param pPrice the price
          * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final JDateDay pDate,
-                                final String pAccount,
+                                final String pSecurity,
                                 final String pPrice) throws JOceanusException {
             /* Create the PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, pId, pAccount, pDate, pPrice);
+            SecurityPrice myPrice = new SecurityPrice(this, pId, pSecurity, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
@@ -787,17 +787,17 @@ public class AccountPrice
          * @param pId the id
          * @param pControlId the control id
          * @param pDate the date
-         * @param pAccountId the account id
+         * @param pSecurityId the security id
          * @param pPrice the price
          * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final JDateDay pDate,
-                                  final Integer pAccountId,
+                                  final Integer pSecurityId,
                                   final byte[] pPrice) throws JOceanusException {
             /* Create the price and PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, pId, pControlId, pAccountId, pDate, pPrice);
+            SecurityPrice myPrice = new SecurityPrice(this, pId, pControlId, pSecurityId, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(pId)) {

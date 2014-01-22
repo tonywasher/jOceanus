@@ -27,28 +27,29 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetDataItem extension for AccountCategory.
+ * SheetDataItem extension for Payee.
  * @author Tony Washer
  */
-public class SheetAccountCategory
-        extends SheetDataItem<AccountCategory> {
+public class SheetPayee
+        extends SheetDataItem<Payee> {
     /**
-     * NamedArea for Categories.
+     * NamedArea for Payees.
      */
-    protected static final String AREA_ACTCATEGORIES = "AccountCategoryInfo";
+    private static final String AREA_PAYEES = Payee.LIST_NAME;
 
     /**
-     * NameList for AccountCategories.
+     * NameList for Payees.
      */
-    protected static final String AREA_ACTCATNAMES = "AccountCategoryNames";
+    protected static final String AREA_PAYEENAMES = Payee.OBJECT_NAME
+                                                    + "Names";
 
     /**
      * Name column.
@@ -61,30 +62,30 @@ public class SheetAccountCategory
     private static final int COL_TYPE = COL_NAME + 1;
 
     /**
-     * Parent column.
-     */
-    private static final int COL_PARENT = COL_TYPE + 1;
-
-    /**
      * Description column.
      */
-    private static final int COL_DESC = COL_PARENT + 1;
+    private static final int COL_DESC = COL_TYPE + 1;
 
     /**
-     * Category data list.
+     * Closed column.
      */
-    private final AccountCategoryList theList;
+    private static final int COL_CLOSED = COL_DESC + 1;
+
+    /**
+     * Payee data list.
+     */
+    private final PayeeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountCategory(final MoneyWiseReader pReader) {
+    protected SheetPayee(final MoneyWiseReader pReader) {
         /* Call super constructor */
-        super(pReader, AREA_ACTCATEGORIES);
+        super(pReader, AREA_PAYEES);
 
-        /* Access the Categories list */
-        theList = pReader.getData().getAccountCategories();
+        /* Access the Payees list */
+        theList = pReader.getData().getPayees();
         setDataList(theList);
     }
 
@@ -92,12 +93,12 @@ public class SheetAccountCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountCategory(final MoneyWiseWriter pWriter) {
+    protected SheetPayee(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, AREA_ACTCATEGORIES);
+        super(pWriter, AREA_PAYEES);
 
-        /* Access the Categories list */
-        theList = pWriter.getData().getAccountCategories();
+        /* Access the Payees list */
+        theList = pWriter.getData().getPayees();
         setDataList(theList);
     }
 
@@ -105,57 +106,61 @@ public class SheetAccountCategory
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myCatId = loadInteger(COL_TYPE);
-        Integer myParentId = loadInteger(COL_PARENT);
+        Integer myTypeId = loadInteger(COL_TYPE);
 
         /* Access the Name and description */
         byte[] myNameBytes = loadBytes(COL_NAME);
         byte[] myDescBytes = loadBytes(COL_DESC);
 
+        /* Access the Flags */
+        Boolean isClosed = loadBoolean(COL_CLOSED);
+
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId, myParentId);
+        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myTypeId, isClosed);
     }
 
     @Override
     protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the links */
+        /* Access the name */
         String myType = loadString(COL_TYPE);
-        String myParent = loadString(COL_PARENT);
 
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
         String myDesc = loadString(COL_DESC);
 
+        /* Access the Flags */
+        Boolean isClosed = loadBoolean(COL_CLOSED);
+
         /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, myParent);
+        theList.addOpenItem(pId, myName, myDesc, myType, isClosed);
     }
 
     @Override
-    protected void insertSecureItem(final AccountCategory pItem) throws JOceanusException {
+    protected void insertSecureItem(final Payee pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
-        writeInteger(COL_TYPE, pItem.getCategoryTypeId());
-        writeInteger(COL_PARENT, pItem.getParentCategoryId());
+        writeInteger(COL_TYPE, pItem.getPayeeTypeId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
     @Override
-    protected void insertOpenItem(final AccountCategory pItem) throws JOceanusException {
+    protected void insertOpenItem(final Payee pItem) throws JOceanusException {
         /* Set the fields */
-        writeString(COL_TYPE, pItem.getCategoryTypeName());
-        writeString(COL_PARENT, pItem.getParentCategoryName());
+        writeString(COL_TYPE, pItem.getPayeeTypeName());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
     @Override
     protected void prepareSheet() throws JOceanusException {
         /* Write titles */
-        writeHeader(COL_TYPE, AccountCategory.FIELD_CATTYPE.getName());
-        writeHeader(COL_PARENT, AccountCategory.FIELD_PARENT.getName());
-        writeHeader(COL_NAME, AccountCategory.FIELD_NAME.getName());
-        writeHeader(COL_DESC, AccountCategory.FIELD_DESC.getName());
+        writeHeader(COL_TYPE, Payee.FIELD_PAYEETYPE.getName());
+        writeHeader(COL_NAME, Payee.FIELD_NAME.getName());
+        writeHeader(COL_DESC, Payee.FIELD_DESC.getName());
+        writeHeader(COL_CLOSED, Payee.FIELD_CLOSED.getName());
     }
 
     @Override
@@ -164,20 +169,19 @@ public class SheetAccountCategory
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
         setStringColumn(COL_TYPE);
-        setStringColumn(COL_PARENT);
+        setBooleanColumn(COL_CLOSED);
 
         /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_ACTCATNAMES);
+        nameColumnRange(COL_NAME, AREA_PAYEENAMES);
 
         /* Set validation */
-        applyDataValidation(COL_TYPE, SheetAccountCategoryType.AREA_ACCOUNTCATTYPENAMES);
-        applyDataValidation(COL_PARENT, AREA_ACTCATNAMES);
+        applyDataValidation(COL_TYPE, SheetPayeeType.AREA_PAYEETYPENAMES);
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_DESC;
+        return COL_CLOSED;
     }
 
     @Override
@@ -189,12 +193,12 @@ public class SheetAccountCategory
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
+        /* Validate the payees */
         theList.validateOnLoad();
     }
 
     /**
-     * Load the AccountCategories from an archive.
+     * Load the Payees from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -207,22 +211,22 @@ public class SheetAccountCategory
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            DataView myView = pWorkBook.getRangeView(AREA_PAYEES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AccountCategory.LIST_NAME)) {
+            if (!pTask.setNewStage(Payee.LIST_NAME)) {
                 return false;
             }
 
-            /* Count the number of Categories */
+            /* Count the number of Payees */
             int myTotal = myView.getRowCount();
 
-            /* Access the list of categories */
-            AccountCategoryList myList = pData.getAccountCategories();
+            /* Access the list of payees */
+            PayeeList myList = pData.getPayees();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -243,15 +247,12 @@ public class SheetAccountCategory
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myType = myCell.getStringValue();
 
-                /* Access Parent */
-                String myParent = null;
+                /* Access Closed Flag */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                if (myCell != null) {
-                    myParent = myCell.getStringValue();
-                }
+                Boolean isClosed = myCell.getBooleanValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, myParent);
+                myList.addOpenItem(0, myName, null, myType, isClosed);
 
                 /* Report the progress */
                 myCount++;
@@ -268,12 +269,12 @@ public class SheetAccountCategory
             /* Touch underlying items */
             myList.touchUnderlyingItems();
 
-            /* Validate the account categories */
+            /* Validate the event categories */
             myList.validateOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load AccountCategories", e);
+            throw new JMoneyWiseIOException("Failed to Load Payees", e);
         }
 
         /* Return to caller */

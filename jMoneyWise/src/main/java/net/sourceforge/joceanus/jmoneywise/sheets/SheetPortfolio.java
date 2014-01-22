@@ -27,28 +27,29 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetDataItem extension for AccountCategory.
+ * SheetDataItem extension for Portfolio.
  * @author Tony Washer
  */
-public class SheetAccountCategory
-        extends SheetDataItem<AccountCategory> {
+public class SheetPortfolio
+        extends SheetDataItem<Portfolio> {
     /**
-     * NamedArea for Categories.
+     * NamedArea for Portfolios.
      */
-    protected static final String AREA_ACTCATEGORIES = "AccountCategoryInfo";
+    private static final String AREA_PORTFOLIOS = Portfolio.LIST_NAME;
 
     /**
-     * NameList for AccountCategories.
+     * NameList for Portfolios.
      */
-    protected static final String AREA_ACTCATNAMES = "AccountCategoryNames";
+    protected static final String AREA_PORTFOLIONAMES = Portfolio.OBJECT_NAME
+                                                        + "Names";
 
     /**
      * Name column.
@@ -56,35 +57,30 @@ public class SheetAccountCategory
     private static final int COL_NAME = COL_CONTROLID + 1;
 
     /**
-     * Type column.
-     */
-    private static final int COL_TYPE = COL_NAME + 1;
-
-    /**
-     * Parent column.
-     */
-    private static final int COL_PARENT = COL_TYPE + 1;
-
-    /**
      * Description column.
      */
-    private static final int COL_DESC = COL_PARENT + 1;
+    private static final int COL_DESC = COL_NAME + 1;
 
     /**
-     * Category data list.
+     * Closed column.
      */
-    private final AccountCategoryList theList;
+    private static final int COL_CLOSED = COL_DESC + 1;
+
+    /**
+     * Portfolio data list.
+     */
+    private final PortfolioList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountCategory(final MoneyWiseReader pReader) {
+    protected SheetPortfolio(final MoneyWiseReader pReader) {
         /* Call super constructor */
-        super(pReader, AREA_ACTCATEGORIES);
+        super(pReader, AREA_PORTFOLIOS);
 
-        /* Access the Categories list */
-        theList = pReader.getData().getAccountCategories();
+        /* Access the Portfolios list */
+        theList = pReader.getData().getPortfolios();
         setDataList(theList);
     }
 
@@ -92,12 +88,12 @@ public class SheetAccountCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountCategory(final MoneyWiseWriter pWriter) {
+    protected SheetPortfolio(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, AREA_ACTCATEGORIES);
+        super(pWriter, AREA_PORTFOLIOS);
 
-        /* Access the Categories list */
-        theList = pWriter.getData().getAccountCategories();
+        /* Access the Portfolios list */
+        theList = pWriter.getData().getPortfolios();
         setDataList(theList);
     }
 
@@ -105,57 +101,54 @@ public class SheetAccountCategory
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myCatId = loadInteger(COL_TYPE);
-        Integer myParentId = loadInteger(COL_PARENT);
 
         /* Access the Name and description */
         byte[] myNameBytes = loadBytes(COL_NAME);
         byte[] myDescBytes = loadBytes(COL_DESC);
 
+        /* Access the Flags */
+        Boolean isClosed = loadBoolean(COL_CLOSED);
+
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId, myParentId);
+        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, isClosed);
     }
 
     @Override
     protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the links */
-        String myType = loadString(COL_TYPE);
-        String myParent = loadString(COL_PARENT);
-
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
         String myDesc = loadString(COL_DESC);
 
+        /* Access the Flags */
+        Boolean isClosed = loadBoolean(COL_CLOSED);
+
         /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, myParent);
+        theList.addOpenItem(pId, myName, myDesc, isClosed);
     }
 
     @Override
-    protected void insertSecureItem(final AccountCategory pItem) throws JOceanusException {
+    protected void insertSecureItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
-        writeInteger(COL_TYPE, pItem.getCategoryTypeId());
-        writeInteger(COL_PARENT, pItem.getParentCategoryId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
     @Override
-    protected void insertOpenItem(final AccountCategory pItem) throws JOceanusException {
+    protected void insertOpenItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
-        writeString(COL_TYPE, pItem.getCategoryTypeName());
-        writeString(COL_PARENT, pItem.getParentCategoryName());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
     @Override
     protected void prepareSheet() throws JOceanusException {
         /* Write titles */
-        writeHeader(COL_TYPE, AccountCategory.FIELD_CATTYPE.getName());
-        writeHeader(COL_PARENT, AccountCategory.FIELD_PARENT.getName());
-        writeHeader(COL_NAME, AccountCategory.FIELD_NAME.getName());
-        writeHeader(COL_DESC, AccountCategory.FIELD_DESC.getName());
+        writeHeader(COL_NAME, Portfolio.FIELD_NAME.getName());
+        writeHeader(COL_DESC, Portfolio.FIELD_DESC.getName());
+        writeHeader(COL_CLOSED, Portfolio.FIELD_CLOSED.getName());
     }
 
     @Override
@@ -163,21 +156,16 @@ public class SheetAccountCategory
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
-        setStringColumn(COL_TYPE);
-        setStringColumn(COL_PARENT);
+        setBooleanColumn(COL_CLOSED);
 
         /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_ACTCATNAMES);
-
-        /* Set validation */
-        applyDataValidation(COL_TYPE, SheetAccountCategoryType.AREA_ACCOUNTCATTYPENAMES);
-        applyDataValidation(COL_PARENT, AREA_ACTCATNAMES);
+        nameColumnRange(COL_NAME, AREA_PORTFOLIONAMES);
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_DESC;
+        return COL_CLOSED;
     }
 
     @Override
@@ -189,12 +177,12 @@ public class SheetAccountCategory
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
+        /* Validate the portfolios */
         theList.validateOnLoad();
     }
 
     /**
-     * Load the AccountCategories from an archive.
+     * Load the Portfolios from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -207,22 +195,22 @@ public class SheetAccountCategory
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            DataView myView = pWorkBook.getRangeView(AREA_PORTFOLIOS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AccountCategory.LIST_NAME)) {
+            if (!pTask.setNewStage(Portfolio.LIST_NAME)) {
                 return false;
             }
 
-            /* Count the number of Categories */
+            /* Count the number of portfolios */
             int myTotal = myView.getRowCount();
 
-            /* Access the list of categories */
-            AccountCategoryList myList = pData.getAccountCategories();
+            /* Access the list of portfolios */
+            PortfolioList myList = pData.getPortfolios();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -239,19 +227,12 @@ public class SheetAccountCategory
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myName = myCell.getStringValue();
 
-                /* Access Type */
+                /* Access Closed Flag */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myType = myCell.getStringValue();
-
-                /* Access Parent */
-                String myParent = null;
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                if (myCell != null) {
-                    myParent = myCell.getStringValue();
-                }
+                Boolean isClosed = myCell.getBooleanValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, myParent);
+                myList.addOpenItem(0, myName, null, isClosed);
 
                 /* Report the progress */
                 myCount++;
@@ -268,12 +249,12 @@ public class SheetAccountCategory
             /* Touch underlying items */
             myList.touchUnderlyingItems();
 
-            /* Validate the account categories */
+            /* Validate the event categories */
             myList.validateOnLoad();
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load AccountCategories", e);
+            throw new JMoneyWiseIOException("Failed to Load Portfolios", e);
         }
 
         /* Return to caller */

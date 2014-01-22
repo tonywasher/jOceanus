@@ -25,19 +25,19 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 
 /**
  * Analysis Map classes.
@@ -72,9 +72,9 @@ public abstract class AnalysisMaps {
          */
         protected SecurityPriceMap(final MoneyWiseData pData) {
             /* Loop through the prices */
-            Iterator<AccountPrice> myIterator = pData.getPrices().iterator();
+            Iterator<SecurityPrice> myIterator = pData.getPrices().iterator();
             while (myIterator.hasNext()) {
-                AccountPrice myPrice = myIterator.next();
+                SecurityPrice myPrice = myIterator.next();
 
                 /* Add to the map */
                 addPriceToMap(myPrice);
@@ -88,9 +88,9 @@ public abstract class AnalysisMaps {
          * Add price to map.
          * @param pPrice the price to add.
          */
-        private void addPriceToMap(final AccountPrice pPrice) {
+        private void addPriceToMap(final SecurityPrice pPrice) {
             /* Access security prices */
-            Account mySecurity = pPrice.getAccount();
+            Account mySecurity = pPrice.getSecurity();
             PriceList myList = get(mySecurity.getId());
 
             /* If the list is new */
@@ -119,9 +119,9 @@ public abstract class AnalysisMaps {
             PriceList myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<AccountPrice> myIterator = myList.iterator();
+                Iterator<SecurityPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    AccountPrice myCurr = myIterator.next();
+                    SecurityPrice myCurr = myIterator.next();
 
                     /* Break if this is later than the date */
                     if (pDate.compareTo(myCurr.getDate()) > 0) {
@@ -158,9 +158,9 @@ public abstract class AnalysisMaps {
             PriceList myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<AccountPrice> myIterator = myList.iterator();
+                Iterator<SecurityPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    AccountPrice myCurr = myIterator.next();
+                    SecurityPrice myCurr = myIterator.next();
 
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());
@@ -194,7 +194,7 @@ public abstract class AnalysisMaps {
      * Price List class.
      */
     private static final class PriceList
-            extends ArrayList<AccountPrice>
+            extends ArrayList<SecurityPrice>
             implements JDataContents {
         /**
          * Serial Id.
@@ -204,7 +204,7 @@ public abstract class AnalysisMaps {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields("AccountPriceList");
+        private static final JDataFields FIELD_DEFS = new JDataFields("SecurityPriceList");
 
         @Override
         public JDataFields getDataFields() {

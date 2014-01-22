@@ -31,15 +31,15 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -62,16 +62,6 @@ public final class EventCategory
      * Separator.
      */
     public static final String STR_SEP = ":";
-
-    /**
-     * EventCategory Name length.
-     */
-    public static final int NAMELEN = 30;
-
-    /**
-     * EventCategory Description length.
-     */
-    public static final int DESCLEN = 50;
 
     /**
      * Resource Bundle.
@@ -107,11 +97,6 @@ public final class EventCategory
      * SubCategory Field Id.
      */
     public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
-
-    /**
-     * Multiple instances Error.
-     */
-    private static final String ERROR_MULT = NLS_BUNDLE.getString("ErrorMultiple");
 
     /**
      * Invalid Parent Error.
@@ -1032,7 +1017,7 @@ public final class EventCategory
         /**
          * Count the instances of a string.
          * @param pName the string to check for
-         * @return The Item if present (or null)
+         * @return The # of instances of the name
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
@@ -1054,7 +1039,7 @@ public final class EventCategory
         /**
          * Count the instances of a class.
          * @param pClass the event category class
-         * @return The # of instances of the name
+         * @return The # of instances of the class
          */
         protected int countInstances(final EventCategoryClass pClass) {
             /* Access the iterator */

@@ -39,25 +39,25 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Tag for an event.
+ * Portfolio class.
  */
-public class EventClass
+public class Portfolio
         extends EncryptedItem
-        implements Comparable<EventClass> {
+        implements Comparable<Portfolio> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = EventClass.class.getSimpleName();
+    public static final String OBJECT_NAME = Portfolio.class.getSimpleName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "es";
+    public static final String LIST_NAME = "Portfolios";
+
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventClass.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
 
     /**
      * Local Report fields.
@@ -67,12 +67,17 @@ public class EventClass
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClassName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPortName"));
 
     /**
      * Description Field Id.
      */
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+
+    /**
+     * isClosed Field Id.
+     */
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
     @Override
     public JDataFields declareFields() {
@@ -138,6 +143,14 @@ public class EventClass
     }
 
     /**
+     * Is the portfolio closed?
+     * @return true/false
+     */
+    public Boolean isClosed() {
+        return isClosed(getValueSet());
+    }
+
+    /**
      * Obtain Name.
      * @param pValueSet the valueSet
      * @return the Name
@@ -192,6 +205,15 @@ public class EventClass
     }
 
     /**
+     * Is the portfolio closed?
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isClosed(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, Boolean.class);
+    }
+
+    /**
      * Set name value.
      * @param pValue the value
      * @throws JOceanusException on error
@@ -243,46 +265,56 @@ public class EventClass
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
+    /**
+     * Set closed value.
+     * @param pValue the value
+     */
+    private void setValueClosed(final Boolean pValue) {
+        getValueSet().setValue(FIELD_CLOSED, pValue);
+    }
+
     @Override
     public MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
-    public EventClass getBase() {
-        return (EventClass) super.getBase();
+    public EventCategory getBase() {
+        return (EventCategory) super.getBase();
     }
 
     @Override
-    public EventClassList getList() {
-        return (EventClassList) super.getList();
+    public PortfolioList getList() {
+        return (PortfolioList) super.getList();
     }
 
     /**
      * Copy Constructor.
      * @param pList the list
-     * @param pClass The Class to copy
+     * @param pPortfolio The Portfolio to copy
      */
-    protected EventClass(final EventClassList pList,
-                         final EventClass pClass) {
+    protected Portfolio(final PortfolioList pList,
+                        final Portfolio pPortfolio) {
         /* Set standard values */
-        super(pList, pClass);
+        super(pList, pPortfolio);
     }
 
     /**
      * Secure constructor.
      * @param pList the List to add to
-     * @param pId the Class id
+     * @param pId the portfolio id
      * @param pControlId the control id
-     * @param pName the Encrypted Name of the event class
-     * @param pDesc the Encrypted Description of the event class
+     * @param pName the Encrypted Name of the portfolio
+     * @param pDesc the Encrypted Description of the portfolio
+     * @param pClosed is the portfolio closed?
      * @throws JOceanusException on error
      */
-    protected EventClass(final EventClassList pList,
-                         final Integer pId,
-                         final Integer pControlId,
-                         final byte[] pName,
-                         final byte[] pDesc) throws JOceanusException {
+    protected Portfolio(final PortfolioList pList,
+                        final Integer pId,
+                        final Integer pControlId,
+                        final byte[] pName,
+                        final byte[] pDesc,
+                        final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -295,6 +327,9 @@ public class EventClass
             setValueName(pName);
             setValueDesc(pDesc);
 
+            /* Store closed flag */
+            setValueClosed(pClosed);
+
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
@@ -306,22 +341,27 @@ public class EventClass
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
-     * @param pName the Name of the event class
-     * @param pDesc the description of the event class
+     * @param pName the Name of the event category
+     * @param pDesc the description of the category
+     * @param pClosed is the portfolio closed?
      * @throws JOceanusException on error
      */
-    protected EventClass(final EventClassList pList,
-                         final Integer pId,
-                         final String pName,
-                         final String pDesc) throws JOceanusException {
+    protected Portfolio(final PortfolioList pList,
+                        final Integer pId,
+                        final String pName,
+                        final String pDesc,
+                        final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
-            /* Record the encrypted values */
+            /* Record the string values */
             setValueName(pName);
             setValueDesc(pDesc);
+
+            /* Store closed flag */
+            setValueClosed(pClosed);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -334,13 +374,13 @@ public class EventClass
      * Edit Constructor.
      * @param pList the list
      */
-    public EventClass(final EventClassList pList) {
+    public Portfolio(final PortfolioList pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
     }
 
     @Override
-    public int compareTo(final EventClass pThat) {
+    public int compareTo(final Portfolio pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -360,11 +400,11 @@ public class EventClass
     }
 
     /**
-     * Set a new tag name.
+     * Set a new portfolio name.
      * @param pName the new name
      * @throws JOceanusException on error
      */
-    public void setName(final String pName) throws JOceanusException {
+    public void setPortfolioName(final String pName) throws JOceanusException {
         setValueName(pName);
     }
 
@@ -379,7 +419,7 @@ public class EventClass
 
     @Override
     public void validate() {
-        EventClassList myList = getList();
+        PortfolioList myList = getList();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -387,14 +427,14 @@ public class EventClass
         if (myName == null) {
             addError(ERROR_MISSING, FIELD_NAME);
 
-            /* Else check the name */
+            /* Check that the name is valid */
         } else {
-            /* The description must not be too long */
+            /* The name must not be too long */
             if (myName.length() > NAMELEN) {
                 addError(ERROR_LENGTH, FIELD_NAME);
             }
 
-            /* Check that the name is unique */
+            /* The name must be unique */
             if (myList.countInstances(myName) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
             }
@@ -403,7 +443,7 @@ public class EventClass
         /* Check description length */
         if ((myDesc != null)
             && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, FIELD_NAME);
+            addError(ERROR_LENGTH, FIELD_DESC);
         }
 
         /* Set validation flag */
@@ -413,29 +453,34 @@ public class EventClass
     }
 
     /**
-     * Update base tag from an edited tag.
-     * @param pClass the edited class
+     * Update base portfolio from an edited portfolio.
+     * @param pPortfolio the edited portfolio
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pClass) {
-        /* Can only update from an event class */
-        if (!(pClass instanceof EventClass)) {
+    public boolean applyChanges(final DataItem pPortfolio) {
+        /* Can only update from a portfolio */
+        if (!(pPortfolio instanceof Portfolio)) {
             return false;
         }
-        EventClass myClass = (EventClass) pClass;
+        Portfolio myPortfolio = (Portfolio) pPortfolio;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myClass.getName())) {
-            setValueName(myClass.getNameField());
+        if (!Difference.isEqual(getName(), myPortfolio.getName())) {
+            setValueName(myPortfolio.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myClass.getDesc())) {
-            setValueDesc(myClass.getDescField());
+        if (!Difference.isEqual(getDesc(), myPortfolio.getDesc())) {
+            setValueDesc(myPortfolio.getDescField());
+        }
+
+        /* Update the closed status if required */
+        if (!Difference.isEqual(isClosed(), myPortfolio.isClosed())) {
+            setValueClosed(myPortfolio.isClosed());
         }
 
         /* Check for changes */
@@ -443,10 +488,10 @@ public class EventClass
     }
 
     /**
-     * The Event Tag List class.
+     * The Portfolio List class.
      */
-    public static class EventClassList
-            extends EncryptedList<EventClass> {
+    public static class PortfolioList
+            extends EncryptedList<Portfolio> {
         /**
          * Local Report fields.
          */
@@ -468,48 +513,75 @@ public class EventClass
         }
 
         /**
-         * Construct an empty CORE EventClass list.
+         * Construct an empty CORE Portfolio list.
          * @param pData the DataSet for the list
          */
-        protected EventClassList(final MoneyWiseData pData) {
-            super(EventClass.class, pData, ListStyle.CORE);
+        public PortfolioList(final MoneyWiseData pData) {
+            super(Portfolio.class, pData, ListStyle.CORE);
         }
 
         @Override
-        protected EventClassList getEmptyList(final ListStyle pStyle) {
-            EventClassList myList = new EventClassList(this);
+        protected PortfolioList getEmptyList(final ListStyle pStyle) {
+            PortfolioList myList = new PortfolioList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventClassList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventClassList) super.cloneList(pDataSet);
+        public PortfolioList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (PortfolioList) super.cloneList(pDataSet);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EventClassList(final EventClassList pSource) {
+        protected PortfolioList(final PortfolioList pSource) {
             super(pSource);
         }
 
         /**
+         * Derive Edit list.
+         * @return the edit list
+         */
+        public PortfolioList deriveEditList() {
+            /* Build an empty List */
+            PortfolioList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the portfolios */
+            Iterator<Portfolio> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                Portfolio myCurr = myIterator.next();
+
+                /* Ignore deleted events */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked portfolio and add it to the list */
+                Portfolio myPortfolio = new Portfolio(myList, myCurr);
+                myList.append(myPortfolio);
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
-         * @param pClass item
+         * @param pPortfolio item
          * @return the newly added item
          */
         @Override
-        public EventClass addCopyItem(final DataItem pClass) {
-            /* Can only clone an EventClass */
-            if (!(pClass instanceof EventClass)) {
+        public Portfolio addCopyItem(final DataItem pPortfolio) {
+            /* Can only clone a Portfolio */
+            if (!(pPortfolio instanceof Portfolio)) {
                 return null;
             }
 
-            EventClass myClass = new EventClass(this, (EventClass) pClass);
-            add(myClass);
-            return myClass;
+            Portfolio myPortfolio = new Portfolio(this, (Portfolio) pPortfolio);
+            add(myPortfolio);
+            return myPortfolio;
         }
 
         /**
@@ -517,25 +589,25 @@ public class EventClass
          * @return the new item
          */
         @Override
-        public EventClass addNewItem() {
-            EventClass myClass = new EventClass(this);
-            add(myClass);
-            return myClass;
+        public Portfolio addNewItem() {
+            Portfolio myPortfolio = new Portfolio(this);
+            add(myPortfolio);
+            return myPortfolio;
         }
 
         /**
          * Count the instances of a string.
          * @param pName the string to check for
-         * @return The Item if present (or null)
+         * @return The # of instances of the name
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
-            Iterator<EventClass> myIterator = iterator();
+            Iterator<Portfolio> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventClass myCurr = myIterator.next();
+                Portfolio myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -550,13 +622,13 @@ public class EventClass
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public EventClass findItemByName(final String pName) {
+        public Portfolio findItemByName(final String pName) {
             /* Access the iterator */
-            Iterator<EventClass> myIterator = iterator();
+            Iterator<Portfolio> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventClass myCurr = myIterator.next();
+                Portfolio myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -567,51 +639,55 @@ public class EventClass
         }
 
         /**
-         * Allow a class to be added.
+         * Allow a portfolio to be added.
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
+         * @param pClosed is the portfolio closed?
          * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
-                                final String pDesc) throws JOceanusException {
-            /* Create the tag */
-            EventClass myClass = new EventClass(this, pId, pName, pDesc);
+                                final String pDesc,
+                                final Boolean pClosed) throws JOceanusException {
+            /* Create the portfolio */
+            Portfolio myPortfolio = new Portfolio(this, pId, pName, pDesc, pClosed);
 
-            /* Check that this ClassId has not been previously added */
+            /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(pId)) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
+                myPortfolio.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPortfolio, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            append(myClass);
+            append(myPortfolio);
         }
 
         /**
-         * Load an Encrypted Class.
+         * Load an Encrypted Portfolio.
          * @param pId the id
          * @param pControlId the control id
          * @param pName the encrypted name
          * @param pDesc the encrypted description
+         * @param pClosed is the portfolio closed?
          * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create the tag */
-            EventClass myClass = new EventClass(this, pId, pControlId, pName, pDesc);
+                                  final byte[] pDesc,
+                                  final Boolean pClosed) throws JOceanusException {
+            /* Create the portfolio */
+            Portfolio myPortfolio = new Portfolio(this, pId, pControlId, pName, pDesc, pClosed);
 
-            /* Check that this ClassId has not been previously added */
+            /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(pId)) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
+                myPortfolio.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPortfolio, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            append(myClass);
+            append(myPortfolio);
         }
     }
 }

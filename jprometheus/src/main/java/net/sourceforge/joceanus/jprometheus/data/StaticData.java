@@ -109,16 +109,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
-     * StaticData Name length.
-     */
-    public static final int NAMELEN = 30;
-
-    /**
-     * StaticData Description length.
-     */
-    public static final int DESCLEN = 50;
-
-    /**
      * Return the name of the Static Data.
      * @return the name
      */

@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 
 /**
  * Quicken Price.
@@ -51,14 +51,14 @@ public class QPrice
     /**
      * The Price.
      */
-    private final AccountPrice thePrice;
+    private final SecurityPrice thePrice;
 
     /**
      * Obtain Security Name.
      * @return the security name
      */
     public String getSecurity() {
-        return thePrice.getAccountName();
+        return thePrice.getSecurityName();
     }
 
     /**
@@ -81,7 +81,7 @@ public class QPrice
      * Obtain Price.
      * @return the price
      */
-    public AccountPrice getPrice() {
+    public SecurityPrice getPrice() {
         return thePrice;
     }
 
@@ -91,7 +91,7 @@ public class QPrice
      * @param pPrice the account price
      */
     protected QPrice(final QAnalysis pAnalysis,
-                     final AccountPrice pPrice) {
+                     final SecurityPrice pPrice) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -104,8 +104,8 @@ public class QPrice
      * @return the QIF format
      */
     protected String buildQIF() {
-        /* Access the account */
-        Account myAccount = thePrice.getAccount();
+        /* Access the security */
+        Account mySecurity = thePrice.getSecurity();
 
         /* Reset the builder */
         reset();
@@ -117,7 +117,7 @@ public class QPrice
 
         /* Add the Ticker Symbol */
         append(QIF_QUOTE);
-        append(myAccount.getSymbol());
+        append(mySecurity.getSymbol());
         append(QIF_QUOTE);
         append(QIF_COMMA);
 

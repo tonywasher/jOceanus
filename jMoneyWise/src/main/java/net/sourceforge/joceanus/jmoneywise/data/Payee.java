@@ -32,9 +32,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -42,25 +43,25 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Account Category class.
+ * Payee class.
  */
-public class AccountCategory
+public class Payee
         extends EncryptedItem
-        implements Comparable<AccountCategory> {
+        implements Comparable<Payee> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = AccountCategory.class.getSimpleName();
+    public static final String OBJECT_NAME = Payee.class.getSimpleName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = "AccountCategories";
+    public static final String LIST_NAME = "Payees";
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategory.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Payee.class.getName());
 
     /**
      * Local Report fields.
@@ -70,7 +71,7 @@ public class AccountCategory
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPayeeName"));
 
     /**
      * Description Field Id.
@@ -78,24 +79,14 @@ public class AccountCategory
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     /**
-     * Category Type Field Id.
+     * PayeeType Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatType"));
+    public static final JDataField FIELD_PAYEETYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPayeeType"));
 
     /**
-     * Parent Category Field Id.
+     * isClosed Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
-
-    /**
-     * SubCategory Field Id.
-     */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
-
-    /**
-     * Invalid Parent Error.
-     */
-    private static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
     @Override
     public JDataFields declareFields() {
@@ -116,7 +107,7 @@ public class AccountCategory
      * Obtain Name.
      * @return the name
      */
-    public final String getName() {
+    public String getName() {
         return getName(getValueSet());
     }
 
@@ -161,82 +152,52 @@ public class AccountCategory
     }
 
     /**
-     * Obtain Account Category Type.
+     * Obtain Payee Type.
      * @return the type
      */
-    public AccountCategoryType getCategoryType() {
-        return getAccountCategoryType(getValueSet());
+    public PayeeType getPayeeType() {
+        return getPayeeType(getValueSet());
     }
 
     /**
-     * Obtain categoryTypeId.
+     * Obtain PayeeTypeId.
      * @return the categoryTypeId
      */
-    public Integer getCategoryTypeId() {
-        AccountCategoryType myType = getCategoryType();
+    public Integer getPayeeTypeId() {
+        PayeeType myType = getPayeeType();
         return (myType == null)
                 ? null
                 : myType.getId();
     }
 
     /**
-     * Obtain CategoryTypeName.
-     * @return the categoryTypeName
+     * Obtain PayeeTypeName.
+     * @return the payeeTypeName
      */
-    public String getCategoryTypeName() {
-        AccountCategoryType myType = getCategoryType();
+    public String getPayeeTypeName() {
+        PayeeType myType = getPayeeType();
         return (myType == null)
                 ? null
                 : myType.getName();
     }
 
     /**
-     * Obtain CategoryTypeClass.
-     * @return the categoryTypeClass
+     * Obtain PayeeTypeClass.
+     * @return the payeeTypeClass
      */
-    public AccountCategoryClass getCategoryTypeClass() {
-        AccountCategoryType myType = getCategoryType();
+    public PayeeTypeClass getPayeeTypeClass() {
+        PayeeType myType = getPayeeType();
         return (myType == null)
                 ? null
-                : myType.getAccountClass();
+                : myType.getPayeeClass();
     }
 
     /**
-     * Obtain Account Category Parent.
-     * @return the parent
+     * Is the payee closed?
+     * @return true/false
      */
-    public AccountCategory getParentCategory() {
-        return getParentCategory(getValueSet());
-    }
-
-    /**
-     * Obtain parentId.
-     * @return the parentId
-     */
-    public Integer getParentCategoryId() {
-        AccountCategory myParent = getParentCategory();
-        return (myParent == null)
-                ? null
-                : myParent.getId();
-    }
-
-    /**
-     * Obtain parentName.
-     * @return the parentName
-     */
-    public String getParentCategoryName() {
-        AccountCategory myParent = getParentCategory();
-        return (myParent == null)
-                ? null
-                : myParent.getName();
-    }
-
-    /**
-     * Obtain subCategory.
-     * @return the subCategory
-     */
-    public String getSubCategory() {
-        return getSubCategory(getValueSet());
+    public Boolean isClosed() {
+        return isClosed(getValueSet());
     }
 
     /**
@@ -294,30 +255,21 @@ public class AccountCategory
     }
 
     /**
-     * Obtain AccountCategoryType.
+     * Obtain PayeeType.
      * @param pValueSet the valueSet
-     * @return the AccountCategoryType
+     * @return the PayeeType
      */
-    public static AccountCategoryType getAccountCategoryType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CATTYPE, AccountCategoryType.class);
+    public static PayeeType getPayeeType(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PAYEETYPE, PayeeType.class);
     }
 
     /**
-     * Obtain Parent AccountCategory.
+     * Is the payee closed?
      * @param pValueSet the valueSet
-     * @return the Parent AccountCategory
+     * @return true/false
      */
-    public static AccountCategory getParentCategory(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, AccountCategory.class);
-    }
-
-    /**
-     * Obtain SubCategory.
-     * @param pValueSet the valueSet
-     * @return the subCategory
-     */
-    public static String getSubCategory(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_SUBCAT, String.class);
+    public static Boolean isClosed(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DESC, Boolean.class);
     }
 
     /**
@@ -373,59 +325,35 @@ public class AccountCategory
     }
 
     /**
-     * Set account type value.
+     * Set payee type value.
      * @param pValue the value
      */
-    private void setValueType(final AccountCategoryType pValue) {
-        getValueSet().setValue(FIELD_CATTYPE, pValue);
+    private void setValueType(final PayeeType pValue) {
+        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
     }
 
     /**
-     * Set account type id.
+     * Set payee type id.
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
-        getValueSet().setValue(FIELD_CATTYPE, pValue);
+        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
     }
 
     /**
-     * Set account type name.
+     * Set payee type name.
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
-        getValueSet().setValue(FIELD_CATTYPE, pValue);
+        getValueSet().setValue(FIELD_PAYEETYPE, pValue);
     }
 
     /**
-     * Set parent value.
+     * Set closed value.
      * @param pValue the value
      */
-    private void setValueParent(final AccountCategory pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pValue the value
-     */
-    private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent name.
-     * @param pValue the value
-     */
-    private void setValueParent(final String pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set subCategory name.
-     * @param pValue the value
-     */
-    private void setValueSubCategory(final String pValue) {
-        getValueSet().setValue(FIELD_SUBCAT, pValue);
+    private void setValueClosed(final Boolean pValue) {
+        getValueSet().setValue(FIELD_CLOSED, pValue);
     }
 
     @Override
@@ -433,35 +361,35 @@ public class AccountCategory
         return (MoneyWiseData) super.getDataSet();
     }
 
+    @Override
+    public EventCategory getBase() {
+        return (EventCategory) super.getBase();
+    }
+
+    @Override
+    public PayeeList getList() {
+        return (PayeeList) super.getList();
+    }
+
     /**
-     * Is this account category the required class.
-     * @param pClass the required category class.
+     * Is this payee the required class.
+     * @param pClass the required payee class.
      * @return true/false
      */
-    public boolean isCategoryClass(final AccountCategoryClass pClass) {
+    public boolean isPayeeClass(final PayeeTypeClass pClass) {
         /* Check for match */
-        return getCategoryTypeClass() == pClass;
-    }
-
-    @Override
-    public AccountCategory getBase() {
-        return (AccountCategory) super.getBase();
-    }
-
-    @Override
-    public AccountCategoryList getList() {
-        return (AccountCategoryList) super.getList();
+        return getPayeeTypeClass() == pClass;
     }
 
     /**
      * Copy Constructor.
      * @param pList the list
-     * @param pCategory The Category to copy
+     * @param pPayee The Payee to copy
      */
-    protected AccountCategory(final AccountCategoryList pList,
-                              final AccountCategory pCategory) {
+    protected Payee(final PayeeList pList,
+                    final Payee pPayee) {
         /* Set standard values */
-        super(pList, pCategory);
+        super(pList, pPayee);
     }
 
     /**
@@ -469,27 +397,26 @@ public class AccountCategory
      * @param pList the List to add to
      * @param pId the Category id
      * @param pControlId the control id
-     * @param pName the Encrypted Name of the account category
-     * @param pDesc the Encrypted Description of the category
-     * @param pCatTypeId the id of the category type
-     * @param pParentId the id of the parent category
+     * @param pName the Encrypted Name of the payee
+     * @param pDesc the Encrypted Description of the payee
+     * @param pPayeeTypeId the id of the payee type
+     * @param pClosed is the payee closed?
      * @throws JOceanusException on error
      */
-    protected AccountCategory(final AccountCategoryList pList,
-                              final Integer pId,
-                              final Integer pControlId,
-                              final byte[] pName,
-                              final byte[] pDesc,
-                              final Integer pCatTypeId,
-                              final Integer pParentId) throws JOceanusException {
+    protected Payee(final PayeeList pList,
+                    final Integer pId,
+                    final Integer pControlId,
+                    final byte[] pName,
+                    final byte[] pDesc,
+                    final Integer pPayeeTypeId,
+                    final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Store the IDs */
-            setValueType(pCatTypeId);
-            setValueParent(pParentId);
+            setValueType(pPayeeTypeId);
 
             /* Set ControlId */
             setControlKey(pControlId);
@@ -498,8 +425,8 @@ public class AccountCategory
             setValueName(pName);
             setValueDesc(pDesc);
 
-            /* Resolve the subCategory */
-            resolveSubCategory();
+            /* Store closed flag */
+            setValueClosed(pClosed);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -512,33 +439,32 @@ public class AccountCategory
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
-     * @param pName the Name of the account category
-     * @param pDesc the description of the category
-     * @param pCatType the Category type name
-     * @param pParent the Parent Category name
+     * @param pName the Name of the event payee
+     * @param pDesc the description of the payee
+     * @param pPayeeType the Payee type
+     * @param pClosed is the payee closed?
      * @throws JOceanusException on error
      */
-    protected AccountCategory(final AccountCategoryList pList,
-                              final Integer pId,
-                              final String pName,
-                              final String pDesc,
-                              final String pCatType,
-                              final String pParent) throws JOceanusException {
+    protected Payee(final PayeeList pList,
+                    final Integer pId,
+                    final String pName,
+                    final String pDesc,
+                    final String pPayeeType,
+                    final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Store the links */
-            setValueType(pCatType);
-            setValueParent(pParent);
+            setValueType(pPayeeType);
 
-            /* Record the encrypted values */
+            /* Record the string values */
             setValueName(pName);
             setValueDesc(pDesc);
 
-            /* Resolve the subCategory */
-            resolveSubCategory();
+            /* Store closed flag */
+            setValueClosed(pClosed);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -551,13 +477,13 @@ public class AccountCategory
      * Edit Constructor.
      * @param pList the list
      */
-    public AccountCategory(final AccountCategoryList pList) {
+    public Payee(final PayeeList pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
     }
 
     @Override
-    public int compareTo(final AccountCategory pThat) {
+    public int compareTo(final Payee pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -566,8 +492,8 @@ public class AccountCategory
             return -1;
         }
 
-        /* Check the category type */
-        int iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
+        /* Check the payee type */
+        int iDiff = Difference.compareObject(getPayeeType(), pThat.getPayeeType());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -589,90 +515,45 @@ public class AccountCategory
 
         /* Access Relevant lists */
         MoneyWiseData myData = getDataSet();
-        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-        AccountCategoryList myList = getList();
+        PayeeTypeList myTypes = myData.getPayeeTypes();
         ValueSet myValues = getValueSet();
 
         /* Adjust Category type */
-        Object myCatType = myValues.getValue(FIELD_CATTYPE);
-        if (myCatType instanceof AccountCategoryType) {
-            myCatType = ((AccountCategoryType) myCatType).getId();
+        Object myPayeeType = myValues.getValue(FIELD_PAYEETYPE);
+        if (myPayeeType instanceof EventCategoryType) {
+            myPayeeType = ((EventCategoryType) myPayeeType).getId();
         }
-        if (myCatType instanceof Integer) {
-            AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
+        if (myPayeeType instanceof Integer) {
+            PayeeType myType = myTypes.findItemById((Integer) myPayeeType);
             if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                addError(ERROR_UNKNOWN, FIELD_PAYEETYPE);
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
-        } else if (myCatType instanceof String) {
-            AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
+        } else if (myPayeeType instanceof String) {
+            PayeeType myType = myTypes.findItemByName((String) myPayeeType);
             if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                addError(ERROR_UNKNOWN, FIELD_PAYEETYPE);
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueType(myType);
-        }
-
-        /* Adjust Parent */
-        Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof AccountCategory) {
-            myParent = ((AccountCategory) myParent).getId();
-        }
-        if (myParent instanceof Integer) {
-            AccountCategory myCat = myList.findItemById((Integer) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
-        } else if (myParent instanceof String) {
-            AccountCategory myCat = myList.findItemByName((String) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
         }
     }
 
     /**
-     * Resolve subCategory name.
-     */
-    private void resolveSubCategory() {
-        /* Set to null */
-        setValueSubCategory(null);
-
-        /* Obtain the name */
-        String myName = getName();
-        if (myName != null) {
-            /* Look for separator */
-            int iIndex = myName.indexOf(EventCategory.STR_SEP);
-            if (iIndex != -1) {
-                /* Access and set subCategory */
-                String mySub = myName.substring(iIndex + 1);
-                setValueSubCategory(mySub);
-            }
-        }
-    }
-
-    /**
-     * Set a new category name.
+     * Set a new payee name.
      * @param pName the new name
      * @throws JOceanusException on error
      */
-    public void setCategoryName(final String pName) throws JOceanusException {
+    public void setPayeeName(final String pName) throws JOceanusException {
         setValueName(pName);
-
-        /* Resolve the subCategory */
-        resolveSubCategory();
     }
 
     /**
-     * Set a new category type.
+     * Set a new payee type.
      * @param pType the new type
      */
-    public void setCategoryType(final AccountCategoryType pType) {
+    public void setPayeeType(final PayeeType pType) {
         setValueType(pType);
     }
 
@@ -685,31 +566,16 @@ public class AccountCategory
         setValueDesc(pDesc);
     }
 
-    /**
-     * Set a new parent category.
-     * @param pParent the new parent
-     */
-    public void setParentCategory(final AccountCategory pParent) {
-        setValueParent(pParent);
-    }
-
     @Override
     public void touchUnderlyingItems() {
-        /* touch the category type referred to */
-        getCategoryType().touchItem(this);
-
-        /* Touch parent if it exists */
-        AccountCategory myParent = getParentCategory();
-        if (myParent != null) {
-            myParent.touchItem(this);
-        }
+        /* touch the payee type */
+        getPayeeType().touchItem(this);
     }
 
     @Override
     public void validate() {
-        AccountCategoryList myList = getList();
-        AccountCategoryType myCatType = getCategoryType();
-        AccountCategory myParent = getParentCategory();
+        PayeeList myList = getList();
+        PayeeType myPayeeType = getPayeeType();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -736,54 +602,25 @@ public class AccountCategory
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
-        /* AccountCategoryType must be non-null */
-        if (myCatType == null) {
-            addError(ERROR_MISSING, FIELD_CATTYPE);
+        /* PayeeType must be non-null */
+        if (myPayeeType == null) {
+            addError(ERROR_MISSING, FIELD_PAYEETYPE);
         } else {
             /* Access the class */
-            AccountCategoryClass myClass = myCatType.getAccountClass();
+            PayeeTypeClass myClass = myPayeeType.getPayeeClass();
 
-            /* AccountCategoryType must be enabled */
-            if (!myCatType.getEnabled()) {
-                addError(ERROR_DISABLED, FIELD_CATTYPE);
+            /* PayeeType must be enabled */
+            if (!myPayeeType.getEnabled()) {
+                addError(ERROR_DISABLED, FIELD_PAYEETYPE);
             }
 
-            /* If the CategoryType is singular */
+            /* If the PayeeType is singular */
             if (myClass.isSingular()) {
                 /* Count the elements of this class */
                 int myCount = myList.countInstances(myClass);
                 if (myCount > 1) {
-                    addError(ERROR_MULT, FIELD_CATTYPE);
+                    addError(ERROR_MULT, FIELD_PAYEETYPE);
                 }
-            }
-
-            /* Switch on the account class */
-            switch (myClass) {
-                case TOTALS:
-                    /* If parent exists */
-                    if (myParent != null) {
-                        addError(ERROR_EXIST, FIELD_PARENT);
-                    }
-                    break;
-                case SAVINGSTOTALS:
-                case CASHTOTALS:
-                case PRICEDTOTALS:
-                case LOANTOTALS:
-                    /* Check parent */
-                    if (myParent == null) {
-                        addError(ERROR_MISSING, FIELD_PARENT);
-                    } else if (!myParent.isCategoryClass(AccountCategoryClass.TOTALS)) {
-                        addError(ERROR_BADPARENT, FIELD_PARENT);
-                    }
-                    break;
-                default:
-                    /* Check parent */
-                    if (myParent == null) {
-                        addError(ERROR_MISSING, FIELD_PARENT);
-                    } else if (myParent.getCategoryTypeClass() != myClass.getParentClass()) {
-                        addError(ERROR_BADPARENT, FIELD_PARENT);
-                    }
-                    break;
             }
         }
 
@@ -794,39 +631,39 @@ public class AccountCategory
     }
 
     /**
-     * Update base category from an edited category.
-     * @param pCategory the edited category
+     * Update base payee from an edited payee.
+     * @param pPayee the edited payee
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pCategory) {
-        /* Can only update from an account category */
-        if (!(pCategory instanceof AccountCategory)) {
+    public boolean applyChanges(final DataItem pPayee) {
+        /* Can only update from a payee */
+        if (!(pPayee instanceof Payee)) {
             return false;
         }
-        AccountCategory myCategory = (AccountCategory) pCategory;
+        Payee myPayee = (Payee) pPayee;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myCategory.getName())) {
-            setValueName(myCategory.getNameField());
+        if (!Difference.isEqual(getName(), myPayee.getName())) {
+            setValueName(myPayee.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myCategory.getDesc())) {
-            setValueDesc(myCategory.getDescField());
+        if (!Difference.isEqual(getDesc(), myPayee.getDesc())) {
+            setValueDesc(myPayee.getDescField());
         }
 
         /* Update the category type if required */
-        if (!Difference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
-            setValueType(myCategory.getCategoryType());
+        if (!Difference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
+            setValueType(myPayee.getPayeeType());
         }
 
-        /* Update the parent category if required */
-        if (!Difference.isEqual(getParentCategory(), myCategory.getParentCategory())) {
-            setValueParent(myCategory.getParentCategory());
+        /* Update the closed status if required */
+        if (!Difference.isEqual(isClosed(), myPayee.isClosed())) {
+            setValueClosed(myPayee.isClosed());
         }
 
         /* Check for changes */
@@ -834,10 +671,10 @@ public class AccountCategory
     }
 
     /**
-     * The Account Category List class.
+     * The Payee List class.
      */
-    public static class AccountCategoryList
-            extends EncryptedList<AccountCategory> {
+    public static class PayeeList
+            extends EncryptedList<Payee> {
         /**
          * Local Report fields.
          */
@@ -859,30 +696,30 @@ public class AccountCategory
         }
 
         /**
-         * Construct an empty CORE Account Category list.
+         * Construct an empty CORE Payee list.
          * @param pData the DataSet for the list
          */
-        protected AccountCategoryList(final MoneyWiseData pData) {
-            super(AccountCategory.class, pData, ListStyle.CORE);
+        public PayeeList(final MoneyWiseData pData) {
+            super(Payee.class, pData, ListStyle.CORE);
         }
 
         @Override
-        protected AccountCategoryList getEmptyList(final ListStyle pStyle) {
-            AccountCategoryList myList = new AccountCategoryList(this);
+        protected PayeeList getEmptyList(final ListStyle pStyle) {
+            PayeeList myList = new PayeeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public AccountCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (AccountCategoryList) super.cloneList(pDataSet);
+        public PayeeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (PayeeList) super.cloneList(pDataSet);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected AccountCategoryList(final AccountCategoryList pSource) {
+        protected PayeeList(final PayeeList pSource) {
             super(pSource);
         }
 
@@ -890,23 +727,23 @@ public class AccountCategory
          * Derive Edit list.
          * @return the edit list
          */
-        public AccountCategoryList deriveEditList() {
+        public PayeeList deriveEditList() {
             /* Build an empty List */
-            AccountCategoryList myList = getEmptyList(ListStyle.EDIT);
+            PayeeList myList = getEmptyList(ListStyle.EDIT);
 
-            /* Loop through the categories */
-            Iterator<AccountCategory> myIterator = iterator();
+            /* Loop through the payees */
+            Iterator<Payee> myIterator = iterator();
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
+                Payee myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
                     continue;
                 }
 
-                /* Build the new linked event category and add it to the list */
-                AccountCategory myCategory = new AccountCategory(myList, myCurr);
-                myList.append(myCategory);
+                /* Build the new linked payee and add it to the list */
+                Payee myPayee = new Payee(myList, myCurr);
+                myList.append(myPayee);
             }
 
             /* Return the list */
@@ -915,19 +752,19 @@ public class AccountCategory
 
         /**
          * Add a new item to the core list.
-         * @param pCategory item
+         * @param pPayee item
          * @return the newly added item
          */
         @Override
-        public AccountCategory addCopyItem(final DataItem pCategory) {
-            /* Can only clone an AccountCategory */
-            if (!(pCategory instanceof AccountCategory)) {
+        public Payee addCopyItem(final DataItem pPayee) {
+            /* Can only clone a Payee */
+            if (!(pPayee instanceof Payee)) {
                 return null;
             }
 
-            AccountCategory myCategory = new AccountCategory(this, (AccountCategory) pCategory);
-            add(myCategory);
-            return myCategory;
+            Payee myPayee = new Payee(this, (Payee) pPayee);
+            add(myPayee);
+            return myPayee;
         }
 
         /**
@@ -935,10 +772,10 @@ public class AccountCategory
          * @return the new item
          */
         @Override
-        public AccountCategory addNewItem() {
-            AccountCategory myCategory = new AccountCategory(this);
-            add(myCategory);
-            return myCategory;
+        public Payee addNewItem() {
+            Payee myPayee = new Payee(this);
+            add(myPayee);
+            return myPayee;
         }
 
         /**
@@ -948,12 +785,12 @@ public class AccountCategory
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
-            Iterator<AccountCategory> myIterator = iterator();
+            Iterator<Payee> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
+                Payee myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -968,15 +805,15 @@ public class AccountCategory
          * @param pClass the event category class
          * @return The # of instances of the class
          */
-        protected int countInstances(final AccountCategoryClass pClass) {
+        protected int countInstances(final PayeeTypeClass pClass) {
             /* Access the iterator */
-            Iterator<AccountCategory> myIterator = iterator();
+            Iterator<Payee> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
-                if (pClass == myCurr.getCategoryTypeClass()) {
+                Payee myCurr = myIterator.next();
+                if (pClass == myCurr.getPayeeTypeClass()) {
                     iCount++;
                 }
             }
@@ -990,13 +827,13 @@ public class AccountCategory
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public AccountCategory findItemByName(final String pName) {
+        public Payee findItemByName(final String pName) {
             /* Access the iterator */
-            Iterator<AccountCategory> myIterator = iterator();
+            Iterator<Payee> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
+                Payee myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -1007,18 +844,18 @@ public class AccountCategory
         }
 
         /**
-         * Obtain the first account category for the specified class.
-         * @param pClass the account category class
-         * @return the category
+         * Obtain the first payee for the specified class.
+         * @param pClass the payee class
+         * @return the payee
          */
-        public AccountCategory getSingularClass(final AccountCategoryClass pClass) {
+        public Payee getSingularClass(final PayeeTypeClass pClass) {
             /* Access the iterator */
-            Iterator<AccountCategory> myIterator = iterator();
+            Iterator<Payee> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
-                if (myCurr.getCategoryTypeClass() == pClass) {
+                Payee myCurr = myIterator.next();
+                if (myCurr.getPayeeTypeClass() == pClass) {
                     return myCurr;
                 }
             }
@@ -1028,59 +865,59 @@ public class AccountCategory
         }
 
         /**
-         * Allow a category to be added.
+         * Allow a payee to be added.
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
-         * @param pCategoryType the category type
-         * @param pParent the parent category
+         * @param pPayeeType the payee type
+         * @param pClosed is the payee closed
          * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
-                                final String pCategoryType,
-                                final String pParent) throws JOceanusException {
-            /* Create the category */
-            AccountCategory myCategory = new AccountCategory(this, pId, pName, pDesc, pCategoryType, pParent);
+                                final String pPayeeType,
+                                final Boolean pClosed) throws JOceanusException {
+            /* Create the payee */
+            Payee myPayee = new Payee(this, pId, pName, pDesc, pPayeeType, pClosed);
 
-            /* Check that this CategoryId has not been previously added */
+            /* Check that this PayeeId has not been previously added */
             if (!isIdUnique(pId)) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
+                myPayee.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPayee, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            append(myCategory);
+            append(myPayee);
         }
 
         /**
-         * Load an Encrypted Category.
+         * Load an Encrypted Payee.
          * @param pId the id
          * @param pControlId the control id
          * @param pName the encrypted name
          * @param pDesc the encrypted description
-         * @param pCategoryId the category id
-         * @param pParentId the parent id
+         * @param pPayeeTypeId the payee id
+         * @param pClosed is the payee closed
          * @throws JOceanusException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final byte[] pDesc,
-                                  final Integer pCategoryId,
-                                  final Integer pParentId) throws JOceanusException {
-            /* Create the category */
-            AccountCategory myCategory = new AccountCategory(this, pId, pControlId, pName, pDesc, pCategoryId, pParentId);
+                                  final Integer pPayeeTypeId,
+                                  final Boolean pClosed) throws JOceanusException {
+            /* Create the payee */
+            Payee myPayee = new Payee(this, pId, pControlId, pName, pDesc, pPayeeTypeId, pClosed);
 
-            /* Check that this CategoryId has not been previously added */
+            /* Check that this PayeeId has not been previously added */
             if (!isIdUnique(pId)) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
+                myPayee.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPayee, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            append(myCategory);
+            append(myPayee);
         }
     }
 }

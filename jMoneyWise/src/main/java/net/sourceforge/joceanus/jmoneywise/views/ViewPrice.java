@@ -28,24 +28,24 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Extension of AccountPrice to cater for diluted prices.
  * @author Tony Washer
  */
 public class ViewPrice
-        extends AccountPrice {
+        extends SecurityPrice {
     /**
      * Object name.
      */
@@ -60,7 +60,7 @@ public class ViewPrice
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -133,8 +133,8 @@ public class ViewPrice
     }
 
     @Override
-    public AccountPrice getBase() {
-        return (AccountPrice) super.getBase();
+    public SecurityPrice getBase() {
+        return (SecurityPrice) super.getBase();
     }
 
     /**
@@ -151,14 +151,14 @@ public class ViewPrice
         /* Access Price and date */
         JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
-        Account myAccount = getAccount();
+        Account mySecurity = getSecurity();
 
         /* If we have can look at dilutions */
         if ((hasDilutions)
             && (myDate != null)
             && (myPrice != null)) {
             /* Determine the dilution factor for the date */
-            JDilution myDilution = myList.getDilutions().getDilutionFactor(myAccount, myDate);
+            JDilution myDilution = myList.getDilutions().getDilutionFactor(mySecurity, myDate);
 
             /* If we have a dilution factor */
             if (myDilution != null) {
@@ -175,7 +175,7 @@ public class ViewPrice
      * @param pPrice The Price
      */
     protected ViewPrice(final ViewPriceList pList,
-                        final AccountPrice pPrice) {
+                        final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
 
@@ -191,7 +191,7 @@ public class ViewPrice
      * @param pList the list
      */
     private ViewPrice(final ViewPriceList pList) {
-        super(pList, pList.getAccount());
+        super(pList, pList.getSecurity());
 
         /* Determine whether the account has dilutions */
         hasDilutions = ((ViewPriceList) getList()).hasDilutions;
@@ -236,9 +236,9 @@ public class ViewPrice
         }
 
         /**
-         * The Account field id.
+         * The Security field id.
          */
-        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
+        public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField("Security");
 
         /**
          * The Dilutions field id.
@@ -247,8 +247,8 @@ public class ViewPrice
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_ACCOUNT.equals(pField)) {
-                return theAccount;
+            if (FIELD_SECURITY.equals(pField)) {
+                return theSecurity;
             }
             if (FIELD_DILUTIONS.equals(pField)) {
                 return (theDilutions.isEmpty())
@@ -264,9 +264,9 @@ public class ViewPrice
         }
 
         /**
-         * The account.
+         * The security.
          */
-        private final Account theAccount;
+        private final Account theSecurity;
 
         /**
          * Dilutions list.
@@ -279,11 +279,11 @@ public class ViewPrice
         private boolean hasDilutions = false;
 
         /**
-         * Obtain account.
-         * @return the account
+         * Obtain security.
+         * @return the security
          */
-        private Account getAccount() {
-            return theAccount;
+        private Account getSecurity() {
+            return theSecurity;
         }
 
         /**
@@ -305,38 +305,38 @@ public class ViewPrice
         /**
          * Construct an edit extract of a Price list.
          * @param pView The master view
-         * @param pAccount The account to extract rates for
+         * @param pSecurity The security to extract prices for
          */
         public ViewPriceList(final View pView,
-                             final Account pAccount) {
+                             final Account pSecurity) {
             /* Declare the data and set the style */
             super(ViewPrice.class, pView.getData());
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */
-            if ((pAccount != null)
-                && (pAccount.getAlias() != null)) {
-                theAccount = pAccount.getAlias();
+            if ((pSecurity != null)
+                && (pSecurity.getAlias() != null)) {
+                theSecurity = pSecurity.getAlias();
             } else {
-                theAccount = pAccount;
+                theSecurity = pSecurity;
             }
 
             /* Access the base prices */
-            AccountPriceList myPrices = getDataSet().getPrices();
+            SecurityPriceList myPrices = getDataSet().getPrices();
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
             theDilutions = pView.getDilutions();
-            hasDilutions = theDilutions.hasDilution(theAccount);
+            hasDilutions = theDilutions.hasDilution(theSecurity);
 
             /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = myPrices.listIterator();
+            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SecurityPrice myCurr = myIterator.next();
                 /* Check the account */
-                int myResult = theAccount.compareTo(myCurr.getAccount());
+                int myResult = theSecurity.compareTo(myCurr.getSecurity());
 
                 /* Skip different accounts */
                 if (myResult != 0) {
@@ -352,8 +352,8 @@ public class ViewPrice
         /* Is this list locked */
         @Override
         public boolean isLocked() {
-            return (theAccount != null)
-                   && (theAccount.isLocked());
+            return (theSecurity != null)
+                   && (theSecurity.isLocked());
         }
 
         @Override
@@ -368,7 +368,7 @@ public class ViewPrice
         @Override
         public ViewPrice addNewItem() {
             ViewPrice myPrice = new ViewPrice(this);
-            myPrice.setAccount(theAccount);
+            myPrice.setSecurity(theSecurity);
             add(myPrice);
             return myPrice;
         }

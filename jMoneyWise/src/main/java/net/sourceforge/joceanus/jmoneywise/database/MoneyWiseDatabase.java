@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -56,6 +56,8 @@ public class MoneyWiseDatabase
     private void declareTables() {
         /* Add additional tables */
         addTable(new TableAccountCategoryType(this));
+        addTable(new TablePayeeType(this));
+        addTable(new TableSecurityType(this));
         addTable(new TableEventCategoryType(this));
         addTable(new TableTaxBasis(this));
         addTable(new TableTaxCategory(this));
@@ -71,9 +73,12 @@ public class MoneyWiseDatabase
         addTable(new TableTaxYear(this));
         addTable(new TableTaxYearInfo(this));
         addTable(new TableExchangeRate(this));
+        addTable(new TablePayee(this));
+        addTable(new TableSecurity(this));
         addTable(new TableAccount(this));
+        addTable(new TablePortfolio(this));
         addTable(new TableAccountRate(this));
-        addTable(new TableAccountPrice(this));
+        addTable(new TableSecurityPrice(this));
         addTable(new TableAccountInfo(this));
         addTable(new TableEvent(this));
         addTable(new TableEventInfo(this));

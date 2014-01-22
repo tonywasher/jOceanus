@@ -25,9 +25,13 @@ package net.sourceforge.joceanus.jprometheus.data;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
+import net.sourceforge.joceanus.jmetis.field.JFieldState;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.ItemValidation;
 import net.sourceforge.joceanus.jmetis.viewer.ItemValidation.ErrorElement;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -37,10 +41,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSetHistory;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
-import net.sourceforge.joceanus.jmetis.field.JFieldSetItem;
-import net.sourceforge.joceanus.jmetis.field.JFieldState;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -121,6 +121,11 @@ public abstract class DataItem
     public static final String ERROR_CREATEITEM = NLS_BUNDLE.getString("ErrorCreate");
 
     /**
+     * Multiple instances Error.
+     */
+    public static final String ERROR_MULT = NLS_BUNDLE.getString("ErrorMultiple");
+
+    /**
      * Instance ReportFields.
      */
     private final JDataFields theFields;
@@ -158,6 +163,16 @@ public abstract class DataItem
     public int getValueSetVersion() {
         return theValueSet.getVersion();
     }
+
+    /**
+     * Standard Name length.
+     */
+    public static final int NAMELEN = 30;
+
+    /**
+     * Standard Description length.
+     */
+    public static final int DESCLEN = 50;
 
     /**
      * Id Field Id.
