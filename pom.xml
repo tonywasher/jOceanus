@@ -231,6 +231,11 @@
         <version>2.4</version>
         <configuration>
             <linkJavadoc>true</linkJavadoc>
+            <aggregate>true</aggregate>
+            <excludes>
+               <exclude>**/jira/soap/*.java</exclude>
+               <exclude>**/SevenZip/**/*.java</exclude>
+            </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -239,7 +244,9 @@
         <version>2.9.1</version>
         <configuration>
           <show>public</show>
+          <aggregate>true</aggregate>
           <nohelp>true</nohelp>
+          <excludePackageNames>*.jira.soap.*:SevenZip*</excludePackageNames>
         </configuration>
       </plugin>
     </plugins>

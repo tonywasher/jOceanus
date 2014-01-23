@@ -18,7 +18,6 @@
 
     <menu name="jGordianKnot">
       <item name="Introduction" href="index.html"/>
-      <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 
     <menu ref="parent"/>

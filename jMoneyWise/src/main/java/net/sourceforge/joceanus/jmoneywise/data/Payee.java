@@ -349,11 +349,13 @@ public class Payee
     }
 
     /**
-     * Set closed value.
+     * Set closed indication.
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, pValue);
+        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
     }
 
     @Override
@@ -564,6 +566,14 @@ public class Payee
      */
     public void setDescription(final String pDesc) throws JOceanusException {
         setValueDesc(pDesc);
+    }
+
+    /**
+     * Set a new closed indication.
+     * @param isClosed the new closed indication
+     */
+    public void setClosed(final Boolean isClosed) {
+        setValueClosed(isClosed);
     }
 
     @Override

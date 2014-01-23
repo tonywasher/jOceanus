@@ -62,9 +62,19 @@ public class SheetPortfolio
     private static final int COL_DESC = COL_NAME + 1;
 
     /**
+     * Holding column.
+     */
+    private static final int COL_HOLDING = COL_DESC + 1;
+
+    /**
+     * TaxFree column.
+     */
+    private static final int COL_TAXFREE = COL_HOLDING + 1;
+
+    /**
      * Closed column.
      */
-    private static final int COL_CLOSED = COL_DESC + 1;
+    private static final int COL_CLOSED = COL_TAXFREE + 1;
 
     /**
      * Portfolio data list.
@@ -101,16 +111,18 @@ public class SheetPortfolio
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
+        Integer myHoldingId = loadInteger(COL_HOLDING);
 
         /* Access the Name and description */
         byte[] myNameBytes = loadBytes(COL_NAME);
         byte[] myDescBytes = loadBytes(COL_DESC);
 
         /* Access the Flags */
+        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, isClosed);
+        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myHoldingId, isTaxFree, isClosed);
     }
 
     @Override
@@ -118,20 +130,24 @@ public class SheetPortfolio
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
         String myDesc = loadString(COL_DESC);
+        String myHolding = loadString(COL_HOLDING);
 
         /* Access the Flags */
+        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, isClosed);
+        theList.addOpenItem(pId, myName, myDesc, myHolding, isTaxFree, isClosed);
     }
 
     @Override
     protected void insertSecureItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_HOLDING, pItem.getHoldingId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
@@ -140,6 +156,8 @@ public class SheetPortfolio
         /* Set the fields */
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
+        writeString(COL_HOLDING, pItem.getHoldingName());
+        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBoolean(COL_CLOSED, pItem.isClosed());
     }
 
@@ -148,6 +166,8 @@ public class SheetPortfolio
         /* Write titles */
         writeHeader(COL_NAME, Portfolio.FIELD_NAME.getName());
         writeHeader(COL_DESC, Portfolio.FIELD_DESC.getName());
+        writeHeader(COL_HOLDING, Portfolio.FIELD_HOLDING.getName());
+        writeHeader(COL_TAXFREE, Portfolio.FIELD_TAXFREE.getName());
         writeHeader(COL_CLOSED, Portfolio.FIELD_CLOSED.getName());
     }
 
@@ -156,10 +176,15 @@ public class SheetPortfolio
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
+        setStringColumn(COL_HOLDING);
+        setBooleanColumn(COL_TAXFREE);
         setBooleanColumn(COL_CLOSED);
 
         /* Set the name column range */
         nameColumnRange(COL_NAME, AREA_PORTFOLIONAMES);
+
+        /* Set validation */
+        applyDataValidation(COL_HOLDING, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override
@@ -227,12 +252,20 @@ public class SheetPortfolio
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myName = myCell.getStringValue();
 
+                /* Access holding name */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myHolding = myCell.getStringValue();
+
+                /* Access TaxFree Flag */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                Boolean isTaxFree = myCell.getBooleanValue();
+
                 /* Access Closed Flag */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = myCell.getBooleanValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, isClosed);
+                myList.addOpenItem(0, myName, null, myHolding, isTaxFree, isClosed);
 
                 /* Report the progress */
                 myCount++;

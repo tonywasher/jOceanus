@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -77,9 +78,14 @@ public class SheetSecurity
     private static final int COL_DESC = COL_SYMBOL + 1;
 
     /**
+     * Currency column.
+     */
+    private static final int COL_CURRENCY = COL_DESC + 1;
+
+    /**
      * Closed column.
      */
-    private static final int COL_CLOSED = COL_DESC + 1;
+    private static final int COL_CLOSED = COL_CURRENCY + 1;
 
     /**
      * Security data list.
@@ -118,6 +124,7 @@ public class SheetSecurity
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myTypeId = loadInteger(COL_TYPE);
         Integer myParentId = loadInteger(COL_PARENT);
+        Integer myCurrencyId = loadInteger(COL_CURRENCY);
 
         /* Access the Name and description */
         byte[] myNameBytes = loadBytes(COL_NAME);
@@ -128,7 +135,7 @@ public class SheetSecurity
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myTypeId, myParentId, mySymbol, isClosed);
+        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myTypeId, myParentId, mySymbol, myCurrencyId, isClosed);
     }
 
     @Override
@@ -136,6 +143,7 @@ public class SheetSecurity
         /* Access the name */
         String myType = loadString(COL_TYPE);
         String myParent = loadString(COL_PARENT);
+        String myCurrency = loadString(COL_CURRENCY);
 
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
@@ -146,7 +154,7 @@ public class SheetSecurity
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, myParent, mySymbol, isClosed);
+        theList.addOpenItem(pId, myName, myDesc, myType, myParent, mySymbol, myCurrency, isClosed);
     }
 
     @Override
@@ -155,6 +163,7 @@ public class SheetSecurity
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
+        writeInteger(COL_CURRENCY, pItem.getSecurityCurrencyId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_SYMBOL, pItem.getSymbolBytes());
@@ -166,6 +175,7 @@ public class SheetSecurity
         /* Set the fields */
         writeString(COL_TYPE, pItem.getSecurityTypeName());
         writeString(COL_PARENT, pItem.getParentName());
+        writeString(COL_CURRENCY, pItem.getSecurityCurrencyName());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
         writeString(COL_SYMBOL, pItem.getSymbol());
@@ -177,6 +187,7 @@ public class SheetSecurity
         /* Write titles */
         writeHeader(COL_TYPE, Security.FIELD_SECTYPE.getName());
         writeHeader(COL_PARENT, Security.FIELD_PARENT.getName());
+        writeHeader(COL_CURRENCY, Security.FIELD_CURRENCY.getName());
         writeHeader(COL_NAME, Security.FIELD_NAME.getName());
         writeHeader(COL_DESC, Security.FIELD_DESC.getName());
         writeHeader(COL_SYMBOL, Security.FIELD_SYMBOL.getName());
@@ -191,6 +202,7 @@ public class SheetSecurity
         setStringColumn(COL_TYPE);
         setStringColumn(COL_PARENT);
         setStringColumn(COL_SYMBOL);
+        setStringColumn(COL_CURRENCY);
         setBooleanColumn(COL_CLOSED);
 
         /* Set the name column range */
@@ -198,6 +210,7 @@ public class SheetSecurity
 
         /* Set validation */
         applyDataValidation(COL_TYPE, SheetSecurityType.AREA_SECURITYTYPENAMES);
+        applyDataValidation(COL_CURRENCY, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
         applyDataValidation(COL_PARENT, SheetPayee.AREA_PAYEENAMES);
     }
 
@@ -256,6 +269,9 @@ public class SheetSecurity
                 return false;
             }
 
+            /* Access default currency */
+            AccountCurrency myCurrency = pData.getDefaultCurrency();
+
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
@@ -283,7 +299,7 @@ public class SheetSecurity
                 Boolean isClosed = myCell.getBooleanValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, myParent, mySymbol, isClosed);
+                myList.addOpenItem(0, myName, null, myType, myParent, mySymbol, myCurrency.getName(), isClosed);
 
                 /* Report the progress */
                 myCount++;

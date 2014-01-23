@@ -63,14 +63,14 @@ public class TableSecurity
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Security.FIELD_SECTYPE, TableSecurityType.TABLE_NAME);
-        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(Security.FIELD_PARENT);
+        myTableDef.addReferenceColumn(Security.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
+        myTableDef.addReferenceColumn(Security.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Security.FIELD_NAME, Security.NAMELEN);
         myTableDef.addNullEncryptedColumn(Security.FIELD_DESC, Security.DESCLEN);
         myTableDef.addEncryptedColumn(Security.FIELD_SYMBOL, Security.SYMBOLLEN);
         myTableDef.addBooleanColumn(Security.FIELD_CLOSED);
 
         /* Declare Sort Columns */
-        myParentCol.setSortOrder(SortOrder.DESCENDING);
         myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
@@ -88,13 +88,14 @@ public class TableSecurity
         TableDefinition myTableDef = getTableDef();
         Integer myTypeId = myTableDef.getIntegerValue(Security.FIELD_SECTYPE);
         Integer myParentId = myTableDef.getIntegerValue(Security.FIELD_PARENT);
+        Integer myCurrencyId = myTableDef.getIntegerValue(Security.FIELD_CURRENCY);
         byte[] myName = myTableDef.getBinaryValue(Security.FIELD_NAME);
         byte[] myDesc = myTableDef.getBinaryValue(Security.FIELD_DESC);
         byte[] mySymbol = myTableDef.getBinaryValue(Security.FIELD_SYMBOL);
         Boolean isClosed = myTableDef.getBooleanValue(Security.FIELD_CLOSED);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, myTypeId, myParentId, mySymbol, isClosed);
+        theList.addSecureItem(pId, pControlId, myName, myDesc, myTypeId, myParentId, mySymbol, myCurrencyId, isClosed);
     }
 
     @Override
@@ -106,6 +107,8 @@ public class TableSecurity
             myTableDef.setIntegerValue(iField, pItem.getSecurityTypeId());
         } else if (Security.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
+        } else if (Security.FIELD_CURRENCY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getSecurityCurrencyId());
         } else if (Security.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Security.FIELD_DESC.equals(iField)) {

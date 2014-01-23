@@ -20,7 +20,6 @@
       <item name="Introduction" href="index.html"/>
       <item name="TableFilter Demo" href="demo/TableDemo.html"/>
       <item name="DateDay Demo" href="demo/DateDemo.html"/>
-      <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 
     <menu ref="parent"/>

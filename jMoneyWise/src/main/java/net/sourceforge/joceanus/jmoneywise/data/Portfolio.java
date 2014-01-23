@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -52,7 +53,8 @@ public class Portfolio
     /**
      * List name.
      */
-    public static final String LIST_NAME = "Portfolios";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Resource Bundle.
@@ -75,9 +77,29 @@ public class Portfolio
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     /**
+     * Holding Field Id.
+     */
+    public static final JDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHolding"));
+
+    /**
+     * isTaxFree Field Id.
+     */
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
+
+    /**
      * isClosed Field Id.
      */
     public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
+
+    /**
+     * Holding Invalid Error Text.
+     */
+    private static final String ERROR_BADHOLD = NLS_BUNDLE.getString("ErrorBadHolding");
+
+    /**
+     * Holding Closed Error Text.
+     */
+    private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
 
     @Override
     public JDataFields declareFields() {
@@ -143,6 +165,44 @@ public class Portfolio
     }
 
     /**
+     * Obtain Holding.
+     * @return the holding account
+     */
+    public Account getHolding() {
+        return getHolding(getValueSet());
+    }
+
+    /**
+     * Obtain HoldingId.
+     * @return the holdingId
+     */
+    public Integer getHoldingId() {
+        Account myHolding = getHolding();
+        return (myHolding == null)
+                ? null
+                : myHolding.getId();
+    }
+
+    /**
+     * Obtain HoldingName.
+     * @return the holdingName
+     */
+    public String getHoldingName() {
+        Account myHolding = getHolding();
+        return (myHolding == null)
+                ? null
+                : myHolding.getName();
+    }
+
+    /**
+     * Is the portfolio taxFree.
+     * @return true/false
+     */
+    public Boolean isTaxFree() {
+        return isTaxFree(getValueSet());
+    }
+
+    /**
      * Is the portfolio closed?
      * @return true/false
      */
@@ -202,6 +262,24 @@ public class Portfolio
      */
     private static EncryptedString getDescField(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
+    }
+
+    /**
+     * Obtain Holding.
+     * @param pValueSet the valueSet
+     * @return the Holding Account
+     */
+    public static Account getHolding(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_HOLDING, Account.class);
+    }
+
+    /**
+     * Is the portfolio taxFree.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isTaxFree(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
     }
 
     /**
@@ -266,11 +344,47 @@ public class Portfolio
     }
 
     /**
-     * Set closed value.
+     * Set holding value.
+     * @param pValue the value
+     */
+    private void setValueHolding(final Account pValue) {
+        getValueSet().setValue(FIELD_HOLDING, pValue);
+    }
+
+    /**
+     * Set holding id.
+     * @param pValue the value
+     */
+    private void setValueHolding(final Integer pValue) {
+        getValueSet().setValue(FIELD_HOLDING, pValue);
+    }
+
+    /**
+     * Set holding name.
+     * @param pValue the value
+     */
+    private void setValueHolding(final String pValue) {
+        getValueSet().setValue(FIELD_HOLDING, pValue);
+    }
+
+    /**
+     * Set taxFree indication.
+     * @param pValue the value
+     */
+    private void setValueTaxFree(final Boolean pValue) {
+        getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
+    }
+
+    /**
+     * Set closed indication.
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, pValue);
+        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
     }
 
     @Override
@@ -306,6 +420,8 @@ public class Portfolio
      * @param pControlId the control id
      * @param pName the Encrypted Name of the portfolio
      * @param pDesc the Encrypted Description of the portfolio
+     * @param pHoldingId the Holding account id
+     * @param pTaxFree is the portfolio taxFree?
      * @param pClosed is the portfolio closed?
      * @throws JOceanusException on error
      */
@@ -314,6 +430,8 @@ public class Portfolio
                         final Integer pControlId,
                         final byte[] pName,
                         final byte[] pDesc,
+                        final Integer pHoldingId,
+                        final Boolean pTaxFree,
                         final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
@@ -322,13 +440,15 @@ public class Portfolio
         try {
             /* Set ControlId */
             setControlKey(pControlId);
+            setValueHolding(pHoldingId);
 
             /* Record the encrypted values */
             setValueName(pName);
             setValueDesc(pDesc);
 
-            /* Store closed flag */
+            /* Store flags */
             setValueClosed(pClosed);
+            setValueTaxFree(pTaxFree);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -343,6 +463,8 @@ public class Portfolio
      * @param pId the id
      * @param pName the Name of the event category
      * @param pDesc the description of the category
+     * @param pHolding the Holding account id
+     * @param pTaxFree is the portfolio taxFree?
      * @param pClosed is the portfolio closed?
      * @throws JOceanusException on error
      */
@@ -350,6 +472,8 @@ public class Portfolio
                         final Integer pId,
                         final String pName,
                         final String pDesc,
+                        final String pHolding,
+                        final Boolean pTaxFree,
                         final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
@@ -359,9 +483,11 @@ public class Portfolio
             /* Record the string values */
             setValueName(pName);
             setValueDesc(pDesc);
+            setValueHolding(pHolding);
 
-            /* Store closed flag */
+            /* Store flags */
             setValueClosed(pClosed);
+            setValueTaxFree(pTaxFree);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -399,6 +525,38 @@ public class Portfolio
         return super.compareId(pThat);
     }
 
+    @Override
+    public void resolveDataSetLinks() throws JOceanusException {
+        /* Update the Encryption details */
+        super.resolveDataSetLinks();
+
+        /* Access Relevant lists */
+        MoneyWiseData myData = getDataSet();
+        AccountList myAccounts = myData.getAccounts();
+        ValueSet myValues = getValueSet();
+
+        /* Adjust Holding */
+        Object myHolding = myValues.getValue(FIELD_HOLDING);
+        if (myHolding instanceof Account) {
+            myHolding = ((Account) myHolding).getId();
+        }
+        if (myHolding instanceof Integer) {
+            Account myAccount = myAccounts.findItemById((Integer) myHolding);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_HOLDING);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
+            }
+            setValueHolding(myAccount);
+        } else if (myHolding instanceof String) {
+            Account myAccount = myAccounts.findItemByName((String) myHolding);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_HOLDING);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
+            }
+            setValueHolding(myAccount);
+        }
+    }
+
     /**
      * Set a new portfolio name.
      * @param pName the new name
@@ -417,9 +575,35 @@ public class Portfolio
         setValueDesc(pDesc);
     }
 
+    /**
+     * Set a new holding account.
+     * @param pHolding the holding
+     * @throws JOceanusException on error
+     */
+    public void setHolding(final Account pHolding) throws JOceanusException {
+        setValueHolding(pHolding);
+    }
+
+    /**
+     * Set a new closed indication.
+     * @param isClosed the new closed indication
+     */
+    public void setClosed(final Boolean isClosed) {
+        setValueClosed(isClosed);
+    }
+
+    /**
+     * Set a new taxFree indication.
+     * @param isTaxFree the new taxFree indication
+     */
+    public void setTaxFree(final Boolean isTaxFree) {
+        setValueTaxFree(isTaxFree);
+    }
+
     @Override
     public void validate() {
         PortfolioList myList = getList();
+        Account myHolding = getHolding();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -444,6 +628,22 @@ public class Portfolio
         if ((myDesc != null)
             && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
+        }
+
+        /* Holding account must exist */
+        if (myHolding == null) {
+            addError(ERROR_MISSING, FIELD_HOLDING);
+        } else {
+            /* check that holding account is savings */
+            if (!myHolding.isSavings()) {
+                addError(ERROR_BADHOLD, FIELD_HOLDING);
+            }
+
+            /* If we are open then holding account must be open */
+            if (!isClosed()
+                && myHolding.isClosed()) {
+                addError(ERROR_HOLDCLOSED, FIELD_HOLDING);
+            }
         }
 
         /* Set validation flag */
@@ -476,6 +676,16 @@ public class Portfolio
         /* Update the description if required */
         if (!Difference.isEqual(getDesc(), myPortfolio.getDesc())) {
             setValueDesc(myPortfolio.getDescField());
+        }
+
+        /* Update the holding account if required */
+        if (!Difference.isEqual(getHolding(), myPortfolio.getHolding())) {
+            setValueHolding(myPortfolio.getHolding());
+        }
+
+        /* Update the taxFree status if required */
+        if (!Difference.isEqual(isTaxFree(), myPortfolio.isTaxFree())) {
+            setValueTaxFree(myPortfolio.isTaxFree());
         }
 
         /* Update the closed status if required */
@@ -643,15 +853,19 @@ public class Portfolio
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
+         * @param pHolding the Holding account
+         * @param pTaxFree is the portfolio taxFree?
          * @param pClosed is the portfolio closed?
          * @throws JOceanusException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
+                                final String pHolding,
+                                final Boolean pTaxFree,
                                 final Boolean pClosed) throws JOceanusException {
             /* Create the portfolio */
-            Portfolio myPortfolio = new Portfolio(this, pId, pName, pDesc, pClosed);
+            Portfolio myPortfolio = new Portfolio(this, pId, pName, pDesc, pHolding, pTaxFree, pClosed);
 
             /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -669,6 +883,8 @@ public class Portfolio
          * @param pControlId the control id
          * @param pName the encrypted name
          * @param pDesc the encrypted description
+         * @param pHoldingId the Holding account id
+         * @param pTaxFree is the portfolio taxFree?
          * @param pClosed is the portfolio closed?
          * @throws JOceanusException on error
          */
@@ -676,9 +892,11 @@ public class Portfolio
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final byte[] pDesc,
+                                  final Integer pHoldingId,
+                                  final Boolean pTaxFree,
                                   final Boolean pClosed) throws JOceanusException {
             /* Create the portfolio */
-            Portfolio myPortfolio = new Portfolio(this, pId, pControlId, pName, pDesc, pClosed);
+            Portfolio myPortfolio = new Portfolio(this, pId, pControlId, pName, pDesc, pHoldingId, pTaxFree, pClosed);
 
             /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(pId)) {

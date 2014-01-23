@@ -60,7 +60,9 @@ public class TablePortfolio
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(Portfolio.FIELD_NAME, Portfolio.NAMELEN);
+        myTableDef.addReferenceColumn(Portfolio.FIELD_HOLDING, TableAccount.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(Portfolio.FIELD_DESC, Portfolio.DESCLEN);
+        myTableDef.addBooleanColumn(Portfolio.FIELD_TAXFREE);
         myTableDef.addBooleanColumn(Portfolio.FIELD_CLOSED);
     }
 
@@ -78,10 +80,12 @@ public class TablePortfolio
         TableDefinition myTableDef = getTableDef();
         byte[] myName = myTableDef.getBinaryValue(Portfolio.FIELD_NAME);
         byte[] myDesc = myTableDef.getBinaryValue(Portfolio.FIELD_DESC);
+        Integer myHoldingId = myTableDef.getIntegerValue(Portfolio.FIELD_HOLDING);
+        Boolean isTaxFree = myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE);
         Boolean isClosed = myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, isClosed);
+        theList.addSecureItem(pId, pControlId, myName, myDesc, myHoldingId, isTaxFree, isClosed);
     }
 
     @Override
@@ -93,6 +97,10 @@ public class TablePortfolio
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Portfolio.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
+        } else if (Portfolio.FIELD_HOLDING.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getHoldingId());
+        } else if (Portfolio.FIELD_TAXFREE.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isTaxFree());
         } else if (Portfolio.FIELD_CLOSED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else {

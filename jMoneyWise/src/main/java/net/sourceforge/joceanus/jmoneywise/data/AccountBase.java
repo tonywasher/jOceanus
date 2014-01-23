@@ -189,16 +189,16 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Account Category.
-     * @return the category
+     * Obtain Account Currency.
+     * @return the currency
      */
     public AccountCurrency getAccountCurrency() {
         return getAccountCurrency(getValueSet());
     }
 
     /**
-     * Obtain AccountCategoryId.
-     * @return the actCategoryId
+     * Obtain AccountCurrencyId.
+     * @return the actCurrencyId
      */
     public Integer getAccountCurrencyId() {
         AccountCurrency myCurrency = getAccountCurrency();
@@ -208,8 +208,8 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain AccountCategoryName.
-     * @return the actCategoryName
+     * Obtain AccountCurrencyName.
+     * @return the actCurrencyName
      */
     public String getAccountCurrencyName() {
         AccountCurrency myCurrency = getAccountCurrency();

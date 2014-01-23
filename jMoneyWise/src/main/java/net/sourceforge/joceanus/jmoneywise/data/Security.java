@@ -33,6 +33,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
@@ -99,6 +101,11 @@ public class Security
      * Symbol Field Id.
      */
     public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSymbol"));
+
+    /**
+     * Currency Field Id.
+     */
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCurrency"));
 
     /**
      * isClosed Field Id.
@@ -279,6 +286,36 @@ public class Security
     }
 
     /**
+     * Obtain Security Currency.
+     * @return the category
+     */
+    public AccountCurrency getSecurityCurrency() {
+        return getSecurityCurrency(getValueSet());
+    }
+
+    /**
+     * Obtain SecurityCurrencyId.
+     * @return the secCurrencyId
+     */
+    public Integer getSecurityCurrencyId() {
+        AccountCurrency myCurrency = getSecurityCurrency();
+        return (myCurrency == null)
+                ? null
+                : myCurrency.getId();
+    }
+
+    /**
+     * Obtain SecurityCurrencyName.
+     * @return the actCurrencyName
+     */
+    public String getSecurityCurrencyName() {
+        AccountCurrency myCurrency = getSecurityCurrency();
+        return (myCurrency == null)
+                ? null
+                : myCurrency.getName();
+    }
+
+    /**
      * Is the security closed?
      * @return true/false
      */
@@ -386,6 +423,15 @@ public class Security
     }
 
     /**
+     * Obtain SecurityCurrency.
+     * @param pValueSet the valueSet
+     * @return the SecurityCurrency
+     */
+    public static AccountCurrency getSecurityCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    }
+
+    /**
      * Is the security closed?
      * @param pValueSet the valueSet
      * @return true/false
@@ -455,7 +501,7 @@ public class Security
     }
 
     /**
-     * Set owner id.
+     * Set parent id.
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
@@ -521,11 +567,37 @@ public class Security
     }
 
     /**
-     * Set closed value.
+     * Set security currency value.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final AccountCurrency pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set security currency id.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final Integer pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set security currency name.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final String pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set closed indication.
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, pValue);
+        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
     }
 
     @Override
@@ -574,6 +646,7 @@ public class Security
      * @param pSecTypeId the id of the security type
      * @param pParentId the id of the parent
      * @param pSymbol the security symbol
+     * @param pCurrencyId the id of the currency
      * @param pClosed is the security closed?
      * @throws JOceanusException on error
      */
@@ -585,6 +658,7 @@ public class Security
                        final Integer pSecTypeId,
                        final Integer pParentId,
                        final byte[] pSymbol,
+                       final Integer pCurrencyId,
                        final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
@@ -594,6 +668,7 @@ public class Security
             /* Store the IDs */
             setValueType(pSecTypeId);
             setValueParent(pParentId);
+            setValueCurrency(pCurrencyId);
 
             /* Set ControlId */
             setControlKey(pControlId);
@@ -623,6 +698,7 @@ public class Security
      * @param pParent the Parent
      * @param pSymbol the security symbol
      * @param pClosed is the security closed?
+     * @param pCurrency the Security currency
      * @throws JOceanusException on error
      */
     protected Security(final SecurityList pList,
@@ -632,6 +708,7 @@ public class Security
                        final String pSecType,
                        final String pParent,
                        final String pSymbol,
+                       final String pCurrency,
                        final Boolean pClosed) throws JOceanusException {
         /* Initialise the item */
         super(pList, pId);
@@ -641,6 +718,9 @@ public class Security
             /* Store the links */
             setValueType(pSecType);
             setValueParent(pParent);
+
+            /* Store the currency */
+            setValueCurrency(pCurrency);
 
             /* Record the string values */
             setValueName(pName);
@@ -700,6 +780,7 @@ public class Security
         /* Access Relevant lists */
         MoneyWiseData myData = getDataSet();
         SecurityTypeList myTypes = myData.getSecurityTypes();
+        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
         PayeeList myPayees = myData.getPayees();
         ValueSet myValues = getValueSet();
 
@@ -724,7 +805,28 @@ public class Security
             setValueType(myType);
         }
 
-        /* Adjust Owner */
+        /* Adjust Currency */
+        Object myCurrency = myValues.getValue(FIELD_CURRENCY);
+        if (myCurrency instanceof AccountCurrency) {
+            myCurrency = ((AccountCurrency) myCurrency).getId();
+        }
+        if (myCurrency instanceof Integer) {
+            AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
+            if (myCurr == null) {
+                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
+            }
+            setValueCurrency(myCurr);
+        } else if (myCurrency instanceof String) {
+            AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
+            if (myCurr == null) {
+                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
+                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
+            }
+            setValueCurrency(myCurr);
+        }
+
+        /* Adjust Parent */
         Object myOwner = myValues.getValue(FIELD_PARENT);
         if (myOwner instanceof Payee) {
             myOwner = ((Payee) myOwner).getId();
@@ -782,6 +884,14 @@ public class Security
     }
 
     /**
+     * Set a new security currency.
+     * @param pCurrency the new currency
+     */
+    public void setSecurityCurrency(final AccountCurrency pCurrency) {
+        setValueCurrency(pCurrency);
+    }
+
+    /**
      * Set a new parent.
      * @param pParent the parent
      * @throws JOceanusException on error
@@ -790,10 +900,19 @@ public class Security
         setValueParent(pParent);
     }
 
+    /**
+     * Set a new closed indication.
+     * @param isClosed the new closed indication
+     */
+    public void setClosed(final Boolean isClosed) {
+        setValueClosed(isClosed);
+    }
+
     @Override
     public void touchUnderlyingItems() {
-        /* touch the security type and parent */
+        /* touch the security type, currency and parent */
         getSecurityType().touchItem(this);
+        getSecurityCurrency().touchItem(this);
         getParent().touchItem(this);
     }
 
@@ -802,6 +921,7 @@ public class Security
         SecurityList myList = getList();
         Payee myParent = getParent();
         SecurityType mySecType = getSecurityType();
+        AccountCurrency myCurrency = getSecurityCurrency();
         String myName = getName();
         String myDesc = getDesc();
         String mySymbol = getSymbol();
@@ -837,6 +957,13 @@ public class Security
             if (!mySecType.getEnabled()) {
                 addError(ERROR_DISABLED, FIELD_SECTYPE);
             }
+        }
+
+        /* Currency must be non-null and enabled */
+        if (myCurrency == null) {
+            addError(ERROR_MISSING, FIELD_CURRENCY);
+        } else if (!myCurrency.getEnabled()) {
+            addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
 
         /* Parent must be non-null */
@@ -918,6 +1045,11 @@ public class Security
         /* Update the symbol if required */
         if (!Difference.isEqual(getSymbol(), mySecurity.getSymbol())) {
             setValueSymbol(mySecurity.getSymbolField());
+        }
+
+        /* Update the security currency if required */
+        if (!Difference.isEqual(getSecurityCurrency(), mySecurity.getSecurityCurrency())) {
+            setValueCurrency(mySecurity.getSecurityCurrency());
         }
 
         /* Update the closed status if required */
@@ -1088,6 +1220,7 @@ public class Security
          * @param pSecType the security type
          * @param pParent the parent
          * @param pSymbol the security symbol
+         * @param pCurrency the security currency
          * @param pClosed is the security closed?
          * @throws JOceanusException on error
          */
@@ -1097,9 +1230,10 @@ public class Security
                                 final String pSecType,
                                 final String pParent,
                                 final String pSymbol,
+                                final String pCurrency,
                                 final Boolean pClosed) throws JOceanusException {
             /* Create the security */
-            Security mySecurity = new Security(this, pId, pName, pDesc, pSecType, pParent, pSymbol, pClosed);
+            Security mySecurity = new Security(this, pId, pName, pDesc, pSecType, pParent, pSymbol, pCurrency, pClosed);
 
             /* Check that this SecurityId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1120,6 +1254,7 @@ public class Security
          * @param pSecTypeId the security type id
          * @param pParentId the parent id
          * @param pSymbol the security symbol
+         * @param pCurrencyId the security currency
          * @param pClosed is the security closed?
          * @throws JOceanusException on error
          */
@@ -1130,9 +1265,10 @@ public class Security
                                   final Integer pSecTypeId,
                                   final Integer pParentId,
                                   final byte[] pSymbol,
+                                  final Integer pCurrencyId,
                                   final Boolean pClosed) throws JOceanusException {
             /* Create the security */
-            Security mySecurity = new Security(this, pId, pControlId, pName, pDesc, pSecTypeId, pParentId, pSymbol, pClosed);
+            Security mySecurity = new Security(this, pId, pControlId, pName, pDesc, pSecTypeId, pParentId, pSymbol, pCurrencyId, pClosed);
 
             /* Check that this SecurityId has not been previously added */
             if (!isIdUnique(pId)) {
