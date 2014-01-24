@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -226,7 +227,7 @@ public class SpotPrices
      * The Spot Prices List class.
      */
     public static class SpotList
-            extends EncryptedList<SpotPrice> {
+            extends EncryptedList<SpotPrice, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -343,9 +344,7 @@ public class SpotPrices
             while (myActIterator.hasNext()) {
                 Account myAccount = myActIterator.next();
                 /* Ignore accounts that are wrong portfolio, have no prices or are aliases */
-                if ((!Difference.isEqual(myAccount.getPortfolio(), thePortfolio))
-                    || (!myAccount.hasUnits())
-                    || (myAccount.isAlias())) {
+                if ((!Difference.isEqual(myAccount.getPortfolio(), thePortfolio)) || (!myAccount.hasUnits()) || (myAccount.isAlias())) {
                     continue;
                 }
 
@@ -416,7 +415,7 @@ public class SpotPrices
 
         /* Disable Add a new item */
         @Override
-        public SpotPrice addCopyItem(final DataItem pElement) {
+        public SpotPrice addCopyItem(final DataItem<?> pElement) {
             throw new UnsupportedOperationException();
         }
 
@@ -499,8 +498,7 @@ public class SpotPrices
         /**
          * List name.
          */
-        public static final String LIST_NAME = OBJECT_NAME
-                                               + "s";
+        public static final String LIST_NAME = OBJECT_NAME + "s";
 
         /**
          * Report fields.
@@ -599,8 +597,8 @@ public class SpotPrices
         @Override
         public void setValidEdit() {
             setEditState((hasHistory())
-                    ? EditState.VALID
-                    : EditState.CLEAN);
+                                       ? EditState.VALID
+                                       : EditState.CLEAN);
         }
 
         @Override
@@ -634,21 +632,21 @@ public class SpotPrices
             if (getPrice(myBase) == null) {
                 /* Return status */
                 return myCurr.isDeletion()
-                        ? DataState.DELNEW
-                        : DataState.NEW;
+                                          ? DataState.DELNEW
+                                          : DataState.NEW;
             }
 
             /* If we are deleted return so */
             if (myCurr.isDeletion()) {
                 return myBase.isDeletion()
-                        ? DataState.CLEAN
-                        : DataState.DELETED;
+                                          ? DataState.CLEAN
+                                          : DataState.DELETED;
             }
 
             /* Return RECOVERED or CHANGED depending on whether we started as deleted */
             return (myBase.isDeletion())
-                    ? DataState.RECOVERED
-                    : DataState.CHANGED;
+                                        ? DataState.RECOVERED
+                                        : DataState.CHANGED;
         }
     }
 }

@@ -27,6 +27,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
+import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -34,12 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -48,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class ControlKey
-        extends DataItem
+        extends DataItem<CryptographyList>
         implements Comparable<ControlKey> {
     /**
      * Resource Bundle.
@@ -63,8 +64,7 @@ public class ControlKey
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -208,11 +208,11 @@ public class ControlKey
     private void setValuePasswordHash(final PasswordHash pValue) {
         getValueSet().setValue(FIELD_PASSHASH, pValue);
         setValueHashKey((pValue == null)
-                ? null
-                : pValue.getHashKey());
+                                        ? null
+                                        : pValue.getHashKey());
         setValueHashBytes((pValue == null)
-                ? null
-                : pValue.getHashBytes());
+                                          ? null
+                                          : pValue.getHashBytes());
     }
 
     /**
@@ -497,7 +497,7 @@ public class ControlKey
      * ControlKey List.
      */
     public static class ControlKeyList
-            extends DataList<ControlKey> {
+            extends DataList<ControlKey, CryptographyList> {
         /**
          * Local Report fields.
          */
@@ -563,12 +563,12 @@ public class ControlKey
 
         @Override
         public ControlKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                final DataList<?> pOld) {
+                                                final DataList<?, CryptographyList> pOld) {
             return (ControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public ControlKey addCopyItem(final DataItem pItem) {
+        public ControlKey addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a ControlKey */
             if (!(pItem instanceof ControlKey)) {
                 return null;
@@ -582,7 +582,7 @@ public class ControlKey
 
         @Override
         public ControlKey addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

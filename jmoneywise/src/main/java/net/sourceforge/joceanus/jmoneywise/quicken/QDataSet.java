@@ -32,14 +32,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Quicken DataSet Representation.
@@ -86,7 +87,7 @@ public class QDataSet {
      * @param pView the dataView
      * @param pPreferences the preferences
      */
-    public QDataSet(final ThreadStatus<MoneyWiseData> pStatus,
+    public QDataSet(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                     final View pView,
                     final QIFPreference pPreferences) {
         /* Store parameters */
@@ -112,7 +113,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputData(final ThreadStatus<MoneyWiseData> pStatus) throws JOceanusException {
+    public boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus) throws JOceanusException {
         /* Determine whether to use consolidated file */
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
@@ -131,8 +132,7 @@ public class QDataSet {
         boolean bContinue = true;
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAnalysis.getAccountIterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* Output the file */
@@ -149,7 +149,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData> pStatus) throws JOceanusException {
+    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus) throws JOceanusException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 
@@ -157,9 +157,7 @@ public class QDataSet {
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
 
         /* Determine the archive name */
-        File myQIFFile = new File(myDirectory
-                                  + File.separator
-                                  + theQIFType.getFileName());
+        File myQIFFile = new File(myDirectory + File.separator + theQIFType.getFileName());
 
         /* Protect against exceptions */
         try {
@@ -176,8 +174,7 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to write to file: "
-                                            + myQIFFile.getName(), e);
+            throw new JMoneyWiseIOException("Failed to write to file: " + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -187,8 +184,7 @@ public class QDataSet {
                 }
 
                 /* Delete the file */
-                if ((doDelete)
-                    && (!myQIFFile.delete())) {
+                if ((doDelete) && (!myQIFFile.delete())) {
                     doDelete = false;
                 }
 
@@ -215,10 +211,7 @@ public class QDataSet {
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
 
         /* Determine the archive name */
-        File myQIFFile = new File(myDirectory
-                                  + File.separator
-                                  + pAccount.getName()
-                                  + QIFType.QIF_SUFFIX);
+        File myQIFFile = new File(myDirectory + File.separator + pAccount.getName() + QIFType.QIF_SUFFIX);
 
         /* Protect against exceptions */
         try {
@@ -235,8 +228,7 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to write to file: "
-                                            + myQIFFile.getName(), e);
+            throw new JMoneyWiseIOException("Failed to write to file: " + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -246,8 +238,7 @@ public class QDataSet {
                 }
 
                 /* Delete the file */
-                if ((doDelete)
-                    && (!myQIFFile.delete())) {
+                if ((doDelete) && (!myQIFFile.delete())) {
                     doDelete = false;
                 }
 

@@ -31,6 +31,9 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
@@ -41,17 +44,15 @@ import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.JFieldPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.SecurityPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Provides top-level control of data.
  * @param <T> the DataSet type
+ * @param <E> the data list enum class
  */
-public abstract class DataControl<T extends DataSet<T, ?>>
+public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         extends JEventObject {
     /**
      * Rewind action.

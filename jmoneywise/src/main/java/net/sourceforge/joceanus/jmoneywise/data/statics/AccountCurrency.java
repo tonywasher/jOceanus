@@ -30,11 +30,12 @@ import java.util.Locale;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -42,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCurrency
-        extends StaticData<AccountCurrency, AccountCurrencyClass> {
+        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -91,8 +92,8 @@ public class AccountCurrency
      */
     private void setValueDefault(final Boolean pValue) {
         getValueSet().setValue(FIELD_DEFAULT, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                              ? pValue
+                                                              : Boolean.FALSE);
     }
 
     /**
@@ -239,7 +240,7 @@ public class AccountCurrency
     }
 
     @Override
-    public boolean applyChanges(final DataItem pData) {
+    public boolean applyChanges(final DataItem<?> pData) {
         /* Can only apply changes for AccountCurrency */
         if (!(pData instanceof AccountCurrency)) {
             return false;
@@ -267,7 +268,7 @@ public class AccountCurrency
      * Represents a list of {@link AccountCurrency} objects.
      */
     public static class AccountCurrencyList
-            extends StaticList<AccountCurrency, AccountCurrencyClass> {
+            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -317,7 +318,7 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrency addCopyItem(final DataItem pItem) {
+        public AccountCurrency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountCurrency */
             if (!(pItem instanceof AccountCurrency)) {
                 return null;
@@ -330,7 +331,7 @@ public class AccountCurrency
 
         @Override
         public AccountCurrency addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

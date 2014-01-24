@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
@@ -36,22 +36,23 @@ import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for Event.
  * @author Tony Washer
  */
 public class SheetEvent
-        extends SheetDataItem<Event> {
+        extends SheetDataItem<Event, MoneyWiseList> {
     /**
      * NamedArea for Events.
      */
@@ -143,8 +144,8 @@ public class SheetEvent
 
         /* Set up info Sheet */
         theInfoSheet = isBackup()
-                ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+                                 ? null
+                                 : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     /**
@@ -163,8 +164,8 @@ public class SheetEvent
 
         /* Set up info Sheet */
         theInfoSheet = isBackup()
-                ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+                                 ? null
+                                 : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     @Override
@@ -208,8 +209,7 @@ public class SheetEvent
 
         /* If we don't have a date */
         Event myEvent;
-        if ((myDate == null)
-            && (theLastParent != null)) {
+        if ((myDate == null) && (theLastParent != null)) {
             /* Pick up last date */
             myDate = theLastParent.getDate();
 
@@ -330,9 +330,8 @@ public class SheetEvent
     protected int getLastColumn() {
         /* Return the last column */
         return (isBackup())
-                ? COL_PARENT
-                : COL_RECONCILED
-                  + theInfoSheet.getXtraColumnCount();
+                           ? COL_PARENT
+                           : COL_RECONCILED + theInfoSheet.getXtraColumnCount();
     }
 
     @Override
@@ -379,8 +378,7 @@ public class SheetEvent
                 DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
-                if (!pTask.setNewStage("Events from "
-                                       + myYear.getDate().getYear())) {
+                if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
                     return false;
                 }
 
@@ -406,12 +404,11 @@ public class SheetEvent
                     /* Access date */
                     DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     JDateDay myDate = (myCell != null)
-                            ? myCell.getDateValue()
-                            : null;
+                                                      ? myCell.getDateValue()
+                                                      : null;
 
                     /* If the event is too late */
-                    if ((myDate != null)
-                        && (pLastEvent.compareTo(myDate) < 0)) {
+                    if ((myDate != null) && (pLastEvent.compareTo(myDate) < 0)) {
                         /* Break the loop */
                         break;
                     }
@@ -419,12 +416,12 @@ public class SheetEvent
                     /* Access the values */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myDebit = (myCell != null)
-                            ? myCell.getStringValue()
-                            : null;
+                                                     ? myCell.getStringValue()
+                                                     : null;
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myCredit = (myCell != null)
-                            ? myCell.getStringValue()
-                            : null;
+                                                      ? myCell.getStringValue()
+                                                      : null;
                     String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                     String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
@@ -517,8 +514,7 @@ public class SheetEvent
 
                     /* If we have a null date */
                     Event myEvent;
-                    if ((myDate == null)
-                        && (myLastParent != null)) {
+                    if ((myDate == null) && (myLastParent != null)) {
                         /* Pick up last date */
                         myDate = myLastParent.getDate();
 
@@ -558,8 +554,7 @@ public class SheetEvent
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -591,7 +586,7 @@ public class SheetEvent
      * EventInfoSet sheet.
      */
     private static class SheetEventInfoSet
-            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
+            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
 
         /**
          * Constructor.
@@ -600,7 +595,7 @@ public class SheetEvent
          * @param pBaseCol the base column
          */
         public SheetEventInfoSet(final Class<EventInfoClass> pClass,
-                                 final SheetDataItem<Event> pOwner,
+                                 final SheetDataItem<Event, MoneyWiseList> pOwner,
                                  final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

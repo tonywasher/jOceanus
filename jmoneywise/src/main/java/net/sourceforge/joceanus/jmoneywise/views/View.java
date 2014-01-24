@@ -24,28 +24,29 @@ package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.database.Database;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jprometheus.database.Database;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 /**
  * Data Control for MoneyWiseApp.
  * @author Tony Washer
  */
 public class View
-        extends DataControl<MoneyWiseData> {
+        extends DataControl<MoneyWiseData, MoneyWiseList> {
     /**
      * The DataSet.
      */

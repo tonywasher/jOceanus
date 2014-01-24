@@ -29,28 +29,28 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataInfo;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
 public class EventInfo
-        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass> {
+        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -115,13 +115,13 @@ public class EventInfo
      */
     public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, Account.class);
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, Account.class);
     }
 
     @Override
     public String getLinkName() {
-        DataItem myItem = getLink(DataItem.class);
+        DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Account) {
             return ((Account) myItem).getName();
         }
@@ -218,7 +218,7 @@ public class EventInfo
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        DataItem myLink = null;
+                        DataItem<?> myLink = null;
                         switch (myType.getInfoClass()) {
                             case THIRDPARTY:
                                 myLink = myData.getAccounts().findItemById(getValue(Integer.class));
@@ -348,7 +348,7 @@ public class EventInfo
         /* If we are using an account */
         if (myType.isLink()) {
             Integer myId = getValue(Integer.class);
-            DataItem myNewLink = null;
+            DataItem<?> myNewLink = null;
             switch (myType.getInfoClass()) {
                 case THIRDPARTY:
                     myNewLink = myData.getAccounts().findItemById(myId);
@@ -387,8 +387,8 @@ public class EventInfo
         switch (myType.getDataType()) {
             case INTEGER:
                 return myFormatter.formatObject(myType.isLink()
-                        ? getAccount()
-                        : getValue(Integer.class));
+                                                               ? getAccount()
+                                                               : getValue(Integer.class));
             case MONEY:
                 return myFormatter.formatObject(getValue(JMoney.class));
             case UNITS:
@@ -425,7 +425,7 @@ public class EventInfo
             case INTEGER:
                 if (myType.isLink()) {
                     if (pValue instanceof String) {
-                        DataItem myLink = null;
+                        DataItem<?> myLink = null;
                         String myName = (String) pValue;
                         MoneyWiseData myData = getDataSet();
                         switch (myType.getInfoClass()) {
@@ -437,16 +437,14 @@ public class EventInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION
-                                                                    + " "
-                                                                    + myName);
+                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION + " " + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);
                         bValueOK = true;
                     }
                     if (pValue instanceof DataItem) {
-                        DataItem myItem = (DataItem) pValue;
+                        DataItem<?> myItem = (DataItem<?>) pValue;
                         setValueValue(myItem.getId());
                         setValueLink(myItem);
                         bValueOK = true;
@@ -514,7 +512,7 @@ public class EventInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pEventInfo) {
+    public boolean applyChanges(final DataItem<?> pEventInfo) {
         /* Can only update from EventInfo */
         if (!(pEventInfo instanceof EventInfo)) {
             return false;
@@ -557,7 +555,7 @@ public class EventInfo
      * EventInfoList.
      */
     public static class EventInfoList
-            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass> {
+            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -617,7 +615,7 @@ public class EventInfo
         }
 
         @Override
-        public EventInfo addCopyItem(final DataItem pItem) {
+        public EventInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an EventInfo */
             if (!(pItem instanceof EventInfo)) {
                 return null;
@@ -695,10 +693,7 @@ public class EventInfo
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pEvent, ERROR_BADINFOCLASS
-                                                          + " ["
-                                                          + pInfoClass
-                                                          + "]");
+                throw new JMoneyWiseDataException(pEvent, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create a new Event Info */

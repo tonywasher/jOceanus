@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.preference.FileSelector;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jmetis.preference.FileSelector;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -53,12 +53,12 @@ public class SubversionRestore<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<?> theControl;
+    private final DataControl<?, ?> theControl;
 
     /**
      * ThreadStatus.
      */
-    private final ThreadStatus<?> theStatus;
+    private final ThreadStatus<?, ?> theStatus;
 
     /**
      * The preference manager.
@@ -70,7 +70,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
      * @param pStatus the thread status
      * @param pPreferenceMgr the preference manager
      */
-    public SubversionRestore(final ThreadStatus<T> pStatus,
+    public SubversionRestore(final ThreadStatus<T, ?> pStatus,
                              final PreferenceManager pPreferenceMgr) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
@@ -119,8 +119,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         String myName = myFile.getName();
         myName = myName.substring(myPrefix.length());
         if (myName.endsWith(SpreadSheet.ZIPFILE_EXT)) {
-            myName = myName.substring(0, myName.length()
-                                         - SpreadSheet.ZIPFILE_EXT.length());
+            myName = myName.substring(0, myName.length() - SpreadSheet.ZIPFILE_EXT.length());
         }
         myRepo = new File(myRepo.getPath(), myName);
 

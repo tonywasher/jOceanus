@@ -24,11 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticData<AccountInfoType, AccountInfoClass> {
+        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -45,8 +46,7 @@ public class AccountInfoType
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -188,7 +188,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-            extends StaticList<AccountInfoType, AccountInfoClass> {
+            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -238,7 +238,7 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoType addCopyItem(final DataItem pItem) {
+        public AccountInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {
                 return null;
@@ -251,7 +251,7 @@ public class AccountInfoType
 
         @Override
         public AccountInfoType addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

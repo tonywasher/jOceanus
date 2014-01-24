@@ -32,10 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
@@ -43,6 +39,10 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -79,7 +79,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     /**
      * The WorkSheets.
      */
-    private List<SheetDataItem<?>> theSheets = null;
+    private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
      * Is this a backup sheet.
@@ -130,7 +130,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * Add Sheet to list.
      * @param pSheet the sheet
      */
-    protected void addSheet(final SheetDataItem<?> pSheet) {
+    protected void addSheet(final SheetDataItem<?, ?> pSheet) {
         theSheets.add(pSheet);
     }
 
@@ -200,8 +200,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to load Backup Workbook: "
-                                             + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -259,8 +258,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to load Edit-able Workbook: "
-                                             + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to load Edit-able Workbook: " + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -304,7 +302,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         theData = newDataSet();
 
         /* Initialise the list */
-        theSheets = new ArrayList<SheetDataItem<?>>();
+        theSheets = new ArrayList<SheetDataItem<?, ?>>();
 
         /* If this is a backup */
         if (isBackup()) {
@@ -342,17 +340,16 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     private boolean loadWorkBook() throws JOceanusException {
-        SheetDataItem<?> mySheet;
+        SheetDataItem<?, ?> mySheet;
 
         /* Access the iterator for the list */
-        Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
+        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             /* Access the next sheet */
             mySheet = myIterator.next();
 

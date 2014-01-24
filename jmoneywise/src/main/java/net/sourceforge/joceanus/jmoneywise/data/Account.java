@@ -59,8 +59,7 @@ public class Account
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
     /**
      * Resource Bundle.
      */
@@ -136,8 +135,8 @@ public class Account
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                    ? theInfoSet
-                    : JDataFieldValue.SKIP;
+                             ? theInfoSet
+                             : JDataFieldValue.SKIP;
         }
 
         /* Handle status */
@@ -147,8 +146,7 @@ public class Account
 
         /* Handle infoSet fields */
         AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
-        if ((theInfoSet != null)
-            && (myClass != null)) {
+        if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
 
@@ -183,8 +181,7 @@ public class Account
 
     @Override
     public boolean isEditable() {
-        return super.isEditable()
-               && !isClosed();
+        return super.isEditable() && !isClosed();
     }
 
     /**
@@ -193,8 +190,8 @@ public class Account
      */
     public JDateDay getMaturity() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
+                         : null;
     }
 
     /**
@@ -203,8 +200,8 @@ public class Account
      */
     public Account getParent() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.PARENT)
-                : null;
+                         ? theInfoSet.getAccount(AccountInfoClass.PARENT)
+                         : null;
     }
 
     /**
@@ -213,8 +210,8 @@ public class Account
      */
     public Account getAlias() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.ALIAS)
-                : null;
+                         ? theInfoSet.getAccount(AccountInfoClass.ALIAS)
+                         : null;
     }
 
     /**
@@ -223,8 +220,8 @@ public class Account
      */
     public Account getPortfolio() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.PORTFOLIO)
-                : null;
+                         ? theInfoSet.getAccount(AccountInfoClass.PORTFOLIO)
+                         : null;
     }
 
     /**
@@ -233,8 +230,8 @@ public class Account
      */
     public Account getHolding() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.HOLDING)
-                : null;
+                         ? theInfoSet.getAccount(AccountInfoClass.HOLDING)
+                         : null;
     }
 
     /**
@@ -243,8 +240,8 @@ public class Account
      */
     public EventCategory getAutoExpense() {
         return hasInfoSet
-                ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
-                : null;
+                         ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
+                         : null;
     }
 
     /**
@@ -253,8 +250,8 @@ public class Account
      */
     public String getSymbol() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.SYMBOL, String.class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.SYMBOL, String.class)
+                         : null;
     }
 
     /**
@@ -263,8 +260,8 @@ public class Account
      */
     public String getComments() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.COMMENTS, String.class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.COMMENTS, String.class)
+                         : null;
     }
 
     /**
@@ -273,8 +270,8 @@ public class Account
      */
     public JMoney getOpeningBalance() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.OPENINGBALANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -283,8 +280,8 @@ public class Account
      */
     public char[] getWebSite() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
+                         : null;
     }
 
     /**
@@ -293,8 +290,8 @@ public class Account
      */
     public char[] getCustNo() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
+                         : null;
     }
 
     /**
@@ -303,8 +300,8 @@ public class Account
      */
     public char[] getUserId() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
+                         : null;
     }
 
     /**
@@ -313,8 +310,8 @@ public class Account
      */
     public char[] getPassword() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
+                         : null;
     }
 
     /**
@@ -323,8 +320,8 @@ public class Account
      */
     public char[] getSortCode() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                         : null;
     }
 
     /**
@@ -333,8 +330,8 @@ public class Account
      */
     public char[] getReference() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                         : null;
     }
 
     /**
@@ -343,8 +340,8 @@ public class Account
      */
     public char[] getAccount() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                         : null;
     }
 
     /**
@@ -353,8 +350,8 @@ public class Account
      */
     public char[] getNotes() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                : null;
+                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                         : null;
     }
 
     /**
@@ -442,9 +439,7 @@ public class Account
      * @return true/false
      */
     public boolean isDeletable() {
-        return theStatus.isDeletable(getState())
-               && (!isDeleted())
-               && (!getAccountCategoryClass().isSingular());
+        return theStatus.isDeletable(getState()) && (!isDeleted()) && (!getAccountCategoryClass().isSingular());
     }
 
     @Override
@@ -453,8 +448,7 @@ public class Account
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -469,8 +463,7 @@ public class Account
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -485,8 +478,7 @@ public class Account
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory)
-            && (useInfoSet)) {
+        if ((!hasHistory) && (useInfoSet)) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -540,8 +532,8 @@ public class Account
         AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                    ? theInfoSet.fieldChanged(myClass)
-                    : Difference.IDENTICAL;
+                               ? theInfoSet.fieldChanged(myClass)
+                               : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -606,8 +598,7 @@ public class Account
         }
 
         /* If this is a build of edit from Core */
-        if ((getStyle() == ListStyle.EDIT)
-            && (pAccount.getStyle() == ListStyle.CORE)) {
+        if ((getStyle() == ListStyle.EDIT) && (pAccount.getStyle() == ListStyle.CORE)) {
             /* Copy the flags */
             theStatus = new AccountStatus(pAccount.theStatus);
         }
@@ -696,8 +687,7 @@ public class Account
         theStatus.adjustClosed();
 
         /* If the maturity is null for a bond set it to close date */
-        if (isCategoryClass(AccountCategoryClass.BOND)
-            && getMaturity() == null) {
+        if (isCategoryClass(AccountCategoryClass.BOND) && getMaturity() == null) {
             /* Record a date for maturity */
             setMaturity(getCloseDate());
         }
@@ -735,7 +725,7 @@ public class Account
      * @param pObject the object touch the account
      */
     @Override
-    public void touchItem(final DataItem pObject) {
+    public void touchItem(final DataItem<MoneyWiseList> pObject) {
         /* Note that the account is Active */
         super.touchItem(pObject);
 
@@ -944,23 +934,19 @@ public class Account
         /* If we have a class */
         if (myClass != null) {
             /* If the account has rates then it must be money-based */
-            if ((theStatus.hasRates())
-                && (!myClass.hasValue())) {
+            if ((theStatus.hasRates()) && (!myClass.hasValue())) {
                 addError(ERROR_BADRATES, FIELD_CATEGORY);
             }
 
             /* If the account is closed it must be closeable */
-            if ((isClosed())
-                && (!isCloseable())) {
+            if ((isClosed()) && (!isCloseable())) {
                 addError(ERROR_BADCLOSE, FIELD_CLOSED);
             }
 
             /* If the account has units */
             if (myClass.hasUnits()) {
                 /* Account must have prices unless it is idle or alias */
-                if ((!theStatus.hasPrices())
-                    && (theStatus.hasEvents())
-                    && (myAlias == null)) {
+                if ((!theStatus.hasPrices()) && (theStatus.hasEvents()) && (myAlias == null)) {
                     addError(ERROR_NOPRICES, FIELD_CATEGORY);
                 }
 
@@ -970,20 +956,17 @@ public class Account
             }
 
             /* If the account is tax free, check that it is allowed */
-            if ((isTaxFree())
-                && (!myClass.canTaxFree())) {
+            if ((isTaxFree()) && (!myClass.canTaxFree())) {
                 addError(ERROR_TAXFREE, FIELD_TAXFREE);
             }
 
             /* If the account is gross interest, check that it is allowed */
-            if ((isGrossInterest())
-                && (!myClass.canTaxFree())) {
+            if ((isGrossInterest()) && (!myClass.canTaxFree())) {
                 addError(ERROR_GROSS, FIELD_GROSS);
             }
 
             /* Cannot be both gross interest and taxFree */
-            if ((isGrossInterest())
-                && (isTaxFree())) {
+            if ((isGrossInterest()) && (isTaxFree())) {
                 addError(ERROR_TAXFREEGROSS, FIELD_TAXFREE);
                 addError(ERROR_TAXFREEGROSS, FIELD_GROSS);
             }
@@ -994,8 +977,7 @@ public class Account
                 theInfoSet.validate();
 
                 /* If the account is autoExpense, check that there is no opening balance */
-                if ((getAutoExpense() != null)
-                    && (getOpeningBalance() != null)) {
+                if ((getAutoExpense() != null) && (getOpeningBalance() != null)) {
                     addError(ERROR_AUTOBALANCE, AccountInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE));
                 }
             }
@@ -1014,7 +996,7 @@ public class Account
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pAccount) {
+    public boolean applyChanges(final DataItem<?> pAccount) {
         /* Can only update from an account */
         if (!(pAccount instanceof Account)) {
             return false;
@@ -1056,8 +1038,8 @@ public class Account
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null)
-                        ? JDataFieldValue.SKIP
-                        : theAccount;
+                                           ? JDataFieldValue.SKIP
+                                           : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -1204,7 +1186,7 @@ public class Account
          * @return the newly added item
          */
         @Override
-        public Account addCopyItem(final DataItem pAccount) {
+        public Account addCopyItem(final DataItem<?> pAccount) {
             /* Can only clone an Account */
             if (!(pAccount instanceof Account)) {
                 return null;

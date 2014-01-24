@@ -128,63 +128,63 @@ public class AccountStatus
         /* Handle flags */
         if (FIELD_CLOSEDATE.equals(pField)) {
             return (theCloseDate != null)
-                    ? theCloseDate
-                    : JDataFieldValue.SKIP;
+                                         ? theCloseDate
+                                         : JDataFieldValue.SKIP;
         }
         if (FIELD_EVTFIRST.equals(pField)) {
             return (theEarliest != null)
-                    ? theEarliest
-                    : JDataFieldValue.SKIP;
+                                        ? theEarliest
+                                        : JDataFieldValue.SKIP;
         }
         if (FIELD_EVTLAST.equals(pField)) {
             return (theLatest != null)
-                    ? theLatest
-                    : JDataFieldValue.SKIP;
+                                      ? theLatest
+                                      : JDataFieldValue.SKIP;
         }
         if (FIELD_INITPRC.equals(pField)) {
             return (theInitPrice != null)
-                    ? theInitPrice
-                    : JDataFieldValue.SKIP;
+                                         ? theInitPrice
+                                         : JDataFieldValue.SKIP;
         }
         if (FIELD_HASLOANS.equals(pField)) {
             return hasLoans
-                    ? hasLoans
-                    : JDataFieldValue.SKIP;
+                           ? hasLoans
+                           : JDataFieldValue.SKIP;
         }
         if (FIELD_HASRATES.equals(pField)) {
             return hasRates
-                    ? hasRates
-                    : JDataFieldValue.SKIP;
+                           ? hasRates
+                           : JDataFieldValue.SKIP;
         }
         if (FIELD_HASPRICE.equals(pField)) {
             return hasPrices
-                    ? hasPrices
-                    : JDataFieldValue.SKIP;
+                            ? hasPrices
+                            : JDataFieldValue.SKIP;
         }
         if (FIELD_HASPATT.equals(pField)) {
             return hasPatterns
-                    ? hasPatterns
-                    : JDataFieldValue.SKIP;
+                              ? hasPatterns
+                              : JDataFieldValue.SKIP;
         }
         if (FIELD_ISPARENT.equals(pField)) {
             return isParent
-                    ? isParent
-                    : JDataFieldValue.SKIP;
+                           ? isParent
+                           : JDataFieldValue.SKIP;
         }
         if (FIELD_ISALIASD.equals(pField)) {
             return isAliasedTo
-                    ? isAliasedTo
-                    : JDataFieldValue.SKIP;
+                              ? isAliasedTo
+                              : JDataFieldValue.SKIP;
         }
         if (FIELD_ISPORTFOLIO.equals(pField)) {
             return isPortfolio
-                    ? isPortfolio
-                    : JDataFieldValue.SKIP;
+                              ? isPortfolio
+                              : JDataFieldValue.SKIP;
         }
         if (FIELD_ISHOLDING.equals(pField)) {
             return isHolding
-                    ? isHolding
-                    : JDataFieldValue.SKIP;
+                            ? isHolding
+                            : JDataFieldValue.SKIP;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
             return isCloseable;
@@ -426,18 +426,14 @@ public class AccountStatus
         boolean canDelete = theLatest == null;
 
         /* Next we cannot delete if we are referenced by another account */
-        canDelete &= !isParent
-                     && !isAliasedTo;
-        canDelete &= !isPortfolio
-                     && !isHolding;
+        canDelete &= !isParent && !isAliasedTo;
+        canDelete &= !isPortfolio && !isHolding;
 
         /* Next we cannot delete if we are referenced by rates/patterns */
-        canDelete &= !hasRates
-                     && !hasPatterns;
+        canDelete &= !hasRates && !hasPatterns;
 
         /* Next we cannot delete if we are referenced by prices (except for auto-price) */
-        canDelete &= !hasPrices
-                     || (pState == DataState.NEW);
+        canDelete &= !hasPrices || (pState == DataState.NEW);
 
         /* Finally we can only delete if we are new */
         return canDelete;
@@ -458,8 +454,8 @@ public class AccountStatus
     protected void adjustClosed() throws JOceanusException {
         /* Access latest activity date */
         JDateDay myCloseDate = (theLatest == null)
-                ? null
-                : theLatest.getDate();
+                                                  ? null
+                                                  : theLatest.getDate();
 
         /* Store the close date */
         theCloseDate = myCloseDate;
@@ -471,7 +467,7 @@ public class AccountStatus
      * @param pObject the object touch the account
      */
     protected void touchItem(final Account pAccount,
-                             final DataItem pObject) {
+                             final DataItem<MoneyWiseList> pObject) {
         /* If we are being touched by a rate */
         if (pObject instanceof AccountRate) {
             /* Note flags */

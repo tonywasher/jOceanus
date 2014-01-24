@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountCategory
-        extends SheetDataItem<AccountCategory> {
+        extends SheetDataItem<AccountCategory, MoneyWiseList> {
     /**
      * NamedArea for Categories.
      */
@@ -255,8 +256,7 @@ public class SheetAccountCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

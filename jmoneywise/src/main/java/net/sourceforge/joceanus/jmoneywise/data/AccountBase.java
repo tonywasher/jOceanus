@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public abstract class AccountBase
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<AccountBase> {
     /**
      * Resource Bundle.
@@ -138,8 +138,8 @@ public abstract class AccountBase
     public Integer getAccountCategoryId() {
         AccountCategory myCategory = getAccountCategory();
         return (myCategory == null)
-                ? null
-                : myCategory.getId();
+                                   ? null
+                                   : myCategory.getId();
     }
 
     /**
@@ -149,8 +149,8 @@ public abstract class AccountBase
     public String getAccountCategoryName() {
         AccountCategory myCategory = getAccountCategory();
         return (myCategory == null)
-                ? null
-                : myCategory.getName();
+                                   ? null
+                                   : myCategory.getName();
     }
 
     /**
@@ -160,8 +160,8 @@ public abstract class AccountBase
     public AccountCategoryClass getAccountCategoryClass() {
         AccountCategory myCategory = getAccountCategory();
         return (myCategory == null)
-                ? null
-                : myCategory.getCategoryTypeClass();
+                                   ? null
+                                   : myCategory.getCategoryTypeClass();
     }
 
     /**
@@ -203,8 +203,8 @@ public abstract class AccountBase
     public Integer getAccountCurrencyId() {
         AccountCurrency myCurrency = getAccountCurrency();
         return (myCurrency == null)
-                ? null
-                : myCurrency.getId();
+                                   ? null
+                                   : myCurrency.getId();
     }
 
     /**
@@ -214,8 +214,8 @@ public abstract class AccountBase
     public String getAccountCurrencyName() {
         AccountCurrency myCurrency = getAccountCurrency();
         return (myCurrency == null)
-                ? null
-                : myCurrency.getName();
+                                   ? null
+                                   : myCurrency.getName();
     }
 
     /**
@@ -346,8 +346,8 @@ public abstract class AccountBase
      */
     private void setValueClosed(final Boolean pValue) {
         getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                             ? pValue
+                                                             : Boolean.FALSE);
     }
 
     /**
@@ -356,8 +356,8 @@ public abstract class AccountBase
      */
     private void setValueTaxFree(final Boolean pValue) {
         getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                              ? pValue
+                                                              : Boolean.FALSE);
     }
 
     /**
@@ -366,8 +366,8 @@ public abstract class AccountBase
      */
     private void setValueGrossInterest(final Boolean pValue) {
         getValueSet().setValue(FIELD_GROSS, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                            ? pValue
+                                                            : Boolean.FALSE);
     }
 
     /**
@@ -609,8 +609,7 @@ public abstract class AccountBase
     public boolean isAsset() {
         /* Check for asset */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().isAsset());
+        return (myCat != null) && (myCat.getCategoryTypeClass().isAsset());
     }
 
     /**
@@ -620,8 +619,7 @@ public abstract class AccountBase
     public boolean isNonAsset() {
         /* Check for non asset */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().isNonAsset());
+        return (myCat != null) && (myCat.getCategoryTypeClass().isNonAsset());
     }
 
     /**
@@ -631,8 +629,7 @@ public abstract class AccountBase
     public boolean hasUnits() {
         /* Check for units */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().hasUnits());
+        return (myCat != null) && (myCat.getCategoryTypeClass().hasUnits());
     }
 
     /**
@@ -642,8 +639,7 @@ public abstract class AccountBase
     public boolean hasValue() {
         /* Check for units */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().hasValue());
+        return (myCat != null) && (myCat.getCategoryTypeClass().hasValue());
     }
 
     /**
@@ -653,8 +649,7 @@ public abstract class AccountBase
     public boolean isLoan() {
         /* Check for units */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().isLoan());
+        return (myCat != null) && (myCat.getCategoryTypeClass().isLoan());
     }
 
     /**
@@ -664,8 +659,7 @@ public abstract class AccountBase
     public boolean isSavings() {
         /* Check for units */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null)
-               && (myCat.getCategoryTypeClass().isSavings());
+        return (myCat != null) && (myCat.getCategoryTypeClass().isSavings());
     }
 
     /**
@@ -694,15 +688,15 @@ public abstract class AccountBase
                     return myCategories.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGrossInterest())
-                        ? EventCategoryClass.GROSSINTEREST
-                        : EventCategoryClass.TAXEDINTEREST);
+                                                                        ? EventCategoryClass.GROSSINTEREST
+                                                                        : EventCategoryClass.TAXEDINTEREST);
             case DIVIDEND:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(EventCategoryClass.TAXFREEDIVIDEND);
                 }
                 return myCategories.getSingularClass(isCategoryClass(AccountCategoryClass.UNITTRUST)
-                        ? EventCategoryClass.UNITTRUSTDIVIDEND
-                        : EventCategoryClass.SHAREDIVIDEND);
+                                                                                                    ? EventCategoryClass.UNITTRUSTDIVIDEND
+                                                                                                    : EventCategoryClass.SHAREDIVIDEND);
             default:
                 return pCategory;
         }
@@ -725,8 +719,7 @@ public abstract class AccountBase
 
         /* AccountCurrency must be non-null (for valued assets) and enabled */
         if (myCurrency == null) {
-            if (hasUnits()
-                || hasValue()) {
+            if (hasUnits() || hasValue()) {
                 addError(ERROR_MISSING, FIELD_CURRENCY);
             }
         } else if (!myCurrency.getEnabled()) {
@@ -838,7 +831,7 @@ public abstract class AccountBase
      * @param <T> the dataType
      */
     public abstract static class AccountBaseList<T extends AccountBase>
-            extends EncryptedList<T> {
+            extends EncryptedList<T, MoneyWiseList> {
         /**
          * Local Report fields.
          */

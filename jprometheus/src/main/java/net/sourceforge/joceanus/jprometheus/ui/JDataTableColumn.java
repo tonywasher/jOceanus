@@ -28,8 +28,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 
 /**
  * TableColumn extension class.
@@ -111,8 +111,9 @@ public class JDataTableColumn
 
     /**
      * Column Model class.
+     * @param <E> the data list enum class
      */
-    public static class JDataTableColumnModel
+    public static class JDataTableColumnModel<E extends Enum<E>>
             extends DefaultTableColumnModel {
         /**
          * Serial Id.
@@ -147,13 +148,13 @@ public class JDataTableColumn
         /**
          * The DataTableModel.
          */
-        private final JDataTableModel<?> theModel;
+        private final JDataTableModel<?, E> theModel;
 
         /**
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected JDataTableColumnModel(final JDataTable<?> pTable) {
+        protected JDataTableColumnModel(final JDataTable<?, E> pTable) {
             /* Access TableModel */
             theModel = pTable.getTableModel();
         }
@@ -207,9 +208,10 @@ public class JDataTableColumn
 
     /**
      * Row Column Model class.
+     * @param <E> the data list enum class
      */
-    protected static final class RowColumnModel
-            extends JDataTableColumnModel {
+    protected static final class RowColumnModel<E extends Enum<E>>
+            extends JDataTableColumnModel<E> {
         /**
          * Serial Id.
          */
@@ -224,7 +226,7 @@ public class JDataTableColumn
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected RowColumnModel(final JDataTable<?> pTable) {
+        protected RowColumnModel(final JDataTable<?, E> pTable) {
             /* Call super-constructor */
             super(pTable);
 

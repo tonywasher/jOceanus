@@ -33,23 +33,23 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * AccountRate data type.
  * @author Tony Washer
  */
 public class AccountRate
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<AccountRate> {
     /**
      * Object name.
@@ -59,8 +59,7 @@ public class AccountRate
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -181,8 +180,8 @@ public class AccountRate
     public Integer getAccountId() {
         Account myAccount = getAccount();
         return (myAccount == null)
-                ? null
-                : myAccount.getId();
+                                  ? null
+                                  : myAccount.getId();
     }
 
     /**
@@ -192,8 +191,8 @@ public class AccountRate
     public String getAccountName() {
         Account myAccount = getAccount();
         return (myAccount == null)
-                ? null
-                : myAccount.getName();
+                                  ? null
+                                  : myAccount.getName();
     }
 
     /**
@@ -559,8 +558,7 @@ public class AccountRate
         AccountRate myNext = myList.peekNext(this);
 
         /* Determine whether this is the last entry for the account */
-        boolean isLast = (myNext == null)
-                         || !Difference.isEqual(myNext.getAccount(), getAccount());
+        boolean isLast = (myNext == null) || !Difference.isEqual(myNext.getAccount(), getAccount());
 
         /* If the date is null then we must be the last element for the account */
         if (myDate == null) {
@@ -577,8 +575,7 @@ public class AccountRate
             }
 
             /* The date must be in-range (unless it is the last one) */
-            if ((!isLast)
-                && (mySet.getDateRange().compareTo(myDate) != 0)) {
+            if ((!isLast) && (mySet.getDateRange().compareTo(myDate) != 0)) {
                 addError(ERROR_RANGE, FIELD_ENDDATE);
             }
         }
@@ -645,7 +642,7 @@ public class AccountRate
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pRate) {
+    public boolean applyChanges(final DataItem<?> pRate) {
         /* Can only update from an AccountRate */
         if (!(pRate instanceof AccountRate)) {
             return false;
@@ -679,7 +676,7 @@ public class AccountRate
      * List class.
      */
     public static class AccountRateList
-            extends EncryptedList<AccountRate> {
+            extends EncryptedList<AccountRate, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -699,8 +696,8 @@ public class AccountRate
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null)
-                        ? JDataFieldValue.SKIP
-                        : theAccount;
+                                           ? JDataFieldValue.SKIP
+                                           : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -795,8 +792,7 @@ public class AccountRate
         /* Is this list locked */
         @Override
         public boolean isLocked() {
-            return (theAccount != null)
-                   && theAccount.isLocked();
+            return (theAccount != null) && theAccount.isLocked();
         }
 
         /**
@@ -805,7 +801,7 @@ public class AccountRate
          * @return the newly added item
          */
         @Override
-        public AccountRate addCopyItem(final DataItem pRate) {
+        public AccountRate addCopyItem(final DataItem<?> pRate) {
             /* Can only clone an AccountRate */
             if (!(pRate instanceof AccountRate)) {
                 return null;
@@ -843,8 +839,7 @@ public class AccountRate
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 AccountRate myCurr = myIterator.next();
-                if ((pDate.equals(myCurr.getEndDate()))
-                    && (pAccount.equals(myCurr.getAccount()))) {
+                if ((pDate.equals(myCurr.getEndDate())) && (pAccount.equals(myCurr.getAccount()))) {
                     iCount++;
                 }
             }
@@ -876,8 +871,7 @@ public class AccountRate
                 JDateDay myDate = myCurr.getDate();
 
                 /* break loop if we have the correct record */
-                if ((myDate == null)
-                    || (myDate.compareTo(pDate) >= 0)) {
+                if ((myDate == null) || (myDate.compareTo(pDate) >= 0)) {
                     return myCurr;
                 }
             }

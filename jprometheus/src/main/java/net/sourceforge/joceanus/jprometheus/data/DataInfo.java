@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -37,10 +37,11 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the data type
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
- * @param <E> the Info Class that applies to this item
+ * @param <S> the Info Class that applies to this item
+ * @param <E> the data list enum class
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
-        extends EncryptedItem
+public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+        extends EncryptedItem<E>
         implements Comparable<T> {
     /**
      * Maximum DataLength.
@@ -94,12 +95,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
 
     @Override
     public boolean skipField(final JDataField pField) {
-        if ((FIELD_LINK.equals(pField))
-            && !getInfoClass().isLink()) {
+        if ((FIELD_LINK.equals(pField)) && !getInfoClass().isLink()) {
             return true;
         }
-        if ((FIELD_VALUE.equals(pField))
-            && getInfoClass().isLink()) {
+        if ((FIELD_VALUE.equals(pField)) && getInfoClass().isLink()) {
             return true;
         }
         return super.skipField(pField);
@@ -115,7 +114,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * Obtain InfoClass.
      * @return the InfoClass
      */
-    public abstract E getInfoClass();
+    public abstract S getInfoClass();
 
     /**
      * Obtain InfoTypeId.
@@ -145,7 +144,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param pClass the class of the link
      * @return the Account
      */
-    public <X extends DataItem> X getLink(final Class<X> pClass) {
+    public <X extends DataItem<?>> X getLink(final Class<X> pClass) {
         return getLink(getValueSet(), pClass);
     }
 
@@ -226,8 +225,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     public static <X> X getValue(final EncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+                                     ? null
+                                     : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
     }
 
     /**
@@ -237,8 +236,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      */
     public static EncryptedField<?> getField(final EncryptedValueSet pValueSet) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
+                                     ? null
+                                     : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
     }
 
     /**
@@ -248,11 +247,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param pClass the class of the link
      * @return the Link
      */
-    public static <X extends DataItem> X getLink(final ValueSet pValueSet,
-                                                 final Class<X> pClass) {
+    public static <X extends DataItem<?>> X getLink(final ValueSet pValueSet,
+                                                    final Class<X> pClass) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, pClass);
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, pClass);
     }
 
     /**
@@ -323,7 +322,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * Set link.
      * @param pLink the link
      */
-    protected void setValueLink(final DataItem pLink) {
+    protected void setValueLink(final DataItem<?> pLink) {
         ValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_LINK, pLink);
@@ -334,8 +333,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfo(final DataInfoList<T, O, I, E> pList,
-                       final DataInfo<T, O, I, E> pInfo) {
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final DataInfo<T, O, I, S, E> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -344,7 +343,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfo(final DataInfoList<T, O, I, E> pList) {
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -358,7 +357,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param uOwnerId the owner id
      * @throws JOceanusException on error
      */
-    protected DataInfo(final DataInfoList<T, O, I, E> pList,
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
                        final Integer uId,
                        final Integer uControlId,
                        final Integer uInfoTypeId,
@@ -405,7 +404,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfo(final DataInfoList<T, O, I, E> pList,
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
                        final Integer uId,
                        final I pInfoType,
                        final O pOwner) {
@@ -422,10 +421,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param <T> the DataType
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
-     * @param <E> the Info Class that applies to this item
+     * @param <S> the Info Class that applies to this item
+     * @param <E> the data list enum class
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, E> & Comparable<T>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
-            extends EncryptedList<T> {
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<T>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
+            extends EncryptedList<T, E> {
         /**
          * Local Report fields.
          */
@@ -457,12 +457,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected DataInfoList(final DataInfoList<T, O, I, E> pSource) {
+        protected DataInfoList(final DataInfoList<T, O, I, S, E> pSource) {
             super(pSource);
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I, E> getEmptyList(final ListStyle pStyle);
+        protected abstract DataInfoList<T, O, I, S, E> getEmptyList(final ListStyle pStyle);
 
         /**
          * Add new item to the list.
@@ -483,7 +483,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
          */
         public abstract void addOpenItem(final Integer uId,
                                          final O pOwner,
-                                         final E pInfoClass,
+                                         final S pInfoClass,
                                          final Object pValue) throws JOceanusException;
     }
 }

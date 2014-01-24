@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
@@ -70,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class PricePoint
-        extends JDataTable<SpotPrice> {
+        extends JDataTable<SpotPrice, MoneyWiseList> {
     /**
      * Serial Id.
      */
@@ -89,12 +90,12 @@ public class PricePoint
     /**
      * The updateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The update entry.
      */
-    private final transient UpdateEntry<SpotPrice> theUpdateEntry;
+    private final transient UpdateEntry<SpotPrice, MoneyWiseList> theUpdateEntry;
 
     /**
      * The Spot prices.
@@ -235,7 +236,7 @@ public class PricePoint
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theUpdateEntry = theUpdateSet.registerClass(SpotPrice.class);
         setUpdateSet(theUpdateSet);
 
@@ -351,8 +352,7 @@ public class PricePoint
         thePortfolio = pPortfolio;
 
         /* If selection is valid */
-        if ((theDate != null)
-            && (thePortfolio != null)) {
+        if ((theDate != null) && (thePortfolio != null)) {
             /* Create the new list */
             theSnapshot = new SpotPrices(theView, pPortfolio, pDate);
             thePrices = theSnapshot.getPrices();
@@ -395,9 +395,8 @@ public class PricePoint
         /* Switch on the Data State */
         switch (pRow.getState()) {
             case CLEAN:
-                DataItem myBase = pRow.getBase();
-                if ((myBase != null)
-                    && (myBase.isDeleted())) {
+                DataItem<?> myBase = pRow.getBase();
+                if ((myBase != null) && (myBase.isDeleted())) {
                     return false;
                 }
                 return true;
@@ -473,8 +472,7 @@ public class PricePoint
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
-                if (!Difference.isEqual(theDate, myDate)
-                    || !Difference.isEqual(thePortfolio, myPortfolio)) {
+                if (!Difference.isEqual(theDate, myDate) || !Difference.isEqual(thePortfolio, myPortfolio)) {
                     /* Protect against exceptions */
                     try {
                         /* Set selection */
@@ -544,7 +542,7 @@ public class PricePoint
      * SpotView table model.
      */
     public final class SpotViewModel
-            extends JDataTableModel<SpotPrice> {
+            extends JDataTableModel<SpotPrice, MoneyWiseList> {
         /**
          * Serial Id.
          */
@@ -567,8 +565,7 @@ public class PricePoint
         @Override
         public boolean includeRow(final SpotPrice pRow) {
             /* Return visibility of row */
-            return showAll()
-                   || !pRow.getSecurity().isClosed();
+            return showAll() || !pRow.getSecurity().isClosed();
         }
 
         /**
@@ -578,8 +575,8 @@ public class PricePoint
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         /**
@@ -589,8 +586,8 @@ public class PricePoint
         @Override
         public int getRowCount() {
             return (thePrices == null)
-                    ? 0
-                    : thePrices.size();
+                                      ? 0
+                                      : thePrices.size();
         }
 
         @Override
@@ -689,7 +686,7 @@ public class PricePoint
      * SpotView mouse listener.
      */
     private static final class SpotViewMouse
-            extends JDataTableMouse<SpotPrice> {
+            extends JDataTableMouse<SpotPrice, MoneyWiseList> {
         /**
          * Constructor.
          * @param pTable the table
@@ -704,7 +701,7 @@ public class PricePoint
      * Column Model class.
      */
     private final class SpotViewColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<MoneyWiseList> {
         /**
          * Serial Id.
          */

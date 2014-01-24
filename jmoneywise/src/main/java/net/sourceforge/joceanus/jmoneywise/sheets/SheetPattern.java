@@ -22,27 +22,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.EventBase;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Pattern;
-import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.EventBase;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for Pattern.
  * @author Tony Washer
  */
 public class SheetPattern
-        extends SheetDataItem<Pattern> {
+        extends SheetDataItem<Pattern, MoneyWiseList> {
     /**
      * NamedArea for Patterns.
      */
@@ -172,8 +173,7 @@ public class SheetPattern
         String myAmount = loadString(COL_AMOUNT);
 
         /* If we don't have a date */
-        if ((myDate == null)
-            && (theLastParent != null)) {
+        if ((myDate == null) && (theLastParent != null)) {
             /* Pick up last date */
             myDate = theLastParent.getDate();
 
@@ -278,8 +278,8 @@ public class SheetPattern
     protected int getLastColumn() {
         /* Return the last column */
         return (isBackup())
-                ? COL_PARENT
-                : COL_FREQ;
+                           ? COL_PARENT
+                           : COL_FREQ;
     }
 
     @Override
@@ -345,25 +345,24 @@ public class SheetPattern
                 /* Access date */
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 JDateDay myDate = (myCell != null)
-                        ? myCell.getDateValue()
-                        : null;
+                                                  ? myCell.getDateValue()
+                                                  : null;
 
                 /* Access the values */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myDebit = (myCell != null)
-                        ? myCell.getStringValue()
-                        : null;
+                                                 ? myCell.getStringValue()
+                                                 : null;
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myCredit = (myCell != null)
-                        ? myCell.getStringValue()
-                        : null;
+                                                  ? myCell.getStringValue()
+                                                  : null;
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                 /* If we have a null date */
-                if ((myDate == null)
-                    && (myLastParent != null)) {
+                if ((myDate == null) && (myLastParent != null)) {
                     /* Pick up last date */
                     myDate = myLastParent.getDate();
 
@@ -389,8 +388,7 @@ public class SheetPattern
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

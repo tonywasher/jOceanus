@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
@@ -99,10 +98,7 @@ public class MoneyWiseData
         MoneyWiseList myType = FIELDSET_MAP.get(pField);
         if (myType != null) {
             /* Access the list */
-            DataList<?> myList = getDataList(myType, DataList.class);
-            return (myList.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : myList;
+            return getFieldListValue(myType);
         }
 
         /* Pass call on */
@@ -404,7 +400,7 @@ public class MoneyWiseData
      * @param pListType the list type
      * @return the new list
      */
-    private DataList<?> newList(final MoneyWiseList pListType) {
+    private DataList<?, MoneyWiseList> newList(final MoneyWiseList pListType) {
         /* Switch on list Type */
         switch (pListType) {
             case ACCOUNTTYPES:
@@ -529,12 +525,12 @@ public class MoneyWiseData
      */
     public void initialiseAnalysis() throws JOceanusException {
         /* Loop through the list types */
-        Iterator<Entry<MoneyWiseList, DataList<?>>> myIterator = entryIterator();
+        Iterator<Entry<MoneyWiseList, DataList<?, MoneyWiseList>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<MoneyWiseList, DataList<?>> myEntry = myIterator.next();
+            Entry<MoneyWiseList, DataList<?, MoneyWiseList>> myEntry = myIterator.next();
 
             /* Access list and switch on type */
-            DataList<?> myList = myEntry.getValue();
+            DataList<?, MoneyWiseList> myList = myEntry.getValue();
             switch (myEntry.getKey()) {
             /* Reset the flags on low-lying data */
                 case ACCOUNTTYPES:

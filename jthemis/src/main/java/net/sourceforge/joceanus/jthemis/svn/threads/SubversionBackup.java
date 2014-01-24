@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Backup;
 
@@ -47,12 +47,12 @@ public class SubversionBackup<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<?> theControl;
+    private final DataControl<?, ?> theControl;
 
     /**
      * ThreadStatus.
      */
-    private final ThreadStatus<?> theStatus;
+    private final ThreadStatus<?, ?> theStatus;
 
     /**
      * The preference manager.
@@ -64,7 +64,7 @@ public class SubversionBackup<T extends DataSet<T, ?>>
      * @param pStatus the thread status
      * @param pPreferenceMgr the preference manager
      */
-    public SubversionBackup(final ThreadStatus<T> pStatus,
+    public SubversionBackup(final ThreadStatus<T, ?> pStatus,
                             final PreferenceManager pPreferenceMgr) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);

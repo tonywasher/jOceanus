@@ -22,16 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxBasis
-        extends SheetStaticData<TaxBasis> {
+        extends SheetStaticData<TaxBasis, MoneyWiseList> {
     /**
      * NamedArea for Tax Bases.
      */
@@ -48,8 +49,7 @@ public class SheetTaxBasis
     /**
      * NameList for TaxBases.
      */
-    protected static final String AREA_TAXBASISNAMES = TaxBasis.OBJECT_NAME
-                                                       + "Names";
+    protected static final String AREA_TAXBASISNAMES = TaxBasis.OBJECT_NAME + "Names";
 
     /**
      * TaxCategories data list.
@@ -169,8 +169,7 @@ public class SheetTaxBasis
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

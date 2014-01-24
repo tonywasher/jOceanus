@@ -24,23 +24,24 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.logging.Logger;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread Status.
  * @author Tony Washer
  * @param <T> the DataSet type
+ * @param <E> the data list enum class
  */
-public class ThreadStatus<T extends DataSet<T, ?>>
+public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         implements TaskControl<T> {
     /**
      * Default Number of steps/stages.
@@ -65,12 +66,12 @@ public class ThreadStatus<T extends DataSet<T, ?>>
     /**
      * The data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * The StatusBar.
      */
-    private final StatusBar theStatusBar;
+    private final StatusDisplay theStatusBar;
 
     /**
      * The number of reporting steps.
@@ -96,7 +97,7 @@ public class ThreadStatus<T extends DataSet<T, ?>>
      * Get the data control.
      * @return the data control
      */
-    public DataControl<T> getControl() {
+    public DataControl<T, E> getControl() {
         return theControl;
     }
 
@@ -122,7 +123,7 @@ public class ThreadStatus<T extends DataSet<T, ?>>
      * Obtain StatusBar.
      * @return the StatusBar
      */
-    public StatusBar getStatusBar() {
+    public StatusDisplay getStatusBar() {
         return theStatusBar;
     }
 
@@ -131,8 +132,8 @@ public class ThreadStatus<T extends DataSet<T, ?>>
      * @param pControl the data control
      * @param pStatusBar the status bar
      */
-    public ThreadStatus(final DataControl<T> pControl,
-                        final StatusBar pStatusBar) {
+    public ThreadStatus(final DataControl<T, E> pControl,
+                        final StatusDisplay pStatusBar) {
         /* Store parameter */
         theControl = pControl;
         theLogger = pControl.getLogger();

@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Portfolio class.
  */
 public class Portfolio
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<Portfolio> {
     /**
      * Object name.
@@ -53,8 +53,7 @@ public class Portfolio
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -179,8 +178,8 @@ public class Portfolio
     public Integer getHoldingId() {
         Account myHolding = getHolding();
         return (myHolding == null)
-                ? null
-                : myHolding.getId();
+                                  ? null
+                                  : myHolding.getId();
     }
 
     /**
@@ -190,8 +189,8 @@ public class Portfolio
     public String getHoldingName() {
         Account myHolding = getHolding();
         return (myHolding == null)
-                ? null
-                : myHolding.getName();
+                                  ? null
+                                  : myHolding.getName();
     }
 
     /**
@@ -373,8 +372,8 @@ public class Portfolio
      */
     private void setValueTaxFree(final Boolean pValue) {
         getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                              ? pValue
+                                                              : Boolean.FALSE);
     }
 
     /**
@@ -383,8 +382,8 @@ public class Portfolio
      */
     private void setValueClosed(final Boolean pValue) {
         getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                             ? pValue
+                                                             : Boolean.FALSE);
     }
 
     @Override
@@ -625,8 +624,7 @@ public class Portfolio
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
@@ -640,8 +638,7 @@ public class Portfolio
             }
 
             /* If we are open then holding account must be open */
-            if (!isClosed()
-                && myHolding.isClosed()) {
+            if (!isClosed() && myHolding.isClosed()) {
                 addError(ERROR_HOLDCLOSED, FIELD_HOLDING);
             }
         }
@@ -658,7 +655,7 @@ public class Portfolio
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pPortfolio) {
+    public boolean applyChanges(final DataItem<?> pPortfolio) {
         /* Can only update from a portfolio */
         if (!(pPortfolio instanceof Portfolio)) {
             return false;
@@ -701,7 +698,7 @@ public class Portfolio
      * The Portfolio List class.
      */
     public static class PortfolioList
-            extends EncryptedList<Portfolio> {
+            extends EncryptedList<Portfolio, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -783,7 +780,7 @@ public class Portfolio
          * @return the newly added item
          */
         @Override
-        public Portfolio addCopyItem(final DataItem pPortfolio) {
+        public Portfolio addCopyItem(final DataItem<?> pPortfolio) {
             /* Can only clone a Portfolio */
             if (!(pPortfolio instanceof Portfolio)) {
                 return null;

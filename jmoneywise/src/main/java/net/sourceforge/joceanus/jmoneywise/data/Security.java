@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Security class.
  */
 public class Security
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<Security> {
     /**
      * Object name.
@@ -205,8 +205,8 @@ public class Security
     public Integer getParentId() {
         Payee myParent = getParent();
         return (myParent == null)
-                ? null
-                : myParent.getId();
+                                 ? null
+                                 : myParent.getId();
     }
 
     /**
@@ -216,8 +216,8 @@ public class Security
     public String getParentName() {
         Payee myParent = getParent();
         return (myParent == null)
-                ? null
-                : myParent.getName();
+                                 ? null
+                                 : myParent.getName();
     }
 
     /**
@@ -235,8 +235,8 @@ public class Security
     public Integer getSecurityTypeId() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                ? null
-                : myType.getId();
+                               ? null
+                               : myType.getId();
     }
 
     /**
@@ -246,8 +246,8 @@ public class Security
     public String getSecurityTypeName() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                ? null
-                : myType.getName();
+                               ? null
+                               : myType.getName();
     }
 
     /**
@@ -257,8 +257,8 @@ public class Security
     public SecurityTypeClass getSecurityTypeClass() {
         SecurityType myType = getSecurityType();
         return (myType == null)
-                ? null
-                : myType.getSecurityClass();
+                               ? null
+                               : myType.getSecurityClass();
     }
 
     /**
@@ -300,8 +300,8 @@ public class Security
     public Integer getSecurityCurrencyId() {
         AccountCurrency myCurrency = getSecurityCurrency();
         return (myCurrency == null)
-                ? null
-                : myCurrency.getId();
+                                   ? null
+                                   : myCurrency.getId();
     }
 
     /**
@@ -311,8 +311,8 @@ public class Security
     public String getSecurityCurrencyName() {
         AccountCurrency myCurrency = getSecurityCurrency();
         return (myCurrency == null)
-                ? null
-                : myCurrency.getName();
+                                   ? null
+                                   : myCurrency.getName();
     }
 
     /**
@@ -596,8 +596,8 @@ public class Security
      */
     private void setValueClosed(final Boolean pValue) {
         getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                             ? pValue
+                                                             : Boolean.FALSE);
     }
 
     @Override
@@ -944,8 +944,7 @@ public class Security
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
@@ -975,8 +974,7 @@ public class Security
             PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
 
             /* If the account needs a market parent */
-            if ((myClass.needsMarketParent())
-                && (myParClass != PayeeTypeClass.MARKET)) {
+            if ((myClass.needsMarketParent()) && (myParClass != PayeeTypeClass.MARKET)) {
                 addError(ERROR_PARMARKET, FIELD_PARENT);
 
                 /* else check that any parent is owner */
@@ -995,8 +993,7 @@ public class Security
         }
 
         /* If we are open then parent must be open */
-        if (!isClosed()
-            && myParent.isClosed()) {
+        if (!isClosed() && myParent.isClosed()) {
             addError(ERROR_PARCLOSED, FIELD_CLOSED);
         }
 
@@ -1012,7 +1009,7 @@ public class Security
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pSecurity) {
+    public boolean applyChanges(final DataItem<?> pSecurity) {
         /* Can only update from a security */
         if (!(pSecurity instanceof Security)) {
             return false;
@@ -1065,7 +1062,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-            extends EncryptedList<Security> {
+            extends EncryptedList<Security, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -1147,7 +1144,7 @@ public class Security
          * @return the newly added item
          */
         @Override
-        public Security addCopyItem(final DataItem pSecurity) {
+        public Security addCopyItem(final DataItem<?> pSecurity) {
             /* Can only clone an Security */
             if (!(pSecurity instanceof Security)) {
                 return null;

@@ -24,14 +24,6 @@ package net.sourceforge.joceanus.jtethys.decimal;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-
 /**
  * JDecimal test class.
  */

@@ -22,17 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfoType
-        extends SheetStaticData<TaxYearInfoType> {
+        extends SheetStaticData<TaxYearInfoType, MoneyWiseList> {
     /**
      * NamedArea for TaxYearInfoType.
      */
@@ -49,8 +50,7 @@ public class SheetTaxYearInfoType
     /**
      * NameList for TaxYearInfoType.
      */
-    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME
-                                                          + "Names";
+    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
 
     /**
      * TaxYearInfoTypes data list.
@@ -157,8 +157,7 @@ public class SheetTaxYearInfoType
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

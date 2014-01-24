@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticData<PayeeType, PayeeTypeClass> {
+        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -43,8 +44,7 @@ public class PayeeType
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -150,7 +150,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-            extends StaticList<PayeeType, PayeeTypeClass> {
+            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -195,7 +195,7 @@ public class PayeeType
         }
 
         @Override
-        public PayeeType addCopyItem(final DataItem pItem) {
+        public PayeeType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a PayeeType */
             if (!(pItem instanceof PayeeType)) {
                 return null;
@@ -208,7 +208,7 @@ public class PayeeType
 
         @Override
         public PayeeType addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

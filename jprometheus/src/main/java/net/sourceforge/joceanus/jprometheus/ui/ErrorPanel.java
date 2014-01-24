@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet.ErrorDisplay;
+import net.sourceforge.joceanus.jprometheus.views.ErrorDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 

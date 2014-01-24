@@ -43,18 +43,18 @@ public class CreateDatabase<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl<T, ?> theControl;
 
     /**
      * Thread Status.
      */
-    private final ThreadStatus<T> theStatus;
+    private final ThreadStatus<T, ?> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public CreateDatabase(final ThreadStatus<T> pStatus) {
+    public CreateDatabase(final ThreadStatus<T, ?> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

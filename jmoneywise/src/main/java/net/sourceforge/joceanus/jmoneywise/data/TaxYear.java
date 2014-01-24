@@ -24,26 +24,26 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * TaxYear DataItem utilising TaxYearInfo.
@@ -60,8 +60,7 @@ public class TaxYear
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -98,14 +97,13 @@ public class TaxYear
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                    ? theInfoSet
-                    : JDataFieldValue.SKIP;
+                             ? theInfoSet
+                             : JDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
         TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
-        if ((theInfoSet != null)
-            && (myClass != null)) {
+        if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
 
@@ -139,8 +137,8 @@ public class TaxYear
      */
     public JMoney getAllowance() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.ALLOWANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -149,8 +147,8 @@ public class TaxYear
      */
     public JMoney getRentalAllowance() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.RENTALALLOWANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.RENTALALLOWANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -159,8 +157,8 @@ public class TaxYear
      */
     public JMoney getLoBand() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LOTAXBAND, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.LOTAXBAND, JMoney.class)
+                         : null;
     }
 
     /**
@@ -169,8 +167,8 @@ public class TaxYear
      */
     public JMoney getBasicBand() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXBAND, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXBAND, JMoney.class)
+                         : null;
     }
 
     /**
@@ -179,8 +177,8 @@ public class TaxYear
      */
     public JMoney getCapitalAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CAPITALALLOWANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.CAPITALALLOWANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -189,8 +187,8 @@ public class TaxYear
      */
     public JMoney getLoAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.LOAGEALLOWANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -199,8 +197,8 @@ public class TaxYear
      */
     public JMoney getHiAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.HIAGEALLOWANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -209,8 +207,8 @@ public class TaxYear
      */
     public JMoney getAgeAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AGEALLOWANCELIMIT, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.AGEALLOWANCELIMIT, JMoney.class)
+                         : null;
     }
 
     /**
@@ -219,8 +217,8 @@ public class TaxYear
      */
     public JMoney getAddAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, JMoney.class)
+                         : null;
     }
 
     /**
@@ -229,8 +227,8 @@ public class TaxYear
      */
     public JMoney getAddIncBound() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, JMoney.class)
+                         : null;
     }
 
     /**
@@ -239,8 +237,8 @@ public class TaxYear
      */
     public JRate getLoTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LOTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.LOTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -249,8 +247,8 @@ public class TaxYear
      */
     public JRate getBasicTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.BASICTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -259,8 +257,8 @@ public class TaxYear
      */
     public JRate getHiTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HITAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.HITAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -269,8 +267,8 @@ public class TaxYear
      */
     public JRate getIntTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.INTERESTTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.INTERESTTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -279,8 +277,8 @@ public class TaxYear
      */
     public JRate getDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.DIVIDENDTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -289,8 +287,8 @@ public class TaxYear
      */
     public JRate getHiDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.HIDIVIDENDTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -299,8 +297,8 @@ public class TaxYear
      */
     public JRate getAddTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -309,8 +307,8 @@ public class TaxYear
      */
     public JRate getAddDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -319,8 +317,8 @@ public class TaxYear
      */
     public JRate getCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CAPITALTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.CAPITALTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -329,8 +327,8 @@ public class TaxYear
      */
     public JRate getHiCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, JRate.class)
-                : null;
+                         ? theInfoSet.getValue(TaxYearInfoClass.HICAPITALTAXRATE, JRate.class)
+                         : null;
     }
 
     /**
@@ -562,8 +560,7 @@ public class TaxYear
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -578,8 +575,7 @@ public class TaxYear
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -594,8 +590,7 @@ public class TaxYear
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory)
-            && (useInfoSet)) {
+        if ((!hasHistory) && (useInfoSet)) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -649,8 +644,8 @@ public class TaxYear
         TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                    ? theInfoSet.fieldChanged(myClass)
-                    : Difference.IDENTICAL;
+                               ? theInfoSet.fieldChanged(myClass)
+                               : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -769,15 +764,13 @@ public class TaxYear
         if (myDate != null) {
             /* The year must be one greater than the preceding element */
             TaxYear myPrev = myList.peekPrevious(this);
-            if ((myPrev != null)
-                && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
+            if ((myPrev != null) && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
                 addError(ERROR_LISTGAP, FIELD_TAXYEAR);
             }
         }
 
         /* If we have a tax regime and an infoSet */
-        if ((myTaxRegime != null)
-            && (theInfoSet != null)) {
+        if ((myTaxRegime != null) && (theInfoSet != null)) {
             /* Validate the InfoSet */
             theInfoSet.validate();
         }
@@ -957,7 +950,7 @@ public class TaxYear
         }
 
         @Override
-        public TaxYear addCopyItem(final DataItem pTaxYear) {
+        public TaxYear addCopyItem(final DataItem<?> pTaxYear) {
             /* Can only clone a TaxYear */
             if (!(pTaxYear instanceof TaxYear)) {
                 return null;
@@ -974,7 +967,7 @@ public class TaxYear
          */
         @Override
         public TaxYear addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

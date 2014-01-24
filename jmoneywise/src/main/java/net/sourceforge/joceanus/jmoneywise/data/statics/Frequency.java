@@ -23,11 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FrequencyClass> {
+        extends StaticData<Frequency, FrequencyClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -150,7 +151,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass> {
+            extends StaticList<Frequency, FrequencyClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -213,7 +214,7 @@ public class Frequency
          * @return the newly added item
          */
         @Override
-        public Frequency addCopyItem(final DataItem pItem) {
+        public Frequency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a Frequency */
             if (!(pItem instanceof Frequency)) {
                 return null;
@@ -230,7 +231,7 @@ public class Frequency
          */
         @Override
         public Frequency addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

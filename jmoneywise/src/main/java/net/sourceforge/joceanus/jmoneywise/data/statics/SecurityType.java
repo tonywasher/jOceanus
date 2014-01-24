@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticData<SecurityType, SecurityTypeClass> {
+        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -43,8 +44,7 @@ public class SecurityType
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -150,7 +150,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass> {
+            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -195,7 +195,7 @@ public class SecurityType
         }
 
         @Override
-        public SecurityType addCopyItem(final DataItem pItem) {
+        public SecurityType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a SecurityType */
             if (!(pItem instanceof SecurityType)) {
                 return null;
@@ -208,7 +208,7 @@ public class SecurityType
 
         @Override
         public SecurityType addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

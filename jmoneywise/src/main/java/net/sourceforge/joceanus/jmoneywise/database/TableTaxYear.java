@@ -25,24 +25,25 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * DatabaseTable extension for TaxYear.
  * @author Tony Washer
  */
 public class TableTaxYear
-        extends DatabaseTable<TaxYear> {
+        extends DatabaseTable<TaxYear, MoneyWiseList> {
     /**
      * The name of the TaxYears table.
      */

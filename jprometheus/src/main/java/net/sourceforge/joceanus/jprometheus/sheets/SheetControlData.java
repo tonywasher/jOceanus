@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlData
-        extends SheetDataItem<ControlData> {
+        extends SheetDataItem<ControlData, CryptographyList> {
     /**
      * SheetName for ControlData.
      */
@@ -129,7 +130,7 @@ public class SheetControlData
     protected int getLastColumn() {
         /* Return the last column */
         return isBackup()
-                ? COL_CONTROLID
-                : COL_VERSION;
+                         ? COL_CONTROLID
+                         : COL_VERSION;
     }
 }

@@ -23,11 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventCategoryType
-        extends StaticData<EventCategoryType, EventCategoryClass> {
+        extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -44,8 +45,7 @@ public class EventCategoryType
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -67,8 +67,7 @@ public class EventCategoryType
 
     @Override
     public boolean isActive() {
-        return super.isActive()
-               || getCategoryClass().isHiddenType();
+        return super.isActive() || getCategoryClass().isHiddenType();
     }
 
     @Override
@@ -157,7 +156,7 @@ public class EventCategoryType
      * Represents a list of {@link EventCategoryType} objects.
      */
     public static class EventCategoryTypeList
-            extends StaticList<EventCategoryType, EventCategoryClass> {
+            extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -212,7 +211,7 @@ public class EventCategoryType
          * @return the newly added item
          */
         @Override
-        public EventCategoryType addCopyItem(final DataItem pItem) {
+        public EventCategoryType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a EventCategoryType */
             if (!(pItem instanceof EventCategoryType)) {
                 return null;
@@ -229,7 +228,7 @@ public class EventCategoryType
          */
         @Override
         public EventCategoryType addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

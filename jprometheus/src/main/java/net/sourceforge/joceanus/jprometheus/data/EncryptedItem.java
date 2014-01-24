@@ -39,9 +39,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Encrypted Data Item and List.
  * @author Tony Washer
+ * @param <E> the data list enum class
  */
-public abstract class EncryptedItem
-        extends DataItem {
+public abstract class EncryptedItem<E extends Enum<E>>
+        extends DataItem<E> {
     /**
      * Resource Bundle.
      */
@@ -92,8 +93,8 @@ public abstract class EncryptedItem
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
-                ? null
-                : myKey.getId();
+                              ? null
+                              : myKey.getId();
     }
 
     /**
@@ -129,7 +130,7 @@ public abstract class EncryptedItem
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(final EncryptedList<?> pList,
+    public EncryptedItem(final EncryptedList<?, E> pList,
                          final Integer pId) {
         super(pList, pId);
         theGenerator = new EncryptionGenerator(null);
@@ -140,8 +141,8 @@ public abstract class EncryptedItem
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(final EncryptedList<?> pList,
-                         final EncryptedItem pSource) {
+    public EncryptedItem(final EncryptedList<?, E> pList,
+                         final EncryptedItem<E> pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
     }
@@ -191,11 +192,8 @@ public abstract class EncryptedItem
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle bad usage */
-        if ((myCurrent != null)
-            && (!EncryptedField.class.isInstance(myCurrent))) {
-            throw new IllegalArgumentException(ERROR_USAGE
-                                               + " "
-                                               + pField.getName());
+        if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
+            throw new IllegalArgumentException(ERROR_USAGE + " " + pField.getName());
         }
 
         /* Create the new encrypted value */
@@ -234,8 +232,8 @@ public abstract class EncryptedItem
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null)
-                    ? Difference.DIFFERENT
-                    : Difference.IDENTICAL;
+                                 ? Difference.DIFFERENT
+                                 : Difference.IDENTICAL;
         }
 
         /* Handle case where new value is null */
@@ -270,7 +268,7 @@ public abstract class EncryptedItem
      * @throws JOceanusException on error
      */
     protected void adoptSecurity(final ControlKey pControl,
-                                 final EncryptedItem pBase) throws JOceanusException {
+                                 final EncryptedItem<E> pBase) throws JOceanusException {
         /* Set the Control Key */
         setValueControlKey(pControl);
 
@@ -308,9 +306,10 @@ public abstract class EncryptedItem
     /**
      * Encrypted DataList.
      * @param <T> the item type
+     * @param <E> the data list enum class
      */
-    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>>
-            extends DataList<T> {
+    public abstract static class EncryptedList<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
+            extends DataList<T, E> {
         /**
          * Get the active controlKey.
          * @return the active controlKey
@@ -318,8 +317,8 @@ public abstract class EncryptedItem
         public ControlKey getControlKey() {
             ControlData myControl = getDataSet().getControl();
             return (myControl == null)
-                    ? null
-                    : myControl.getControlKey();
+                                      ? null
+                                      : myControl.getControlKey();
         }
 
         /**
@@ -348,7 +347,7 @@ public abstract class EncryptedItem
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EncryptedList(final EncryptedList<T> pSource) {
+        protected EncryptedList(final EncryptedList<T, E> pSource) {
             super(pSource);
         }
 
@@ -386,8 +385,7 @@ public abstract class EncryptedItem
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -407,7 +405,7 @@ public abstract class EncryptedItem
          */
         protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
-                                        final EncryptedList<?> pBase) throws JOceanusException {
+                                        final EncryptedList<?, E> pBase) throws JOceanusException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;
@@ -429,13 +427,13 @@ public abstract class EncryptedItem
             /* Loop through this list */
             while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
-                EncryptedItem myCurr = myIterator.next();
-                EncryptedItem myBase = pBase.findItemById(myCurr.getId());
+                EncryptedItem<E> myCurr = myIterator.next();
+                EncryptedItem<E> myBase = pBase.findItemById(myCurr.getId());
 
                 /* Cast the items correctly */
                 T mySource = (myBase == null)
-                        ? null
-                        : myClass.cast(myBase);
+                                             ? null
+                                             : myClass.cast(myBase);
                 T myTarget = myClass.cast(myCurr);
 
                 /* Adopt/initialise the security */
@@ -443,8 +441,7 @@ public abstract class EncryptedItem
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

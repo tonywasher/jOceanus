@@ -26,13 +26,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for ControlKey.
  */
 public class TableControlKeys
-        extends DatabaseTable<ControlKey> {
+        extends DatabaseTable<ControlKey, CryptographyList> {
     /**
      * The name of the ControlKeys table.
      */

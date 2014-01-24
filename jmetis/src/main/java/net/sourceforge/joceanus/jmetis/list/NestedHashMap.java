@@ -144,8 +144,8 @@ public class NestedHashMap<K, V>
     private static int hashKey(final Object pKey) {
         /* Return the hash for the key */
         return (pKey == null)
-                ? 0
-                : pKey.hashCode();
+                             ? 0
+                             : pKey.hashCode();
     }
 
     /**
@@ -203,8 +203,7 @@ public class NestedHashMap<K, V>
          */
         private void collapseArray() {
             /* Ignore if too busy or already at top */
-            if ((theParent == null)
-                || (theNumElements > 1)) {
+            if ((theParent == null) || (theNumElements > 1)) {
                 return;
             }
 
@@ -239,10 +238,8 @@ public class NestedHashMap<K, V>
      */
     public NestedHashMap(final int pShiftBits) {
         /* Ensure that the shift bits are in range */
-        if ((pShiftBits < SHIFT_MIN_BITS)
-            || (pShiftBits > SHIFT_MAX_BITS)) {
-            throw new IllegalArgumentException("Invalid number of shift bits "
-                                               + pShiftBits);
+        if ((pShiftBits < SHIFT_MIN_BITS) || (pShiftBits > SHIFT_MAX_BITS)) {
+            throw new IllegalArgumentException("Invalid number of shift bits " + pShiftBits);
         }
 
         /* Calculate the array size */
@@ -293,8 +290,8 @@ public class NestedHashMap<K, V>
 
         /* Return the value */
         return (myEntry != null)
-                ? myEntry.getValue()
-                : null;
+                                ? myEntry.getValue()
+                                : null;
     }
 
     @Override
@@ -312,8 +309,8 @@ public class NestedHashMap<K, V>
 
         /* Return the old value */
         return (myEntry != null)
-                ? myEntry.getValue()
-                : null;
+                                ? myEntry.getValue()
+                                : null;
     }
 
     @Override
@@ -406,8 +403,7 @@ public class NestedHashMap<K, V>
                 }
 
                 /* if we have an extension array pass, check its contents */
-            } else if ((myEntry instanceof ArrayElement)
-                       && (containsValue((ArrayElement) myEntry, pValue))) {
+            } else if ((myEntry instanceof ArrayElement) && (containsValue((ArrayElement) myEntry, pValue))) {
                 return true;
             }
         }
@@ -459,10 +455,9 @@ public class NestedHashMap<K, V>
             V myValue = myEntry.getValue();
             int myHash = hashKey(myKey);
             HashEntry<?, ?> myTest = myThat.getEntry(myHash, myKey);
-            if ((myTest == null)
-                || ((myTest.theValue == null)
-                        ? myValue != null
-                        : !myTest.theValue.equals(myValue))) {
+            if ((myTest == null) || ((myTest.theValue == null)
+                                                              ? myValue != null
+                                                              : !myTest.theValue.equals(myValue))) {
                 return false;
             }
         }
@@ -515,12 +510,12 @@ public class NestedHashMap<K, V>
 
             /* Add to the buffer (handling self reference) */
             myBuilder.append((myKey == this)
-                    ? SELF_REF
-                    : myKey);
+                                            ? SELF_REF
+                                            : myKey);
             myBuilder.append('=');
             myBuilder.append((myValue == this)
-                    ? SELF_REF
-                    : myValue);
+                                              ? SELF_REF
+                                              : myValue);
         }
 
         /* Add brackets */
@@ -551,8 +546,7 @@ public class NestedHashMap<K, V>
         /* Loop to locate HashEntry location */
         for (;;) {
             /* Calculate the index into the array */
-            myIndex = myCurHash
-                      & myMask;
+            myIndex = myCurHash & myMask;
 
             /* Access current entry */
             Object myEntry = myArray.theArray[myIndex];
@@ -616,8 +610,7 @@ public class NestedHashMap<K, V>
 
                 /* Calculate index of existing entry */
                 myShift += theShiftBits;
-                int myNewIndex = (myHashEntry.theHash >>> myShift)
-                                 & myMask;
+                int myNewIndex = (myHashEntry.theHash >>> myShift) & myMask;
                 myNewArray.theArray[myNewIndex] = myHashEntry;
                 myNewArray.theNumElements++;
                 myArray.theArray[myIndex] = myNewArray;
@@ -649,8 +642,7 @@ public class NestedHashMap<K, V>
         /* Loop to locate HashEntry location */
         for (;;) {
             /* Calculate the index into the array */
-            myIndex = myCurHash
-                      & myMask;
+            myIndex = myCurHash & myMask;
 
             /* Access current entry */
             Object myEntry = myCurArray.theArray[myIndex];
@@ -707,8 +699,7 @@ public class NestedHashMap<K, V>
         /* Loop to locate HashEntry location */
         for (;;) {
             /* Calculate the index into the array */
-            myIndex = myCurHash
-                      & myMask;
+            myIndex = myCurHash & myMask;
 
             /* Access current entry */
             Object myEntry = myArray.theArray[myIndex];
@@ -737,8 +728,8 @@ public class NestedHashMap<K, V>
                 if (myHash.theHash == pHash) {
                     /* If the top entry is not a match */
                     if ((pKey == null)
-                            ? myHash.theKey != null
-                            : !pKey.equals(myHash.theKey)) {
+                                      ? myHash.theKey != null
+                                      : !pKey.equals(myHash.theKey)) {
                         /* Find/remove the entry */
                         myHash = myHash.removeKey(pKey);
 
@@ -861,8 +852,8 @@ public class NestedHashMap<K, V>
             while (myHash != null) {
                 /* Check item */
                 if ((pKey == null)
-                        ? myHash.theKey == null
-                        : pKey.equals(myHash.theKey)) {
+                                  ? myHash.theKey == null
+                                  : pKey.equals(myHash.theKey)) {
                     return myHash;
                 }
 
@@ -936,8 +927,8 @@ public class NestedHashMap<K, V>
 
                 /* If the next holds the key */
                 if ((pKey == null)
-                        ? myNext.theKey == null
-                        : pKey.equals(myNext.theKey)) {
+                                  ? myNext.theKey == null
+                                  : pKey.equals(myNext.theKey)) {
                     /* Unlink the entry and return it */
                     myHash.theNext = myNext.theNext;
                     return myNext;
@@ -959,8 +950,8 @@ public class NestedHashMap<K, V>
             for (;;) {
                 /* If we match the key */
                 if ((pKey == null)
-                        ? myHash.theKey == null
-                        : pKey.equals(myHash.theKey)) {
+                                  ? myHash.theKey == null
+                                  : pKey.equals(myHash.theKey)) {
                     /* Return it */
                     return myHash;
                 }
@@ -1022,31 +1013,28 @@ public class NestedHashMap<K, V>
 
             /* Check key */
             if ((theKey == null)
-                    ? myThat.theKey != null
-                    : !theKey.equals(myThat.theKey)) {
+                                ? myThat.theKey != null
+                                : !theKey.equals(myThat.theKey)) {
                 return false;
             }
 
             /* Check value */
             return (theValue == null)
-                    ? myThat.theValue == null
-                    : theValue.equals(myThat.theValue);
+                                     ? myThat.theValue == null
+                                     : theValue.equals(myThat.theValue);
         }
 
         @Override
         public int hashCode() {
             /* Create combined hashCode */
             return (theValue == null)
-                    ? theHash
-                    : theHash
-                      ^ theValue.hashCode();
+                                     ? theHash
+                                     : theHash ^ theValue.hashCode();
         }
 
         @Override
         public String toString() {
-            return theKey
-                   + "="
-                   + theValue;
+            return theKey + "=" + theValue;
         }
     }
 
@@ -1410,10 +1398,9 @@ public class NestedHashMap<K, V>
 
             /* Check that this key exists with this value */
             HashEntry<?, ?> myTest = getEntry(myEntry.theHash, myEntry.theKey);
-            return (myTest != null)
-                   && ((myEntry.theValue == null)
-                           ? myTest.theValue == null
-                           : myEntry.theValue.equals(myTest.theValue));
+            return (myTest != null) && ((myEntry.theValue == null)
+                                                                  ? myTest.theValue == null
+                                                                  : myEntry.theValue.equals(myTest.theValue));
         }
 
         @Override
@@ -1442,7 +1429,6 @@ public class NestedHashMap<K, V>
     @Override
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
-        @SuppressWarnings("unchecked")
         NestedHashMap<K, V> myResult = (NestedHashMap<K, V>) super.clone();
 
         /* Re-initialise the fields */
@@ -1507,7 +1493,6 @@ public class NestedHashMap<K, V>
      * @throws IOException on error
      * @throws ClassNotFoundException on error
      */
-    @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream pInput) throws IOException, ClassNotFoundException {
         /* Read in the default stuff */
         pInput.defaultReadObject();

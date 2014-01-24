@@ -29,9 +29,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Database table class for DataInfo Items. Each data type that represents DataInfo should extend this class.
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?>>
-        extends TableEncrypted<T> {
+public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
+        extends TableEncrypted<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control

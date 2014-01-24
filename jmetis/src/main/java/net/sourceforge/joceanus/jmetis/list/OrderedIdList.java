@@ -48,7 +48,6 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      * Get the index as an OrderedIdIndex.
      * @return the index
      */
-    @SuppressWarnings("unchecked")
     private OrderedIdIndex<I, T> getTheIndex() {
         return (OrderedIdIndex<I, T>) super.getIndex();
     }
@@ -161,8 +160,8 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
 
         /* Return the next object */
         return (myNode == null)
-                ? null
-                : myNode.getObject();
+                               ? null
+                               : myNode.getObject();
     }
 
     /**
@@ -189,8 +188,8 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
 
         /* Return the previous object */
         return (myNode == null)
-                ? null
-                : myNode.getObject();
+                               ? null
+                               : myNode.getObject();
     }
 
     /**

@@ -29,21 +29,21 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 
 /**
  * TaxInfoSet class.
  * @author Tony Washer
  */
 public class TaxInfoSet
-        extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+        extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
     /**
      * Resource Bundle.
      */
@@ -102,8 +102,8 @@ public class TaxInfoSet
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -156,8 +156,8 @@ public class TaxInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         TaxYearInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
+                              ? JDataFieldRequired.NOTALLOWED
+                              : isClassRequired(myClass);
     }
 
     /**
@@ -184,20 +184,20 @@ public class TaxInfoSet
             case ADDITIONALTAXRATE:
             case ADDITIONALDIVIDENDTAXRATE:
                 return myRegime.hasAdditionalTaxBand()
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                      ? JDataFieldRequired.MUSTEXIST
+                                                      : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle CapitalIncome Tax Details */
             case CAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
-                        ? JDataFieldRequired.NOTALLOWED
-                        : JDataFieldRequired.MUSTEXIST;
+                                                         ? JDataFieldRequired.NOTALLOWED
+                                                         : JDataFieldRequired.MUSTEXIST;
 
                 /* Handle CapitalIncome Tax Details */
             case HICAPITALTAXRATE:
                 return myRegime.hasCapitalGainsAsIncome()
-                        ? JDataFieldRequired.NOTALLOWED
-                        : JDataFieldRequired.CANEXIST;
+                                                         ? JDataFieldRequired.NOTALLOWED
+                                                         : JDataFieldRequired.CANEXIST;
 
                 /* Handle all other fields */
             default:
@@ -216,8 +216,7 @@ public class TaxInfoSet
         for (TaxYearInfoClass myClass : TaxYearInfoClass.values()) {
             /* Access info for class */
             TaxYearInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null)
-                                 && !myInfo.isDeleted();
+            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
             JDataFieldRequired myState = isClassRequired(myClass);
@@ -250,10 +249,9 @@ public class TaxInfoSet
                 /* Obtain Allowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.ALLOWANCE);
                 JDecimal myAllowance = (myAllowInfo != null)
-                        ? myInfo.getValue(JDecimal.class)
-                        : null;
-                if ((myAllowance != null)
-                    && (myValue.compareTo(myAllowance) < 0)) {
+                                                            ? myInfo.getValue(JDecimal.class)
+                                                            : null;
+                if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_ALLOW, getFieldForClass(myClass));
                 }
             }
@@ -263,10 +261,9 @@ public class TaxInfoSet
                 /* Obtain LoAgeAllowance value */
                 TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LOAGEALLOWANCE);
                 JDecimal myAllowance = (myAllowInfo != null)
-                        ? myInfo.getValue(JDecimal.class)
-                        : null;
-                if ((myAllowance != null)
-                    && (myValue.compareTo(myAllowance) < 0)) {
+                                                            ? myInfo.getValue(JDecimal.class)
+                                                            : null;
+                if ((myAllowance != null) && (myValue.compareTo(myAllowance) < 0)) {
                     myTaxYear.addError(ERROR_LOALLOW, getFieldForClass(myClass));
                 }
             }

@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Payee class.
  */
 public class Payee
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<Payee> {
     /**
      * Object name.
@@ -166,8 +166,8 @@ public class Payee
     public Integer getPayeeTypeId() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                ? null
-                : myType.getId();
+                               ? null
+                               : myType.getId();
     }
 
     /**
@@ -177,8 +177,8 @@ public class Payee
     public String getPayeeTypeName() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                ? null
-                : myType.getName();
+                               ? null
+                               : myType.getName();
     }
 
     /**
@@ -188,8 +188,8 @@ public class Payee
     public PayeeTypeClass getPayeeTypeClass() {
         PayeeType myType = getPayeeType();
         return (myType == null)
-                ? null
-                : myType.getPayeeClass();
+                               ? null
+                               : myType.getPayeeClass();
     }
 
     /**
@@ -354,8 +354,8 @@ public class Payee
      */
     private void setValueClosed(final Boolean pValue) {
         getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                ? pValue
-                : Boolean.FALSE);
+                                                             ? pValue
+                                                             : Boolean.FALSE);
     }
 
     @Override
@@ -607,8 +607,7 @@ public class Payee
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
@@ -646,7 +645,7 @@ public class Payee
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pPayee) {
+    public boolean applyChanges(final DataItem<?> pPayee) {
         /* Can only update from a payee */
         if (!(pPayee instanceof Payee)) {
             return false;
@@ -684,7 +683,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-            extends EncryptedList<Payee> {
+            extends EncryptedList<Payee, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -766,7 +765,7 @@ public class Payee
          * @return the newly added item
          */
         @Override
-        public Payee addCopyItem(final DataItem pPayee) {
+        public Payee addCopyItem(final DataItem<?> pPayee) {
             /* Can only clone a Payee */
             if (!(pPayee instanceof Payee)) {
                 return null;

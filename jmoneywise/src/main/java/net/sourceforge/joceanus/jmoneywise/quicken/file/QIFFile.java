@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
@@ -195,7 +196,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    public boolean writeFile(final ThreadStatus<MoneyWiseData> pStatus,
+    public boolean writeFile(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                              final OutputStreamWriter pStream) throws IOException {
         /* Write the classes */
         boolean bContinue = writeClasses(pStatus, pStream);
@@ -231,7 +232,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeClasses(final ThreadStatus<MoneyWiseData> pStatus,
+    private boolean writeClasses(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                  final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -241,8 +242,7 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing classes"))
-                            && (pStatus.setNumSteps(theClasses.size()));
+        boolean bContinue = (pStatus.setNewStage("Writing classes")) && (pStatus.setNumSteps(theClasses.size()));
 
         /* Skip step if we have no classes */
         if (theClasses.isEmpty()) {
@@ -270,8 +270,7 @@ public class QIFFile {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -287,7 +286,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeCategories(final ThreadStatus<MoneyWiseData> pStatus,
+    private boolean writeCategories(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                     final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -297,8 +296,7 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing categories"))
-                            && (pStatus.setNumSteps(theCategories.size()));
+        boolean bContinue = (pStatus.setNewStage("Writing categories")) && (pStatus.setNumSteps(theCategories.size()));
 
         /* Format Item Type header */
         QIFRecord.formatItemType(QIFEventCategory.QIF_ITEM, myBuilder);
@@ -321,8 +319,7 @@ public class QIFFile {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -338,7 +335,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeAccounts(final ThreadStatus<MoneyWiseData> pStatus,
+    private boolean writeAccounts(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                   final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -348,8 +345,7 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing accounts"))
-                            && (pStatus.setNumSteps(theAccounts.size()));
+        boolean bContinue = (pStatus.setNewStage("Writing accounts")) && (pStatus.setNumSteps(theAccounts.size()));
 
         /* Set AutoSwitch and header */
         QIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);
@@ -373,8 +369,7 @@ public class QIFFile {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -390,7 +385,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writeSecurities(final ThreadStatus<MoneyWiseData> pStatus,
+    private boolean writeSecurities(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                     final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -400,8 +395,7 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing securities"))
-                            && (pStatus.setNumSteps(theSecurities.size()));
+        boolean bContinue = (pStatus.setNewStage("Writing securities")) && (pStatus.setNumSteps(theSecurities.size()));
 
         /* Skip step if we have no securities */
         if (theSecurities.isEmpty()) {
@@ -432,8 +426,7 @@ public class QIFFile {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -459,7 +452,7 @@ public class QIFFile {
      * @return continue true/false
      * @throws IOException on error
      */
-    private boolean writePrices(final ThreadStatus<MoneyWiseData> pStatus,
+    private boolean writePrices(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                 final OutputStreamWriter pStream) throws IOException {
         /* Create string builder */
         StringBuilder myBuilder = new StringBuilder();
@@ -469,8 +462,7 @@ public class QIFFile {
         int myCount = 0;
 
         /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing prices"))
-                            && (pStatus.setNumSteps(thePrices.size()));
+        boolean bContinue = (pStatus.setNewStage("Writing prices")) && (pStatus.setNumSteps(thePrices.size()));
 
         /* Skip step if we have no prices */
         if (thePrices.isEmpty()) {
@@ -494,8 +486,7 @@ public class QIFFile {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }

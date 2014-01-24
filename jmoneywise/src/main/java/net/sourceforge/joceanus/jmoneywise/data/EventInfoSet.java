@@ -29,25 +29,25 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * EventInfoSet class.
  * @author Tony Washer
  */
 public class EventInfoSet
-        extends DataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
+        extends DataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
     /**
      * Resource Bundle.
      */
@@ -116,8 +116,8 @@ public class EventInfoSet
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -188,8 +188,8 @@ public class EventInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         EventInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
+                              ? JDataFieldRequired.NOTALLOWED
+                              : isClassRequired(myClass);
     }
 
     /**
@@ -221,20 +221,20 @@ public class EventInfoSet
             case NATINSURANCE:
             case DEEMEDBENEFIT:
                 return (myClass == EventCategoryClass.TAXEDINCOME)
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                                  ? JDataFieldRequired.CANEXIST
+                                                                  : JDataFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
             case CREDITDATE:
                 return (myClass == EventCategoryClass.TRANSFER)
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                               ? JDataFieldRequired.CANEXIST
+                                                               : JDataFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
             case CHARITYDONATION:
                 return (myClass == EventCategoryClass.INTEREST)
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                               ? JDataFieldRequired.CANEXIST
+                                                               : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
@@ -255,8 +255,8 @@ public class EventInfoSet
                 /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
                 return ((myClass == EventCategoryClass.TRANSFER) && (myDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)))
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                                                                                             ? JDataFieldRequired.MUSTEXIST
+                                                                                                                             : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle ThirdParty separately */
             case THIRDPARTY:
@@ -286,16 +286,16 @@ public class EventInfoSet
                 return JDataFieldRequired.CANEXIST;
             case INTEREST:
                 return ((pDebit.isTaxFree()) || (pDebit.isGrossInterest()))
-                        ? JDataFieldRequired.NOTALLOWED
-                        : JDataFieldRequired.MUSTEXIST;
+                                                                           ? JDataFieldRequired.NOTALLOWED
+                                                                           : JDataFieldRequired.MUSTEXIST;
             case DIVIDEND:
                 return (pDebit.isTaxFree())
-                        ? JDataFieldRequired.NOTALLOWED
-                        : JDataFieldRequired.MUSTEXIST;
+                                           ? JDataFieldRequired.NOTALLOWED
+                                           : JDataFieldRequired.MUSTEXIST;
             case TRANSFER:
                 return pDebit.isCategoryClass(AccountCategoryClass.LIFEBOND)
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                                            ? JDataFieldRequired.MUSTEXIST
+                                                                            : JDataFieldRequired.NOTALLOWED;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -381,8 +381,8 @@ public class EventInfoSet
         switch (pClass) {
             case STOCKTAKEOVER:
                 return pEvent.getAmount().isNonZero()
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                     ? JDataFieldRequired.MUSTEXIST
+                                                     : JDataFieldRequired.NOTALLOWED;
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -399,8 +399,7 @@ public class EventInfoSet
         for (EventInfoClass myClass : EventInfoClass.values()) {
             /* Access info for class */
             EventInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null)
-                                 && !myInfo.isDeleted();
+            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
             JDataFieldRequired myState = isClassRequired(myClass);

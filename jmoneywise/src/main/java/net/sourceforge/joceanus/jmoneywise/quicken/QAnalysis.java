@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -296,7 +297,7 @@ public class QAnalysis
      * @param pView the dataView
      * @param pLastEvent the date of the last event to process
      */
-    protected void analyseData(final ThreadStatus<MoneyWiseData> pStatus,
+    protected void analyseData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                final View pView,
                                final JDateDay pLastEvent) {
         /* Store data and analysis */
@@ -318,14 +319,11 @@ public class QAnalysis
         theStartDate = myTaxYear.getDateRange().getStart();
 
         /* Update status bar */
-        boolean bContinue = pStatus.setNumStages(QIF_NUMLISTS)
-                            && pStatus.setNewStage("Analysing accounts")
-                            && pStatus.setNumSteps(myAccounts.size());
+        boolean bContinue = pStatus.setNumStages(QIF_NUMLISTS) && pStatus.setNewStage("Analysing accounts") && pStatus.setNumSteps(myAccounts.size());
 
         /* Loop through the accounts */
         Iterator<Account> myActIterator = myAccounts.iterator();
-        while ((bContinue)
-               && (myActIterator.hasNext())) {
+        while ((bContinue) && (myActIterator.hasNext())) {
             Account myAccount = myActIterator.next();
 
             /* Ignore deleted accounts */
@@ -342,8 +340,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -356,8 +353,7 @@ public class QAnalysis
         /* Loop through the events */
         myCount = 0;
         Iterator<Event> myIterator = myEvents.iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             Event myEvent = myIterator.next();
 
             /* If the price is too late */
@@ -390,17 +386,14 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
 
         /* Update status bar and analyse prices */
         SecurityPriceList myPrices = theData.getPrices();
-        if ((bContinue)
-            && (pStatus.setNewStage("Analysing prices"))
-            && (pStatus.setNumSteps(myPrices.size()))) {
+        if ((bContinue) && (pStatus.setNewStage("Analysing prices")) && (pStatus.setNumSteps(myPrices.size()))) {
             /* Analyse prices for securities */
             theSecurities.buildPrices(pStatus, myPrices, pLastEvent);
         }
@@ -456,8 +449,7 @@ public class QAnalysis
             switch (pEvent.getCategoryClass()) {
                 case TRANSFER:
                     /* Transfer from Money to Units */
-                    if ((!mySource.hasUnits())
-                        && (myTarget.hasUnits())) {
+                    if ((!mySource.hasUnits()) && (myTarget.hasUnits())) {
                         /* Needs a debit line if we cannot use BuyX */
                         return myType.canXferPortfolioLinked();
                     }
@@ -478,8 +470,7 @@ public class QAnalysis
                 return mySource.hasUnits();
             case TRANSFER:
                 /* Transfer from Units to Money */
-                if (mySource.hasUnits()
-                    && !myTarget.hasUnits()) {
+                if (mySource.hasUnits() && !myTarget.hasUnits()) {
                     /* Needs a credit line if we cannot use SellX */
                     return myType.canXferPortfolioLinked();
                 }
@@ -498,7 +489,7 @@ public class QAnalysis
      * @return success true/false
      * @throws IOException on error
      */
-    protected boolean outputData(final ThreadStatus<MoneyWiseData> pStatus,
+    protected boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                  final OutputStreamWriter pStream) throws IOException {
         /* Access the number of reporting steps */
         int mySteps = pStatus.getReportingSteps();
@@ -542,8 +533,7 @@ public class QAnalysis
 
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAccounts.values().iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* If the account is active */
@@ -554,8 +544,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -575,8 +564,7 @@ public class QAnalysis
         /* Loop through the accounts */
         myCount = 0;
         myIterator = theAccounts.values().iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* Output events */
@@ -584,8 +572,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }

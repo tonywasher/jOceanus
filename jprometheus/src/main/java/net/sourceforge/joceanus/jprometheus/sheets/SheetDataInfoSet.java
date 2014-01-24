@@ -28,27 +28,28 @@ import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Utility class to handle DataInfo associated with an owner.
  * @param <T> the data type
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
- * @param <E> the Info type class
+ * @param <S> the Info type class
+ * @param <E> the data list enum class
  */
-public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem & Comparable<? super O>, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass> {
+public class SheetDataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E> & Comparable<? super O>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>> {
     /**
      * Class column.
      */
-    private final Class<E> theClass;
+    private final Class<S> theClass;
 
     /**
      * Owning data sheet.
      */
-    private final SheetDataItem<O> theOwner;
+    private final SheetDataItem<O, E> theOwner;
 
     /**
      * Base column.
@@ -61,8 +62,8 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pOwner the owning spreadsheet
      * @param pBaseCol the base column
      */
-    public SheetDataInfoSet(final Class<E> pClass,
-                            final SheetDataItem<O> pOwner,
+    public SheetDataInfoSet(final Class<S> pClass,
+                            final SheetDataItem<O, E> pOwner,
                             final int pBaseCol) {
         /* Store parameters */
         theClass = pClass;
@@ -76,7 +77,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      */
     public void prepareSheet() throws JOceanusException {
         /* Loop through the class values */
-        for (E myClass : theClass.getEnumConstants()) {
+        for (S myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
             int iCol = getIdColumn(myClass);
             int iData = iCol + 1;
@@ -93,7 +94,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      */
     public void formatSheet() throws JOceanusException {
         /* Loop through the class values */
-        for (E myClass : theClass.getEnumConstants()) {
+        for (S myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
             int iCol = getIdColumn(myClass);
             int iData = iCol + 1;
@@ -141,7 +142,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pList name of validation range
      * @throws JOceanusException on error
      */
-    protected void applyDataValidation(final E pClass,
+    protected void applyDataValidation(final S pClass,
                                        final String pList) throws JOceanusException {
         /* Obtain the data column */
         int iCol = 1 + getIdColumn(pClass);
@@ -155,7 +156,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pInfoSet the DataInfoSet to write
      * @throws JOceanusException on error
      */
-    public void writeDataInfoSet(final DataInfoSet<T, O, I, E> pInfoSet) throws JOceanusException {
+    public void writeDataInfoSet(final DataInfoSet<T, O, I, S, E> pInfoSet) throws JOceanusException {
         /* Loop through the items */
         for (T myInfo : pInfoSet) {
             /* Skip if deleted */
@@ -175,7 +176,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      */
     private void writeDataInfo(final T pInfo) throws JOceanusException {
         /* Obtain the id and data columns */
-        E myClass = pInfo.getInfoClass();
+        S myClass = pInfo.getInfoClass();
         int iCol = getIdColumn(myClass);
         int iData = iCol + 1;
 
@@ -221,10 +222,10 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pOwner the owner of the info
      * @throws JOceanusException on error
      */
-    public void loadDataInfoSet(final DataInfoList<T, O, I, E> pInfoList,
+    public void loadDataInfoSet(final DataInfoList<T, O, I, S, E> pInfoList,
                                 final O pOwner) throws JOceanusException {
         /* Loop through the class values */
-        for (E myClass : theClass.getEnumConstants()) {
+        for (S myClass : theClass.getEnumConstants()) {
             /* Access the id and data columns */
             int iCol = getIdColumn(myClass);
             int iData = iCol + 1;
@@ -271,10 +272,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pClass the class
      * @return the id column.
      */
-    private int getIdColumn(final E pClass) {
+    private int getIdColumn(final S pClass) {
         /* Calculate the id column */
-        return theBaseCol
-               + (2 * (pClass.getClassId() - 1));
+        return theBaseCol + (2 * (pClass.getClassId() - 1));
     }
 
     /**

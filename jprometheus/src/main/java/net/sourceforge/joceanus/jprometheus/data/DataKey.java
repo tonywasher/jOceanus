@@ -24,17 +24,18 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.DataCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.SymmetricKey;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -43,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class DataKey
-        extends DataItem
+        extends DataItem<CryptographyList>
         implements Comparable<DataKey> {
     /**
      * Resource Bundle.
@@ -58,8 +59,7 @@ public class DataKey
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -121,8 +121,8 @@ public class DataKey
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
-                ? null
-                : myKey.getId();
+                              ? null
+                              : myKey.getId();
     }
 
     /**
@@ -140,8 +140,8 @@ public class DataKey
     public Integer getKeyTypeId() {
         SymKeyType myType = getKeyType();
         return (myType == null)
-                ? null
-                : myType.getId();
+                               ? null
+                               : myType.getId();
     }
 
     /**
@@ -491,7 +491,7 @@ public class DataKey
      * DataKey List.
      */
     public static class DataKeyList
-            extends DataList<DataKey> {
+            extends DataList<DataKey, CryptographyList> {
         /**
          * Local Report fields.
          */
@@ -557,18 +557,18 @@ public class DataKey
 
         @Override
         public DataKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                             final DataList<?> pOld) {
+                                             final DataList<?, CryptographyList> pOld) {
             return (DataKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public DataKey addCopyItem(final DataItem pItem) {
+        public DataKey addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a DataKey */
             if (!(pItem instanceof DataKey)) {
                 return null;
             }
 
-            /* Clone the control key */
+            /* Clone the data key */
             DataKey myKey = new DataKey(this, (DataKey) pItem);
             add(myKey);
             return myKey;
@@ -576,7 +576,7 @@ public class DataKey
 
         @Override
         public DataKey addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

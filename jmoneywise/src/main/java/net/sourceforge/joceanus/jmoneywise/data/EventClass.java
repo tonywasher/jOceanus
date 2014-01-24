@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Tag for an event.
  */
 public class EventClass
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<EventClass> {
     /**
      * Object name.
@@ -52,8 +52,7 @@ public class EventClass
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "es";
+    public static final String LIST_NAME = OBJECT_NAME + "es";
     /**
      * Resource Bundle.
      */
@@ -401,8 +400,7 @@ public class EventClass
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_NAME);
         }
 
@@ -418,7 +416,7 @@ public class EventClass
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pClass) {
+    public boolean applyChanges(final DataItem<?> pClass) {
         /* Can only update from an event class */
         if (!(pClass instanceof EventClass)) {
             return false;
@@ -446,7 +444,7 @@ public class EventClass
      * The Event Tag List class.
      */
     public static class EventClassList
-            extends EncryptedList<EventClass> {
+            extends EncryptedList<EventClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -501,7 +499,7 @@ public class EventClass
          * @return the newly added item
          */
         @Override
-        public EventClass addCopyItem(final DataItem pClass) {
+        public EventClass addCopyItem(final DataItem<?> pClass) {
             /* Can only clone an EventClass */
             if (!(pClass instanceof EventClass)) {
                 return null;

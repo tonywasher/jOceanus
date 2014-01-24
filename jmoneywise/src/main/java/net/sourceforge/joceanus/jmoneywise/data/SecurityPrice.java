@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
  * @author Tony Washer
  */
 public class SecurityPrice
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<SecurityPrice> {
     /**
      * Object name.
@@ -62,8 +62,7 @@ public class SecurityPrice
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -142,8 +141,8 @@ public class SecurityPrice
     public Integer getSecurityId() {
         Account mySecurity = getSecurity();
         return (mySecurity == null)
-                ? null
-                : mySecurity.getId();
+                                   ? null
+                                   : mySecurity.getId();
     }
 
     /**
@@ -153,8 +152,8 @@ public class SecurityPrice
     public String getSecurityName() {
         Account mySecurity = getSecurity();
         return (mySecurity == null)
-                ? null
-                : mySecurity.getName();
+                                   ? null
+                                   : mySecurity.getName();
     }
 
     /**
@@ -283,7 +282,7 @@ public class SecurityPrice
      * @param pList the list
      * @param pPrice The Price
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
                             final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
@@ -294,7 +293,7 @@ public class SecurityPrice
      * @param pList the list
      * @param pSecurity the security
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
                             final Account pSecurity) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
@@ -310,7 +309,7 @@ public class SecurityPrice
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
                           final Integer pId,
                           final String pSecurity,
                           final JDateDay pDate,
@@ -347,7 +346,7 @@ public class SecurityPrice
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice> pList,
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
                           final Integer pId,
                           final Integer pControlId,
                           final Integer pSecurityId,
@@ -504,7 +503,7 @@ public class SecurityPrice
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pItem) {
+    public boolean applyChanges(final DataItem<?> pItem) {
         if (pItem instanceof SpotPrice) {
             SpotPrice mySpot = (SpotPrice) pItem;
             return applyChanges(mySpot);
@@ -569,7 +568,7 @@ public class SecurityPrice
      * Price List.
      */
     public static class SecurityPriceList
-            extends EncryptedList<SecurityPrice> {
+            extends EncryptedList<SecurityPrice, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -624,7 +623,7 @@ public class SecurityPrice
          * @return the newly added item
          */
         @Override
-        public SecurityPrice addCopyItem(final DataItem pPrice) {
+        public SecurityPrice addCopyItem(final DataItem<?> pPrice) {
             if (pPrice instanceof SecurityPrice) {
                 SecurityPrice myPrice = new SecurityPrice(this, (SecurityPrice) pPrice);
                 add(myPrice);

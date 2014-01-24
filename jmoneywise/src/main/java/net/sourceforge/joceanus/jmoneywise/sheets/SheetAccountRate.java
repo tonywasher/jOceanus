@@ -22,25 +22,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
+import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
 public class SheetAccountRate
-        extends SheetDataItem<AccountRate> {
+        extends SheetDataItem<AccountRate, MoneyWiseList> {
     /**
      * NamedArea for Rates.
      */
@@ -254,8 +255,7 @@ public class SheetAccountRate
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

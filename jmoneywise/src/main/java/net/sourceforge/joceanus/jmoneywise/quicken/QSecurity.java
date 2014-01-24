@@ -32,6 +32,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -258,7 +259,7 @@ public final class QSecurity
          * @param pPrices the price list
          * @param pDate the latest date for prices
          */
-        protected void buildPrices(final ThreadStatus<MoneyWiseData> pStatus,
+        protected void buildPrices(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                    final SecurityPriceList pPrices,
                                    final JDateDay pDate) {
             /* Access the number of reporting steps */
@@ -293,8 +294,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     break;
                 }
             }
@@ -307,7 +307,7 @@ public final class QSecurity
          * @return success true/false
          * @throws IOException on error
          */
-        protected boolean outputSecurities(final ThreadStatus<MoneyWiseData> pStatus,
+        protected boolean outputSecurities(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* Ignore if there are no securities */
             if (theSecurities.isEmpty()) {
@@ -319,8 +319,7 @@ public final class QSecurity
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = pStatus.setNewStage("Writing securities")
-                                && pStatus.setNumSteps(theSecurities.size());
+            boolean bContinue = pStatus.setNewStage("Writing securities") && pStatus.setNumSteps(theSecurities.size());
 
             /* Clear AutoSwitch */
             reset();
@@ -331,8 +330,7 @@ public final class QSecurity
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write Security details */
@@ -340,8 +338,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
@@ -364,20 +361,18 @@ public final class QSecurity
          * @return success true/false
          * @throws IOException on error
          */
-        protected boolean outputPrices(final ThreadStatus<MoneyWiseData> pStatus,
+        protected boolean outputPrices(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                        final OutputStreamWriter pStream) throws IOException {
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = pStatus.setNewStage("Writing prices")
-                                && pStatus.setNumSteps(theNumPrices);
+            boolean bContinue = pStatus.setNewStage("Writing prices") && pStatus.setNumSteps(theNumPrices);
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write price details */
@@ -385,8 +380,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

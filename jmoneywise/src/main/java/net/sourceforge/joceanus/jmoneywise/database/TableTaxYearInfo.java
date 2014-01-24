@@ -22,16 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDataInfo;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableTaxYearInfo
-        extends TableDataInfo<TaxYearInfo> {
+        extends TableDataInfo<TaxYearInfo, MoneyWiseList> {
     /**
      * The name of the table.
      */
@@ -96,7 +97,7 @@ public class TableTaxYearInfo
         theTaxYears.touchUnderlyingItems();
 
         /* Validate the tax years */
-        DataErrorList<DataItem> myErrors = theTaxYears.validate();
+        DataErrorList<DataItem<MoneyWiseList>> myErrors = theTaxYears.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

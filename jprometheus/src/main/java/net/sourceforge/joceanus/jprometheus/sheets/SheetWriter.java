@@ -32,15 +32,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -72,7 +72,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     /**
      * The WorkSheets.
      */
-    private List<SheetDataItem<?>> theSheets = null;
+    private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
      * Is this a backup sheet.
@@ -123,7 +123,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * Add Sheet to list.
      * @param pSheet the sheet
      */
-    protected void addSheet(final SheetDataItem<?> pSheet) {
+    protected void addSheet(final SheetDataItem<?, ?> pSheet) {
         theSheets.add(pSheet);
     }
 
@@ -156,8 +156,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
 
             /* Create the new output Zip file */
             myZipFile = new ZipWriteFile(myHash, pFile);
-            String myName = SpreadSheet.FILE_NAME
-                            + pType.getExtension();
+            String myName = SpreadSheet.FILE_NAME + pType.getExtension();
             myStream = myZipFile.getOutputStream(new File(myName));
 
             /* Initialise the WorkBook */
@@ -177,8 +176,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             bSuccess = true;
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to create Backup Workbook: "
-                                             + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -193,8 +191,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess)
-                && (!pFile.delete())) {
+            if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
                 theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
             }
@@ -242,8 +239,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             bSuccess = true;
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to create Editable Workbook: "
-                                             + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to create Editable Workbook: " + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -258,8 +254,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess)
-                && (!pFile.delete())) {
+            if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
                 theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
             }
@@ -281,7 +276,7 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         theWorkBook = new DataWorkBook(pType);
 
         /* Initialise the list */
-        theSheets = new ArrayList<SheetDataItem<?>>();
+        theSheets = new ArrayList<SheetDataItem<?, ?>>();
 
         /* If this is a backup */
         if (isBackup()) {
@@ -304,17 +299,16 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      * @throws IOException on write error
      */
     private void writeWorkBook(final OutputStream pStream) throws JOceanusException, IOException {
-        SheetDataItem<?> mySheet;
+        SheetDataItem<?, ?> mySheet;
 
         /* Access the iterator for the list */
-        Iterator<SheetDataItem<?>> myIterator = theSheets.iterator();
+        Iterator<SheetDataItem<?, ?>> myIterator = theSheets.iterator();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             /* Access the next sheet */
             mySheet = myIterator.next();
 

@@ -22,16 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxCategory
-        extends SheetStaticData<TaxCategory> {
+        extends SheetStaticData<TaxCategory, MoneyWiseList> {
     /**
      * NamedArea for Tax Types.
      */
@@ -48,8 +49,7 @@ public class SheetTaxCategory
     /**
      * NameList for TaxTypes.
      */
-    protected static final String AREA_TAXCATEGORYNAMES = TaxCategory.OBJECT_NAME
-                                                          + "Names";
+    protected static final String AREA_TAXCATEGORYNAMES = TaxCategory.OBJECT_NAME + "Names";
 
     /**
      * TaxCategories data list.
@@ -169,8 +169,7 @@ public class SheetTaxCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

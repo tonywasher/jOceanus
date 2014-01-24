@@ -26,26 +26,26 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
  * @author Tony Washer
  */
 public abstract class TaxYearBase
-        extends DataItem
+        extends DataItem<MoneyWiseList>
         implements Comparable<TaxYearBase> {
     /**
      * Object name.
@@ -128,8 +128,8 @@ public abstract class TaxYearBase
     public Integer getTaxRegimeId() {
         TaxRegime myRegime = getTaxRegime();
         return (myRegime == null)
-                ? null
-                : myRegime.getId();
+                                 ? null
+                                 : myRegime.getId();
     }
 
     /**
@@ -139,8 +139,8 @@ public abstract class TaxYearBase
     public String getTaxRegimeName() {
         TaxRegime myRegime = getTaxRegime();
         return (myRegime == null)
-                ? null
-                : myRegime.getName();
+                                 ? null
+                                 : myRegime.getName();
     }
 
     /**
@@ -201,8 +201,8 @@ public abstract class TaxYearBase
     private void setValueTaxYear(final JDateDay pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
         JDateDayRange myRange = (pValue != null)
-                ? deriveRange(pValue)
-                : null;
+                                                ? deriveRange(pValue)
+                                                : null;
         getValueSet().setValue(FIELD_DATERANGE, myRange);
     }
 
@@ -311,7 +311,7 @@ public abstract class TaxYearBase
      * Edit constructor.
      * @param pList the list
      */
-    protected TaxYearBase(final DataList<TaxYearBase> pList) {
+    protected TaxYearBase(final DataList<TaxYearBase, MoneyWiseList> pList) {
         super(pList, 0);
     }
 
@@ -386,8 +386,7 @@ public abstract class TaxYearBase
             }
 
             /* The day and month must be 5th April */
-            if ((myDate.getDay() != END_OF_MONTH_DAY)
-                || (myDate.getMonth() != Calendar.APRIL)) {
+            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Calendar.APRIL)) {
                 addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }
@@ -428,7 +427,7 @@ public abstract class TaxYearBase
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pTaxYear) {
+    public boolean applyChanges(final DataItem<?> pTaxYear) {
         /* Can only update from TaxYear */
         if (!(pTaxYear instanceof TaxYearBase)) {
             return false;
@@ -454,7 +453,7 @@ public abstract class TaxYearBase
      * @param <T> the dataType
      */
     public abstract static class TaxYearBaseList<T extends TaxYearBase>
-            extends DataList<T> {
+            extends DataList<T, MoneyWiseList> {
         /**
          * Local Report fields.
          */

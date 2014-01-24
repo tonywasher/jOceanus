@@ -400,11 +400,9 @@ public class OrderedList<T extends Comparable<? super T>>
         }
 
         /* Loop through the list */
-        for (myCurr = theFirst, myOther = myThat.theFirst; (myCurr != null)
-                                                           || (myOther != null); myCurr = myCurr.getNext(), myOther = myOther.getNext()) {
+        for (myCurr = theFirst, myOther = myThat.theFirst; (myCurr != null) || (myOther != null); myCurr = myCurr.getNext(), myOther = myOther.getNext()) {
             /* If either entry is null then we differ */
-            if ((myCurr == null)
-                || (myOther == null)) {
+            if ((myCurr == null) || (myOther == null)) {
                 return false;
             }
 
@@ -643,8 +641,8 @@ public class OrderedList<T extends Comparable<? super T>>
 
         /* Return the next object */
         return (myNode == null)
-                ? null
-                : myNode.getObject();
+                               ? null
+                               : myNode.getObject();
     }
 
     /**
@@ -657,8 +655,8 @@ public class OrderedList<T extends Comparable<? super T>>
 
         /* Return the next object */
         return (myNode == null)
-                ? null
-                : myNode.getObject();
+                               ? null
+                               : myNode.getObject();
     }
 
     @Override
@@ -700,7 +698,6 @@ public class OrderedList<T extends Comparable<? super T>>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <X> X[] toArray(final X[] a) {
         /* Determine the size of the array */
         int iSize = size();
@@ -947,7 +944,6 @@ public class OrderedList<T extends Comparable<? super T>>
     @Override
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
-        @SuppressWarnings("unchecked")
         OrderedList<T> myResult = (OrderedList<T>) super.clone();
 
         /* Re-initialise the fields */
@@ -1001,7 +997,6 @@ public class OrderedList<T extends Comparable<? super T>>
      * @throws IOException on error
      * @throws ClassNotFoundException on error
      */
-    @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream pInput) throws IOException, ClassNotFoundException {
         /* Read in the default stuff */
         pInput.defaultReadObject();

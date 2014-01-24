@@ -22,16 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategoryType
-        extends SheetStaticData<EventCategoryType> {
+        extends SheetStaticData<EventCategoryType, MoneyWiseList> {
 
     /**
      * NamedArea for Category Types.
@@ -49,8 +50,7 @@ public class SheetEventCategoryType
     /**
      * NameList for Category Types.
      */
-    protected static final String AREA_CATTYPENAMES = EventCategoryType.OBJECT_NAME
-                                                      + "Names";
+    protected static final String AREA_CATTYPENAMES = EventCategoryType.OBJECT_NAME + "Names";
 
     /**
      * EventCategoryTypes data list.
@@ -170,8 +170,7 @@ public class SheetEventCategoryType
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

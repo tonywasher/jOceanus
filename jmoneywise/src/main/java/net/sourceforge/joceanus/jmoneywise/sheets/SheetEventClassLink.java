@@ -22,9 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventClassLink
-        extends SheetDataItem<EventClassLink> {
+        extends SheetDataItem<EventClassLink, MoneyWiseList> {
     /**
      * NamedArea for Event Classes.
      */

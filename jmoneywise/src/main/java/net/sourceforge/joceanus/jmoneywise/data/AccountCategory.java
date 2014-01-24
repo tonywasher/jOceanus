@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Account Category class.
  */
 public class AccountCategory
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<AccountCategory> {
     /**
      * Object name.
@@ -175,8 +175,8 @@ public class AccountCategory
     public Integer getCategoryTypeId() {
         AccountCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getId();
+                               ? null
+                               : myType.getId();
     }
 
     /**
@@ -186,8 +186,8 @@ public class AccountCategory
     public String getCategoryTypeName() {
         AccountCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getName();
+                               ? null
+                               : myType.getName();
     }
 
     /**
@@ -197,8 +197,8 @@ public class AccountCategory
     public AccountCategoryClass getCategoryTypeClass() {
         AccountCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getAccountClass();
+                               ? null
+                               : myType.getAccountClass();
     }
 
     /**
@@ -216,8 +216,8 @@ public class AccountCategory
     public Integer getParentCategoryId() {
         AccountCategory myParent = getParentCategory();
         return (myParent == null)
-                ? null
-                : myParent.getId();
+                                 ? null
+                                 : myParent.getId();
     }
 
     /**
@@ -227,8 +227,8 @@ public class AccountCategory
     public String getParentCategoryName() {
         AccountCategory myParent = getParentCategory();
         return (myParent == null)
-                ? null
-                : myParent.getName();
+                                 ? null
+                                 : myParent.getName();
     }
 
     /**
@@ -731,8 +731,7 @@ public class AccountCategory
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
@@ -799,7 +798,7 @@ public class AccountCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pCategory) {
+    public boolean applyChanges(final DataItem<?> pCategory) {
         /* Can only update from an account category */
         if (!(pCategory instanceof AccountCategory)) {
             return false;
@@ -837,7 +836,7 @@ public class AccountCategory
      * The Account Category List class.
      */
     public static class AccountCategoryList
-            extends EncryptedList<AccountCategory> {
+            extends EncryptedList<AccountCategory, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -919,7 +918,7 @@ public class AccountCategory
          * @return the newly added item
          */
         @Override
-        public AccountCategory addCopyItem(final DataItem pCategory) {
+        public AccountCategory addCopyItem(final DataItem<?> pCategory) {
             /* Can only clone an AccountCategory */
             if (!(pCategory instanceof AccountCategory)) {
                 return null;

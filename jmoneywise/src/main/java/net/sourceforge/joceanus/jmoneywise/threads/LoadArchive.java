@@ -22,14 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.LoaderThread;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony
  */
 public class LoadArchive
-        extends LoaderThread<MoneyWiseData> {
+        extends LoaderThread<MoneyWiseData, MoneyWiseList> {
     /**
      * Task description.
      */
@@ -51,13 +52,13 @@ public class LoadArchive
     /**
      * Thread status.
      */
-    private final ThreadStatus<MoneyWiseData> theStatus;
+    private final ThreadStatus<MoneyWiseData, MoneyWiseList> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public LoadArchive(final ThreadStatus<MoneyWiseData> pStatus) {
+    public LoadArchive(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

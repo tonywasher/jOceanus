@@ -30,6 +30,12 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -41,12 +47,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
@@ -55,9 +55,10 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  * @param <L> the list type
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T, ?>>
-        extends JDataTable<T> {
+public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>, E extends Enum<E>>
+        extends JDataTable<T, E> {
     /**
      * Serial Id.
      */
@@ -111,7 +112,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The Data view.
      */
-    private final transient DataControl<?> theControl;
+    private final transient DataControl<?, E> theControl;
 
     /**
      * The field manager.
@@ -146,12 +147,12 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The UpdateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<E> theUpdateSet;
 
     /**
      * The UpdateEntry.
      */
-    private final transient UpdateEntry<T> theUpdateEntry;
+    private final transient UpdateEntry<T, E> theUpdateEntry;
 
     /**
      * The Error panel.
@@ -179,8 +180,8 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
      * @param pListClass the list class
      * @param pItemClass the item class
      */
-    public StaticDataTable(final DataControl<?> pControl,
-                           final UpdateSet pUpdateSet,
+    public StaticDataTable(final DataControl<?, E> pControl,
+                           final UpdateSet<E> pUpdateSet,
                            final ErrorPanel pError,
                            final Class<L> pListClass,
                            final Class<T> pItemClass) {
@@ -250,7 +251,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
      */
     protected void refreshData() throws JOceanusException {
         /* Access data */
-        DataSet<?, ?> myData = theControl.getData();
+        DataSet<?, E> myData = theControl.getData();
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);
@@ -283,7 +284,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
      * Static table model.
      */
     public final class StaticModel
-            extends JDataTableModel<T> {
+            extends JDataTableModel<T, E> {
         /**
          * Serial Id.
          */
@@ -310,8 +311,8 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         /**
@@ -321,8 +322,8 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
         @Override
         public int getRowCount() {
             return (theStatic == null)
-                    ? 0
-                    : theStatic.size();
+                                      ? 0
+                                      : theStatic.size();
         }
 
         @Override
@@ -365,7 +366,7 @@ public class StaticDataTable<L extends StaticList<T, ?>, T extends StaticData<T,
      * Column Model class.
      */
     private final class StaticColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<E> {
         /**
          * Serial Id.
          */

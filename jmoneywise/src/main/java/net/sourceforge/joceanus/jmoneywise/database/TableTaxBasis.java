@@ -22,12 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableTaxBasis
-        extends TableStaticData<TaxBasis> {
+        extends TableStaticData<TaxBasis, MoneyWiseList> {
     /**
      * The name of the TaxBasis table.
      */

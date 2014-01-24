@@ -31,8 +31,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Update entry items.
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
+public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**
      * The class.
      */
@@ -41,7 +42,7 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
     /**
      * The DataList.
      */
-    private DataList<T> theDataList;
+    private DataList<T, E> theDataList;
 
     /**
      * Obtain the name of the entry.
@@ -55,7 +56,7 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
      * Obtain the list for the entry.
      * @return the list
      */
-    public DataList<T> getDataList() {
+    public DataList<T, E> getDataList() {
         return theDataList;
     }
 
@@ -72,7 +73,7 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
      * Set the Data list.
      * @param pDataList the DataList
      */
-    public void setDataList(final DataList<T> pDataList) {
+    public void setDataList(final DataList<T, E> pDataList) {
         theDataList = pDataList;
     }
 
@@ -98,12 +99,12 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
 
         /* Create an iterator for the changes list */
         Iterator<T> myIterator = theDataList.iterator();
-        DataList<?> myBaseList = theDataList.getBaseList();
+        DataList<?, E> myBaseList = theDataList.getBaseList();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            DataItem myBase;
+            DataItem<E> myCurr = myIterator.next();
+            DataItem<?> myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {
@@ -165,13 +166,13 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
 
         /* Create an iterator for this list */
         Iterator<T> myIterator = theDataList.iterator();
-        DataList<?> myBaseList = theDataList.getBaseList();
+        DataList<?, E> myBaseList = theDataList.getBaseList();
         int myVersion = theDataList.getVersion();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-            DataItem myBase;
+            DataItem<?> myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {

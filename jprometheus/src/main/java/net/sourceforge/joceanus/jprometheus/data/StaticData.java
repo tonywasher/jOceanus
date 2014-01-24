@@ -38,10 +38,11 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Template for a Static Data item and List.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the static class
+ * @param <S> the static class
+ * @param <E> the data list enum class
  */
-public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface>
-        extends EncryptedItem
+public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
+        extends EncryptedItem<E>
         implements Comparable<T> {
     /**
      * Resource Bundle.
@@ -96,7 +97,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * The Enum Class for this Static Data.
      */
-    private Class<E> theEnumClass = null;
+    private Class<S> theEnumClass = null;
 
     @Override
     public String formatObject() {
@@ -168,7 +169,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the Static class of the Static Data.
      * @return the class
      */
-    public final E getStaticClass() {
+    public final S getStaticClass() {
         return getStaticClass(getValueSet(), theEnumClass);
     }
 
@@ -268,7 +269,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Obtain the Enum class of this Static Data.
      * @return the class
      */
-    protected final Class<E> getEnumClass() {
+    protected final Class<S> getEnumClass() {
         return theEnumClass;
     }
 
@@ -344,7 +345,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Set the Class.
      * @param pClass the class
      */
-    private void setValueClass(final E pClass) {
+    private void setValueClass(final S pClass) {
         getValueSet().setValue(FIELD_CLASS, pClass);
     }
 
@@ -365,8 +366,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         }
 
         /* Compare on order */
-        int iDiff = getOrder()
-                    - pThat.getOrder();
+        int iDiff = getOrder() - pThat.getOrder();
         if (iDiff != 0) {
             return iDiff;
         }
@@ -383,7 +383,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
     @Override
     public void validate() {
-        StaticList<?, ?> myList = (StaticList<?, ?>) getList();
+        StaticList<?, ?, ?> myList = (StaticList<?, ?, ?>) getList();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -405,8 +405,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_NAME);
         }
 
@@ -431,7 +430,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
-    protected StaticData(final StaticList<T, E> pList,
+    protected StaticData(final StaticList<T, S, E> pList,
                          final T pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
@@ -443,7 +442,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pValue the name of the new item
      * @throws JOceanusException on error
      */
-    protected StaticData(final StaticList<T, E> pList,
+    protected StaticData(final StaticList<T, S, E> pList,
                          final String pValue) throws JOceanusException {
         /* Call super constructor */
         super(pList, 0);
@@ -463,8 +462,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pClass the class of the new item
      * @throws JOceanusException on error
      */
-    protected StaticData(final StaticList<T, E> pList,
-                         final E pClass) throws JOceanusException {
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final S pClass) throws JOceanusException {
         /* Call super constructor */
         super(pList, 0);
 
@@ -493,7 +492,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pDesc the description of the new item
      * @throws JOceanusException on error
      */
-    protected StaticData(final StaticList<T, E> pList,
+    protected StaticData(final StaticList<T, S, E> pList,
                          final Integer pId,
                          final Boolean isEnabled,
                          final Integer pOrder,
@@ -532,7 +531,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pDesc the encrypted description of the new item
      * @throws JOceanusException on error
      */
-    protected StaticData(final StaticList<T, E> pList,
+    protected StaticData(final StaticList<T, S, E> pList,
                          final Integer pId,
                          final Integer pControlId,
                          final Boolean isEnabled,
@@ -570,11 +569,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @throws JOceanusException on error
      */
     private void parseEnumValue(final String pValue) throws JOceanusException {
-        Class<E> myClass = getEnumClass();
-        E[] myEnums = myClass.getEnumConstants();
+        Class<S> myClass = getEnumClass();
+        S[] myEnums = myClass.getEnumConstants();
 
         /* Loop through the enum constants */
-        for (E myValue : myEnums) {
+        for (S myValue : myEnums) {
             /* If this is the desired value */
             if (myValue.name().equalsIgnoreCase(pValue)) {
                 /* Store the class */
@@ -589,11 +588,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JPrometheusDataException(ERROR_BADNAME
-                                               + " "
-                                               + myClass.getSimpleName()
-                                               + ": "
-                                               + pValue);
+            throw new JPrometheusDataException(ERROR_BADNAME + " " + myClass.getSimpleName() + ": " + pValue);
         }
     }
 
@@ -603,11 +598,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @throws JOceanusException on error
      */
     private void parseEnumId(final int pId) throws JOceanusException {
-        Class<E> myClass = getEnumClass();
-        E[] myEnums = myClass.getEnumConstants();
+        Class<S> myClass = getEnumClass();
+        S[] myEnums = myClass.getEnumConstants();
 
         /* Loop through the enum constants */
-        for (E myValue : myEnums) {
+        for (S myValue : myEnums) {
             /* If this is the desired value */
             if (myValue.getClassId() == pId) {
                 /* Store the class and details */
@@ -618,11 +613,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JPrometheusDataException(ERROR_BADID
-                                               + " "
-                                               + myClass.getSimpleName()
-                                               + ": "
-                                               + pId);
+            throw new JPrometheusDataException(ERROR_BADID + " " + myClass.getSimpleName() + ": " + pId);
         }
     }
 
@@ -631,11 +622,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pData the static data to format
      * @return the formatted data
      */
-    public static String format(final StaticData<?, ?> pData) {
+    public static String format(final StaticData<?, ?, ?> pData) {
         String myFormat;
         myFormat = (pData != null)
-                ? pData.getName()
-                : "null";
+                                  ? pData.getName()
+                                  : "null";
         return myFormat;
     }
 
@@ -677,14 +668,14 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     @Override
-    public boolean applyChanges(final DataItem pData) {
+    public boolean applyChanges(final DataItem<?> pData) {
         /* Can only apply changes for Static Data */
         if (!(pData instanceof StaticData)) {
             return false;
         }
 
         /* Access the data */
-        StaticData<?, ?> myData = (StaticData<?, ?>) pData;
+        StaticData<?, ?, ?> myData = (StaticData<?, ?, ?>) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -700,7 +691,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Apply basic changes.
      * @param pData the changed element
      */
-    protected void applyBasicChanges(final StaticData<?, ?> pData) {
+    protected void applyBasicChanges(final StaticData<?, ?, ?> pData) {
         /* Update the name if required */
         if (!Difference.isEqual(getName(), pData.getName())) {
             setValueName(pData.getNameField());
@@ -725,15 +716,16 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Represents a list of StaticData objects.
      * @param <T> the item type
-     * @param <E> the static data class
+     * @param <S> the static data class
+     * @param <E> the data list enum class
      */
-    public abstract static class StaticList<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface>
-            extends EncryptedList<T> {
+    public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
+            extends EncryptedList<T, E> {
         /**
          * Obtain the enumClass.
          * @return the enumClass
          */
-        protected abstract Class<E> getEnumClass();
+        protected abstract Class<S> getEnumClass();
 
         /**
          * Construct a generic static data list.
@@ -751,7 +743,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected StaticList(final StaticList<T, E> pSource) {
+        protected StaticList(final StaticList<T, S, E> pSource) {
             super(pSource);
         }
 
@@ -760,7 +752,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * @param eClass The class of the item to search for
          * @return The Item if present (or <code>null</code> if not found)
          */
-        public T findItemByClass(final E eClass) {
+        public T findItemByClass(final S eClass) {
             /* Access the iterator */
             Iterator<T> myIterator = iterator();
 

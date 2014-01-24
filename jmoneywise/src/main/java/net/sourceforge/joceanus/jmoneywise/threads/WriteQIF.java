@@ -22,15 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -51,7 +52,7 @@ public class WriteQIF
     /**
      * Thread Status.
      */
-    private final ThreadStatus<MoneyWiseData> theStatus;
+    private final ThreadStatus<MoneyWiseData, MoneyWiseList> theStatus;
 
     /**
      * Constructor (Event Thread).

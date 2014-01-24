@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPayeeType
-        extends SheetStaticData<PayeeType> {
+        extends SheetStaticData<PayeeType, MoneyWiseList> {
     /**
      * NamedArea for PayeeTypes.
      */
@@ -48,8 +49,7 @@ public class SheetPayeeType
     /**
      * NameList for PayeeTypes.
      */
-    protected static final String AREA_PAYEETYPENAMES = PayeeType.OBJECT_NAME
-                                                        + "Names";
+    protected static final String AREA_PAYEETYPENAMES = PayeeType.OBJECT_NAME + "Names";
 
     /**
      * PayeeTypes data list.
@@ -169,8 +169,7 @@ public class SheetPayeeType
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

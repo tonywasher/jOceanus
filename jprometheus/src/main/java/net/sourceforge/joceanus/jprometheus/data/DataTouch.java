@@ -40,7 +40,7 @@ public class DataTouch<E extends Enum<E>> {
      * Constructor.
      * @param pClass the eNum class
      */
-    public DataTouch(Class<E> pClass) {
+    public DataTouch(final Class<E> pClass) {
         /* Create the map */
         theMap = new EnumMap<E, TouchCounter<E>>(pClass);
     }

@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
@@ -33,21 +33,22 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for Account.
  * @author Tony Washer
  */
 public class SheetAccount
-        extends SheetDataItem<Account> {
+        extends SheetDataItem<Account, MoneyWiseList> {
     /**
      * NamedArea for Accounts.
      */
@@ -56,8 +57,7 @@ public class SheetAccount
     /**
      * NameList for Accounts.
      */
-    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME
-                                                      + "Names";
+    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -147,8 +147,8 @@ public class SheetAccount
 
         /* Set up info Sheet */
         theInfoSheet = isBackup()
-                ? null
-                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
+                                 ? null
+                                 : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
     }
 
     @Override
@@ -354,8 +354,7 @@ public class SheetAccount
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -444,8 +443,7 @@ public class SheetAccount
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -470,7 +468,7 @@ public class SheetAccount
      * AccountInfoSet sheet.
      */
     private static class SheetAccountInfoSet
-            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
 
         /**
          * Constructor.
@@ -479,7 +477,7 @@ public class SheetAccount
          * @param pBaseCol the base column
          */
         public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
-                                   final SheetDataItem<Account> pOwner,
+                                   final SheetDataItem<Account, MoneyWiseList> pOwner,
                                    final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

@@ -41,21 +41,17 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldSet;
+import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -66,6 +62,11 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.TaxYearSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
@@ -216,17 +217,17 @@ public class MaintTaxYear
     /**
      * The Update Set.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The TaxYear Update Entry.
      */
-    private final transient UpdateEntry<TaxYear> theYearsEntry;
+    private final transient UpdateEntry<TaxYear, MoneyWiseList> theYearsEntry;
 
     /**
      * The TaxInfo Update Entry.
      */
-    private final transient UpdateEntry<TaxYearInfo> theInfoEntry;
+    private final transient UpdateEntry<TaxYearInfo, MoneyWiseList> theInfoEntry;
 
     /**
      * Obtain the tax Year.
@@ -246,7 +247,7 @@ public class MaintTaxYear
         theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theYearsEntry = theUpdateSet.registerClass(TaxYear.class);
         theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 
@@ -671,8 +672,7 @@ public class MaintTaxYear
      * @return true/false
      */
     public boolean hasUpdates() {
-        return (theTaxYear != null)
-               && (theTaxYear.hasChanges());
+        return (theTaxYear != null) && (theTaxYear.hasChanges());
     }
 
     /**
@@ -680,8 +680,7 @@ public class MaintTaxYear
      * @return true/false
      */
     public boolean hasErrors() {
-        return (theTaxYear != null)
-               && (theTaxYear.hasErrors());
+        return (theTaxYear != null) && (theTaxYear.hasErrors());
     }
 
     /**
@@ -690,8 +689,8 @@ public class MaintTaxYear
      */
     public EditState getEditState() {
         return (theTaxYear == null)
-                ? EditState.CLEAN
-                : theTaxYear.getEditState();
+                                   ? EditState.CLEAN
+                                   : theTaxYear.getEditState();
     }
 
     /**
@@ -768,8 +767,7 @@ public class MaintTaxYear
         /* If we have a selected tax year */
         if (pTaxYear != null) {
             /* If we need to show deleted items */
-            if ((!doShowDeleted)
-                && (pTaxYear.isDeleted())) {
+            if ((!doShowDeleted) && (pTaxYear.isDeleted())) {
                 /* Set the flag correctly */
                 doShowDeleted = true;
             }
@@ -818,13 +816,11 @@ public class MaintTaxYear
             theFieldSet.renderSet(theTaxYear);
 
             /* Make sure delete buttons are visible */
-            boolean isEndOfList = (theTaxYears.peekPrevious(theTaxYear) == null)
-                                  || (theTaxYears.peekNext(theTaxYear) == null);
-            theDelButton.setVisible(!bActive
-                                    || ((!theTaxYear.isActive()) && (isEndOfList)));
+            boolean isEndOfList = (theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears.peekNext(theTaxYear) == null);
+            theDelButton.setVisible(!bActive || ((!theTaxYear.isActive()) && (isEndOfList)));
             theDelButton.setText(!bActive
-                    ? "Recover"
-                    : "Delete");
+                                         ? "Recover"
+                                         : "Delete");
 
             /* else no account */
         } else {
@@ -852,8 +848,7 @@ public class MaintTaxYear
             Object o = e.getSource();
 
             /* If the event relates to the Field Set */
-            if ((theFieldSet.equals(o))
-                && (e instanceof ActionDetailEvent)) {
+            if ((theFieldSet.equals(o)) && (e instanceof ActionDetailEvent)) {
                 /* Access event and obtain details */
                 ActionDetailEvent evt = (ActionDetailEvent) e;
                 Object dtl = evt.getDetails();

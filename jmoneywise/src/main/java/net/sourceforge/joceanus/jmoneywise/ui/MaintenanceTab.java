@@ -29,12 +29,11 @@ import java.util.ResourceBundle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
-import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -57,8 +56,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
@@ -139,7 +140,7 @@ public class MaintenanceTab
     /**
      * The Static Panel.
      */
-    private final StaticDataPanel theStatic;
+    private final StaticDataPanel<MoneyWiseList> theStatic;
 
     /**
      * The Preferences Panel.
@@ -202,7 +203,7 @@ public class MaintenanceTab
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel(theView);
+        theStatic = new StaticDataPanel<MoneyWiseList>(theView);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
         theView.addChangeListener(myListener);
@@ -326,8 +327,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the Accounts tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theAccountTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
         }
 
         /* Access the Category index */
@@ -335,8 +335,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the Category tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theCategoryTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || theCategoryTab.hasUpdates());
         }
 
         /* Access the TaxYear index */
@@ -344,8 +343,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the TaxYear tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theTaxYearTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearTab.hasUpdates());
         }
 
         /* Access the Static panel */
@@ -353,8 +351,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the static tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || theStatic.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || theStatic.hasUpdates());
         }
 
         /* Access the Properties panel */
@@ -362,8 +359,7 @@ public class MaintenanceTab
 
         /* Enable/Disable the Properties tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates
-                                         || thePreferences.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || thePreferences.hasUpdates());
         }
 
         /* Update the top level tabs */

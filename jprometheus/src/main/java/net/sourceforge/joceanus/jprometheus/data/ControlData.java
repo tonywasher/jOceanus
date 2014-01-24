@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -42,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class ControlData
-        extends DataItem
+        extends DataItem<CryptographyList>
         implements Comparable<ControlData> {
     /**
      * Resource Bundle.
@@ -107,8 +108,8 @@ public class ControlData
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
-                ? null
-                : myKey.getId();
+                              ? null
+                              : myKey.getId();
     }
 
     /**
@@ -239,8 +240,7 @@ public class ControlData
         }
 
         /* Compare the Versions */
-        int iDiff = getDataVersion()
-                    - pThat.getDataVersion();
+        int iDiff = getDataVersion() - pThat.getDataVersion();
         if (iDiff != 0) {
             return iDiff;
         }
@@ -287,7 +287,7 @@ public class ControlData
      * Control Data List.
      */
     public static class ControlDataList
-            extends DataList<ControlData> {
+            extends DataList<ControlData, CryptographyList> {
         /**
          * Local Report fields.
          */
@@ -366,18 +366,18 @@ public class ControlData
 
         @Override
         public ControlDataList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                 final DataList<?> pOld) {
+                                                 final DataList<?, CryptographyList> pOld) {
             return (ControlDataList) super.deriveDifferences(pDataSet, pOld);
         }
 
         @Override
-        public ControlData addCopyItem(final DataItem pItem) {
+        public ControlData addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a ControlData */
             if (!(pItem instanceof ControlData)) {
                 return null;
             }
 
-            /* Clone the control key */
+            /* Clone the control data */
             ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
             theControl = myControl;
@@ -386,7 +386,7 @@ public class ControlData
 
         @Override
         public ControlData addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

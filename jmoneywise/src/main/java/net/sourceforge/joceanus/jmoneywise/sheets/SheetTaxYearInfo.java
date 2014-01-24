@@ -22,11 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfo
-        extends SheetDataInfo<TaxYearInfo> {
+        extends SheetDataInfo<TaxYearInfo, MoneyWiseList> {
     /**
      * NamedArea for TaxYearInfo.
      */

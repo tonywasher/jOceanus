@@ -40,22 +40,15 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.field.JFieldSet;
+import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet;
-import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
@@ -65,11 +58,19 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AccountSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
@@ -229,17 +230,17 @@ public class MaintAccount
     /**
      * The Update Set.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The view list.
      */
-    private final transient UpdateEntry<Account> theAccountEntry;
+    private final transient UpdateEntry<Account, MoneyWiseList> theAccountEntry;
 
     /**
      * The AccountInfo Update Entry.
      */
-    private final transient UpdateEntry<AccountInfo> theInfoEntry;
+    private final transient UpdateEntry<AccountInfo, MoneyWiseList> theInfoEntry;
 
     /**
      * Obtain the account.
@@ -259,7 +260,7 @@ public class MaintAccount
         theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theAccountEntry = theUpdateSet.registerClass(Account.class);
         theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 
@@ -544,8 +545,7 @@ public class MaintAccount
      * @return true/false
      */
     public boolean hasUpdates() {
-        return (theAccount != null)
-               && (theAccount.hasChanges());
+        return (theAccount != null) && (theAccount.hasChanges());
     }
 
     /**
@@ -553,8 +553,7 @@ public class MaintAccount
      * @return true/false
      */
     public boolean hasErrors() {
-        return (theAccount != null)
-               && (theAccount.hasErrors());
+        return (theAccount != null) && (theAccount.hasErrors());
     }
 
     /**
@@ -563,8 +562,8 @@ public class MaintAccount
      */
     public EditState getEditState() {
         return (theAccount == null)
-                ? EditState.CLEAN
-                : theAccount.getEditState();
+                                   ? EditState.CLEAN
+                                   : theAccount.getEditState();
     }
 
     /**
@@ -613,8 +612,7 @@ public class MaintAccount
             AccountCategory myCategory = myCatIterator.next();
 
             /* Ignore the category if it is reserved or not enabled */
-            if ((myCategory.getCategoryTypeClass().isSingular())
-                || (!myCategory.getCategoryType().getEnabled())) {
+            if ((myCategory.getCategoryTypeClass().isSingular()) || (!myCategory.getCategoryType().getEnabled())) {
                 continue;
             }
 
@@ -666,8 +664,7 @@ public class MaintAccount
             }
 
             /* Ignore the account if it is closed and we are not showing closed */
-            if (myAcct.isClosed()
-                && (!doShowClosed)) {
+            if (myAcct.isClosed() && (!doShowClosed)) {
                 continue;
             }
 
@@ -746,14 +743,12 @@ public class MaintAccount
             AccountCategoryClass myCatClass = theAccount.getAccountCategoryClass();
 
             /* Set the visibility */
-            theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
-                                                              && isNewAccount);
+            theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable() && isNewAccount);
             theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myCatClass == AccountCategoryClass.BOND);
             theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.PARENT), myCatClass.isChild());
 
             /* Handle alias */
-            if (myCategory.getCategoryTypeClass().canAlias()
-                && !theAccount.isAliasedTo()) {
+            if (myCategory.getCategoryTypeClass().canAlias() && !theAccount.isAliasedTo()) {
 
                 /* Set visible */
                 theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.ALIAS), true);
@@ -811,34 +806,31 @@ public class MaintAccount
 
             /* Set the First Event */
             theFirst.setText((theAccount.getEarliest() != null)
-                    ? myFormatter.formatObject(theAccount.getEarliest().getDate())
-                    : "N/A");
+                                                               ? myFormatter.formatObject(theAccount.getEarliest().getDate())
+                                                               : "N/A");
 
             /* Set the Last Event */
             theLast.setText((theAccount.getLatest() != null)
-                    ? myFormatter.formatObject(theAccount.getLatest().getDate())
-                    : "N/A");
+                                                            ? myFormatter.formatObject(theAccount.getLatest().getDate())
+                                                            : "N/A");
 
             /* Set the Status */
             theStatus.setText(determineStatus().toString());
 
             /* Set text for close button */
             theClsButton.setText((isClosed)
-                    ? "ReOpen"
-                    : "Close");
+                                           ? "ReOpen"
+                                           : "Close");
 
             /* Make sure buttons are visible */
             boolean isDeletable = theAccount.isDeletable();
             theDelButton.setVisible(isDeletable);
             theDelButton.setText("Delete");
-            theClsButton.setVisible(bActive
-                                    && !isDeletable);
+            theClsButton.setVisible(bActive && !isDeletable);
 
             /* Enable buttons */
-            theInsButton.setEnabled(!theAccount.hasChanges()
-                                    && (!myCatClass.isSingular()));
-            theClsButton.setEnabled((isClosed)
-                                    || (theAccount.isCloseable()));
+            theInsButton.setEnabled(!theAccount.hasChanges() && (!myCatClass.isSingular()));
+            theClsButton.setEnabled((isClosed) || (theAccount.isCloseable()));
 
             /* Note that we are finished refreshing data */
             theFieldSet.setRefreshingData(false);
@@ -915,8 +907,7 @@ public class MaintAccount
             Object o = e.getSource();
 
             /* If the event relates to the Field Set */
-            if ((theFieldSet.equals(o))
-                && (e instanceof ActionDetailEvent)) {
+            if ((theFieldSet.equals(o)) && (e instanceof ActionDetailEvent)) {
                 /* Access event and obtain details */
                 ActionDetailEvent evt = (ActionDetailEvent) e;
                 Object dtl = evt.getDetails();
@@ -933,8 +924,7 @@ public class MaintAccount
                     String myCmd = e.getActionCommand();
 
                     /* If the command is reset/last undo */
-                    if ((myCmd.equals(SaveButtons.CMD_RESET))
-                        || ((myCmd.equals(SaveButtons.CMD_UNDO)) && (!theAccount.hasHistory()))) {
+                    if ((myCmd.equals(SaveButtons.CMD_RESET)) || ((myCmd.equals(SaveButtons.CMD_UNDO)) && (!theAccount.hasHistory()))) {
                         /* Delete new account */
                         delNewAccount();
                         return;
@@ -1165,8 +1155,8 @@ public class MaintAccount
 
         /* Handle standard account */
         return (theAccount.isCloseable())
-                ? AccountStatus.INACTIVE
-                : AccountStatus.ACTIVE;
+                                         ? AccountStatus.INACTIVE
+                                         : AccountStatus.ACTIVE;
     }
 
     /**

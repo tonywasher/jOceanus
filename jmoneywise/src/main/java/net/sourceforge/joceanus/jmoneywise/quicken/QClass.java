@@ -28,11 +28,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QClassLineType;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
 /**
  * Quicken Class.
@@ -175,7 +176,7 @@ public final class QClass
          * @return Continue? true/false
          * @throws IOException on error
          */
-        protected boolean outputClasses(final ThreadStatus<MoneyWiseData> pStatus,
+        protected boolean outputClasses(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                         final OutputStreamWriter pStream) throws IOException {
             /* If we have no classes */
             if (theClasses.isEmpty()) {
@@ -187,8 +188,7 @@ public final class QClass
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = pStatus.setNewStage("Writing classes")
-                                && pStatus.setNumSteps(size());
+            boolean bContinue = pStatus.setNewStage("Writing classes") && pStatus.setNumSteps(size());
 
             /* Add the Item type */
             reset();
@@ -201,8 +201,7 @@ public final class QClass
 
             /* Loop through the classes */
             Iterator<QClass> myIterator = theClasses.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QClass myClass = myIterator.next();
 
                 /* Write Class details */
@@ -210,8 +209,7 @@ public final class QClass
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

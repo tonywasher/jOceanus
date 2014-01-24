@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -45,7 +46,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -244,7 +244,7 @@ public abstract class ColumnDefinition {
      * Locate reference.
      * @param pTables the list of defined tables
      */
-    protected void locateReference(final List<DatabaseTable<?>> pTables) {
+    protected void locateReference(final List<DatabaseTable<?, ?>> pTables) {
     }
 
     /**
@@ -289,8 +289,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             int myValue = pResults.getInt(pIndex);
-            if ((myValue == 0)
-                && (pResults.wasNull())) {
+            if ((myValue == 0) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -380,15 +379,15 @@ public abstract class ColumnDefinition {
         }
 
         @Override
-        protected void locateReference(final List<DatabaseTable<?>> pTables) {
+        protected void locateReference(final List<DatabaseTable<?, ?>> pTables) {
             /* Access the Iterator */
-            ListIterator<DatabaseTable<?>> myIterator;
+            ListIterator<DatabaseTable<?, ?>> myIterator;
             myIterator = pTables.listIterator();
 
             /* Loop through the Tables */
             while (myIterator.hasNext()) {
                 /* Access Table */
-                DatabaseTable<?> myTable = myIterator.next();
+                DatabaseTable<?, ?> myTable = myIterator.next();
 
                 /* If this is the referenced table */
                 if (theReference.compareTo(myTable.getTableName()) == 0) {
@@ -543,8 +542,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             short myValue = pResults.getShort(pIndex);
-            if ((myValue == 0)
-                && (pResults.wasNull())) {
+            if ((myValue == 0) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -605,8 +603,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             long myValue = pResults.getLong(pIndex);
-            if ((myValue == 0)
-                && (pResults.wasNull())) {
+            if ((myValue == 0) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -667,8 +664,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             float myValue = pResults.getFloat(pIndex);
-            if ((myValue == 0)
-                && (pResults.wasNull())) {
+            if ((myValue == 0) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -729,8 +725,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             double myValue = pResults.getDouble(pIndex);
-            if ((myValue == 0)
-                && (pResults.wasNull())) {
+            if ((myValue == 0) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -792,8 +787,8 @@ public abstract class ColumnDefinition {
                                  final int pIndex) throws SQLException {
             Date myValue = pResults.getDate(pIndex);
             setValue((myValue == null)
-                    ? null
-                    : new JDateDay(myValue));
+                                      ? null
+                                      : new JDateDay(myValue));
         }
 
         @Override
@@ -853,8 +848,7 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             boolean myValue = pResults.getBoolean(pIndex);
-            if ((!myValue)
-                && (pResults.wasNull())) {
+            if ((!myValue) && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);

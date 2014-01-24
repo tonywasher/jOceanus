@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSecurity
-        extends SheetDataItem<Security> {
+        extends SheetDataItem<Security, MoneyWiseList> {
     /**
      * NamedArea for Securities.
      */
@@ -49,8 +50,7 @@ public class SheetSecurity
     /**
      * NameList for Securities.
      */
-    protected static final String AREA_SECURITYNAMES = Security.OBJECT_NAME
-                                                       + "Names";
+    protected static final String AREA_SECURITYNAMES = Security.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -303,8 +303,7 @@ public class SheetSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

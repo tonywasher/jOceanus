@@ -29,9 +29,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Database table class for Encrypted Items. Each data type that uses encrypted data should extend this class.
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? super T>>
-        extends DatabaseTable<T> {
+public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
+        extends DatabaseTable<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control

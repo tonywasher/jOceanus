@@ -24,15 +24,15 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jmetis.preference.FileSelector;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jmetis.preference.FileSelector;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,9 +41,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * not possible, the items are re-encrypted. These changes remain in memory and should be committed to the database later.
  * @author Tony Washer
  * @param <T> the DataSet type
+ * @param <E> the data list enum class
  */
-public class LoadExtract<T extends DataSet<T, ?>>
-        extends LoaderThread<T> {
+public class LoadExtract<T extends DataSet<T, E>, E extends Enum<E>>
+        extends LoaderThread<T, E> {
     /**
      * Task description.
      */
@@ -52,18 +53,18 @@ public class LoadExtract<T extends DataSet<T, ?>>
     /**
      * Data control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Thread Status.
      */
-    private final ThreadStatus<T> theStatus;
+    private final ThreadStatus<T, E> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public LoadExtract(final ThreadStatus<T> pStatus) {
+    public LoadExtract(final ThreadStatus<T, E> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

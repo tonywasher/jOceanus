@@ -30,23 +30,23 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * ExchangeRate class.
  */
 public final class ExchangeRate
-        extends DataItem
+        extends DataItem<MoneyWiseList>
         implements Comparable<ExchangeRate> {
     /**
      * Object name.
@@ -56,8 +56,7 @@ public final class ExchangeRate
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -106,13 +105,8 @@ public final class ExchangeRate
 
     @Override
     public String formatObject() {
-        return getDate()
-               + " "
-               + getFromCurrency().getCurrency().getCurrencyCode()
-               + ":"
-               + getToCurrency().getCurrency().getCurrencyCode()
-               + "="
-               + getExchangeRate().toString();
+        return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":" + getToCurrency().getCurrency().getCurrencyCode() + "="
+                + getExchangeRate().toString();
     }
 
     @Override
@@ -143,8 +137,8 @@ public final class ExchangeRate
     public Integer getFromCurrencyId() {
         AccountCurrency myCurr = getFromCurrency();
         return (myCurr == null)
-                ? null
-                : myCurr.getId();
+                               ? null
+                               : myCurr.getId();
     }
 
     /**
@@ -154,8 +148,8 @@ public final class ExchangeRate
     public String getFromCurrencyName() {
         AccountCurrency myCurr = getFromCurrency();
         return (myCurr == null)
-                ? null
-                : myCurr.getName();
+                               ? null
+                               : myCurr.getName();
     }
 
     /**
@@ -173,8 +167,8 @@ public final class ExchangeRate
     public Integer getToCurrencyId() {
         AccountCurrency myCurr = getToCurrency();
         return (myCurr == null)
-                ? null
-                : myCurr.getId();
+                               ? null
+                               : myCurr.getId();
     }
 
     /**
@@ -184,8 +178,8 @@ public final class ExchangeRate
     public String getToCurrencyName() {
         AccountCurrency myCurr = getToCurrency();
         return (myCurr == null)
-                ? null
-                : myCurr.getName();
+                               ? null
+                               : myCurr.getName();
     }
 
     /**
@@ -203,8 +197,8 @@ public final class ExchangeRate
     public JRatio getInverseRate() {
         JRatio myRate = getExchangeRate();
         return (myRate == null)
-                ? null
-                : myRate.getInverseRatio();
+                               ? null
+                               : myRate.getInverseRatio();
     }
 
     /**
@@ -552,8 +546,7 @@ public final class ExchangeRate
         }
 
         /* Check currency combination */
-        if ((myFrom != null)
-            && (myTo != null)) {
+        if ((myFrom != null) && (myTo != null)) {
             /* Must be different */
             if (myFrom.equals(myTo)) {
                 addError(ERROR_CIRCLE, FIELD_TO);
@@ -592,7 +585,7 @@ public final class ExchangeRate
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pRate) {
+    public boolean applyChanges(final DataItem<?> pRate) {
         /* Can only update from an event exchange rate */
         if (!(pRate instanceof ExchangeRate)) {
             return false;
@@ -631,7 +624,7 @@ public final class ExchangeRate
      * The ExchangeRate List class.
      */
     public static class ExchangeRateList
-            extends DataList<ExchangeRate> {
+            extends DataList<ExchangeRate, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -753,7 +746,7 @@ public final class ExchangeRate
          * @return the newly added item
          */
         @Override
-        public ExchangeRate addCopyItem(final DataItem pRate) {
+        public ExchangeRate addCopyItem(final DataItem<?> pRate) {
             /* Can only clone an ExchangeRate */
             if (!(pRate instanceof ExchangeRate)) {
                 return null;
@@ -925,8 +918,7 @@ public final class ExchangeRate
                 JRatio myRatio = myCurr.getExchangeRate();
 
                 /* If this is a new date */
-                if ((myCurrDate == null)
-                    || (!myDate.equals(myCurrDate))) {
+                if ((myCurrDate == null) || (!myDate.equals(myCurrDate))) {
                     /* Access the current rate for the new default currency */
                     /* TODO This must exist on the same date */
                     myCurrRate = findRate(pCurrency, myDate).getExchangeRate();

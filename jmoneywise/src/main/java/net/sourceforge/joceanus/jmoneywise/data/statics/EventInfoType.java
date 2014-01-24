@@ -24,11 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventInfoType
-        extends StaticData<EventInfoType, EventInfoClass> {
+        extends StaticData<EventInfoType, EventInfoClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -45,8 +46,7 @@ public class EventInfoType
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -178,7 +178,7 @@ public class EventInfoType
      * Represents a list of {@link EventInfoType} objects.
      */
     public static class EventInfoTypeList
-            extends StaticList<EventInfoType, EventInfoClass> {
+            extends StaticList<EventInfoType, EventInfoClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -228,7 +228,7 @@ public class EventInfoType
         }
 
         @Override
-        public EventInfoType addCopyItem(final DataItem pItem) {
+        public EventInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an EventInfoType */
             if (!(pItem instanceof EventInfoType)) {
                 return null;
@@ -241,7 +241,7 @@ public class EventInfoType
 
         @Override
         public EventInfoType addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

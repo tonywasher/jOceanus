@@ -26,24 +26,25 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.EventBase;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
-import net.sourceforge.joceanus.jmoneywise.data.EventBase;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TableEncrypted extension for Event.
  * @author Tony Washer
  */
 public class TableEvent
-        extends TableEncrypted<Event> {
+        extends TableEncrypted<Event, MoneyWiseList> {
     /**
      * The name of the Events table.
      */

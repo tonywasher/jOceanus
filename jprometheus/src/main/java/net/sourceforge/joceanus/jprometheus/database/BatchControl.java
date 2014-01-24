@@ -62,7 +62,7 @@ public class BatchControl {
     /**
      * The Currently active Database table.
      */
-    private DatabaseTable<?> theCurrTable = null;
+    private DatabaseTable<?, ?> theCurrTable = null;
 
     /**
      * The Currently active Mode.
@@ -92,8 +92,7 @@ public class BatchControl {
      * @return true/false is the batch full
      */
     protected boolean isFull() {
-        return (theCapacity != 0)
-               && (theItems >= theCapacity);
+        return (theCapacity != 0) && (theItems >= theCapacity);
     }
 
     /**
@@ -109,7 +108,7 @@ public class BatchControl {
      * @param pTable the Table being operated on
      * @param pMode the Mode that is in operation
      */
-    protected void setCurrentTable(final DatabaseTable<?> pTable,
+    protected void setCurrentTable(final DatabaseTable<?, ?> pTable,
                                    final DataState pMode) {
         /* Store details */
         theCurrTable = pTable;
@@ -171,7 +170,7 @@ public class BatchControl {
         /**
          * The table that is being controlled.
          */
-        private final DatabaseTable<?> theTable;
+        private final DatabaseTable<?, ?> theTable;
 
         /**
          * The State of the table.
@@ -196,7 +195,7 @@ public class BatchControl {
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                DataItem myCurr = (DataItem) myIterator.next();
+                DataItem<?> myCurr = (DataItem<?>) myIterator.next();
 
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
@@ -219,7 +218,7 @@ public class BatchControl {
 
             /* Loop through the list */
             while (myIterator.hasPrevious()) {
-                DataItem myCurr = (DataItem) myIterator.previous();
+                DataItem<?> myCurr = (DataItem<?>) myIterator.previous();
 
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
@@ -238,9 +237,9 @@ public class BatchControl {
          * @param pItem the item to commit
          * @return have we reached the end of the batch?
          */
-        private boolean commitItem(final DataItem pItem) {
+        private boolean commitItem(final DataItem<?> pItem) {
             /* Access the underlying element */
-            DataItem myBase = pItem.getBase();
+            DataItem<?> myBase = pItem.getBase();
 
             /* If we are handling deletions */
             if (theState == DataState.DELETED) {
@@ -261,8 +260,7 @@ public class BatchControl {
 
             /* If we have to worry about batch space */
             /* Adjust batch and note if we are finished */
-            return (theCapacity > 0)
-                   && (--theItems == 0);
+            return (theCapacity > 0) && (--theItems == 0);
         }
     }
 }

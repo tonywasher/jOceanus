@@ -24,21 +24,22 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Thread to create a extract spreadsheet of a data set.
  * @author Tony Washer
  * @param <T> the DataSet type
+ * @param <E> the data list enum class
  */
-public class CreateExtract<T extends DataSet<T, ?>>
+public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
         extends WorkerThread<Void> {
     /**
      * Task description.
@@ -48,18 +49,18 @@ public class CreateExtract<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Thread Status.
      */
-    private final ThreadStatus<T> theStatus;
+    private final ThreadStatus<T, E> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public CreateExtract(final ThreadStatus<T> pStatus) {
+    public CreateExtract(final ThreadStatus<T, E> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
@@ -92,10 +93,7 @@ public class CreateExtract<T extends DataSet<T, ?>>
             WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
 
             /* Determine the name of the file to build */
-            myFile = new File(myBackupDir.getPath()
-                              + File.separator
-                              + myPrefix
-                              + myType.getExtension());
+            myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + myType.getExtension());
 
             /* Create extract */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();
@@ -134,8 +132,7 @@ public class CreateExtract<T extends DataSet<T, ?>>
             /* Catch any exceptions */
         } finally {
             /* Delete the file */
-            if ((doDelete)
-                && (!myFile.delete())) {
+            if ((doDelete) && (!myFile.delete())) {
                 doDelete = false;
             }
         }

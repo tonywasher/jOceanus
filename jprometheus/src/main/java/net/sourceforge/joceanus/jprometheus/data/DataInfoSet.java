@@ -31,13 +31,13 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -46,9 +46,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the data type
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
- * @param <E> the Info type class
+ * @param <S> the Info type class
+ * @param <E> the data list enum class
  */
-public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
+public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
         implements JDataContents, Iterable<T> {
     /**
      * Resource Bundle.
@@ -102,7 +103,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
          * Obtain infoSet.
          * @return the infoSet
          */
-        DataInfoSet<?, ?, ?, ?> getInfoSet();
+        DataInfoSet<?, ?, ?, ?, ?> getInfoSet();
     }
 
     /**
@@ -118,17 +119,17 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     /**
      * The InfoTypes for the InfoSet.
      */
-    private final StaticList<I, E> theTypeList;
+    private final StaticList<I, S, E> theTypeList;
 
     /**
      * The DataInfoList for the InfoSet.
      */
-    private final DataInfoList<T, O, I, E> theInfoList;
+    private final DataInfoList<T, O, I, S, E> theInfoList;
 
     /**
      * The Map of the DataInfo.
      */
-    private final Map<E, T> theMap;
+    private final Map<S, T> theMap;
 
     /**
      * Obtain owner.
@@ -145,24 +146,24 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pInfoList the infoList for the set
      */
     protected DataInfoSet(final O pOwner,
-                          final StaticList<I, E> pTypeList,
-                          final DataInfoList<T, O, I, E> pInfoList) {
+                          final StaticList<I, S, E> pTypeList,
+                          final DataInfoList<T, O, I, S, E> pInfoList) {
         /* Store the Owner and InfoType List */
         theOwner = pOwner;
         theTypeList = pTypeList;
         theInfoList = pInfoList;
 
         /* Create the Map */
-        theMap = new EnumMap<E, T>(theTypeList.getEnumClass());
+        theMap = new EnumMap<S, T>(theTypeList.getEnumClass());
     }
 
     /**
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
-    protected void cloneTheDataInfoSet(final DataInfoSet<T, O, I, E> pSource) {
+    protected void cloneTheDataInfoSet(final DataInfoSet<T, O, I, S, E> pSource) {
         /* Clone the InfoSet for each Event in the underlying Map */
-        for (Entry<E, T> myEntry : pSource.theMap.entrySet()) {
+        for (Entry<S, T> myEntry : pSource.theMap.entrySet()) {
             /* Create the new value */
             T myNew = theInfoList.addCopyItem(myEntry.getValue());
 
@@ -178,7 +179,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pClass the Value Class
      * @return the value
      */
-    public <X> X getValue(final E pInfoClass,
+    public <X> X getValue(final S pInfoClass,
                           final Class<X> pClass) {
         /* Access existing entry */
         T myValue = theMap.get(pInfoClass);
@@ -197,7 +198,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pInfoClass the Info Class
      * @return the value
      */
-    public EncryptedField<?> getField(final E pInfoClass) {
+    public EncryptedField<?> getField(final S pInfoClass) {
         /* Access existing entry */
         T myValue = theMap.get(pInfoClass);
 
@@ -215,7 +216,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pInfoClass the Info Class
      * @return the value
      */
-    protected T getInfo(final E pInfoClass) {
+    protected T getInfo(final S pInfoClass) {
         /* Return the info */
         return theMap.get(pInfoClass);
     }
@@ -225,15 +226,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pInfoClass the class to test
      * @return <code>true/false</code>
      */
-    public Difference fieldChanged(final E pInfoClass) {
+    public Difference fieldChanged(final S pInfoClass) {
         /* Access the info */
         T myInfo = getInfo(pInfoClass);
 
         /* Return change details */
-        return (myInfo != null)
-               && myInfo.hasHistory()
-                ? Difference.DIFFERENT
-                : Difference.IDENTICAL;
+        return (myInfo != null) && myInfo.hasHistory()
+                                                      ? Difference.DIFFERENT
+                                                      : Difference.IDENTICAL;
     }
 
     /**
@@ -242,7 +242,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * @param pValue the Value
      * @throws JOceanusException on error
      */
-    public void setValue(final E pInfoClass,
+    public void setValue(final S pInfoClass,
                          final Object pValue) throws JOceanusException {
         /* Determine whether this is a deletion */
         boolean bDelete = pValue == null;
@@ -284,13 +284,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      */
     public void registerInfo(final T pInfo) {
         /* Obtain the existing Map value */
-        E myClass = pInfo.getInfoClass();
+        S myClass = pInfo.getInfoClass();
         T myValue = theMap.get(myClass);
 
         /* Reject if duplicate */
         if (myValue != null) {
-            throw new IllegalArgumentException("Duplicate information type "
-                                               + pInfo.getInfoClass());
+            throw new IllegalArgumentException("Duplicate information type " + pInfo.getInfoClass());
         }
 
         /* Add to the map */
@@ -303,7 +302,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      */
     public void deRegisterInfo(final T pInfo) {
         /* Obtain the existing Map value */
-        E myClass = pInfo.getInfoClass();
+        S myClass = pInfo.getInfoClass();
 
         /* Remove from the map */
         theMap.remove(myClass);
@@ -436,8 +435,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         for (T myValue : theMap.values()) {
             /* Access version of value */
             int myValueVersion = (bEditRestore)
-                    ? myValue.getValueSetVersion()
-                    : myValue.getBase().getValueSetVersion();
+                                               ? myValue.getValueSetVersion()
+                                               : myValue.getBase().getValueSetVersion();
 
             /* If the value was deleted at same time as owner */
             if (myValueVersion == myVersion) {

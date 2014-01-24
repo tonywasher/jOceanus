@@ -30,21 +30,21 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * AccountInfoSet class.
  * @author Tony Washer
  */
 public class AccountInfoSet
-        extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+        extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
     /**
      * Resource Bundle.
      */
@@ -190,8 +190,8 @@ public class AccountInfoSet
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -280,8 +280,8 @@ public class AccountInfoSet
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
         AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
-                ? JDataFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
+                              ? JDataFieldRequired.NOTALLOWED
+                              : isClassRequired(myClass);
     }
 
     /**
@@ -316,56 +316,56 @@ public class AccountInfoSet
             case USERID:
             case PASSWORD:
                 return myClass.isNonAsset()
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                           ? JDataFieldRequired.CANEXIST
+                                           : JDataFieldRequired.NOTALLOWED;
 
                 /* Parent */
             case PARENT:
                 return myClass.isChild()
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                        ? JDataFieldRequired.MUSTEXIST
+                                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Alias */
             case ALIAS:
                 return myClass.canAlias()
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                         ? JDataFieldRequired.CANEXIST
+                                         : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Portfolio */
             case PORTFOLIO:
                 return (myClass.hasUnits())
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                           ? JDataFieldRequired.MUSTEXIST
+                                           : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Holding */
             case HOLDING:
                 return (myClass == AccountCategoryClass.PORTFOLIO)
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                                  ? JDataFieldRequired.MUSTEXIST
+                                                                  : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Maturity */
             case MATURITY:
                 return (myClass == AccountCategoryClass.BOND)
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                             ? JDataFieldRequired.MUSTEXIST
+                                                             : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Symbol */
             case SYMBOL:
                 return (myClass.hasUnits() && (myAccount.getAlias() == null))
-                        ? JDataFieldRequired.MUSTEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                                                             ? JDataFieldRequired.MUSTEXIST
+                                                                             : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle OpeningBalance */
             case OPENINGBALANCE:
                 return myClass.isSavings()
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                          ? JDataFieldRequired.CANEXIST
+                                          : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle AutoExpense */
             case AUTOEXPENSE:
                 return myClass.isCash()
-                        ? JDataFieldRequired.CANEXIST
-                        : JDataFieldRequired.NOTALLOWED;
+                                       ? JDataFieldRequired.CANEXIST
+                                       : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle all other fields */
             default:
@@ -384,8 +384,7 @@ public class AccountInfoSet
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
             AccountInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null)
-                                 && !myInfo.isDeleted();
+            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
             JDataFieldRequired myState = isClassRequired(myClass);
@@ -451,8 +450,7 @@ public class AccountInfoSet
                     }
 
                     /* If we are open then parent must be open */
-                    if (!myAccount.isClosed()
-                        && myParent.isClosed()) {
+                    if (!myAccount.isClosed() && myParent.isClosed()) {
                         myAccount.addError(ERROR_PARCLOSED, getFieldForClass(myClass));
                     }
                     break;
@@ -492,8 +490,7 @@ public class AccountInfoSet
 
                     /* Alias account must have prices */
                     AccountStatus myAliasStatus = myAlias.getStatus();
-                    if ((!myAliasStatus.hasPrices())
-                        && (myAliasStatus.hasEvents())) {
+                    if ((!myAliasStatus.hasPrices()) && (myAliasStatus.hasEvents())) {
                         myAccount.addError(ERROR_ALSNOPRICES, getFieldForClass(myClass));
                     }
                     break;
@@ -507,8 +504,7 @@ public class AccountInfoSet
                     }
 
                     /* If we are open then portfolio must be open */
-                    if (!myAccount.isClosed()
-                        && myPortfolio.isClosed()) {
+                    if (!myAccount.isClosed() && myPortfolio.isClosed()) {
                         myAccount.addError(ERROR_PORTCLOSED, getFieldForClass(myClass));
                     }
                     break;
@@ -522,8 +518,7 @@ public class AccountInfoSet
                     }
 
                     /* If we are open then holding account must be open */
-                    if (!myAccount.isClosed()
-                        && myHolding.isClosed()) {
+                    if (!myAccount.isClosed() && myHolding.isClosed()) {
                         myAccount.addError(ERROR_HOLDCLOSED, getFieldForClass(myClass));
                     }
 

@@ -68,8 +68,7 @@ public class Event
     /**
      * The name of the object.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Resource Bundle.
@@ -111,8 +110,8 @@ public class Event
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
-                    ? theInfoSet
-                    : JDataFieldValue.SKIP;
+                             ? theInfoSet
+                             : JDataFieldValue.SKIP;
         }
 
         /* Pass onwards */
@@ -150,8 +149,8 @@ public class Event
      */
     public JUnits getDebitUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.DEBITUNITS, JUnits.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.DEBITUNITS, JUnits.class)
+                         : null;
     }
 
     /**
@@ -160,8 +159,8 @@ public class Event
      */
     public JUnits getCreditUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CREDITUNITS, JUnits.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.CREDITUNITS, JUnits.class)
+                         : null;
     }
 
     /**
@@ -170,8 +169,8 @@ public class Event
      */
     public JMoney getTaxCredit() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.TAXCREDIT, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.TAXCREDIT, JMoney.class)
+                         : null;
     }
 
     /**
@@ -180,8 +179,8 @@ public class Event
      */
     public JDilution getDilution() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.DILUTION, JDilution.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.DILUTION, JDilution.class)
+                         : null;
     }
 
     /**
@@ -190,8 +189,8 @@ public class Event
      */
     public Integer getYears() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.QUALIFYYEARS, Integer.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.QUALIFYYEARS, Integer.class)
+                         : null;
     }
 
     /**
@@ -200,8 +199,8 @@ public class Event
      */
     public JDateDay getCreditDate() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CREDITDATE, JDateDay.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.CREDITDATE, JDateDay.class)
+                         : null;
     }
 
     /**
@@ -210,8 +209,8 @@ public class Event
      */
     public JMoney getNatInsurance() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.NATINSURANCE, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.NATINSURANCE, JMoney.class)
+                         : null;
     }
 
     /**
@@ -220,8 +219,8 @@ public class Event
      */
     public JMoney getDeemedBenefit() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.DEEMEDBENEFIT, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.DEEMEDBENEFIT, JMoney.class)
+                         : null;
     }
 
     /**
@@ -230,8 +229,8 @@ public class Event
      */
     public JMoney getPension() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.PENSION, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.PENSION, JMoney.class)
+                         : null;
     }
 
     /**
@@ -240,8 +239,8 @@ public class Event
      */
     public JMoney getCharityDonation() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CHARITYDONATION, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.CHARITYDONATION, JMoney.class)
+                         : null;
     }
 
     /**
@@ -250,8 +249,8 @@ public class Event
      */
     public String getReference() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.REFERENCE, String.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.REFERENCE, String.class)
+                         : null;
     }
 
     /**
@@ -260,8 +259,8 @@ public class Event
      */
     public String getComments() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.COMMENTS, String.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.COMMENTS, String.class)
+                         : null;
     }
 
     /**
@@ -270,8 +269,8 @@ public class Event
      */
     public Account getThirdParty() {
         return hasInfoSet
-                ? theInfoSet.getAccount(EventInfoClass.THIRDPARTY)
-                : null;
+                         ? theInfoSet.getAccount(EventInfoClass.THIRDPARTY)
+                         : null;
     }
 
     /**
@@ -280,8 +279,8 @@ public class Event
      */
     public JMoney getCreditAmount() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.CREDITAMOUNT, JMoney.class)
-                : null;
+                         ? theInfoSet.getValue(EventInfoClass.CREDITAMOUNT, JMoney.class)
+                         : null;
     }
 
     @Override
@@ -290,8 +289,7 @@ public class Event
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == DataState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -306,8 +304,7 @@ public class Event
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN)
-            && (useInfoSet)) {
+        if ((myState == EditState.CLEAN) && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -322,8 +319,7 @@ public class Event
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory)
-            && (useInfoSet)) {
+        if ((!hasHistory) && (useInfoSet)) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -377,8 +373,8 @@ public class Event
         EventInfoClass myClass = EventInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
-                    ? theInfoSet.fieldChanged(myClass)
-                    : Difference.IDENTICAL;
+                               ? theInfoSet.fieldChanged(myClass)
+                               : Difference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -585,38 +581,30 @@ public class Event
         super.validate();
 
         /* Check for valid priced credit account */
-        if ((myCredit != null)
-            && (myCredit.hasUnits())) {
+        if ((myCredit != null) && (myCredit.hasUnits())) {
             /* If the date of this event is prior to the first price */
             SecurityPrice myPrice = myCredit.getInitPrice();
-            if ((myPrice != null)
-                && (getDate().compareTo(myPrice.getDate()) < 0)) {
+            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_CREDIT);
             }
         }
 
         /* Check for valid priced debit account */
-        if ((myDebit != null)
-            && (myDebit.hasUnits())
-            && (!Difference.isEqual(myCredit, myDebit))) {
+        if ((myDebit != null) && (myDebit.hasUnits()) && (!Difference.isEqual(myCredit, myDebit))) {
             /* If the date of this event is prior to the first price */
             SecurityPrice myPrice = myDebit.getInitPrice();
-            if ((myPrice != null)
-                && (getDate().compareTo(myPrice.getDate()) < 0)) {
+            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_DEBIT);
             }
         }
 
         /* Cannot have Credit and Debit if accounts are identical */
-        if ((myCreditUnits != null)
-            && (myDebitUnits != null)
-            && (Difference.isEqual(myCredit, myDebit))) {
+        if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myCredit, myDebit))) {
             addError(ERROR_CIRCULAR, EventInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS));
         }
 
         /* If we have a category and an infoSet */
-        if ((myCategory != null)
-            && (theInfoSet != null)) {
+        if ((myCategory != null) && (theInfoSet != null)) {
             /* Validate the InfoSet */
             theInfoSet.validate();
         }
@@ -636,14 +624,12 @@ public class Event
         TaxYearList myList = myData.getTaxYears();
 
         /* Ignore unless tax credit is null/zero */
-        if ((getTaxCredit() != null)
-            && (getTaxCredit().isNonZero())) {
+        if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
             return getTaxCredit();
         }
 
         /* Ignore unless category is interest/dividend */
-        if ((getCategory() == null)
-            || ((!isInterest()) && (!isDividend()))) {
+        if ((getCategory() == null) || ((!isInterest()) && (!isDividend()))) {
             return getTaxCredit();
         }
 
@@ -652,8 +638,8 @@ public class Event
 
         /* Determine the tax credit rate */
         JRate myRate = (isInterest())
-                ? myTax.getIntTaxRate()
-                : myTax.getDivTaxRate();
+                                     ? myTax.getIntTaxRate()
+                                     : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -831,7 +817,7 @@ public class Event
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pEvent) {
+    public boolean applyChanges(final DataItem<?> pEvent) {
         /* Can only update from an event */
         if (!(pEvent instanceof Event)) {
             return false;
@@ -956,8 +942,8 @@ public class Event
             /* Handle standard fields */
             if (FIELD_EVENTGROUPS.equals(pField)) {
                 return theGroups.isEmpty()
-                        ? JDataFieldValue.SKIP
-                        : theGroups;
+                                          ? JDataFieldValue.SKIP
+                                          : theGroups;
             }
 
             /* Pass onwards */
@@ -1161,7 +1147,7 @@ public class Event
          * @return the newly added item
          */
         @Override
-        public Event addCopyItem(final DataItem pItem) {
+        public Event addCopyItem(final DataItem<?> pItem) {
             if (pItem instanceof Event) {
                 Event myEvent = new Event(this, (Event) pItem);
                 add(myEvent);

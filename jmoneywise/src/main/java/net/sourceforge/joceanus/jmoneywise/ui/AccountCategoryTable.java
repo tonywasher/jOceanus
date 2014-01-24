@@ -51,6 +51,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -71,7 +72,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * Account Category Maintenance.
  */
 public class AccountCategoryTable
-        extends JDataTable<AccountCategory> {
+        extends JDataTable<AccountCategory, MoneyWiseList> {
     /**
      * Serial Id.
      */
@@ -130,12 +131,12 @@ public class AccountCategoryTable
     /**
      * The updateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<AccountCategory> theCategoryEntry;
+    private final transient UpdateEntry<AccountCategory, MoneyWiseList> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -214,7 +215,7 @@ public class AccountCategoryTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theCategoryEntry = theUpdateSet.registerClass(AccountCategory.class);
         setUpdateSet(theUpdateSet);
 
@@ -315,7 +316,7 @@ public class AccountCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<AccountCategory> {
+            extends JDataTableModel<AccountCategory, MoneyWiseList> {
         /**
          * The Serial Id.
          */
@@ -333,15 +334,15 @@ public class AccountCategoryTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         @Override
         public int getRowCount() {
             return (theCategories == null)
-                    ? 0
-                    : theCategories.size();
+                                          ? 0
+                                          : theCategories.size();
         }
 
         @Override
@@ -384,8 +385,8 @@ public class AccountCategoryTable
 
             /* Handle filter */
             return (theParent == null)
-                    ? true
-                    : theParent.equals(pRow.getParentCategory());
+                                      ? true
+                                      : theParent.equals(pRow.getParentCategory());
         }
     }
 
@@ -536,7 +537,7 @@ public class AccountCategoryTable
      * Column Model class.
      */
     private final class CategoryColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<MoneyWiseList> {
         /**
          * Serial Id.
          */

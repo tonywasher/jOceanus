@@ -24,11 +24,19 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.sheet.CellPosition;
+import net.sourceforge.joceanus.jmetis.sheet.CellStyleType;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataSheet;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
@@ -37,21 +45,14 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmetis.sheet.CellPosition;
-import net.sourceforge.joceanus.jmetis.sheet.CellStyleType;
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataRow;
-import net.sourceforge.joceanus.jmetis.sheet.DataSheet;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
  * @author Tony Washer
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> {
+public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**
      * ID column.
      */
@@ -95,7 +96,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * The DataList.
      */
-    private DataList<T> theList = null;
+    private DataList<T, E> theList = null;
 
     /**
      * The name of the related range.
@@ -171,11 +172,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Set the DataList.
      * @param pList the Data list
      */
-    protected void setDataList(final DataList<T> pList) {
+    protected void setDataList(final DataList<T, E> pList) {
         /* Store parameters */
         theList = pList;
-        isAdjusted = (!isBackup)
-                     && (theList instanceof EncryptedList);
+        isAdjusted = (!isBackup) && (theList instanceof EncryptedList);
     }
 
     /**
@@ -218,8 +218,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Declare the number of steps */
             if (!theTask.setNumSteps((isDoubleLoad)
-                    ? myTotal << 1
-                    : myTotal)) {
+                                                   ? myTotal << 1
+                                                   : myTotal)) {
                 return false;
             }
 
@@ -240,8 +240,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!theTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -262,8 +261,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!theTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -274,8 +272,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JPrometheusIOException("Failed to Load "
-                                             + theRangeName, e);
+            throw new JPrometheusIOException("Failed to Load " + theRangeName, e);
         }
 
         /* Return to caller */
@@ -308,8 +305,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Determine size of sheet */
             int myNumRows = (isBackup)
-                    ? myTotal
-                    : myTotal + 1;
+                                      ? myTotal
+                                      : myTotal + 1;
             int myNumCols = getLastColumn() + 1;
 
             /* Create the sheet */
@@ -352,8 +349,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 /* Report the progress */
                 myCount++;
                 theCurrRow++;
-                if (((myCount % mySteps) == 0)
-                    && (!theTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -369,8 +365,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 nameRange();
             }
         } catch (JOceanusException e) {
-            throw new JPrometheusIOException("Failed to create "
-                                             + theRangeName, e);
+            throw new JPrometheusIOException("Failed to create " + theRangeName, e);
         }
 
         /* Return to caller */
@@ -387,8 +382,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = pColumn;
 
         /* If we should adjust the column */
-        if ((isAdjusted)
-            && (myCol > COL_CONTROLID)) {
+        if ((isAdjusted) && (myCol > COL_CONTROLID)) {
             /* Decrement column */
             myCol--;
         }
@@ -723,8 +717,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getIntegerValue()
-                : null;
+                               ? myCell.getIntegerValue()
+                               : null;
     }
 
     /**
@@ -741,8 +735,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getBooleanValue()
-                : null;
+                               ? myCell.getBooleanValue()
+                               : null;
     }
 
     /**
@@ -760,8 +754,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getDateValue()
-                : null;
+                               ? myCell.getDateValue()
+                               : null;
     }
 
     /**
@@ -779,8 +773,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getMoneyValue()
-                : null;
+                               ? myCell.getMoneyValue()
+                               : null;
     }
 
     /**
@@ -798,8 +792,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getPriceValue()
-                : null;
+                               ? myCell.getPriceValue()
+                               : null;
     }
 
     /**
@@ -817,8 +811,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getRateValue()
-                : null;
+                               ? myCell.getRateValue()
+                               : null;
     }
 
     /**
@@ -836,8 +830,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getUnitsValue()
-                : null;
+                               ? myCell.getUnitsValue()
+                               : null;
     }
 
     /**
@@ -855,8 +849,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getDilutionValue()
-                : null;
+                               ? myCell.getDilutionValue()
+                               : null;
     }
 
     /**
@@ -874,8 +868,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getRatioValue()
-                : null;
+                               ? myCell.getRatioValue()
+                               : null;
     }
 
     /**
@@ -892,8 +886,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getStringValue()
-                : null;
+                               ? myCell.getStringValue()
+                               : null;
     }
 
     /**
@@ -911,8 +905,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getBytesValue()
-                : null;
+                               ? myCell.getBytesValue()
+                               : null;
     }
 
     /**
@@ -930,8 +924,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
         /* Return the value */
         return (myCell != null)
-                ? myCell.getCharArrayValue()
-                : null;
+                               ? myCell.getCharArrayValue()
+                               : null;
     }
 
     /**

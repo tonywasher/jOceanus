@@ -23,11 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticData<TaxBasis, TaxBasisClass> {
+        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -185,7 +186,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass> {
+            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -240,7 +241,7 @@ public class TaxBasis
          * @return the newly added item
          */
         @Override
-        public TaxBasis addCopyItem(final DataItem pItem) {
+        public TaxBasis addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxBasis */
             if (!(pItem instanceof TaxBasis)) {
                 return null;
@@ -257,7 +258,7 @@ public class TaxBasis
          */
         @Override
         public TaxBasis addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

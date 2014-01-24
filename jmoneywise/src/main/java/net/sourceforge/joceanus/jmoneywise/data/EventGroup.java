@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class EventGroup<T extends EventBase>
-        extends DataGroup<T> {
+        extends DataGroup<T, MoneyWiseList> {
     /**
      * Resource Bundle.
      */
@@ -210,8 +210,8 @@ public class EventGroup<T extends EventBase>
             if (myEvent.relatesTo(pAccount)) {
                 /* Access partner name */
                 String myName = (pAccount.equals(myEvent.getDebit()))
-                        ? myEvent.getCreditName()
-                        : myEvent.getDebitName();
+                                                                     ? myEvent.getCreditName()
+                                                                     : myEvent.getDebitName();
 
                 /* Determine differences in partners */
                 if (myPartner == null) {
@@ -290,8 +290,7 @@ public class EventGroup<T extends EventBase>
                 /* Handle deltas to the account */
                 if (pAccount.equals(myEvent.getCredit())) {
                     myAmount.addAmount(myValue);
-                } else if ((!myEvent.isDividend())
-                           && (!myEvent.isInterest())) {
+                } else if ((!myEvent.isDividend()) && (!myEvent.isInterest())) {
                     myAmount.subtractAmount(myValue);
                 }
             }

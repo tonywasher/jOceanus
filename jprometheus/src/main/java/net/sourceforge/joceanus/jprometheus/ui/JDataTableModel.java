@@ -27,13 +27,13 @@ import java.util.ResourceBundle;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldData;
+import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jmetis.field.JFieldData;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jmetis.field.JFieldValue;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter;
 import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
@@ -41,8 +41,9 @@ import net.sourceforge.joceanus.jtethys.swing.TableFilter.TableFilterModel;
 /**
  * Data Table model class.
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>>
+public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends AbstractTableModel
         implements PopulateFieldData, TableFilterModel<T> {
     /**
@@ -63,12 +64,12 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     /**
      * The Table.
      */
-    private final JDataTable<T> theTable;
+    private final JDataTable<T, E> theTable;
 
     /**
      * The RowHdrModel.
      */
-    private final RowTableModel theRowHdrModel;
+    private final RowTableModel<E> theRowHdrModel;
 
     /**
      * Should we show all items.
@@ -114,8 +115,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     @Override
     public boolean includeRow(final T pRow) {
         /* Return visibility of row */
-        return showAll
-               || !pRow.isDeleted();
+        return showAll || !pRow.isDeleted();
     }
 
     @Override
@@ -156,8 +156,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         Object o = getItemValue(myItem, pColIndex);
 
         /* If we have a null value for an error field, set error description */
-        if ((o == null)
-            && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
+        if ((o == null) && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
             o = JFieldValue.ERROR;
         }
 
@@ -201,11 +200,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             myItem.popHistory();
 
             /* Build the error */
-            JOceanusException myError = new JPrometheusDataException("Failed to update field at ("
-                                                                     + pRowIndex
-                                                                     + ","
-                                                                     + pColIndex
-                                                                     + ")", e);
+            JOceanusException myError = new JPrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
 
             /* Show the error */
             theTable.setError(myError);
@@ -247,7 +242,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
      * Constructor.
      * @param pTable the table with which this model is associated
      */
-    protected JDataTableModel(final JDataTable<T> pTable) {
+    protected JDataTableModel(final JDataTable<T, E> pTable) {
         /* Access rowHdrModel */
         theTable = pTable;
         theRowHdrModel = pTable.getRowTableModel();
@@ -343,7 +338,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     /**
      * Row Table model class.
      */
-    protected static class RowTableModel
+    protected static class RowTableModel<E extends Enum<E>>
             extends AbstractTableModel
             implements PopulateFieldData {
         /**
@@ -354,13 +349,13 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         /**
          * The DataTable.
          */
-        private JDataTable<?> theTable = null;
+        private JDataTable<?, E> theTable = null;
 
         /**
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected RowTableModel(final JDataTable<?> pTable) {
+        protected RowTableModel(final JDataTable<?, E> pTable) {
             /* Access rowHdrModel */
             theTable = pTable;
         }
@@ -403,9 +398,9 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             /* If this is a data row */
             if (iRow >= 0) {
                 /* Access the row */
-                JDataTableModel<?> myModel = theTable.getTableModel();
-                DataItem myRow = myModel.getItemAtIndex(iRow);
-                JDataTableColumnModel myColModel = (JDataTableColumnModel) theTable.getColumnModel();
+                JDataTableModel<?, E> myModel = theTable.getTableModel();
+                DataItem<E> myRow = myModel.getItemAtIndex(iRow);
+                JDataTableColumnModel<E> myColModel = (JDataTableColumnModel<E>) theTable.getColumnModel();
                 JDataField[] iFields = myColModel.getColumnFields();
 
                 /* Has the row changed */

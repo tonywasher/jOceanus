@@ -23,11 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxRegime
-        extends StaticData<TaxRegime, TaxRegimeClass> {
+        extends StaticData<TaxRegime, TaxRegimeClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -44,8 +45,7 @@ public class TaxRegime
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -175,7 +175,7 @@ public class TaxRegime
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList
-            extends StaticList<TaxRegime, TaxRegimeClass> {
+            extends StaticList<TaxRegime, TaxRegimeClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -230,7 +230,7 @@ public class TaxRegime
          * @return the newly added item
          */
         @Override
-        public TaxRegime addCopyItem(final DataItem pItem) {
+        public TaxRegime addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxRegime */
             if (!(pItem instanceof TaxRegime)) {
                 return null;
@@ -247,7 +247,7 @@ public class TaxRegime
          */
         @Override
         public TaxRegime addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

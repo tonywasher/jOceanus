@@ -32,9 +32,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * use the new controlKey. Data will be left in the Updated state ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
+ * @param <E> the data list enum class
  */
-public class RenewSecurity<T extends DataSet<T, ?>>
-        extends LoaderThread<T> {
+public class RenewSecurity<T extends DataSet<T, E>, E extends Enum<E>>
+        extends LoaderThread<T, E> {
     /**
      * Task description.
      */
@@ -43,18 +44,18 @@ public class RenewSecurity<T extends DataSet<T, ?>>
     /**
      * Data Control.
      */
-    private final DataControl<T> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Thread Status.
      */
-    private final ThreadStatus<T> theStatus;
+    private final ThreadStatus<T, E> theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public RenewSecurity(final ThreadStatus<T> pStatus) {
+    public RenewSecurity(final ThreadStatus<T, E> pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

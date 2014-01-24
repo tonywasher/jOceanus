@@ -30,18 +30,18 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 /**
  * Pattern data type.
@@ -57,8 +57,7 @@ public class Pattern
     /**
      * The name of the object.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Interesting TaxYear.
@@ -106,8 +105,8 @@ public class Pattern
     public Integer getFrequencyId() {
         Frequency myFreq = getFrequency();
         return (myFreq == null)
-                ? null
-                : myFreq.getId();
+                               ? null
+                               : myFreq.getId();
     }
 
     /**
@@ -117,8 +116,8 @@ public class Pattern
     public String getFrequencyName() {
         Frequency myFreq = getFrequency();
         return (myFreq == null)
-                ? null
-                : myFreq.getName();
+                               ? null
+                               : myFreq.getName();
     }
 
     /**
@@ -169,8 +168,8 @@ public class Pattern
      */
     public Account getPartner() {
         return isCredit()
-                ? getDebit()
-                : getCredit();
+                         ? getDebit()
+                         : getCredit();
     }
 
     @Override
@@ -387,16 +386,13 @@ public class Pattern
                 TaxYear myBase = myList.findTaxYearForDate(getDate());
 
                 /* Ignore if no maturity or else not this year */
-                if ((myDate == null)
-                    || (myBase == null)
-                    || (myBase.compareTo(pTaxYear) != 0)) {
+                if ((myDate == null) || (myBase == null) || (myBase.compareTo(pTaxYear) != 0)) {
                     return null;
                 }
             }
 
             /* Calculate the difference in years */
-            iAdjust = pTaxYear.getTaxYear().getYear()
-                      - RANGE_PATTERN.getEnd().getYear();
+            iAdjust = pTaxYear.getTaxYear().getYear() - RANGE_PATTERN.getEnd().getYear();
 
             /* Adjust the date to fall into the tax year */
             pDate.copyDate(getDate());
@@ -473,7 +469,7 @@ public class Pattern
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pPattern) {
+    public boolean applyChanges(final DataItem<?> pPattern) {
         /* Can only update from Pattern */
         if (!(pPattern instanceof Pattern)) {
             return false;
@@ -529,8 +525,8 @@ public class Pattern
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
                 return (theAccount == null)
-                        ? JDataFieldValue.SKIP
-                        : theAccount;
+                                           ? JDataFieldValue.SKIP
+                                           : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -627,8 +623,7 @@ public class Pattern
 
         @Override
         public boolean isLocked() {
-            return (theAccount != null)
-                   && (theAccount.isLocked());
+            return (theAccount != null) && (theAccount.isLocked());
         }
 
         /**
@@ -637,7 +632,7 @@ public class Pattern
          * @return the newly added item
          */
         @Override
-        public Pattern addCopyItem(final DataItem pPattern) {
+        public Pattern addCopyItem(final DataItem<?> pPattern) {
             /* Can only clone from Pattern */
             if (!(pPattern instanceof Pattern)) {
                 return null;

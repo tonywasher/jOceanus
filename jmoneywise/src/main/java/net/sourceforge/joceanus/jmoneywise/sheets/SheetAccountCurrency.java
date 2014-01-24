@@ -22,16 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountCurrency
-        extends SheetStaticData<AccountCurrency> {
+        extends SheetStaticData<AccountCurrency, MoneyWiseList> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -48,8 +49,7 @@ public class SheetAccountCurrency
     /**
      * NameList for AccountCurrencies.
      */
-    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME
-                                                          + "Names";
+    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME + "Names";
 
     /**
      * Default column.
@@ -203,8 +203,7 @@ public class SheetAccountCurrency
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

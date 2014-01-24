@@ -37,26 +37,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
-import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
@@ -69,6 +49,9 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
@@ -78,10 +61,28 @@ import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableMouse;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -89,7 +90,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class Register
-        extends JDataTable<Event> {
+        extends JDataTable<Event, MoneyWiseList> {
     /**
      * Serial Id.
      */
@@ -208,17 +209,17 @@ public class Register
     /**
      * Update Set.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * Event Update Entry.
      */
-    private final transient UpdateEntry<Event> theEventEntry;
+    private final transient UpdateEntry<Event, MoneyWiseList> theEventEntry;
 
     /**
      * EventInfo Update Entry.
      */
-    private final transient UpdateEntry<EventInfo> theInfoEntry;
+    private final transient UpdateEntry<EventInfo, MoneyWiseList> theInfoEntry;
 
     /**
      * Table Model.
@@ -402,7 +403,7 @@ public class Register
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theEventEntry = theUpdateSet.registerClass(Event.class);
         theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
         setUpdateSet(theUpdateSet);
@@ -677,7 +678,7 @@ public class Register
      * Register table model.
      */
     public final class RegisterModel
-            extends JDataTableModel<Event> {
+            extends JDataTableModel<Event, MoneyWiseList> {
         /**
          * Serial Id.
          */
@@ -698,8 +699,8 @@ public class Register
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         /**
@@ -709,8 +710,8 @@ public class Register
         @Override
         public int getRowCount() {
             return (theEvents == null)
-                    ? 0
-                    : theEvents.size();
+                                      ? 0
+                                      : theEvents.size();
         }
 
         @Override
@@ -900,7 +901,7 @@ public class Register
      * Register mouse listener.
      */
     private final class RegisterMouse
-            extends JDataTableMouse<Event> {
+            extends JDataTableMouse<Event, MoneyWiseList> {
         /**
          * Constructor.
          */
@@ -929,11 +930,9 @@ public class Register
             }
 
             /* Loop through the selected rows */
-            for (DataItem myRow : mySelf.cacheSelectedRows()) {
+            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null)
-                    || (myRow.isLocked())
-                    || (myRow.isDeleted())) {
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -967,14 +966,9 @@ public class Register
             }
 
             /* If there is something to add and there are already items in the menu */
-            boolean nullItem = enableNullDebUnits
-                               || enableNullCredUnits
-                               || enableNullTax;
-            nullItem = nullItem
-                       || enableNullYears
-                       || enableNullDilution;
-            if ((nullItem)
-                && (pMenu.getComponentCount() > 0)) {
+            boolean nullItem = enableNullDebUnits || enableNullCredUnits || enableNullTax;
+            nullItem = nullItem || enableNullYears || enableNullDilution;
+            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1040,11 +1034,9 @@ public class Register
             }
 
             /* Loop through the selected rows */
-            for (DataItem myRow : mySelf.cacheSelectedRows()) {
+            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null)
-                    || (myRow.isLocked())
-                    || (myRow.isDeleted())) {
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1054,17 +1046,14 @@ public class Register
                 EventCategory myCat = myEvent.getCategory();
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = (myCat != null)
-                                    && (myEvent.isInterest() || myEvent.isDividend());
-                if ((isTaxable)
-                    && ((myTax == null) || (!myTax.isNonZero()))) {
+                boolean isTaxable = (myCat != null) && (myEvent.isInterest() || myEvent.isDividend());
+                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableCalcTax)
-                && (pMenu.getComponentCount() > 0)) {
+            if ((enableCalcTax) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1114,8 +1103,7 @@ public class Register
             boolean enableNavigate = myAccount != null;
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableNavigate)
-                && (pMenu.getComponentCount() > 0)) {
+            if ((enableNavigate) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1123,26 +1111,18 @@ public class Register
             /* If we can navigate */
             if (enableNavigate) {
                 /* Create the View account choice */
-                JMenuItem myItem = new JMenuItem(POPUP_VIEW
-                                                 + ": "
-                                                 + myAccount.getName());
+                JMenuItem myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_VIEW
-                                        + ":"
-                                        + myAccount.getName());
+                myItem.setActionCommand(POPUP_VIEW + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(POPUP_MAINT
-                                       + ": "
-                                       + myAccount.getName());
+                myItem = new JMenuItem(POPUP_MAINT + ": " + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_MAINT
-                                        + ":"
-                                        + myAccount.getName());
+                myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1190,8 +1170,7 @@ public class Register
                 calculateTaxCredits();
 
                 /* If this is a navigate command */
-            } else if ((myCmd.startsWith(POPUP_VIEW))
-                       || (myCmd.startsWith(POPUP_MAINT))) {
+            } else if ((myCmd.startsWith(POPUP_VIEW)) || (myCmd.startsWith(POPUP_MAINT))) {
                 /* perform the navigation */
                 performNavigation(myCmd);
 
@@ -1214,11 +1193,9 @@ public class Register
             Register mySelf = Register.this;
 
             /* Loop through the selected rows */
-            for (DataItem myRow : mySelf.cacheSelectedRows()) {
+            for (DataItem<?> myRow : mySelf.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null)
-                    || (myRow.isLocked())
-                    || (myRow.isDeleted())) {
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1234,14 +1211,12 @@ public class Register
                 JMoney myTax = myEvent.getTaxCredit();
 
                 /* Ignore rows with invalid category type */
-                if ((myCat == null)
-                    || ((!myEvent.isInterest()) && (!myEvent.isDividend()))) {
+                if ((myCat == null) || ((!myEvent.isInterest()) && (!myEvent.isDividend()))) {
                     continue;
                 }
 
                 /* Ignore rows with tax credit already set */
-                if ((myTax != null)
-                    && (myTax.isNonZero())) {
+                if ((myTax != null) && (myTax.isNonZero())) {
                     continue;
                 }
 
@@ -1289,7 +1264,7 @@ public class Register
      * Column Model class.
      */
     private final class RegisterColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<MoneyWiseList> {
         /**
          * Serial Id.
          */

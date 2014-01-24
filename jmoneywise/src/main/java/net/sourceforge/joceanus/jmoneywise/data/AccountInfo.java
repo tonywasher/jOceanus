@@ -29,25 +29,25 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataInfo;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
 public class AccountInfo
-        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -120,8 +120,8 @@ public class AccountInfo
      */
     public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, Account.class);
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, Account.class);
     }
 
     /**
@@ -131,13 +131,13 @@ public class AccountInfo
      */
     public static EventCategory getEventCategory(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, EventCategory.class);
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, EventCategory.class);
     }
 
     @Override
     public String getLinkName() {
-        DataItem myItem = getLink(DataItem.class);
+        DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Account) {
             return ((Account) myItem).getName();
         }
@@ -237,7 +237,7 @@ public class AccountInfo
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        DataItem myLink = null;
+                        DataItem<?> myLink = null;
                         switch (myType.getInfoClass()) {
                             case ALIAS:
                             case PARENT:
@@ -382,7 +382,7 @@ public class AccountInfo
         /* If the value is a link */
         if (myType.isLink()) {
             Integer myId = getValue(Integer.class);
-            DataItem myNewLink = null;
+            DataItem<?> myNewLink = null;
             switch (myType.getInfoClass()) {
                 case ALIAS:
                 case PARENT:
@@ -453,7 +453,7 @@ public class AccountInfo
             case INTEGER:
                 if (myType.isLink()) {
                     if (pValue instanceof String) {
-                        DataItem myLink = null;
+                        DataItem<?> myLink = null;
                         String myName = (String) pValue;
                         MoneyWiseData myData = getDataSet();
                         switch (myType.getInfoClass()) {
@@ -471,16 +471,14 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION
-                                                                    + " "
-                                                                    + myName);
+                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION + " " + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);
                         bValueOK = true;
                     }
                     if (pValue instanceof DataItem) {
-                        DataItem myItem = (DataItem) pValue;
+                        DataItem<?> myItem = (DataItem<?>) pValue;
                         setValueValue(myItem.getId());
                         setValueLink(myItem);
                         bValueOK = true;
@@ -535,7 +533,7 @@ public class AccountInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pActInfo) {
+    public boolean applyChanges(final DataItem<?> pActInfo) {
         /* Can only update from AccountInfo */
         if (!(pActInfo instanceof AccountInfo)) {
             return false;
@@ -584,7 +582,7 @@ public class AccountInfo
      * AccountInfoList.
      */
     public static class AccountInfoList
-            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -644,7 +642,7 @@ public class AccountInfo
         }
 
         @Override
-        public AccountInfo addCopyItem(final DataItem pItem) {
+        public AccountInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountInfo */
             if (!(pItem instanceof AccountInfo)) {
                 return null;
@@ -722,10 +720,7 @@ public class AccountInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pAccount, ERROR_BADINFOCLASS
-                                                            + " ["
-                                                            + pInfoClass
-                                                            + "]");
+                throw new JMoneyWiseDataException(pAccount, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create a new Account Info Type */

@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -39,9 +42,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
-import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
-import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -122,18 +122,18 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
             return (theControlKeys.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theControlKeys;
+                                             ? JDataFieldValue.SKIP
+                                             : theControlKeys;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
             return (theDataKeys.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theDataKeys;
+                                          ? JDataFieldValue.SKIP
+                                          : theDataKeys;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
             return (theControlData.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theControlData;
+                                             ? JDataFieldValue.SKIP
+                                             : theControlData;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -191,7 +191,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The DataList Map.
      */
-    private final Map<E, DataList<?>> theListMap;
+    private final Map<E, DataList<?, E>> theListMap;
 
     /**
      * General formatter.
@@ -266,7 +266,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Get List Map.
      * @return the list map
      */
-    protected Map<E, DataList<?>> getListMap() {
+    protected Map<E, DataList<?, E>> getListMap() {
         return theListMap;
     }
 
@@ -274,7 +274,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Get Enum Class.
      * @return the enum class
      */
-    protected Class<E> getEnumClass() {
+    public Class<E> getEnumClass() {
         return theEnumClass;
     }
 
@@ -303,7 +303,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = new ControlDataList(this);
 
         /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?>>(pEnumClass);
+        theListMap = new EnumMap<E, DataList<?, E>>(pEnumClass);
 
         /* record formatter */
         theFormatter = pFormatter;
@@ -324,7 +324,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theSecurity = pSource.getSecurity();
 
         /* Create the map of additional DataLists */
-        theListMap = new EnumMap<E, DataList<?>>(theEnumClass);
+        theListMap = new EnumMap<E, DataList<?, E>>(theEnumClass);
 
         /* Copy formatter */
         theFormatter = pSource.getDataFormatter();
@@ -349,13 +349,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pSource.getControlData().cloneList(this);
 
         /* Loop through the source lists */
-        Iterator<Entry<E, DataList<?>>> myIterator = pSource.entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
             E myType = myEntry.getKey();
-            DataList<?> myList = myEntry.getValue();
+            DataList<?, E> myList = myEntry.getValue();
 
             /* Create the cloned list */
             addList(myType, myList.cloneList(this));
@@ -381,13 +381,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
 
         /* Loop through the source lists */
-        Iterator<Entry<E, DataList<?>>> myIterator = pSource.entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
             E myType = myEntry.getKey();
-            DataList<?> myList = myEntry.getValue();
+            DataList<?, E> myList = myEntry.getValue();
 
             /* Create the update list */
             addList(myType, myList.deriveList(ListStyle.UPDATE));
@@ -420,17 +420,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
 
         /* Obtain listMaps */
-        Map<E, DataList<?>> myOldMap = pOld.getListMap();
+        Map<E, DataList<?, E>> myOldMap = pOld.getListMap();
 
         /* Loop through the new lists */
-        Iterator<Entry<E, DataList<?>>> myIterator = pNew.entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = pNew.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
             E myType = myEntry.getKey();
-            DataList<?> myNew = myEntry.getValue();
-            DataList<?> myOld = myOldMap.get(myType);
+            DataList<?, E> myNew = myEntry.getValue();
+            DataList<?, E> myOld = myOldMap.get(myType);
 
             /* Derive Differences */
             addList(myType, myNew.deriveDifferences(this, myOld));
@@ -449,16 +449,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.reBase(pOld.getControlData());
 
         /* Obtain old listMap */
-        Map<E, DataList<?>> myMap = pOld.getListMap();
+        Map<E, DataList<?, E>> myMap = pOld.getListMap();
 
         /* Loop through the lists */
-        Iterator<Entry<E, DataList<?>>> myIterator = entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
             E myType = myEntry.getKey();
-            DataList<?> myList = myEntry.getValue();
+            DataList<?, E> myList = myEntry.getValue();
 
             /* ReBase on Old dataList */
             myList.reBase(myMap.get(myType));
@@ -471,7 +471,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pList the list to add
      */
     protected void addList(final E pListType,
-                           final DataList<?> pList) {
+                           final DataList<?, E> pList) {
         /* Add the DataList to the map */
         theListMap.put(pListType, pList);
 
@@ -488,15 +488,30 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pListClass the class of the list
      * @return the list of items
      */
-    protected <L extends DataList<?>> L getDataList(final E pListType,
-                                                    final Class<L> pListClass) {
-        /* Access the class */
-        DataList<?> myList = theListMap.get(pListType);
+    protected <L extends DataList<?, E>> L getDataList(final E pListType,
+                                                       final Class<L> pListClass) {
+        /* Access the list */
+        DataList<?, E> myList = theListMap.get(pListType);
 
         /* Cast correctly */
         return (myList == null)
-                ? null
-                : pListClass.cast(myList);
+                               ? null
+                               : pListClass.cast(myList);
+    }
+
+    /**
+     * Obtain debug value for list.
+     * @param pListType the list type
+     * @return true/false
+     */
+    protected Object getFieldListValue(final E pListType) {
+        /* Access the class */
+        DataList<?, E> myList = theListMap.get(pListType);
+
+        /* Cast correctly */
+        return ((myList == null) || (myList.isEmpty()))
+                                                       ? JDataFieldValue.SKIP
+                                                       : myList;
     }
 
     /**
@@ -505,14 +520,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pListClass the class of the list
      * @return the list of items
      */
-    public <L extends DataList<?>> L getDataList(final Class<L> pListClass) {
+    public <L extends DataList<?, E>> L getDataList(final Class<L> pListClass) {
         /* Loop through the lists */
-        Iterator<Entry<E, DataList<?>>> myIterator = entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            DataList<?> myList = myEntry.getValue();
+            DataList<?, E> myList = myEntry.getValue();
             if (pListClass.equals(myList.getClass())) {
                 return pListClass.cast(myList);
             }
@@ -536,9 +551,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.setGeneration(pGeneration);
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Set the Generation */
             myList.setGeneration(pGeneration);
@@ -559,9 +574,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.setVersion(pVersion);
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Set the Version */
             myList.setVersion(pVersion);
@@ -582,9 +597,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.rewindToVersion(pVersion);
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Rewind the list */
             myList.rewindToVersion(pVersion);
@@ -652,9 +667,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         myHashCode += theControlData.hashCode();
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Access equivalent list */
             myHashCode *= HASH_PRIME;
@@ -671,16 +686,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean isEmpty() {
         /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty()
-            || !theDataKeys.isEmpty()
-            || !theControlData.isEmpty()) {
+        if (!theControlKeys.isEmpty() || !theDataKeys.isEmpty() || !theControlData.isEmpty()) {
             return false;
         }
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Determine whether the list is empty */
             if (!myList.isEmpty()) {
@@ -698,16 +711,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        if ((theControlKeys.hasUpdates())
-            || (theDataKeys.hasUpdates())
-            || (theControlData.hasUpdates())) {
+        if ((theControlKeys.hasUpdates()) || (theDataKeys.hasUpdates()) || (theControlData.hasUpdates())) {
             return true;
         }
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* Determine whether the list has updates */
             if (myList.hasUpdates()) {
@@ -767,22 +778,22 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         ControlKey myControl = getControlKey();
 
         /* Obtain base listMap */
-        Map<E, DataList<?>> myMap = pBase.getListMap();
+        Map<E, DataList<?, E>> myMap = pBase.getListMap();
 
         /* Loop through the List values */
-        Iterator<Entry<E, DataList<?>>> myIterator = entryIterator();
+        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?>> myEntry = myIterator.next();
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access the two lists */
-            DataList<?> myList = myEntry.getValue();
-            DataList<?> myBase = myMap.get(myEntry.getKey());
+            DataList<?, E> myList = myEntry.getValue();
+            DataList<?, E> myBase = myMap.get(myEntry.getKey());
 
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
-                EncryptedList<?> myEncrypted = (EncryptedList<?>) myList;
-                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?>) myBase)) {
+                EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
+                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?, E>) myBase)) {
                     return false;
                 }
             }
@@ -845,14 +856,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Loop through the List values */
-        Iterator<DataList<?>> myIterator = iterator();
+        Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Update the security */
-                EncryptedList<?> myEncrypted = (EncryptedList<?>) myList;
+                EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
                 if (!myEncrypted.updateSecurity(pTask, myControl)) {
                     return false;
                 }
@@ -877,8 +888,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Set the control */
         return (myKey == null)
-                ? null
-                : myKey.getPasswordHash();
+                              ? null
+                              : myKey.getPasswordHash();
     }
 
     /**
@@ -932,7 +943,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain list iterator.
      * @return the iterator
      */
-    public Iterator<DataList<?>> iterator() {
+    public Iterator<DataList<?, E>> iterator() {
         return theListMap.values().iterator();
     }
 
@@ -940,7 +951,27 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * Obtain list iterator.
      * @return the iterator
      */
-    public Iterator<Entry<E, DataList<?>>> entryIterator() {
+    public Iterator<Entry<E, DataList<?, E>>> entryIterator() {
         return theListMap.entrySet().iterator();
+    }
+
+    /**
+     * Cryptography List Enum Types.
+     */
+    public enum CryptographyList {
+        /**
+         * ControlKey.
+         */
+        CONTROLKEY,
+
+        /**
+         * DataKey.
+         */
+        DATAKEY,
+
+        /**
+         * ControlData.
+         */
+        CONTROLDATA;
     }
 }

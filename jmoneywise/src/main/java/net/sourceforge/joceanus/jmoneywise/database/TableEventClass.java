@@ -23,16 +23,17 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.EventClass;
+import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableEventClass
-        extends TableEncrypted<EventClass> {
+        extends TableEncrypted<EventClass, MoneyWiseList> {
     /**
      * The name of the EventClass table.
      */
@@ -103,7 +104,7 @@ public class TableEventClass
         theList.reSort();
 
         /* Validate the event tags */
-        DataErrorList<DataItem> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

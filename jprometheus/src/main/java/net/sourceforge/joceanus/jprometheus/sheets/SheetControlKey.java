@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlKey
-        extends SheetDataItem<ControlKey> {
+        extends SheetDataItem<ControlKey, CryptographyList> {
     /**
      * SheetName for Keys.
      */

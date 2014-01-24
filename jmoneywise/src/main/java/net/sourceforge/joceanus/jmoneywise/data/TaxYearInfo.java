@@ -28,26 +28,26 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataInfo;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * Representation of an information extension of a TaxYear.
  * @author Tony Washer
  */
 public class TaxYearInfo
-        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
     /**
      * Object name.
      */
@@ -382,7 +382,7 @@ public class TaxYearInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pTaxInfo) {
+    public boolean applyChanges(final DataItem<?> pTaxInfo) {
         /* Can only update from TaxYearInfo */
         if (!(pTaxInfo instanceof TaxYearInfo)) {
             return false;
@@ -407,7 +407,7 @@ public class TaxYearInfo
      * TaxYearInfoList.
      */
     public static class TaxInfoList
-            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -467,7 +467,7 @@ public class TaxYearInfo
         }
 
         @Override
-        public TaxYearInfo addCopyItem(final DataItem pItem) {
+        public TaxYearInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxYearInfo */
             if (!(pItem instanceof TaxYearInfo)) {
                 return null;
@@ -545,10 +545,7 @@ public class TaxYearInfo
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS
-                                                            + " ["
-                                                            + pInfoClass
-                                                            + "]");
+                throw new JMoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create a new Tax Info */

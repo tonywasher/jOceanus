@@ -28,8 +28,9 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdIndex;
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.
  * @author Tony Washer
  * @param <T> the dataType
+ * @param <E> the data list enum class
  */
-public class IdManager<T extends DataItem & Comparable<? super T>>
+public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdIndex<Integer, T> {
     /**
      * The maximum id.
@@ -69,9 +70,7 @@ public class IdManager<T extends DataItem & Comparable<? super T>>
      */
     protected boolean isIdUnique(final Integer uId) {
         /* Its unique if its unassigned or greater than the max id */
-        if ((uId == null)
-            || (uId == 0)
-            || (uId > theMaxId)) {
+        if ((uId == null) || (uId == 0) || (uId > theMaxId)) {
             return true;
         }
 
@@ -83,12 +82,11 @@ public class IdManager<T extends DataItem & Comparable<? super T>>
      * Generate/Record new id.
      * @param pItem the item
      */
-    protected void setNewId(final DataItem pItem) {
+    protected void setNewId(final DataItem<E> pItem) {
         Integer myId = pItem.getId();
 
         /* If we need to generate a new id */
-        if ((myId == null)
-            || (myId == 0)) {
+        if ((myId == null) || (myId == 0)) {
             /* Increment and use the max Id */
             theMaxId++;
             pItem.setId(theMaxId);

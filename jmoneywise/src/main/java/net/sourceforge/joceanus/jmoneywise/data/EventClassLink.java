@@ -26,19 +26,19 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Event Class Link for an event.
  */
 public class EventClassLink
-        extends DataItem
+        extends DataItem<MoneyWiseList>
         implements Comparable<EventClassLink> {
     /**
      * Object name.
@@ -48,8 +48,7 @@ public class EventClassLink
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -96,8 +95,8 @@ public class EventClassLink
     public Integer getEventId() {
         Event myEvent = getEvent();
         return (myEvent == null)
-                ? null
-                : myEvent.getId();
+                                ? null
+                                : myEvent.getId();
     }
 
     /**
@@ -115,8 +114,8 @@ public class EventClassLink
     public Integer getEventClassId() {
         EventClass myClass = getEventClass();
         return (myClass == null)
-                ? null
-                : myClass.getId();
+                                ? null
+                                : myClass.getId();
     }
 
     /**
@@ -348,7 +347,7 @@ public class EventClassLink
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pLink) {
+    public boolean applyChanges(final DataItem<?> pLink) {
         /* Can only update from an event tag link */
         if (!(pLink instanceof EventClassLink)) {
             return false;
@@ -376,7 +375,7 @@ public class EventClassLink
      * The EventClassLink List class.
      */
     public static class EventClassLinkList
-            extends DataList<EventClassLink> {
+            extends DataList<EventClassLink, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -431,7 +430,7 @@ public class EventClassLink
          * @return the newly added item
          */
         @Override
-        public EventClassLink addCopyItem(final DataItem pLink) {
+        public EventClassLink addCopyItem(final DataItem<?> pLink) {
             /* Can only clone an EventClassLink */
             if (!(pLink instanceof EventClassLink)) {
                 return null;

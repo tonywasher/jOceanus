@@ -99,7 +99,7 @@ public class DataValues {
      * Constructor.
      * @param pItem the Item to obtain values from
      */
-    private DataValues(final DataItem pItem) {
+    private DataValues(final DataItem<?> pItem) {
         /* Store Item type */
         theItemType = pItem.getDataFields().getName();
 
@@ -118,13 +118,12 @@ public class DataValues {
             JDataField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
-            if (myField.isValueSetField()
-                && myField.isEqualityField()) {
+            if (myField.isValueSetField() && myField.isEqualityField()) {
                 /* Store the value */
                 Object myValue = myValues.getValue(myField);
                 theFields.put(myField, (myValue == null)
-                        ? null
-                        : myValue.toString());
+                                                        ? null
+                                                        : myValue.toString());
             }
         }
 
@@ -134,7 +133,7 @@ public class DataValues {
             theInfoItems = new ArrayList<InfoItem>();
 
             /* Access InfoSet */
-            DataInfoSet<?, ?, ?, ?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
+            DataInfoSet<?, ?, ?, ?, ?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
 
             /* Iterator over the values */
             Iterator<?> myInfoIterator = myInfoSet.iterator();
@@ -144,7 +143,7 @@ public class DataValues {
                 /* If this is a DataInfo item */
                 if (myCurr instanceof DataInfo) {
                     /* Access as DataArguments */
-                    DataInfo<?, ?, ?, ?> myItem = (DataInfo<?, ?, ?, ?>) myCurr;
+                    DataInfo<?, ?, ?, ?, ?> myItem = (DataInfo<?, ?, ?, ?, ?>) myCurr;
 
                     /* Add item to the list */
                     InfoItem myInfo = new InfoItem(myItem);
@@ -180,16 +179,15 @@ public class DataValues {
             JDataField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
-            if (myField.isValueSetField()
-                && myField.isEqualityField()) {
+            if (myField.isValueSetField() && myField.isEqualityField()) {
                 /* Access element */
                 Element myChild = getChild(pElement, myField.getName());
                 if (myChild != null) {
                     /* Put value (as id if possible) */
                     Integer myId = getId(myChild);
                     theFields.put(myField, (myId == null)
-                            ? myChild.getTextContent()
-                            : myId);
+                                                         ? myChild.getTextContent()
+                                                         : myId);
                 } else {
                     theFields.put(myField, null);
                 }
@@ -245,8 +243,8 @@ public class DataValues {
 
         /* Allocate infoItems list */
         theInfoItems = (hasInfoSet)
-                ? new ArrayList<InfoItem>()
-                : null;
+                                   ? new ArrayList<InfoItem>()
+                                   : null;
     }
 
     /**
@@ -269,8 +267,8 @@ public class DataValues {
         /* Access the id */
         String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
         return (myId.length() > 0)
-                ? Integer.parseInt(myId)
-                : null;
+                                  ? Integer.parseInt(myId)
+                                  : null;
     }
 
     /**
@@ -290,8 +288,8 @@ public class DataValues {
         /* Access first element */
         Node myNode = myList.item(0);
         return (myNode instanceof Element)
-                ? (Element) myNode
-                : null;
+                                          ? (Element) myNode
+                                          : null;
     }
 
     /**
@@ -331,7 +329,7 @@ public class DataValues {
                 /* If the value is an instance of a DataItem */
                 if (myValue instanceof DataItem) {
                     /* Set id attribute */
-                    DataItem myLink = (DataItem) myValue;
+                    DataItem<?> myLink = (DataItem<?>) myValue;
                     myElement.setAttribute(DataItem.FIELD_ID.getName(), myLink.getId().toString());
                 }
 
@@ -371,7 +369,7 @@ public class DataValues {
      * @return the element holding the list
      */
     public static Element createXML(final Document pDocument,
-                                    final DataList<?> pList) {
+                                    final DataList<?, ?> pList) {
         /* Create an element for the item */
         Element myElement = pDocument.createElement(pList.listName());
 
@@ -386,7 +384,7 @@ public class DataValues {
             }
 
             /* Access as DataItem */
-            DataItem myItem = (DataItem) myObject;
+            DataItem<?> myItem = (DataItem<?>) myObject;
 
             /* Create DataArguments for item */
             DataValues myArgs = new DataValues(myItem);
@@ -436,9 +434,10 @@ public class DataValues {
      * Create XML for a DataSet.
      * @param pDocument the document to hold the list.
      * @param pData the data set
+     * @param <E> the list enum type
      */
-    public static void createXML(final Document pDocument,
-                                 final DataSet<?, ?> pData) {
+    public static <E extends Enum<E>> void createXML(final Document pDocument,
+                                                     final DataSet<?, E> pData) {
         /* Create an element for the document */
         Element myElement = pDocument.createElement(pData.getClass().getSimpleName());
         pDocument.appendChild(myElement);
@@ -448,9 +447,9 @@ public class DataValues {
         myElement.setAttribute(ControlData.FIELD_VERSION.getName(), myControl.getDataVersion().toString());
 
         /* Iterate through the list */
-        Iterator<DataList<?>> myIterator = pData.iterator();
+        Iterator<DataList<?, E>> myIterator = pData.iterator();
         while (myIterator.hasNext()) {
-            DataList<?> myList = myIterator.next();
+            DataList<?, E> myList = myIterator.next();
 
             /* If this should be included as DataXML */
             if (myList.includeDataXML()) {
@@ -508,7 +507,7 @@ public class DataValues {
          * Constructor.
          * @param pInfo the info Item
          */
-        private InfoItem(final DataInfo<?, ?, ?, ?> pInfo) {
+        private InfoItem(final DataInfo<?, ?, ?, ?, ?> pInfo) {
             /* Store values */
             theName = pInfo.getInfoClass().toString();
             theId = pInfo.getId();
@@ -555,9 +554,7 @@ public class DataValues {
 
         @Override
         public int hashCode() {
-            return theName.hashCode()
-                   + theId
-                   + theValue.hashCode();
+            return theName.hashCode() + theId + theValue.hashCode();
         }
     }
 }

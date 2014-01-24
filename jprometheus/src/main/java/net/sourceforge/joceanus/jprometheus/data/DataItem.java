@@ -47,8 +47,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
  * a time and is unique within that list
  * @see DataList
+ * @param <E> the data list enum class
  */
-public abstract class DataItem
+public abstract class DataItem<E extends Enum<E>>
         implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
     /**
      * Resource Bundle.
@@ -259,8 +260,8 @@ public abstract class DataItem
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                    ? JDataFieldValue.SKIP
-                    : theBase;
+                                    ? JDataFieldValue.SKIP
+                                    : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
             return getState();
@@ -270,28 +271,28 @@ public abstract class DataItem
         }
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted()
-                    ? Boolean.TRUE
-                    : JDataFieldValue.SKIP;
+                              ? Boolean.TRUE
+                              : JDataFieldValue.SKIP;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null)
-                    ? theValueSet.getVersion()
-                    : JDataFieldValue.SKIP;
+                                        ? theValueSet.getVersion()
+                                        : JDataFieldValue.SKIP;
         }
         if (FIELD_HEADER.equals(pField)) {
             return (isHeader)
-                    ? isHeader
-                    : JDataFieldValue.SKIP;
+                             ? isHeader
+                             : JDataFieldValue.SKIP;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory()
-                    ? theHistory
-                    : JDataFieldValue.SKIP;
+                               ? theHistory
+                               : JDataFieldValue.SKIP;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return hasErrors()
-                    ? theErrors
-                    : JDataFieldValue.SKIP;
+                              ? theErrors
+                              : JDataFieldValue.SKIP;
         }
 
         /* Not recognised */
@@ -301,17 +302,12 @@ public abstract class DataItem
     /**
      * The list to which this item belongs.
      */
-    private DataList<?> theList = null;
-
-    /**
-     * Self reference.
-     */
-    private DataItem theItem;
+    private DataList<?, E> theList = null;
 
     /**
      * The item that this DataItem is based upon.
      */
-    private DataItem theBase = null;
+    private DataItem<?> theBase = null;
 
     /**
      * The Edit state of this item {@link EditState}.
@@ -347,7 +343,7 @@ public abstract class DataItem
      * Obtain the list.
      * @return the list
      */
-    public DataList<?> getList() {
+    public DataList<?, E> getList() {
         return theList;
     }
 
@@ -511,7 +507,7 @@ public abstract class DataItem
      * Touch the item.
      * @param pObject object that references the item
      */
-    public void touchItem(final DataItem pObject) {
+    public void touchItem(final DataItem<E> pObject) {
         isActive = true;
     }
 
@@ -522,18 +518,10 @@ public abstract class DataItem
     }
 
     /**
-     * Obtain properly cast reference to self.
-     * @return self reference
-     */
-    public DataItem getItem() {
-        return theItem;
-    }
-
-    /**
      * Get the base item for this item.
      * @return the Base item or <code>null</code>
      */
-    public DataItem getBase() {
+    public DataItem<?> getBase() {
         return theBase;
     }
 
@@ -541,7 +529,7 @@ public abstract class DataItem
      * Set the base item for this item.
      * @param pBase the Base item
      */
-    public void setBase(final DataItem pBase) {
+    public void setBase(final DataItem<?> pBase) {
         theBase = pBase;
     }
 
@@ -557,8 +545,7 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean hasHistory() {
-        return (theHistory != null)
-               && (theHistory.hasHistory());
+        return (theHistory != null) && (theHistory.hasHistory());
     }
 
     /**
@@ -587,7 +574,7 @@ public abstract class DataItem
      * Set Change history for an update list so that the first and only entry in the change list is the original values of the base.
      * @param pBase the base item
      */
-    public final void setHistory(final DataItem pBase) {
+    public final void setHistory(final DataItem<?> pBase) {
         theHistory.setHistory(pBase.getOriginalValues());
     }
 
@@ -653,8 +640,8 @@ public abstract class DataItem
      */
     public Difference fieldChanged(final JDataField pField) {
         return ((pField != null) && (pField.isValueSetField()))
-                ? theHistory.fieldChanged(pField)
-                : Difference.IDENTICAL;
+                                                               ? theHistory.fieldChanged(pField)
+                                                               : Difference.IDENTICAL;
     }
 
     /**
@@ -678,8 +665,7 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == EditState.CLEAN)
-               || (theEdit == EditState.VALID);
+        return (theEdit == EditState.CLEAN) || (theEdit == EditState.VALID);
     }
 
     /**
@@ -689,8 +675,8 @@ public abstract class DataItem
      */
     public boolean hasErrors(final JDataField pField) {
         return (pField != null)
-                ? theErrors.hasErrors(pField)
-                : false;
+                               ? theErrors.hasErrors(pField)
+                               : false;
     }
 
     /**
@@ -712,8 +698,8 @@ public abstract class DataItem
      */
     public void clearErrors() {
         theEdit = (theValueSet.getVersion() > 0)
-                ? EditState.DIRTY
-                : EditState.CLEAN;
+                                                ? EditState.DIRTY
+                                                : EditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -735,8 +721,8 @@ public abstract class DataItem
     @Override
     public String getFieldErrors(final JDataField pField) {
         return (pField != null)
-                ? theErrors.getFieldErrors(pField)
-                : null;
+                               ? theErrors.getFieldErrors(pField)
+                               : null;
     }
 
     @Override
@@ -756,7 +742,7 @@ public abstract class DataItem
      * Copy flags.
      * @param pItem the original item
      */
-    private void copyFlags(final DataItem pItem) {
+    private void copyFlags(final DataItem<E> pItem) {
         isActive = pItem.isActive();
     }
 
@@ -772,12 +758,11 @@ public abstract class DataItem
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public DataItem(final DataList<?> pList,
+    public DataItem(final DataList<?, E> pList,
                     final Integer uId) {
         /* Record list and item references */
         theId = uId;
         theList = pList;
-        theItem = pList.getBaseClass().cast(this);
 
         /* Declare fields (allowing for subclasses) */
         theFields = declareFields();
@@ -790,8 +775,8 @@ public abstract class DataItem
 
         /* Allocate initial value set and declare it */
         ValueSet myValues = (this instanceof EncryptedItem)
-                ? new EncryptedValueSet(this)
-                : new ValueSet(this);
+                                                           ? new EncryptedValueSet(this)
+                                                           : new ValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -804,8 +789,8 @@ public abstract class DataItem
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected DataItem(final DataList<?> pList,
-                       final DataItem pBase) {
+    protected DataItem(final DataList<?, E> pList,
+                       final DataItem<E> pBase) {
         /* Initialise using standard constructor */
         this(pList, pBase.getId());
 
@@ -910,7 +895,7 @@ public abstract class DataItem
         }
 
         /* Access the object as a DataItem */
-        DataItem myItem = (DataItem) pThat;
+        DataItem<?> myItem = (DataItem<?>) pThat;
 
         /* Check the id */
         if (compareId(myItem) != 0) {
@@ -979,9 +964,8 @@ public abstract class DataItem
      * @param pThat the DataItem to compare
      * @return the order
      */
-    protected int compareId(final DataItem pThat) {
-        return theId
-               - pThat.theId;
+    protected int compareId(final DataItem<?> pThat) {
+        return theId - pThat.theId;
     }
 
     /**
@@ -989,10 +973,10 @@ public abstract class DataItem
      * @return the underlying state
      */
     protected DataState getBaseState() {
-        DataItem myBase = getBase();
+        DataItem<?> myBase = getBase();
         return (myBase == null)
-                ? DataState.NOSTATE
-                : myBase.getState();
+                               ? DataState.NOSTATE
+                               : myBase.getState();
     }
 
     /**
@@ -1009,7 +993,7 @@ public abstract class DataItem
      * @param pElement the changed element.
      * @return were changes made?
      */
-    public boolean applyChanges(final DataItem pElement) {
+    public boolean applyChanges(final DataItem<?> pElement) {
         return false;
     }
 
@@ -1029,8 +1013,7 @@ public abstract class DataItem
             return JFieldState.DELETED;
 
             /* Determine Error state */
-        } else if ((hasErrors())
-                   && (hasErrors(pField))) {
+        } else if ((hasErrors()) && (hasErrors(pField))) {
             return JFieldState.ERROR;
 
             /* Determine Changed state */

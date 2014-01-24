@@ -26,6 +26,12 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.data.EventBase;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern;
+import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -33,20 +39,15 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.EventBase;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Pattern;
-import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TabelEncrypted extension for Pattern.
  * @author Tony Washer
  */
 public class TablePattern
-        extends TableEncrypted<Pattern> {
+        extends TableEncrypted<Pattern, MoneyWiseList> {
     /**
      * The name of the Patterns table.
      */
@@ -140,7 +141,7 @@ public class TablePattern
         theList.touchUnderlyingItems();
 
         /* Validate the events */
-        DataErrorList<DataItem> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

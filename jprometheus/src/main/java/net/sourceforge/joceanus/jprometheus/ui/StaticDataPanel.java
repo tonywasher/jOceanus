@@ -60,8 +60,9 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 /**
  * Top level panel for static data.
  * @author Tony Washer
+ * @param <E> the data list enum class
  */
-public class StaticDataPanel
+public class StaticDataPanel<E extends Enum<E>>
         extends JEventPanel {
     /**
      * Serial Id.
@@ -91,7 +92,7 @@ public class StaticDataPanel
     /**
      * The data control.
      */
-    private final transient DataControl<?> theControl;
+    private final transient DataControl<?, E> theControl;
 
     /**
      * The card panel.
@@ -111,12 +112,12 @@ public class StaticDataPanel
     /**
      * The Panel map.
      */
-    private final Map<String, StaticDataTable<?, ?>> theMap;
+    private final Map<String, StaticDataTable<?, ?, E>> theMap;
 
     /**
      * The Active panel.
      */
-    private StaticDataTable<?, ?> theActive;
+    private StaticDataTable<?, ?, E> theActive;
 
     /**
      * The error panel.
@@ -131,7 +132,7 @@ public class StaticDataPanel
     /**
      * The UpdateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<E> theUpdateSet;
 
     /**
      * The data entry.
@@ -147,7 +148,7 @@ public class StaticDataPanel
      * Obtain the updateList.
      * @return the viewSet
      */
-    protected UpdateSet getUpdateSet() {
+    protected UpdateSet<E> getUpdateSet() {
         return theUpdateSet;
     }
 
@@ -155,12 +156,12 @@ public class StaticDataPanel
      * Constructor.
      * @param pControl the data control
      */
-    public StaticDataPanel(final DataControl<?> pControl) {
+    public StaticDataPanel(final DataControl<?, E> pControl) {
         /* Store control */
         theControl = pControl;
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet(pControl);
+        theUpdateSet = new UpdateSet<E>(pControl);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theControl.getDataMgr();
@@ -203,7 +204,7 @@ public class StaticDataPanel
         theCardPanel.setLayout(theLayout);
 
         /* Create the panel map */
-        theMap = new LinkedHashMap<String, StaticDataTable<?, ?>>();
+        theMap = new LinkedHashMap<String, StaticDataTable<?, ?, E>>();
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -221,11 +222,11 @@ public class StaticDataPanel
      * @param <L> the list type
      * @param <T> the data type
      */
-    public <L extends StaticList<T, ?>, T extends StaticData<T, ?>> void addStatic(final String pListName,
-                                                                                   final Class<L> pListClass,
-                                                                                   final Class<T> pItemClass) {
+    public <L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>> void addStatic(final String pListName,
+                                                                                         final Class<L> pListClass,
+                                                                                         final Class<T> pItemClass) {
         /* Create the new panel */
-        StaticDataTable<L, T> myPanel = new StaticDataTable<L, T>(theControl, theUpdateSet, theError, pListClass, pItemClass);
+        StaticDataTable<L, T, E> myPanel = new StaticDataTable<L, T, E>(theControl, theUpdateSet, theError, pListClass, pItemClass);
 
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);
@@ -291,7 +292,7 @@ public class StaticDataPanel
      */
     public void refreshData() throws JOceanusException {
         /* Loop through the map */
-        for (StaticDataTable<?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
             /* Refresh the panel */
             myPanel.refreshData();
         }
@@ -305,7 +306,7 @@ public class StaticDataPanel
      */
     private void cancelEditing() {
         /* Loop through the map */
-        for (StaticDataTable<?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
             /* Refresh the underlying children */
             myPanel.cancelEditing();
         }
@@ -347,9 +348,9 @@ public class StaticDataPanel
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Loop through the panels */
-            Iterator<Map.Entry<String, StaticDataTable<?, ?>>> myIterator = theMap.entrySet().iterator();
+            Iterator<Map.Entry<String, StaticDataTable<?, ?, E>>> myIterator = theMap.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Map.Entry<String, StaticDataTable<?, ?>> myEntry = myIterator.next();
+                Map.Entry<String, StaticDataTable<?, ?, E>> myEntry = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
                 DataAction myAction = new DataAction(myEntry.getKey(), myEntry.getValue());
@@ -435,7 +436,7 @@ public class StaticDataPanel
         /**
          * Data Table.
          */
-        private final StaticDataTable<?, ?> theTable;
+        private final StaticDataTable<?, ?, ?> theTable;
 
         /**
          * Constructor.
@@ -443,7 +444,7 @@ public class StaticDataPanel
          * @param pTable the table
          */
         private DataAction(final String pName,
-                           final StaticDataTable<?, ?> pTable) {
+                           final StaticDataTable<?, ?, ?> pTable) {
             super(pName);
             theName = pName;
             theTable = pTable;

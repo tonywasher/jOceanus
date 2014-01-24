@@ -22,11 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -34,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountInfo
-        extends SheetDataInfo<AccountInfo> {
+        extends SheetDataInfo<AccountInfo, MoneyWiseList> {
     /**
      * NamedArea for AccountInfo.
      */

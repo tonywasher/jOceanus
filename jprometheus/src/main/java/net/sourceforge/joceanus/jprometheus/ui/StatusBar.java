@@ -43,12 +43,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 
 /**
  * Status bar panel.
  * @author Tony Washer
  */
-public class StatusBar {
+public class StatusBar
+        implements StatusDisplay {
     /**
      * Maximum progress.
      */
@@ -190,19 +192,19 @@ public class StatusBar {
     private final StatusListener theListener;
 
     /**
-     * Get progress panel.
-     * @return the panel
-     */
-    public JPanel getProgressPanel() {
-        return theProgPanel;
-    }
-
-    /**
      * Get status panel.
      * @return the panel
      */
     public JPanel getStatusPanel() {
         return theStatPanel;
+    }
+
+    /**
+     * Get progress panel.
+     * @return the panel
+     */
+    public JPanel getProgressPanel() {
+        return theProgPanel;
     }
 
     /**
@@ -219,7 +221,7 @@ public class StatusBar {
      * @param pData the Data control
      */
     public StatusBar(final ThreadControl pThread,
-                     final DataControl<?> pData) {
+                     final DataControl<?, ?> pData) {
         /* Record passed parameters */
         theControl = pThread;
 
@@ -307,10 +309,7 @@ public class StatusBar {
         }
     }
 
-    /**
-     * Update StatusBar.
-     * @param pStatus the status data
-     */
+    @Override
     public void updateStatusBar(final StatusData pStatus) {
         /* Update Task if required */
         if (pStatus.differTask(theCurrent)) {
@@ -321,8 +320,7 @@ public class StatusBar {
         /* Update Stage if required */
         if (pStatus.differStage(theCurrent)) {
             /* Expand stage text to 20 */
-            String myStage = pStatus.getStage()
-                             + "                              ";
+            String myStage = pStatus.getStage() + "                              ";
             myStage = myStage.substring(0, STAGE_CHARS);
             theStageLabel.setText(myStage);
         }
@@ -355,15 +353,10 @@ public class StatusBar {
         theCurrent = pStatus;
     }
 
-    /**
-     * Set Success string.
-     * @param pOperation the operation
-     */
+    @Override
     public void setSuccess(final String pOperation) {
         /* Set the status text field */
-        theStatusLabel.setText(pOperation
-                               + " "
-                               + NLS_SUCCESS);
+        theStatusLabel.setText(pOperation + " " + NLS_SUCCESS);
 
         /* Show the status window rather than the progress window */
         theStatPanel.setVisible(true);
@@ -377,28 +370,20 @@ public class StatusBar {
         theTimer.start();
     }
 
-    /**
-     * Set Failure string.
-     * @param pOperation the operation
-     * @param pErrors the error list
-     */
+    @Override
     public void setFailure(final String pOperation,
                            final DataErrorList<JMetisExceptionWrapper> pErrors) {
         /* Initialise the message */
-        String myText = pOperation
-                        + " "
-                        + NLS_FAIL;
+        String myText = pOperation + " " + NLS_FAIL;
 
         /* If there is an error detail */
         if (!pErrors.isEmpty()) {
             /* Add the first error detail */
-            myText += ". "
-                      + pErrors.get(0).getMessage();
+            myText += ". " + pErrors.get(0).getMessage();
 
             /* else no failure - must have cancelled */
         } else {
-            myText += ". "
-                      + NLS_CANCELLED;
+            myText += ". " + NLS_CANCELLED;
         }
 
         /* Store the errors */
@@ -415,6 +400,11 @@ public class StatusBar {
         /* Show the status window rather than the progress window */
         theStatPanel.setVisible(true);
         theProgPanel.setVisible(false);
+    }
+
+    @Override
+    public void showProgressPanel() {
+        theProgPanel.setVisible(true);
     }
 
     /**
@@ -605,8 +595,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differNumSteps(final StatusData pData) {
-            return (pData == null)
-                   || (theNumSteps != pData.getNumSteps());
+            return (pData == null) || (theNumSteps != pData.getNumSteps());
         }
 
         /**
@@ -615,8 +604,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differNumStages(final StatusData pData) {
-            return (pData == null)
-                   || (theNumStages != pData.getNumStages());
+            return (pData == null) || (theNumStages != pData.getNumStages());
         }
 
         /**
@@ -625,8 +613,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStepsDone(final StatusData pData) {
-            return (pData == null)
-                   || (theStepsDone != pData.getStepsDone());
+            return (pData == null) || (theStepsDone != pData.getStepsDone());
         }
 
         /**
@@ -635,8 +622,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStagesDone(final StatusData pData) {
-            return (pData == null)
-                   || (theStagesDone != pData.getStagesDone());
+            return (pData == null) || (theStagesDone != pData.getStagesDone());
         }
 
         /**
@@ -645,8 +631,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStage(final StatusData pData) {
-            return (pData == null)
-                   || !Difference.isEqual(theStage, pData.getStage());
+            return (pData == null) || !Difference.isEqual(theStage, pData.getStage());
         }
 
         /**
@@ -655,8 +640,7 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differTask(final StatusData pData) {
-            return (pData == null)
-                   || !Difference.isEqual(theTask, pData.getTask());
+            return (pData == null) || !Difference.isEqual(theTask, pData.getTask());
         }
 
         /**

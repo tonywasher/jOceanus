@@ -88,7 +88,7 @@ public class SaveButtons
     /**
      * The update set.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<?> theUpdateSet;
 
     /**
      * The OK button.
@@ -109,7 +109,7 @@ public class SaveButtons
      * Constructor.
      * @param pUpdateSet the update set
      */
-    public SaveButtons(final UpdateSet pUpdateSet) {
+    public SaveButtons(final UpdateSet<?> pUpdateSet) {
         /* Create the boxes */
         theOKButton = new JButton(NLS_OK);
         theUndoButton = new JButton(NLS_UNDO);

@@ -43,8 +43,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Template class to provide mouse support for a table.
  * @author Tony Washer
  * @param <T> the data type.
+ * @param <E> the data list enum class
  */
-public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>>
+public abstract class JDataTableMouse<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends MouseAdapter
         implements ActionListener {
     /**
@@ -80,7 +81,7 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
     /**
      * The underlying data table.
      */
-    private final JDataTable<T> theTable;
+    private final JDataTable<T, E> theTable;
 
     /**
      * Are we showing all items?
@@ -130,7 +131,7 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
      * Constructor.
      * @param pTable the table
      */
-    public JDataTableMouse(final JDataTable<T> pTable) {
+    public JDataTableMouse(final JDataTable<T, E> pTable) {
         /* Store parameters */
         theTable = pTable;
 
@@ -154,8 +155,7 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
      */
     public void maybeShowPopup(final MouseEvent e) {
         /* If we can trigger a PopUp menu */
-        if ((e.isPopupTrigger())
-            && (theTable.isEnabled())) {
+        if ((e.isPopupTrigger()) && (theTable.isEnabled())) {
             /* Note if this is a header PopUp */
             Object o = e.getComponent();
             isHeader = (o instanceof JTableHeader);
@@ -191,9 +191,7 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
                 }
 
                 /* If we are on a valid row, ensure that this row is selected */
-                if ((!isHeader)
-                    && (theRow >= 0)
-                    && (!theTable.isRowSelected(myRow))) {
+                if ((!isHeader) && (theRow >= 0) && (!theTable.isRowSelected(myRow))) {
                     theTable.setRowSelectionInterval(myRow, myRow);
                 }
             }
@@ -243,10 +241,9 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
         boolean enableDupl = false;
 
         /* Loop through the selected rows */
-        for (DataItem myRow : theTable.cacheSelectedRows()) {
+        for (DataItem<E> myRow : theTable.cacheSelectedRows()) {
             /* Ignore locked rows */
-            if ((myRow == null)
-                || (myRow.isLocked())) {
+            if ((myRow == null) || (myRow.isLocked())) {
                 continue;
             }
 
@@ -261,13 +258,9 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
         }
 
         /* If there is something to add and there are already items in the menu */
-        boolean haveItems = enableIns
-                            || enableDel
-                            || enableDupl;
-        haveItems |= enableShow
-                     || enableRecov;
-        if ((haveItems)
-            && (pMenu.getComponentCount() > 0)) {
+        boolean haveItems = enableIns || enableDel || enableDupl;
+        haveItems |= enableShow || enableRecov;
+        if ((haveItems) && (pMenu.getComponentCount() > 0)) {
             /* Add a separator */
             pMenu.addSeparator();
         }
@@ -346,16 +339,14 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
      */
     protected void setColumnToNull(final int col) {
         /* Access the table model */
-        JDataTableModel<T> myModel = theTable.getTableModel();
+        JDataTableModel<T, E> myModel = theTable.getTableModel();
         Class<T> myClass = theTable.getDataClass();
 
         try {
             /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
+            for (DataItem<E> myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null)
-                    || (myRow.isLocked())
-                    || (myRow.isDeleted())) {
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
 

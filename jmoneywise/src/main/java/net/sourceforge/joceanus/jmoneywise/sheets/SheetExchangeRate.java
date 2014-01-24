@@ -22,19 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 
 /**
  * SheetDataItem extension for ExchangeRate.
  * @author Tony Washer
  */
 public class SheetExchangeRate
-        extends SheetDataItem<ExchangeRate> {
+        extends SheetDataItem<ExchangeRate, MoneyWiseList> {
     /**
      * NamedArea for Rates.
      */

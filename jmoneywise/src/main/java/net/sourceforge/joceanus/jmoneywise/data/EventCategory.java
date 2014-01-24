@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Event Category class.
  */
 public final class EventCategory
-        extends EncryptedItem
+        extends EncryptedItem<MoneyWiseList>
         implements Comparable<EventCategory> {
     /**
      * Object name.
@@ -130,8 +130,7 @@ public final class EventCategory
 
     @Override
     public boolean isActive() {
-        return super.isActive()
-               || isHidden();
+        return super.isActive() || isHidden();
     }
 
     /**
@@ -197,8 +196,8 @@ public final class EventCategory
     public Integer getCategoryTypeId() {
         EventCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getId();
+                               ? null
+                               : myType.getId();
     }
 
     /**
@@ -208,8 +207,8 @@ public final class EventCategory
     public String getCategoryTypeName() {
         EventCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getName();
+                               ? null
+                               : myType.getName();
     }
 
     /**
@@ -219,8 +218,8 @@ public final class EventCategory
     public EventCategoryClass getCategoryTypeClass() {
         EventCategoryType myType = getCategoryType();
         return (myType == null)
-                ? null
-                : myType.getCategoryClass();
+                               ? null
+                               : myType.getCategoryClass();
     }
 
     /**
@@ -238,8 +237,8 @@ public final class EventCategory
     public Integer getParentCategoryId() {
         EventCategory myParent = getParentCategory();
         return (myParent == null)
-                ? null
-                : myParent.getId();
+                                 ? null
+                                 : myParent.getId();
     }
 
     /**
@@ -249,8 +248,8 @@ public final class EventCategory
     public String getParentCategoryName() {
         EventCategory myParent = getParentCategory();
         return (myParent == null)
-                ? null
-                : myParent.getName();
+                                 ? null
+                                 : myParent.getName();
     }
 
     /**
@@ -483,8 +482,8 @@ public final class EventCategory
         /* Check for match */
         EventCategoryClass myClass = getCategoryTypeClass();
         return (myClass == null)
-                ? false
-                : myClass.isTransfer();
+                                ? false
+                                : myClass.isTransfer();
     }
 
     /**
@@ -604,8 +603,8 @@ public final class EventCategory
         boolean isHidden = isHidden();
         if (isHidden != pThat.isHidden()) {
             return (isHidden)
-                    ? 1
-                    : -1;
+                             ? 1
+                             : -1;
         }
 
         /* Check the category type */
@@ -773,8 +772,7 @@ public final class EventCategory
         }
 
         /* Check description length */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
 
@@ -833,15 +831,12 @@ public final class EventCategory
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
-                        if ((myParentClass.isIncome() != myClass.isIncome())
-                            || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
+                        if ((myParentClass.isIncome() != myClass.isIncome()) || (myParentClass.isStockTransfer() != myClass.isStockTransfer())) {
                             addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 
                         /* Check that name reflects parent */
-                        if ((myName != null)
-                            && !myName.startsWith(myParent.getName()
-                                                  + STR_SEP)) {
+                        if ((myName != null) && !myName.startsWith(myParent.getName() + STR_SEP)) {
                             addError(ERROR_MATCHPARENT, FIELD_PARENT);
                         }
                     }
@@ -861,7 +856,7 @@ public final class EventCategory
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem pCategory) {
+    public boolean applyChanges(final DataItem<?> pCategory) {
         /* Can only update from an event category */
         if (!(pCategory instanceof EventCategory)) {
             return false;
@@ -902,15 +897,15 @@ public final class EventCategory
     public boolean isHidden() {
         EventCategoryClass myClass = this.getCategoryTypeClass();
         return (myClass == null)
-                ? false
-                : myClass.isHiddenType();
+                                ? false
+                                : myClass.isHiddenType();
     }
 
     /**
      * The Event Category List class.
      */
     public static class EventCategoryList
-            extends EncryptedList<EventCategory> {
+            extends EncryptedList<EventCategory, MoneyWiseList> {
         /**
          * Local Report fields.
          */
@@ -992,7 +987,7 @@ public final class EventCategory
          * @return the newly added item
          */
         @Override
-        public EventCategory addCopyItem(final DataItem pCategory) {
+        public EventCategory addCopyItem(final DataItem<?> pCategory) {
             /* Can only clone an EventCategory */
             if (!(pCategory instanceof EventCategory)) {
                 return null;

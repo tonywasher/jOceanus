@@ -28,11 +28,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
 /**
  * Quicken Category.
@@ -121,8 +122,8 @@ public final class QCategory
 
         /* Determine Income/Expense flag */
         addFlag((theType.isIncome())
-                ? QCategoryLineType.INCOME
-                : QCategoryLineType.EXPENSE);
+                                    ? QCategoryLineType.INCOME
+                                    : QCategoryLineType.EXPENSE);
 
         /* Return the result */
         return completeItem();
@@ -158,8 +159,7 @@ public final class QCategory
          * @return the size
          */
         protected int size() {
-            return theParents.size()
-                   + theCategories.size();
+            return theParents.size() + theCategories.size();
         }
 
         /**
@@ -212,11 +212,10 @@ public final class QCategory
          * @return Continue? true/false
          * @throws IOException on error
          */
-        protected boolean outputCategories(final ThreadStatus<MoneyWiseData> pStatus,
+        protected boolean outputCategories(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
-            if ((theParents.isEmpty())
-                && (theCategories.isEmpty())) {
+            if ((theParents.isEmpty()) && (theCategories.isEmpty())) {
                 return true;
             }
 
@@ -225,8 +224,7 @@ public final class QCategory
             int myCount = 0;
 
             /* Update status bar */
-            boolean bContinue = pStatus.setNewStage("Writing categories")
-                                && pStatus.setNumSteps(size());
+            boolean bContinue = pStatus.setNewStage("Writing categories") && pStatus.setNumSteps(size());
 
             /* Add the Item type */
             reset();
@@ -239,8 +237,7 @@ public final class QCategory
 
             /* Loop through the parents */
             Iterator<QCategory> myIterator = theParents.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -248,16 +245,14 @@ public final class QCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
 
             /* Loop through the categories */
             myIterator = theCategories.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -265,8 +260,7 @@ public final class QCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
@@ -333,8 +327,8 @@ public final class QCategory
             public QCategory next() {
                 /* Check for parents entry */
                 return (useParents)
-                        ? theParentIterator.next()
-                        : theCategoryIterator.next();
+                                   ? theParentIterator.next()
+                                   : theCategoryIterator.next();
             }
 
             @Override

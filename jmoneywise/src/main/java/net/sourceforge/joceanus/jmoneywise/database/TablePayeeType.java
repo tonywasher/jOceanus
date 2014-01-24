@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TablePayeeType
-        extends TableStaticData<PayeeType> {
+        extends TableStaticData<PayeeType, MoneyWiseList> {
     /**
      * The table name.
      */

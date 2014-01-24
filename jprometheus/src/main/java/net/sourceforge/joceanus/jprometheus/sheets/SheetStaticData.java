@@ -29,9 +29,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
  * @author Tony Washer
  * @param <T> the data type
+ * @param <E> the data list enum class
  */
-public abstract class SheetStaticData<T extends StaticData<T, ?>>
-        extends SheetDataItem<T> {
+public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
+        extends SheetDataItem<T, E> {
     /**
      * Enabled column.
      */

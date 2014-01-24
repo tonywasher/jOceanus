@@ -67,8 +67,9 @@ import net.sourceforge.joceanus.jtethys.help.HelpWindow;
  * Main window for application.
  * @author Tony Washer
  * @param <T> the data set type
+ * @param <E> the data list enum class
  */
-public abstract class MainWindow<T extends DataSet<T, ?>>
+public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         implements ThreadControl, ActionListener {
     /**
      * Resource Bundle.
@@ -188,7 +189,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
     /**
      * The data view.
      */
-    private DataControl<T> theView = null;
+    private DataControl<T, E> theView = null;
 
     /**
      * The frame.
@@ -329,7 +330,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      * Get the data view.
      * @return the data view
      */
-    public DataControl<T> getView() {
+    public DataControl<T, E> getView() {
         return theView;
     }
 
@@ -391,7 +392,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      * @param pView the Data view
      * @throws JOceanusException on error
      */
-    public void buildMainWindow(final DataControl<T> pView) throws JOceanusException {
+    public void buildMainWindow(final DataControl<T, E> pView) throws JOceanusException {
         /* Store the view */
         theView = pView;
         theDataMgr = theView.getDataMgr();
@@ -580,8 +581,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
             /* If this is the frame that is closing down */
             if (theFrame.equals(o)) {
                 /* If we have updates or changes */
-                if ((hasUpdates())
-                    || (hasChanges())) {
+                if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
                     int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
 
@@ -722,31 +722,22 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
         /* Disable menus if we have a worker thread */
         theDataMenu.setEnabled(!hasWorker);
         theBackupMenu.setEnabled(!hasWorker);
-        theSecureMenu.setEnabled(!hasWorker
-                                 && hasControl);
+        theSecureMenu.setEnabled(!hasWorker && hasControl);
 
         /* If we have changes but no updates enable the undo/reset options */
-        if ((hasWorker)
-            || (!hasControl)) {
+        if ((hasWorker) || (!hasControl)) {
             theEditMenu.setEnabled(false);
         } else {
-            theEditMenu.setEnabled(!hasUpdates
-                                   && hasChanges);
+            theEditMenu.setEnabled(!hasUpdates && hasChanges);
         }
 
         /* If we have changes disable the create backup options */
-        theWriteBackup.setEnabled(!hasChanges
-                                  && !hasUpdates
-                                  && hasControl);
-        theWriteExtract.setEnabled(!hasChanges
-                                   && !hasUpdates
-                                   && hasControl);
+        theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        theWriteExtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
 
         /* If we have changes disable the security options */
-        theUpdatePass.setEnabled(!hasChanges
-                                 && !hasUpdates);
-        theRenewSec.setEnabled(!hasChanges
-                               && !hasUpdates);
+        theUpdatePass.setEnabled(!hasChanges && !hasUpdates);
+        theRenewSec.setEnabled(!hasChanges && !hasUpdates);
 
         /* If we have updates disable the load backup/database option */
         theLoadBackup.setEnabled(!hasUpdates);
@@ -754,8 +745,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
         theLoadDBase.setEnabled(!hasUpdates);
 
         /* If we have updates or no changes disable the save database */
-        theSaveDBase.setEnabled(!hasUpdates
-                                && hasChanges);
+        theSaveDBase.setEnabled(!hasUpdates && hasChanges);
     }
 
     @Override
@@ -811,10 +801,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void loadDatabase() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        LoadDatabase<T> myThread = new LoadDatabase<T>(myStatus);
+        LoadDatabase<T, E> myThread = new LoadDatabase<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -824,10 +814,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void storeDatabase() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        StoreDatabase<T> myThread = new StoreDatabase<T>(myStatus);
+        StoreDatabase<T, E> myThread = new StoreDatabase<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -837,7 +827,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void createDatabase() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
         CreateDatabase<T> myThread = new CreateDatabase<T>(myStatus);
@@ -850,7 +840,7 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void purgeDatabase() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
         PurgeDatabase<T> myThread = new PurgeDatabase<T>(myStatus);
@@ -885,10 +875,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void writeBackup() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        CreateBackup<T> myThread = new CreateBackup<T>(myStatus);
+        CreateBackup<T, E> myThread = new CreateBackup<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -898,10 +888,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void restoreBackup() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        LoadBackup<T> myThread = new LoadBackup<T>(myStatus);
+        LoadBackup<T, E> myThread = new LoadBackup<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -911,10 +901,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void writeExtract() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        CreateExtract<T> myThread = new CreateExtract<T>(myStatus);
+        CreateExtract<T, E> myThread = new CreateExtract<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -924,10 +914,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void loadExtract() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        LoadExtract<T> myThread = new LoadExtract<T>(myStatus);
+        LoadExtract<T, E> myThread = new LoadExtract<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -937,10 +927,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void updatePassword() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        UpdatePassword<T> myThread = new UpdatePassword<T>(myStatus);
+        UpdatePassword<T, E> myThread = new UpdatePassword<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -950,10 +940,10 @@ public abstract class MainWindow<T extends DataSet<T, ?>>
      */
     private void reNewSecurity() {
         /* Allocate the status */
-        ThreadStatus<T> myStatus = new ThreadStatus<T>(theView, theStatusBar);
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
 
         /* Create the worker thread */
-        RenewSecurity<T> myThread = new RenewSecurity<T>(myStatus);
+        RenewSecurity<T, E> myThread = new RenewSecurity<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

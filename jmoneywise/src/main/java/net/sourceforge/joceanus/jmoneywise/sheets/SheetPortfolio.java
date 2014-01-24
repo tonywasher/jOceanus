@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPortfolio
-        extends SheetDataItem<Portfolio> {
+        extends SheetDataItem<Portfolio, MoneyWiseList> {
     /**
      * NamedArea for Portfolios.
      */
@@ -48,8 +49,7 @@ public class SheetPortfolio
     /**
      * NameList for Portfolios.
      */
-    protected static final String AREA_PORTFOLIONAMES = Portfolio.OBJECT_NAME
-                                                        + "Names";
+    protected static final String AREA_PORTFOLIONAMES = Portfolio.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -269,8 +269,7 @@ public class SheetPortfolio
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

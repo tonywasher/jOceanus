@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
@@ -39,17 +39,18 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
-import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for TaxYear.
  * @author Tony Washer
  */
 public class SheetTaxYear
-        extends SheetDataItem<TaxYear> {
+        extends SheetDataItem<TaxYear, MoneyWiseList> {
     /**
      * NamedArea for TaxYears.
      */
@@ -101,8 +102,8 @@ public class SheetTaxYear
 
         /* Set up info Sheet */
         theInfoSheet = isBackup()
-                ? null
-                : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+                                 ? null
+                                 : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     /**
@@ -121,8 +122,8 @@ public class SheetTaxYear
 
         /* Set up info Sheet */
         theInfoSheet = isBackup()
-                ? null
-                : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+                                 ? null
+                                 : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     @Override
@@ -364,8 +365,7 @@ public class SheetTaxYear
                 myCount++;
                 iRow++;
 
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -393,7 +393,7 @@ public class SheetTaxYear
      * TaxYearInfoSet sheet.
      */
     private static class SheetTaxInfoSet
-            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
 
         /**
          * Constructor.
@@ -402,7 +402,7 @@ public class SheetTaxYear
          * @param pBaseCol the base column
          */
         public SheetTaxInfoSet(final Class<TaxYearInfoClass> pClass,
-                               final SheetDataItem<TaxYear> pOwner,
+                               final SheetDataItem<TaxYear, MoneyWiseList> pOwner,
                                final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

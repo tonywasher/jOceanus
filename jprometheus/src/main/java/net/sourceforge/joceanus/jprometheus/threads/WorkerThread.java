@@ -29,8 +29,8 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
 import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -43,7 +43,7 @@ public abstract class WorkerThread<T>
     /**
      * The Status Bar.
      */
-    private final StatusBar theStatusBar;
+    private final StatusDisplay theStatusBar;
 
     /**
      * The description of the operation.
@@ -61,7 +61,7 @@ public abstract class WorkerThread<T>
      * @param pStatus the thread status
      */
     protected WorkerThread(final String pTask,
-                           final ThreadStatus<?> pStatus) {
+                           final ThreadStatus<?, ?> pStatus) {
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
@@ -90,7 +90,7 @@ public abstract class WorkerThread<T>
      * Show StatusBar.
      */
     protected void showStatusBar() {
-        theStatusBar.getProgressPanel().setVisible(true);
+        theStatusBar.showProgressPanel();
     }
 
     /**
@@ -98,8 +98,7 @@ public abstract class WorkerThread<T>
      */
     protected void completeStatusBar() {
         /* If we are not cancelled and have no error */
-        if ((!isCancelled())
-            && (theErrors.isEmpty())) {
+        if ((!isCancelled()) && (theErrors.isEmpty())) {
             /* Set success */
             theStatusBar.setSuccess(theTask);
 

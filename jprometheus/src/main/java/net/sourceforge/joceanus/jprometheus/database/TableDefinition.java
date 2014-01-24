@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.swing.SortOrder;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
@@ -50,6 +51,7 @@ import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.RatioColum
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ReferenceColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.StringColumn;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.UnitsColumn;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -57,8 +59,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database field definition class. Maps each dataType to a database field.
@@ -435,9 +435,7 @@ public class TableDefinition {
     public BinaryColumn addEncryptedColumn(final JDataField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, CipherSet.IVSIZE
-                                                            + CipherSet.KEYIDLEN
-                                                            + CipherSet.getEncryptionLength(2 * pLength));
+        BinaryColumn myColumn = new BinaryColumn(this, pId, CipherSet.IVSIZE + CipherSet.KEYIDLEN + CipherSet.getEncryptionLength(2 * pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -490,7 +488,7 @@ public class TableDefinition {
      * Locate reference.
      * @param pTables the list of defined tables
      */
-    protected void resolveReferences(final List<DatabaseTable<?>> pTables) {
+    protected void resolveReferences(final List<DatabaseTable<?, ?>> pTables) {
         /* Create the iterator */
         Iterator<ColumnDefinition> myIterator = theList.iterator();
 
@@ -527,10 +525,7 @@ public class TableDefinition {
      * @return the error string
      */
     private String getColumnError(final ColumnDefinition pCol) {
-        return "Column "
-               + pCol.getColumnName()
-               + " in table "
-               + theTableName;
+        return "Column " + pCol.getColumnName() + " in table " + theTableName;
     }
 
     /**
@@ -553,8 +548,7 @@ public class TableDefinition {
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
-                throw new JPrometheusLogicException(getColumnError(myDef)
-                                                    + " has no value for insert");
+                throw new JPrometheusLogicException(getColumnError(myDef) + " has no value for insert");
             }
 
             myDef.storeValue(theStatement, myIndex++);
@@ -619,8 +613,7 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Integer type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Integer type");
         }
 
         /* Return the value */
@@ -640,8 +633,7 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Long type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Long type");
         }
 
         /* Return the value */
@@ -661,8 +653,7 @@ public class TableDefinition {
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Date type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Date type");
         }
 
         /* Return the value */
@@ -682,9 +673,7 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JPrometheusLogicException("Column "
-                                                + getColumnError(myCol)
-                                                + " is not Boolean type");
+            throw new JPrometheusLogicException("Column " + getColumnError(myCol) + " is not Boolean type");
         }
 
         /* Return the value */
@@ -704,8 +693,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not String type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not String type");
         }
 
         /* Return the value */
@@ -727,8 +715,7 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not money type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not money type");
         }
 
         /* Access the value */
@@ -750,8 +737,7 @@ public class TableDefinition {
 
         /* Reject if this is not a price column */
         if (!(myCol instanceof PriceColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Price type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Price type");
         }
 
         /* Access the value */
@@ -773,8 +759,7 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Rate type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Rate type");
         }
 
         /* Access the value */
@@ -796,8 +781,7 @@ public class TableDefinition {
 
         /* Reject if this is not a units column */
         if (!(myCol instanceof UnitsColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Units type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Units type");
         }
 
         /* Access the value */
@@ -819,8 +803,7 @@ public class TableDefinition {
 
         /* Reject if this is not a dilution column */
         if (!(myCol instanceof DilutionColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Dilution type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Dilution type");
         }
 
         /* Access the value */
@@ -842,8 +825,7 @@ public class TableDefinition {
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Ratio type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Ratio type");
         }
 
         /* Access the value */
@@ -863,8 +845,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Binary type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Binary type");
         }
 
         /* Return the value */
@@ -885,8 +866,7 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Integer type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Integer type");
         }
 
         /* Set the value */
@@ -907,8 +887,7 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Long type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Long type");
         }
 
         /* Set the value */
@@ -929,8 +908,7 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Boolean type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Boolean type");
         }
 
         /* Set the value */
@@ -951,8 +929,7 @@ public class TableDefinition {
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Date type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Date type");
         }
 
         /* Set the value */
@@ -973,8 +950,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not String type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not String type");
         }
 
         /* Set the value */
@@ -995,8 +971,7 @@ public class TableDefinition {
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Binary type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Binary type");
         }
 
         /* Set the value */
@@ -1017,8 +992,7 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Money type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Money type");
         }
 
         /* Set the value */
@@ -1039,8 +1013,7 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Rate type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Rate type");
         }
 
         /* Set the value */
@@ -1061,8 +1034,7 @@ public class TableDefinition {
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
-            throw new JPrometheusLogicException(getColumnError(myCol)
-                                                + " is not Ratio type");
+            throw new JPrometheusLogicException(getColumnError(myCol) + " is not Ratio type");
         }
 
         /* Set the value */
@@ -1082,10 +1054,7 @@ public class TableDefinition {
 
         /* Check that the id is in range and present */
         if (myDef == null) {
-            throw new JPrometheusLogicException("Invalid Column Id: "
-                                                + pId
-                                                + " for "
-                                                + theTableName);
+            throw new JPrometheusLogicException("Invalid Column Id: " + pId + " for " + theTableName);
         }
 
         /* Return the column definition */
@@ -1302,8 +1271,7 @@ public class TableDefinition {
             }
 
             /* If we are using prefixes */
-            if ((sortOnReference)
-                || (pChar > 'a')) {
+            if ((sortOnReference) || (pChar > 'a')) {
                 /* If this is a reference column */
                 if (myDef instanceof ReferenceColumn) {
                     /* Handle Reference column */
@@ -1405,8 +1373,7 @@ public class TableDefinition {
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
-                    throw new JPrometheusLogicException(getColumnError(myDef)
-                                                        + " has no value for update");
+                    throw new JPrometheusLogicException(getColumnError(myDef) + " has no value for update");
                 }
 
                 /* Remember the column */

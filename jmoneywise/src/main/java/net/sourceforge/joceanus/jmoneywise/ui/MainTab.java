@@ -34,12 +34,11 @@ import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
@@ -47,7 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.help.HelpException;
@@ -60,7 +61,7 @@ import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
  * @author Tony Washer
  */
 public class MainTab
-        extends MainWindow<MoneyWiseData> {
+        extends MainWindow<MoneyWiseData, MoneyWiseList> {
     /**
      * View Statement.
      */
@@ -315,9 +316,7 @@ public class MainTab
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        return theRegister.hasUpdates()
-               || theSpotView.hasUpdates()
-               || theMaint.hasUpdates();
+        return theRegister.hasUpdates() || theSpotView.hasUpdates() || theMaint.hasUpdates();
     }
 
     @Override
@@ -453,13 +452,11 @@ public class MainTab
         boolean hasControl = theView.getData().getControl() != null;
 
         /* Disable menus if we have no data */
-        theCreateQIF.setEnabled(!hasWorker
-                                && hasControl);
+        theCreateQIF.setEnabled(!hasWorker && hasControl);
 
         /* Access the Register panel and determine its status */
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
-        boolean showTab = !hasWorker
-                          && (!hasUpdates || theRegister.hasUpdates());
+        boolean showTab = !hasWorker && (!hasUpdates || theRegister.hasUpdates());
 
         /* Enable/Disable the extract tab */
         if (iIndex != -1) {
@@ -468,8 +465,7 @@ public class MainTab
 
         /* Access the Report panel */
         iIndex = theTabs.indexOfTab(TITLE_REPORT);
-        showTab = !hasWorker
-                  && !hasUpdates;
+        showTab = !hasWorker && !hasUpdates;
 
         /* Enable/Disable the reports tab */
         if (iIndex != -1) {
@@ -478,8 +474,7 @@ public class MainTab
 
         /* Access the SpotView panel and determine its status */
         iIndex = theTabs.indexOfTab(TITLE_SPOTVIEW);
-        showTab = !hasWorker
-                  && (!hasUpdates || theSpotView.hasUpdates());
+        showTab = !hasWorker && (!hasUpdates || theSpotView.hasUpdates());
 
         /* Enable/Disable the spotView tab */
         if (iIndex != -1) {
@@ -488,8 +483,7 @@ public class MainTab
 
         /* Access the Maintenance panel */
         iIndex = theTabs.indexOfTab(TITLE_MAINT);
-        showTab = !hasWorker
-                  && (!hasUpdates || theMaint.hasUpdates());
+        showTab = !hasWorker && (!hasUpdates || theMaint.hasUpdates());
 
         /* Enable/Disable the maintenance tab */
         if (iIndex != -1) {
@@ -563,9 +557,7 @@ public class MainTab
                 theComboList.refreshData();
 
                 /* else if it is one of the sub-panels */
-            } else if (theRegister.equals(o)
-                       || theMaint.equals(o)
-                       || theSpotView.equals(o)) {
+            } else if (theRegister.equals(o) || theMaint.equals(o) || theSpotView.equals(o)) {
                 /* Set the visibility */
                 setVisibility();
             }

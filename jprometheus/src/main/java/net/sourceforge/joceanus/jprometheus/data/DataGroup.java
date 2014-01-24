@@ -24,17 +24,18 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 
 /**
  * Group class for data item.
  * @param <T> Item comprising group
+ * @param <E> the data list enum class
  */
-public abstract class DataGroup<T extends DataItem & Comparable<? super T>>
+public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
@@ -62,10 +63,7 @@ public abstract class DataGroup<T extends DataItem & Comparable<? super T>>
 
     @Override
     public String formatObject() {
-        return getDataFields().getName()
-               + "("
-               + size()
-               + ")";
+        return getDataFields().getName() + "(" + size() + ")";
     }
 
     /**

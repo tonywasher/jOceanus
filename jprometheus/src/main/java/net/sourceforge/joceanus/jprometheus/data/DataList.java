@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -33,16 +35,15 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
-import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Generic implementation of a DataList for DataItems.
  * @author Tony Washer
  * @param <T> the item type
+ * @param <E> the data list enum class
  */
-public abstract class DataList<T extends DataItem & Comparable<? super T>>
+public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
@@ -123,10 +124,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     @Override
     public String formatObject() {
-        return getDataFields().getName()
-               + "("
-               + size()
-               + ")";
+        return getDataFields().getName() + "(" + size() + ")";
     }
 
     @Override
@@ -154,8 +152,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                    ? JDataFieldValue.SKIP
-                    : theBase;
+                                    ? JDataFieldValue.SKIP
+                                    : theBase;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return JDataFieldValue.SKIP;
@@ -203,12 +201,12 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * The id manager.
      */
-    private final IdManager<T> theMgr;
+    private final IdManager<T, E> theMgr;
 
     /**
      * The base list (for extracts).
      */
-    private DataList<? extends DataItem> theBase = null;
+    private DataList<? extends DataItem<E>, E> theBase = null;
 
     /**
      * The generation.
@@ -296,7 +294,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Get the Base of the list.
      * @return the Base list
      */
-    public DataList<?> getBaseList() {
+    public DataList<?, E> getBaseList() {
         return theBase;
     }
 
@@ -321,8 +319,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == EditState.CLEAN)
-               || (theEdit == EditState.VALID);
+        return (theEdit == EditState.CLEAN) || (theEdit == EditState.VALID);
     }
 
     /**
@@ -337,7 +334,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Set the base DataList.
      * @param pBase the list that this list is based upon
      */
-    protected void setBase(final DataList<? extends DataItem> pBase) {
+    protected void setBase(final DataList<? extends DataItem<E>, E> pBase) {
         theBase = pBase;
     }
 
@@ -366,12 +363,12 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     protected DataList(final Class<T> pBaseClass,
                        final DataSet<?, ?> pDataSet,
                        final ListStyle pStyle) {
-        super(pBaseClass, new IdManager<T>(pDataSet.getGranularity()));
+        super(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
         theStyle = pStyle;
         theDataSet = pDataSet;
         theGranularity = pDataSet.getGranularity();
         theGeneration = pDataSet.getGeneration();
-        theMgr = (IdManager<T>) getIndex();
+        theMgr = (IdManager<T, E>) getIndex();
 
         /* Declare fields (allowing for subclasses) */
         theFields = declareFields();
@@ -381,10 +378,10 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Construct a clone object.
      * @param pSource the list to clone
      */
-    protected DataList(final DataList<T> pSource) {
-        super(pSource.getBaseClass(), new IdManager<T>(pSource.getGranularity()));
+    protected DataList(final DataList<T, E> pSource) {
+        super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
         theStyle = ListStyle.COPY;
-        theMgr = (IdManager<T>) getIndex();
+        theMgr = (IdManager<T, E>) getIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();
         theGranularity = pSource.getGranularity();
@@ -399,7 +396,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pStyle the style of the empty list
      * @return the list
      */
-    protected abstract DataList<T> getEmptyList(final ListStyle pStyle);
+    protected abstract DataList<T, E> getEmptyList(final ListStyle pStyle);
 
     /**
      * Derive an cloned extract of this list.
@@ -407,9 +404,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return the cloned list
      * @throws JOceanusException on error
      */
-    protected DataList<T> cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+    protected DataList<T, E> cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList(ListStyle.CLONE);
+        DataList<T, E> myList = getEmptyList(ListStyle.CLONE);
         myList.theDataSet = pDataSet;
 
         /* Populate the list */
@@ -429,9 +426,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @return the derived list
      * @throws JOceanusException on error
      */
-    public DataList<T> deriveList(final ListStyle pStyle) throws JOceanusException {
+    public DataList<T, E> deriveList(final ListStyle pStyle) throws JOceanusException {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList(pStyle);
+        DataList<T, E> myList = getEmptyList(pStyle);
 
         /* Populate the list */
         populateList(myList);
@@ -445,24 +442,23 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pList the list to populate
      * @throws JOceanusException on error
      */
-    protected void populateList(final DataList<T> pList) throws JOceanusException {
+    protected void populateList(final DataList<T, E> pList) throws JOceanusException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = myStyle == ListStyle.UPDATE;
         boolean isClone = myStyle == ListStyle.CLONE;
 
         /* Create an iterator for all items in the list */
-        Iterator<? extends DataItem> myIterator = iterator();
+        Iterator<? extends DataItem<E>> myIterator = iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
             /* Access the item and its state */
-            DataItem myCurr = myIterator.next();
+            DataItem<E> myCurr = myIterator.next();
             DataState myState = myCurr.getState();
 
             /* If this is an UPDATE list, ignore clean elements */
-            if ((isUpdate)
-                && (myState == DataState.CLEAN)) {
+            if ((isUpdate) && (myState == DataState.CLEAN)) {
                 continue;
             }
 
@@ -483,12 +479,12 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      */
     public void resolveDataSetLinks() throws JOceanusException {
         /* Create an iterator for all items in the list */
-        Iterator<? extends DataItem> myIterator = iterator();
+        Iterator<? extends DataItem<E>> myIterator = iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
             /* Access the item */
-            DataItem myCurr = myIterator.next();
+            DataItem<E> myCurr = myIterator.next();
 
             /* Adjust the links */
             myCurr.resolveDataSetLinks();
@@ -503,10 +499,10 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pOld The old list to compare to
      * @return the difference list
      */
-    public DataList<T> deriveDifferences(final DataSet<?, ?> pDataSet,
-                                         final DataList<?> pOld) {
+    public DataList<T, E> deriveDifferences(final DataSet<?, ?> pDataSet,
+                                            final DataList<?, E> pOld) {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList(ListStyle.DIFFER);
+        DataList<T, E> myList = getEmptyList(ListStyle.DIFFER);
         myList.theDataSet = pDataSet;
 
         /* Access an Id Map of the old list */
@@ -516,8 +512,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
-            DataItem myCurr = myIterator.next();
-            DataItem myItem = (DataItem) myOld.get(myCurr.getId());
+            DataItem<E> myCurr = myIterator.next();
+            DataItem<?> myItem = (DataItem<?>) myOld.get(myCurr.getId());
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -530,7 +526,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    DataItem myNew = myList.addCopyItem(myCurr);
+                    DataItem<E> myNew = myList.addCopyItem(myCurr);
                     myNew.setBase(myItem);
 
                     /* Ensure that we record the correct history */
@@ -546,8 +542,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         Iterator<?> myOldIterator = myOld.values().iterator();
         while (myOldIterator.hasNext()) {
             /* Insert a new item */
-            DataItem myCurr = (DataItem) myOldIterator.next();
-            DataItem myItem = myList.addCopyItem(myCurr);
+            DataItem<?> myCurr = (DataItem<?>) myOldIterator.next();
+            DataItem<E> myItem = myList.addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setDeleted(true);
         }
@@ -562,7 +558,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * differ will be viewed as changed
      * @param pBase The base list to re-base on
      */
-    public void reBase(final DataList<?> pBase) {
+    public void reBase(final DataList<?, E> pBase) {
         /* Access an Id Map of the old list */
         Map<Integer, ?> myBase = pBase.getIdMap();
 
@@ -571,7 +567,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         while (myIterator.hasNext()) {
             /* Locate the item in the base list */
             T myCurr = myIterator.next();
-            DataItem myItem = (DataItem) myBase.get(myCurr.getId());
+            DataItem<?> myItem = (DataItem<?>) myBase.get(myCurr.getId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
@@ -603,7 +599,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         Iterator<?> myBaseIterator = myBase.values().iterator();
         while (myBaseIterator.hasNext()) {
             /* Insert a new item */
-            DataItem myCurr = (DataItem) myBaseIterator.next();
+            DataItem<?> myCurr = (DataItem<?>) myBaseIterator.next();
             T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setHistory(myCurr);
@@ -625,7 +621,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Generate/Record new id for the item.
      * @param pItem the new item
      */
-    protected void setNewId(final DataItem pItem) {
+    protected void setNewId(final DataItem<E> pItem) {
         /* Ask the Id Manager to manage the request */
         theMgr.setNewId(pItem);
     }
@@ -723,9 +719,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Validate the data items.
      * @return the error list (or null if no errors)
      */
-    public DataErrorList<DataItem> validate() {
+    public DataErrorList<DataItem<E>> validate() {
         /* Allocate error list */
-        DataErrorList<DataItem> myErrors = null;
+        DataErrorList<DataItem<E>> myErrors = null;
 
         /* Clear the errors */
         clearErrors();
@@ -751,7 +747,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
                 /* If this is the first error */
                 if (myErrors == null) {
                     /* Allocate error list */
-                    myErrors = new DataErrorList<DataItem>();
+                    myErrors = new DataErrorList<DataItem<E>>();
                 }
 
                 /* Add to the error list */
@@ -772,7 +768,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      */
     public void validateOnLoad() throws JOceanusException {
         /* Validate the list */
-        DataErrorList<DataItem> myErrors = validate();
+        DataErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
             throw new JPrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
@@ -836,7 +832,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
-    public abstract T addCopyItem(final DataItem pElement);
+    public abstract T addCopyItem(final DataItem<?> pElement);
 
     /**
      * Create a new empty element in the edit list (to be over-written).

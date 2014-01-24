@@ -25,15 +25,16 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableAccount
-        extends TableEncrypted<Account> {
+        extends TableEncrypted<Account, MoneyWiseList> {
     /**
      * The name of the Account table.
      */

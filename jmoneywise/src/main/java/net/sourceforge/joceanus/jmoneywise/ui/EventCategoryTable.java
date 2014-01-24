@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -70,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * Event Category Maintenance.
  */
 public class EventCategoryTable
-        extends JDataTable<EventCategory> {
+        extends JDataTable<EventCategory, MoneyWiseList> {
     /**
      * Serial Id.
      */
@@ -129,12 +130,12 @@ public class EventCategoryTable
     /**
      * The updateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<EventCategory> theCategoryEntry;
+    private final transient UpdateEntry<EventCategory, MoneyWiseList> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -213,7 +214,7 @@ public class EventCategoryTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theCategoryEntry = theUpdateSet.registerClass(EventCategory.class);
         setUpdateSet(theUpdateSet);
 
@@ -314,7 +315,7 @@ public class EventCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<EventCategory> {
+            extends JDataTableModel<EventCategory, MoneyWiseList> {
         /**
          * The Serial Id.
          */
@@ -332,15 +333,15 @@ public class EventCategoryTable
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         @Override
         public int getRowCount() {
             return (theCategories == null)
-                    ? 0
-                    : theCategories.size();
+                                          ? 0
+                                          : theCategories.size();
         }
 
         @Override
@@ -383,8 +384,8 @@ public class EventCategoryTable
 
             /* Handle filter */
             return (theParent == null)
-                    ? true
-                    : theParent.equals(pRow.getParentCategory());
+                                      ? true
+                                      : theParent.equals(pRow.getParentCategory());
         }
     }
 
@@ -535,7 +536,7 @@ public class EventCategoryTable
      * Column Model class.
      */
     private final class CategoryColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<MoneyWiseList> {
         /**
          * Serial Id.
          */

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -54,8 +55,7 @@ public class ViewPrice
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
      * Report fields.
@@ -154,9 +154,7 @@ public class ViewPrice
         Account mySecurity = getSecurity();
 
         /* If we have can look at dilutions */
-        if ((hasDilutions)
-            && (myDate != null)
-            && (myPrice != null)) {
+        if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
             /* Determine the dilution factor for the date */
             JDilution myDilution = myList.getDilutions().getDilutionFactor(mySecurity, myDate);
 
@@ -214,7 +212,7 @@ public class ViewPrice
      * Price List.
      */
     public static class ViewPriceList
-            extends EncryptedList<ViewPrice> {
+            extends EncryptedList<ViewPrice, MoneyWiseList> {
         /**
          * Report fields.
          */
@@ -252,8 +250,8 @@ public class ViewPrice
             }
             if (FIELD_DILUTIONS.equals(pField)) {
                 return (theDilutions.isEmpty())
-                        ? JDataFieldValue.SKIP
-                        : theDilutions;
+                                               ? JDataFieldValue.SKIP
+                                               : theDilutions;
             }
             return super.getFieldValue(pField);
         }
@@ -314,8 +312,7 @@ public class ViewPrice
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */
-            if ((pSecurity != null)
-                && (pSecurity.getAlias() != null)) {
+            if ((pSecurity != null) && (pSecurity.getAlias() != null)) {
                 theSecurity = pSecurity.getAlias();
             } else {
                 theSecurity = pSecurity;
@@ -352,12 +349,11 @@ public class ViewPrice
         /* Is this list locked */
         @Override
         public boolean isLocked() {
-            return (theSecurity != null)
-                   && (theSecurity.isLocked());
+            return (theSecurity != null) && (theSecurity.isLocked());
         }
 
         @Override
-        public ViewPrice addCopyItem(final DataItem pElement) {
+        public ViewPrice addCopyItem(final DataItem<?> pElement) {
             throw new UnsupportedOperationException();
         }
 

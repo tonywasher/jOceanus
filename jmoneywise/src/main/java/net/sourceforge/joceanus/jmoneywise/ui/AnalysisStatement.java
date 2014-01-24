@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
@@ -64,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * Analysis Statement.
  */
 public class AnalysisStatement
-        extends JDataTable<Event> {
+        extends JDataTable<Event, MoneyWiseList> {
     /**
      * Serial Id.
      */
@@ -128,7 +129,7 @@ public class AnalysisStatement
     /**
      * The updateSet.
      */
-    private final transient UpdateSet theUpdateSet;
+    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
 
     /**
      * The field manager.
@@ -138,12 +139,12 @@ public class AnalysisStatement
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<Event> theEventEntry;
+    private final transient UpdateEntry<Event, MoneyWiseList> theEventEntry;
 
     /**
      * The info entry.
      */
-    private final transient UpdateEntry<EventInfo> theInfoEntry;
+    private final transient UpdateEntry<EventInfo, MoneyWiseList> theInfoEntry;
 
     /**
      * The analysis data entry.
@@ -224,7 +225,7 @@ public class AnalysisStatement
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
         theEventEntry = theUpdateSet.registerClass(Event.class);
         theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
         setUpdateSet(theUpdateSet);
@@ -365,7 +366,7 @@ public class AnalysisStatement
      * JTable Data Model.
      */
     private final class AnalysisTableModel
-            extends JDataTableModel<Event> {
+            extends JDataTableModel<Event, MoneyWiseList> {
         /**
          * The Serial Id.
          */
@@ -383,15 +384,15 @@ public class AnalysisStatement
         @Override
         public int getColumnCount() {
             return (theColumns == null)
-                    ? 0
-                    : theColumns.getColumnCount();
+                                       ? 0
+                                       : theColumns.getColumnCount();
         }
 
         @Override
         public int getRowCount() {
             return (theEvents == null)
-                    ? 0
-                    : 1 + theEvents.size();
+                                      ? 0
+                                      : 1 + theEvents.size();
         }
 
         @Override
@@ -410,8 +411,8 @@ public class AnalysisStatement
         public Event getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
-                    ? theHeader
-                    : theEvents.get(pRowIndex - 1);
+                                 ? theHeader
+                                 : theEvents.get(pRowIndex - 1);
         }
 
         @Override
@@ -419,8 +420,8 @@ public class AnalysisStatement
                                    final int pColIndex) {
             /* Return the appropriate value */
             return pEvent.isHeader()
-                    ? theColumns.getHeaderValue(pColIndex)
-                    : theColumns.getItemValue(pEvent, pColIndex);
+                                    ? theColumns.getHeaderValue(pColIndex)
+                                    : theColumns.getItemValue(pEvent, pColIndex);
         }
 
         @Override
@@ -437,8 +438,7 @@ public class AnalysisStatement
             }
 
             /* Return visibility of row */
-            return !pRow.isDeleted()
-                   && !theFilter.filterEvent(pRow);
+            return !pRow.isDeleted() && !theFilter.filterEvent(pRow);
         }
     }
 
@@ -479,7 +479,7 @@ public class AnalysisStatement
      * Column Model class.
      */
     private final class AnalysisColumnModel
-            extends JDataTableColumnModel {
+            extends JDataTableColumnModel<MoneyWiseList> {
         /**
          * Serial Id.
          */
