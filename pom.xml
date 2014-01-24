@@ -9,7 +9,7 @@
   <url>http://joceanus.sourceforge.net/staging/</url>
   <packaging>pom</packaging>
   <modules>
-    <module>jMoneyWise</module>
+    <module>jmoneywise</module>
     <module>jthemis</module>
     <module>jprometheus</module>
     <module>jmetis</module>
