@@ -13,7 +13,7 @@ set projectName=jOceanus
 set source=c:\Users\Tony\%projectName%
 set target=c:\Users\Tony\sourceforge\%projectName%\trunk
 set dirNames=jmetis jprometheus jtethys
-set dirNames=%dirNames% jGordianKnot jthemis jMoneyWise
+set dirNames=%dirNames% jgordianknot jthemis jmoneywise
 
 :docopy
 rem xcopy /Y %source%\pom.xml %target%\pom.xml
