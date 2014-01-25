@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class ControlData
-        extends DataItem<CryptographyList>
+        extends DataItem<CryptographyDataType>
         implements Comparable<ControlData> {
     /**
      * Resource Bundle.
@@ -287,7 +287,7 @@ public class ControlData
      * Control Data List.
      */
     public static class ControlDataList
-            extends DataList<ControlData, CryptographyList> {
+            extends DataList<ControlData, CryptographyDataType> {
         /**
          * Local Report fields.
          */
@@ -326,7 +326,7 @@ public class ControlData
          * @param pData the DataSet for the list
          */
         protected ControlDataList(final DataSet<?, ?> pData) {
-            super(ControlData.class, pData, ListStyle.CORE);
+            this(pData, ListStyle.CORE);
         }
 
         /**
@@ -336,7 +336,7 @@ public class ControlData
          */
         protected ControlDataList(final DataSet<?, ?> pData,
                                   final ListStyle pStyle) {
-            super(ControlData.class, pData, pStyle);
+            super(ControlData.class, pData, CryptographyDataType.CONTROLDATA, pStyle);
         }
 
         /**
@@ -366,7 +366,7 @@ public class ControlData
 
         @Override
         public ControlDataList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                 final DataList<?, CryptographyList> pOld) {
+                                                 final DataList<?, CryptographyDataType> pOld) {
             return (ControlDataList) super.deriveDifferences(pDataSet, pOld);
         }
 

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableEventCategory
-        extends TableEncrypted<EventCategory, MoneyWiseList> {
+        extends TableEncrypted<EventCategory, MoneyWiseDataType> {
     /**
      * The name of the Category table.
      */
@@ -124,7 +124,7 @@ public class TableEventCategory
         theList.touchUnderlyingItems();
 
         /* Validate the event categories */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

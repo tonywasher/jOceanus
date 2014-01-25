@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
  * a time and is unique within that list
  * @see DataList
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataItem<E extends Enum<E>>
         implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
@@ -179,6 +179,11 @@ public abstract class DataItem<E extends Enum<E>>
      * Id Field Id.
      */
     public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
+
+    /**
+     * Type Field Id.
+     */
+    public static final JDataField FIELD_DATATYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
 
     /**
      * List Field Id.
@@ -361,6 +366,14 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public ListStyle getStyle() {
         return theList.getStyle();
+    }
+
+    /**
+     * Get the type of the item.
+     * @return the item type
+     */
+    public E getItemType() {
+        return theList.getItemType();
     }
 
     /**

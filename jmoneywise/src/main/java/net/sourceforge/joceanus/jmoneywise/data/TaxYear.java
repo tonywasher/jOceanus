@@ -860,7 +860,7 @@ public class TaxYear
          * @param pData the DataSet for the list
          */
         public TaxYearList(final MoneyWiseData pData) {
-            super(pData, TaxYear.class);
+            super(pData, TaxYear.class, MoneyWiseDataType.TAXYEAR);
         }
 
         /**

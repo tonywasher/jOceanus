@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class TableAccountRate
-        extends TableEncrypted<AccountRate, MoneyWiseList> {
+        extends TableEncrypted<AccountRate, MoneyWiseDataType> {
     /**
      * The name of the Rates table.
      */
@@ -125,7 +125,7 @@ public class TableAccountRate
         theList.touchUnderlyingItems();
 
         /* Validate the account rates */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

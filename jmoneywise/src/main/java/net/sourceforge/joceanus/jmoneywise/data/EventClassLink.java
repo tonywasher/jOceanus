@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Event Class Link for an event.
  */
 public class EventClassLink
-        extends DataItem<MoneyWiseList>
+        extends DataItem<MoneyWiseDataType>
         implements Comparable<EventClassLink> {
     /**
      * Object name.
@@ -375,7 +375,7 @@ public class EventClassLink
      * The EventClassLink List class.
      */
     public static class EventClassLinkList
-            extends DataList<EventClassLink, MoneyWiseList> {
+            extends DataList<EventClassLink, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -401,7 +401,7 @@ public class EventClassLink
          * @param pData the DataSet for the list
          */
         protected EventClassLinkList(final MoneyWiseData pData) {
-            super(EventClassLink.class, pData, ListStyle.CORE);
+            super(EventClassLink.class, pData, MoneyWiseDataType.EVENTCLASSLINK, ListStyle.CORE);
         }
 
         @Override

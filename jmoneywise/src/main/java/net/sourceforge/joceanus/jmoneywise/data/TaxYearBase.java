@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * @author Tony Washer
  */
 public abstract class TaxYearBase
-        extends DataItem<MoneyWiseList>
+        extends DataItem<MoneyWiseDataType>
         implements Comparable<TaxYearBase> {
     /**
      * Object name.
@@ -311,7 +311,7 @@ public abstract class TaxYearBase
      * Edit constructor.
      * @param pList the list
      */
-    protected TaxYearBase(final DataList<TaxYearBase, MoneyWiseList> pList) {
+    protected TaxYearBase(final DataList<TaxYearBase, MoneyWiseDataType> pList) {
         super(pList, 0);
     }
 
@@ -453,7 +453,7 @@ public abstract class TaxYearBase
      * @param <T> the dataType
      */
     public abstract static class TaxYearBaseList<T extends TaxYearBase>
-            extends DataList<T, MoneyWiseList> {
+            extends DataList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -468,10 +468,12 @@ public abstract class TaxYearBase
          * Construct an empty CORE TaxYear list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
+         * @param pItemType the item type
          */
         protected TaxYearBaseList(final MoneyWiseData pData,
-                                  final Class<T> pClass) {
-            super(pClass, pData, ListStyle.CORE);
+                                  final Class<T> pClass,
+                                  final MoneyWiseDataType pItemType) {
+            super(pClass, pData, pItemType, ListStyle.CORE);
         }
 
         /**

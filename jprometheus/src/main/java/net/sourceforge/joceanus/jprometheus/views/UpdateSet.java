@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
 /**
  * Provides control of a set of update-able DataLists.
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
         extends JEventObject

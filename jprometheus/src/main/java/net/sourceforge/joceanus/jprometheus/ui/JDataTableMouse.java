@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Template class to provide mouse support for a table.
  * @author Tony Washer
  * @param <T> the data type.
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class JDataTableMouse<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends MouseAdapter

@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info type class
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
         implements JDataContents, Iterable<T> {

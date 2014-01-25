@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.event.JEventObject;
 /**
  * Provides top-level control of data.
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         extends JEventObject {

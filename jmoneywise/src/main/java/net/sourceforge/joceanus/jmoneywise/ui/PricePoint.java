@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class PricePoint
-        extends JDataTable<SpotPrice, MoneyWiseList> {
+        extends JDataTable<SpotPrice, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -90,12 +90,12 @@ public class PricePoint
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The update entry.
      */
-    private final transient UpdateEntry<SpotPrice, MoneyWiseList> theUpdateEntry;
+    private final transient UpdateEntry<SpotPrice, MoneyWiseDataType> theUpdateEntry;
 
     /**
      * The Spot prices.
@@ -236,7 +236,7 @@ public class PricePoint
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
-        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
         theUpdateEntry = theUpdateSet.registerClass(SpotPrice.class);
         setUpdateSet(theUpdateSet);
 
@@ -542,7 +542,7 @@ public class PricePoint
      * SpotView table model.
      */
     public final class SpotViewModel
-            extends JDataTableModel<SpotPrice, MoneyWiseList> {
+            extends JDataTableModel<SpotPrice, MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -686,7 +686,7 @@ public class PricePoint
      * SpotView mouse listener.
      */
     private static final class SpotViewMouse
-            extends JDataTableMouse<SpotPrice, MoneyWiseList> {
+            extends JDataTableMouse<SpotPrice, MoneyWiseDataType> {
         /**
          * Constructor.
          * @param pTable the table
@@ -701,7 +701,7 @@ public class PricePoint
      * Column Model class.
      */
     private final class SpotViewColumnModel
-            extends JDataTableColumnModel<MoneyWiseList> {
+            extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */

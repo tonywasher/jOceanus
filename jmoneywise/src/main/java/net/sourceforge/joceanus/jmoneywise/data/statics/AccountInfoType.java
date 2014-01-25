@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseList> {
+        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -188,7 +188,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseList> {
+            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -214,7 +214,7 @@ public class AccountInfoType
          * @param pData the DataSet for the list
          */
         public AccountInfoTypeList(final DataSet<?, ?> pData) {
-            super(AccountInfoType.class, pData, ListStyle.CORE);
+            super(AccountInfoType.class, pData, MoneyWiseDataType.ACCOUNTINFOTYPE, ListStyle.CORE);
         }
 
         /**

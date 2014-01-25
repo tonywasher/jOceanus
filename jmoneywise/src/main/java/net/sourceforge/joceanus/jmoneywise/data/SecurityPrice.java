@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
  * @author Tony Washer
  */
 public class SecurityPrice
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<SecurityPrice> {
     /**
      * Object name.
@@ -282,7 +282,7 @@ public class SecurityPrice
      * @param pList the list
      * @param pPrice The Price
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
                             final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
@@ -293,7 +293,7 @@ public class SecurityPrice
      * @param pList the list
      * @param pSecurity the security
      */
-    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
+    protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
                             final Account pSecurity) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
@@ -309,7 +309,7 @@ public class SecurityPrice
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
                           final Integer pId,
                           final String pSecurity,
                           final JDateDay pDate,
@@ -346,7 +346,7 @@ public class SecurityPrice
      * @param pPrice the price
      * @throws JOceanusException on error
      */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseList> pList,
+    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
                           final Integer pId,
                           final Integer pControlId,
                           final Integer pSecurityId,
@@ -568,7 +568,7 @@ public class SecurityPrice
      * Price List.
      */
     public static class SecurityPriceList
-            extends EncryptedList<SecurityPrice, MoneyWiseList> {
+            extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -594,7 +594,7 @@ public class SecurityPrice
          * @param pData the DataSet for the list
          */
         protected SecurityPriceList(final MoneyWiseData pData) {
-            super(SecurityPrice.class, pData);
+            super(SecurityPrice.class, pData, MoneyWiseDataType.SECURITYPRICE);
         }
 
         /**

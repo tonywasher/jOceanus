@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableEventInfoType
-        extends TableStaticData<EventInfoType, MoneyWiseList> {
+        extends TableStaticData<EventInfoType, MoneyWiseDataType> {
     /**
      * The name of the table.
      */

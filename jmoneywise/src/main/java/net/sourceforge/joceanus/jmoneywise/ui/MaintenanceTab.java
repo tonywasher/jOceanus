@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -46,6 +46,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
@@ -140,7 +144,7 @@ public class MaintenanceTab
     /**
      * The Static Panel.
      */
-    private final StaticDataPanel<MoneyWiseList> theStatic;
+    private final StaticDataPanel<MoneyWiseDataType> theStatic;
 
     /**
      * The Preferences Panel.
@@ -203,7 +207,7 @@ public class MaintenanceTab
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel<MoneyWiseList>(theView);
+        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
         theView.addChangeListener(myListener);
@@ -219,6 +223,8 @@ public class MaintenanceTab
         theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
         theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
         theStatic.addStatic(EventInfoType.LIST_NAME, EventInfoTypeList.class, EventInfoType.class);
+        theStatic.addStatic(PayeeType.LIST_NAME, PayeeTypeList.class, PayeeType.class);
+        theStatic.addStatic(SecurityType.LIST_NAME, SecurityTypeList.class, SecurityType.class);
 
         /* Create the Preferences Tab */
         PreferenceManager myPrefs = theView.getPreferenceMgr();

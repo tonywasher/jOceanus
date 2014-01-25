@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  * @param <S> the Info Class that applies to this item
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
         extends EncryptedItem<E>
@@ -422,7 +422,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      * @param <S> the Info Class that applies to this item
-     * @param <E> the data list enum class
+     * @param <E> the data type enum class
      */
     public abstract static class DataInfoList<T extends DataInfo<T, O, I, S, E> & Comparable<T>, O extends DataItem<E>, I extends StaticData<I, S, E>, S extends Enum<S> & DataInfoClass, E extends Enum<E>>
             extends EncryptedList<T, E> {
@@ -445,12 +445,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
          * Construct a generic data info list.
          * @param pBaseClass the class of the underlying object
          * @param pData the dataSet
+         * @param pItemType the list type
          * @param pStyle the style of the list
          */
         public DataInfoList(final Class<T> pBaseClass,
                             final DataSet<?, ?> pData,
+                            final E pItemType,
                             final ListStyle pStyle) {
-            super(pBaseClass, pData, pStyle);
+            super(pBaseClass, pData, pItemType, pStyle);
         }
 
         /**

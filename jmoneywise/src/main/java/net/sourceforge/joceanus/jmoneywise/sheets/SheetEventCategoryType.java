@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategoryType
-        extends SheetStaticData<EventCategoryType, MoneyWiseList> {
+        extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
 
     /**
      * NamedArea for Category Types.

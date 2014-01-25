@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class TaxYearInfo
-        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -407,7 +407,7 @@ public class TaxYearInfo
      * TaxYearInfoList.
      */
     public static class TaxInfoList
-            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -443,7 +443,7 @@ public class TaxYearInfo
          * @param pData the DataSet for the list
          */
         protected TaxInfoList(final MoneyWiseData pData) {
-            super(TaxYearInfo.class, pData, ListStyle.CORE);
+            super(TaxYearInfo.class, pData, MoneyWiseDataType.TAXYEARINFO, ListStyle.CORE);
         }
 
         /**

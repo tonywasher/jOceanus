@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventCategoryType
-        extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseList> {
+        extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -156,7 +156,7 @@ public class EventCategoryType
      * Represents a list of {@link EventCategoryType} objects.
      */
     public static class EventCategoryTypeList
-            extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseList> {
+            extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -182,7 +182,7 @@ public class EventCategoryType
          * @param pData the DataSet for the list
          */
         public EventCategoryTypeList(final DataSet<?, ?> pData) {
-            super(EventCategoryType.class, pData, ListStyle.CORE);
+            super(EventCategoryType.class, pData, MoneyWiseDataType.EVENTTYPE, ListStyle.CORE);
         }
 
         /**

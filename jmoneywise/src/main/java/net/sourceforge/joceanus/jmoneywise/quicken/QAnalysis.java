@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -297,7 +297,7 @@ public class QAnalysis
      * @param pView the dataView
      * @param pLastEvent the date of the last event to process
      */
-    protected void analyseData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
+    protected void analyseData(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
                                final View pView,
                                final JDateDay pLastEvent) {
         /* Store data and analysis */
@@ -489,7 +489,7 @@ public class QAnalysis
      * @return success true/false
      * @throws IOException on error
      */
-    protected boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
+    protected boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
                                  final OutputStreamWriter pStream) throws IOException {
         /* Access the number of reporting steps */
         int mySteps = pStatus.getReportingSteps();

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableEventInfo
-        extends TableDataInfo<EventInfo, MoneyWiseList> {
+        extends TableDataInfo<EventInfo, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -85,7 +85,7 @@ public class TableEventInfo
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
         /* Validate the events */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theEvents.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theEvents.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

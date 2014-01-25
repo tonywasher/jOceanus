@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseList> {
+        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -150,7 +150,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseList> {
+            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -176,7 +176,7 @@ public class PayeeType
          * @param pData the DataSet for the list
          */
         public PayeeTypeList(final DataSet<?, ?> pData) {
-            super(PayeeType.class, pData, ListStyle.CORE);
+            super(PayeeType.class, pData, MoneyWiseDataType.PAYEETYPE, ListStyle.CORE);
         }
 
         /**

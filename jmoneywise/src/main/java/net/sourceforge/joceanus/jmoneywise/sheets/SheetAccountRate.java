@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetAccountRate
-        extends SheetDataItem<AccountRate, MoneyWiseList> {
+        extends SheetDataItem<AccountRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */

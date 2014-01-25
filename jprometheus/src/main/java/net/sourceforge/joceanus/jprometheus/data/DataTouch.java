@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Class to record reference to a DataItem via another data item.
- * @param <E> the DataItem types
+ * @param <E> the Data item type class
  */
 public class DataTouch<E extends Enum<E>> {
     /**

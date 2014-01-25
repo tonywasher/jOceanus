@@ -467,7 +467,7 @@ public class AccountStatus
      * @param pObject the object touch the account
      */
     protected void touchItem(final Account pAccount,
-                             final DataItem<MoneyWiseList> pObject) {
+                             final DataItem<MoneyWiseDataType> pObject) {
         /* If we are being touched by a rate */
         if (pObject instanceof AccountRate) {
             /* Note flags */

@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class AccountInfoSet
-        extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
+        extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */

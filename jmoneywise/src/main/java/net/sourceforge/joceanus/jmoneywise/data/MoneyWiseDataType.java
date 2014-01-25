@@ -25,118 +25,118 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.ResourceBundle;
 
 /**
- * MoneyWiseList Types.
+ * MoneyWise Item Types.
  */
-public enum MoneyWiseList {
+public enum MoneyWiseDataType {
     /**
-     * AccountTypes.
+     * AccountType.
      */
-    ACCOUNTTYPES,
+    ACCOUNTTYPE,
 
     /**
-     * SecurityTypes.
+     * SecurityType.
      */
-    SECURITYTYPES,
+    SECURITYTYPE,
 
     /**
-     * PayeeTypes.
+     * PayeeType.
      */
-    PAYEETYPES,
+    PAYEETYPE,
 
     /**
-     * EventTypes.
+     * EventType.
      */
-    EVENTTYPES,
+    EVENTTYPE,
 
     /**
-     * TaxBases.
+     * TaxBasis.
      */
-    TAXBASES,
+    TAXBASIS,
 
     /**
-     * TaxTypes.
+     * TaxType.
      */
-    TAXTYPES,
+    TAXTYPE,
 
     /**
-     * Currencies.
+     * Currency.
      */
-    CURRENCIES,
+    CURRENCY,
 
     /**
-     * TaxRegimes.
+     * TaxRegime.
      */
-    TAXREGIMES,
+    TAXREGIME,
 
     /**
-     * Frequencies.
+     * Frequency.
      */
-    FREQUENCIES,
+    FREQUENCY,
 
     /**
-     * TaxInfoTypes.
+     * TaxInfoType.
      */
-    TAXINFOTYPES,
+    TAXINFOTYPE,
 
     /**
-     * AccountInfoTypes.
+     * AccountInfoType.
      */
-    ACCOUNTINFOTYPES,
+    ACCOUNTINFOTYPE,
 
     /**
-     * EventInfoTypes.
+     * EventInfoType.
      */
-    EVENTINFOTYPES,
+    EVENTINFOTYPE,
 
     /**
-     * TaxYears.
+     * TaxYear.
      */
-    TAXYEARS,
+    TAXYEAR,
 
     /**
-     * TaxYearsInfo.
+     * TaxYearInfo.
      */
     TAXYEARINFO,
 
     /**
-     * EventClasses.
+     * EventClass.
      */
-    EVENTCLASSES,
+    EVENTCLASS,
 
     /**
-     * AccountCategories.
+     * AccountCategory.
      */
-    ACCOUNTCATEGORIES,
+    ACCOUNTCATEGORY,
 
     /**
-     * EventCategories.
+     * EventCategory.
      */
-    EVENTCATEGORIES,
+    EVENTCATEGORY,
 
     /**
-     * ExchangeRates.
+     * ExchangeRate.
      */
-    EXCHANGERATES,
+    EXCHANGERATE,
 
     /**
-     * Payees.
+     * Payee.
      */
-    PAYEES,
+    PAYEE,
 
     /**
      * Securities.
      */
-    SECURITIES,
+    SECURITY,
 
     /**
-     * Accounts.
+     * Account.
      */
-    ACCOUNTS,
+    ACCOUNT,
 
     /**
-     * Portfolios.
+     * Portfolio.
      */
-    PORTFOLIOS,
+    PORTFOLIO,
 
     /**
      * AccountInfo.
@@ -144,19 +144,19 @@ public enum MoneyWiseList {
     ACCOUNTINFO,
 
     /**
-     * AccountRates.
+     * AccountRate.
      */
-    ACCOUNTRATES,
+    ACCOUNTRATE,
 
     /**
-     * SecurityPrices.
+     * SecurityPrice.
      */
-    SECURITYPRICES,
+    SECURITYPRICE,
 
     /**
-     * Events.
+     * Event.
      */
-    EVENTS,
+    EVENT,
 
     /**
      * EventInfo.
@@ -164,19 +164,19 @@ public enum MoneyWiseList {
     EVENTINFO,
 
     /**
-     * EventClassLinks.
+     * EventClassLink.
      */
-    EVENTCLASSLINKS,
+    EVENTCLASSLINK,
 
     /**
-     * Patterns.
+     * Pattern.
      */
-    PATTERNS;
+    PATTERN;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseList.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MoneyWiseDataType.class.getName());
 
     /**
      * The String name.

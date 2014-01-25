@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetFrequency
-        extends SheetStaticData<Frequency, MoneyWiseList> {
+        extends SheetStaticData<Frequency, MoneyWiseDataType> {
 
     /**
      * NamedArea for Frequencies.

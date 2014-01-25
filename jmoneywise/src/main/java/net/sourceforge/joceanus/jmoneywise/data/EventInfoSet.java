@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * @author Tony Washer
  */
 public class EventInfoSet
-        extends DataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
+        extends DataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */

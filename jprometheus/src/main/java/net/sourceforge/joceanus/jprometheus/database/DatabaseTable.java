@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSecurity
-        extends SheetDataItem<Security, MoneyWiseList> {
+        extends SheetDataItem<Security, MoneyWiseDataType> {
     /**
      * NamedArea for Securities.
      */

@@ -895,7 +895,7 @@ public class Event
          */
         protected BaseEventList(final MoneyWiseData pData,
                                 final Class<T> pClass) {
-            super(pData, pClass);
+            super(pData, pClass, MoneyWiseDataType.EVENT);
         }
 
         /**

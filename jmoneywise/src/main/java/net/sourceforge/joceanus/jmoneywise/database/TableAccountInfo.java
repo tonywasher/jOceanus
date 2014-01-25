@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableAccountInfo
-        extends TableDataInfo<AccountInfo, MoneyWiseList> {
+        extends TableDataInfo<AccountInfo, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -88,7 +88,7 @@ public class TableAccountInfo
         theAccounts.touchUnderlyingItems();
 
         /* Validate the events */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theAccounts.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theAccounts.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

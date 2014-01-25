@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableEventClassLink
-        extends DatabaseTable<EventClassLink, MoneyWiseList> {
+        extends DatabaseTable<EventClassLink, MoneyWiseDataType> {
     /**
      * The name of the EventClassLink table.
      */
@@ -107,7 +107,7 @@ public class TableEventClassLink
         theList.touchUnderlyingItems();
 
         /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetAccount
-        extends SheetDataItem<Account, MoneyWiseList> {
+        extends SheetDataItem<Account, MoneyWiseDataType> {
     /**
      * NamedArea for Accounts.
      */
@@ -468,7 +468,7 @@ public class SheetAccount
      * AccountInfoSet sheet.
      */
     private static class SheetAccountInfoSet
-            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
+            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.
@@ -477,7 +477,7 @@ public class SheetAccount
          * @param pBaseCol the base column
          */
         public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
-                                   final SheetDataItem<Account, MoneyWiseList> pOwner,
+                                   final SheetDataItem<Account, MoneyWiseDataType> pOwner,
                                    final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

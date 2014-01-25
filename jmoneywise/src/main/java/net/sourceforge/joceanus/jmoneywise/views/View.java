@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * @author Tony Washer
  */
 public class View
-        extends DataControl<MoneyWiseData, MoneyWiseList> {
+        extends DataControl<MoneyWiseData, MoneyWiseDataType> {
     /**
      * The DataSet.
      */

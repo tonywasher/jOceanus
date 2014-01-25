@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for Portfolio.
  */
 public class TablePortfolio
-        extends TableEncrypted<Portfolio, MoneyWiseList> {
+        extends TableEncrypted<Portfolio, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -119,7 +119,7 @@ public class TablePortfolio
         theList.touchUnderlyingItems();
 
         /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

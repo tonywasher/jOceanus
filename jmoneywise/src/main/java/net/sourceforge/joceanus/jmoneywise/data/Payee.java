@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Payee class.
  */
 public class Payee
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Payee> {
     /**
      * Object name.
@@ -683,7 +683,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-            extends EncryptedList<Payee, MoneyWiseList> {
+            extends EncryptedList<Payee, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -709,7 +709,7 @@ public class Payee
          * @param pData the DataSet for the list
          */
         public PayeeList(final MoneyWiseData pData) {
-            super(Payee.class, pData, ListStyle.CORE);
+            super(Payee.class, pData, MoneyWiseDataType.PAYEE, ListStyle.CORE);
         }
 
         @Override

@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * Event Category Maintenance.
  */
 public class EventCategoryTable
-        extends JDataTable<EventCategory, MoneyWiseList> {
+        extends JDataTable<EventCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -130,12 +130,12 @@ public class EventCategoryTable
     /**
      * The updateSet.
      */
-    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<EventCategory, MoneyWiseList> theCategoryEntry;
+    private final transient UpdateEntry<EventCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -214,7 +214,7 @@ public class EventCategoryTable
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
         theCategoryEntry = theUpdateSet.registerClass(EventCategory.class);
         setUpdateSet(theUpdateSet);
 
@@ -315,7 +315,7 @@ public class EventCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<EventCategory, MoneyWiseList> {
+            extends JDataTableModel<EventCategory, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -536,7 +536,7 @@ public class EventCategoryTable
      * Column Model class.
      */
     private final class CategoryColumnModel
-            extends JDataTableColumnModel<MoneyWiseList> {
+            extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */

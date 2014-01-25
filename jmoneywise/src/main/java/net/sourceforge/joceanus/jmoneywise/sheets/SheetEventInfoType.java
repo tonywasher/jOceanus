@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventInfoType
-        extends SheetStaticData<EventInfoType, MoneyWiseList> {
+        extends SheetStaticData<EventInfoType, MoneyWiseDataType> {
     /**
      * NamedArea for EventInfoType.
      */

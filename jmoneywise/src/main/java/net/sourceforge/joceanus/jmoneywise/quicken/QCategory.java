@@ -30,7 +30,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -212,7 +212,7 @@ public final class QCategory
          * @return Continue? true/false
          * @throws IOException on error
          */
-        protected boolean outputCategories(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
+        protected boolean outputCategories(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
             if ((theParents.isEmpty()) && (theCategories.isEmpty())) {

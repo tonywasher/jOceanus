@@ -564,7 +564,7 @@ public class Pattern
          * @param pData the DataSet for the list
          */
         protected PatternList(final MoneyWiseData pData) {
-            super(pData, Pattern.class);
+            super(pData, Pattern.class, MoneyWiseDataType.PATTERN);
         }
 
         /**

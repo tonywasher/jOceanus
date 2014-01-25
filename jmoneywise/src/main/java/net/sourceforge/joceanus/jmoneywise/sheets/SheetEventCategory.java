@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategory
-        extends SheetDataItem<EventCategory, MoneyWiseList> {
+        extends SheetDataItem<EventCategory, MoneyWiseDataType> {
     /**
      * NamedArea for EventCategories.
      */

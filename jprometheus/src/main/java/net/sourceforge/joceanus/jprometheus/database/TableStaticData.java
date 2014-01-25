@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should extend this class.
  * @param <T> the data type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
         extends TableEncrypted<T, E> {

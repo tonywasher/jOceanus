@@ -26,14 +26,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Database table class for DataKey.
  */
 public class TableDataKeys
-        extends DatabaseTable<DataKey, CryptographyList> {
+        extends DatabaseTable<DataKey, CryptographyDataType> {
     /**
      * The name of the Static table.
      */

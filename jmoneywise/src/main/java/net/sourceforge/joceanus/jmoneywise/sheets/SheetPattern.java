@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetPattern
-        extends SheetDataItem<Pattern, MoneyWiseList> {
+        extends SheetDataItem<Pattern, MoneyWiseDataType> {
     /**
      * NamedArea for Patterns.
      */

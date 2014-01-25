@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Security class.
  */
 public class Security
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Security> {
     /**
      * Object name.
@@ -1062,7 +1062,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-            extends EncryptedList<Security, MoneyWiseList> {
+            extends EncryptedList<Security, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -1088,7 +1088,7 @@ public class Security
          * @param pData the DataSet for the list
          */
         public SecurityList(final MoneyWiseData pData) {
-            super(Security.class, pData, ListStyle.CORE);
+            super(Security.class, pData, MoneyWiseDataType.SECURITY, ListStyle.CORE);
         }
 
         @Override

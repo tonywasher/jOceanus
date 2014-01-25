@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseList> {
+        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -186,7 +186,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseList> {
+            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -212,7 +212,7 @@ public class TaxBasis
          * @param pData the DataSet for the list
          */
         public TaxBasisList(final DataSet<?, ?> pData) {
-            super(TaxBasis.class, pData, ListStyle.CORE);
+            super(TaxBasis.class, pData, MoneyWiseDataType.TAXBASIS, ListStyle.CORE);
         }
 
         /**

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
  * A wrapper for a worker thread that loads a DataSet.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class LoaderThread<T extends DataSet<T, E>, E extends Enum<E>>
         extends WorkerThread<T> {

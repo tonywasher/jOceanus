@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxYearInfoType
-        extends StaticData<TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+        extends StaticData<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -160,7 +160,7 @@ public class TaxYearInfoType
      * Represents a list of {@link TaxYearInfoType} objects.
      */
     public static class TaxYearInfoTypeList
-            extends StaticList<TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+            extends StaticList<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -186,7 +186,7 @@ public class TaxYearInfoType
          * @param pData the DataSet for the list
          */
         public TaxYearInfoTypeList(final DataSet<?, ?> pData) {
-            super(TaxYearInfoType.class, pData, ListStyle.CORE);
+            super(TaxYearInfoType.class, pData, MoneyWiseDataType.TAXINFOTYPE, ListStyle.CORE);
         }
 
         /**

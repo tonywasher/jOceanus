@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountCategory
-        extends SheetDataItem<AccountCategory, MoneyWiseList> {
+        extends SheetDataItem<AccountCategory, MoneyWiseDataType> {
     /**
      * NamedArea for Categories.
      */

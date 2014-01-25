@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetTaxYear
-        extends SheetDataItem<TaxYear, MoneyWiseList> {
+        extends SheetDataItem<TaxYear, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYears.
      */
@@ -393,7 +393,7 @@ public class SheetTaxYear
      * TaxYearInfoSet sheet.
      */
     private static class SheetTaxInfoSet
-            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.
@@ -402,7 +402,7 @@ public class SheetTaxYear
          * @param pBaseCol the base column
          */
         public SheetTaxInfoSet(final Class<TaxYearInfoClass> pClass,
-                               final SheetDataItem<TaxYear, MoneyWiseList> pOwner,
+                               final SheetDataItem<TaxYear, MoneyWiseDataType> pOwner,
                                final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

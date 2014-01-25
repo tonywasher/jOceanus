@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class ControlKey
-        extends DataItem<CryptographyList>
+        extends DataItem<CryptographyDataType>
         implements Comparable<ControlKey> {
     /**
      * Resource Bundle.
@@ -497,7 +497,7 @@ public class ControlKey
      * ControlKey List.
      */
     public static class ControlKeyList
-            extends DataList<ControlKey, CryptographyList> {
+            extends DataList<ControlKey, CryptographyDataType> {
         /**
          * Local Report fields.
          */
@@ -523,7 +523,7 @@ public class ControlKey
          * @param pData the DataSet for the list
          */
         protected ControlKeyList(final DataSet<?, ?> pData) {
-            super(ControlKey.class, pData, ListStyle.CORE);
+            this(pData, ListStyle.CORE);
         }
 
         /**
@@ -533,7 +533,7 @@ public class ControlKey
          */
         protected ControlKeyList(final DataSet<?, ?> pData,
                                  final ListStyle pStyle) {
-            super(ControlKey.class, pData, pStyle);
+            super(ControlKey.class, pData, CryptographyDataType.CONTROLKEY, pStyle);
         }
 
         /**
@@ -563,7 +563,7 @@ public class ControlKey
 
         @Override
         public ControlKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                                final DataList<?, CryptographyList> pOld) {
+                                                final DataList<?, CryptographyDataType> pOld) {
             return (ControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 

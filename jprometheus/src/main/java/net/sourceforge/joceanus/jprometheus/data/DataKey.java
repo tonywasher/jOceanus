@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class DataKey
-        extends DataItem<CryptographyList>
+        extends DataItem<CryptographyDataType>
         implements Comparable<DataKey> {
     /**
      * Resource Bundle.
@@ -491,7 +491,7 @@ public class DataKey
      * DataKey List.
      */
     public static class DataKeyList
-            extends DataList<DataKey, CryptographyList> {
+            extends DataList<DataKey, CryptographyDataType> {
         /**
          * Local Report fields.
          */
@@ -517,7 +517,7 @@ public class DataKey
          * @param pData the DataSet for the list
          */
         protected DataKeyList(final DataSet<?, ?> pData) {
-            super(DataKey.class, pData, ListStyle.CORE);
+            this(pData, ListStyle.CORE);
         }
 
         /**
@@ -527,7 +527,7 @@ public class DataKey
          */
         protected DataKeyList(final DataSet<?, ?> pData,
                               final ListStyle pStyle) {
-            super(DataKey.class, pData, pStyle);
+            super(DataKey.class, pData, CryptographyDataType.DATAKEY, pStyle);
         }
 
         /**
@@ -557,7 +557,7 @@ public class DataKey
 
         @Override
         public DataKeyList deriveDifferences(final DataSet<?, ?> pDataSet,
-                                             final DataList<?, CryptographyList> pOld) {
+                                             final DataList<?, CryptographyDataType> pOld) {
             return (DataKeyList) super.deriveDifferences(pDataSet, pOld);
         }
 

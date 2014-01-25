@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public abstract class AccountBase
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountBase> {
     /**
      * Resource Bundle.
@@ -831,7 +831,7 @@ public abstract class AccountBase
      * @param <T> the dataType
      */
     public abstract static class AccountBaseList<T extends AccountBase>
-            extends EncryptedList<T, MoneyWiseList> {
+            extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -846,10 +846,12 @@ public abstract class AccountBase
          * Construct an empty CORE Account list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
+         * @param pItemType the item type
          */
         protected AccountBaseList(final MoneyWiseData pData,
-                                  final Class<T> pClass) {
-            super(pClass, pData, ListStyle.CORE);
+                                  final Class<T> pClass,
+                                  final MoneyWiseDataType pItemType) {
+            super(pClass, pData, pItemType, ListStyle.CORE);
         }
 
         /**

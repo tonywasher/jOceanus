@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 /**
  * Top level panel for static data.
  * @author Tony Washer
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class StaticDataPanel<E extends Enum<E>>
         extends JEventPanel {

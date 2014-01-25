@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfo
-        extends SheetDataInfo<TaxYearInfo, MoneyWiseList> {
+        extends SheetDataInfo<TaxYearInfo, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYearInfo.
      */

@@ -34,7 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 
@@ -51,7 +51,7 @@ public class Snippets {
      * @return the document
      * @throws ParserConfigurationException on error
      */
-    public Document createXMLList(final DataList<?, MoneyWiseList> pList) throws ParserConfigurationException {
+    public Document createXMLList(final DataList<?, MoneyWiseDataType> pList) throws ParserConfigurationException {
         /* Create the new document */
         DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
@@ -73,7 +73,7 @@ public class Snippets {
      * @param pList the list
      * @param pStream the stream to write to
      */
-    public void writeXMLList(final DataList<?, MoneyWiseList> pList,
+    public void writeXMLList(final DataList<?, MoneyWiseDataType> pList,
                              final OutputStream pStream) {
         try {
             Document myDocument = createXMLList(pList);

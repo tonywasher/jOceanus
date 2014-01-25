@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * @author Tony Washer
  */
 public class EventInfo
-        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
+        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -555,7 +555,7 @@ public class EventInfo
      * EventInfoList.
      */
     public static class EventInfoList
-            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
+            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -591,7 +591,7 @@ public class EventInfo
          * @param pData the DataSet for the list
          */
         protected EventInfoList(final MoneyWiseData pData) {
-            super(EventInfo.class, pData, ListStyle.CORE);
+            super(EventInfo.class, pData, MoneyWiseDataType.EVENTINFO, ListStyle.CORE);
         }
 
         /**

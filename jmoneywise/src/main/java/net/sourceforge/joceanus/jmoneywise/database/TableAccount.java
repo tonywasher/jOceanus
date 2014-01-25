@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableAccount
-        extends TableEncrypted<Account, MoneyWiseList> {
+        extends TableEncrypted<Account, MoneyWiseDataType> {
     /**
      * The name of the Account table.
      */

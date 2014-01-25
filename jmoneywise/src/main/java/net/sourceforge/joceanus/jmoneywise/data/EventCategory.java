@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Event Category class.
  */
 public final class EventCategory
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<EventCategory> {
     /**
      * Object name.
@@ -905,7 +905,7 @@ public final class EventCategory
      * The Event Category List class.
      */
     public static class EventCategoryList
-            extends EncryptedList<EventCategory, MoneyWiseList> {
+            extends EncryptedList<EventCategory, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -931,7 +931,7 @@ public final class EventCategory
          * @param pData the DataSet for the list
          */
         public EventCategoryList(final MoneyWiseData pData) {
-            super(EventCategory.class, pData, ListStyle.CORE);
+            super(EventCategory.class, pData, MoneyWiseDataType.EVENTCATEGORY, ListStyle.CORE);
         }
 
         @Override

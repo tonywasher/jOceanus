@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableTaxYearInfo
-        extends TableDataInfo<TaxYearInfo, MoneyWiseList> {
+        extends TableDataInfo<TaxYearInfo, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -97,7 +97,7 @@ public class TableTaxYearInfo
         theTaxYears.touchUnderlyingItems();
 
         /* Validate the tax years */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theTaxYears.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theTaxYears.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

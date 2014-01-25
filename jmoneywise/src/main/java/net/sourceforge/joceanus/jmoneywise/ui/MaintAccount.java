@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AccountSelect;
@@ -230,17 +230,17 @@ public class MaintAccount
     /**
      * The Update Set.
      */
-    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The view list.
      */
-    private final transient UpdateEntry<Account, MoneyWiseList> theAccountEntry;
+    private final transient UpdateEntry<Account, MoneyWiseDataType> theAccountEntry;
 
     /**
      * The AccountInfo Update Entry.
      */
-    private final transient UpdateEntry<AccountInfo, MoneyWiseList> theInfoEntry;
+    private final transient UpdateEntry<AccountInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * Obtain the account.
@@ -260,7 +260,7 @@ public class MaintAccount
         theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
         theAccountEntry = theUpdateSet.registerClass(Account.class);
         theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 

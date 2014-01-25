@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Encrypted Data Item and List.
  * @author Tony Washer
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class EncryptedItem<E extends Enum<E>>
         extends DataItem<E> {
@@ -306,7 +306,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Encrypted DataList.
      * @param <T> the item type
-     * @param <E> the data list enum class
+     * @param <E> the data type enum class
      */
     public abstract static class EncryptedList<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
             extends DataList<T, E> {
@@ -325,22 +325,26 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * Construct an empty CORE encrypted list.
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
+         * @param pItemType the item type
          */
         protected EncryptedList(final Class<T> pBaseClass,
-                                final DataSet<?, ?> pData) {
-            super(pBaseClass, pData, ListStyle.CORE);
+                                final DataSet<?, ?> pData,
+                                final E pItemType) {
+            this(pBaseClass, pData, pItemType, ListStyle.CORE);
         }
 
         /**
          * Construct a generic encrypted list.
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
+         * @param pItemType the list type
          * @param pStyle the style of the list
          */
         public EncryptedList(final Class<T> pBaseClass,
                              final DataSet<?, ?> pData,
+                             final E pItemType,
                              final ListStyle pStyle) {
-            super(pBaseClass, pData, pStyle);
+            super(pBaseClass, pData, pItemType, pStyle);
         }
 
         /**

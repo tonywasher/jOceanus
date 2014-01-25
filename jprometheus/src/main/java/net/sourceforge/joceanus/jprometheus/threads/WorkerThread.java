@@ -29,7 +29,7 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
+import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 

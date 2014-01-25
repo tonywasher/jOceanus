@@ -71,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * MoneyWise dataSet.
  */
 public class MoneyWiseData
-        extends DataSet<MoneyWiseData, MoneyWiseList> {
+        extends DataSet<MoneyWiseData, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */
@@ -85,7 +85,7 @@ public class MoneyWiseData
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, MoneyWiseList> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, MoneyWiseList.class);
+    private static final Map<JDataField, MoneyWiseDataType> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
 
     @Override
     public JDataFields getDataFields() {
@@ -95,7 +95,7 @@ public class MoneyWiseData
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle List fields */
-        MoneyWiseList myType = FIELDSET_MAP.get(pField);
+        MoneyWiseDataType myType = FIELDSET_MAP.get(pField);
         if (myType != null) {
             /* Access the list */
             return getFieldListValue(myType);
@@ -125,7 +125,7 @@ public class MoneyWiseData
      * @return the Account category types
      */
     public AccountCategoryTypeList getAccountCategoryTypes() {
-        return getDataList(MoneyWiseList.ACCOUNTTYPES, AccountCategoryTypeList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNTTYPE, AccountCategoryTypeList.class);
     }
 
     /**
@@ -133,7 +133,7 @@ public class MoneyWiseData
      * @return the Payee types
      */
     public PayeeTypeList getPayeeTypes() {
-        return getDataList(MoneyWiseList.PAYEETYPES, PayeeTypeList.class);
+        return getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
     }
 
     /**
@@ -141,7 +141,7 @@ public class MoneyWiseData
      * @return the Security types
      */
     public SecurityTypeList getSecurityTypes() {
-        return getDataList(MoneyWiseList.SECURITYTYPES, SecurityTypeList.class);
+        return getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
     }
 
     /**
@@ -149,7 +149,7 @@ public class MoneyWiseData
      * @return the Event Category types
      */
     public EventCategoryTypeList getEventCategoryTypes() {
-        return getDataList(MoneyWiseList.EVENTTYPES, EventCategoryTypeList.class);
+        return getDataList(MoneyWiseDataType.EVENTTYPE, EventCategoryTypeList.class);
     }
 
     /**
@@ -157,7 +157,7 @@ public class MoneyWiseData
      * @return the Tax bases
      */
     public TaxBasisList getTaxBases() {
-        return getDataList(MoneyWiseList.TAXBASES, TaxBasisList.class);
+        return getDataList(MoneyWiseDataType.TAXBASIS, TaxBasisList.class);
     }
 
     /**
@@ -165,7 +165,7 @@ public class MoneyWiseData
      * @return the Tax categories
      */
     public TaxCategoryList getTaxCategories() {
-        return getDataList(MoneyWiseList.TAXTYPES, TaxCategoryList.class);
+        return getDataList(MoneyWiseDataType.TAXTYPE, TaxCategoryList.class);
     }
 
     /**
@@ -173,7 +173,7 @@ public class MoneyWiseData
      * @return the Account Currencies
      */
     public AccountCurrencyList getAccountCurrencies() {
-        return getDataList(MoneyWiseList.CURRENCIES, AccountCurrencyList.class);
+        return getDataList(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class);
     }
 
     /**
@@ -181,7 +181,7 @@ public class MoneyWiseData
      * @return the TaxRegimes
      */
     public TaxRegimeList getTaxRegimes() {
-        return getDataList(MoneyWiseList.TAXREGIMES, TaxRegimeList.class);
+        return getDataList(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class);
     }
 
     /**
@@ -189,7 +189,7 @@ public class MoneyWiseData
      * @return the Frequencies
      */
     public FrequencyList getFrequencys() {
-        return getDataList(MoneyWiseList.FREQUENCIES, FrequencyList.class);
+        return getDataList(MoneyWiseDataType.FREQUENCY, FrequencyList.class);
     }
 
     /**
@@ -197,7 +197,7 @@ public class MoneyWiseData
      * @return the TaxYear Info types
      */
     public TaxYearInfoTypeList getTaxInfoTypes() {
-        return getDataList(MoneyWiseList.TAXINFOTYPES, TaxYearInfoTypeList.class);
+        return getDataList(MoneyWiseDataType.TAXINFOTYPE, TaxYearInfoTypeList.class);
     }
 
     /**
@@ -205,7 +205,7 @@ public class MoneyWiseData
      * @return the Account Info types
      */
     public AccountInfoTypeList getActInfoTypes() {
-        return getDataList(MoneyWiseList.ACCOUNTINFOTYPES, AccountInfoTypeList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNTINFOTYPE, AccountInfoTypeList.class);
     }
 
     /**
@@ -213,7 +213,7 @@ public class MoneyWiseData
      * @return the Event Info types
      */
     public EventInfoTypeList getEventInfoTypes() {
-        return getDataList(MoneyWiseList.EVENTINFOTYPES, EventInfoTypeList.class);
+        return getDataList(MoneyWiseDataType.EVENTINFOTYPE, EventInfoTypeList.class);
     }
 
     /**
@@ -221,7 +221,7 @@ public class MoneyWiseData
      * @return the EventClasses
      */
     public EventClassList getEventClasses() {
-        return getDataList(MoneyWiseList.EVENTCLASSES, EventClassList.class);
+        return getDataList(MoneyWiseDataType.EVENTCLASS, EventClassList.class);
     }
 
     /**
@@ -229,7 +229,7 @@ public class MoneyWiseData
      * @return the Account categories
      */
     public AccountCategoryList getAccountCategories() {
-        return getDataList(MoneyWiseList.ACCOUNTCATEGORIES, AccountCategoryList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNTCATEGORY, AccountCategoryList.class);
     }
 
     /**
@@ -237,7 +237,7 @@ public class MoneyWiseData
      * @return the Event categories
      */
     public EventCategoryList getEventCategories() {
-        return getDataList(MoneyWiseList.EVENTCATEGORIES, EventCategoryList.class);
+        return getDataList(MoneyWiseDataType.EVENTCATEGORY, EventCategoryList.class);
     }
 
     /**
@@ -245,7 +245,7 @@ public class MoneyWiseData
      * @return the TaxYears
      */
     public TaxYearList getTaxYears() {
-        return getDataList(MoneyWiseList.TAXYEARS, TaxYearList.class);
+        return getDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
     }
 
     /**
@@ -253,7 +253,7 @@ public class MoneyWiseData
      * @return the Tax Info
      */
     public TaxInfoList getTaxInfo() {
-        return getDataList(MoneyWiseList.TAXYEARINFO, TaxInfoList.class);
+        return getDataList(MoneyWiseDataType.TAXYEARINFO, TaxInfoList.class);
     }
 
     /**
@@ -261,7 +261,7 @@ public class MoneyWiseData
      * @return the ExchangeRates
      */
     public ExchangeRateList getExchangeRates() {
-        return getDataList(MoneyWiseList.EXCHANGERATES, ExchangeRateList.class);
+        return getDataList(MoneyWiseDataType.EXCHANGERATE, ExchangeRateList.class);
     }
 
     /**
@@ -269,7 +269,7 @@ public class MoneyWiseData
      * @return the Payees
      */
     public PayeeList getPayees() {
-        return getDataList(MoneyWiseList.PAYEES, PayeeList.class);
+        return getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
     }
 
     /**
@@ -277,7 +277,7 @@ public class MoneyWiseData
      * @return the Securities
      */
     public SecurityList getSecurities() {
-        return getDataList(MoneyWiseList.SECURITIES, SecurityList.class);
+        return getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
     }
 
     /**
@@ -285,7 +285,7 @@ public class MoneyWiseData
      * @return the Accounts
      */
     public AccountList getAccounts() {
-        return getDataList(MoneyWiseList.ACCOUNTS, AccountList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNT, AccountList.class);
     }
 
     /**
@@ -293,7 +293,7 @@ public class MoneyWiseData
      * @return the Portfolios
      */
     public PortfolioList getPortfolios() {
-        return getDataList(MoneyWiseList.PORTFOLIOS, PortfolioList.class);
+        return getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
     }
 
     /**
@@ -301,7 +301,7 @@ public class MoneyWiseData
      * @return the Account Info
      */
     public AccountInfoList getAccountInfo() {
-        return getDataList(MoneyWiseList.ACCOUNTINFO, AccountInfoList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNTINFO, AccountInfoList.class);
     }
 
     /**
@@ -309,7 +309,7 @@ public class MoneyWiseData
      * @return the Account rates
      */
     public AccountRateList getRates() {
-        return getDataList(MoneyWiseList.ACCOUNTRATES, AccountRateList.class);
+        return getDataList(MoneyWiseDataType.ACCOUNTRATE, AccountRateList.class);
     }
 
     /**
@@ -317,7 +317,7 @@ public class MoneyWiseData
      * @return the Account prices
      */
     public SecurityPriceList getPrices() {
-        return getDataList(MoneyWiseList.SECURITYPRICES, SecurityPriceList.class);
+        return getDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
     }
 
     /**
@@ -325,7 +325,7 @@ public class MoneyWiseData
      * @return the Patterns
      */
     public PatternList getPatterns() {
-        return getDataList(MoneyWiseList.PATTERNS, PatternList.class);
+        return getDataList(MoneyWiseDataType.PATTERN, PatternList.class);
     }
 
     /**
@@ -333,7 +333,7 @@ public class MoneyWiseData
      * @return the Events
      */
     public EventList getEvents() {
-        return getDataList(MoneyWiseList.EVENTS, EventList.class);
+        return getDataList(MoneyWiseDataType.EVENT, EventList.class);
     }
 
     /**
@@ -341,7 +341,7 @@ public class MoneyWiseData
      * @return the Event Info
      */
     public EventInfoList getEventInfo() {
-        return getDataList(MoneyWiseList.EVENTINFO, EventInfoList.class);
+        return getDataList(MoneyWiseDataType.EVENTINFO, EventInfoList.class);
     }
 
     /**
@@ -349,7 +349,7 @@ public class MoneyWiseData
      * @return the EventClass Links
      */
     public EventClassLinkList getEventClassLinks() {
-        return getDataList(MoneyWiseList.EVENTCLASSLINKS, EventClassLinkList.class);
+        return getDataList(MoneyWiseDataType.EVENTCLASSLINK, EventClassLinkList.class);
     }
 
     /**
@@ -378,10 +378,10 @@ public class MoneyWiseData
                          final PreferenceManager pPreferenceMgr,
                          final JFieldManager pFieldMgr) {
         /* Call Super-constructor */
-        super(MoneyWiseList.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
+        super(MoneyWiseDataType.class, pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
 
         /* Loop through the list types */
-        for (MoneyWiseList myType : MoneyWiseList.values()) {
+        for (MoneyWiseDataType myType : MoneyWiseDataType.values()) {
             /* Create the empty list */
             addList(myType, newList(myType));
         }
@@ -400,66 +400,66 @@ public class MoneyWiseData
      * @param pListType the list type
      * @return the new list
      */
-    private DataList<?, MoneyWiseList> newList(final MoneyWiseList pListType) {
+    private DataList<?, MoneyWiseDataType> newList(final MoneyWiseDataType pListType) {
         /* Switch on list Type */
         switch (pListType) {
-            case ACCOUNTTYPES:
+            case ACCOUNTTYPE:
                 return new AccountCategoryTypeList(this);
-            case PAYEETYPES:
+            case PAYEETYPE:
                 return new PayeeTypeList(this);
-            case SECURITYTYPES:
+            case SECURITYTYPE:
                 return new SecurityTypeList(this);
-            case EVENTTYPES:
+            case EVENTTYPE:
                 return new EventCategoryTypeList(this);
-            case TAXBASES:
+            case TAXBASIS:
                 return new TaxBasisList(this);
-            case TAXTYPES:
+            case TAXTYPE:
                 return new TaxCategoryList(this);
-            case CURRENCIES:
+            case CURRENCY:
                 return new AccountCurrencyList(this);
-            case TAXREGIMES:
+            case TAXREGIME:
                 return new TaxRegimeList(this);
-            case FREQUENCIES:
+            case FREQUENCY:
                 return new FrequencyList(this);
-            case TAXINFOTYPES:
+            case TAXINFOTYPE:
                 return new TaxYearInfoTypeList(this);
-            case ACCOUNTINFOTYPES:
+            case ACCOUNTINFOTYPE:
                 return new AccountInfoTypeList(this);
-            case EVENTINFOTYPES:
+            case EVENTINFOTYPE:
                 return new EventInfoTypeList(this);
-            case EVENTCLASSES:
+            case EVENTCLASS:
                 return new EventClassList(this);
-            case ACCOUNTCATEGORIES:
+            case ACCOUNTCATEGORY:
                 return new AccountCategoryList(this);
-            case EVENTCATEGORIES:
+            case EVENTCATEGORY:
                 return new EventCategoryList(this);
-            case TAXYEARS:
+            case TAXYEAR:
                 return new TaxYearList(this);
             case TAXYEARINFO:
                 return new TaxInfoList(this);
-            case EXCHANGERATES:
+            case EXCHANGERATE:
                 return new ExchangeRateList(this);
-            case PAYEES:
+            case PAYEE:
                 return new PayeeList(this);
-            case SECURITIES:
+            case SECURITY:
                 return new SecurityList(this);
-            case ACCOUNTS:
+            case ACCOUNT:
                 return new AccountList(this);
-            case PORTFOLIOS:
+            case PORTFOLIO:
                 return new PortfolioList(this);
-            case ACCOUNTRATES:
+            case ACCOUNTRATE:
                 return new AccountRateList(this);
-            case SECURITYPRICES:
+            case SECURITYPRICE:
                 return new SecurityPriceList(this);
-            case PATTERNS:
+            case PATTERN:
                 return new PatternList(this);
             case ACCOUNTINFO:
                 return new AccountInfoList(this);
-            case EVENTS:
+            case EVENT:
                 return new EventList(this);
             case EVENTINFO:
                 return new EventInfoList(this);
-            case EVENTCLASSLINKS:
+            case EVENTCLASSLINK:
                 return new EventClassLinkList(this);
             default:
                 throw new IllegalArgumentException(pListType.toString());
@@ -525,43 +525,43 @@ public class MoneyWiseData
      */
     public void initialiseAnalysis() throws JOceanusException {
         /* Loop through the list types */
-        Iterator<Entry<MoneyWiseList, DataList<?, MoneyWiseList>>> myIterator = entryIterator();
+        Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<MoneyWiseList, DataList<?, MoneyWiseList>> myEntry = myIterator.next();
+            Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>> myEntry = myIterator.next();
 
             /* Access list and switch on type */
-            DataList<?, MoneyWiseList> myList = myEntry.getValue();
+            DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
             switch (myEntry.getKey()) {
             /* Reset the flags on low-lying data */
-                case ACCOUNTTYPES:
-                case PAYEETYPES:
-                case SECURITYTYPES:
-                case EVENTTYPES:
-                case CURRENCIES:
-                case TAXREGIMES:
-                case FREQUENCIES:
-                case TAXINFOTYPES:
-                case ACCOUNTINFOTYPES:
-                case EVENTINFOTYPES:
-                case EVENTCLASSES:
+                case ACCOUNTTYPE:
+                case PAYEETYPE:
+                case SECURITYTYPE:
+                case EVENTTYPE:
+                case CURRENCY:
+                case TAXREGIME:
+                case FREQUENCY:
+                case TAXINFOTYPE:
+                case ACCOUNTINFOTYPE:
+                case EVENTINFOTYPE:
+                case EVENTCLASS:
                     myList.clearActive();
                     break;
 
                 /* Reset flags and touch underlying on intermediate data */
-                case ACCOUNTCATEGORIES:
-                case EVENTCATEGORIES:
-                case TAXYEARS:
-                case PAYEES:
-                case SECURITIES:
-                case ACCOUNTS:
-                case PORTFOLIOS:
+                case ACCOUNTCATEGORY:
+                case EVENTCATEGORY:
+                case TAXYEAR:
+                case PAYEE:
+                case SECURITY:
+                case ACCOUNT:
+                case PORTFOLIO:
                     myList.clearActive();
                     myList.touchUnderlyingItems();
                     break;
 
                 /* Touch underlying data for high level data */
-                case EXCHANGERATES:
-                case PATTERNS:
+                case EXCHANGERATE:
+                case PATTERN:
                     myList.touchUnderlyingItems();
                     break;
 

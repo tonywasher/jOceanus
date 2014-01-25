@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCurrency
-        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseList> {
+        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -268,7 +268,7 @@ public class AccountCurrency
      * Represents a list of {@link AccountCurrency} objects.
      */
     public static class AccountCurrencyList
-            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseList> {
+            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -294,7 +294,7 @@ public class AccountCurrency
          * @param pData the DataSet for the list
          */
         public AccountCurrencyList(final DataSet<?, ?> pData) {
-            super(AccountCurrency.class, pData, ListStyle.CORE);
+            super(AccountCurrency.class, pData, MoneyWiseDataType.CURRENCY, ListStyle.CORE);
         }
 
         /**

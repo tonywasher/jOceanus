@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventInfo
-        extends SheetDataInfo<EventInfo, MoneyWiseList> {
+        extends SheetDataInfo<EventInfo, MoneyWiseDataType> {
     /**
      * NamedArea for EventInfo.
      */

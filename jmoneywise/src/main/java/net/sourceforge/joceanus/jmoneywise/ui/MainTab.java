@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jthemis.svn.threads.SubversionRestore;
  * @author Tony Washer
  */
 public class MainTab
-        extends MainWindow<MoneyWiseData, MoneyWiseList> {
+        extends MainWindow<MoneyWiseData, MoneyWiseDataType> {
     /**
      * View Statement.
      */

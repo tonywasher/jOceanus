@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Portfolio class.
  */
 public class Portfolio
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Portfolio> {
     /**
      * Object name.
@@ -698,7 +698,7 @@ public class Portfolio
      * The Portfolio List class.
      */
     public static class PortfolioList
-            extends EncryptedList<Portfolio, MoneyWiseList> {
+            extends EncryptedList<Portfolio, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -724,7 +724,7 @@ public class Portfolio
          * @param pData the DataSet for the list
          */
         public PortfolioList(final MoneyWiseData pData) {
-            super(Portfolio.class, pData, ListStyle.CORE);
+            super(Portfolio.class, pData, MoneyWiseDataType.PORTFOLIO, ListStyle.CORE);
         }
 
         @Override

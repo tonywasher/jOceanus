@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class TableSecurityPrice
-        extends TableEncrypted<SecurityPrice, MoneyWiseList> {
+        extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * The name of the Prices table.
      */
@@ -121,7 +121,7 @@ public class TableSecurityPrice
         theList.touchUnderlyingItems();
 
         /* Validate the security prices */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

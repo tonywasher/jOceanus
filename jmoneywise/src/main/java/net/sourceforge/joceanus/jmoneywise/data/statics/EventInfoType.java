@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventInfoType
-        extends StaticData<EventInfoType, EventInfoClass, MoneyWiseList> {
+        extends StaticData<EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -178,7 +178,7 @@ public class EventInfoType
      * Represents a list of {@link EventInfoType} objects.
      */
     public static class EventInfoTypeList
-            extends StaticList<EventInfoType, EventInfoClass, MoneyWiseList> {
+            extends StaticList<EventInfoType, EventInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -204,7 +204,7 @@ public class EventInfoType
          * @param pData the DataSet for the list
          */
         public EventInfoTypeList(final DataSet<?, ?> pData) {
-            super(EventInfoType.class, pData, ListStyle.CORE);
+            super(EventInfoType.class, pData, MoneyWiseDataType.EVENTINFOTYPE, ListStyle.CORE);
         }
 
         /**

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Thread to load data from the database.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class LoadDatabase<T extends DataSet<T, E>, E extends Enum<E>>
         extends LoaderThread<T, E> {

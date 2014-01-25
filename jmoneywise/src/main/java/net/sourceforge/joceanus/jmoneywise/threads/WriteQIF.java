@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -52,7 +52,7 @@ public class WriteQIF
     /**
      * Thread Status.
      */
-    private final ThreadStatus<MoneyWiseData, MoneyWiseList> theStatus;
+    private final ThreadStatus<MoneyWiseData, MoneyWiseDataType> theStatus;
 
     /**
      * Constructor (Event Thread).

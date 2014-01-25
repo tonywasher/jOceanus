@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class TableEvent
-        extends TableEncrypted<Event, MoneyWiseList> {
+        extends TableEncrypted<Event, MoneyWiseDataType> {
     /**
      * The name of the Events table.
      */

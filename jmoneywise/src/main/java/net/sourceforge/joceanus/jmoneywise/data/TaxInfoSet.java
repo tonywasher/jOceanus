@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
  * @author Tony Washer
  */
 public class TaxInfoSet
-        extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseList> {
+        extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */

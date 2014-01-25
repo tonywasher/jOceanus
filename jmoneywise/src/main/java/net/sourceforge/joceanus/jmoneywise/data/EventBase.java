@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public abstract class EventBase
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<EventBase> {
     /**
      * Resource Bundle.
@@ -1357,10 +1357,10 @@ public abstract class EventBase
 
     /**
      * The Event List class.
-     * @param <T> the dataTypeoppo
+     * @param <T> the dataType
      */
     public abstract static class EventBaseList<T extends EventBase>
-            extends EncryptedList<T, MoneyWiseList> {
+            extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -1409,10 +1409,12 @@ public abstract class EventBase
          * Construct an empty CORE Event list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
+         * @param pItemType the item type
          */
         protected EventBaseList(final MoneyWiseData pData,
-                                final Class<T> pClass) {
-            super(pClass, pData, ListStyle.CORE);
+                                final Class<T> pClass,
+                                final MoneyWiseDataType pItemType) {
+            super(pClass, pData, pItemType, ListStyle.CORE);
         }
 
         /**

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Update entry items.
  * @param <T> the data type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**

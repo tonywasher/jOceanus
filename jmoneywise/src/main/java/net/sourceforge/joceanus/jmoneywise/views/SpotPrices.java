@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -227,7 +227,7 @@ public class SpotPrices
      * The Spot Prices List class.
      */
     public static class SpotList
-            extends EncryptedList<SpotPrice, MoneyWiseList> {
+            extends EncryptedList<SpotPrice, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -332,7 +332,7 @@ public class SpotPrices
          */
         public SpotList(final SpotPrices pPrices) {
             /* Build initial list */
-            super(SpotPrice.class, pPrices.getData());
+            super(SpotPrice.class, pPrices.getData(), MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();

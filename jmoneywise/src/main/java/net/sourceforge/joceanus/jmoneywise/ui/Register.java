@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -90,7 +90,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class Register
-        extends JDataTable<Event, MoneyWiseList> {
+        extends JDataTable<Event, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -209,17 +209,17 @@ public class Register
     /**
      * Update Set.
      */
-    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * Event Update Entry.
      */
-    private final transient UpdateEntry<Event, MoneyWiseList> theEventEntry;
+    private final transient UpdateEntry<Event, MoneyWiseDataType> theEventEntry;
 
     /**
      * EventInfo Update Entry.
      */
-    private final transient UpdateEntry<EventInfo, MoneyWiseList> theInfoEntry;
+    private final transient UpdateEntry<EventInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * Table Model.
@@ -403,7 +403,7 @@ public class Register
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
         theEventEntry = theUpdateSet.registerClass(Event.class);
         theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
         setUpdateSet(theUpdateSet);
@@ -678,7 +678,7 @@ public class Register
      * Register table model.
      */
     public final class RegisterModel
-            extends JDataTableModel<Event, MoneyWiseList> {
+            extends JDataTableModel<Event, MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -901,7 +901,7 @@ public class Register
      * Register mouse listener.
      */
     private final class RegisterMouse
-            extends JDataTableMouse<Event, MoneyWiseList> {
+            extends JDataTableMouse<Event, MoneyWiseDataType> {
         /**
          * Constructor.
          */
@@ -1264,7 +1264,7 @@ public class Register
      * Column Model class.
      */
     private final class RegisterColumnModel
-            extends JDataTableColumnModel<MoneyWiseList> {
+            extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */

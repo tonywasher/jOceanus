@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
- * @param <T> the data type
- * @param <E> the list enum type
+ * @param <T> the dataSet type
+ * @param <E> the data type enum class
  */
 public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         implements JDataContents {
@@ -956,9 +956,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Cryptography List Enum Types.
+     * Cryptography Data Enum Types.
      */
-    public enum CryptographyList {
+    public enum CryptographyDataType {
         /**
          * ControlKey.
          */
@@ -973,5 +973,22 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
          * ControlData.
          */
         CONTROLDATA;
+
+        /**
+         * The String name.
+         */
+        private String theName;
+
+        @Override
+        public String toString() {
+            /* If we have not yet loaded the name */
+            if (theName == null) {
+                /* Load the name */
+                theName = NLS_BUNDLE.getString(name());
+            }
+
+            /* return the name */
+            return theName;
+        }
     }
 }

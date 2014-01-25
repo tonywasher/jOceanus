@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.swing.TableFilter;
  * Template class to provide a table to handle a data type.
  * @author Tony Washer
  * @param <T> the data type.
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends JEventTable

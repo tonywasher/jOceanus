@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Generic implementation of a DataList for DataItems.
  * @author Tony Washer
  * @param <T> the item type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdList<Integer, T>
@@ -108,9 +108,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEditState"));
 
     /**
-     * Class Field Id.
+     * ListType Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataClass"));
+    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
 
     /**
      * Base Field Id.
@@ -158,8 +158,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (FIELD_ERRORS.equals(pField)) {
             return JDataFieldValue.SKIP;
         }
-        if (FIELD_CLASS.equals(pField)) {
-            return getBaseClass().getSimpleName();
+        if (FIELD_TYPE.equals(pField)) {
+            return theItemType;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -199,6 +199,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     private final int theGranularity;
 
     /**
+     * The item type.
+     */
+    private final E theItemType;
+
+    /**
      * The id manager.
      */
     private final IdManager<T, E> theMgr;
@@ -224,6 +229,14 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public ListStyle getStyle() {
         return theStyle;
+    }
+
+    /**
+     * Get the type of the list.
+     * @return the item type
+     */
+    public E getItemType() {
+        return theItemType;
     }
 
     /**
@@ -358,13 +371,16 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Construct a new object.
      * @param pBaseClass the class of the underlying object
      * @param pDataSet the owning dataSet
+     * @param pItemType the item type
      * @param pStyle the new {@link ListStyle}
      */
     protected DataList(final Class<T> pBaseClass,
                        final DataSet<?, ?> pDataSet,
+                       final E pItemType,
                        final ListStyle pStyle) {
         super(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
         theStyle = pStyle;
+        theItemType = pItemType;
         theDataSet = pDataSet;
         theGranularity = pDataSet.getGranularity();
         theGeneration = pDataSet.getGeneration();
@@ -381,6 +397,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     protected DataList(final DataList<T, E> pSource) {
         super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
         theStyle = ListStyle.COPY;
+        theItemType = pSource.getItemType();
         theMgr = (IdManager<T, E>) getIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();

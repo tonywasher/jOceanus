@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 /**
  * Group class for data item.
  * @param <T> Item comprising group
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdList<Integer, T>

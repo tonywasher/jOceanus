@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Account Category class.
  */
 public class AccountCategory
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountCategory> {
     /**
      * Object name.
@@ -836,7 +836,7 @@ public class AccountCategory
      * The Account Category List class.
      */
     public static class AccountCategoryList
-            extends EncryptedList<AccountCategory, MoneyWiseList> {
+            extends EncryptedList<AccountCategory, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -862,7 +862,7 @@ public class AccountCategory
          * @param pData the DataSet for the list
          */
         protected AccountCategoryList(final MoneyWiseData pData) {
-            super(AccountCategory.class, pData, ListStyle.CORE);
+            super(AccountCategory.class, pData, MoneyWiseDataType.ACCOUNTCATEGORY, ListStyle.CORE);
         }
 
         @Override

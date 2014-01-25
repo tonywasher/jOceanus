@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyList;
+import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetDataKey
-        extends SheetDataItem<DataKey, CryptographyList> {
+        extends SheetDataItem<DataKey, CryptographyDataType> {
     /**
      * SheetName for Keys.
      */

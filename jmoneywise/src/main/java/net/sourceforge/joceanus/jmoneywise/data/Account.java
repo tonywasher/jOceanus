@@ -725,7 +725,7 @@ public class Account
      * @param pObject the object touch the account
      */
     @Override
-    public void touchItem(final DataItem<MoneyWiseList> pObject) {
+    public void touchItem(final DataItem<MoneyWiseDataType> pObject) {
         /* Note that the account is Active */
         super.touchItem(pObject);
 
@@ -1099,7 +1099,7 @@ public class Account
          * @param pData the DataSet for the list
          */
         public AccountList(final MoneyWiseData pData) {
-            super(pData, Account.class);
+            super(pData, Account.class, MoneyWiseDataType.ACCOUNT);
         }
 
         /**

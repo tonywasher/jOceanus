@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  * @param <L> the list type
  * @param <T> the data type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>, E extends Enum<E>>
         extends JDataTable<T, E> {

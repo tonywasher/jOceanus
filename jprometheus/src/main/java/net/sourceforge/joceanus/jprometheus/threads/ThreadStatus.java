@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.StatusData;
 import net.sourceforge.joceanus.jprometheus.views.StatusDisplay;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Thread Status.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
         implements TaskControl<T> {

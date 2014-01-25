@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class AccountInfo
-        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
+        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -582,7 +582,7 @@ public class AccountInfo
      * AccountInfoList.
      */
     public static class AccountInfoList
-            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseList> {
+            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -618,7 +618,7 @@ public class AccountInfo
          * @param pData the DataSet for the list
          */
         protected AccountInfoList(final MoneyWiseData pData) {
-            super(AccountInfo.class, pData, ListStyle.CORE);
+            super(AccountInfo.class, pData, MoneyWiseDataType.ACCOUNTINFO, ListStyle.CORE);
         }
 
         /**

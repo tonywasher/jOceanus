@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCategoryType
-        extends StaticData<AccountCategoryType, AccountCategoryClass, MoneyWiseList> {
+        extends StaticData<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -151,7 +151,7 @@ public class AccountCategoryType
      * Represents a list of {@link AccountCategoryType} objects.
      */
     public static class AccountCategoryTypeList
-            extends StaticList<AccountCategoryType, AccountCategoryClass, MoneyWiseList> {
+            extends StaticList<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -177,7 +177,7 @@ public class AccountCategoryType
          * @param pData the DataSet for the list
          */
         public AccountCategoryTypeList(final DataSet<?, ?> pData) {
-            super(AccountCategoryType.class, pData, ListStyle.CORE);
+            super(AccountCategoryType.class, pData, MoneyWiseDataType.ACCOUNTTYPE, ListStyle.CORE);
         }
 
         /**

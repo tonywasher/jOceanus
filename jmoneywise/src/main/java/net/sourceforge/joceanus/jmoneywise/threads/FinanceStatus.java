@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
  * Finance Status Thread control.
  */
 public class FinanceStatus
-        extends ThreadStatus<MoneyWiseData, MoneyWiseList> {
+        extends ThreadStatus<MoneyWiseData, MoneyWiseDataType> {
     /**
      * The view.
      */

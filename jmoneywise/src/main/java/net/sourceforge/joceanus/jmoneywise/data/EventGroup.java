@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class EventGroup<T extends EventBase>
-        extends DataGroup<T, MoneyWiseList> {
+        extends DataGroup<T, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */

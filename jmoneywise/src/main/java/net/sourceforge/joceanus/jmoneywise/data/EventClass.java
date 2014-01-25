@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Tag for an event.
  */
 public class EventClass
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<EventClass> {
     /**
      * Object name.
@@ -444,7 +444,7 @@ public class EventClass
      * The Event Tag List class.
      */
     public static class EventClassList
-            extends EncryptedList<EventClass, MoneyWiseList> {
+            extends EncryptedList<EventClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -470,7 +470,7 @@ public class EventClass
          * @param pData the DataSet for the list
          */
         protected EventClassList(final MoneyWiseData pData) {
-            super(EventClass.class, pData, ListStyle.CORE);
+            super(EventClass.class, pData, MoneyWiseDataType.EVENTCLASS, ListStyle.CORE);
         }
 
         @Override

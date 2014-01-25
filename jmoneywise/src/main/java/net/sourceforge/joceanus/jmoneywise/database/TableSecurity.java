@@ -27,7 +27,7 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for Security.
  */
 public class TableSecurity
-        extends TableEncrypted<Security, MoneyWiseList> {
+        extends TableEncrypted<Security, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -133,7 +133,7 @@ public class TableSecurity
         theList.touchUnderlyingItems();
 
         /* Validate the securities */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

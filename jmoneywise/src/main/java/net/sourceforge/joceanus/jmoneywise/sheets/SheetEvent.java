@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetEvent
-        extends SheetDataItem<Event, MoneyWiseList> {
+        extends SheetDataItem<Event, MoneyWiseDataType> {
     /**
      * NamedArea for Events.
      */
@@ -586,7 +586,7 @@ public class SheetEvent
      * EventInfoSet sheet.
      */
     private static class SheetEventInfoSet
-            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseList> {
+            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.
@@ -595,7 +595,7 @@ public class SheetEvent
          * @param pBaseCol the base column
          */
         public SheetEventInfoSet(final Class<EventInfoClass> pClass,
-                                 final SheetDataItem<Event, MoneyWiseList> pOwner,
+                                 final SheetDataItem<Event, MoneyWiseDataType> pOwner,
                                  final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }

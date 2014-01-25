@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Thread to create a extract spreadsheet of a data set.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
         extends WorkerThread<Void> {

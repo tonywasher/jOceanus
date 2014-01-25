@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRatio;
  * ExchangeRate class.
  */
 public final class ExchangeRate
-        extends DataItem<MoneyWiseList>
+        extends DataItem<MoneyWiseDataType>
         implements Comparable<ExchangeRate> {
     /**
      * Object name.
@@ -624,7 +624,7 @@ public final class ExchangeRate
      * The ExchangeRate List class.
      */
     public static class ExchangeRateList
-            extends DataList<ExchangeRate, MoneyWiseList> {
+            extends DataList<ExchangeRate, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -679,7 +679,7 @@ public final class ExchangeRate
          * @param pData the DataSet for the list
          */
         protected ExchangeRateList(final MoneyWiseData pData) {
-            super(ExchangeRate.class, pData, ListStyle.CORE);
+            super(ExchangeRate.class, pData, MoneyWiseDataType.EXCHANGERATE, ListStyle.CORE);
         }
 
         @Override

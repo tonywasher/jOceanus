@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * need to re-encrypt and data fields. Data will be left in the Updated state ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class UpdatePassword<T extends DataSet<T, E>, E extends Enum<E>>
         extends LoaderThread<T, E> {

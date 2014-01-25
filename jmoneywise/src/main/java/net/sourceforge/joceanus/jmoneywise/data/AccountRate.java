@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class AccountRate
-        extends EncryptedItem<MoneyWiseList>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountRate> {
     /**
      * Object name.
@@ -676,7 +676,7 @@ public class AccountRate
      * List class.
      */
     public static class AccountRateList
-            extends EncryptedList<AccountRate, MoneyWiseList> {
+            extends EncryptedList<AccountRate, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -730,7 +730,7 @@ public class AccountRate
          * @param pData the DataSet for the list
          */
         protected AccountRateList(final MoneyWiseData pData) {
-            super(AccountRate.class, pData);
+            super(AccountRate.class, pData, MoneyWiseDataType.ACCOUNTRATE);
         }
 
         /**

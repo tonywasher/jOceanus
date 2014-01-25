@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseList> {
+        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -150,7 +150,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseList> {
+            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -176,7 +176,7 @@ public class SecurityType
          * @param pData the DataSet for the list
          */
         public SecurityTypeList(final DataSet<?, ?> pData) {
-            super(SecurityType.class, pData, ListStyle.CORE);
+            super(SecurityType.class, pData, MoneyWiseDataType.SECURITYTYPE, ListStyle.CORE);
         }
 
         /**

@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * SheetDataItem class for accessing a sheet that is related to a data type.
  * @author Tony Washer
  * @param <T> the data type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -87,7 +87,7 @@ public class QDataSet {
      * @param pView the dataView
      * @param pPreferences the preferences
      */
-    public QDataSet(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus,
+    public QDataSet(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
                     final View pView,
                     final QIFPreference pPreferences) {
         /* Store parameters */
@@ -113,7 +113,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus) throws JOceanusException {
+    public boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) throws JOceanusException {
         /* Determine whether to use consolidated file */
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
@@ -149,7 +149,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData, MoneyWiseList> pStatus) throws JOceanusException {
+    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) throws JOceanusException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -212,7 +212,7 @@ public class ViewPrice
      * Price List.
      */
     public static class ViewPriceList
-            extends EncryptedList<ViewPrice, MoneyWiseList> {
+            extends EncryptedList<ViewPrice, MoneyWiseDataType> {
         /**
          * Report fields.
          */
@@ -308,7 +308,7 @@ public class ViewPrice
         public ViewPriceList(final View pView,
                              final Account pSecurity) {
             /* Declare the data and set the style */
-            super(ViewPrice.class, pView.getData());
+            super(ViewPrice.class, pView.getData(), MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */

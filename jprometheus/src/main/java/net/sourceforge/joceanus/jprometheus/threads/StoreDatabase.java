@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Thread to store changes in the DataSet to a database.
  * @author Tony Washer
  * @param <T> the DataSet type
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class StoreDatabase<T extends DataSet<T, E>, E extends Enum<E>>
         extends WorkerThread<Void> {

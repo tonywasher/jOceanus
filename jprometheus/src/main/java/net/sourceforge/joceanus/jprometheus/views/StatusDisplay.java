@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.views;
 
 import net.sourceforge.joceanus.jmetis.viewer.JMetisExceptionWrapper;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar.StatusData;
 
 /**
  * Interface to status bar.

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FrequencyClass, MoneyWiseList> {
+        extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -151,7 +151,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass, MoneyWiseList> {
+            extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -177,7 +177,7 @@ public class Frequency
          * @param pData the DataSet for the list
          */
         public FrequencyList(final DataSet<?, ?> pData) {
-            super(Frequency.class, pData, ListStyle.CORE);
+            super(Frequency.class, pData, MoneyWiseDataType.FREQUENCY, ListStyle.CORE);
         }
 
         /**

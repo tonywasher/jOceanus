@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfoType
-        extends SheetStaticData<TaxYearInfoType, MoneyWiseList> {
+        extends SheetStaticData<TaxYearInfoType, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYearInfoType.
      */

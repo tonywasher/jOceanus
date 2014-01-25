@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmetis.list.OrderedIdIndex;
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.
  * @author Tony Washer
  * @param <T> the dataType
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends OrderedIdIndex<Integer, T> {

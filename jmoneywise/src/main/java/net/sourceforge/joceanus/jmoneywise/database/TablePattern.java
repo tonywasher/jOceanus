@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class TablePattern
-        extends TableEncrypted<Pattern, MoneyWiseList> {
+        extends TableEncrypted<Pattern, MoneyWiseDataType> {
     /**
      * The name of the Patterns table.
      */
@@ -141,7 +141,7 @@ public class TablePattern
         theList.touchUnderlyingItems();
 
         /* Validate the events */
-        DataErrorList<DataItem<MoneyWiseList>> myErrors = theList.validate();
+        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
         if (myErrors != null) {
             throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

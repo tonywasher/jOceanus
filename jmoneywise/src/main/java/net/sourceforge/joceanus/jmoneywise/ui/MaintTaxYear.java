@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -217,17 +217,17 @@ public class MaintTaxYear
     /**
      * The Update Set.
      */
-    private final transient UpdateSet<MoneyWiseList> theUpdateSet;
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
      * The TaxYear Update Entry.
      */
-    private final transient UpdateEntry<TaxYear, MoneyWiseList> theYearsEntry;
+    private final transient UpdateEntry<TaxYear, MoneyWiseDataType> theYearsEntry;
 
     /**
      * The TaxInfo Update Entry.
      */
-    private final transient UpdateEntry<TaxYearInfo, MoneyWiseList> theInfoEntry;
+    private final transient UpdateEntry<TaxYearInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * Obtain the tax Year.
@@ -247,7 +247,7 @@ public class MaintTaxYear
         theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseList>(theView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
         theYearsEntry = theUpdateSet.registerClass(TaxYear.class);
         theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 

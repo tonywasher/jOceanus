@@ -111,7 +111,7 @@ public class JDataTableColumn
 
     /**
      * Column Model class.
-     * @param <E> the data list enum class
+     * @param <E> the data type enum class
      */
     public static class JDataTableColumnModel<E extends Enum<E>>
             extends DefaultTableColumnModel {
@@ -208,7 +208,7 @@ public class JDataTableColumn
 
     /**
      * Row Column Model class.
-     * @param <E> the data list enum class
+     * @param <E> the data type enum class
      */
     protected static final class RowColumnModel<E extends Enum<E>>
             extends JDataTableColumnModel<E> {

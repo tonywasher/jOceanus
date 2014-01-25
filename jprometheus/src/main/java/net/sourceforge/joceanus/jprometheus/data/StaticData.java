@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  * @param <T> the data type
  * @param <S> the static class
- * @param <E> the data list enum class
+ * @param <E> the data type enum class
  */
 public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
         extends EncryptedItem<E>
@@ -717,7 +717,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * Represents a list of StaticData objects.
      * @param <T> the item type
      * @param <S> the static data class
-     * @param <E> the data list enum class
+     * @param <E> the data type enum class
      */
     public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
             extends EncryptedList<T, E> {
@@ -731,12 +731,14 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * Construct a generic static data list.
          * @param pBaseClass the class of the underlying object
          * @param pData the dataSet
+         * @param pItemType the item type
          * @param pStyle the style of the list
          */
         public StaticList(final Class<T> pBaseClass,
                           final DataSet<?, ?> pData,
+                          final E pItemType,
                           final ListStyle pStyle) {
-            super(pBaseClass, pData, pStyle);
+            super(pBaseClass, pData, pItemType, pStyle);
         }
 
         /**

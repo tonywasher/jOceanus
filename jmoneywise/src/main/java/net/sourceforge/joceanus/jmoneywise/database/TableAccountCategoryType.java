@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableAccountCategoryType
-        extends TableStaticData<AccountCategoryType, MoneyWiseList> {
+        extends TableStaticData<AccountCategoryType, MoneyWiseDataType> {
     /**
      * The table name.
      */
