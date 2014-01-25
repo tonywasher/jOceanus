@@ -27,20 +27,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * The Tax Bucket class.
@@ -65,7 +66,7 @@ public final class TaxCalcBucket
     /**
      * Tax Category Field Id.
      */
-    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataCategory"));
+    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXTYPE.getItemName());
 
     /**
      * Tax Section Field Id.
@@ -100,8 +101,8 @@ public final class TaxCalcBucket
         }
         if (FIELD_PARENT.equals(pField)) {
             return (theParent != null)
-                    ? theParent
-                    : JDataFieldValue.SKIP;
+                                      ? theParent
+                                      : JDataFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -110,8 +111,8 @@ public final class TaxCalcBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -216,8 +217,8 @@ public final class TaxCalcBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -347,8 +348,7 @@ public final class TaxCalcBucket
         /* Check for non-zero amount */
         JMoney myAmount = getMoneyValue(TaxAttribute.AMOUNT);
         JMoney myTax = getMoneyValue(TaxAttribute.TAXATION);
-        return myAmount.isNonZero()
-               || ((myTax != null) && (myTax.isNonZero()));
+        return myAmount.isNonZero() || ((myTax != null) && (myTax.isNonZero()));
     }
 
     /**
@@ -366,8 +366,8 @@ public final class TaxCalcBucket
 
         /* Calculate the tax if we have a rate */
         JMoney myTaxation = (myRate != null)
-                ? myAmount.valueAtRate(myRate)
-                : new JMoney();
+                                            ? myAmount.valueAtRate(myRate)
+                                            : new JMoney();
 
         /* Return the taxation amount */
         setAttribute(TaxAttribute.TAXATION, myTaxation);
@@ -440,10 +440,7 @@ public final class TaxCalcBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**
@@ -492,13 +489,13 @@ public final class TaxCalcBucket
             }
             if (FIELD_GAINS.equals(pField)) {
                 return (hasGainsSlices)
-                        ? hasGainsSlices
-                        : JDataFieldValue.SKIP;
+                                       ? hasGainsSlices
+                                       : JDataFieldValue.SKIP;
             }
             if (FIELD_ALLOW.equals(pField)) {
                 return (hasReducedAllow)
-                        ? hasReducedAllow
-                        : JDataFieldValue.SKIP;
+                                        ? hasReducedAllow
+                                        : JDataFieldValue.SKIP;
             }
             return JDataFieldValue.UNKNOWN;
         }

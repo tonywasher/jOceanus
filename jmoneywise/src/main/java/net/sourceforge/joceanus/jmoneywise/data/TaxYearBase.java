@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -65,7 +66,7 @@ public abstract class TaxYearBase
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
 
     /**
      * TaxYear field Id.
@@ -80,7 +81,7 @@ public abstract class TaxYearBase
     /**
      * TaxRegime field Id.
      */
-    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRegime"));
+    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TAXREGIME.getItemName());
 
     /**
      * Bad Date Error Text.
@@ -457,7 +458,7 @@ public abstract class TaxYearBase
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public MoneyWiseData getDataSet() {

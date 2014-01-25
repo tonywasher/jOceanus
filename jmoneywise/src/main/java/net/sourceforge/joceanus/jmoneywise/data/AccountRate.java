@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -54,12 +55,12 @@ public class AccountRate
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = AccountRate.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.ACCOUNTRATE.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.ACCOUNTRATE.getListName();
 
     /**
      * Resource Bundle.
@@ -69,7 +70,7 @@ public class AccountRate
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -79,7 +80,7 @@ public class AccountRate
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAccount"));
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.ACCOUNT.getItemName());
 
     /**
      * Rate Field Id.
@@ -680,12 +681,12 @@ public class AccountRate
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountRateList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Account Field Id.
          */
-        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(MoneyWiseDataType.ACCOUNT.getItemName());
 
         @Override
         public JDataFields declareFields() {

@@ -26,23 +26,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 
 /**
  * The Security Bucket class.
@@ -67,17 +68,17 @@ public final class SecurityBucket
     /**
      * Account (Security) Field Id.
      */
-    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSecurity"));
+    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Portfolio Field Id.
      */
-    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
+    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * Security Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Base Field Id.
@@ -166,8 +167,8 @@ public final class SecurityBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -198,9 +199,7 @@ public final class SecurityBucket
      * @return the decorated name
      */
     public String getDecoratedName() {
-        return thePortfolio.getName()
-               + ":"
-               + theSecurity.getName();
+        return thePortfolio.getName() + ":" + theSecurity.getName();
     }
 
     /**
@@ -356,8 +355,8 @@ public final class SecurityBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -718,8 +717,7 @@ public final class SecurityBucket
          */
         public boolean isActive() {
             JUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
-            return (myUnits != null)
-                   && (myUnits.isNonZero());
+            return (myUnits != null) && (myUnits.isNonZero());
         }
     }
 
@@ -742,10 +740,7 @@ public final class SecurityBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**
@@ -831,8 +826,7 @@ public final class SecurityBucket
                 SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive()
-                    || !myBucket.isIdle()) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
                     append(myBucket);

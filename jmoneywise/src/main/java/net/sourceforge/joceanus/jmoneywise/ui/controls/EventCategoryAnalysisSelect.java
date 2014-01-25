@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -40,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
@@ -64,14 +64,9 @@ public class EventCategoryAnalysisSelect
     private static final long serialVersionUID = -5828172857155415661L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategoryAnalysisSelect.class.getName());
-
-    /**
      * Text for EventCategory Label.
      */
-    private static final String NLS_CATEGORY = NLS_BUNDLE.getString("EventCategory");
+    private static final String NLS_CATEGORY = MoneyWiseDataType.EVENTCATEGORY.getItemName();
 
     /**
      * The active event categories bucket list.
@@ -100,8 +95,7 @@ public class EventCategoryAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (theCategories != null)
-               && !theCategories.isEmpty();
+        return (theCategories != null) && !theCategories.isEmpty();
     }
 
     /**
@@ -154,8 +148,7 @@ public class EventCategoryAnalysisSelect
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to button */
-        theButton.setEnabled(bEnabled
-                             && isAvailable());
+        theButton.setEnabled(bEnabled && isAvailable());
     }
 
     /**
@@ -176,8 +169,7 @@ public class EventCategoryAnalysisSelect
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myCategory == null)
-            && (!theCategories.isEmpty())) {
+        if ((myCategory == null) && (!theCategories.isEmpty())) {
             /* Use the first bucket */
             myCategory = theCategories.peekFirst();
         }
@@ -366,8 +358,8 @@ public class EventCategoryAnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theButton.setText((theCategory == null)
-                    ? null
-                    : theCategory.getName());
+                                                   ? null
+                                                   : theCategory.getName());
         }
     }
 }

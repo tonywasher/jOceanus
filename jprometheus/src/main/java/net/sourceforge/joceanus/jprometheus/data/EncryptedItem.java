@@ -66,7 +66,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Control Key Field Id.
      */
-    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataKey"));
+    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField(ControlKey.OBJECT_NAME);
 
     /**
      * Error message for bad usage.

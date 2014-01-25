@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -39,12 +39,12 @@ public class PayeeType
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = PayeeType.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.PAYEETYPE.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.PAYEETYPE.getListName();
 
     /**
      * Report fields.
@@ -154,7 +154,7 @@ public class PayeeType
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PayeeTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

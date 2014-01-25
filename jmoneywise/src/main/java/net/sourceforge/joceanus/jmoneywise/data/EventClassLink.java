@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -43,27 +44,27 @@ public class EventClassLink
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = EventClassLink.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTCLASSLINK.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.EVENTCLASSLINK.getListName();
 
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ExchangeRate.class.getSimpleName(), DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     /**
      * Event Field Id.
      */
-    public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityValueField("Event");
+    public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.EVENT.getItemName());
 
     /**
      * EventClass Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField("EventClass");
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.EVENTCLASS.getItemName());
 
     @Override
     public JDataFields declareFields() {
@@ -379,7 +380,7 @@ public class EventClassLink
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventClassLinkList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

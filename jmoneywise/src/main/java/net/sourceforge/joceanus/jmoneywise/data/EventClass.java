@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -47,12 +48,12 @@ public class EventClass
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = EventClass.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTCLASS.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "es";
+    public static final String LIST_NAME = MoneyWiseDataType.EVENTCLASS.getListName();
     /**
      * Resource Bundle.
      */
@@ -61,12 +62,12 @@ public class EventClass
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClassName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Description Field Id.
@@ -448,7 +449,7 @@ public class EventClass
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

@@ -54,17 +54,17 @@ public class DataKey
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = DataKey.class.getSimpleName();
+    public static final String OBJECT_NAME = CryptographyDataType.DATAKEY.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = CryptographyDataType.DATAKEY.getListName();
 
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -74,7 +74,7 @@ public class DataKey
     /**
      * ControlKey Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataControl"));
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(ControlKey.OBJECT_NAME);
 
     /**
      * KeyType Field Id.
@@ -495,7 +495,7 @@ public class DataKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.AccountType;
@@ -72,12 +73,12 @@ public final class EventCategoryBucket
     /**
      * Event Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.EVENTCATEGORY.getItemName());
 
     /**
      * Event Type Field Id.
      */
-    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.EVENTTYPE.getItemName());
 
     /**
      * Base Field Id.
@@ -150,8 +151,8 @@ public final class EventCategoryBucket
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBaseValues != null)
-                    ? theBaseValues
-                    : JDataFieldValue.SKIP;
+                                          ? theBaseValues
+                                          : JDataFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -160,8 +161,8 @@ public final class EventCategoryBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -185,8 +186,8 @@ public final class EventCategoryBucket
      */
     public String getName() {
         return (theCategory == null)
-                ? NAME_TOTALS
-                : theCategory.getName();
+                                    ? NAME_TOTALS
+                                    : theCategory.getName();
     }
 
     @Override
@@ -302,8 +303,8 @@ public final class EventCategoryBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -337,8 +338,8 @@ public final class EventCategoryBucket
         theAnalysis = pAnalysis;
         theCategory = pCategory;
         theType = (pCategory == null)
-                ? null
-                : pCategory.getCategoryType();
+                                     ? null
+                                     : pCategory.getCategoryType();
 
         /* Create the history map */
         theHistory = new BucketHistory<CategoryValues, EventAttribute>(new CategoryValues());
@@ -739,8 +740,7 @@ public final class EventCategoryBucket
         public boolean isActive() {
             JMoney myIncome = getMoneyValue(EventAttribute.INCOME);
             JMoney myExpense = getMoneyValue(EventAttribute.EXPENSE);
-            return (myIncome.isNonZero())
-                   || (myExpense.isNonZero());
+            return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
 
@@ -763,10 +763,7 @@ public final class EventCategoryBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

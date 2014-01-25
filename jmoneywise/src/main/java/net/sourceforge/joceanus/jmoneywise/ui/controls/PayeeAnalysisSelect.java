@@ -27,7 +27,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -38,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
@@ -59,14 +59,9 @@ public class PayeeAnalysisSelect
     private static final long serialVersionUID = -8172530196737018124L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PayeeAnalysisSelect.class.getName());
-
-    /**
      * Text for Payee Label.
      */
-    private static final String NLS_PAYEE = NLS_BUNDLE.getString("Payee");
+    private static final String NLS_PAYEE = MoneyWiseDataType.PAYEE.getItemName();
 
     /**
      * The active payee bucket list.
@@ -95,8 +90,7 @@ public class PayeeAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (thePayees != null)
-               && !thePayees.isEmpty();
+        return (thePayees != null) && !thePayees.isEmpty();
     }
 
     /**
@@ -149,8 +143,7 @@ public class PayeeAnalysisSelect
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to button */
-        theButton.setEnabled(bEnabled
-                             && isAvailable());
+        theButton.setEnabled(bEnabled && isAvailable());
     }
 
     /**
@@ -171,8 +164,7 @@ public class PayeeAnalysisSelect
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myPayee == null)
-            && (!thePayees.isEmpty())) {
+        if ((myPayee == null) && (!thePayees.isEmpty())) {
             /* Use the first bucket */
             myPayee = thePayees.peekFirst();
         }
@@ -345,8 +337,8 @@ public class PayeeAnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theButton.setText((thePayee == null)
-                    ? null
-                    : thePayee.getName());
+                                                ? null
+                                                : thePayee.getName());
         }
     }
 }

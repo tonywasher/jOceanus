@@ -30,13 +30,13 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
@@ -356,15 +356,15 @@ public class SheetEvent
                                          final MoneyWiseData pData,
                                          final YearRange pRange,
                                          final JDateDay pLastEvent) throws JOceanusException {
+        /* Access the list of events */
+        EventList myList = pData.getEvents();
+        EventInfoList myInfoList = pData.getEventInfo();
+
         /* Protect against exceptions */
         try {
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
-
-            /* Access the list of events */
-            EventList myList = pData.getEvents();
-            EventInfoList myInfoList = pData.getEventInfo();
 
             /* Obtain the range iterator */
             ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
@@ -575,7 +575,7 @@ public class SheetEvent
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to load Events", e);
+            throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

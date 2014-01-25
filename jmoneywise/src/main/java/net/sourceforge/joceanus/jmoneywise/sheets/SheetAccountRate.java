@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -197,6 +197,9 @@ public class SheetAccountRate
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of rates */
+        AccountRateList myList = pData.getRates();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -213,9 +216,6 @@ public class SheetAccountRate
 
             /* Count the number of Rates */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of rates */
-            AccountRateList myList = pData.getRates();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -272,7 +272,7 @@ public class SheetAccountRate
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Rates", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

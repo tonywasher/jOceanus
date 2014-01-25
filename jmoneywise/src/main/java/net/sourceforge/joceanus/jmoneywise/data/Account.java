@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -54,12 +55,12 @@ public class Account
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = Account.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.ACCOUNT.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.ACCOUNT.getListName();
     /**
      * Resource Bundle.
      */
@@ -68,7 +69,7 @@ public class Account
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), AccountBase.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountBase.FIELD_DEFS);
 
     /**
      * AccountInfoSet field Id.
@@ -1022,7 +1023,7 @@ public class Account
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), AccountBaseList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, AccountBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -1032,7 +1033,7 @@ public class Account
         /**
          * Account field id.
          */
-        private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataName"));
+        private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(LIST_NAME);
 
         @Override
         public Object getFieldValue(final JDataField pField) {

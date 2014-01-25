@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
@@ -55,12 +56,12 @@ public class TaxYear
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = TaxYear.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.TAXYEAR.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.TAXYEAR.getListName();
 
     /**
      * Resource Bundle.
@@ -70,7 +71,7 @@ public class TaxYear
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), TaxYearBase.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TaxYearBase.FIELD_DEFS);
 
     /**
      * TaxInfoSet field Id.
@@ -798,7 +799,7 @@ public class TaxYear
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), TaxYearBaseList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, TaxYearBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -217,6 +217,9 @@ public class SheetPortfolio
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of portfolios */
+        PortfolioList myList = pData.getPortfolios();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -233,9 +236,6 @@ public class SheetPortfolio
 
             /* Count the number of portfolios */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of portfolios */
-            PortfolioList myList = pData.getPortfolios();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -286,7 +286,7 @@ public class SheetPortfolio
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Portfolios", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

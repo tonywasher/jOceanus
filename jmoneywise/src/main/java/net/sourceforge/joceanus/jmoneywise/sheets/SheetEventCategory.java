@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -205,6 +205,9 @@ public class SheetEventCategory
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of categories */
+        EventCategoryList myList = pData.getEventCategories();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -221,9 +224,6 @@ public class SheetEventCategory
 
             /* Count the number of Categories */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of categories */
-            EventCategoryList myList = pData.getEventCategories();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -273,7 +273,7 @@ public class SheetEventCategory
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load EventCategories", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

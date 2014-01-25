@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -47,12 +47,12 @@ public class AccountCurrency
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = AccountCurrency.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.CURRENCY.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = "AccountCurrencies";
+    public static final String LIST_NAME = MoneyWiseDataType.CURRENCY.getListName();
 
     /**
      * Report fields.
@@ -272,7 +272,7 @@ public class AccountCurrency
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCurrency.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

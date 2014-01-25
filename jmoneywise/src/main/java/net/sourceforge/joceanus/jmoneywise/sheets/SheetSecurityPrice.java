@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -188,6 +188,9 @@ public class SheetSecurityPrice
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final JDateDay pLastEvent) throws JOceanusException {
+        /* Access the list of prices */
+        SecurityPriceList myList = pData.getPrices();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -206,9 +209,6 @@ public class SheetSecurityPrice
             int myRows = myView.getRowCount();
             int myCols = myView.getColumnCount();
             int myTotal = (myRows - 1) * (myCols - 1);
-
-            /* Access the list of prices */
-            SecurityPriceList myList = pData.getPrices();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -270,7 +270,7 @@ public class SheetSecurityPrice
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Prices", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

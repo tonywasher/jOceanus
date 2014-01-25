@@ -26,18 +26,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Portfolio Bucket.
@@ -57,7 +58,7 @@ public final class PortfolioBucket
     /**
      * Portfolio Field Id.
      */
-    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
+    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * Base Field Id.
@@ -109,8 +110,8 @@ public final class PortfolioBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -134,8 +135,8 @@ public final class PortfolioBucket
      */
     public String getName() {
         return (thePortfolio == null)
-                ? NAME_TOTALS
-                : thePortfolio.getName();
+                                     ? NAME_TOTALS
+                                     : thePortfolio.getName();
     }
 
     @Override
@@ -189,8 +190,8 @@ public final class PortfolioBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -368,10 +369,7 @@ public final class PortfolioBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

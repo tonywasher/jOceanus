@@ -89,17 +89,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataControlKeys"));
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.CONTROLKEY.getListName());
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDataKeys"));
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.DATAKEY.getListName());
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataControlData"));
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(CryptographyDataType.CONTROLDATA.getListName());
 
     @Override
     public JDataFields getDataFields() {
@@ -979,6 +979,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
          */
         private String theName;
 
+        /**
+         * The list name.
+         */
+        private String theListName;
+
         @Override
         public String toString() {
             /* If we have not yet loaded the name */
@@ -989,6 +994,29 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* return the name */
             return theName;
+        }
+
+        /**
+         * Obtain name of item
+         * @return the item name
+         */
+        public String getItemName() {
+            return toString();
+        }
+
+        /**
+         * Obtain name of associated list
+         * @return the list name
+         */
+        public String getListName() {
+            /* If we have not yet loaded the name */
+            if (theListName == null) {
+                /* Load the name */
+                theListName = NLS_BUNDLE.getString("list" + name());
+            }
+
+            /* return the list name */
+            return theListName;
         }
     }
 }

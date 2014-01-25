@@ -26,12 +26,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -39,8 +40,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValue
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Account Category Bucket.
@@ -60,12 +61,12 @@ public final class AccountCategoryBucket
     /**
      * Account Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.ACCOUNTCATEGORY.getItemName());
 
     /**
      * Category Type Field Id.
      */
-    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.ACCOUNTTYPE.getItemName());
 
     /**
      * Base Field Id.
@@ -120,8 +121,8 @@ public final class AccountCategoryBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -206,8 +207,8 @@ public final class AccountCategoryBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -302,14 +303,14 @@ public final class AccountCategoryBucket
 
             /* This is a payee */
             return (myClass.isSubTotal())
-                    ? CategoryType.SUBTOTAL
-                    : CategoryType.PAYEE;
+                                         ? CategoryType.SUBTOTAL
+                                         : CategoryType.PAYEE;
         }
 
         /* Return creditCard/Money */
         return (myClass == AccountCategoryClass.CREDITCARD)
-                ? CategoryType.CREDITCARD
-                : CategoryType.MONEY;
+                                                           ? CategoryType.CREDITCARD
+                                                           : CategoryType.MONEY;
     }
 
     /**
@@ -409,10 +410,7 @@ public final class AccountCategoryBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**
@@ -487,8 +485,8 @@ public final class AccountCategoryBucket
             /* Obtain the totals category */
             AccountCategory myTotals = theData.getAccountCategories().getSingularClass(AccountCategoryClass.TOTALS);
             return (myTotals == null)
-                    ? null
-                    : new AccountCategoryBucket(myTotals);
+                                     ? null
+                                     : new AccountCategoryBucket(myTotals);
         }
 
         /**

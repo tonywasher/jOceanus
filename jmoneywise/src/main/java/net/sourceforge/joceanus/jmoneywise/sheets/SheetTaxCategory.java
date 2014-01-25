@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -133,6 +133,9 @@ public class SheetTaxCategory
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of tax categories */
+        TaxCategoryList myList = pData.getTaxCategories();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -149,9 +152,6 @@ public class SheetTaxCategory
 
             /* Count the number of TaxCategories */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of tax categories */
-            TaxCategoryList myList = pData.getTaxCategories();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -179,7 +179,7 @@ public class SheetTaxCategory
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Tax Buckets", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

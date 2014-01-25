@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.data;
+package net.sourceforge.joceanus.jmoneywise;
 
 import java.util.ResourceBundle;
 
@@ -183,6 +183,11 @@ public enum MoneyWiseDataType {
      */
     private String theName;
 
+    /**
+     * The List name.
+     */
+    private String theListName;
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -193,5 +198,28 @@ public enum MoneyWiseDataType {
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain name of item
+     * @return the item name
+     */
+    public String getItemName() {
+        return toString();
+    }
+
+    /**
+     * Obtain name of associated list
+     * @return the list name
+     */
+    public String getListName() {
+        /* If we have not yet loaded the name */
+        if (theListName == null) {
+            /* Load the name */
+            theListName = NLS_BUNDLE.getString("list" + name());
+        }
+
+        /* return the list name */
+        return theListName;
     }
 }

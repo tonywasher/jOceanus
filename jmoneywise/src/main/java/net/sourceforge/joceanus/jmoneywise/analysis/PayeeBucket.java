@@ -26,21 +26,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * The Payee Bucket class.
@@ -65,7 +66,7 @@ public final class PayeeBucket
     /**
      * Payee Field Id.
      */
-    private static final JDataField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPayee"));
+    private static final JDataField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.PAYEE.getItemName());
 
     /**
      * Base Field Id.
@@ -143,8 +144,8 @@ public final class PayeeBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -168,8 +169,8 @@ public final class PayeeBucket
      */
     public String getName() {
         return (thePayee == null)
-                ? NAME_TOTALS
-                : thePayee.getName();
+                                 ? NAME_TOTALS
+                                 : thePayee.getName();
     }
 
     /**
@@ -285,8 +286,8 @@ public final class PayeeBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -462,8 +463,7 @@ public final class PayeeBucket
 
         /* If there is a non-zero TaxCredit */
         JMoney myTaxCred = pEvent.getTaxCredit();
-        if ((myTaxCred != null)
-            && (myTaxCred.isNonZero())) {
+        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (myIncome == null) {
                 myIncome = getNewIncome();
@@ -473,8 +473,7 @@ public final class PayeeBucket
 
         /* If there is National Insurance */
         JMoney myNatIns = pEvent.getNatInsurance();
-        if ((myNatIns != null)
-            && (myNatIns.isNonZero())) {
+        if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
             if (myIncome == null) {
                 myIncome = getNewIncome();
@@ -553,8 +552,7 @@ public final class PayeeBucket
 
         /* Adjust for Tax credit */
         JMoney myTaxCred = pEvent.getTaxCredit();
-        if ((myTaxCred != null)
-            && (myTaxCred.isNonZero())) {
+        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             myExpense = getNewExpense();
             myExpense.addAmount(myTaxCred);
         }
@@ -770,8 +768,7 @@ public final class PayeeBucket
         public boolean isActive() {
             JMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
             JMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
-            return (myIncome.isNonZero())
-                   || (myExpense.isNonZero());
+            return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
 
@@ -794,10 +791,7 @@ public final class PayeeBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

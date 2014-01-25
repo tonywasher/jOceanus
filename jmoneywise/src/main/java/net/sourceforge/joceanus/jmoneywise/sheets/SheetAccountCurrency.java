@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -167,6 +167,9 @@ public class SheetAccountCurrency
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of account currencies */
+        AccountCurrencyList myList = pData.getAccountCurrencies();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -183,9 +186,6 @@ public class SheetAccountCurrency
 
             /* Count the number of AccountCurrencies */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of account currencies */
-            AccountCurrencyList myList = pData.getAccountCurrencies();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -216,7 +216,7 @@ public class SheetAccountCurrency
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Account Currencies", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

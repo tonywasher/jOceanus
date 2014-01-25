@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -134,6 +134,9 @@ public class SheetFrequency
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of frequencies */
+        FrequencyList myList = pData.getFrequencys();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -150,9 +153,6 @@ public class SheetFrequency
 
             /* Count the number of Frequencies */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of frequencies */
-            FrequencyList myList = pData.getFrequencys();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -180,7 +180,7 @@ public class SheetFrequency
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to load Frequencies", e);
+            throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
@@ -78,12 +79,12 @@ public class AccountSelect
     /**
      * Text for AccountCategory Label.
      */
-    private static final String NLS_TYPE = NLS_BUNDLE.getString("AccountCategory");
+    private static final String NLS_TYPE = MoneyWiseDataType.ACCOUNTCATEGORY.getItemName() + ":";
 
     /**
      * Text for Account Label.
      */
-    private static final String NLS_ACCOUNT = NLS_BUNDLE.getString("Account");
+    private static final String NLS_ACCOUNT = MoneyWiseDataType.ACCOUNT.getItemName() + ":";
 
     /**
      * Text for Show Closed.
@@ -261,8 +262,8 @@ public class AccountSelect
     public void restoreSavePoint() {
         /* Restore the savePoint */
         theState = (theSavePoint == null)
-                ? new AccountState()
-                : new AccountState(theSavePoint);
+                                         ? new AccountState()
+                                         : new AccountState(theSavePoint);
 
         /* Build the range and apply the state */
         buildAccountTypes();
@@ -329,14 +330,12 @@ public class AccountSelect
             }
 
             /* Skip deleted items */
-            if ((!doShowDeleted)
-                && (myAccount.isDeleted())) {
+            if ((!doShowDeleted) && (myAccount.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed)
-                && (myAccount.isClosed())) {
+            if ((!doShowClosed) && (myAccount.isClosed())) {
                 continue;
             }
 
@@ -365,14 +364,12 @@ public class AccountSelect
             }
 
             /* Skip deleted items */
-            if ((!doShowDeleted)
-                && (myAccount.isDeleted())) {
+            if ((!doShowDeleted) && (myAccount.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed)
-                && (myAccount.isClosed())) {
+            if ((!doShowClosed) && (myAccount.isClosed())) {
                 continue;
             }
 
@@ -436,8 +433,7 @@ public class AccountSelect
         /* If we have a selected item */
         if (mySelected != null) {
             /* Check its validity */
-            boolean isInvalid = (!doShowDeleted)
-                                && (mySelected.isDeleted());
+            boolean isInvalid = (!doShowDeleted) && (mySelected.isDeleted());
             isInvalid |= ((!doShowClosed) && (mySelected.isClosed()));
             isInvalid |= (myCategory.compareTo(mySelected.getAccountCategory()) != 0);
 
@@ -457,14 +453,12 @@ public class AccountSelect
         while (myIterator.hasNext()) {
             Account myAcct = myIterator.next();
             /* Skip deleted items */
-            if ((!doShowDeleted)
-                && (myAcct.isDeleted())) {
+            if ((!doShowDeleted) && (myAcct.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed)
-                && (myAcct.isClosed())) {
+            if ((!doShowClosed) && (myAcct.isClosed())) {
                 continue;
             }
 
@@ -519,18 +513,14 @@ public class AccountSelect
         theCategoriesBox.setSelectedItem(getCategory());
 
         /* If we need to show closed items */
-        if ((!doShowClosed())
-            && (myAccount != null)
-            && (myAccount.isClosed())) {
+        if ((!doShowClosed()) && (myAccount != null) && (myAccount.isClosed())) {
             /* Set the flag correctly */
             theState.setDoShowClosed(true);
             theShowClosed.setSelected(true);
         }
 
         /* If we need to show deleted items */
-        if ((!doShowDeleted())
-            && (myAccount != null)
-            && (myAccount.isDeleted())) {
+        if ((!doShowDeleted()) && (myAccount != null) && (myAccount.isDeleted())) {
             /* Set the flag correctly */
             theState.setDoShowDeleted(true);
             theShowDeleted.setSelected(true);
@@ -580,8 +570,7 @@ public class AccountSelect
             }
 
             /* If this event relates to the categories box */
-            if ((theCategoriesBox.equals(o))
-                && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((theCategoriesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new category and rebuild account list */
                 AccountCategory myCategory = (AccountCategory) evt.getItem();
                 if (theState.setCategory(myCategory)) {
@@ -591,8 +580,7 @@ public class AccountSelect
                 }
 
                 /* If this event relates to the account box */
-            } else if ((theAccountBox.equals(o))
-                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            } else if ((theAccountBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new account */
                 Account myAcct = (Account) evt.getItem();
                 if (theState.setSelected(myAcct)) {
@@ -600,15 +588,13 @@ public class AccountSelect
                 }
 
                 /* If this event relates to the showClosed box */
-            } else if ((theShowClosed.equals(o))
-                       && (theState.setDoShowClosed(theShowClosed.isSelected()))) {
+            } else if ((theShowClosed.equals(o)) && (theState.setDoShowClosed(theShowClosed.isSelected()))) {
                 /* Build lists */
                 buildAccountTypes();
                 buildAccounts();
 
                 /* If this event relates to the showDeleted box */
-            } else if ((theShowDeleted.equals(o))
-                       && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
                 /* Build lists */
                 buildAccountTypes();
                 buildAccounts();
@@ -751,11 +737,11 @@ public class AccountSelect
             theShowClosed.setSelected(doShowClosed);
             theShowDeleted.setSelected(doShowDeleted);
             theCategoriesBox.setSelectedItem((theCategory == null)
-                    ? null
-                    : theCategory.getName());
+                                                                  ? null
+                                                                  : theCategory.getName());
             theAccountBox.setSelectedItem((theSelected == null)
-                    ? null
-                    : theSelected.getName());
+                                                               ? null
+                                                               : theSelected.getName());
         }
     }
 }

@@ -27,7 +27,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -38,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -62,19 +62,14 @@ public class SecurityAnalysisSelect
     private static final long serialVersionUID = -7059807216968295408L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityAnalysisSelect.class.getName());
-
-    /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORTFOLIO = NLS_BUNDLE.getString("Portfolio");
+    private static final String NLS_PORTFOLIO = MoneyWiseDataType.PORTFOLIO.getItemName();
 
     /**
      * Text for Security Label.
      */
-    private static final String NLS_SECURITY = NLS_BUNDLE.getString("Security");
+    private static final String NLS_SECURITY = MoneyWiseDataType.SECURITY.getItemName();
 
     /**
      * The active portfolio bucket list.
@@ -113,8 +108,7 @@ public class SecurityAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (theSecurities != null)
-               && !theSecurities.isEmpty();
+        return (theSecurities != null) && !theSecurities.isEmpty();
     }
 
     /**
@@ -179,8 +173,7 @@ public class SecurityAnalysisSelect
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Securities to select */
-        boolean secAvailable = bEnabled
-                               && isAvailable();
+        boolean secAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theSecButton.setEnabled(secAvailable);
@@ -206,13 +199,12 @@ public class SecurityAnalysisSelect
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((mySecurity == null)
-            && (!theSecurities.isEmpty())) {
+        if ((mySecurity == null) && (!theSecurities.isEmpty())) {
             /* Check for a security in the same portfolio */
             Account myPortfolio = theState.getPortfolio();
             PortfolioBucket myPortBucket = (myPortfolio == null)
-                    ? null
-                    : thePortfolios.findItemById(myPortfolio.getId());
+                                                                ? null
+                                                                : thePortfolios.findItemById(myPortfolio.getId());
 
             /* If the portfolio no longer exists */
             if (myPortBucket == null) {
@@ -505,8 +497,8 @@ public class SecurityAnalysisSelect
 
                 /* Access portfolio for security */
                 thePortfolio = (theSecurity == null)
-                        ? null
-                        : theSecurity.getPortfolio();
+                                                    ? null
+                                                    : theSecurity.getPortfolio();
 
                 /* We have changed */
                 return true;
@@ -536,11 +528,11 @@ public class SecurityAnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theSecButton.setText((theSecurity == null)
-                    ? null
-                    : theSecurity.getName());
+                                                      ? null
+                                                      : theSecurity.getName());
             thePortButton.setText((thePortfolio == null)
-                    ? null
-                    : thePortfolio.getName());
+                                                        ? null
+                                                        : thePortfolio.getName());
         }
     }
 }

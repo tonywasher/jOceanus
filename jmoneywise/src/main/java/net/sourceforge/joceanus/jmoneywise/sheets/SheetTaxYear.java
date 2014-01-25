@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
@@ -234,6 +234,10 @@ public class SheetTaxYear
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final YearRange pRange) throws JOceanusException {
+        /* Access the lists */
+        TaxYearList myList = pData.getTaxYears();
+        TaxInfoList myInfoList = pData.getTaxInfo();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -250,10 +254,6 @@ public class SheetTaxYear
 
             /* Count the number of TaxYears */
             int myTotal = myView.getColumnCount();
-
-            /* Access the lists */
-            TaxYearList myList = pData.getTaxYears();
-            TaxInfoList myInfoList = pData.getTaxInfo();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -382,7 +382,7 @@ public class SheetTaxYear
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load TaxYears", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

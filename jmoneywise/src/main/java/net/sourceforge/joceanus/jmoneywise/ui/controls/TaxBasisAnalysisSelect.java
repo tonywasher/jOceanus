@@ -27,7 +27,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -39,6 +38,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
@@ -59,14 +59,9 @@ public class TaxBasisAnalysisSelect
     private static final long serialVersionUID = 2653125674925955281L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxBasisAnalysisSelect.class.getName());
-
-    /**
      * Text for TaxBasis Label.
      */
-    private static final String NLS_BASIS = NLS_BUNDLE.getString("TaxBasis");
+    private static final String NLS_BASIS = MoneyWiseDataType.TAXBASIS.getItemName();
 
     /**
      * The active tax basis bucket list.
@@ -95,8 +90,7 @@ public class TaxBasisAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (theTaxBases != null)
-               && !theTaxBases.isEmpty();
+        return (theTaxBases != null) && !theTaxBases.isEmpty();
     }
 
     /**
@@ -149,8 +143,7 @@ public class TaxBasisAnalysisSelect
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Pass call on to button */
-        theButton.setEnabled(bEnabled
-                             && isAvailable());
+        theButton.setEnabled(bEnabled && isAvailable());
     }
 
     /**
@@ -171,8 +164,7 @@ public class TaxBasisAnalysisSelect
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myBasis == null)
-            && (!theTaxBases.isEmpty())) {
+        if ((myBasis == null) && (!theTaxBases.isEmpty())) {
             /* Use the first bucket */
             myBasis = theTaxBases.peekFirst();
         }
@@ -330,8 +322,8 @@ public class TaxBasisAnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theButton.setText((theBasis == null)
-                    ? null
-                    : theBasis.getName());
+                                                ? null
+                                                : theBasis.getName());
         }
     }
 }

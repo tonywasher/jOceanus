@@ -53,17 +53,17 @@ public class ControlData
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = ControlData.class.getSimpleName();
+    public static final String OBJECT_NAME = CryptographyDataType.CONTROLDATA.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME;
+    public static final String LIST_NAME = CryptographyDataType.CONTROLDATA.getListName();
 
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -78,7 +78,7 @@ public class ControlData
     /**
      * Field ID for Control Key.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataKey"));
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(CryptographyDataType.CONTROLKEY.getItemName());
 
     /**
      * Error message for already exists.
@@ -291,7 +291,7 @@ public class ControlData
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

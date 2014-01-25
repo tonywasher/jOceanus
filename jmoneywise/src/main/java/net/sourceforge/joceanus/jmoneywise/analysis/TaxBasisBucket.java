@@ -26,14 +26,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountType;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
@@ -41,8 +40,10 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * The TaxBasis Bucket class.
@@ -67,7 +68,7 @@ public final class TaxBasisBucket
     /**
      * Tax Basis Field Id.
      */
-    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataBasis"));
+    private static final JDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
 
     /**
      * Base Field Id.
@@ -115,8 +116,8 @@ public final class TaxBasisBucket
             Object myValue = getAttributeValue(myClass);
             if (myValue instanceof JDecimal) {
                 return ((JDecimal) myValue).isNonZero()
-                        ? myValue
-                        : JDataFieldValue.SKIP;
+                                                       ? myValue
+                                                       : JDataFieldValue.SKIP;
             }
             return myValue;
         }
@@ -170,8 +171,8 @@ public final class TaxBasisBucket
      */
     public String getName() {
         return (theTaxBasis == null)
-                ? NAME_TOTALS
-                : theTaxBasis.getName();
+                                    ? NAME_TOTALS
+                                    : theTaxBasis.getName();
     }
 
     /**
@@ -283,8 +284,8 @@ public final class TaxBasisBucket
 
         /* Return the value */
         return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SKIP;
+                                ? myValue
+                                : JDataFieldValue.SKIP;
     }
 
     /**
@@ -444,8 +445,7 @@ public final class TaxBasisBucket
             myNet.addAmount(myAmount);
 
             /* If we have a tax credit */
-            if ((myTaxCredit != null)
-                && (myTaxCredit.isNonZero())) {
+            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
                 /* Adjust the tax */
                 JMoney myTax = theValues.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
                 myTax = new JMoney(myTax);
@@ -457,22 +457,19 @@ public final class TaxBasisBucket
             }
 
             /* If we have a natInsurance payment */
-            if ((myNatIns != null)
-                && (myNatIns.isNonZero())) {
+            if ((myNatIns != null) && (myNatIns.isNonZero())) {
                 /* Adjust the gross */
                 myGross.addAmount(myNatIns);
             }
 
             /* If we have a Benefit payment */
-            if ((myBenefit != null)
-                && (myBenefit.isNonZero())) {
+            if ((myBenefit != null) && (myBenefit.isNonZero())) {
                 /* Adjust the gross */
                 myGross.addAmount(myBenefit);
             }
 
             /* If we have a Charity donation */
-            if ((myDonation != null)
-                && (myDonation.isNonZero())) {
+            if ((myDonation != null) && (myDonation.isNonZero())) {
                 /* Adjust the gross */
                 myGross.addAmount(myDonation);
             }
@@ -656,9 +653,7 @@ public final class TaxBasisBucket
             JMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
             JMoney myNet = getMoneyValue(TaxBasisAttribute.NET);
             JMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-            return (myGross.isNonZero())
-                   || (myNet.isNonZero())
-                   || (myTax.isNonZero());
+            return (myGross.isNonZero()) || (myNet.isNonZero()) || (myTax.isNonZero());
         }
     }
 
@@ -681,10 +676,7 @@ public final class TaxBasisBucket
 
         @Override
         public String formatObject() {
-            return getDataFields().getName()
-                   + "("
-                   + size()
-                   + ")";
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

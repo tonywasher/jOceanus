@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
@@ -55,12 +56,12 @@ public class Security
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = Security.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.SECURITY.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = "Securities";
+    public static final String LIST_NAME = MoneyWiseDataType.SECURITY.getListName();
 
     /**
      * Symbol length.
@@ -75,12 +76,12 @@ public class Security
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSecName"));
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Description Field Id.
@@ -90,7 +91,7 @@ public class Security
     /**
      * SecurityType Field Id.
      */
-    public static final JDataField FIELD_SECTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSecType"));
+    public static final JDataField FIELD_SECTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Parent Field Id.
@@ -105,7 +106,7 @@ public class Security
     /**
      * Currency Field Id.
      */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCurrency"));
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * isClosed Field Id.
@@ -1066,7 +1067,7 @@ public class Security
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

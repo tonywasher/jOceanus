@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
@@ -66,7 +67,7 @@ public class TaxYearSelect
     /**
      * Text for Selection Title.
      */
-    private static final String NLS_YEAR = NLS_BUNDLE.getString("SelectYear");
+    private static final String NLS_YEAR = MoneyWiseDataType.TAXYEAR.getItemName() + ":";
 
     /**
      * Text for Selection Title.
@@ -229,8 +230,7 @@ public class TaxYearSelect
             TaxYear myYear = myYearIterator.previous();
 
             /* If the year is not deleted */
-            if ((!doShowDeleted())
-                && (myYear.isDeleted())) {
+            if ((!doShowDeleted()) && (myYear.isDeleted())) {
                 continue;
             }
 
@@ -275,8 +275,7 @@ public class TaxYearSelect
             }
 
             /* If this event relates to the years box */
-            if ((theYearsBox.equals(o))
-                && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new year and notify the change */
                 TaxYear myYear = (TaxYear) evt.getItem();
                 if (theState.setTaxYear(myYear)) {
@@ -284,8 +283,7 @@ public class TaxYearSelect
                 }
 
                 /* If this event relates to the showDeleted box */
-            } else if ((theShowDeleted.equals(o))
-                       && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
                 /* Rebuild lists */
                 refreshData();
             }

@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -40,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket;
@@ -66,19 +66,14 @@ public class AccountAnalysisSelect
     private static final long serialVersionUID = 2264147825388154486L;
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountAnalysisSelect.class.getName());
-
-    /**
      * Text for Category Label.
      */
-    private static final String NLS_CATEGORY = NLS_BUNDLE.getString("Category");
+    private static final String NLS_CATEGORY = MoneyWiseDataType.ACCOUNTCATEGORY.getItemName();
 
     /**
      * Text for Account Label.
      */
-    private static final String NLS_ACCOUNT = NLS_BUNDLE.getString("Account");
+    private static final String NLS_ACCOUNT = MoneyWiseDataType.ACCOUNT.getItemName();
 
     /**
      * The active category bucket list.
@@ -117,8 +112,7 @@ public class AccountAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (theAccounts != null)
-               && !theAccounts.isEmpty();
+        return (theAccounts != null) && !theAccounts.isEmpty();
     }
 
     /**
@@ -183,8 +177,7 @@ public class AccountAnalysisSelect
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Accounts to select */
-        boolean acAvailable = bEnabled
-                              && isAvailable();
+        boolean acAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theAccountButton.setEnabled(acAvailable);
@@ -210,13 +203,12 @@ public class AccountAnalysisSelect
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myAccount == null)
-            && (!theAccounts.isEmpty())) {
+        if ((myAccount == null) && (!theAccounts.isEmpty())) {
             /* Check for an account in the same category */
             AccountCategory myCategory = theState.getCategory();
             AccountCategoryBucket myCatBucket = (myCategory == null)
-                    ? null
-                    : theCategories.findItemById(myCategory.getId());
+                                                                    ? null
+                                                                    : theCategories.findItemById(myCategory.getId());
 
             /* If the category no longer exists */
             if (myCatBucket == null) {
@@ -330,8 +322,7 @@ public class AccountAnalysisSelect
 
                 /* Only process low-level items */
                 AccountCategoryClass myClass = myBucket.getAccountCategory().getCategoryTypeClass();
-                if (myClass.canParentAccount()
-                    || myClass.isParentCategory()) {
+                if (myClass.canParentAccount() || myClass.isParentCategory()) {
                     continue;
                 }
 
@@ -525,8 +516,8 @@ public class AccountAnalysisSelect
 
                 /* Access category for account */
                 theCategory = (theAccount == null)
-                        ? null
-                        : theAccount.getAccountCategory();
+                                                  ? null
+                                                  : theAccount.getAccountCategory();
 
                 /* We have changed */
                 return true;
@@ -556,11 +547,11 @@ public class AccountAnalysisSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theAccountButton.setText((theAccount == null)
-                    ? null
-                    : theAccount.getName());
+                                                         ? null
+                                                         : theAccount.getName());
             theCatButton.setText((theCategory == null)
-                    ? null
-                    : theCategory.getName());
+                                                      ? null
+                                                      : theCategory.getName());
         }
     }
 }

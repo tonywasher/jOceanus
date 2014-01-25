@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -85,7 +86,7 @@ public class SpotSelect
     /**
      * Text for Portfolio Label.
      */
-    private static final String NLS_PORT = NLS_BUNDLE.getString("SelectPortfolio");
+    private static final String NLS_PORT = MoneyWiseDataType.PORTFOLIO.getItemName() + ":";
 
     /**
      * Text for Show Closed.
@@ -286,8 +287,7 @@ public class SpotSelect
         }
 
         /* If we do not have an active portfolio and the list is non-empty */
-        if ((myPortfolio == null)
-            && (!theAccounts.isEmpty())) {
+        if ((myPortfolio == null) && (!theAccounts.isEmpty())) {
             /* Access the first portfolio */
             myPortfolio = getFirstPortfolio();
         }
@@ -329,11 +329,11 @@ public class SpotSelect
      */
     public final void setRange(final JDateDayRange pRange) {
         JDateDay myStart = (pRange == null)
-                ? null
-                : pRange.getStart();
+                                           ? null
+                                           : pRange.getStart();
         JDateDay myEnd = (pRange == null)
-                ? null
-                : pRange.getEnd();
+                                         ? null
+                                         : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -342,10 +342,8 @@ public class SpotSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        theNext.setEnabled(bEnabled
-                           && (theState.getNextDate() != null));
-        thePrev.setEnabled(bEnabled
-                           && (theState.getPrevDate() != null));
+        theNext.setEnabled(bEnabled && (theState.getNextDate() != null));
+        thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
         thePortButton.setEnabled(bEnabled);
     }
@@ -410,8 +408,7 @@ public class SpotSelect
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if ((theDateButton.equals(evt.getSource()))
-                && (theState.setDate(theDateButton))) {
+            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
                 fireStateChanged();
             }
         }
@@ -659,8 +656,8 @@ public class SpotSelect
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
             thePortButton.setText((thePortfolio == null)
-                    ? null
-                    : thePortfolio.getName());
+                                                        ? null
+                                                        : thePortfolio.getName());
         }
     }
 }

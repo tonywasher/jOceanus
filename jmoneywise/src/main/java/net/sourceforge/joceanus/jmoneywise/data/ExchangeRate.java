@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -51,12 +52,12 @@ public final class ExchangeRate
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = ExchangeRate.class.getSimpleName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.EXCHANGERATE.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = MoneyWiseDataType.EXCHANGERATE.getListName();
 
     /**
      * Resource Bundle.
@@ -66,7 +67,7 @@ public final class ExchangeRate
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME);
 
     /**
      * Date Field Id.
@@ -628,7 +629,7 @@ public final class ExchangeRate
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         /**
          * Default Field Id.

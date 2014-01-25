@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -134,6 +134,9 @@ public class SheetTaxRegime
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of tax regimes */
+        TaxRegimeList myList = pData.getTaxRegimes();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -150,9 +153,6 @@ public class SheetTaxRegime
 
             /* Count the number of TaxRegimes */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of tax regimes */
-            TaxRegimeList myList = pData.getTaxRegimes();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -180,7 +180,7 @@ public class SheetTaxRegime
 
             /* Handle Exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to load Tax Regimes", e);
+            throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

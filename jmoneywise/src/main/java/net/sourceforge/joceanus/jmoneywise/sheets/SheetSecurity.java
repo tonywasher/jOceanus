@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -244,6 +244,9 @@ public class SheetSecurity
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of securities */
+        SecurityList myList = pData.getSecurities();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -260,9 +263,6 @@ public class SheetSecurity
 
             /* Count the number of securities */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of securities */
-            SecurityList myList = pData.getSecurities();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -320,7 +320,7 @@ public class SheetSecurity
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Securities", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */

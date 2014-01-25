@@ -27,13 +27,13 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -289,6 +289,10 @@ public class SheetAccount
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
+        /* Access the list of accounts */
+        AccountList myList = pData.getAccounts();
+        AccountInfoList myInfoList = pData.getAccountInfo();
+
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -305,10 +309,6 @@ public class SheetAccount
 
             /* Count the number of accounts */
             int myTotal = myView.getRowCount();
-
-            /* Access the list of accounts */
-            AccountList myList = pData.getAccounts();
-            AccountInfoList myInfoList = pData.getAccountInfo();
 
             /* Declare the number of steps (*2) */
             if (!pTask.setNumSteps(myTotal << 1)) {
@@ -457,7 +457,7 @@ public class SheetAccount
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load Accounts", e);
+            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
 
         /* Return to caller */
