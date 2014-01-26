@@ -82,6 +82,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
+     * Locked Field Id.
+     */
+    public static final JDataField FIELD_LOCKED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLocked"));
+
+    /**
      * Security Field Id.
      */
     public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurity"));
@@ -116,6 +121,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
         if (FIELD_VERSION.equals(pField)) {
             return theVersion;
+        }
+        if (FIELD_LOCKED.equals(pField)) {
+            return isLocked
+                           ? isLocked
+                           : JDataFieldValue.SKIP;
         }
         if (FIELD_SECURITY.equals(pField)) {
             return theSecurity;
@@ -189,6 +199,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     private int theVersion = 0;
 
     /**
+     * Is the DataSet locked to touches?
+     */
+    private Boolean isLocked = Boolean.TRUE;
+
+    /**
      * The DataList Map.
      */
     private final Map<E, DataList<?, E>> theListMap;
@@ -260,6 +275,24 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public int getVersion() {
         return theVersion;
+    }
+
+    /**
+     * Is the dataSet locked to touches.
+     * @return true/false
+     */
+    public Boolean isLocked() {
+        return isLocked;
+    }
+
+    /**
+     * Set the dataSet touch lock.
+     * @param pLocked set lock true/false
+     */
+    protected void setLocked(final boolean pLocked) {
+        isLocked = pLocked
+                          ? Boolean.TRUE
+                          : Boolean.FALSE;
     }
 
     /**

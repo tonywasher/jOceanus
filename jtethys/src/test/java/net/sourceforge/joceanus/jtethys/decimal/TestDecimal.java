@@ -39,6 +39,15 @@ public final class TestDecimal {
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
+        /* run the test */
+        testDecimal();
+    }
+
+    /**
+     * Main test.
+     * @return a monetary value
+     */
+    private static JMoney testDecimal() {
         /* Create the required presentation formatter and parser */
         JDecimalParser myParser = new JDecimalParser();
         JDecimalFormatter myFormatter = new JDecimalFormatter();
@@ -77,5 +86,8 @@ public final class TestDecimal {
         /* Set to null */
         myFormat.trim();
         myPrice.setZero();
+
+        /* Use otherwise dead variables */
+        return myMoney.valueAtRate(myRate);
     }
 }

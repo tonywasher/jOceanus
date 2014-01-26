@@ -659,13 +659,13 @@ public abstract class AccountBase
     }
 
     /**
-     * Determines whether an account is savings.
+     * Determines whether an account is deposit.
      * @return savings true/false
      */
-    public boolean isSavings() {
+    public boolean isDeposit() {
         /* Check for units */
         AccountCategory myCat = getAccountCategory();
-        return (myCat != null) && (myCat.getCategoryTypeClass().isSavings());
+        return (myCat != null) && (myCat.getCategoryTypeClass().isDeposit());
     }
 
     /**

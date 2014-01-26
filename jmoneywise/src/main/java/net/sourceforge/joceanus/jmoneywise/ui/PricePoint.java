@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -166,29 +165,24 @@ public class PricePoint
     }
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PricePoint.class.getName());
-
-    /**
      * The Asset column name.
      */
-    private static final String TITLE_ASSET = NLS_BUNDLE.getString("TitleAsset");
+    private static final String TITLE_ASSET = SpotPrice.FIELD_SECURITY.getName();
 
     /**
      * The Price column name.
      */
-    private static final String TITLE_PRICE = NLS_BUNDLE.getString("TitlePrice");
+    private static final String TITLE_PRICE = SpotPrice.FIELD_PRICE.getName();
 
     /**
      * The previous price column name.
      */
-    private static final String TITLE_PREVPRICE = NLS_BUNDLE.getString("TitlePrevPrice");
+    private static final String TITLE_PREVPRICE = SpotPrice.FIELD_PREVPRICE.getName();
 
     /**
      * The previous date column name.
      */
-    private static final String TITLE_PREVDATE = NLS_BUNDLE.getString("TitlePrevDate");
+    private static final String TITLE_PREVDATE = SpotPrice.FIELD_PREVDATE.getName();
 
     /**
      * The Asset column id.

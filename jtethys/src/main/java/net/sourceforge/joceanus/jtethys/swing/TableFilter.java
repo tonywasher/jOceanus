@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
@@ -136,8 +137,7 @@ public class TableFilter<T extends Comparable<? super T>>
          * @return negative,0,positive as per the order
          */
         public int compareReference(final RowEntry<X> pThat) {
-            return theReference
-                   - pThat.theReference;
+            return theReference - pThat.theReference;
         }
     }
 
@@ -305,8 +305,7 @@ public class TableFilter<T extends Comparable<? super T>>
     @Override
     public int convertRowIndexToModel(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0)
-            || (pIndex >= getViewRowCount())) {
+        if ((pIndex < 0) || (pIndex >= getViewRowCount())) {
             throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
@@ -317,8 +316,7 @@ public class TableFilter<T extends Comparable<? super T>>
     @Override
     public int convertRowIndexToView(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0)
-            || (pIndex >= getModelRowCount())) {
+        if ((pIndex < 0) || (pIndex >= getModelRowCount())) {
             throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
@@ -360,9 +358,7 @@ public class TableFilter<T extends Comparable<? super T>>
         int iIndex;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pEndRow >= iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0) || (pEndRow >= iNumRows) || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
@@ -384,11 +380,8 @@ public class TableFilter<T extends Comparable<? super T>>
         }
 
         /* Compress the ModelToView array */
-        int iNumTrailing = iNumRows
-                           - pEndRow
-                           - 1;
-        int iNewLen = pFirstRow
-                      + iNumTrailing;
+        int iNumTrailing = iNumRows - pEndRow - 1;
+        int iNewLen = pFirstRow + iNumTrailing;
         if (iNumTrailing > 0) {
             /* Shift entries in the map down */
             System.arraycopy(theModelToView, pEndRow + 1, theModelToView, pFirstRow, iNumTrailing);
@@ -425,24 +418,19 @@ public class TableFilter<T extends Comparable<? super T>>
         int iNumRows = getModelRowCount();
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pFirstRow > iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0) || (pFirstRow > iNumRows) || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
         /* Determine the number of rows that we are inserting plus trailing entries */
         int iXtraLen = (pEndRow - pFirstRow) + 1;
-        int iNumTrailing = iNumRows
-                           - pFirstRow;
-        int iNewLen = iNumRows
-                      + iXtraLen;
+        int iNumTrailing = iNumRows - pFirstRow;
+        int iNewLen = iNumRows + iXtraLen;
         int iIndex;
 
         /* Adjust arrays to have space for new entries */
         theModelToView = Arrays.copyOf(theModelToView, iNewLen);
-        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length
-                                                                  + iXtraLen);
+        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length + iXtraLen);
 
         /* If we have trailing entries */
         if (iNumTrailing > 0) {
@@ -483,8 +471,7 @@ public class TableFilter<T extends Comparable<? super T>>
         }
 
         /* If we have hidden rows */
-        if (iView < theViewToModel.length
-                    + iXtraLen) {
+        if (iView < theViewToModel.length + iXtraLen) {
             /* Truncate the new mapping */
             newViewToModel = Arrays.copyOf(newViewToModel, iView);
         }
@@ -504,9 +491,7 @@ public class TableFilter<T extends Comparable<? super T>>
         int iNumRows = theModelToView.length;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pEndRow >= iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0) || (pEndRow >= iNumRows) || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
@@ -566,8 +551,7 @@ public class TableFilter<T extends Comparable<? super T>>
         }
 
         /* Sort the array */
-        viewChanged = sortViewToModel(newViewToModel)
-                      || viewChanged;
+        viewChanged = sortViewToModel(newViewToModel) || viewChanged;
 
         /* If we have changed */
         if (viewChanged) {
@@ -601,8 +585,7 @@ public class TableFilter<T extends Comparable<? super T>>
                             final int pEndRow,
                             final int pColumn) {
         /* Check valid column */
-        if ((pColumn < 0)
-            || (pColumn >= theModel.getColumnCount())) {
+        if ((pColumn < 0) || (pColumn >= theModel.getColumnCount())) {
             throw new IndexOutOfBoundsException("Invalid Column");
         }
 
@@ -649,8 +632,8 @@ public class TableFilter<T extends Comparable<? super T>>
     private boolean isCorrectOrder(final RowEntry<T> pFirst,
                                    final RowEntry<T> pSecond) {
         int iResult = (doSort)
-                ? pFirst.compareRow(pSecond)
-                : pFirst.compareReference(pSecond);
+                              ? pFirst.compareRow(pSecond)
+                              : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
 
@@ -776,6 +759,11 @@ public class TableFilter<T extends Comparable<? super T>>
 
         @Override
         public T next() {
+            /* Check correctness */
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
             /* Return the element */
             return theArray[theIndex++].theRow;
         }

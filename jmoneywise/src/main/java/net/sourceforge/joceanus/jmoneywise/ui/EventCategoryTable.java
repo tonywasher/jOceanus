@@ -85,7 +85,7 @@ public class EventCategoryTable
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = NLS_BUNDLE.getString("TitleName");
+    private static final String TITLE_NAME = EventCategory.FIELD_NAME.getName();
 
     /**
      * FullName Column Title.
@@ -95,12 +95,12 @@ public class EventCategoryTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = MoneyWiseDataType.EVENTCATEGORY.getItemName();
+    private static final String TITLE_CAT = EventCategory.FIELD_CATTYPE.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+    private static final String TITLE_DESC = EventCategory.FIELD_DESC.getName();
 
     /**
      * Active Column Title.
@@ -661,7 +661,7 @@ public class EventCategoryTable
                 case COLUMN_FULLNAME:
                     return EventCategory.FIELD_NAME;
                 case COLUMN_ACTIVE:
-                    return EventCategory.FIELD_ACTIVE;
+                    return EventCategory.FIELD_TOUCH;
                 default:
                     return null;
             }

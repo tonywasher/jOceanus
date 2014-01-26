@@ -358,7 +358,7 @@ public class AccountInfoSet
 
                 /* Handle OpeningBalance */
             case OPENINGBALANCE:
-                return myClass.isSavings()
+                return myClass.isDeposit()
                                           ? JDataFieldRequired.CANEXIST
                                           : JDataFieldRequired.NOTALLOWED;
 
@@ -513,8 +513,8 @@ public class AccountInfoSet
                     /* Access holding account */
                     Account myHolding = myInfo.getAccount();
 
-                    /* check that holding account is savings */
-                    if (!myHolding.isSavings()) {
+                    /* check that holding account is deposit */
+                    if (!myHolding.isDeposit()) {
                         myAccount.addError(ERROR_BADHOLD, getFieldForClass(myClass));
                     }
 

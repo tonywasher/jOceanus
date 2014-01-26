@@ -881,8 +881,8 @@ public abstract class EventBase
                 case TRANSFER:
                     /* Transfer must be to/from savings */
                     return (myDebitType.isAutoExpense())
-                                                        ? myCreditClass.isSavings()
-                                                        : myDebitClass.isSavings();
+                                                        ? myCreditClass.isDeposit()
+                                                        : myDebitClass.isDeposit();
                 case EXPENSE:
                     /* Transfer must be to/from nonAsset */
                     return (myDebitType.isAutoExpense())
@@ -916,8 +916,8 @@ public abstract class EventBase
                     return false;
                 }
 
-                /* Taxed income must be from employer to savings/loan (as expense) */
-                return (myDebitClass == AccountCategoryClass.EMPLOYER) && (myCreditClass.isSavings() || myCreditClass.isLoan());
+                /* Taxed income must be from employer to deposit/loan (as expense) */
+                return (myDebitClass == AccountCategoryClass.EMPLOYER) && (myCreditClass.isDeposit() || myCreditClass.isLoan());
 
             case GRANTINCOME:
                 /* Cannot refund Grant Income */
@@ -925,8 +925,8 @@ public abstract class EventBase
                     return false;
                 }
 
-                /* Grant income must be from grant-able to savings account */
-                return myDebitClass.canGrant() && myCreditClass.isSavings();
+                /* Grant income must be from grant-able to deposit account */
+                return myDebitClass.canGrant() && myCreditClass.isDeposit();
 
             case BENEFITINCOME:
                 /* Cannot refund Benefit Income */
@@ -934,12 +934,12 @@ public abstract class EventBase
                     return false;
                 }
 
-                /* Benefit income must be from government to savings account */
-                return (myDebitClass == AccountCategoryClass.GOVERNMENT) && myCreditClass.isSavings();
+                /* Benefit income must be from government to deposit account */
+                return (myDebitClass == AccountCategoryClass.GOVERNMENT) && myCreditClass.isDeposit();
 
             case OTHERINCOME:
-                /* Other income is from nonAsset to savings/loan */
-                return myDebitClass.isNonAsset() && (myCreditClass.isSavings() || myCreditClass.isLoan());
+                /* Other income is from nonAsset to deposit/loan */
+                return myDebitClass.isNonAsset() && (myCreditClass.isDeposit() || myCreditClass.isLoan());
 
             case GIFTEDINCOME:
             case INHERITED:
@@ -953,7 +953,7 @@ public abstract class EventBase
 
             case INTEREST:
                 /* Debit must be able to generate interest */
-                if (!myDebitClass.isSavings()) {
+                if (!myDebitClass.isDeposit()) {
                     return false;
                 }
 

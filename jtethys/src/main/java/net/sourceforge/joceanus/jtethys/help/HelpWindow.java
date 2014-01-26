@@ -237,25 +237,29 @@ public class HelpWindow
 
     @Override
     public void hyperlinkUpdate(final HyperlinkEvent e) {
-        /* If this is an activated event */
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (e instanceof HTMLFrameHyperlinkEvent) {
-                HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-                HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
-                doc.processHTMLFrameHyperlinkEvent(evt);
-            } else {
-                URL url = e.getURL();
-                try {
-                    String desc = e.getDescription();
-                    if (url == null) {
-                        /* display the new page */
-                        displayPage(desc);
-                    } else {
-                        theEditor.setPage(e.getURL());
-                    }
-                } catch (IOException t) {
-                    theLogger.log(Level.SEVERE, HelpModule.ERROR_STREAM, t);
+        /* Ignore non-activated events */
+        if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+            return;
+        }
+        /* If this is a Frame hyper link event */
+        if (e instanceof HTMLFrameHyperlinkEvent) {
+            HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
+            HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
+            doc.processHTMLFrameHyperlinkEvent(evt);
+
+            /* else look for a URL */
+        } else {
+            URL url = e.getURL();
+            try {
+                String desc = e.getDescription();
+                if (url == null) {
+                    /* display the new page */
+                    displayPage(desc);
+                } else {
+                    theEditor.setPage(e.getURL());
                 }
+            } catch (IOException t) {
+                theLogger.log(Level.SEVERE, HelpModule.ERROR_STREAM, t);
             }
         }
     }
@@ -265,8 +269,7 @@ public class HelpWindow
         DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 
         /* Ignore if there is no selection or if this is the root */
-        if ((myNode == null)
-            || (theRoot.equals(myNode))) {
+        if ((myNode == null) || (theRoot.equals(myNode))) {
             return;
         }
 

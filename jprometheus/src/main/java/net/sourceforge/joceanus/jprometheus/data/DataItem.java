@@ -196,9 +196,9 @@ public abstract class DataItem<E extends Enum<E>>
     public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBase"));
 
     /**
-     * Active Field Id.
+     * TouchStatus Field Id.
      */
-    public static final JDataField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActive"));
+    public static final JDataField FIELD_TOUCH = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTouch"));
 
     /**
      * Deleted Field Id.
@@ -260,8 +260,11 @@ public abstract class DataItem<E extends Enum<E>>
         if (FIELD_LIST.equals(pField)) {
             return getList();
         }
-        if (FIELD_ACTIVE.equals(pField)) {
-            return isActive();
+        if (FIELD_DATATYPE.equals(pField)) {
+            return getItemType();
+        }
+        if (FIELD_TOUCH.equals(pField)) {
+            return theTouchStatus;
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
@@ -340,9 +343,9 @@ public abstract class DataItem<E extends Enum<E>>
     private ItemValidation theErrors = null;
 
     /**
-     * Is the item active.
+     * Status.
      */
-    private boolean isActive = false;
+    private final DataTouch<E> theTouchStatus;
 
     /**
      * Obtain the list.
@@ -394,7 +397,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean isActive() {
-        return isActive;
+        return theTouchStatus.isActive();
     }
 
     /**
@@ -510,10 +513,10 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
-     * Clear the Item Active flag.
+     * Clear the touch status flag.
      */
     protected void clearActive() {
-        isActive = false;
+        theTouchStatus.resetTouches();
     }
 
     /**
@@ -521,7 +524,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pObject object that references the item
      */
     public void touchItem(final DataItem<E> pObject) {
-        isActive = true;
+        theTouchStatus.touchItem(pObject.getItemType());
     }
 
     /**
@@ -756,7 +759,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pItem the original item
      */
     private void copyFlags(final DataItem<E> pItem) {
-        isActive = pItem.isActive();
+        // isActive = pItem.isActive();
     }
 
     /**
@@ -795,6 +798,11 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Allocate id */
         pList.setNewId(this);
+
+        /* Create the touch status */
+        DataSet<?, ?> myData = getDataSet();
+        Class<E> myClass = (Class<E>) myData.getEnumClass();
+        theTouchStatus = new DataTouch<E>(getDataSet(), myClass);
     }
 
     /**

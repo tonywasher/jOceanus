@@ -24,33 +24,63 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
+
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jprometheus.data.DataTouch.TouchCounter;
 
 /**
  * Class to record reference to a DataItem via another data item.
  * @param <E> the Data item type class
  */
-public class DataTouch<E extends Enum<E>> {
+public class DataTouch<E extends Enum<E>>
+        extends EnumMap<E, TouchCounter<E>>
+        implements JDataFormat {
     /**
-     * The map of Item type to access count.
+     * Serial Id.
      */
-    private final Map<E, TouchCounter<E>> theMap;
+    private static final long serialVersionUID = 1766620543307434230L;
+
+    /**
+     * The DataSet.
+     */
+    private final DataSet<?, ?> theDataSet;
+
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
+    }
 
     /**
      * Constructor.
+     * @param pDataSet the DataSet
      * @param pClass the eNum class
      */
-    public DataTouch(final Class<E> pClass) {
+    public DataTouch(final DataSet<?, ?> pDataSet,
+                     final Class<E> pClass) {
         /* Create the map */
-        theMap = new EnumMap<E, TouchCounter<E>>(pClass);
+        super(pClass);
+        theDataSet = pDataSet;
+    }
+
+    /**
+     * Is the DataSet locked.
+     * @return true/false
+     */
+    private Boolean isLocked() {
+        return theDataSet.isLocked();
     }
 
     /**
      * Reset all touches.
      */
     public void resetTouches() {
-        /* Clear the map */
-        theMap.clear();
+        /* Ignore if we are locked */
+        if (isLocked()) {
+            return;
+        }
+
+        /* Clear the map if we are not locked */
+        clear();
     }
 
     /**
@@ -58,13 +88,18 @@ public class DataTouch<E extends Enum<E>> {
      * @param pItemType the item type
      */
     public void touchItem(final E pItemType) {
+        /* Ignore if we are locked */
+        if (isLocked()) {
+            return;
+        }
+
         /* Access the record for the item type */
         TouchCounter<E> myCounter = getCounter(pItemType);
 
         /* If this is a new dataType */
         if (myCounter == null) {
             /* Store a new counter */
-            theMap.put(pItemType, new TouchCounter<E>(pItemType));
+            put(pItemType, new TouchCounter<E>(pItemType));
 
             /* else just record the touch */
         } else {
@@ -77,7 +112,7 @@ public class DataTouch<E extends Enum<E>> {
      * @return true/false
      */
     public boolean isActive() {
-        return !theMap.isEmpty();
+        return !isEmpty();
     }
 
     /**
@@ -86,7 +121,7 @@ public class DataTouch<E extends Enum<E>> {
      * @return the counter (or null)
      */
     public TouchCounter<E> getCounter(final E pItemType) {
-        return theMap.get(pItemType);
+        return get(pItemType);
     }
 
     /**
@@ -94,14 +129,15 @@ public class DataTouch<E extends Enum<E>> {
      * @return the iterator
      */
     public Iterator<TouchCounter<E>> iterator() {
-        return theMap.values().iterator();
+        return values().iterator();
     }
 
     /**
      * Simple counter.
      * @param <E> the DataItem types
      */
-    public static final class TouchCounter<E> {
+    public static final class TouchCounter<E>
+            implements JDataFormat {
         /**
          * The item type.
          */
@@ -111,6 +147,11 @@ public class DataTouch<E extends Enum<E>> {
          * The number of touches.
          */
         private int theTouches;
+
+        @Override
+        public String formatObject() {
+            return Integer.toString(theTouches);
+        }
 
         /**
          * Obtain the item type.
@@ -134,7 +175,7 @@ public class DataTouch<E extends Enum<E>> {
          */
         private TouchCounter(final E pItemType) {
             theItemType = pItemType;
-            theTouches = 0;
+            theTouches = 1;
         }
 
         /**

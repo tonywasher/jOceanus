@@ -476,7 +476,7 @@ public class EventInfoSet
                 case THIRDPARTY:
                     /* Check account type */
                     Account myThirdParty = myInfo.getAccount();
-                    if (!myThirdParty.isSavings()) {
+                    if (!myThirdParty.isDeposit()) {
                         myEvent.addError(ERROR_BADACCOUNT, getFieldForClass(myClass));
                     }
                     break;

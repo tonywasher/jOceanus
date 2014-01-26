@@ -24,10 +24,12 @@ package net.sourceforge.joceanus.jmoneywise;
 
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
+
 /**
  * MoneyWise Item Types.
  */
-public enum MoneyWiseDataType {
+public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
      * AccountType.
      */
@@ -221,5 +223,10 @@ public enum MoneyWiseDataType {
 
         /* return the list name */
         return theListName;
+    }
+
+    @Override
+    public String getFieldName() {
+        return getListName();
     }
 }

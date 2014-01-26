@@ -86,7 +86,7 @@ public class AccountCategoryTable
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = NLS_BUNDLE.getString("TitleName");
+    private static final String TITLE_NAME = AccountCategory.FIELD_NAME.getName();
 
     /**
      * FullName Column Title.
@@ -96,12 +96,12 @@ public class AccountCategoryTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = MoneyWiseDataType.ACCOUNTTYPE.getItemName();
+    private static final String TITLE_CAT = AccountCategory.FIELD_CATTYPE.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+    private static final String TITLE_DESC = AccountCategory.FIELD_DESC.getName();
 
     /**
      * Active Column Title.
@@ -662,7 +662,7 @@ public class AccountCategoryTable
                 case COLUMN_FULLNAME:
                     return EventCategory.FIELD_NAME;
                 case COLUMN_ACTIVE:
-                    return EventCategory.FIELD_ACTIVE;
+                    return EventCategory.FIELD_TOUCH;
                 default:
                     return null;
             }

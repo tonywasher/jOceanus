@@ -72,27 +72,27 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
     /**
      * Class column title.
      */
-    private static final String TITLE_CLASS = NLS_BUNDLE.getString("TitleClass");
+    private static final String TITLE_CLASS = StaticData.FIELD_CLASS.getName();
 
     /**
      * Name column title.
      */
-    private static final String TITLE_NAME = NLS_BUNDLE.getString("TitleName");
+    private static final String TITLE_NAME = StaticData.FIELD_NAME.getName();
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+    private static final String TITLE_DESC = StaticData.FIELD_DESC.getName();
 
     /**
      * Order column title.
      */
-    private static final String TITLE_ORDER = NLS_BUNDLE.getString("TitleSortOrder");
+    private static final String TITLE_ORDER = StaticData.FIELD_ORDER.getName();
 
     /**
      * Enabled column title.
      */
-    private static final String TITLE_ENABLED = NLS_BUNDLE.getString("TitleEnabled");
+    private static final String TITLE_ENABLED = StaticData.FIELD_ENABLED.getName();
 
     /**
      * Active column title.
@@ -579,7 +579,7 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                 case COLUMN_ORDER:
                     return StaticData.FIELD_ORDER;
                 case COLUMN_ACTIVE:
-                    return DataItem.FIELD_ACTIVE;
+                    return DataItem.FIELD_TOUCH;
                 default:
                     return null;
             }

@@ -180,29 +180,19 @@ public abstract class HelpModule {
      */
     private void parseHelpDefinition(final Class<?> pClass,
                                      final String pFile) throws HelpException {
-        InputStream myStream = null;
-        DocumentBuilderFactory myFactory;
-        DocumentBuilder myBuilder;
-        Document myDoc;
-        Element myElement;
-
         /* Protect against exceptions */
-        try {
-            /* Access the input stream for the entity */
-            myStream = pClass.getResourceAsStream(pFile);
-
+        try (InputStream myStream = pClass.getResourceAsStream(pFile)) {
             /* Create the document builder */
-            myFactory = DocumentBuilderFactory.newInstance();
-            myBuilder = myFactory.newDocumentBuilder();
+            DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
             /* Access the XML document element */
-            myDoc = myBuilder.parse(myStream);
-            myElement = myDoc.getDocumentElement();
+            Document myDoc = myBuilder.parse(myStream);
+            Element myElement = myDoc.getDocumentElement();
 
             /* Reject if this is not a Help Definitions file */
             if (!myElement.getNodeName().equals(DOC_NAME)) {
-                throw new HelpException("Invalid document name: "
-                                        + myElement.getNodeName());
+                throw new HelpException("Invalid document name: " + myElement.getNodeName());
             }
 
             /* Set title of document */
@@ -225,29 +215,9 @@ public abstract class HelpModule {
             myStream.close();
 
             /* Catch exceptions */
-        } catch (SAXException e) {
-            /* Throw Exception */
-            throw new HelpException("Failed to parse XML Help Definitions", e);
-
-        } catch (IOException e) {
-            /* Throw Exception */
-            throw new HelpException("Failed to read XML Help Definitions", e);
-
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             /* Throw Exception */
             throw new HelpException("Failed to initiate parser", e);
-        } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
-            }
         }
     }
 
@@ -265,8 +235,7 @@ public abstract class HelpModule {
         for (HelpEntry myEntry : pEntries) {
             /* Check that the entry is not already in the list */
             if (searchFor(myEntry.getName()) != null) {
-                throw new HelpException("Duplicate Help object Name: "
-                                        + myEntry.getName());
+                throw new HelpException("Duplicate Help object Name: " + myEntry.getName());
             }
 
             /* If we have a file name */

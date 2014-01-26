@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import java.util.ListIterator;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
@@ -41,16 +42,13 @@ public class ValueSetHistory
         JDataFields myFields = new JDataFields(ValueSetHistory.class.getSimpleName());
 
         /* Loop through the fields */
-        ListIterator<ValueSetDelta> myIterator = theDeltas.listIterator(theDeltas.size());
-        while (myIterator.hasPrevious()) {
+        Iterator<ValueSetDelta> myIterator = theDeltas.descendingIterator();
+        while (myIterator.hasNext()) {
             /* Access the Delta */
-            ValueSetDelta myDelta = myIterator.previous();
+            ValueSetDelta myDelta = myIterator.next();
 
             /* Declare the field */
-            myFields.declareIndexField(ValueSet.FIELD_VERSION
-                                       + "("
-                                       + myDelta.getVersion()
-                                       + ")");
+            myFields.declareIndexField(ValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
         }
 
         return myFields;
@@ -60,24 +58,25 @@ public class ValueSetHistory
     public Object getFieldValue(final JDataField pField) {
         /* Access the index */
         int myIndex = pField.getIndex();
-        int mySize = theDeltas.size();
-        if ((myIndex < 0)
-            || (myIndex >= mySize)) {
-            return JDataFieldValue.UNKNOWN;
+
+        /* Loop through the fields */
+        Iterator<ValueSetDelta> myIterator = theDeltas.descendingIterator();
+        for (int i = 0; myIterator.hasNext(); i++) {
+            ValueSetDelta myDelta = myIterator.next();
+
+            /* Return field if we found it */
+            if (i == myIndex) {
+                return myDelta;
+            }
         }
 
-        /* Access the delta */
-        return theDeltas.get(mySize
-                             - myIndex
-                             - 1);
+        /* Not found */
+        return JDataFieldValue.UNKNOWN;
     }
 
     @Override
     public String formatObject() {
-        return ValueSetHistory.class.getSimpleName()
-               + "("
-               + theStack.size()
-               + ")";
+        return ValueSetHistory.class.getSimpleName() + "(" + theStack.size() + ")";
     }
 
     /**
@@ -93,20 +92,20 @@ public class ValueSetHistory
     /**
      * The stack of valueSet changes.
      */
-    private final Stack<ValueSet> theStack;
+    private final Deque<ValueSet> theStack;
 
     /**
      * The stack of valueSetDelta fields.
      */
-    private final Stack<ValueSetDelta> theDeltas;
+    private final Deque<ValueSetDelta> theDeltas;
 
     /**
      * Constructor.
      */
     public ValueSetHistory() {
         /* Allocate the stack */
-        theStack = new Stack<ValueSet>();
-        theDeltas = new Stack<ValueSetDelta>();
+        theStack = new ArrayDeque<ValueSet>();
+        theDeltas = new ArrayDeque<ValueSetDelta>();
     }
 
     /**
@@ -193,7 +192,7 @@ public class ValueSetHistory
      * @return whether there are entries in the history list
      */
     public boolean hasHistory() {
-        return !theStack.empty();
+        return !theStack.isEmpty();
     }
 
     /**

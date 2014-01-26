@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -286,8 +286,7 @@ public enum AccountCategoryClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid Account Category Class Id: "
-                                          + id);
+        throw new JMoneyWiseDataException("Invalid Account Category Class Id: " + id);
     }
 
     /**
@@ -391,10 +390,10 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType is savings.
-     * @return <code>true</code> if the account category type is savings, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType is deposit.
+     * @return <code>true</code> if the account category type is deposit, <code>false</code> otherwise.
      */
-    public boolean isSavings() {
+    public boolean isDeposit() {
         switch (this) {
             case SAVINGS:
             case BOND:

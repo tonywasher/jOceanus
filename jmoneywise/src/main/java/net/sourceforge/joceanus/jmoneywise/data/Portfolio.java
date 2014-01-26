@@ -633,8 +633,8 @@ public class Portfolio
         if (myHolding == null) {
             addError(ERROR_MISSING, FIELD_HOLDING);
         } else {
-            /* check that holding account is savings */
-            if (!myHolding.isSavings()) {
+            /* check that holding account is deposit */
+            if (!myHolding.isDeposit()) {
                 addError(ERROR_BADHOLD, FIELD_HOLDING);
             }
 

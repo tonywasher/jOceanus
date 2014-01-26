@@ -104,32 +104,32 @@ public class Register
     /**
      * Date column title.
      */
-    protected static final String TITLE_DATE = NLS_BUNDLE.getString("TitleDate");
+    protected static final String TITLE_DATE = Event.FIELD_DATE.getName();
 
     /**
      * Description column title.
      */
-    protected static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+    protected static final String TITLE_DESC = EventInfoClass.COMMENTS.toString();
 
     /**
      * CategoryType column title.
      */
-    protected static final String TITLE_CATEGORY = MoneyWiseDataType.EVENTCATEGORY.getItemName();
+    protected static final String TITLE_CATEGORY = Event.FIELD_CATEGORY.getName();
 
     /**
      * Amount column title.
      */
-    protected static final String TITLE_AMOUNT = NLS_BUNDLE.getString("TitleAmount");
+    protected static final String TITLE_AMOUNT = Event.FIELD_AMOUNT.getName();
 
     /**
      * Debit column title.
      */
-    protected static final String TITLE_DEBIT = NLS_BUNDLE.getString("TitleDebit");
+    protected static final String TITLE_DEBIT = Event.FIELD_DEBIT.getName();
 
     /**
      * Credit column title.
      */
-    protected static final String TITLE_CREDIT = NLS_BUNDLE.getString("TitleCredit");
+    protected static final String TITLE_CREDIT = Event.FIELD_CREDIT.getName();
 
     /**
      * DebitUnits column title.

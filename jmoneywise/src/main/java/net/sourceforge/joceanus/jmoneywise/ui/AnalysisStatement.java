@@ -79,27 +79,27 @@ public class AnalysisStatement
     /**
      * Date Column Title.
      */
-    private static final String TITLE_DATE = NLS_BUNDLE.getString("TitleDate");
+    private static final String TITLE_DATE = Event.FIELD_DATE.getName();
 
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = MoneyWiseDataType.EVENTCATEGORY.getItemName();
+    private static final String TITLE_CAT = Event.FIELD_CATEGORY.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+    private static final String TITLE_DESC = EventInfoClass.COMMENTS.toString();
 
     /**
      * Debit Column Title.
      */
-    private static final String TITLE_DEBIT = NLS_BUNDLE.getString("TitleDebit");
+    private static final String TITLE_DEBIT = Event.FIELD_DEBIT.getName();
 
     /**
      * Credit Column Title.
      */
-    private static final String TITLE_CREDIT = NLS_BUNDLE.getString("TitleCredit");
+    private static final String TITLE_CREDIT = Event.FIELD_CREDIT.getName();
 
     /**
      * Debited Column Title.

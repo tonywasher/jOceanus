@@ -85,8 +85,8 @@ public class JDataFields {
         theName = pName;
         theUnderlying = pUnderlying;
         theNextValue = (theUnderlying == null)
-                ? 0
-                : theUnderlying.getNumValues();
+                                              ? 0
+                                              : theUnderlying.getNumValues();
         theFields = new ArrayList<JDataField>();
     }
 
@@ -169,6 +169,9 @@ public class JDataFields {
     private JDataField declareDataField(final String pName,
                                         final boolean isEqualityField,
                                         final boolean isValueSetField) {
+        /* Check the name */
+        checkUniqueName(pName);
+
         /* Create the field */
         JDataField myField = new JDataField(pName, isEqualityField, isValueSetField);
 
@@ -185,6 +188,9 @@ public class JDataFields {
      * @return the field
      */
     private JDataField declareDataField(final String pName) {
+        /* Check the name */
+        checkUniqueName(pName);
+
         /* Create the field */
         JDataField myField = new JDataField(pName);
 
@@ -193,6 +199,23 @@ public class JDataFields {
 
         /* Return the index */
         return myField;
+    }
+
+    /**
+     * Check unique name.
+     * @param pName the name to check.
+     * @throws IllegalArgumentException if name is present
+     */
+    private void checkUniqueName(final String pName) {
+        Iterator<JDataField> myIterator = fieldIterator();
+        while (myIterator.hasNext()) {
+            JDataField myField = myIterator.next();
+
+            /* If the name exists, throw an exception */
+            if (pName.equals(myField.getName())) {
+                throw new IllegalArgumentException("Duplicate field name: " + pName);
+            }
+        }
     }
 
     /**
@@ -221,15 +244,14 @@ public class JDataFields {
             /* Allocate preceding iterator */
             JDataFields myUnderlying = pFields.theUnderlying;
             thePreceding = (myUnderlying == null)
-                    ? null
-                    : myUnderlying.fieldIterator();
+                                                 ? null
+                                                 : myUnderlying.fieldIterator();
         }
 
         @Override
         public boolean hasNext() {
             /* Check for preceding entry */
-            if ((thePreceding != null)
-                && (thePreceding.hasNext())) {
+            if ((thePreceding != null) && (thePreceding.hasNext())) {
                 return true;
             }
 
@@ -240,8 +262,7 @@ public class JDataFields {
         @Override
         public JDataField next() {
             /* Check for preceding entry */
-            if ((thePreceding != null)
-                && (thePreceding.hasNext())) {
+            if ((thePreceding != null) && (thePreceding.hasNext())) {
                 return thePreceding.next();
             }
 
@@ -335,8 +356,8 @@ public class JDataFields {
 
             /* Allocate value index if required */
             theIndex = isValueSetField
-                    ? theNextValue++
-                    : -1;
+                                      ? theNextValue++
+                                      : -1;
         }
 
         /**
@@ -372,8 +393,7 @@ public class JDataFields {
             JDataField myThat = (JDataField) pThat;
 
             /* Check the name and index is the same */
-            if ((theIndex != myThat.theIndex)
-                || (!theName.equals(myThat.theName))) {
+            if ((theIndex != myThat.theIndex) || (!theName.equals(myThat.theName))) {
                 return false;
             }
 
@@ -383,8 +403,7 @@ public class JDataFields {
             }
 
             /* Check the flags are the same */
-            if ((isEqualityField != myThat.isEqualityField)
-                || (isValueSetField != myThat.isValueSetField)) {
+            if ((isEqualityField != myThat.isEqualityField) || (isValueSetField != myThat.isValueSetField)) {
                 return false;
             }
 
@@ -417,8 +436,13 @@ public class JDataFields {
 
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
+            /* Determine name */
+            String myName = (myValue instanceof JDataFieldEnum)
+                                                               ? ((JDataFieldEnum) myValue).getFieldName()
+                                                               : myValue.toString();
+
             /* Declare a field for the value */
-            JDataField myField = pAnchor.declareLocalField(myValue.toString());
+            JDataField myField = pAnchor.declareLocalField(myName);
 
             /* Add to the map */
             myMap.put(myField, myValue);
@@ -472,5 +496,16 @@ public class JDataFields {
          * Not Allowed.
          */
         NOTALLOWED;
+    }
+
+    /**
+     * Enum naming interface.
+     */
+    public interface JDataFieldEnum {
+        /**
+         * Get Field name.
+         * @return the field name
+         */
+        String getFieldName();
     }
 }
