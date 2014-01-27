@@ -30,6 +30,8 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataDifference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jtethys.DataConverter;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -42,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jtethys.DataConverter;
 
 /**
  * Generic Data object formatter.
@@ -172,8 +173,8 @@ public class JDataFormatter {
         }
         if (myClass == Boolean.class) {
             return ((Boolean) pValue)
-                    ? "true"
-                    : "false";
+                                     ? "true"
+                                     : "false";
         }
         if (myClass == Short.class) {
             return ((Short) pValue).toString();
@@ -239,8 +240,13 @@ public class JDataFormatter {
             return formatObject(((JDataDifference) pValue).getObject());
         }
 
+        /* Handle JOceanusExceptions */
+        if (JOceanusException.class.isInstance(pValue)) {
+            return myClass.getSimpleName();
+        }
+
         /* Standard format option */
-        return pValue.getClass().getCanonicalName();
+        return myClass.getCanonicalName();
     }
 
     /**
@@ -313,8 +319,7 @@ public class JDataFormatter {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
-        throw new IllegalArgumentException(ERROR_CLASS
-                                           + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
     }
 
     /**
@@ -351,8 +356,7 @@ public class JDataFormatter {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
-        throw new IllegalArgumentException(ERROR_CLASS
-                                           + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
     }
 
     /**
@@ -375,7 +379,6 @@ public class JDataFormatter {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }
-        throw new IllegalArgumentException(ERROR_CLASS
-                                           + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
     }
 }

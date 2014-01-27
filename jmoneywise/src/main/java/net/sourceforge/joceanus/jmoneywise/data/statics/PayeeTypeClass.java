@@ -147,8 +147,7 @@ public enum PayeeTypeClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid PayeeType Class Id: "
-                                          + id);
+        throw new JMoneyWiseDataException("Invalid PayeeType Class Id: " + id);
     }
 
     /**
@@ -187,6 +186,7 @@ public enum PayeeTypeClass implements StaticInterface {
         switch (this) {
             case TAXMAN:
             case GOVERNMENT:
+            case MARKET:
             case INSTITUTION:
             case EMPLOYER:
             case INDIVIDUAL:

@@ -270,7 +270,7 @@ public class Payee
      * @return true/false
      */
     public static Boolean isClosed(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, Boolean.class);
+        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
     }
 
     /**
@@ -365,8 +365,8 @@ public class Payee
     }
 
     @Override
-    public EventCategory getBase() {
-        return (EventCategory) super.getBase();
+    public Payee getBase() {
+        return (Payee) super.getBase();
     }
 
     @Override

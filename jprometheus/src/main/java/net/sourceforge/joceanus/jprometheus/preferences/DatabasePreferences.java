@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jprometheus.database.BatchControl;
 import net.sourceforge.joceanus.jprometheus.database.JDBCDriver;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -50,7 +50,7 @@ public class DatabasePreferences
     /**
      * Registry name for DataBase name.
      */
-    public static final String NAME_DBNAME = "DBaseName";
+    public static final String NAME_DBNAME = "DBaseNameNew";
 
     /**
      * Registry name for DataBase batch size.
@@ -120,7 +120,7 @@ public class DatabasePreferences
     /**
      * Default Database name.
      */
-    private static final String DEFAULT_DBNAME = "NewFinance";
+    private static final String DEFAULT_DBNAME = "MoneyWise";
 
     /**
      * Default Database batch size.
@@ -130,7 +130,7 @@ public class DatabasePreferences
     /**
      * Default Database user.
      */
-    private static final String DEFAULT_DBUSER = "FinanceUser";
+    private static final String DEFAULT_DBUSER = "MoneyWiseUser";
 
     /**
      * Default Database password.

@@ -33,10 +33,16 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -349,7 +355,7 @@ public class SheetAccount
                     isClosed = myCell.getBooleanValue();
                 }
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree, isGross, myCurrency.getName());
 
                 /* Report the progress */
@@ -441,6 +447,9 @@ public class SheetAccount
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OPENINGBALANCE, myBalance);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
 
+                /* Process alternate view */
+                processAlternate(pData, myView, myRow);
+
                 /* Report the progress */
                 myCount++;
                 if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
@@ -455,6 +464,9 @@ public class SheetAccount
             /* Touch underlying items */
             myList.touchUnderlyingItems();
 
+            /* Resolve Alternate lists */
+            resolveAlternate(pData);
+
             /* Handle exceptions */
         } catch (JOceanusException e) {
             throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
@@ -462,6 +474,127 @@ public class SheetAccount
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * Process row into alternate form.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @throws JOceanusException on error
+     */
+    private static void processAlternate(final MoneyWiseData pData,
+                                         final DataView pView,
+                                         final DataRow pRow) throws JOceanusException {
+        /* Access lists */
+        PayeeTypeList myPayeeTypeList = pData.getPayeeTypes();
+        SecurityTypeList mySecTypeList = pData.getSecurityTypes();
+        SecurityList mySecurityList = pData.getSecurities();
+        PayeeList myPayeeList = pData.getPayees();
+        PortfolioList myPortfolioList = pData.getPortfolios();
+
+        /* Access name and type */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Handle taxFree which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isTaxFree = Boolean.FALSE;
+        if (myCell != null) {
+            isTaxFree = myCell.getBooleanValue();
+        }
+
+        /* Skip gross */
+        iAdjust++;
+
+        /* Handle closed which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* If this is a portfolio */
+        if (myType.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
+            /* Skip three columns */
+            iAdjust++;
+            iAdjust++;
+            iAdjust++;
+
+            /* Access Holding account */
+            String myHolding = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+            /* Add the value into the finance tables */
+            myPortfolioList.addOpenItem(0, myName, null, myHolding, isTaxFree, isClosed);
+
+            /* If this is a payee */
+        } else if (myPayeeTypeList.findItemByName(myType) != null) {
+            /* Add the value into the finance tables */
+            myPayeeList.addOpenItem(0, myName, null, myType, isClosed);
+        } else {
+            /* Look for separator in category */
+            int iIndex = myType.indexOf(EventCategory.STR_SEP);
+            if (iIndex != -1) {
+                /* Access subCategory as security type */
+                String mySecType = myType.substring(iIndex + 1);
+                if (mySecTypeList.findItemByName(mySecType) != null) {
+                    /* Access Parent account */
+                    String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+                    if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
+                        return;
+                    }
+
+                    /* Skip four columns */
+                    iAdjust++;
+                    iAdjust++;
+                    iAdjust++;
+                    iAdjust++;
+
+                    /* Access Symbol */
+                    String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+                    /* Add the value into the tables */
+                    mySecurityList.addOpenItem(0, myName, null, mySecType, myParent, mySymbol, pData.getDefaultCurrency().getName(), isClosed);
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve alternate lists.
+     * @param pData the DataSet
+     * @throws JOceanusException on error
+     */
+    private static void resolveAlternate(final MoneyWiseData pData) throws JOceanusException {
+        /* Access lists */
+        SecurityList mySecurityList = pData.getSecurities();
+        PayeeList myPayeeList = pData.getPayees();
+        PortfolioList myPortfolioList = pData.getPortfolios();
+
+        /* Sort the lists */
+        myPayeeList.resolveDataSetLinks();
+        myPayeeList.reSort();
+
+        /* Touch underlying items and validate */
+        myPayeeList.touchUnderlyingItems();
+        myPayeeList.validateOnLoad();
+
+        /* Sort the lists */
+        mySecurityList.resolveDataSetLinks();
+        mySecurityList.reSort();
+
+        /* Touch underlying items and validate */
+        mySecurityList.touchUnderlyingItems();
+        mySecurityList.validateOnLoad();
+
+        /* Sort the lists */
+        myPortfolioList.resolveDataSetLinks();
+        myPortfolioList.reSort();
+
+        /* Touch underlying items and validate */
+        myPortfolioList.touchUnderlyingItems();
+        myPortfolioList.validateOnLoad();
     }
 
     /**

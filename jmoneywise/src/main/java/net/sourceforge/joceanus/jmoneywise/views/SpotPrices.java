@@ -236,7 +236,7 @@ public class SpotPrices
         /**
          * The portfolio field Id.
          */
-        public static final JDataField FIELD_PORFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
+        public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
 
         /**
          * The date field Id.

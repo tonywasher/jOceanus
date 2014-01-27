@@ -57,9 +57,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 public class MoneyWiseSheet
         extends SpreadSheet<MoneyWiseData> {
     /**
-     * Number of base archive load areas. 10xStatic,EventClasses,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
+     * Number of base archive load areas. 11xStatic,EventClasses,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
      */
-    private static final int NUM_ARCHIVE_AREAS = 20;
+    private static final int NUM_ARCHIVE_AREAS = 22;
 
     /**
      * Year boundary.
@@ -237,8 +237,7 @@ public class MoneyWiseSheet
         myStatic.addOpenItem(0, 0);
 
         /* Calculate the number of stages */
-        int myStages = NUM_ARCHIVE_AREAS
-                       + pRange.getNumYears();
+        int myStages = NUM_ARCHIVE_AREAS + pRange.getNumYears();
 
         /* Declare the number of stages */
         return pTask.setNumStages(myStages);
@@ -278,8 +277,7 @@ public class MoneyWiseSheet
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JMoneyWiseIOException("Failed to load Workbook: "
-                                            + myArchive.getName(), e);
+            throw new JMoneyWiseIOException("Failed to load Workbook: " + myArchive.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -325,6 +323,12 @@ public class MoneyWiseSheet
             /* Load Tables */
             if (bContinue) {
                 bContinue = SheetAccountCategoryType.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetSecurityType.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetPayeeType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 bContinue = SheetEventCategoryType.loadArchive(pTask, myWorkbook, myData);

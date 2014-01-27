@@ -438,7 +438,7 @@ public class Security
      * @return true/false
      */
     public static Boolean isClosed(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, Boolean.class);
+        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
     }
 
     /**
@@ -607,8 +607,8 @@ public class Security
     }
 
     @Override
-    public EventCategory getBase() {
-        return (EventCategory) super.getBase();
+    public Security getBase() {
+        return (Security) super.getBase();
     }
 
     @Override

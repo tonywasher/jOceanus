@@ -90,8 +90,8 @@ public class JMetisExceptionWrapper
             JOceanusException myWrapped = (JOceanusException) theWrapped;
             Object myObject = myWrapped.getObject();
             return (myObject == null)
-                    ? JDataFieldValue.SKIP
-                    : myObject;
+                                     ? JDataFieldValue.SKIP
+                                     : myObject;
         }
         if (FIELD_STACK.equals(pField)) {
             return theWrapped.getStackTrace();
@@ -115,9 +115,7 @@ public class JMetisExceptionWrapper
 
     @Override
     public String formatObject() {
-        return "Exception("
-               + theClass
-               + ")";
+        return theClass;
     }
 
     /**

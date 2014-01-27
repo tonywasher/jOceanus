@@ -220,7 +220,7 @@ public class EventCategoryTable
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataCategories = myDataMgr.new JDataEntry(EventCategoryTable.class.getSimpleName());
         theDataCategories.addAsChildOf(mySection);
         theDataCategories.setObject(theUpdateSet);

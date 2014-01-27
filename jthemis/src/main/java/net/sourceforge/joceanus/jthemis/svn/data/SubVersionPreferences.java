@@ -114,7 +114,7 @@ public class SubVersionPreferences
     /**
      * Default value for SubversionRepository Base.
      */
-    private static final String DEFAULT_SVN_REPO = "http://Tony-HP";
+    private static final String DEFAULT_SVN_REPO = "http://localhost";
 
     /**
      * Default value for SubversionRepository Name.
@@ -124,7 +124,7 @@ public class SubVersionPreferences
     /**
      * Default value for SubversionUser.
      */
-    private static final String DEFAULT_SVN_USER = "User";
+    private static final String DEFAULT_SVN_USER = "SvnUser";
 
     /**
      * Default value for SubversionPassword.

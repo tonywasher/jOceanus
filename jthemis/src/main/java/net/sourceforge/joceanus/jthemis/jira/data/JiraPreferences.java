@@ -79,12 +79,12 @@ public class JiraPreferences
     /**
      * Default value for JiraUser.
      */
-    private static final String DEFAULT_USER = "User";
+    private static final String DEFAULT_USER = "JiraUser";
 
     /**
      * Default value for JiraPassword.
      */
-    private static final String DEFAULT_PASS = "";
+    private static final String DEFAULT_PASS = "Secret";
 
     /**
      * Default value for JiraPrefix.

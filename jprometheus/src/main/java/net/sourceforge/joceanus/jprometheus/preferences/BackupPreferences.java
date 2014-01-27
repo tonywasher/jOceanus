@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.preferences;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Backup preferences.
@@ -51,7 +51,7 @@ public class BackupPreferences
     /**
      * Registry name for Archive FileName.
      */
-    public static final String NAME_ARCHIVE_FILE = "SourceFile";
+    public static final String NAME_ARCHIVE_FILE = "SourceFileNew";
 
     /**
      * Registry name for Last Event.
@@ -101,7 +101,7 @@ public class BackupPreferences
     /**
      * Default value for BackupPrefix.
      */
-    private static final String DEFAULT_BACKUP_PFIX = "FinanceBackup";
+    private static final String DEFAULT_BACKUP_PFIX = "MoneyWiseBackup";
 
     /**
      * Default value for BackupType.
