@@ -27,10 +27,10 @@ import java.io.File;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
-import net.sourceforge.joceanus.jthemis.jira.data.Issue;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraIssue;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNCommitInfo;
@@ -62,12 +62,12 @@ public class CommitMgr {
     /**
      * Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * WorkingSet.
      */
-    private final WorkingCopySet theWorkingSet;
+    private final SvnWorkingCopySet theWorkingSet;
 
     /**
      * Report object.
@@ -102,7 +102,7 @@ public class CommitMgr {
      * @param pWorkingSet the workingSet
      * @param pReport the report object
      */
-    public CommitMgr(final WorkingCopySet pWorkingSet,
+    public CommitMgr(final SvnWorkingCopySet pWorkingSet,
                      final ReportStatus pReport) {
         /* Store parameters */
         theWorkingSet = pWorkingSet;
@@ -125,7 +125,7 @@ public class CommitMgr {
      * @param pComments the comments for the change
      * @throws JOceanusException on error
      */
-    public void commitChanges(final Issue pIssue,
+    public void commitChanges(final JiraIssue pIssue,
                               final String pComments) throws JOceanusException {
         /* Access commit client */
         SVNCommitClient myCommit = theMgr.getCommitClient();

@@ -30,8 +30,8 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
 
 /**
@@ -49,7 +49,7 @@ public class UpdateWorkingCopy
     /**
      * The Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * The Location.
@@ -59,7 +59,7 @@ public class UpdateWorkingCopy
     /**
      * The WorkingCopySet.
      */
-    private WorkingCopySet theWorkingCopySet;
+    private SvnWorkingCopySet theWorkingCopySet;
 
     /**
      * The Error.
@@ -70,7 +70,7 @@ public class UpdateWorkingCopy
      * Obtain the working copy set.
      * @return the working copy set
      */
-    public WorkingCopySet getWorkingCopySet() {
+    public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
     }
 
@@ -87,7 +87,7 @@ public class UpdateWorkingCopy
      * @param pWorkingSet the working set to update
      * @param pReport the report object
      */
-    public UpdateWorkingCopy(final WorkingCopySet pWorkingSet,
+    public UpdateWorkingCopy(final SvnWorkingCopySet pWorkingSet,
                              final ReportTask pReport) {
         /* Store parameters */
         theWorkingCopySet = pWorkingSet;
@@ -105,7 +105,7 @@ public class UpdateWorkingCopy
             myCheckOut.updateWorkingCopySet(theWorkingCopySet);
 
             /* Discover new workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
         } catch (JOceanusException e) {
             /* Store the error */
             theError = e;

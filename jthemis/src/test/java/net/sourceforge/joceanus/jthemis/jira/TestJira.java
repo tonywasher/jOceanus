@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.jira.data.Server;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraServer;
 
 /**
  * Jira test suite.
@@ -43,8 +43,9 @@ public class TestJira {
      */
     public static void main(String[] args) {
         try {
-            Server myServer = new Server(new PreferenceManager(theLogger));
-            myServer.loadIssuesFromFilter("AllIssues");
+            JiraServer myServer = new JiraServer(new PreferenceManager(theLogger));
+            myServer.getIssue("BOX-1");
+            System.exit(0);
         } catch (JOceanusException e) {
         }
     }

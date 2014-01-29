@@ -148,11 +148,6 @@ public class MainTab
     private Register theRegister = null;
 
     /**
-     * The report panel.
-     */
-    private ReportTab theReportTab = null;
-
-    /**
      * The analysis panel.
      */
     private AnalysisStatement theStatement = null;
@@ -248,8 +243,8 @@ public class MainTab
         theTabs = new JEnableTabbed();
 
         /* Create the Report Tab */
-        theReportTab = new ReportTab(theView);
-        theTabs.addTab(TITLE_REPORT, theReportTab);
+        ReportTab myReportTab = new ReportTab(theView);
+        theTabs.addTab(TITLE_REPORT, myReportTab);
 
         /* Create the Analysis Tab */
         theStatement = new AnalysisStatement(theView);
@@ -275,7 +270,7 @@ public class MainTab
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
         theRegister.addActionListener(myListener);
-        theReportTab.addActionListener(myListener);
+        myReportTab.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
 

@@ -29,11 +29,11 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 
@@ -49,7 +49,7 @@ public class CreateWorkingCopy
     /**
      * Branches.
      */
-    private final Collection<Branch> theBranches;
+    private final Collection<SvnBranch> theBranches;
 
     /**
      * Revision.
@@ -69,12 +69,12 @@ public class CreateWorkingCopy
     /**
      * The Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * The WorkingCopySet.
      */
-    private WorkingCopySet theWorkingCopySet = null;
+    private SvnWorkingCopySet theWorkingCopySet = null;
 
     /**
      * The Error.
@@ -85,7 +85,7 @@ public class CreateWorkingCopy
      * Obtain the working copy set.
      * @return the working copy set
      */
-    public WorkingCopySet getWorkingCopySet() {
+    public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
     }
 
@@ -104,7 +104,7 @@ public class CreateWorkingCopy
      * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public CreateWorkingCopy(final Branch[] pBranches,
+    public CreateWorkingCopy(final SvnBranch[] pBranches,
                              final SVNRevision pRevision,
                              final File pLocation,
                              final ReportTask pReport) {
@@ -113,7 +113,7 @@ public class CreateWorkingCopy
         theRevision = pRevision;
         theReport = pReport;
         theRepository = pBranches[0].getRepository();
-        Collection<Branch> myBranches = null;
+        Collection<SvnBranch> myBranches = null;
 
         /* protect against exceptions */
         try {
@@ -121,7 +121,7 @@ public class CreateWorkingCopy
             Directory.createDirectory(pLocation);
 
             /* Access branch list for extract */
-            myBranches = Branch.getBranchMap(pBranches).values();
+            myBranches = SvnBranch.getBranchMap(pBranches).values();
         } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
@@ -141,7 +141,7 @@ public class CreateWorkingCopy
             myCheckOut.checkOutBranches(theBranches, theRevision, theLocation);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
         } catch (JOceanusException e) {
             /* Store the error */
             theError = e;

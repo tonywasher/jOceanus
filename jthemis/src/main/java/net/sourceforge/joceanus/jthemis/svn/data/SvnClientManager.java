@@ -38,7 +38,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
  * Manages connections to the server.
  * @author Tony Washer
  */
-public class ClientManager {
+public class SvnClientManager {
     /**
      * Available pool of connections.
      */
@@ -58,7 +58,7 @@ public class ClientManager {
      * Constructor.
      * @param pPreferences the preferences
      */
-    public ClientManager(final SubVersionPreferences pPreferences) {
+    public SvnClientManager(final SubVersionPreferences pPreferences) {
         /* Allocate the pool */
         thePool = new ArrayList<SVNClientManager>();
 

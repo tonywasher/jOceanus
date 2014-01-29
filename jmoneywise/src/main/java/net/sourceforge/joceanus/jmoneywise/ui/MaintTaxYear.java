@@ -180,11 +180,6 @@ public class MaintTaxYear
     private transient TaxYear theTaxYear = null;
 
     /**
-     * The tax year view.
-     */
-    private transient TaxYearList theTaxView = null;
-
-    /**
      * The tax year list.
      */
     private transient TaxYearList theTaxYears = null;
@@ -208,11 +203,6 @@ public class MaintTaxYear
      * The view.
      */
     private final transient View theView;
-
-    /**
-     * The field manager.
-     */
-    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Update Set.
@@ -244,7 +234,7 @@ public class MaintTaxYear
     public MaintTaxYear(final View pView) {
         /* Record the view */
         theView = pView;
-        theFieldMgr = theView.getFieldMgr();
+        JFieldManager myFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
@@ -252,7 +242,7 @@ public class MaintTaxYear
         theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 
         /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<TaxYear>(theFieldMgr);
+        theFieldSet = new JFieldSet<TaxYear>(myFieldMgr);
 
         /* Create the Year fields and add to field set */
         JLabel myYearLabel = new JLabel("Year:");
@@ -760,7 +750,7 @@ public class MaintTaxYear
      */
     public void setSelection(final TaxYear pTaxYear) {
         /* Reset controls */
-        theTaxView = null;
+        TaxYearList myTaxView = null;
         theTaxYear = null;
         TaxInfoList myInfo = null;
 
@@ -773,15 +763,15 @@ public class MaintTaxYear
             }
 
             /* Create the view of the tax year */
-            theTaxView = theTaxYears.deriveEditList(pTaxYear);
-            myInfo = theTaxView.getTaxInfo();
+            myTaxView = theTaxYears.deriveEditList(pTaxYear);
+            myInfo = myTaxView.getTaxInfo();
 
             /* Access the tax year */
-            theTaxYear = theTaxView.findTaxYearForDate(pTaxYear.getTaxYear());
+            theTaxYear = myTaxView.findTaxYearForDate(pTaxYear.getTaxYear());
         }
 
         /* Store list */
-        theYearsEntry.setDataList(theTaxView);
+        theYearsEntry.setDataList(myTaxView);
         theInfoEntry.setDataList(myInfo);
 
         /* notify changes */

@@ -48,8 +48,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
@@ -61,6 +59,8 @@ import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
@@ -119,11 +119,6 @@ public class AnalysisSelect
      * Analysis Manager.
      */
     private AnalysisManager theManager;
-
-    /**
-     * Current Analysis.
-     */
-    private Analysis theAnalysis;
 
     /**
      * Analysis State.
@@ -470,12 +465,12 @@ public class AnalysisSelect
      */
     private void setAnalysis(final JDateDayRange pRange) {
         /* Update the filter selection */
-        theAnalysis = theManager.getAnalysis(pRange);
-        theAccountSelect.setAnalysis(theAnalysis);
-        theSecuritySelect.setAnalysis(theAnalysis);
-        theEventSelect.setAnalysis(theAnalysis);
-        thePayeeSelect.setAnalysis(theAnalysis);
-        theTaxBasisSelect.setAnalysis(theAnalysis);
+        Analysis myAnalysis = theManager.getAnalysis(pRange);
+        theAccountSelect.setAnalysis(myAnalysis);
+        theSecuritySelect.setAnalysis(myAnalysis);
+        theEventSelect.setAnalysis(myAnalysis);
+        thePayeeSelect.setAnalysis(myAnalysis);
+        theTaxBasisSelect.setAnalysis(myAnalysis);
     }
 
     /**
@@ -1009,14 +1004,14 @@ public class AnalysisSelect
             setEnabled(true);
             theRangeButton.setText(theRange.toString());
             theFilterButton.setText((theFilter == null)
-                    ? null
-                    : theFilter.getName());
+                                                       ? null
+                                                       : theFilter.getName());
             theFilterTypeButton.setText((theType == null)
-                    ? null
-                    : theType.toString());
+                                                         ? null
+                                                         : theType.toString());
             theBucketButton.setText((theBucket == null)
-                    ? null
-                    : theBucket.toString());
+                                                       ? null
+                                                       : theBucket.toString());
         }
     }
 

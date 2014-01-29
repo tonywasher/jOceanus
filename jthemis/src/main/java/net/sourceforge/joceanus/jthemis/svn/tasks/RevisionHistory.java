@@ -27,7 +27,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNException;
@@ -50,7 +50,7 @@ public class RevisionHistory {
     /**
      * Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * Result set.
@@ -69,7 +69,7 @@ public class RevisionHistory {
      * Constructor.
      * @param pRepository the repository
      */
-    public RevisionHistory(final Repository pRepository) {
+    public RevisionHistory(final SvnRepository pRepository) {
         // final ReportStatus pReport) {
         /* Store Parameters */
         theRepository = pRepository;

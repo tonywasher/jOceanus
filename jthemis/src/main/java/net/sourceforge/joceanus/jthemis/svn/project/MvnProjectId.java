@@ -37,7 +37,7 @@ import org.apache.maven.model.Model;
  * Project element of POM.
  * @author Tony Washer
  */
-public final class ProjectId
+public final class MvnProjectId
         implements JDataContents {
     /**
      * SnapShot indication.
@@ -47,7 +47,7 @@ public final class ProjectId
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ProjectId.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(MvnProjectId.class.getSimpleName());
 
     /**
      * Group field id.
@@ -162,7 +162,7 @@ public final class ProjectId
      * @param pModel the project model
      * @throws JOceanusException on error
      */
-    protected ProjectId(final Model pModel) throws JOceanusException {
+    protected MvnProjectId(final Model pModel) throws JOceanusException {
         /* Store model */
         theModel = pModel;
         theDependency = null;
@@ -179,7 +179,7 @@ public final class ProjectId
      * @param pDependency the project dependency
      * @throws JOceanusException on error
      */
-    protected ProjectId(final Dependency pDependency) throws JOceanusException {
+    protected MvnProjectId(final Dependency pDependency) throws JOceanusException {
         /* Store dependency */
         theModel = null;
         theDependency = pDependency;
@@ -238,7 +238,7 @@ public final class ProjectId
      * Set new version.
      * @param pId the project Id
      */
-    protected void setNewVersion(final ProjectId pId) {
+    protected void setNewVersion(final MvnProjectId pId) {
         /* Ignore if wrong groupId/versionId */
         if (!theGroupId.equals(pId.getGroupId())) {
             return;
@@ -287,7 +287,7 @@ public final class ProjectId
         }
 
         /* Access as ProjectId */
-        ProjectId myThat = (ProjectId) pThat;
+        MvnProjectId myThat = (MvnProjectId) pThat;
 
         /* Check the attributes */
         if (!theGroupId.equals(myThat.getGroupId())) {
@@ -313,7 +313,7 @@ public final class ProjectId
      * Project list.
      */
     public static final class ProjectList
-            extends ArrayList<ProjectId>
+            extends ArrayList<MvnProjectId>
             implements JDataContents {
         /**
          * The Serial Id.

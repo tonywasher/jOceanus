@@ -8,48 +8,6 @@
   <artifactId>jthemis</artifactId>
   <name>jThemis Project Framework</name>
   <description>Java Project Framework</description>
-  <profiles>
-    <profile>
-      <id>buildclient</id>
-      <build>
-	<defaultGoal>assembly:assembly</defaultGoal>
-      </build>
-    </profile>
-    <profile>
-      <id>fetch-wsdl</id>
-      <build>
-	<defaultGoal>generate-sources</defaultGoal>
-	<plugins>
-	  <plugin>
-	    <artifactId>maven-antrun-plugin</artifactId>
-	    <executions>
-	      <execution>
-		<phase>generate-sources</phase>
-		<goals>
-		  <goal>run</goal>
-		</goals>
-		<configuration>
-		  <tasks>
-		    <get src="${jira.soapclient.jiraurl}/rpc/soap/jirasoapservice-v2?wsdl" dest="${basedir}/src/main/wsdl/jirasoapservice-v2_1.wsdl"/>
-		  </tasks>
-		</configuration>
-	      </execution>
-	    </executions>
-	    <dependencies>
-	      <dependency>
-		<groupId>axis</groupId>
-		<artifactId>axis-ant</artifactId>
-		<version>1.4</version>
-	      </dependency>
-	    </dependencies>
-	  </plugin>
-	</plugins>
-      </build>
-      <properties>
-	<jira.soapclient.jiraurl>http://${svnHost}:8080</jira.soapclient.jiraurl>
-       </properties>
-    </profile>
-  </profiles>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -82,25 +40,25 @@
       <version>${SvnKitVersion}</version>
     </dependency>  
     <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis</artifactId>
-      <version>1.4</version>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>jira-rest-java-client-api</artifactId>
+      <version>${JiraRestVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis-jaxrpc</artifactId>
-      <version>1.4</version>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>jira-rest-java-client-core</artifactId>
+      <version>${JiraRestVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.axis</groupId>
-      <artifactId>axis-saaj</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>axis</groupId>
-      <artifactId>axis-wsdl4j</artifactId>
-      <version>1.5.1</version>
-      <scope>compile</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.6.4</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -118,36 +76,14 @@
       <name>SubVersion Repository</name>
       <url>http://maven.tmatesoft.com/content/repositories/releases/</url>
     </repository>
+    <repository>
+      <id>atlassian-public</id>
+      <name>Atlassian Repository</name>
+      <url>https://m2proxy.atlassian.com/repository/public</url>
+    </repository>
   </repositories>
   <build>
     <plugins>
-      <plugin>
-	<groupId>org.codehaus.mojo</groupId>
-	<artifactId>axistools-maven-plugin</artifactId>
-	<version>1.4</version>
-	<dependencies>
-	  <dependency>
-	    <groupId>org.apache.axis</groupId>
-	    <artifactId>axis</artifactId>
-	    <version>1.4</version>
-	  </dependency>
-	</dependencies>
-	<configuration>
-	  <wsdlFiles>
-	    <wsdlFile>jirasoapservice-v2_1.wsdl</wsdlFile>
-	  </wsdlFiles>
-	  <packageSpace>${packageName}.jira.soap</packageSpace>
-	</configuration>
-	<executions>
-	  <execution>
-	    <id>wsdl2java-generation</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>wsdl2java</goal>
-	    </goals>
-	  </execution>
-	</executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

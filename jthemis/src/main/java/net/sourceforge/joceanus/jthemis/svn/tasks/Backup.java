@@ -29,19 +29,19 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
+import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;
@@ -94,11 +94,6 @@ public class Backup {
     private final ISVNAuthenticationManager theAuth;
 
     /**
-     * The Client Manager.
-     */
-    private final SVNClientManager theManager;
-
-    /**
      * The Administration Client.
      */
     private final SVNAdminClient theAdminClient;
@@ -127,11 +122,11 @@ public class Backup {
                 thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS));
 
         /* Access a default client manager */
-        theManager = SVNClientManager.newInstance();
-        theManager.setAuthenticationManager(theAuth);
+        SVNClientManager myManager = SVNClientManager.newInstance();
+        myManager.setAuthenticationManager(theAuth);
 
         /* Access Administration and Look clients */
-        theAdminClient = theManager.getAdminClient();
+        theAdminClient = myManager.getAdminClient();
     }
 
     /**
@@ -191,11 +186,11 @@ public class Backup {
         myBuilder.append(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO));
 
         /* Build the prefix directory */
-        myBuilder.append(Repository.SEP_URL);
-        myBuilder.append(Repository.PFIX_URL);
+        myBuilder.append(SvnRepository.SEP_URL);
+        myBuilder.append(SvnRepository.PFIX_URL);
 
         /* Build the component directory */
-        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(SvnRepository.SEP_URL);
         myBuilder.append(pName);
 
         /* Return the path */
@@ -240,9 +235,7 @@ public class Backup {
             long revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
-            myZipName = new File(pBackupDir.getPath(), myPrefix
-                                                       + myName
-                                                       + SpreadSheet.ZIPFILE_EXT);
+            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + SpreadSheet.ZIPFILE_EXT);
 
             /* If the backup file exists */
             if (myZipName.exists()) {
@@ -320,8 +313,7 @@ public class Backup {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess)
-                && (myZipName != null)) {
+            if ((!bSuccess) && (myZipName != null)) {
                 myZipName.delete();
             }
         }

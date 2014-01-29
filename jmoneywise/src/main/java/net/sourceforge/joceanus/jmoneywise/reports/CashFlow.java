@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
@@ -34,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,11 +64,6 @@ public class CashFlow
     private final JDataFormatter theFormatter;
 
     /**
-     * Data Analysis.
-     */
-    private Analysis theAnalysis;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -81,9 +76,8 @@ public class CashFlow
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        theAnalysis = pAnalysis;
-        PayeeBucketList myPayees = theAnalysis.getPayees();
-        JDateDayRange myRange = theAnalysis.getDateRange();
+        PayeeBucketList myPayees = pAnalysis.getPayees();
+        JDateDayRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         PayeeBucket myTotals = myPayees.getTotals();

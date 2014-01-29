@@ -27,16 +27,16 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.UpdateStatus.UpdateStatusList;
-import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
+import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -52,12 +52,12 @@ import org.tmatesoft.svn.core.wc.SVNStatusClient;
  * Represents a Working extract copy of subversion.
  * @author Tony Washer
  */
-public final class WorkingCopy
-        implements JDataContents, Comparable<WorkingCopy> {
+public final class SvnWorkingCopy
+        implements JDataContents, Comparable<SvnWorkingCopy> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(WorkingCopy.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(SvnWorkingCopy.class.getSimpleName());
 
     /**
      * Component field id.
@@ -104,8 +104,8 @@ public final class WorkingCopy
         /* Handle standard fields */
         if (FIELD_ALIAS.equals(pField)) {
             return getComponentName().equals(theAlias)
-                    ? JDataFieldValue.SKIP
-                    : theAlias;
+                                                      ? JDataFieldValue.SKIP
+                                                      : theAlias;
         }
         if (FIELD_BRAN.equals(pField)) {
             return theBranch;
@@ -121,8 +121,8 @@ public final class WorkingCopy
         }
         if (FIELD_UPDATES.equals(pField)) {
             return (theUpdates.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theUpdates;
+                                         ? JDataFieldValue.SKIP
+                                         : theUpdates;
         }
 
         /* Unknown */
@@ -132,7 +132,7 @@ public final class WorkingCopy
     /**
      * The branch associated with the working copy.
      */
-    private final Branch theBranch;
+    private final SvnBranch theBranch;
 
     /**
      * The alias of the branch that is checked out.
@@ -157,13 +157,13 @@ public final class WorkingCopy
     /**
      * The project definition.
      */
-    private ProjectDefinition theProject = null;
+    private MvnProjectDefinition theProject = null;
 
     /**
      * Get branch.
      * @return the branch
      */
-    public Branch getBranch() {
+    public SvnBranch getBranch() {
         return theBranch;
     }
 
@@ -180,9 +180,7 @@ public final class WorkingCopy
      * @return the full name
      */
     public String getFullName() {
-        return getComponentName()
-               + "_"
-               + theBranch.getBranchName();
+        return getComponentName() + "_" + theBranch.getBranchName();
     }
 
     /**
@@ -213,7 +211,7 @@ public final class WorkingCopy
      * Get Project Definition.
      * @return the project definition
      */
-    public ProjectDefinition getProjectDefinition() {
+    public MvnProjectDefinition getProjectDefinition() {
         return theProject;
     }
 
@@ -224,9 +222,9 @@ public final class WorkingCopy
      * @param pRevision the checked out revision
      * @throws JOceanusException on error
      */
-    private WorkingCopy(final File pLocation,
-                        final Branch pBranch,
-                        final SVNRevision pRevision) throws JOceanusException {
+    private SvnWorkingCopy(final File pLocation,
+                           final SvnBranch pBranch,
+                           final SVNRevision pRevision) throws JOceanusException {
         /* Store parameters */
         theBranch = pBranch;
         theLocation = pLocation;
@@ -238,9 +236,9 @@ public final class WorkingCopy
         Logger myLogger = pBranch.getRepository().getLogger();
 
         /* Determine the location of the project definition */
-        File myPom = ProjectDefinition.getProjectDefFile(theLocation);
+        File myPom = MvnProjectDefinition.getProjectDefFile(theLocation);
         if (myPom != null) {
-            theProject = ProjectDefinition.parseProjectFile(myLogger, myPom);
+            theProject = MvnProjectDefinition.parseProjectFile(myLogger, myPom);
         }
     }
 
@@ -251,7 +249,7 @@ public final class WorkingCopy
      */
     public void discoverUpdates(final ReportStatus pReport) throws JOceanusException {
         /* Access client */
-        Repository myRepository = theBranch.getRepository();
+        SvnRepository myRepository = theBranch.getRepository();
         SVNClientManager myMgr = myRepository.getClientManager();
         SVNStatusClient myClient = myMgr.getStatusClient();
 
@@ -274,13 +272,13 @@ public final class WorkingCopy
         /**
          * The Working copy.
          */
-        private final WorkingCopy theCopy;
+        private final SvnWorkingCopy theCopy;
 
         /**
          * Constructor.
          * @param pCopy the working copy
          */
-        private UpdateHandler(final WorkingCopy pCopy) {
+        private UpdateHandler(final SvnWorkingCopy pCopy) {
             theCopy = pCopy;
         }
 
@@ -293,7 +291,7 @@ public final class WorkingCopy
     }
 
     @Override
-    public int compareTo(final WorkingCopy pThat) {
+    public int compareTo(final SvnWorkingCopy pThat) {
         /* Handle trivial cases */
         if (this == pThat) {
             return 0;
@@ -317,10 +315,10 @@ public final class WorkingCopy
         }
 
         /* Check that the classes are the same */
-        if (pThat instanceof WorkingCopy) {
+        if (pThat instanceof SvnWorkingCopy) {
             return false;
         }
-        WorkingCopy myThat = (WorkingCopy) pThat;
+        SvnWorkingCopy myThat = (SvnWorkingCopy) pThat;
 
         /* Compare fields */
         return theBranch.equals(myThat.theBranch);
@@ -338,7 +336,7 @@ public final class WorkingCopy
      * @return the status (null if not under VC)
      * @throws JOceanusException on error
      */
-    public static SVNStatus getFileStatus(final Repository pRepo,
+    public static SVNStatus getFileStatus(final SvnRepository pRepo,
                                           final File pFile) throws JOceanusException {
         /* File must exist */
         if (!pFile.exists()) {
@@ -361,8 +359,7 @@ public final class WorkingCopy
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file/directory exists but is not WC */
-            if ((myCode != SVNErrorCode.WC_NOT_FILE)
-                && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
+            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
                 throw new JThemisIOException("Unable to get status", e);
             }
 
@@ -378,13 +375,13 @@ public final class WorkingCopy
     /**
      * Working Copy Set.
      */
-    public static final class WorkingCopySet
-            extends OrderedList<WorkingCopy>
+    public static final class SvnWorkingCopySet
+            extends OrderedList<SvnWorkingCopy>
             implements JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(WorkingCopySet.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnWorkingCopySet.class.getSimpleName());
 
         /**
          * Size field id.
@@ -403,9 +400,7 @@ public final class WorkingCopy
 
         @Override
         public String formatObject() {
-            return "WorkingCopySet("
-                   + size()
-                   + ")";
+            return "WorkingCopySet(" + size() + ")";
         }
 
         @Override
@@ -433,7 +428,7 @@ public final class WorkingCopy
         /**
          * The repository for which these are working sets.
          */
-        private final Repository theRepository;
+        private final SvnRepository theRepository;
 
         /**
          * The base location for the working sets.
@@ -452,7 +447,7 @@ public final class WorkingCopy
          * Get Repository.
          * @return the repository
          */
-        public Repository getRepository() {
+        public SvnRepository getRepository() {
             return theRepository;
         }
 
@@ -463,11 +458,11 @@ public final class WorkingCopy
          * @param pReport the report object
          * @throws JOceanusException on error
          */
-        public WorkingCopySet(final Repository pRepository,
+        public SvnWorkingCopySet(final SvnRepository pRepository,
                               final File pLocation,
                               final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
-            super(WorkingCopy.class);
+            super(SvnWorkingCopy.class);
 
             /* Store parameters */
             theRepository = pRepository;
@@ -483,10 +478,10 @@ public final class WorkingCopy
          * @param pReport the report object
          * @throws JOceanusException on error
          */
-        public WorkingCopySet(final Repository pRepository,
+        public SvnWorkingCopySet(final SvnRepository pRepository,
                               final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
-            super(WorkingCopy.class);
+            super(SvnWorkingCopy.class);
 
             /* Store parameters */
             theRepository = pRepository;
@@ -516,16 +511,15 @@ public final class WorkingCopy
             pReport.setNumStages(size() + 2);
 
             /* Access list iterator */
-            Iterator<WorkingCopy> myIterator = iterator();
+            Iterator<SvnWorkingCopy> myIterator = iterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                WorkingCopy myCopy = myIterator.next();
+                SvnWorkingCopy myCopy = myIterator.next();
 
                 /* Report stage of analysis */
-                pReport.setNewStage("Analysing WC at "
-                                    + myCopy.getLocation().getName());
+                pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
 
                 /* Discover updates */
                 myCopy.discoverUpdates(pReport);
@@ -569,12 +563,12 @@ public final class WorkingCopy
                     SVNURL myURL = myStatus.getRemoteURL();
 
                     /* Obtain the relevant branch in the repository */
-                    Branch myBranch = theRepository.locateBranch(myURL);
+                    SvnBranch myBranch = theRepository.locateBranch(myURL);
 
                     /* If we found the branch */
                     if (myBranch != null) {
                         /* Create the working copy */
-                        WorkingCopy myCopy = new WorkingCopy(myFile, myBranch, myStatus.getRevision());
+                        SvnWorkingCopy myCopy = new SvnWorkingCopy(myFile, myBranch, myStatus.getRevision());
 
                         /* Add to the list */
                         add(myCopy);
@@ -593,12 +587,12 @@ public final class WorkingCopy
             int myFile = 0;
 
             /* Allocate the iterator */
-            ListIterator<WorkingCopy> myIterator = listIterator();
+            ListIterator<SvnWorkingCopy> myIterator = listIterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {
                 /* Access copy and add to files */
-                WorkingCopy myCopy = myIterator.next();
+                SvnWorkingCopy myCopy = myIterator.next();
                 myFiles[myFile++] = myCopy.getLocation();
             }
 
@@ -611,16 +605,16 @@ public final class WorkingCopy
          * @param pComponent the component
          * @return the active branch
          */
-        public Branch getActiveBranch(final String pComponent) {
+        public SvnBranch getActiveBranch(final String pComponent) {
             /* Allocate the iterator */
-            ListIterator<WorkingCopy> myIterator = listIterator();
+            ListIterator<SvnWorkingCopy> myIterator = listIterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {
                 /* Access copy and obtain branch/component */
-                WorkingCopy myCopy = myIterator.next();
-                Branch myBranch = myCopy.getBranch();
-                Component myComp = myBranch.getComponent();
+                SvnWorkingCopy myCopy = myIterator.next();
+                SvnBranch myBranch = myCopy.getBranch();
+                SvnComponent myComp = myBranch.getComponent();
 
                 /* If this is the right component */
                 if (myComp.getName().equals(pComponent)) {

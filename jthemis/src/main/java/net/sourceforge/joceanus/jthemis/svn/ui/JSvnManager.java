@@ -35,16 +35,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.Tag;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateBranchTags;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateNewBranch;
 import net.sourceforge.joceanus.jthemis.svn.threads.CreateTagExtract;
@@ -62,7 +62,12 @@ public final class JSvnManager {
     /**
      * The Base component.
      */
-    private static final String BASE_COMP = "jMoneyWise";
+    private static final String BASE_COMP = "jmoneywise";
+
+    /**
+     * The Base version.
+     */
+    private static final String BASE_BRANCH = "v1.2.1";
 
     /**
      * The Frame.
@@ -73,11 +78,6 @@ public final class JSvnManager {
      * The Data Manager.
      */
     private final JDataManager theDataMgr;
-
-    /**
-     * The Preference Manager.
-     */
-    private final PreferenceManager thePreferenceMgr;
 
     /**
      * Preferences.
@@ -137,12 +137,12 @@ public final class JSvnManager {
     /**
      * The repository.
      */
-    private Repository theRepository;
+    private SvnRepository theRepository;
 
     /**
      * The working copy set.
      */
-    private WorkingCopySet theWorkingSet;
+    private SvnWorkingCopySet theWorkingSet;
 
     /**
      * Status panel.
@@ -150,24 +150,16 @@ public final class JSvnManager {
     private final JSvnStatusWindow theStatusPanel;
 
     /**
-     * The logger.
-     */
-    private final Logger theLogger;
-
-    /**
      * Constructor.
      * @param pLogger the logger
      */
     protected JSvnManager(final Logger pLogger) {
-        /* Store logger */
-        theLogger = pLogger;
-
         /* Create the data manager */
-        theDataMgr = new JDataManager(theLogger);
+        theDataMgr = new JDataManager(pLogger);
 
         /* Create the preference manager */
-        thePreferenceMgr = new PreferenceManager(theLogger);
-        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+        PreferenceManager myPreferenceMgr = new PreferenceManager(pLogger);
+        thePreferences = myPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Create the frame */
         theFrame = new JFrame(JSvnManager.class.getSimpleName());
@@ -233,7 +225,7 @@ public final class JSvnManager {
         theFrame.setVisible(true);
 
         /* Create and run discoverData thread */
-        DiscoverData myThread = new DiscoverData(thePreferenceMgr, theStatusPanel);
+        DiscoverData myThread = new DiscoverData(myPreferenceMgr, theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -285,14 +277,13 @@ public final class JSvnManager {
      */
     private void runCheckOutWC() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
-                        + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
 
         /* Create and run createWorkingCopy thread */
-        Branch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
-        Branch[] myList = new Branch[] { myBranch };
-        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File(myPath
-                                                                                              + "TestWC"), theStatusPanel);
+        SvnBranch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
+        SvnBranch[] myList = new SvnBranch[]
+        { myBranch };
+        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File(myPath + "TestWC"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -302,14 +293,13 @@ public final class JSvnManager {
      */
     private void runCreateTagExtract() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
-                        + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
 
         /* Create and run createTagExtract thread */
-        Tag myTag = theRepository.locateTag(BASE_COMP, "v1.1.0", 1);
-        Tag[] myList = new Tag[] { myTag };
-        CreateTagExtract myThread = new CreateTagExtract(myList, new File(myPath
-                                                                          + "TestXT"), theStatusPanel);
+        SvnTag myTag = theRepository.locateTag(BASE_COMP, BASE_BRANCH, 1);
+        SvnTag[] myList = new SvnTag[]
+        { myTag };
+        CreateTagExtract myThread = new CreateTagExtract(myList, new File(myPath + "TestXT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -339,14 +329,13 @@ public final class JSvnManager {
      */
     private void runCreateBranchTags() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
-                        + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
 
         /* Create and run createBranchTags thread */
-        Branch myBranch = theRepository.locateBranch(BASE_COMP, "v1.1.0");
-        Branch[] myList = new Branch[] { myBranch };
-        CreateBranchTags myThread = new CreateBranchTags(myList, new File(myPath
-                                                                          + "TestBT"), theStatusPanel);
+        SvnBranch myBranch = theRepository.locateBranch(BASE_COMP, BASE_BRANCH);
+        SvnBranch[] myList = new SvnBranch[]
+        { myBranch };
+        CreateBranchTags myThread = new CreateBranchTags(myList, new File(myPath + "TestBT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -356,14 +345,13 @@ public final class JSvnManager {
      */
     private void runCreateNewBranch() {
         /* Access work directory */
-        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
-                        + File.pathSeparator;
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD) + File.pathSeparator;
 
         /* Create and run createBranchTags thread */
-        Tag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
-        Tag[] myList = new Tag[] { myTag };
-        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(myPath
-                                                                                            + "TestNB"), theStatusPanel);
+        SvnTag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
+        SvnTag[] myList = new SvnTag[]
+        { myTag };
+        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(myPath + "TestNB"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }

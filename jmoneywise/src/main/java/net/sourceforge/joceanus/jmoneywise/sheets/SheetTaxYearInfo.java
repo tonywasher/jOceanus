@@ -42,11 +42,6 @@ public class SheetTaxYearInfo
     private static final String AREA_TAXYEARINFO = TaxYearInfo.LIST_NAME;
 
     /**
-     * The DataSet.
-     */
-    private MoneyWiseData theData = null;
-
-    /**
      * TaxYear data list.
      */
     private final TaxYearList theTaxYears;
@@ -65,9 +60,9 @@ public class SheetTaxYearInfo
         super(pReader, AREA_TAXYEARINFO);
 
         /* Access the InfoType list */
-        theData = pReader.getData();
-        theTaxYears = theData.getTaxYears();
-        theList = theData.getTaxInfo();
+        MoneyWiseData myData = pReader.getData();
+        theTaxYears = myData.getTaxYears();
+        theList = myData.getTaxInfo();
         setDataList(theList);
     }
 

@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -34,6 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventBaseList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QPortfolioEvent.QPortfolioEventList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QAccountLineType;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Quicken Account.
@@ -64,11 +64,6 @@ public final class QAccount
      * Is this account an autoExpense?
      */
     private final boolean isAutoExpense;
-
-    /**
-     * Is this account a portfolio?
-     */
-    private final boolean isPortfolio;
 
     /**
      * Obtain the account name.
@@ -140,11 +135,11 @@ public final class QAccount
         theAnalysis = pAnalysis;
         theAccount = pAccount;
         isAutoExpense = (pAccount.getAutoExpense() != null);
-        isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO);
+        boolean isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO);
 
         theEvents = (isPortfolio)
-                ? new QPortfolioEventList(pAnalysis, this)
-                : new QEventList(pAnalysis, this);
+                                 ? new QPortfolioEventList(pAnalysis, this)
+                                 : new QEventList(pAnalysis, this);
     }
 
     /**
@@ -278,8 +273,7 @@ public final class QAccount
      */
     protected boolean isActive() {
         /* Check size of list */
-        return (!theEvents.isEmpty())
-               || (theAccount.getOpeningBalance() != null);
+        return (!theEvents.isEmpty()) || (theAccount.getOpeningBalance() != null);
     }
 
     /**

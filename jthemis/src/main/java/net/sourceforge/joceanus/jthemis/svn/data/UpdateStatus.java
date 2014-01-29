@@ -132,7 +132,7 @@ public class UpdateStatus
      * @param pCopy the working copy for the status
      * @param pStatus the underlying status
      */
-    protected UpdateStatus(final WorkingCopy pCopy,
+    protected UpdateStatus(final SvnWorkingCopy pCopy,
                            final SVNStatus pStatus) {
         /* Copy interesting fields */
         theStatus = pStatus;

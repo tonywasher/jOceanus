@@ -203,7 +203,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     }
 
     /**
-     * Obtain name of item
+     * Obtain name of item.
      * @return the item name
      */
     public String getItemName() {
@@ -211,7 +211,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     }
 
     /**
-     * Obtain name of associated list
+     * Obtain name of associated list.
      * @return the list name
      */
     public String getListName() {

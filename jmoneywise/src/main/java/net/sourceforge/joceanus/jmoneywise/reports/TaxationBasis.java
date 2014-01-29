@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
@@ -35,6 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,11 +65,6 @@ public class TaxationBasis
     private final JDataFormatter theFormatter;
 
     /**
-     * Data Analysis.
-     */
-    private Analysis theAnalysis;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -82,9 +77,8 @@ public class TaxationBasis
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        theAnalysis = pAnalysis;
-        TaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();
-        JDateDayRange myRange = theAnalysis.getDateRange();
+        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
+        JDateDayRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         TaxBasisBucket myTotals = myTaxBasis.getTotals();

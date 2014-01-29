@@ -223,11 +223,6 @@ public class MaintAccount
     private final transient View theView;
 
     /**
-     * The field manager.
-     */
-    private final transient JFieldManager theFieldMgr;
-
-    /**
      * The Update Set.
      */
     private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
@@ -257,7 +252,7 @@ public class MaintAccount
     public MaintAccount(final View pView) {
         /* Access the view */
         theView = pView;
-        theFieldMgr = theView.getFieldMgr();
+        JFieldManager myFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
@@ -265,7 +260,7 @@ public class MaintAccount
         theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 
         /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<Account>(theFieldMgr);
+        theFieldSet = new JFieldSet<Account>(myFieldMgr);
 
         /* Create the status fields */
         theFirst = new JTextField();

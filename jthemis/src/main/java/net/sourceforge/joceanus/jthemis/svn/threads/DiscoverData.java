@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 
 /**
  * Thread to handle analysis of repository.
@@ -53,12 +53,12 @@ public class DiscoverData
     /**
      * The Repository.
      */
-    private Repository theRepository;
+    private SvnRepository theRepository;
 
     /**
      * The WorkingCopySet.
      */
-    private WorkingCopySet theWorkingCopySet;
+    private SvnWorkingCopySet theWorkingCopySet;
 
     /**
      * The Error.
@@ -69,7 +69,7 @@ public class DiscoverData
      * Obtain the repository.
      * @return the repository
      */
-    public Repository getRepository() {
+    public SvnRepository getRepository() {
         return theRepository;
     }
 
@@ -77,7 +77,7 @@ public class DiscoverData
      * Obtain the working copy set.
      * @return the working copy set
      */
-    public WorkingCopySet getWorkingCopySet() {
+    public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
     }
 
@@ -105,10 +105,10 @@ public class DiscoverData
         /* Protect against exceptions */
         try {
             /* Discover repository details */
-            theRepository = new Repository(thePreferenceMgr, this);
+            theRepository = new SvnRepository(thePreferenceMgr, this);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, this);
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, this);
         } catch (JOceanusException e) {
             /* Store the error */
             theError = e;

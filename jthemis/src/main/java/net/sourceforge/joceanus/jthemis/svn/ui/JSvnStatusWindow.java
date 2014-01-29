@@ -65,11 +65,6 @@ public class JSvnStatusWindow
     private final transient JSvnManager theManager;
 
     /**
-     * The scroll pane.
-     */
-    private final JScrollPane theScroll;
-
-    /**
      * The TextArea.
      */
     private final JTextArea theText;
@@ -114,9 +109,9 @@ public class JSvnStatusWindow
         theCancelButton = new JButton("Cancel");
 
         /* Create the scrollPane */
-        theScroll = new JScrollPane();
-        theScroll.setViewportView(theText);
-        theScroll.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        JScrollPane myScroll = new JScrollPane();
+        myScroll.setViewportView(theText);
+        myScroll.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 
         /* Add listener */
         StatusListener myListener = new StatusListener();
@@ -126,7 +121,7 @@ public class JSvnStatusWindow
 
         /* Add the components */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(theScroll);
+        add(myScroll);
         add(theClearButton);
         add(theCancelButton);
     }

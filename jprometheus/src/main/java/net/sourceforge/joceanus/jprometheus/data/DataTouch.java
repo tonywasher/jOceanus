@@ -43,7 +43,7 @@ public class DataTouch<E extends Enum<E>>
     /**
      * The DataSet.
      */
-    private final DataSet<?, ?> theDataSet;
+    private final transient DataSet<?, ?> theDataSet;
 
     @Override
     public String formatObject() {

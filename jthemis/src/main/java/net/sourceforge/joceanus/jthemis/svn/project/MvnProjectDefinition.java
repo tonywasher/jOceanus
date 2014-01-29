@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.project.ProjectId.ProjectList;
+import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -52,7 +52,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Represents the definition of a project.
  * @author Tony Washer
  */
-public class ProjectDefinition
+public class MvnProjectDefinition
         implements JDataContents {
     /**
      * POM name.
@@ -62,7 +62,7 @@ public class ProjectDefinition
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ProjectDefinition.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(MvnProjectDefinition.class.getSimpleName());
 
     /**
      * Id field id.
@@ -106,7 +106,7 @@ public class ProjectDefinition
     /**
      * Main module identity.
      */
-    private final ProjectId theDefinition;
+    private final MvnProjectId theDefinition;
 
     /**
      * Dependency identities.
@@ -125,7 +125,7 @@ public class ProjectDefinition
      * Get Project Identity.
      * @return the project identity
      */
-    public ProjectId getDefinition() {
+    public MvnProjectId getDefinition() {
         return theDefinition;
     }
 
@@ -144,7 +144,7 @@ public class ProjectDefinition
      * @return project definition.
      * @throws JOceanusException on error
      */
-    public static ProjectDefinition parseProjectFile(final Logger pLogger,
+    public static MvnProjectDefinition parseProjectFile(final Logger pLogger,
                                                      final File pFile) throws JOceanusException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer = null;
@@ -156,7 +156,7 @@ public class ProjectDefinition
             myInBuffer = new BufferedInputStream(myInFile);
 
             /* Parse the project definition */
-            return new ProjectDefinition(myInBuffer);
+            return new MvnProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
         } catch (JOceanusException | IOException e) {
@@ -180,7 +180,7 @@ public class ProjectDefinition
      * @param pInput the project definition file as input stream
      * @throws JOceanusException on error
      */
-    public ProjectDefinition(final InputStream pInput) throws JOceanusException {
+    public MvnProjectDefinition(final InputStream pInput) throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Parse the Project definition */
@@ -188,7 +188,7 @@ public class ProjectDefinition
             theModel = myReader.read(pInput);
 
             /* Obtain the major definition */
-            theDefinition = new ProjectId(theModel);
+            theDefinition = new MvnProjectId(theModel);
 
             /* Create the dependency list */
             theDependencies = new ProjectList();
@@ -208,12 +208,12 @@ public class ProjectDefinition
      * @param pDefinition the definition to copy
      * @throws JOceanusException on error
      */
-    public ProjectDefinition(final ProjectDefinition pDefinition) throws JOceanusException {
+    public MvnProjectDefinition(final MvnProjectDefinition pDefinition) throws JOceanusException {
         /* Clone the old model */
         theModel = pDefinition.getModel().clone();
 
         /* Copy project Id and dependencies */
-        theDefinition = new ProjectId(theModel);
+        theDefinition = new MvnProjectId(theModel);
         theDependencies = new ProjectList();
         parseDependencies();
     }
@@ -232,7 +232,7 @@ public class ProjectDefinition
             Dependency myDependency = myIterator.next();
 
             /* Build new project Id */
-            ProjectId myDep = new ProjectId(myDependency);
+            MvnProjectId myDep = new MvnProjectId(myDependency);
             theDependencies.add(myDep);
         }
     }
@@ -303,12 +303,12 @@ public class ProjectDefinition
      * Set New Version for dependencies.
      * @param pProjectId the project Id
      */
-    public void setNewVersion(final ProjectId pProjectId) {
+    public void setNewVersion(final MvnProjectId pProjectId) {
         /* Loop through dependencies */
-        Iterator<ProjectId> myIterator = theDependencies.iterator();
+        Iterator<MvnProjectId> myIterator = theDependencies.iterator();
         while (myIterator.hasNext()) {
             /* Access dependency and set version */
-            ProjectId myRef = myIterator.next();
+            MvnProjectId myRef = myIterator.next();
             myRef.setNewVersion(pProjectId);
         }
     }

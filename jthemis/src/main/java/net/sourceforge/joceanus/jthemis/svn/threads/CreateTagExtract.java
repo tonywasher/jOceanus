@@ -31,8 +31,8 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.Tag;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 
@@ -46,7 +46,7 @@ public class CreateTagExtract
     /**
      * Tags.
      */
-    private final Collection<Tag> theTags;
+    private final Collection<SvnTag> theTags;
 
     /**
      * Location.
@@ -61,7 +61,7 @@ public class CreateTagExtract
     /**
      * The Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * The Error.
@@ -82,14 +82,14 @@ public class CreateTagExtract
      * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public CreateTagExtract(final Tag[] pTags,
+    public CreateTagExtract(final SvnTag[] pTags,
                             final File pLocation,
                             final ReportTask pReport) {
         /* Store parameters */
         theLocation = pLocation;
         theReport = pReport;
         theRepository = pTags[0].getRepository();
-        Collection<Tag> myTags = null;
+        Collection<SvnTag> myTags = null;
 
         /* protect against exceptions */
         try {
@@ -97,7 +97,7 @@ public class CreateTagExtract
             Directory.createDirectory(pLocation);
 
             /* Access tag list for extract */
-            myTags = Tag.getTagMap(pTags).values();
+            myTags = SvnTag.getTagMap(pTags).values();
         } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;

@@ -30,15 +30,15 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchList;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
-import net.sourceforge.joceanus.jthemis.svn.data.Component;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.Tag;
-import net.sourceforge.joceanus.jthemis.svn.project.ProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.project.ProjectId;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
+import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -65,7 +65,7 @@ public class VersionMgr {
     /**
      * Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * Location.
@@ -88,7 +88,7 @@ public class VersionMgr {
      * @param pLocation the location
      * @param pReport the report object
      */
-    public VersionMgr(final Repository pRepository,
+    public VersionMgr(final SvnRepository pRepository,
                       final File pLocation,
                       final ReportStatus pReport) {
         /* Store Parameters */
@@ -113,10 +113,10 @@ public class VersionMgr {
      * @param pSource the tag to base the branch on
      * @throws JOceanusException on error
      */
-    protected void createBranch(final Branch pTarget,
-                                final Tag pSource) throws JOceanusException {
+    protected void createBranch(final SvnBranch pTarget,
+                                final SvnTag pSource) throws JOceanusException {
         /* Access details */
-        Component myComp = pTarget.getComponent();
+        SvnComponent myComp = pTarget.getComponent();
 
         /* Access clients */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
@@ -157,10 +157,10 @@ public class VersionMgr {
      * @param pSource the branch to create the tag for
      * @throws JOceanusException on error
      */
-    private void createTag(final Tag pTarget,
-                           final Branch pSource) throws JOceanusException {
+    private void createTag(final SvnTag pTarget,
+                           final SvnBranch pSource) throws JOceanusException {
         /* Access details */
-        Component myComp = pTarget.getComponent();
+        SvnComponent myComp = pTarget.getComponent();
 
         /* Access clients */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
@@ -201,13 +201,13 @@ public class VersionMgr {
      * @return the list of tags that were created
      * @throws JOceanusException on error
      */
-    public List<Tag> createTags(final Collection<Branch> pBranches) throws JOceanusException {
+    public List<SvnTag> createTags(final Collection<SvnBranch> pBranches) throws JOceanusException {
         /* Create the list of tags */
-        List<Tag> myList = new ArrayList<Tag>();
-        Tag myTag;
+        List<SvnTag> myList = new ArrayList<SvnTag>();
+        SvnTag myTag;
 
         /* Loop through branches */
-        for (Branch myBranch : pBranches) {
+        for (SvnBranch myBranch : pBranches) {
             /* If the branch is tag-gable */
             if (myBranch.isTaggable()) {
                 /* Determine the new tag */
@@ -240,17 +240,17 @@ public class VersionMgr {
      * @return the list of branches that were created
      * @throws JOceanusException on error
      */
-    public List<Branch> createBranches(final Collection<Tag> pTags,
+    public List<SvnBranch> createBranches(final Collection<SvnTag> pTags,
                                        final BranchOpType pBranchType) throws JOceanusException {
         /* Create the list of branches */
-        List<Branch> myList = new ArrayList<Branch>();
+        List<SvnBranch> myList = new ArrayList<SvnBranch>();
 
         /* Loop through tags */
-        for (Tag myTag : pTags) {
+        for (SvnTag myTag : pTags) {
             /* Determine the new branch */
-            Branch myBranch = myTag.getBranch();
-            Component myComp = myBranch.getComponent();
-            BranchList myBranches = myComp.getBranchList();
+            SvnBranch myBranch = myTag.getBranch();
+            SvnComponent myComp = myBranch.getComponent();
+            SvnBranchList myBranches = myComp.getBranchList();
             myBranch = myBranches.nextBranch(myTag.getBranch(), pBranchType);
 
             /* Create the branch */
@@ -272,16 +272,16 @@ public class VersionMgr {
      * @param pBranches the branches to adjust.
      * @throws JOceanusException on error
      */
-    private void adjustBranchDependencies(final List<Branch> pBranches) throws JOceanusException {
+    private void adjustBranchDependencies(final List<SvnBranch> pBranches) throws JOceanusException {
         /* Loop through the branches */
-        for (Branch myBranch : pBranches) {
+        for (SvnBranch myBranch : pBranches) {
             /* Access version */
-            ProjectDefinition myTargDef = myBranch.getProjectDefinition();
+            MvnProjectDefinition myTargDef = myBranch.getProjectDefinition();
 
             /* Loop through the branches */
-            Iterator<Branch> myIterator = pBranches.iterator();
+            Iterator<SvnBranch> myIterator = pBranches.iterator();
             while (myIterator.hasNext()) {
-                Branch mySource = myIterator.next();
+                SvnBranch mySource = myIterator.next();
 
                 /* Skip if we are the same branch */
                 if (mySource.equals(myBranch)) {
@@ -289,8 +289,8 @@ public class VersionMgr {
                 }
 
                 /* Set new version */
-                ProjectDefinition mySrcDef = mySource.getProjectDefinition();
-                ProjectId myId = mySrcDef.getDefinition();
+                MvnProjectDefinition mySrcDef = mySource.getProjectDefinition();
+                MvnProjectId myId = mySrcDef.getDefinition();
                 myTargDef.setNewVersion(myId);
             }
 
@@ -305,16 +305,16 @@ public class VersionMgr {
      * @param pTags the tags to adjust.
      * @throws JOceanusException on error
      */
-    private void adjustTagDependencies(final List<Tag> pTags) throws JOceanusException {
+    private void adjustTagDependencies(final List<SvnTag> pTags) throws JOceanusException {
         /* Loop through the tags */
-        for (Tag myTag : pTags) {
+        for (SvnTag myTag : pTags) {
             /* Access version */
-            ProjectDefinition myTargDef = myTag.getProjectDefinition();
+            MvnProjectDefinition myTargDef = myTag.getProjectDefinition();
 
             /* Loop through the branches */
-            Iterator<Tag> myIterator = pTags.iterator();
+            Iterator<SvnTag> myIterator = pTags.iterator();
             while (myIterator.hasNext()) {
-                Tag mySource = myIterator.next();
+                SvnTag mySource = myIterator.next();
 
                 /* Skip if we are the same tag */
                 if (mySource.equals(myTag)) {
@@ -322,8 +322,8 @@ public class VersionMgr {
                 }
 
                 /* Set new version */
-                ProjectDefinition mySrcDef = mySource.getProjectDefinition();
-                ProjectId myId = mySrcDef.getDefinition();
+                MvnProjectDefinition mySrcDef = mySource.getProjectDefinition();
+                MvnProjectId myId = mySrcDef.getDefinition();
                 myTargDef.setNewVersion(myId);
             }
 

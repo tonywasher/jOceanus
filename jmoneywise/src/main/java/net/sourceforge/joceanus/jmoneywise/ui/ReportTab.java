@@ -43,10 +43,6 @@ import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
@@ -58,7 +54,11 @@ import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementS
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableScroll;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
@@ -106,11 +106,6 @@ public class ReportTab
     private final transient Logger theLogger;
 
     /**
-     * The Report entry.
-     */
-    private final transient JDataEntry theDataReport;
-
-    /**
      * The Spot Analysis Entry.
      */
     private final transient JDataEntry theSpotEntry;
@@ -143,10 +138,10 @@ public class ReportTab
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataReport = myDataMgr.new JDataEntry("Report");
+        JDataEntry myDataReport = myDataMgr.new JDataEntry("Report");
         theSpotEntry = myDataMgr.new JDataEntry("SpotAnalysis");
-        theDataReport.addAsChildOf(mySection);
-        theSpotEntry.addAsChildOf(theDataReport);
+        myDataReport.addAsChildOf(mySection);
+        theSpotEntry.addAsChildOf(myDataReport);
         theSpotEntry.hideEntry();
 
         /* Create Report Manager */
@@ -201,7 +196,7 @@ public class ReportTab
         theSelect.addActionListener(myListener);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataReport);
+        theError = new ErrorPanel(myDataMgr, myDataReport);
         theError.addChangeListener(myListener);
 
         /* Add listener to data */
@@ -366,8 +361,7 @@ public class ReportTab
             int myPos = myEditor.getUI().viewToModel(myEditor, pEvent.getPoint());
 
             /* If all looks OK so far */
-            if ((myPos >= 0)
-                && (myEditor.getDocument() instanceof HTMLDocument)) {
+            if ((myPos >= 0) && (myEditor.getDocument() instanceof HTMLDocument)) {
 
                 /* Access the document element for the position */
                 HTMLDocument myDoc = (HTMLDocument) myEditor.getDocument();
@@ -438,8 +432,7 @@ public class ReportTab
             }
 
             /* If this is the report manager */
-            if (theManager.equals(o)
-                && (evt instanceof ActionDetailEvent)) {
+            if (theManager.equals(o) && (evt instanceof ActionDetailEvent)) {
                 ActionDetailEvent myEvent = (ActionDetailEvent) evt;
                 if (myEvent.getSubId() == ReportManager.ACTION_VIEWFILTER) {
                     /* Create the details of the report */

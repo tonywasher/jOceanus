@@ -1030,7 +1030,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /**
-         * Obtain name of item
+         * Obtain name of item.
          * @return the item name
          */
         public String getItemName() {
@@ -1038,7 +1038,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /**
-         * Obtain name of associated list
+         * Obtain name of associated list.
          * @return the list name
          */
         public String getListName() {

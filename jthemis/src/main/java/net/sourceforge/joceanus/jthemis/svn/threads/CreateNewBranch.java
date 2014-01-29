@@ -31,12 +31,12 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.BranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.Tag;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.tasks.VersionMgr;
 
@@ -50,7 +50,7 @@ public class CreateNewBranch
     /**
      * Tags.
      */
-    private final Collection<Tag> theTags;
+    private final Collection<SvnTag> theTags;
 
     /**
      * Tags.
@@ -70,12 +70,12 @@ public class CreateNewBranch
     /**
      * The Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * The WorkingCopySet.
      */
-    private WorkingCopySet theWorkingCopySet = null;
+    private SvnWorkingCopySet theWorkingCopySet = null;
 
     /**
      * The Error.
@@ -86,7 +86,7 @@ public class CreateNewBranch
      * Obtain the working copy set.
      * @return the working copy set
      */
-    public WorkingCopySet getWorkingCopySet() {
+    public SvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
     }
 
@@ -105,7 +105,7 @@ public class CreateNewBranch
      * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public CreateNewBranch(final Tag[] pTags,
+    public CreateNewBranch(final SvnTag[] pTags,
                            final BranchOpType pBranchType,
                            final File pLocation,
                            final ReportTask pReport) {
@@ -114,7 +114,7 @@ public class CreateNewBranch
         theBranchType = pBranchType;
         theReport = pReport;
         theRepository = pTags[0].getRepository();
-        Collection<Tag> myTags = null;
+        Collection<SvnTag> myTags = null;
 
         /* protect against exceptions */
         try {
@@ -122,7 +122,7 @@ public class CreateNewBranch
             Directory.createDirectory(pLocation);
 
             /* Store the tags */
-            myTags = new HashSet<Tag>(Arrays.asList(pTags));
+            myTags = new HashSet<SvnTag>(Arrays.asList(pTags));
         } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
@@ -142,7 +142,7 @@ public class CreateNewBranch
             myVersionMgr.createBranches(theTags, theBranchType);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
+            theWorkingCopySet = new SvnWorkingCopySet(theRepository, theLocation, this);
         } catch (JOceanusException e) {
             /* Store the error */
             theError = e;

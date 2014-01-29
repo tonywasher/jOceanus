@@ -28,12 +28,12 @@ import java.util.Collection;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.Branch;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.Repository;
-import net.sourceforge.joceanus.jthemis.svn.data.Tag;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy;
-import net.sourceforge.joceanus.jthemis.svn.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -55,7 +55,7 @@ public class CheckOut {
     /**
      * Repository.
      */
-    private final Repository theRepository;
+    private final SvnRepository theRepository;
 
     /**
      * Report object.
@@ -77,7 +77,7 @@ public class CheckOut {
      * @param pRepository the repository
      * @param pReport the report object
      */
-    public CheckOut(final Repository pRepository,
+    public CheckOut(final SvnRepository pRepository,
                     final ReportStatus pReport) {
         /* Store parameters */
         theRepository = pRepository;
@@ -100,7 +100,7 @@ public class CheckOut {
      * @param pPath the path to check out to.
      * @throws JOceanusException on error
      */
-    private void checkOutBranch(final Branch pBranch,
+    private void checkOutBranch(final SvnBranch pBranch,
                                 final SVNRevision pRevision,
                                 final File pPath) throws JOceanusException {
         /* Access update client */
@@ -125,7 +125,7 @@ public class CheckOut {
      * @param pPath the path to check out to.
      * @throws JOceanusException on error
      */
-    private void switchBranch(final Branch pBranch,
+    private void switchBranch(final SvnBranch pBranch,
                               final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
@@ -188,7 +188,7 @@ public class CheckOut {
      * @param pPath the path to export to.
      * @throws JOceanusException on error
      */
-    private void exportTag(final Tag pTag,
+    private void exportTag(final SvnTag pTag,
                            final File pPath) throws JOceanusException {
         /* Access update client */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
@@ -211,11 +211,11 @@ public class CheckOut {
      * @param pPath the path to export to.
      * @throws JOceanusException on error
      */
-    public void checkOutBranches(final Collection<Branch> pBranches,
+    public void checkOutBranches(final Collection<SvnBranch> pBranches,
                                  final SVNRevision pRevision,
                                  final File pPath) throws JOceanusException {
         /* Loop through branches */
-        for (Branch myBranch : pBranches) {
+        for (SvnBranch myBranch : pBranches) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
                 throw new JThemisCancelException("Operation Cancelled");
@@ -235,10 +235,10 @@ public class CheckOut {
      * @param pPath the path to export to.
      * @throws JOceanusException on error
      */
-    public void switchBranches(final Collection<Branch> pBranches,
+    public void switchBranches(final Collection<SvnBranch> pBranches,
                                final File pPath) throws JOceanusException {
         /* Loop through branches */
-        for (Branch myBranch : pBranches) {
+        for (SvnBranch myBranch : pBranches) {
             /* Build path */
             File myPath = new File(pPath, myBranch.getComponent().getName());
 
@@ -252,9 +252,9 @@ public class CheckOut {
      * @param pSet the working set to update.
      * @throws JOceanusException on error
      */
-    public void updateWorkingCopySet(final WorkingCopySet pSet) throws JOceanusException {
+    public void updateWorkingCopySet(final SvnWorkingCopySet pSet) throws JOceanusException {
         /* Loop through copies */
-        for (WorkingCopy myCopy : pSet) {
+        for (SvnWorkingCopy myCopy : pSet) {
             /* Access path */
             File myPath = myCopy.getLocation();
 
@@ -268,9 +268,9 @@ public class CheckOut {
      * @param pSet the working set to revert.
      * @throws JOceanusException on error
      */
-    public void revertWorkingCopySet(final WorkingCopySet pSet) throws JOceanusException {
+    public void revertWorkingCopySet(final SvnWorkingCopySet pSet) throws JOceanusException {
         /* Loop through copies */
-        for (WorkingCopy myCopy : pSet) {
+        for (SvnWorkingCopy myCopy : pSet) {
             /* Access path */
             File myPath = myCopy.getLocation();
 
@@ -285,10 +285,10 @@ public class CheckOut {
      * @param pPath the path to export to.
      * @throws JOceanusException on error
      */
-    public void exportTags(final Collection<Tag> pTags,
+    public void exportTags(final Collection<SvnTag> pTags,
                            final File pPath) throws JOceanusException {
         /* Loop through tags */
-        for (Tag myTag : pTags) {
+        for (SvnTag myTag : pTags) {
             /* Check for cancellation */
             if (theReport.isCancelled()) {
                 throw new JThemisCancelException("Operation Cancelled");
