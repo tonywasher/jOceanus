@@ -41,7 +41,7 @@
     </dependency>  
     <dependency>
       <groupId>com.atlassian.jira</groupId>
-      <artifactId>jira-rest-java-client-api</artifactId>
+      <artifactId>jira-rest-java-client-core</artifactId>
       <version>${JiraRestVersion}</version>
       <exclusions>
         <exclusion>
@@ -49,11 +49,6 @@
           <artifactId>stax-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.atlassian.jira</groupId>
-      <artifactId>jira-rest-java-client-core</artifactId>
-      <version>${JiraRestVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -42,11 +42,6 @@ import com.atlassian.jira.rest.client.api.domain.User;
  */
 public class JiraSecurity {
     /**
-     * Server.
-     */
-    // private final JiraServer theServer;
-
-    /**
      * User Client.
      */
     private final UserRestClient theUserClient;
@@ -82,7 +77,7 @@ public class JiraSecurity {
      * @return the User
      * @throws JOceanusException on error
      */
-    public final JiraUser getUser(final String pName) throws JOceanusException {
+    public JiraUser getUser(final String pName) throws JOceanusException {
         /* Return an existing user if found in list */
         Iterator<JiraUser> myIterator = theUsers.iterator();
         while (myIterator.hasNext()) {

@@ -73,11 +73,6 @@ public class JiraServer {
     private static final String ERROR_SERVICE = "Failed to contact server";
 
     /**
-     * The preference manager.
-     */
-    // private final PreferenceManager thePreferenceMgr;
-
-    /**
      * The Rest Client.
      */
     private final JiraRestClient theClient;
@@ -357,7 +352,7 @@ public class JiraServer {
      * @return the User
      * @throws JOceanusException on error
      */
-    public JiraUser getUser(final String pName) throws JOceanusException {
+    public final JiraUser getUser(final String pName) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pName);
     }

@@ -29,6 +29,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.JThemisLogicException;
+import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraGroup;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraSecurity.JiraUser;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraEntity;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraIssueType;
@@ -39,15 +40,19 @@ import org.joda.time.DateTime;
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.ProjectRolesRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicIssueType;
+import com.atlassian.jira.rest.client.api.domain.BasicProjectRole;
 import com.atlassian.jira.rest.client.api.domain.Component;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Project;
+import com.atlassian.jira.rest.client.api.domain.ProjectRole;
+import com.atlassian.jira.rest.client.api.domain.RoleActor;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.ComponentInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
@@ -65,6 +70,11 @@ public class JiraProject
      * Archive failure error text.
      */
     private static final String ERROR_ARCH = "Failed to archive version";
+
+    /**
+     * Group role name (should be public from underlying file).
+     */
+    private static final String TYPE_ATLASSIAN_GROUP_ROLE = "atlassian-group-role-actor";
 
     /**
      * Server.
@@ -110,6 +120,11 @@ public class JiraProject
      * Versions.
      */
     private final List<JiraVersion> theVersions;
+
+    /**
+     * Roles.
+     */
+    private final List<JiraProjectRole> theRoles;
 
     /**
      * Get the key of the project.
@@ -168,6 +183,14 @@ public class JiraProject
     }
 
     /**
+     * Get the roles iterator.
+     * @return the iterator
+     */
+    public Iterator<JiraProjectRole> roleIterator() {
+        return theRoles.iterator();
+    }
+
+    /**
      * Constructor.
      * @param pServer the server
      * @param pProject the underlying project
@@ -192,11 +215,13 @@ public class JiraProject
         theIssueTypes = new ArrayList<JiraIssueType>();
         theComponents = new ArrayList<JiraComponent>();
         theVersions = new ArrayList<JiraVersion>();
+        theRoles = new ArrayList<JiraProjectRole>();
 
         /* Load IssueTypes etc */
         loadIssueTypes();
         loadComponents();
         loadVersions();
+        loadRoles();
     }
 
     /**
@@ -441,6 +466,30 @@ public class JiraProject
         } catch (RestClientException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to load versions", e);
+        }
+    }
+
+    /**
+     * Load Roles.
+     * @throws JOceanusException on error
+     */
+    private void loadRoles() throws JOceanusException {
+        /* Access client */
+        ProjectRolesRestClient myClient = theClient.getProjectRolesRestClient();
+
+        /* Protect against exceptions */
+        try {
+            /* Loop through all versions */
+            for (BasicProjectRole myBasicRole : getUnderlying().getProjectRoles()) {
+                /* Access version details */
+                ProjectRole myRole = myClient.getRole(myBasicRole.getSelf()).claim();
+
+                /* Add to the list */
+                theRoles.add(new JiraProjectRole(myRole));
+            }
+        } catch (RestClientException e) {
+            /* Pass the exception on */
+            throw new JThemisIOException("Failed to load roles", e);
         }
     }
 
@@ -704,6 +753,151 @@ public class JiraProject
                 /* Pass the exception on */
                 throw new JThemisIOException(ERROR_ARCH, e);
             }
+        }
+    }
+
+    /**
+     * ProjectRole class.
+     */
+    public final class JiraProjectRole
+            extends JiraEntity<ProjectRole> {
+        /**
+         * The description of the project role.
+         */
+        private final String theDesc;
+
+        /**
+         * List of actors.
+         */
+        private List<JiraRoleActor> theActors;
+
+        /**
+         * Get the description of the project role.
+         * @return the description
+         */
+        public String getDescription() {
+            return theDesc;
+        }
+
+        /**
+         * Get the list of actors.
+         * @return the releaseDate
+         */
+        public Iterator<JiraRoleActor> actorIterator() {
+            return theActors.iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pVersion the underlying version
+         * @throws JOceanusException on error
+         */
+        private JiraProjectRole(final ProjectRole pRole) throws JOceanusException {
+            /* Access the details */
+            super(pRole, pRole.getName());
+            theDesc = pRole.getDescription();
+            theActors = new ArrayList<JiraRoleActor>();
+
+            /* Process the actors */
+            for (RoleActor myActor : pRole.getActors()) {
+                /* Add to the list */
+                theActors.add(new JiraRoleActor(myActor));
+            }
+        }
+    }
+
+    /**
+     * RoleActor class.
+     */
+    public final class JiraRoleActor {
+        /**
+         * The underlying role actor.
+         */
+        private final RoleActor theUnderlying;
+
+        /**
+         * The name of the actor.
+         */
+        private final String theName;
+
+        /**
+         * The full name of the actor.
+         */
+        private final String theFullName;
+
+        /**
+         * The actor of the actor.
+         */
+        private final Object theActor;
+
+        /**
+         * Get the underlying role actor.
+         * @return the name
+         */
+        protected RoleActor getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Get the name of the actor.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Get the full name of the actor.
+         * @return the full name
+         */
+        public String getFullName() {
+            return theFullName;
+        }
+
+        /**
+         * Is the actor a group.
+         * @return true/false
+         */
+        public boolean isGroup() {
+            return theActor instanceof JiraGroup;
+        }
+
+        /**
+         * Get the actor user.
+         * @return the user
+         */
+        public Object getActorUser() {
+            return (theActor instanceof JiraUser)
+                                                 ? (JiraUser) theActor
+                                                 : null;
+        }
+
+        /**
+         * Get the actor group
+         * @return the group
+         */
+        public Object getActorGroup() {
+            return (theActor instanceof JiraGroup)
+                                                  ? (JiraGroup) theActor
+                                                  : null;
+        }
+
+        /**
+         * Constructor.
+         * @param pVersion the underlying version
+         * @throws JOceanusException on error
+         */
+        private JiraRoleActor(final RoleActor pActor) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pActor;
+            theName = pActor.getName();
+            theFullName = pActor.getDisplayName();
+
+            /* Resolve the actor */
+            String myType = pActor.getType();
+            theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
+                                                               ? theServer.getGroup(theName)
+                                                               : theServer.getUser(theName);
         }
     }
 }

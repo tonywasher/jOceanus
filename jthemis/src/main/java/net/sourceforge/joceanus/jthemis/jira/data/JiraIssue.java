@@ -45,6 +45,9 @@ import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
+import com.atlassian.jira.rest.client.api.domain.BasicUser;
+import com.atlassian.jira.rest.client.api.domain.BasicVotes;
+import com.atlassian.jira.rest.client.api.domain.BasicWatchers;
 import com.atlassian.jira.rest.client.api.domain.Comment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
@@ -52,7 +55,10 @@ import com.atlassian.jira.rest.client.api.domain.IssueLink;
 import com.atlassian.jira.rest.client.api.domain.IssueLinkType;
 import com.atlassian.jira.rest.client.api.domain.IssueLinkType.Direction;
 import com.atlassian.jira.rest.client.api.domain.Subtask;
+import com.atlassian.jira.rest.client.api.domain.TimeTracking;
 import com.atlassian.jira.rest.client.api.domain.Version;
+import com.atlassian.jira.rest.client.api.domain.Votes;
+import com.atlassian.jira.rest.client.api.domain.Watchers;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import com.atlassian.jira.rest.client.api.domain.input.TransitionInput;
@@ -157,6 +163,21 @@ public class JiraIssue
      * Last Updated Date of Issue.
      */
     private final DateTime theUpdated;
+
+    /**
+     * TimeTracking info.
+     */
+    private final TimeTracking theTimeTracking;
+
+    /**
+     * Votes info.
+     */
+    private final JiraVotes theVotes;
+
+    /**
+     * Watcher info.
+     */
+    private final JiraWatchers theWatchers;
 
     /**
      * IssueLinks.
@@ -293,6 +314,30 @@ public class JiraIssue
     }
 
     /**
+     * Get the timeTracking info.
+     * @return the time tracking
+     */
+    public TimeTracking getTimeTracking() {
+        return theTimeTracking;
+    }
+
+    /**
+     * Get the votes.
+     * @return the votes
+     */
+    public JiraVotes getVotes() {
+        return theVotes;
+    }
+
+    /**
+     * Get the watchers.
+     * @return the watchers
+     */
+    public JiraWatchers getWatchers() {
+        return theWatchers;
+    }
+
+    /**
      * Get the issue links iterator.
      * @return the iterator
      */
@@ -377,6 +422,11 @@ public class JiraIssue
         /* Determine the assignee and reporter */
         theAssignee = theServer.getUser(pIssue.getAssignee());
         theReporter = theServer.getUser(pIssue.getReporter());
+
+        /* Access various statistics information */
+        theTimeTracking = pIssue.getTimeTracking();
+        theWatchers = new JiraWatchers(pIssue.getWatchers());
+        theVotes = new JiraVotes(pIssue.getVotes());
 
         /* Create the lists */
         theIssueLinks = new ArrayList<JiraIssueLink>();
@@ -756,6 +806,148 @@ public class JiraIssue
             /* Determine the target issue */
             theTargetKey = pSubTask.getIssueKey();
             theTarget = null;
+        }
+    }
+
+    /**
+     * Votes.
+     */
+    public final class JiraVotes {
+        /**
+         * The underlying votes.
+         */
+        private final Votes theUnderlying;
+
+        /**
+         * The list of voters.
+         */
+        private final List<JiraUser> theVoters;
+
+        /**
+         * Get the underlying votes.
+         * @return the votes
+         */
+        protected Votes getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Has there been votes?
+         * @return true/false
+         */
+        public boolean hasVoted() {
+            return theUnderlying.hasVoted();
+        }
+
+        /**
+         * Obtain the number of votes
+         * @return the votes
+         */
+        public int getVotes() {
+            return theUnderlying.getVotes();
+        }
+
+        /**
+         * Obtain the voters iterator
+         * @return the iterator
+         */
+        public Iterator<JiraUser> voterIterator() {
+            return theVoters.iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pVotes the underlying votes
+         * @throws JOceanusException on error
+         */
+        private JiraVotes(final BasicVotes pVotes) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theUnderlying = theClient.getVotes(pVotes.getSelf()).claim();
+                theVoters = new ArrayList<JiraUser>();
+
+                /* Process the voters */
+                for (BasicUser myUser : theUnderlying.getUsers()) {
+                    /* Add to the list */
+                    theVoters.add(theServer.getUser(myUser));
+                }
+
+            } catch (RestClientException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to load votes", e);
+            }
+        }
+    }
+
+    /**
+     * Watchers.
+     */
+    public final class JiraWatchers {
+        /**
+         * The underlying watchers.
+         */
+        private final Watchers theUnderlying;
+
+        /**
+         * The list of watchers.
+         */
+        private final List<JiraUser> theWatchers;
+
+        /**
+         * Get the underlying watchers.
+         * @return the votes
+         */
+        protected Watchers getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Is the issue being watched?
+         * @return true/false
+         */
+        public boolean isWatching() {
+            return theUnderlying.isWatching();
+        }
+
+        /**
+         * Obtain the number of watchers
+         * @return the watchers
+         */
+        public int getNumWatchers() {
+            return theUnderlying.getNumWatchers();
+        }
+
+        /**
+         * Obtain the watchers iterator
+         * @return the iterator
+         */
+        public Iterator<JiraUser> voterIterator() {
+            return theWatchers.iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pWatchers the underlying watchers
+         * @throws JOceanusException on error
+         */
+        private JiraWatchers(final BasicWatchers pWatchers) throws JOceanusException {
+            /* Protect against exceptions */
+            try {
+                /* Access the details */
+                theUnderlying = theClient.getWatchers(pWatchers.getSelf()).claim();
+                theWatchers = new ArrayList<JiraUser>();
+
+                /* Process the watchers */
+                for (BasicUser myUser : theUnderlying.getUsers()) {
+                    /* Add to the list */
+                    theWatchers.add(theServer.getUser(myUser));
+                }
+
+            } catch (RestClientException e) {
+                /* Pass the exception on */
+                throw new JThemisIOException("Failed to load watchers", e);
+            }
         }
     }
 }

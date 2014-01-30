@@ -145,7 +145,7 @@ public class MvnProjectDefinition
      * @throws JOceanusException on error
      */
     public static MvnProjectDefinition parseProjectFile(final Logger pLogger,
-                                                     final File pFile) throws JOceanusException {
+                                                        final File pFile) throws JOceanusException {
         FileInputStream myInFile;
         BufferedInputStream myInBuffer = null;
 
@@ -161,8 +161,7 @@ public class MvnProjectDefinition
             /* Catch exceptions */
         } catch (JOceanusException | IOException e) {
             /* Throw Exception */
-            throw new JThemisIOException("Failed to load Project file for "
-                                         + pFile.getAbsolutePath(), e);
+            throw new JThemisIOException("Failed to load Project file for " + pFile.getAbsolutePath(), e);
 
         } finally {
             if (myInBuffer != null) {
@@ -248,8 +247,8 @@ public class MvnProjectDefinition
 
         /* Return the file */
         return (myFile.exists())
-                ? myFile
-                : null;
+                                ? myFile
+                                : null;
     }
 
     /**
@@ -261,8 +260,8 @@ public class MvnProjectDefinition
         /* Protect against exceptions */
         try {
             /* delete the file if it exists */
-            if (pFile.exists()) {
-                pFile.delete();
+            if (pFile.exists() && !pFile.delete()) {
+                throw new JThemisIOException("Failed to delete existing file");
             }
 
             /* Create the output streams */

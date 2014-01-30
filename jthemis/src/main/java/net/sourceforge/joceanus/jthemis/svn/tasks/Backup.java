@@ -141,6 +141,9 @@ public class Backup {
                                final File pZipFile) throws JOceanusException {
         /* Protect against exceptions */
         try {
+            /* Install an event handler */
+            theAdminClient.setEventHandler(new SubversionHandler());
+
             /* Access the zipFile */
             ZipReadFile myFile = new ZipReadFile(pZipFile, theTask.getLogger());
 
@@ -155,7 +158,12 @@ public class Backup {
 
             /* Access the relevant entry and obtain the number of revisions */
             ZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
-            // Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
+            Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
+
+            /* Declare the number of revisions */
+            if (!theTask.setNumSteps(myNumRevs.intValue())) {
+                return;
+            }
 
             /* Access the input stream for the relevant file */
             InputStream myStream = myFile.getInputStream(myEntry);
@@ -253,10 +261,13 @@ public class Backup {
                 }
             }
 
-            /* Determine the number of revisions */
-            int myNumRevisions = (int) revLast;
+            /* Declare the single stage */
+            if ((!theTask.setNumStages(1)) || (!theTask.setNewStage(myName))) {
+                return;
+            }
 
             /* Declare the number of revisions */
+            int myNumRevisions = (int) revLast;
             if (!theTask.setNumSteps(myNumRevisions)) {
                 return;
             }
@@ -267,7 +278,7 @@ public class Backup {
             /* Create a clone of the password hash */
             PasswordHash myHash = pManager.clonePasswordHash(pHash);
 
-            /* Create the new zip file */
+            /* Create the new Zip file */
             myZipFile = new ZipWriteFile(myHash, myZipName);
             myStream = myZipFile.getOutputStream(myEntryName);
 
@@ -314,7 +325,9 @@ public class Backup {
 
             /* Delete the file on error */
             if ((!bSuccess) && (myZipName != null)) {
-                myZipName.delete();
+                if (myZipName.exists() && !myZipName.delete()) {
+                    thePreferenceMgr.getLogger().log(Level.SEVERE, "Failed to delete file on failure");
+                }
             }
         }
     }
@@ -327,8 +340,6 @@ public class Backup {
      */
     public void backUpRepositories(final SecureManager pManager,
                                    final PasswordHash pHash) throws JOceanusException {
-        int iNumStages = 0;
-
         /* Install an event handler */
         theAdminClient.setEventHandler(new SubversionHandler());
 
@@ -340,6 +351,7 @@ public class Backup {
         File myBackup = new File(myBUPreferences.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
 
         /* Loop through the repository directories */
+        int iNumStages = 0;
         for (File myRepository : myRepo.listFiles()) {
             /* Count if its is a directory */
             if (myRepository.isDirectory()) {
@@ -388,13 +400,12 @@ public class Backup {
         @Override
         public void handleAdminEvent(final SVNAdminEvent pEvent,
                                      final double arg1) throws SVNException {
-            /* Ignore if not an interesting event */
-            if (pEvent.getAction() != SVNAdminEventAction.REVISION_DUMPED) {
-                return;
+            /* If this is a step */
+            SVNAdminEventAction myAction = pEvent.getAction();
+            if ((myAction == SVNAdminEventAction.REVISION_DUMPED) || (myAction == SVNAdminEventAction.REVISION_LOADED)) {
+                /* Set steps done value */
+                theTask.setStepsDone((int) pEvent.getRevision());
             }
-
-            /* Set steps done value */
-            theTask.setStepsDone((int) pEvent.getRevision());
         }
 
         @Override
