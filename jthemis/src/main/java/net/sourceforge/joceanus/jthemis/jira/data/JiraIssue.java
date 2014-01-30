@@ -24,7 +24,9 @@ package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -56,6 +58,7 @@ import com.atlassian.jira.rest.client.api.domain.IssueLinkType;
 import com.atlassian.jira.rest.client.api.domain.IssueLinkType.Direction;
 import com.atlassian.jira.rest.client.api.domain.Subtask;
 import com.atlassian.jira.rest.client.api.domain.TimeTracking;
+import com.atlassian.jira.rest.client.api.domain.Transition;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.Votes;
 import com.atlassian.jira.rest.client.api.domain.Watchers;
@@ -208,6 +211,11 @@ public class JiraIssue
      * Labels.
      */
     private final List<String> theLabels;
+
+    /**
+     * Transitions.
+     */
+    private final List<JiraTransition> theTransitions;
 
     /**
      * Get the key of the issue.
@@ -386,6 +394,14 @@ public class JiraIssue
     }
 
     /**
+     * Get the transitions iterator.
+     * @return the iterator
+     */
+    public Iterator<JiraTransition> transitionIterator() {
+        return theTransitions.iterator();
+    }
+
+    /**
      * Constructor.
      * @param pServer the server
      * @param pIssue the underlying issue
@@ -435,6 +451,12 @@ public class JiraIssue
         theFixVers = new ArrayList<JiraVersion>();
         theAffectsVers = new ArrayList<JiraVersion>();
         theLabels = new ArrayList<String>();
+        theTransitions = new ArrayList<JiraTransition>();
+
+        /* Populate the transitions fields */
+        for (Transition myTransition : theClient.getTransitions(pIssue).claim()) {
+            theTransitions.add(new JiraTransition(myTransition));
+        }
 
         /* Populate the issue link fields */
         for (IssueLink myLink : pIssue.getIssueLinks()) {
@@ -840,7 +862,7 @@ public class JiraIssue
         }
 
         /**
-         * Obtain the number of votes
+         * Obtain the number of votes.
          * @return the votes
          */
         public int getVotes() {
@@ -848,7 +870,7 @@ public class JiraIssue
         }
 
         /**
-         * Obtain the voters iterator
+         * Obtain the voters iterator.
          * @return the iterator
          */
         public Iterator<JiraUser> voterIterator() {
@@ -911,7 +933,7 @@ public class JiraIssue
         }
 
         /**
-         * Obtain the number of watchers
+         * Obtain the number of watchers.
          * @return the watchers
          */
         public int getNumWatchers() {
@@ -919,7 +941,7 @@ public class JiraIssue
         }
 
         /**
-         * Obtain the watchers iterator
+         * Obtain the watchers iterator.
          * @return the iterator
          */
         public Iterator<JiraUser> voterIterator() {
@@ -948,6 +970,141 @@ public class JiraIssue
                 /* Pass the exception on */
                 throw new JThemisIOException("Failed to load watchers", e);
             }
+        }
+    }
+
+    /**
+     * Transition.
+     */
+    public final class JiraTransition {
+        /**
+         * The underlying transition.
+         */
+        private final Transition theUnderlying;
+
+        /**
+         * The Name.
+         */
+        private final String theName;
+
+        /**
+         * The field info.
+         */
+        private Map<String, JiraTransitionField> theFieldMap;
+
+        /**
+         * Get the underlying transition.
+         * @return the transition
+         */
+        protected Transition getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Get the name of the transition.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Get the field info for the field.
+         * @param pField the field name
+         * @return the info
+         */
+        public JiraTransitionField getFieldInfo(final String pField) {
+            return theFieldMap.get(pField);
+        }
+
+        /**
+         * Get the field iterator.
+         * @return the iterator
+         */
+        public Iterator<JiraTransitionField> fieldIterator() {
+            return theFieldMap.values().iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pTransition the underlying transition
+         * @throws JOceanusException on error
+         */
+        private JiraTransition(final Transition pTransition) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pTransition;
+            theName = pTransition.getName();
+            theFieldMap = new LinkedHashMap<String, JiraTransitionField>();
+
+            /* Process the fields */
+            for (Transition.Field myField : pTransition.getFields()) {
+                /* Add to the map */
+                theFieldMap.put(myField.getId(), new JiraTransitionField(myField));
+            }
+        }
+    }
+
+    /**
+     * Transition Field.
+     */
+    public static final class JiraTransitionField {
+        /**
+         * The underlying field.
+         */
+        private final Transition.Field theUnderlying;
+
+        /**
+         * The name of the field.
+         */
+        private final String theName;
+
+        /**
+         * The type of the field.
+         */
+        private final String theType;
+
+        /**
+         * Get the underlying field info.
+         * @return the name
+         */
+        protected Transition.Field getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Get the name of the field.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Get the type of the field.
+         * @return the type
+         */
+        public String getType() {
+            return theType;
+        }
+
+        /**
+         * Is the field required?
+         * @return true/false
+         */
+        public boolean isRequired() {
+            return theUnderlying.isRequired();
+        }
+
+        /**
+         * Constructor.
+         * @param pField the underlying field
+         * @throws JOceanusException on error
+         */
+        private JiraTransitionField(final Transition.Field pField) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pField;
+            theName = pField.getId();
+            theType = pField.getType();
         }
     }
 }

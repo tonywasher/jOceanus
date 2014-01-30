@@ -23,8 +23,11 @@
 package net.sourceforge.joceanus.jthemis.jira.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
@@ -38,6 +41,8 @@ import net.sourceforge.joceanus.jthemis.jira.data.JiraServer.JiraPriority;
 import org.joda.time.DateTime;
 
 import com.atlassian.jira.rest.client.api.ComponentRestClient;
+import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
+import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptionsBuilder;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRolesRestClient;
@@ -48,11 +53,16 @@ import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.BasicIssueType;
 import com.atlassian.jira.rest.client.api.domain.BasicProjectRole;
+import com.atlassian.jira.rest.client.api.domain.CimFieldInfo;
+import com.atlassian.jira.rest.client.api.domain.CimIssueType;
+import com.atlassian.jira.rest.client.api.domain.CimProject;
 import com.atlassian.jira.rest.client.api.domain.Component;
+import com.atlassian.jira.rest.client.api.domain.FieldSchema;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.ProjectRole;
 import com.atlassian.jira.rest.client.api.domain.RoleActor;
+import com.atlassian.jira.rest.client.api.domain.StandardOperation;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.ComponentInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
@@ -125,6 +135,11 @@ public class JiraProject
      * Roles.
      */
     private final List<JiraProjectRole> theRoles;
+
+    /**
+     * The create issue field map.
+     */
+    private final Map<JiraIssueType, JiraCimIssueType> theIssueFields;
 
     /**
      * Get the key of the project.
@@ -217,6 +232,9 @@ public class JiraProject
         theVersions = new ArrayList<JiraVersion>();
         theRoles = new ArrayList<JiraProjectRole>();
 
+        /* Create the issue fields map */
+        theIssueFields = new HashMap<JiraIssueType, JiraCimIssueType>();
+
         /* Load IssueTypes etc */
         loadIssueTypes();
         loadComponents();
@@ -258,6 +276,50 @@ public class JiraProject
         } catch (RestClientException e) {
             /* Pass the exception on */
             throw new JThemisIOException("Failed to create issue", e);
+        }
+    }
+
+    /**
+     * Obtain field details for the issue type.
+     * @param pIssueType the issue type
+     * @return the issue field details
+     * @throws JOceanusException on error
+     */
+    protected JiraCimIssueType getIssueFields(final JiraIssueType pIssueType) throws JOceanusException {
+        /* Look for an already resolved type */
+        JiraCimIssueType myIssueType = theIssueFields.get(pIssueType);
+        if (myIssueType != null) {
+            return myIssueType;
+        }
+
+        /* Access client */
+        IssueRestClient myClient = theClient.getIssueClient();
+
+        /* Protect against exceptions */
+        try {
+            /* Create the options */
+            GetCreateIssueMetadataOptionsBuilder myBuilder = new GetCreateIssueMetadataOptionsBuilder();
+            myBuilder = myBuilder.withProjectKeys(getKey());
+            myBuilder = myBuilder.withIssueTypeNames(pIssueType.getName());
+            myBuilder = myBuilder.withExpandedIssueTypesFields();
+            GetCreateIssueMetadataOptions myOptions = myBuilder.build();
+
+            /* Process the details */
+            for (CimProject myMetadata : myClient.getCreateIssueMetadata(myOptions).claim()) {
+                for (CimIssueType myType : myMetadata.getIssueTypes()) {
+                    /* Create the issue type */
+                    myIssueType = new JiraCimIssueType(myType);
+                    theIssueFields.put(pIssueType, myIssueType);
+                    return myIssueType;
+                }
+            }
+
+            /* Throw and exception */
+            throw new JThemisIOException("Cannot create issue with Issue type");
+
+        } catch (RestClientException e) {
+            /* Pass the exception on */
+            throw new JThemisIOException("Failed to determine fields for issue type", e);
         }
     }
 
@@ -781,7 +843,7 @@ public class JiraProject
 
         /**
          * Get the list of actors.
-         * @return the releaseDate
+         * @return the iterator
          */
         public Iterator<JiraRoleActor> actorIterator() {
             return theActors.iterator();
@@ -789,7 +851,7 @@ public class JiraProject
 
         /**
          * Constructor.
-         * @param pVersion the underlying version
+         * @param pRole the underlying role
          * @throws JOceanusException on error
          */
         private JiraProjectRole(final ProjectRole pRole) throws JOceanusException {
@@ -832,7 +894,7 @@ public class JiraProject
 
         /**
          * Get the underlying role actor.
-         * @return the name
+         * @return the actor
          */
         protected RoleActor getUnderlying() {
             return theUnderlying;
@@ -873,7 +935,7 @@ public class JiraProject
         }
 
         /**
-         * Get the actor group
+         * Get the actor group.
          * @return the group
          */
         public Object getActorGroup() {
@@ -884,7 +946,7 @@ public class JiraProject
 
         /**
          * Constructor.
-         * @param pVersion the underlying version
+         * @param pActor the underlying role
          * @throws JOceanusException on error
          */
         private JiraRoleActor(final RoleActor pActor) throws JOceanusException {
@@ -898,6 +960,157 @@ public class JiraProject
             theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
                                                                ? theServer.getGroup(theName)
                                                                : theServer.getUser(theName);
+        }
+    }
+
+    /**
+     * Create Issue Status Field Availability.
+     */
+    public final class JiraCimIssueType {
+        /**
+         * The underlying issueType info.
+         */
+        private final CimIssueType theUnderlying;
+
+        /**
+         * The Issue type.
+         */
+        private final JiraIssueType theType;
+
+        /**
+         * The field info.
+         */
+        private Map<String, JiraCimFieldInfo> theFieldMap;
+
+        /**
+         * Get the underlying issue type.
+         * @return the issue type
+         */
+        protected CimIssueType getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Get the issue type.
+         * @return the issue type
+         */
+        public JiraIssueType getIssueType() {
+            return theType;
+        }
+
+        /**
+         * Get the field info for the field.
+         * @param pField the field name
+         * @return the info
+         */
+        public JiraCimFieldInfo getFieldInfo(final String pField) {
+            return theFieldMap.get(pField);
+        }
+
+        /**
+         * Get the field info list iterator.
+         * @return the iterator
+         */
+        public Iterator<JiraCimFieldInfo> fieldIterator() {
+            return theFieldMap.values().iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pType the underlying issue type
+         * @throws JOceanusException on error
+         */
+        private JiraCimIssueType(final CimIssueType pType) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pType;
+            theType = theServer.getIssueType(pType.getName());
+            theFieldMap = new LinkedHashMap<String, JiraCimFieldInfo>();
+
+            /* Process the fields */
+            for (CimFieldInfo myInfo : pType.getFields().values()) {
+                /* Add to the map */
+                theFieldMap.put(myInfo.getName(), new JiraCimFieldInfo(myInfo));
+            }
+        }
+    }
+
+    /**
+     * Create Issue Field Availability.
+     */
+    public static final class JiraCimFieldInfo {
+        /**
+         * The underlying field info.
+         */
+        private final CimFieldInfo theUnderlying;
+
+        /**
+         * The name of the field.
+         */
+        private final String theName;
+
+        /**
+         * The schema of the field.
+         */
+        private final FieldSchema theSchema;
+
+        /**
+         * Get the underlying field info.
+         * @return the filed info
+         */
+        protected CimFieldInfo getUnderlying() {
+            return theUnderlying;
+        }
+
+        /**
+         * Get the field schema.
+         * @return the schema
+         */
+        public FieldSchema getSchema() {
+            return theSchema;
+        }
+
+        /**
+         * Get the name of the field.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Is the field required?
+         * @return true/false
+         */
+        public boolean isRequired() {
+            return theUnderlying.isRequired();
+        }
+
+        /**
+         * Get the list of allowed values.
+         * @return the iterator
+         */
+        public Iterator<Object> valueIterator() {
+            return theUnderlying.getAllowedValues().iterator();
+        }
+
+        /**
+         * Get the list of allowed operations.
+         * @return the iterator
+         */
+        public Iterator<StandardOperation> operationIterator() {
+            return theUnderlying.getOperations().iterator();
+        }
+
+        /**
+         * Constructor.
+         * @param pInfo the underlying field info
+         * @throws JOceanusException on error
+         */
+        private JiraCimFieldInfo(final CimFieldInfo pInfo) throws JOceanusException {
+            /* Access the details */
+            theUnderlying = pInfo;
+            theName = pInfo.getName();
+            theSchema = pInfo.getSchema();
         }
     }
 }
