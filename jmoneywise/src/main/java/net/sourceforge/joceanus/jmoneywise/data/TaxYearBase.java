@@ -98,6 +98,20 @@ public abstract class TaxYearBase
         return Integer.toString(getTaxYear().getYear());
     }
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_TAXYEAR.equals(pField)) {
+            return true;
+        }
+        if (FIELD_REGIME.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Obtain TaxYear.
      * @return the taxYear date

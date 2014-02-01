@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  */
 public class Account
         extends AccountBase
-        implements InfoSetItem {
+        implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
      */

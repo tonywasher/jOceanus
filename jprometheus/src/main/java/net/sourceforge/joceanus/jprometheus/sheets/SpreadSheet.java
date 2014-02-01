@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -39,11 +39,6 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
      * The Data file name.
      */
     public static final String FILE_NAME = "zipData";
-
-    /**
-     * The ZipFile extension.
-     */
-    public static final String ZIPFILE_EXT = ".zip";
 
     /**
      * Obtain a sheet reader.

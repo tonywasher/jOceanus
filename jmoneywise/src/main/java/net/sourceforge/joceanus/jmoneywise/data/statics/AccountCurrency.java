@@ -69,6 +69,17 @@ public class AccountCurrency
         return FIELD_DEFS;
     }
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_DEFAULT.equals(pField)) {
+            return isDefault();
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Is this the default currency.
      * @return true/false

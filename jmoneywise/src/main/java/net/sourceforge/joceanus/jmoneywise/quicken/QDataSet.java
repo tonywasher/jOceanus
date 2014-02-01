@@ -57,9 +57,9 @@ public class QDataSet {
     private static final String NAME_CHARSET = "Windows-1252";
 
     /**
-     * Write failure error text.
+     * Delete error text.
      */
-    private static final String ERROR_WRITE = "Failed to write file";
+    private static final String ERROR_DELETE = "Failed to delete file";
 
     /**
      * Data Formatter.
@@ -150,8 +150,8 @@ public class QDataSet {
      * @throws JOceanusException on error
      */
     public boolean outputSingleFile(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) throws JOceanusException {
-        FileOutputStream myOutput = null;
-        boolean doDelete = true;
+        /* Assume failure */
+        boolean bSuccess = false;
 
         /* Determine name of output file */
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
@@ -160,39 +160,28 @@ public class QDataSet {
         File myQIFFile = new File(myDirectory + File.separator + theQIFType.getFileName());
 
         /* Protect against exceptions */
-        try {
-            /* Create the Stream writer */
-            myOutput = new FileOutputStream(myQIFFile);
-            BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET);
+        try (FileOutputStream myOutput = new FileOutputStream(myQIFFile);
+             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
+             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET)) {
 
             /* Output the data */
-            boolean bSuccess = theAnalysis.outputData(pStatus, myWriter);
+            boolean isSuccess = theAnalysis.outputData(pStatus, myWriter);
             myWriter.close();
-            doDelete = false;
-            return bSuccess;
+            bSuccess = isSuccess;
 
         } catch (IOException e) {
             /* Report the error */
             throw new JMoneyWiseIOException("Failed to write to file: " + myQIFFile.getName(), e);
         } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myOutput != null) {
-                    myOutput.close();
-                }
-
-                /* Delete the file */
-                if ((doDelete) && (!myQIFFile.delete())) {
-                    doDelete = false;
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                pStatus.getLogger().log(Level.SEVERE, ERROR_WRITE, ex);
+            /* Delete the file */
+            if ((!bSuccess) && (!myQIFFile.delete())) {
+                /* Nothing that we can do. At least we tried */
+                pStatus.getLogger().log(Level.SEVERE, ERROR_DELETE);
             }
         }
+
+        /* Return success indication */
+        return bSuccess;
     }
 
     /**
@@ -204,8 +193,8 @@ public class QDataSet {
      */
     private boolean outputIndividualFile(final Logger pLogger,
                                          final QAccount pAccount) throws JOceanusException {
-        FileOutputStream myOutput = null;
-        boolean doDelete = true;
+        /* Assume failure */
+        boolean bSuccess = false;
 
         /* Determine name of output file */
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
@@ -214,38 +203,28 @@ public class QDataSet {
         File myQIFFile = new File(myDirectory + File.separator + pAccount.getName() + QIFType.QIF_SUFFIX);
 
         /* Protect against exceptions */
-        try {
-            /* Create the Stream writer */
-            myOutput = new FileOutputStream(myQIFFile);
-            BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-            OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET);
-
+        try (FileOutputStream myOutput = new FileOutputStream(myQIFFile);
+             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
+             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET)) {
             /* Output the data */
             pAccount.outputEvents(myWriter, theAnalysis.getStartDate());
+
+            /* Close file and set success */
             myWriter.close();
-            doDelete = false;
-            return true;
+            bSuccess = true;
 
         } catch (IOException e) {
             /* Report the error */
             throw new JMoneyWiseIOException("Failed to write to file: " + myQIFFile.getName(), e);
         } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myOutput != null) {
-                    myOutput.close();
-                }
-
-                /* Delete the file */
-                if ((doDelete) && (!myQIFFile.delete())) {
-                    doDelete = false;
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                pLogger.log(Level.SEVERE, ERROR_WRITE, ex);
+            /* Delete the file on error */
+            if ((!bSuccess) && (!myQIFFile.delete())) {
+                /* Nothing that we can do. At least we tried */
+                pLogger.log(Level.SEVERE, ERROR_DELETE);
             }
         }
+
+        /* Return success indication */
+        return bSuccess;
     }
 }

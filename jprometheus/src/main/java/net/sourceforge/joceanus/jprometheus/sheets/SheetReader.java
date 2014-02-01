@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
@@ -141,47 +140,42 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     public T loadBackup(final File pFile) throws JOceanusException {
-        InputStream myStream = null;
+        /* Note the type of file */
+        isBackup = true;
+
+        /* Access the zip file */
+        ZipReadFile myFile = new ZipReadFile(pFile);
+
+        /* Obtain the hash bytes from the file */
+        byte[] myHashBytes = myFile.getHashBytes();
+
+        /* Access the Security manager */
+        SecureManager mySecurity = theTask.getSecurity();
+
+        /* Obtain the initialised password hash */
+        PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+
+        /* Associate this password hash with the ZipFile */
+        myFile.setPasswordHash(myHash);
+
+        /* Access ZipFile contents */
+        ZipFileContents myContents = myFile.getContents();
+
+        /* Loop through the file entries */
+        Iterator<ZipFileEntry> myIterator = myContents.iterator();
+        ZipFileEntry myEntry = null;
+        while (myIterator.hasNext()) {
+            /* Access the entry */
+            myEntry = myIterator.next();
+
+            /* Break loop if we have the right entry */
+            if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
+                break;
+            }
+        }
 
         /* Protect the workbook retrieval */
-        try {
-            /* Note the type of file */
-            isBackup = true;
-
-            /* Access the zip file */
-            ZipReadFile myFile = new ZipReadFile(pFile, theTask.getLogger());
-
-            /* Obtain the hash bytes from the file */
-            byte[] myHashBytes = myFile.getHashBytes();
-
-            /* Access the Security manager */
-            SecureManager mySecurity = theTask.getSecurity();
-
-            /* Obtain the initialised password hash */
-            PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
-
-            /* Associate this password hash with the ZipFile */
-            myFile.setPasswordHash(myHash);
-
-            /* Access ZipFile contents */
-            ZipFileContents myContents = myFile.getContents();
-
-            /* Loop through the file entries */
-            Iterator<ZipFileEntry> myIterator = myContents.iterator();
-            ZipFileEntry myEntry = null;
-            while (myIterator.hasNext()) {
-                /* Access the entry */
-                myEntry = myIterator.next();
-
-                /* Break loop if we have the right entry */
-                if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
-                    break;
-                }
-            }
-
-            /* Access the input stream for the relevant file */
-            myStream = myFile.getInputStream(myEntry);
-
+        try (InputStream myStream = myFile.getInputStream(myEntry)) {
             /* Initialise the workbook */
             boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(myEntry.getFileName()));
 
@@ -192,7 +186,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Close the Stream to force out errors */
             myStream.close();
-            myStream = null;
 
             /* Check for cancellation */
             if (!bContinue) {
@@ -201,18 +194,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
-        } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                theTask.getLogger().log(Level.SEVERE, ERROR_CLOSE, ex);
-            }
         }
 
         /* Return the new DataSet */
@@ -226,16 +207,11 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     public T loadExtract(final File pFile) throws JOceanusException {
-        InputStream myStream = null;
-
         /* Protect the workbook retrieval */
-        try {
+        try (FileInputStream myInFile = new FileInputStream(pFile);
+             InputStream myStream = new BufferedInputStream(myInFile)) {
             /* Note the type of file */
             isBackup = false;
-
-            /* Create an input stream to the file */
-            FileInputStream myInFile = new FileInputStream(pFile);
-            myStream = new BufferedInputStream(myInFile);
 
             /* Determine the type of the workbook */
             WorkBookType myType = WorkBookType.determineType(pFile.getName());
@@ -250,7 +226,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
             /* Close the Stream to force out errors */
             myStream.close();
-            myStream = null;
 
             /* Check for cancellation */
             if (!bContinue) {
@@ -259,18 +234,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JPrometheusIOException("Failed to load Edit-able Workbook: " + pFile.getName(), e);
-        } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                theTask.getLogger().log(Level.SEVERE, ERROR_CLOSE, ex);
-            }
         }
 
         /* Return the new DataSet */

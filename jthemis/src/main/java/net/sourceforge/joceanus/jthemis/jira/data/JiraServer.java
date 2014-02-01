@@ -363,7 +363,7 @@ public class JiraServer {
      * @return the User
      * @throws JOceanusException on error
      */
-    protected JiraUser getUser(final BasicUser pUser) throws JOceanusException {
+    protected final JiraUser getUser(final BasicUser pUser) throws JOceanusException {
         /* Pass the call to the security service */
         return theSecurity.getUser(pUser);
     }

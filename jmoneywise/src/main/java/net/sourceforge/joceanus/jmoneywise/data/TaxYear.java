@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  */
 public class TaxYear
         extends TaxYearBase
-        implements InfoSetItem {
+        implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
      */

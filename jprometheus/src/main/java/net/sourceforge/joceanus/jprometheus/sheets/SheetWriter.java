@@ -137,27 +137,23 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     public void createBackup(final T pData,
                              final File pFile,
                              final WorkBookType pType) throws JOceanusException {
-        OutputStream myStream = null;
-        ZipWriteFile myZipFile = null;
+        /* Create a clone of the security control */
+        SecureManager mySecure = pData.getSecurity();
+        PasswordHash myBase = pData.getPasswordHash();
+        PasswordHash myHash = mySecure.clonePasswordHash(myBase);
+
+        /* Assume failure */
         boolean bSuccess = false;
+        String myName = SpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        try {
+        try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, pFile);
+             OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
             /* Note the type of file */
             isBackup = true;
 
             /* Record the DataSet */
             theData = pData;
-
-            /* Create a clone of the security control */
-            SecureManager mySecure = pData.getSecurity();
-            PasswordHash myBase = pData.getPasswordHash();
-            PasswordHash myHash = mySecure.clonePasswordHash(myBase);
-
-            /* Create the new output Zip file */
-            myZipFile = new ZipWriteFile(myHash, pFile);
-            String myName = SpreadSheet.FILE_NAME + pType.getExtension();
-            myStream = myZipFile.getOutputStream(new File(myName));
 
             /* Initialise the WorkBook */
             initialiseWorkBook(pType);
@@ -167,29 +163,17 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
 
             /* Close the Stream to force out errors */
             myStream.close();
-            myStream = null;
 
             /* Close the Zip file */
             myZipFile.close();
 
             /* Set success to avoid deleting file */
             bSuccess = true;
+
         } catch (IOException e) {
             /* Report the error */
             throw new JPrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                theTask.getLogger().log(Level.SEVERE, SheetReader.ERROR_CLOSE, ex);
-            }
-
             /* Delete the file on error */
             if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
@@ -206,22 +190,17 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      */
     public void createExtract(final T pData,
                               final File pFile) throws JOceanusException {
-        /* Declare variables */
-        OutputStream myStream = null;
-        FileOutputStream myOutFile = null;
+        /* Assume failure */
         boolean bSuccess = false;
 
         /* Protect the workbook access */
-        try {
+        try (FileOutputStream myOutFile = new FileOutputStream(pFile);
+             BufferedOutputStream myStream = new BufferedOutputStream(myOutFile)) {
             /* Note the type of file */
             isBackup = false;
 
             /* Record the DataSet */
             theData = pData;
-
-            /* Create an output stream to the file */
-            myOutFile = new FileOutputStream(pFile);
-            myStream = new BufferedOutputStream(myOutFile);
 
             /* Determine the type of the workbook */
             WorkBookType myType = WorkBookType.determineType(pFile.getName());
@@ -241,18 +220,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
             /* Report the error */
             throw new JPrometheusIOException("Failed to create Editable Workbook: " + pFile.getName(), e);
         } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Ignore errors */
-            } catch (IOException ex) {
-                theTask.getLogger().log(Level.SEVERE, SheetReader.ERROR_CLOSE, ex);
-            }
-
             /* Delete the file on error */
             if ((!bSuccess) && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */

@@ -102,6 +102,26 @@ public class AccountRate
      */
     private static final String ERROR_NULLDATE = NLS_BUNDLE.getString("ErrorNullDate");
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_ACCOUNT.equals(pField)) {
+            return true;
+        }
+        if (FIELD_RATE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_BONUS.equals(pField)) {
+            return getBonus() != null;
+        }
+        if (FIELD_ENDDATE.equals(pField)) {
+            return getEndDate() != null;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Obtain Rate.
      * @return the rate

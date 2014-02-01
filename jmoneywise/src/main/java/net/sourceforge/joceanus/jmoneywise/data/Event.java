@@ -42,10 +42,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  */
 public class Event
         extends EventBase
-        implements InfoSetItem {
+        implements InfoSetItem<MoneyWiseDataType> {
     /**
      * The name of the object.
      */
@@ -142,6 +142,16 @@ public class Event
     @Override
     public Event getParent() {
         return (Event) super.getParent();
+    }
+
+    @Override
+    public Iterator<Event> childIterator() {
+        /* No iterator if we are not a group or else we are a child */
+        if (!isSplit() || isChild()) {
+            return null;
+        }
+
+        return getList().getGroup(this).iterator();
     }
 
     /**
@@ -399,8 +409,8 @@ public class Event
     }
 
     @Override
-    public BaseEventList<?> getList() {
-        return (BaseEventList<?>) super.getList();
+    public EventList getList() {
+        return (EventList) super.getList();
     }
 
     /**
@@ -543,13 +553,13 @@ public class Event
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        BaseEventList<?> myEvents = getList();
+        EventList myEvents = getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Parent */
         Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof Pattern) {
-            myParent = ((Pattern) myParent).getId();
+        if (myParent instanceof Event) {
+            myParent = ((Event) myParent).getId();
         }
         if (myParent instanceof Integer) {
             Event myEvent = myEvents.findItemById((Integer) myParent);

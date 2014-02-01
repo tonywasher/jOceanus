@@ -113,6 +113,26 @@ public class AccountCategory
         return formatObject();
     }
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_NAME.equals(pField)) {
+            return true;
+        }
+        if (FIELD_DESC.equals(pField)) {
+            return getDesc() != null;
+        }
+        if (FIELD_CATTYPE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_PARENT.equals(pField)) {
+            return getParentCategory() != null;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Obtain Name.
      * @return the name

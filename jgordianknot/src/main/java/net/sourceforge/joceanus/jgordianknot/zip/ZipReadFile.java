@@ -28,8 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -46,14 +44,14 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public class ZipReadFile {
     /**
+     * The ZipFile extension.
+     */
+    public static final String ZIPFILE_EXT = ".zip";
+
+    /**
      * The extension size for the buffer.
      */
     private static final int BUFFERSIZE = 1024;
-
-    /**
-     * Logger.
-     */
-    private final Logger theLogger;
 
     /**
      * HashBytes for this zip file.
@@ -69,11 +67,6 @@ public class ZipReadFile {
      * The name of the Zip file.
      */
     private File theZipFile = null;
-
-    /**
-     * The Header input stream.
-     */
-    private ZipInputStream theHdrStream = null;
 
     /**
      * AsymmetricKey for this zip file.
@@ -107,36 +100,28 @@ public class ZipReadFile {
     /**
      * Constructor.
      * @param pFile the file to read
-     * @param pLogger the logger
      * @throws JOceanusException on error
      */
-    public ZipReadFile(final File pFile,
-                       final Logger pLogger) throws JOceanusException {
-        /* Store the logger */
-        theLogger = pLogger;
-
+    public ZipReadFile(final File pFile) throws JOceanusException {
         /* Protect against exceptions */
-        try {
+        try (FileInputStream myInFile = new FileInputStream(pFile);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {
             /* Store the zipFile name */
             theZipFile = new File(pFile.getPath());
 
             /* Create the file contents */
             theContents = new ZipFileContents();
 
-            /* Open the zip file for reading */
-            FileInputStream myInFile = new FileInputStream(pFile);
-            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            theHdrStream = new ZipInputStream(myInBuffer);
-
             /* Loop through the Zip file entries */
             ZipEntry myEntry;
             for (;;) {
                 /* Read next entry */
-                myEntry = theHdrStream.getNextEntry();
+                myEntry = myHdrStream.getNextEntry();
 
                 /* If this is EOF or a header record break the loop */
                 if ((myEntry == null)
-                    || (myEntry.getExtra() != null)) {
+                        || (myEntry.getExtra() != null)) {
                     break;
                 }
 
@@ -146,8 +131,8 @@ public class ZipReadFile {
 
             /* Pick up security key if it is present */
             theHashBytes = (myEntry == null)
-                    ? null
-                    : myEntry.getExtra();
+                                            ? null
+                                            : myEntry.getExtra();
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -167,7 +152,9 @@ public class ZipReadFile {
         }
 
         /* Protect against exceptions */
-        try {
+        try (FileInputStream myInFile = new FileInputStream(theZipFile);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {
             /* Reject this is the wrong security control */
             if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
                 throw new JGordianLogicException("Password Hash does not match ZipFile Security.");
@@ -184,7 +171,7 @@ public class ZipReadFile {
             /* Loop */
             for (;;) {
                 /* Read the header entry */
-                int myRead = theHdrStream.read(myBuffer, myLen, mySpace);
+                int myRead = myHdrStream.read(myBuffer, myLen, mySpace);
                 if (myRead == -1) {
                     break;
                 }
@@ -197,7 +184,7 @@ public class ZipReadFile {
                 if (mySpace == 0) {
                     /* Increase the buffer */
                     myBuffer = Arrays.copyOf(myBuffer, myLen
-                                                       + BUFFERSIZE);
+                            + BUFFERSIZE);
                     mySpace += BUFFERSIZE;
                 }
             }
@@ -227,16 +214,6 @@ public class ZipReadFile {
             /* Catch exceptions */
         } catch (IOException e) {
             throw new JGordianIOException("Exception reading header of Zip file", e);
-        } finally {
-            /* Close the file */
-            try {
-                if (theHdrStream != null) {
-                    theHdrStream.close();
-                }
-            } catch (IOException e) {
-                theLogger.log(Level.SEVERE, "Failed to close file", e);
-            }
-            theHdrStream = null;
         }
     }
 
@@ -270,7 +247,7 @@ public class ZipReadFile {
 
                 /* Break if we reached EOF or found the correct entry */
                 if ((myEntry == null)
-                    || (myEntry.getName().compareTo(myName) == 0)) {
+                        || (myEntry.getName().compareTo(myName) == 0)) {
                     break;
                 }
             }
@@ -279,7 +256,7 @@ public class ZipReadFile {
             if (myEntry == null) {
                 myZipFile.close();
                 throw new JGordianDataException("File not found - "
-                                                + pFile.getFileName());
+                        + pFile.getFileName());
             }
 
             /* Note the current input stream */

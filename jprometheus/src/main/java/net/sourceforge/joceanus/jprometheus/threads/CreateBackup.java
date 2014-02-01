@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
@@ -126,7 +127,7 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + SpreadSheet.ZIPFILE_EXT);
+            myFile = new File(myName.toString() + ZipReadFile.ZIPFILE_EXT);
 
             /* Create backup */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();

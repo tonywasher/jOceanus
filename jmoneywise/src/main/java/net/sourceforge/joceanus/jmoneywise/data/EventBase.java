@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -51,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  */
 public abstract class EventBase
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<EventBase> {
+        implements Comparable<EventBase>, GroupedItem<MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -141,6 +142,32 @@ public abstract class EventBase
             return true;
         }
         return super.skipField(pField);
+    }
+
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_DATE.equals(pField)) {
+            return !isChild();
+        }
+        if (FIELD_CATEGORY.equals(pField)) {
+            return true;
+        }
+        if (FIELD_DEBIT.equals(pField)) {
+            return !isChild() || !Difference.isEqual(getDebit(), getParent().getDebit());
+        }
+        if (FIELD_CREDIT.equals(pField)) {
+            return !isChild() || !Difference.isEqual(getCredit(), getParent().getCredit());
+        }
+        if (FIELD_AMOUNT.equals(pField)) {
+            return true;
+        }
+        if (FIELD_RECONCILED.equals(pField)) {
+            return isReconciled();
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
     }
 
     /**
@@ -300,10 +327,7 @@ public abstract class EventBase
         return getParent(getValueSet());
     }
 
-    /**
-     * Is the event a child.
-     * @return true/false
-     */
+    @Override
     public boolean isChild() {
         return getParent() != null;
     }

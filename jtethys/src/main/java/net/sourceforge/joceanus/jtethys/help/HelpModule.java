@@ -229,8 +229,6 @@ public abstract class HelpModule {
      */
     private void loadHelpPages(final Class<?> pClass,
                                final HelpEntry[] pEntries) throws HelpException {
-        InputStream myStream = null;
-
         /* Loop through the entities */
         for (HelpEntry myEntry : pEntries) {
             /* Check that the entry is not already in the list */
@@ -240,28 +238,15 @@ public abstract class HelpModule {
 
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
-                try {
-                    /* Access the input stream for the entity */
-                    myStream = pClass.getResourceAsStream(myEntry.getFileName());
-
+                try (InputStream myStream = pClass.getResourceAsStream(myEntry.getFileName())) {
                     /* Build the help page */
                     HelpPage myPage = new HelpPage(myEntry, myStream);
 
                     /* Add it to the list */
                     theList.add(myPage);
 
-                } finally {
-                    /* Protect while cleaning up */
-                    try {
-                        /* Close the output stream */
-                        if (myStream != null) {
-                            myStream.close();
-                        }
-
-                        /* Ignore errors */
-                    } catch (IOException ex) {
-                        theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
-                    }
+                } catch (IOException ex) {
+                    theLogger.log(Level.SEVERE, ERROR_STREAM, ex);
                 }
             }
 

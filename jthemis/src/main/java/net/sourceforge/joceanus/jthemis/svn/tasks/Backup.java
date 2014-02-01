@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
@@ -145,7 +144,7 @@ public class Backup {
             theAdminClient.setEventHandler(new SubversionHandler());
 
             /* Access the zipFile */
-            ZipReadFile myFile = new ZipReadFile(pZipFile, theTask.getLogger());
+            ZipReadFile myFile = new ZipReadFile(pZipFile);
 
             /* Obtain the hash bytes from the file */
             byte[] myHashBytes = myFile.getHashBytes();
@@ -243,7 +242,7 @@ public class Backup {
             long revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
-            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + SpreadSheet.ZIPFILE_EXT);
+            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + ZipReadFile.ZIPFILE_EXT);
 
             /* If the backup file exists */
             if (myZipName.exists()) {

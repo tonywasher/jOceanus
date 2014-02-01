@@ -265,7 +265,6 @@ public class JiraProject
             myBuilder.setSummary(pSummary);
             myBuilder.setDescription(pDesc);
             myBuilder.setReporter(theServer.getActiveUser().getUnderlying());
-            myBuilder.setAssignee(theLead.getUnderlying());
             myBuilder.setPriority(pPriority.getUnderlying());
             IssueInput myInput = myBuilder.build();
 

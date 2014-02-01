@@ -91,9 +91,6 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
 
         /* Store parameter */
         theParent = pParent;
-
-        /* Add the parent to the list */
-        add(theParent);
     }
 
     /**

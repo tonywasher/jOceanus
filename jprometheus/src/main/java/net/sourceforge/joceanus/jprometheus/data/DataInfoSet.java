@@ -96,17 +96,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     }
 
     /**
-     * Interface for an infoSet item.
-     */
-    public interface InfoSetItem {
-        /**
-         * Obtain infoSet.
-         * @return the infoSet
-         */
-        DataInfoSet<?, ?, ?, ?, ?> getInfoSet();
-    }
-
-    /**
      * Version # of the values.
      */
     private int theVersion;
@@ -491,5 +480,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
      */
     public Iterator<T> iterator() {
         return theMap.values().iterator();
+    }
+
+    /**
+     * Is the infoSet empty?
+     * @return true/false.
+     */
+    public boolean isEmpty() {
+        return theMap.isEmpty();
     }
 }

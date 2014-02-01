@@ -27,11 +27,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoSet.InfoSetItem;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,12 +42,63 @@ import org.w3c.dom.NodeList;
 /**
  * Arguments class for DataItem.
  * @author Tony Washer
+ * @param <E> the data type enum class
  */
-public class DataValues {
+public class DataValues<E extends Enum<E>> {
+    /**
+     * Interface for an infoSet item.
+     * @param <E> the data type enum class
+     */
+    public interface InfoSetItem<E extends Enum<E>> {
+        /**
+         * Obtain infoSet.
+         * @return the infoSet
+         */
+        DataInfoSet<?, ?, ?, ?, E> getInfoSet();
+    }
+
+    /**
+     * Interface for a grouped item.
+     * @param <E> the data type enum class
+     */
+    public interface GroupedItem<E extends Enum<E>> {
+        /**
+         * Is the item a child.
+         * @return true/false
+         */
+        boolean isChild();
+
+        /**
+         * Obtain the child iterator.
+         * @return the iterator
+         */
+        Iterator<? extends DataItem<E>> childIterator();
+    }
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataValues.class.getName());
+
     /**
      * InfoSet Items tag.
      */
-    private static final String TAG_INFOSET = "InfoSet";
+    private static final String TAG_INFOSET = NLS_BUNDLE.getString("DataInfoSet");
+
+    /**
+     * Children Items tag.
+     */
+    private static final String TAG_CHILDREN = NLS_BUNDLE.getString("DataChildren");
+
+    /**
+     * Child Item tag.
+     */
+    private static final String TAG_CHILD = NLS_BUNDLE.getString("DataChild");
+
+    /**
+     * List type attribute.
+     */
+    protected static final String ATTR_TYPE = NLS_BUNDLE.getString("DataAttrType");
 
     /**
      * The item type.
@@ -62,6 +114,11 @@ public class DataValues {
      * InfoSet values.
      */
     private final List<InfoItem> theInfoItems;
+
+    /**
+     * Child values.
+     */
+    private final List<DataValues<E>> theChildren;
 
     /**
      * Obtain Item Type.
@@ -80,7 +137,7 @@ public class DataValues {
     }
 
     /**
-     * Does this item has InfoItems?
+     * Does this item have InfoItems?
      * @return true/false
      */
     public boolean hasInfoItems() {
@@ -89,19 +146,45 @@ public class DataValues {
 
     /**
      * Obtain InfoItems iterator.
-     * @return the InfoItems iterator
+     * @return the iterator
      */
     public Iterator<InfoItem> infoIterator() {
         return theInfoItems.iterator();
     }
 
     /**
+     * Does this item have children?
+     * @return true/false
+     */
+    public boolean hasChildren() {
+        return theChildren != null;
+    }
+
+    /**
+     * Obtain Child iterator.
+     * @return the iterator
+     */
+    public Iterator<DataValues<E>> childIterator() {
+        return theChildren.iterator();
+    }
+
+    /**
      * Constructor.
      * @param pItem the Item to obtain values from
      */
-    private DataValues(final DataItem<?> pItem) {
+    public DataValues(final DataItem<E> pItem) {
+        this(pItem, pItem.getDataFields().getName());
+    }
+
+    /**
+     * Constructor.
+     * @param pItem the Item to obtain values from
+     * @param pItemName the item name
+     */
+    protected DataValues(final DataItem<?> pItem,
+                         final String pItemName) {
         /* Store Item type */
-        theItemType = pItem.getDataFields().getName();
+        theItemType = pItemName;
 
         /* Create the map and list */
         theFields = new LinkedHashMap<JDataField, Object>();
@@ -112,48 +195,83 @@ public class DataValues {
         /* Access values */
         ValueSet myValues = pItem.getValueSet();
 
-        /* Iterate through the IDs */
+        /* Iterate through the fields */
         Iterator<JDataField> myIterator = pItem.getDataFields().fieldIterator();
         while (myIterator.hasNext()) {
             JDataField myField = myIterator.next();
 
-            /* If the field is an equality valueSet item */
-            if (myField.isValueSetField() && myField.isEqualityField()) {
-                /* Store the value */
-                Object myValue = myValues.getValue(myField);
-                theFields.put(myField, (myValue == null)
-                                                        ? null
-                                                        : myValue.toString());
+            /* Ignore field if it is irrelevant */
+            if (!myField.isValueSetField() || !myField.isEqualityField()) {
+                continue;
+            }
+
+            /* If the field is to be included */
+            if (pItem.includeXmlField(myField)) {
+                /* Store the value if it is non-null */
+                theFields.put(myField, myValues.getValue(myField));
             }
         }
 
         /* If the item is an infoSet item */
         if (pItem instanceof InfoSetItem) {
-            /* Allocate infoItems list */
-            theInfoItems = new ArrayList<InfoItem>();
-
             /* Access InfoSet */
-            DataInfoSet<?, ?, ?, ?, ?> myInfoSet = ((InfoSetItem) pItem).getInfoSet();
+            DataInfoSet<?, ?, ?, ?, ?> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
 
-            /* Iterator over the values */
-            Iterator<?> myInfoIterator = myInfoSet.iterator();
-            while (myInfoIterator.hasNext()) {
-                Object myCurr = myInfoIterator.next();
+            /* If the InfoSet is non-empty */
+            if (myInfoSet.isEmpty()) {
+                /* No infoSet items */
+                theInfoItems = null;
+            } else {
+                /* Allocate infoItems list */
+                theInfoItems = new ArrayList<InfoItem>();
 
-                /* If this is a DataInfo item */
-                if (myCurr instanceof DataInfo) {
-                    /* Access as DataArguments */
-                    DataInfo<?, ?, ?, ?, ?> myItem = (DataInfo<?, ?, ?, ?, ?>) myCurr;
+                /* Iterator over the values */
+                Iterator<?> myInfoIterator = myInfoSet.iterator();
+                while (myInfoIterator.hasNext()) {
+                    Object myCurr = myInfoIterator.next();
 
-                    /* Add item to the list */
-                    InfoItem myInfo = new InfoItem(myItem);
-                    theInfoItems.add(myInfo);
+                    /* If this is a DataInfo item */
+                    if (myCurr instanceof DataInfo) {
+                        /* Access as DataArguments */
+                        DataInfo<?, ?, ?, ?, ?> myItem = (DataInfo<?, ?, ?, ?, ?>) myCurr;
+
+                        /* Add item to the list */
+                        InfoItem myInfo = new InfoItem(myItem);
+                        theInfoItems.add(myInfo);
+                    }
                 }
             }
 
             /* Else not that we have no infoItems */
         } else {
             theInfoItems = null;
+        }
+
+        /* If the item is an grouped item */
+        if (pItem instanceof GroupedItem) {
+            /* Access child iterator */
+            Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();
+
+            /* If there are no children */
+            if (myChildIterator == null) {
+                theChildren = null;
+            } else {
+                /* Allocate child list */
+                theChildren = new ArrayList<DataValues<E>>();
+
+                /* Iterator over the values */
+                while (myChildIterator.hasNext()) {
+                    DataItem<?> myCurr = myChildIterator.next();
+
+                    /* Add child to the list */
+                    DataValues<E> myChild = new DataValues<E>(myCurr, TAG_CHILD);
+                    theChildren.add(myChild);
+                }
+            }
+
+            /* Else note that we have no children */
+        } else {
+            theChildren = null;
         }
     }
 
@@ -164,14 +282,29 @@ public class DataValues {
      */
     public DataValues(final Element pElement,
                       final JDataFields pFields) {
+        this(pElement, pFields, pElement.getNodeName());
+    }
+
+    /**
+     * Constructor.
+     * @param pElement the Item to obtain values from
+     * @param pFields the field definitions
+     * @param pItemName the item name
+     */
+    protected DataValues(final Element pElement,
+                         final JDataFields pFields,
+                         final String pItemName) {
         /* Store Item type */
-        theItemType = pElement.getNodeName();
+        theItemType = pItemName;
 
         /* Create the map */
         theFields = new LinkedHashMap<JDataField, Object>();
 
-        /* Declare the id */
-        theFields.put(DataItem.FIELD_ID, getId(pElement));
+        /* Declare the id if it exists */
+        Integer myId = getId(pElement);
+        if (myId != null) {
+            theFields.put(DataItem.FIELD_ID, myId);
+        }
 
         /* Loop through the children */
         Iterator<JDataField> myIterator = pFields.fieldIterator();
@@ -183,13 +316,8 @@ public class DataValues {
                 /* Access element */
                 Element myChild = getChild(pElement, myField.getName());
                 if (myChild != null) {
-                    /* Put value (as id if possible) */
-                    Integer myId = getId(myChild);
-                    theFields.put(myField, (myId == null)
-                                                         ? myChild.getTextContent()
-                                                         : myId);
-                } else {
-                    theFields.put(myField, null);
+                    /* Put value */
+                    theFields.put(myField, myChild.getTextContent());
                 }
             }
         }
@@ -217,6 +345,30 @@ public class DataValues {
         } else {
             theInfoItems = null;
         }
+
+        /* Look for children */
+        Element myChildren = getChild(pElement, TAG_CHILDREN);
+        if (myChildren != null) {
+            /* Allocate infoItems list */
+            theChildren = new ArrayList<DataValues<E>>();
+
+            /* Loop through the child values */
+            for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
+                /* If the child is the correct element */
+                if ((myCurr instanceof Element) && TAG_CHILD.equals(myCurr.getNodeName())) {
+                    /* Access as element */
+                    Element myChild = (Element) myCurr;
+
+                    /* Add item to the list */
+                    DataValues<E> myValues = new DataValues<E>(myChild, pFields, theItemType);
+                    theChildren.add(myValues);
+                }
+            }
+
+            /* Else not that we have no children */
+        } else {
+            theChildren = null;
+        }
     }
 
     /**
@@ -225,35 +377,23 @@ public class DataValues {
      */
     public DataValues(final String pName) {
         /* Store Item type */
-        this(pName, false);
-    }
-
-    /**
-     * Constructor.
-     * @param pName the Item type
-     * @param hasInfoSet does this item have an infoSet?
-     */
-    public DataValues(final String pName,
-                      final boolean hasInfoSet) {
-        /* Store Item type */
         theItemType = pName;
 
         /* Create the map */
         theFields = new LinkedHashMap<JDataField, Object>();
 
-        /* Allocate infoItems list */
-        theInfoItems = (hasInfoSet)
-                                   ? new ArrayList<InfoItem>()
-                                   : null;
+        /* No underlying arrays */
+        theInfoItems = null;
+        theChildren = null;
     }
 
     /**
-     * Add argument.
+     * Add value.
      * @param pField the Field definition
      * @param pValue the field value
      */
-    public void addArg(final JDataField pField,
-                       final Object pValue) {
+    public void addValue(final JDataField pField,
+                         final Object pValue) {
         /* Add the field */
         theFields.put(pField, pValue);
     }
@@ -295,9 +435,13 @@ public class DataValues {
     /**
      * Create XML element for item.
      * @param pDocument the document to hold the item.
+     * @param pFormatter the data formatter
+     * @param pStoreIds do we include IDs in XML
      * @return the new element
      */
-    private Element createXML(final Document pDocument) {
+    protected Element createXML(final Document pDocument,
+                                final JDataFormatter pFormatter,
+                                final boolean pStoreIds) {
         /* Create an element for the item */
         Element myElement = pDocument.createElement(theItemType);
 
@@ -309,36 +453,24 @@ public class DataValues {
 
             /* If this is the Id */
             if (DataItem.FIELD_ID.equals(myField)) {
-                /* Add as an Attribute */
-                myElement.setAttribute(myField.getName(), myValue.toString());
-                continue;
-            }
-
-            /* If this is the Control Id */
-            if (EncryptedItem.FIELD_CONTROL.equals(myField)) {
-                /* Ignore it */
-                continue;
-            }
-
-            /* If the value is non-Null */
-            if (myValue != null) {
-                /* Create the child element */
-                Element myChild = pDocument.createElement(myField.getName());
-                myElement.appendChild(myChild);
-
-                /* If the value is an instance of a DataItem */
-                if (myValue instanceof DataItem) {
-                    /* Set id attribute */
-                    DataItem<?> myLink = (DataItem<?>) myValue;
-                    myElement.setAttribute(DataItem.FIELD_ID.getName(), myLink.getId().toString());
+                /* Add as an Attribute if required */
+                if (pStoreIds) {
+                    myElement.setAttribute(myField.getName(), myValue.toString());
                 }
 
-                /* Store the value */
-                myChild.setTextContent(myValue.toString());
+                /* Skip to next field */
+                continue;
             }
+
+            /* Create the child element */
+            Element myChild = pDocument.createElement(myField.getName());
+            myElement.appendChild(myChild);
+
+            /* Store the value */
+            myChild.setTextContent(pFormatter.formatObject(myValue));
         }
 
-        /* If we have an InfoSet */
+        /* If we have InfoSet items */
         if (theInfoItems != null) {
             /* Add infoSet */
             Element myInfoSet = pDocument.createElement(TAG_INFOSET);
@@ -350,11 +482,30 @@ public class DataValues {
                 Element myItem = pDocument.createElement(myInfo.getName());
                 myInfoSet.appendChild(myItem);
 
-                /* Set the id */
-                myItem.setAttribute(DataItem.FIELD_ID.getName(), myInfo.getId().toString());
+                /* Set the id if required */
+                if (pStoreIds) {
+                    myItem.setAttribute(DataItem.FIELD_ID.getName(), myInfo.getId().toString());
+                }
 
                 /* Set the value */
-                myItem.setTextContent(myInfo.getValue());
+                myItem.setTextContent(pFormatter.formatObject(myInfo.getValue()));
+            }
+        }
+
+        /* If we have children */
+        if (theChildren != null) {
+            /* Add children */
+            Element myChildren = pDocument.createElement(TAG_CHILDREN);
+            myElement.appendChild(myChildren);
+
+            /* Loop through the children */
+            Iterator<DataValues<E>> myIterator = theChildren.iterator();
+            while (myIterator.hasNext()) {
+                DataValues<E> myValues = myIterator.next();
+
+                /* Create the subElement and append */
+                Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);
+                myChildren.appendChild(myChild);
             }
         }
 
@@ -363,54 +514,22 @@ public class DataValues {
     }
 
     /**
-     * Create XML for a list.
+     * parse an XML document into DataValues.
      * @param pDocument the document to hold the list.
-     * @param pList the data list
-     * @return the element holding the list
-     */
-    public static Element createXML(final Document pDocument,
-                                    final DataList<?, ?> pList) {
-        /* Create an element for the item */
-        Element myElement = pDocument.createElement(pList.listName());
-
-        /* Iterate through the list */
-        Iterator<?> myIterator = pList.iterator();
-        while (myIterator.hasNext()) {
-            Object myObject = myIterator.next();
-
-            /* Ignore if not a DataItem */
-            if (!(myObject instanceof DataItem)) {
-                continue;
-            }
-
-            /* Access as DataItem */
-            DataItem<?> myItem = (DataItem<?>) myObject;
-
-            /* Create DataArguments for item */
-            DataValues myArgs = new DataValues(myItem);
-
-            /* Add the child to the list */
-            Element myChild = myArgs.createXML(pDocument);
-            myElement.appendChild(myChild);
-        }
-
-        /* Return the element */
-        return myElement;
-    }
-
-    /**
-     * Create XML for a list.
-     * @param pElement the document to hold the list.
      * @param pFields the data fields
      * @return the element holding the list
+     * @param <E> the data type enum class
      */
-    public static List<DataValues> parseXML(final Element pElement,
-                                            final JDataFields pFields) {
+    public static <E extends Enum<E>> List<DataValues<E>> parseXML(final Document pDocument,
+                                                                   final JDataFields pFields) {
         /* Create the list */
-        List<DataValues> myResult = new ArrayList<DataValues>();
+        List<DataValues<E>> myResult = new ArrayList<DataValues<E>>();
+
+        /* Access the parent element */
+        Element myElement = pDocument.getDocumentElement();
 
         /* Loop through the children */
-        for (Node myChild = pElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
+        for (Node myChild = myElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
             /* Ignore non-elements */
             if (!(myChild instanceof Element)) {
                 continue;
@@ -420,7 +539,7 @@ public class DataValues {
             Element myItem = (Element) myChild;
 
             /* Create DataArguments for item */
-            DataValues myArgs = new DataValues(myItem, pFields);
+            DataValues<E> myArgs = new DataValues<E>(myItem, pFields);
 
             /* Add the child to the list */
             myResult.add(myArgs);
@@ -428,36 +547,6 @@ public class DataValues {
 
         /* Return the list */
         return myResult;
-    }
-
-    /**
-     * Create XML for a DataSet.
-     * @param pDocument the document to hold the list.
-     * @param pData the data set
-     * @param <E> the list enum type
-     */
-    public static <E extends Enum<E>> void createXML(final Document pDocument,
-                                                     final DataSet<?, E> pData) {
-        /* Create an element for the document */
-        Element myElement = pDocument.createElement(pData.getClass().getSimpleName());
-        pDocument.appendChild(myElement);
-
-        /* Declare data version */
-        ControlData myControl = pData.getControl();
-        myElement.setAttribute(ControlData.FIELD_VERSION.getName(), myControl.getDataVersion().toString());
-
-        /* Iterate through the list */
-        Iterator<DataList<?, E>> myIterator = pData.iterator();
-        while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
-
-            /* If this should be included as DataXML */
-            if (myList.includeDataXML()) {
-                /* Add the child to the list */
-                Element myChild = createXML(pDocument, myList);
-                myElement.appendChild(myChild);
-            }
-        }
     }
 
     /**
@@ -477,7 +566,7 @@ public class DataValues {
         /**
          * Value of item.
          */
-        private final String theValue;
+        private final Object theValue;
 
         /**
          * Obtain name of item.
@@ -496,10 +585,10 @@ public class DataValues {
         }
 
         /**
-         * Obtain name of item.
-         * @return the name
+         * Obtain value of item.
+         * @return the value
          */
-        public String getValue() {
+        public Object getValue() {
             return theValue;
         }
 
@@ -508,10 +597,15 @@ public class DataValues {
          * @param pInfo the info Item
          */
         private InfoItem(final DataInfo<?, ?, ?, ?, ?> pInfo) {
+            /* Access the infoClass */
+            DataInfoClass myClass = pInfo.getInfoClass();
+
             /* Store values */
-            theName = pInfo.getInfoClass().toString();
+            theName = myClass.toString();
             theId = pInfo.getId();
-            theValue = pInfo.getValue(Object.class).toString();
+            theValue = myClass.isLink()
+                                       ? pInfo.getLink(DataItem.class)
+                                       : pInfo.getValue(Object.class);
         }
 
         /**

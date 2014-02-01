@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
@@ -88,7 +89,7 @@ public class LoadBackup<T extends DataSet<T, E>, E extends Enum<E>>
         String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, SpreadSheet.ZIPFILE_EXT);
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog(theStatus.getLogger());
         File myFile = myDialog.getSelectedFile();
 

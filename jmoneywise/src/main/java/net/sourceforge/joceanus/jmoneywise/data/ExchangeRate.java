@@ -115,6 +115,26 @@ public final class ExchangeRate
         return formatObject();
     }
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_DATE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_FROM.equals(pField)) {
+            return true;
+        }
+        if (FIELD_TO.equals(pField)) {
+            return true;
+        }
+        if (FIELD_RATE.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Obtain Date.
      * @return the name

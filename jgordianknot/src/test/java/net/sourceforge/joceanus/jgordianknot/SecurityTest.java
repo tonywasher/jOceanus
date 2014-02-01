@@ -139,8 +139,10 @@ public class SecurityTest {
             int myRead;
 
             /* Make sure that we have a directory */
-            if (!pDirectory.isDirectory())
+            if (!pDirectory.isDirectory()) {
+                myZipFile.close();
                 throw new JGordianDataException("Invalid source directory");
+            }
 
             /* Loop through the files is the directory */
             for (File myFile : pDirectory.listFiles()) {
@@ -187,11 +189,9 @@ public class SecurityTest {
      */
     protected static void extractZipFile(File pZipFile,
                                          File pDirectory) throws JOceanusException {
-        ZipReadFile myZipFile;
-
         try {
             /* Access the Zip file */
-            myZipFile = new ZipReadFile(pZipFile, theLogger);
+            ZipReadFile myZipFile = new ZipReadFile(pZipFile);
 
             /* Check for security */
             byte[] myHashBytes = myZipFile.getHashBytes();
@@ -403,7 +403,7 @@ public class SecurityTest {
     private static void printSet(String setName,
                                  Set<String> algorithms) {
         System.out.println(setName
-                           + ":");
+                + ":");
         if (algorithms.isEmpty()) {
             System.out.println("            None available.");
         } else {
@@ -411,7 +411,7 @@ public class SecurityTest {
             while (it.hasNext()) {
                 String name = it.next();
                 System.out.println("            "
-                                   + name);
+                        + name);
             }
         }
     }

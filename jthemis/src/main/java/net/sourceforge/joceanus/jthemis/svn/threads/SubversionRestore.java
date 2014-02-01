@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.FileSelector;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -105,7 +105,7 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         String myPrefix = mySVNPreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, SpreadSheet.ZIPFILE_EXT);
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to restore", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);
         myDialog.showDialog(theStatus.getLogger());
         File myFile = myDialog.getSelectedFile();
 
@@ -118,8 +118,8 @@ public class SubversionRestore<T extends DataSet<T, ?>>
         /* Determine the name of the repository */
         String myName = myFile.getName();
         myName = myName.substring(myPrefix.length());
-        if (myName.endsWith(SpreadSheet.ZIPFILE_EXT)) {
-            myName = myName.substring(0, myName.length() - SpreadSheet.ZIPFILE_EXT.length());
+        if (myName.endsWith(ZipReadFile.ZIPFILE_EXT)) {
+            myName = myName.substring(0, myName.length() - ZipReadFile.ZIPFILE_EXT.length());
         }
         myRepo = new File(myRepo.getPath(), myName);
 

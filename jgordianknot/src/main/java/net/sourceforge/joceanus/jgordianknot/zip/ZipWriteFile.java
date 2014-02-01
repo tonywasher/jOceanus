@@ -46,7 +46,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Class used to build a ZipFile.
  */
-public class ZipWriteFile {
+public class ZipWriteFile
+        implements AutoCloseable {
     /**
      * The Create ZipFile Error text.
      */
@@ -230,9 +231,9 @@ public class ZipWriteFile {
             /* Start the new entry */
             theFileName = pFile.getPath();
             theEntry = new ZipEntry(isEncrypted()
-                    ? FILE_PREFIX
-                      + theFileNo
-                    : theFileName);
+                                                 ? FILE_PREFIX
+                                                         + theFileNo
+                                                 : theFileName);
             theStream.putNextEntry(theEntry);
 
             /* Create a new zipFileEntry */
@@ -319,10 +320,7 @@ public class ZipWriteFile {
         }
     }
 
-    /**
-     * Close the Zip file and write the header.
-     * @throws IOException on error
-     */
+    @Override
     public void close() throws IOException {
         /* Close any open output stream */
         closeOutputStream();
@@ -333,7 +331,7 @@ public class ZipWriteFile {
             try {
                 /* If we have stored files and are encrypted */
                 if ((theFileNo > 0)
-                    && (isEncrypted())) {
+                        && (isEncrypted())) {
                     /* Create a new zipFileEntry */
                     ZipFileEntry myEntry = theContents.addZipFileHeader();
 
@@ -346,7 +344,7 @@ public class ZipWriteFile {
                     /* Create the header entry */
                     ++theFileNo;
                     theEntry = new ZipEntry(FILE_PREFIX
-                                            + theFileNo);
+                            + theFileNo);
 
                     /* Declare the password hash and encrypt the header */
                     theEntry.setExtra(theHash.getHashBytes());

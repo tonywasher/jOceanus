@@ -109,6 +109,26 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         return formatObject();
     }
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_NAME.equals(pField)) {
+            return true;
+        }
+        if (FIELD_DESC.equals(pField)) {
+            return getDesc() != null;
+        }
+        if (FIELD_ENABLED.equals(pField)) {
+            return !getEnabled();
+        }
+        if (FIELD_CLASS.equals(pField)) {
+            return !getName().equalsIgnoreCase(getStaticClass().name());
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Return the name of the Static Data.
      * @return the name

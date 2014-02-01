@@ -95,6 +95,23 @@ public class SecurityPrice
      */
     public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPrice"));
 
+    @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_SECURITY.equals(pField)) {
+            return true;
+        }
+        if (FIELD_DATE.equals(pField)) {
+            return true;
+        }
+        if (FIELD_PRICE.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
     /**
      * Obtain Price.
      * @return the price

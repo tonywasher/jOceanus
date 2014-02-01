@@ -87,6 +87,23 @@ public class Pattern
     public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField("Frequency");
 
     @Override
+    public boolean includeXmlField(final JDataField pField) {
+        /* Determine whether fields should be included */
+        if (FIELD_FREQ.equals(pField)) {
+            return true;
+        }
+
+        /* Pass call on */
+        return super.includeXmlField(pField);
+    }
+
+    @Override
+    public Iterator<Pattern> childIterator() {
+        /* No iterator at present */
+        return null;
+    }
+
+    @Override
     public Pattern getParent() {
         return (Pattern) super.getParent();
     }

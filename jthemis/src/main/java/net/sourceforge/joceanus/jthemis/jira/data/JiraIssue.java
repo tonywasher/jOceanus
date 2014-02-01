@@ -729,6 +729,14 @@ public class JiraIssue
         }
 
         /**
+         * Get the target Key.
+         * @return the target key
+         */
+        public String getTargetKey() {
+            return theTargetKey;
+        }
+
+        /**
          * Get the target issue.
          * @return the issue
          * @throws JOceanusException on error
@@ -797,6 +805,14 @@ public class JiraIssue
          */
         public JiraStatus getIssueStatus() {
             return theStatus;
+        }
+
+        /**
+         * Get the target Key.
+         * @return the target key
+         */
+        public String getTargetKey() {
+            return theTargetKey;
         }
 
         /**
@@ -976,7 +992,7 @@ public class JiraIssue
     /**
      * Transition.
      */
-    public final class JiraTransition {
+    public static final class JiraTransition {
         /**
          * The underlying transition.
          */

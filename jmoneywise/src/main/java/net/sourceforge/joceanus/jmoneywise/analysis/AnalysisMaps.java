@@ -42,11 +42,11 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 /**
  * Analysis Map classes.
  */
-public abstract class AnalysisMaps {
+public class AnalysisMaps {
     /**
      * Constructor.
      */
-    private AnalysisMaps() {
+    protected AnalysisMaps() {
     }
 
     /**
@@ -186,7 +186,8 @@ public abstract class AnalysisMaps {
             }
 
             /* Return the prices */
-            return new JPrice[] { myFirst, myLatest };
+            return new JPrice[]
+            { myFirst, myLatest };
         }
     }
 
@@ -232,9 +233,9 @@ public abstract class AnalysisMaps {
         @Override
         public String formatObject() {
             return theSecurity.formatObject()
-                   + "("
-                   + size()
-                   + ")";
+                    + "("
+                    + size()
+                    + ")";
         }
 
         @Override
@@ -327,7 +328,7 @@ public abstract class AnalysisMaps {
 
                     /* break loop if we have the correct record */
                     if ((myDate == null)
-                        || (myDate.compareTo(pDate) >= 0)) {
+                            || (myDate.compareTo(pDate) >= 0)) {
                         return myCurr;
                     }
                 }
@@ -380,9 +381,9 @@ public abstract class AnalysisMaps {
         @Override
         public String formatObject() {
             return theAccount.formatObject()
-                   + "("
-                   + size()
-                   + ")";
+                    + "("
+                    + size()
+                    + ")";
         }
 
         @Override

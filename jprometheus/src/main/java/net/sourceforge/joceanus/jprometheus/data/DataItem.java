@@ -770,6 +770,15 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Is the item to be included in output XML?
+     * @param pField the field to check
+     * @return true/false
+     */
+    public boolean includeXmlField(final JDataField pField) {
+        return false;
+    }
+
+    /**
      * Construct a new item.
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
