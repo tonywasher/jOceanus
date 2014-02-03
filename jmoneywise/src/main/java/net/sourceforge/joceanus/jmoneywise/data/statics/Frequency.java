@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -148,6 +149,17 @@ public class Frequency
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Frequency(final FrequencyList pList,
+                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+    }
+
+    /**
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
@@ -165,6 +177,11 @@ public class Frequency
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return Frequency.FIELD_DEFS;
         }
 
         @Override
@@ -337,6 +354,24 @@ public class Frequency
             if (myFreq.hasErrors()) {
                 throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the frequency */
+            Frequency myFreq = new Frequency(this, pValues);
+
+            /* Check that this FrequencyId has not been previously added */
+            if (!isIdUnique(myFreq.getId())) {
+                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myFreq);
+
+            /* Return it */
+            return myFreq;
         }
 
         /**

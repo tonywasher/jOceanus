@@ -24,27 +24,35 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
+import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
-import net.sourceforge.joceanus.jprometheus.sheets.SpreadSheet;
+import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Thread to create a extract spreadsheet of a data set.
- * @author Tony Washer
+ * LoaderThread extension to create an XML backup.
  * @param <T> the DataSet type
- * @param <E> the data type enum class
+ * @param <E> the Data list type
  */
-public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
-        extends WorkerThread<Void> {
+public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
+        extends LoaderThread<T, E> {
     /**
      * Task description.
      */
-    private static final String TASK_NAME = "Extract Creation";
+    private static final String TASK_NAME = "Create XML Backup";
+
+    /**
+     * Cancel error text.
+     */
+    private static final String ERROR_CANCEL = "Operation cancelled";
+
+    /**
+     * FileName.
+     */
+    protected static final String FILE_NAME = "c:\\Users\\Tony\\TestXML.zip";
 
     /**
      * Data Control.
@@ -57,15 +65,23 @@ public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
     private final ThreadStatus<T, E> theStatus;
 
     /**
+     * Is this a Secure backup?
+     */
+    private final boolean isSecure;
+
+    /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
+     * @param pSecure is this a secure backup
      */
-    public CreateExtract(final ThreadStatus<T, E> pStatus) {
+    public CreateXmlFile(final ThreadStatus<T, E> pStatus,
+                         final boolean pSecure) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
         /* Store passed parameters */
         theStatus = pStatus;
+        isSecure = pSecure;
         theControl = pStatus.getControl();
 
         /* Show the status window */
@@ -73,61 +89,75 @@ public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     @Override
-    public Void performTask() throws JOceanusException {
+    public T performTask() throws JOceanusException {
         boolean doDelete = false;
         File myFile = null;
 
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
-            theStatus.initTask("Creating Extract");
+            theStatus.initTask(TASK_NAME);
 
-            /* Access the Sheet preferences */
-            PreferenceManager myMgr = theControl.getPreferenceMgr();
-            BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+            /* Determine the file */
+            myFile = new File(FILE_NAME);
 
-            /* Determine the archive name */
-            File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
-            String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
-            WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
+            /* Access the data */
+            T myData = theControl.getData();
 
-            /* Determine the name of the file to build */
-            myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + myType.getExtension());
+            /* Create a new formatter */
+            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<T, E>(theStatus);
 
-            /* Create extract */
-            SpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            mySheet.createExtract(theStatus, theControl.getData(), myFile);
+            /* Create backup */
+            boolean bContinue = isSecure
+                                        ? myFormatter.createBackup(myData, myFile)
+                                        : myFormatter.createExtract(myData, myFile);
 
             /* File created, so delete on error */
             doDelete = true;
 
             /* Initialise the status window */
-            theStatus.initTask("Reading Extract");
+            theStatus.initTask("Reading Backup");
 
             /* Load workbook */
-            T myData = mySheet.loadExtract(theStatus, myFile);
+            T myNewData = theControl.getNewData();
+            bContinue = myFormatter.loadZipFile(myNewData, myFile);
+
+            /* Check for cancellation */
+            if (!bContinue) {
+                throw new JPrometheusCancelException(ERROR_CANCEL);
+            }
 
             /* Initialise the status window */
             theStatus.initTask("Re-applying Security");
 
             /* Initialise the security, from the original data */
-            myData.initialiseSecurity(theStatus, theControl.getData());
+            myNewData.initialiseSecurity(theStatus, theControl.getData());
 
             /* Initialise the status window */
-            theStatus.initTask("Verifying Extract");
+            theStatus.initTask("Verifying Backup");
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theControl.getData());
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
                 /* Throw an exception */
-                throw new JPrometheusDataException(myDiff, "Extract is inconsistent");
+                throw new JPrometheusDataException(myDiff, "Backup is inconsistent");
             }
 
             /* OK so switch off flag */
             doDelete = false;
 
+            /* Check for cancellation */
+            if (!bContinue) {
+                throw new JPrometheusCancelException(ERROR_CANCEL);
+            }
+
+            /* Catch any exceptions */
+        } catch (JOceanusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new JPrometheusIOException("Failed", e);
             /* Catch any exceptions */
         } finally {
             /* Delete the file */

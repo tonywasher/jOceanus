@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -40,13 +41,21 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileContents;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipFileEntry;
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.ZipWriteFile;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -113,8 +122,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         PasswordHash myHash = mySecure.clonePasswordHash(myBase);
 
         /* Declare the number of stages */
-        boolean bContinue = theTask.initTask("Creating backup XML")
-                && theTask.setNumStages(pData.getListMap().size());
+        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
         try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, pFile)) {
@@ -159,8 +167,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean createExtract(final T pData,
                                  final File pFile) throws JOceanusException {
         /* Declare the number of stages */
-        boolean bContinue = theTask.initTask("Creating extract XML")
-                && theTask.setNumStages(pData.getListMap().size());
+        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
         try (ZipWriteFile myZipFile = new ZipWriteFile(pFile)) {
@@ -242,9 +249,6 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         Element myElement = pDocument.createElement(pList.listName());
         pDocument.appendChild(myElement);
 
-        /* Set the list type */
-        myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
-
         /* Access the Data formatter */
         JDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
@@ -253,6 +257,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         if (!theTask.setNumSteps(myTotal)) {
             return false;
         }
+
+        /* Set the list type and size */
+        myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
+        myElement.setAttribute(DataValues.ATTR_SIZE, Integer.toString(myTotal));
 
         /* Access the number of reporting steps */
         int mySteps = theTask.getReportingSteps();
@@ -287,5 +295,188 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* return success */
         return true;
+    }
+
+    /**
+     * Load a ZipFile.
+     * @param pData DataSet to load into
+     * @param pFile the file to load
+     * @return success true/false
+     * @throws JOceanusException on error
+     */
+    public boolean loadZipFile(final T pData,
+                               final File pFile) throws JOceanusException {
+        /* Access the zip file */
+        ZipReadFile myZipFile = new ZipReadFile(pFile);
+
+        /* Obtain the hash bytes from the file */
+        byte[] myHashBytes = myZipFile.getHashBytes();
+
+        /* If this is a secure ZipFile */
+        if (myHashBytes != null) {
+            /* Access the Security manager */
+            SecureManager mySecurity = theTask.getSecurity();
+
+            /* Obtain the initialised password hash */
+            PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+
+            /* Associate this password hash with the ZipFile */
+            myZipFile.setPasswordHash(myHash);
+        }
+
+        /* Parse the Zip File */
+        return parseZipFile(pData, myZipFile);
+    }
+
+    /**
+     * Parse a ZipFile.
+     * @param pData DataSet to load into
+     * @param pZipFile the file to parse
+     * @return success true/false
+     * @throws JOceanusException on error
+     */
+    private boolean parseZipFile(final T pData,
+                                 final ZipReadFile pZipFile) throws JOceanusException {
+        /* Declare the number of stages */
+        boolean bContinue = theTask.setNumStages(pData.getListMap().size());
+
+        /* Loop through the data lists */
+        Iterator<DataList<?, E>> myIterator = pData.iterator();
+        while (bContinue && myIterator.hasNext()) {
+            DataList<?, E> myList = myIterator.next();
+
+            /* Declare the new stage */
+            if (!theTask.setNewStage(myList.listName())) {
+                return false;
+            }
+
+            /* If this list should be read */
+            if (myList.includeDataXML()) {
+                /* Write the list details */
+                bContinue = readXMLListFromFile(myList, pZipFile);
+            }
+
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
+            myList.reSort();
+        }
+
+        /* return success */
+        return bContinue;
+    }
+
+    /**
+     * Read XML list from file.
+     * @param pList the data list
+     * @param pZipFile the input zipFile
+     * @return continue true/false
+     * @throws JOceanusException on error
+     */
+    private boolean readXMLListFromFile(final DataList<?, E> pList,
+                                        final ZipReadFile pZipFile) throws JOceanusException {
+        /* Access the list name */
+        String myName = pList.listName();
+
+        /* Locate the correct entry */
+        ZipFileContents myContents = pZipFile.getContents();
+        ZipFileEntry myEntry = myContents.findFileEntry(myName);
+        if (myEntry == null) {
+            throw new JPrometheusDataException("List not found " + myName);
+        }
+
+        /* Protect the workbook access */
+        try (InputStream myStream = pZipFile.getInputStream(myEntry)) {
+            /* Read the document from the stream and parse it */
+            Document myDocument = theBuilder.parse(myStream);
+
+            /* Populate the list from the document */
+            boolean bContinue = parseXMLDocument(myDocument, pList);
+
+            /* Return success */
+            return bContinue;
+
+        } catch (IOException | SAXException e) {
+            throw new JPrometheusIOException("Failed to parse XML", e);
+        }
+    }
+
+    /**
+     * parse an XML document into DataValues.
+     * @param pDocument the document that holds the list.
+     * @param pList the data list
+     * @return continue true/false
+     * @throws JOceanusException on error
+     */
+    private boolean parseXMLDocument(final Document pDocument,
+                                     final DataList<?, E> pList) throws JOceanusException {
+        /* Access the parent element */
+        Element myElement = pDocument.getDocumentElement();
+        E myItemType = pList.getItemType();
+
+        /* Check that the document name and dataType are correct */
+        if ((!Difference.isEqual(myElement.getNodeName(), pList.listName()))
+            || (!Difference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
+            throw new JPrometheusDataException("Invalid list type");
+        }
+
+        /* Access field types for list */
+        JDataFields myFields = pList.getItemFields();
+
+        /* Access the Data formatter */
+        JDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+
+        /* Declare the number of steps */
+        int myTotal = getListCount(myFormatter, myElement);
+        if (!theTask.setNumSteps(myTotal)) {
+            return false;
+        }
+
+        /* Access the number of reporting steps */
+        int mySteps = theTask.getReportingSteps();
+        int myCount = 0;
+
+        /* Loop through the children */
+        for (Node myChild = myElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
+            /* Ignore non-elements */
+            if (!(myChild instanceof Element)) {
+                continue;
+            }
+
+            /* Access as Element */
+            Element myItem = (Element) myChild;
+
+            /* Create DataArguments for item */
+            DataValues<E> myValues = new DataValues<E>(myItem, myFields);
+
+            /* Add the child to the list */
+            pList.addValuesItem(myValues);
+
+            /* Report the progress */
+            myCount++;
+            if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
+                return false;
+            }
+        }
+
+        /* Return success */
+        return true;
+    }
+
+    /**
+     * Obtain count attribute.
+     * @param pFormatter the formatter.
+     * @param pElement the element that holds the count.
+     * @return the list count
+     * @throws JOceanusException on error
+     */
+    private static Integer getListCount(final JDataFormatter pFormatter,
+                                        final Element pElement) throws JOceanusException {
+        try {
+            /* Access the list count */
+            String mySize = pElement.getAttribute(DataValues.ATTR_SIZE);
+            return pFormatter.parseValue(mySize, Integer.class);
+        } catch (NumberFormatException e) {
+            throw new JPrometheusDataException("Invalid list count", e);
+        }
     }
 }

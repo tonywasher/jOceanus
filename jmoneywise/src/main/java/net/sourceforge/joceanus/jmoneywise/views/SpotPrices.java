@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
@@ -281,6 +282,11 @@ public class SpotPrices
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return SpotPrice.FIELD_DEFS;
+        }
+
+        @Override
         protected SpotList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
@@ -421,6 +427,11 @@ public class SpotPrices
 
         @Override
         public SpotPrice addNewItem() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public SpotPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
         }
 

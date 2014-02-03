@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -37,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -107,7 +109,7 @@ public final class ExchangeRate
     @Override
     public String formatObject() {
         return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":" + getToCurrency().getCurrency().getCurrencyCode() + "="
-                + getExchangeRate().toString();
+               + getExchangeRate().toString();
     }
 
     @Override
@@ -322,6 +324,14 @@ public final class ExchangeRate
         getValueSet().setValue(FIELD_RATE, pValue);
     }
 
+    /**
+     * Set exchange rate value.
+     * @param pValue the value
+     */
+    private void setValueExchangeRate(final String pValue) {
+        getValueSet().setValue(FIELD_RATE, pValue);
+    }
+
     @Override
     public MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
@@ -400,6 +410,59 @@ public final class ExchangeRate
         /* Record the string values */
         setValueDate(pDate);
         setValueExchangeRate(pRate);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ExchangeRate(final ExchangeRateList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            }
+
+            /* Store the From currency */
+            myValue = pValues.getValue(FIELD_FROM);
+            if (myValue instanceof Integer) {
+                setValueFromCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueFromCurrency((String) myValue);
+            }
+
+            /* Store the To currency */
+            myValue = pValues.getValue(FIELD_TO);
+            if (myValue instanceof Integer) {
+                setValueToCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueToCurrency((String) myValue);
+            }
+
+            /* Store the Rate */
+            myValue = pValues.getValue(FIELD_RATE);
+            if (myValue instanceof JRatio) {
+                setValueExchangeRate((JRatio) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueExchangeRate(myString);
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueExchangeRate(myFormatter.parseValue(myString, JRatio.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
     }
 
     /**
@@ -691,6 +754,11 @@ public final class ExchangeRate
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return ExchangeRate.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -841,6 +909,24 @@ public final class ExchangeRate
 
             /* Add to the list */
             append(myRate);
+        }
+
+        @Override
+        public ExchangeRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the rate */
+            ExchangeRate myRate = new ExchangeRate(this, pValues);
+
+            /* Check that this RateId has not been previously added */
+            if (!isIdUnique(myRate.getId())) {
+                myRate.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myRate);
+
+            /* Return it */
+            return myRate;
         }
 
         /**

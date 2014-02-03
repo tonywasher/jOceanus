@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -148,6 +149,17 @@ public class TaxRegime
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private TaxRegime(final TaxRegimeList pList,
+                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+    }
+
+    /**
      * Determine whether this tax regime supports a Low Salary Band.
      * @return <code>true/false</code>
      */
@@ -189,6 +201,11 @@ public class TaxRegime
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return TaxRegime.FIELD_DEFS;
         }
 
         @Override
@@ -361,6 +378,24 @@ public class TaxRegime
             if (myTaxReg.hasErrors()) {
                 throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public TaxRegime addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the regime */
+            TaxRegime myRegime = new TaxRegime(this, pValues);
+
+            /* Check that this RegimeId has not been previously added */
+            if (!isIdUnique(myRegime.getId())) {
+                myRegime.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myRegime);
+
+            /* Return it */
+            return myRegime;
         }
 
         /**

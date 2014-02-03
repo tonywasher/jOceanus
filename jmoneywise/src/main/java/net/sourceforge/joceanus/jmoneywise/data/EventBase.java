@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -508,6 +509,14 @@ public abstract class EventBase
     }
 
     /**
+     * Set amount value.
+     * @param pValue the value
+     */
+    private void setValueAmount(final String pValue) {
+        getValueSet().setValue(FIELD_AMOUNT, pValue);
+    }
+
+    /**
      * Set debit value.
      * @param pValue the value
      */
@@ -706,6 +715,87 @@ public abstract class EventBase
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected EventBase(final EventBaseList<? extends EventBase> pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            }
+
+            /* Store the Debit */
+            myValue = pValues.getValue(FIELD_DEBIT);
+            if (myValue instanceof Integer) {
+                setValueDebit((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueDebit((String) myValue);
+            }
+
+            /* Store the Credit */
+            myValue = pValues.getValue(FIELD_CREDIT);
+            if (myValue instanceof Integer) {
+                setValueCredit((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCredit((String) myValue);
+            }
+
+            /* Store the Category */
+            myValue = pValues.getValue(FIELD_CATEGORY);
+            if (myValue instanceof Integer) {
+                setValueCategory((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCategory((String) myValue);
+            }
+
+            /* Store the Amount */
+            myValue = pValues.getValue(FIELD_AMOUNT);
+            if (myValue instanceof JMoney) {
+                setValueAmount((JMoney) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueAmount((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueAmount(myString);
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueAmount(myFormatter.parseValue(myString, JMoney.class));
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            }
+
+            /* Store the reconciled flag */
+            myValue = pValues.getValue(FIELD_RECONCILED);
+            if (myValue instanceof Boolean) {
+                setValueReconciled((Boolean) myValue);
+            }
+
+            /* Store the split flag */
+            myValue = pValues.getValue(FIELD_SPLIT);
+            if (myValue instanceof Boolean) {
+                setValueSplit((Boolean) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Compare this event to another to establish sort order.
      * @param pThat The Event to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
@@ -855,6 +945,18 @@ public abstract class EventBase
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
+        }
+
+        /* Adjust Reconciled */
+        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
+        if (myReconciled == null) {
+            setValueReconciled(Boolean.FALSE);
+        }
+
+        /* Adjust Split */
+        Object mySplit = myValues.getValue(FIELD_SPLIT);
+        if (mySplit == null) {
+            setValueSplit(Boolean.FALSE);
         }
     }
 

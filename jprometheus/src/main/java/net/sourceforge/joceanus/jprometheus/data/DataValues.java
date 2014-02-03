@@ -101,6 +101,11 @@ public class DataValues<E extends Enum<E>> {
     protected static final String ATTR_TYPE = NLS_BUNDLE.getString("DataAttrType");
 
     /**
+     * List size attribute.
+     */
+    protected static final String ATTR_SIZE = NLS_BUNDLE.getString("DataAttrSize");
+
+    /**
      * The item type.
      */
     private final String theItemType;
@@ -399,11 +404,34 @@ public class DataValues<E extends Enum<E>> {
     }
 
     /**
+     * Obtain value.
+     * @param pField the Field definition
+     * @return the field value
+     */
+    public Object getValue(final JDataField pField) {
+        /* Return the field */
+        return theFields.get(pField);
+    }
+
+    /**
+     * Obtain value of specified class.
+     * @param pField the Field definition
+     * @param pClass the class
+     * @param <T> the item type
+     * @return the field value
+     */
+    public <T> T getValue(final JDataField pField,
+                          final Class<T> pClass) {
+        /* Return the properly cast field */
+        return pClass.cast(getValue(pField));
+    }
+
+    /**
      * Obtain id from element.
      * @param pElement the element.
      * @return the id
      */
-    protected static Integer getId(final Element pElement) {
+    private static Integer getId(final Element pElement) {
         /* Access the id */
         String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
         return (myId.length() > 0)
@@ -511,42 +539,6 @@ public class DataValues<E extends Enum<E>> {
 
         /* Return the element */
         return myElement;
-    }
-
-    /**
-     * parse an XML document into DataValues.
-     * @param pDocument the document to hold the list.
-     * @param pFields the data fields
-     * @return the element holding the list
-     * @param <E> the data type enum class
-     */
-    public static <E extends Enum<E>> List<DataValues<E>> parseXML(final Document pDocument,
-                                                                   final JDataFields pFields) {
-        /* Create the list */
-        List<DataValues<E>> myResult = new ArrayList<DataValues<E>>();
-
-        /* Access the parent element */
-        Element myElement = pDocument.getDocumentElement();
-
-        /* Loop through the children */
-        for (Node myChild = myElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
-            /* Ignore non-elements */
-            if (!(myChild instanceof Element)) {
-                continue;
-            }
-
-            /* Access as Element */
-            Element myItem = (Element) myChild;
-
-            /* Create DataArguments for item */
-            DataValues<E> myArgs = new DataValues<E>(myItem, pFields);
-
-            /* Add the child to the list */
-            myResult.add(myArgs);
-        }
-
-        /* Return the list */
-        return myResult;
     }
 
     /**

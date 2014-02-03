@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -625,9 +626,7 @@ public class Security
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                                                             ? pValue
-                                                             : Boolean.FALSE);
+        getValueSet().setValue(FIELD_CLOSED, pValue);
     }
 
     @Override
@@ -768,6 +767,80 @@ public class Security
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Security(final SecurityList pList,
+                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the SecurityType */
+            myValue = pValues.getValue(FIELD_SECTYPE);
+            if (myValue instanceof Integer) {
+                setValueType((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueType((String) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Store the Symbol */
+            myValue = pValues.getValue(FIELD_SYMBOL);
+            if (myValue instanceof String) {
+                setValueSymbol((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueSymbol((byte[]) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            }
+
+            /* Store the closed flag */
+            myValue = pValues.getValue(FIELD_CLOSED);
+            if (myValue instanceof Boolean) {
+                setValueClosed((Boolean) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -875,6 +948,12 @@ public class Security
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueParent(myParent);
+        }
+
+        /* Adjust Closed */
+        Object myClosed = myValues.getValue(FIELD_CLOSED);
+        if (myClosed == null) {
+            setValueClosed(Boolean.FALSE);
         }
     }
 
@@ -1109,6 +1188,11 @@ public class Security
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return Security.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -1305,6 +1389,24 @@ public class Security
 
             /* Add to the list */
             append(mySecurity);
+        }
+
+        @Override
+        public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the security */
+            Security mySecurity = new Security(this, pValues);
+
+            /* Check that this SecurityId has not been previously added */
+            if (!isIdUnique(mySecurity.getId())) {
+                mySecurity.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(mySecurity, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(mySecurity);
+
+            /* Return it */
+            return mySecurity;
         }
     }
 }

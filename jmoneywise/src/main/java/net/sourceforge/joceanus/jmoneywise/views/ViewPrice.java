@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilutedPrice;
@@ -229,6 +230,11 @@ public class ViewPrice
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return ViewPrice.FIELD_DEFS;
+        }
+
+        @Override
         protected ViewPriceList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
@@ -367,6 +373,11 @@ public class ViewPrice
             myPrice.setSecurity(theSecurity);
             add(myPrice);
             return myPrice;
+        }
+
+        @Override
+        public ViewPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
+            throw new UnsupportedOperationException();
         }
     }
 }

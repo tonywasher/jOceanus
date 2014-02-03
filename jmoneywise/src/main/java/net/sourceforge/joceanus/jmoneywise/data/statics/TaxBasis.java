@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -153,6 +154,17 @@ public class TaxBasis
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private TaxBasis(final TaxBasisList pList,
+                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+    }
+
+    /**
      * Determine whether we should add tax credits to the total.
      * @return <code>true</code> if we should add tax credits to the total, <code>false</code> otherwise.
      */
@@ -200,6 +212,11 @@ public class TaxBasis
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return TaxBasis.FIELD_DEFS;
         }
 
         @Override
@@ -372,6 +389,24 @@ public class TaxBasis
             if (myBasis.hasErrors()) {
                 throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the basis */
+            TaxBasis myBasis = new TaxBasis(this, pValues);
+
+            /* Check that this BasisId has not been previously added */
+            if (!isIdUnique(myBasis.getId())) {
+                myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myBasis);
+
+            /* Return it */
+            return myBasis;
         }
 
         /**

@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -345,6 +346,42 @@ public class EventClass
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private EventClass(final EventClassList pList,
+                       final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -473,6 +510,11 @@ public class EventClass
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return EventClass.FIELD_DEFS;
         }
 
         @Override
@@ -625,6 +667,24 @@ public class EventClass
 
             /* Add to the list */
             append(myClass);
+        }
+
+        @Override
+        public EventClass addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the class */
+            EventClass myClass = new EventClass(this, pValues);
+
+            /* Check that this ClassId has not been previously added */
+            if (!isIdUnique(myClass.getId())) {
+                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myClass);
+
+            /* Return it */
+            return myClass;
         }
     }
 }

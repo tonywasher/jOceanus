@@ -148,6 +148,25 @@ public abstract class EncryptedItem<E extends Enum<E>>
     }
 
     /**
+     * Values Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
+     * @param pList the list that this item is associated with
+     * @param pValues the data values
+     * @throws JOceanusException on error
+     */
+    public EncryptedItem(final EncryptedList<?, E> pList,
+                         final DataValues<E> pValues) throws JOceanusException {
+        super(pList, pValues);
+
+        /* Access control Key id */
+        Integer myId = pValues.getValue(FIELD_CONTROL, Integer.class);
+        if (myId != null) {
+            setControlKey(myId);
+        } else {
+            theGenerator = new EncryptionGenerator(null);
+        }
+    }
+
+    /**
      * Set ControlKey.
      * @param pControlKey the Control Key
      */

@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -395,9 +396,7 @@ public class Portfolio
      * @param pValue the value
      */
     private void setValueTaxFree(final Boolean pValue) {
-        getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
-                                                              ? pValue
-                                                              : Boolean.FALSE);
+        getValueSet().setValue(FIELD_TAXFREE, pValue);
     }
 
     /**
@@ -405,9 +404,7 @@ public class Portfolio
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                                                             ? pValue
-                                                             : Boolean.FALSE);
+        getValueSet().setValue(FIELD_CLOSED, pValue);
     }
 
     @Override
@@ -520,6 +517,62 @@ public class Portfolio
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private Portfolio(final PortfolioList pList,
+                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the Holding */
+            myValue = pValues.getValue(FIELD_HOLDING);
+            if (myValue instanceof Integer) {
+                setValueHolding((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueHolding((String) myValue);
+            }
+
+            /* Store the taxFree flag */
+            myValue = pValues.getValue(FIELD_TAXFREE);
+            if (myValue instanceof Boolean) {
+                setValueTaxFree((Boolean) myValue);
+            }
+
+            /* Store the closed flag */
+            myValue = pValues.getValue(FIELD_CLOSED);
+            if (myValue instanceof Boolean) {
+                setValueClosed((Boolean) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -577,6 +630,18 @@ public class Portfolio
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueHolding(myAccount);
+        }
+
+        /* Adjust TaxFree */
+        Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
+        if (myTaxFree == null) {
+            setValueTaxFree(Boolean.FALSE);
+        }
+
+        /* Adjust Closed */
+        Object myClosed = myValues.getValue(FIELD_CLOSED);
+        if (myClosed == null) {
+            setValueClosed(Boolean.FALSE);
         }
     }
 
@@ -736,6 +801,11 @@ public class Portfolio
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return Portfolio.FIELD_DEFS;
         }
 
         @Override
@@ -927,6 +997,24 @@ public class Portfolio
 
             /* Add to the list */
             append(myPortfolio);
+        }
+
+        @Override
+        public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the portfolio */
+            Portfolio myPortfolio = new Portfolio(this, pValues);
+
+            /* Check that this PortfolioId has not been previously added */
+            if (!isIdUnique(myPortfolio.getId())) {
+                myPortfolio.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPortfolio, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myPortfolio);
+
+            /* Return it */
+            return myPortfolio;
         }
     }
 }

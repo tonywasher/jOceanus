@@ -508,6 +508,11 @@ public class DataKey
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return DataKey.FIELD_DEFS;
+        }
+
+        @Override
         public boolean includeDataXML() {
             return false;
         }
@@ -576,6 +581,11 @@ public class DataKey
 
         @Override
         public DataKey addNewItem() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) {
             throw new UnsupportedOperationException();
         }
 

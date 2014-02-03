@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -347,6 +348,14 @@ public class AccountRate
     }
 
     /**
+     * Set the rate.
+     * @param pValue the rate
+     */
+    private void setValueRate(final String pValue) {
+        getValueSet().setValue(FIELD_RATE, pValue);
+    }
+
+    /**
      * Set the bonus rate.
      * @param pValue the bonus rate
      * @throws JOceanusException on error
@@ -373,7 +382,15 @@ public class AccountRate
     }
 
     /**
-     * Set the end date rate.
+     * Set the bonus.
+     * @param pValue the bonus
+     */
+    private void setValueBonus(final String pValue) {
+        getValueSet().setValue(FIELD_BONUS, pValue);
+    }
+
+    /**
+     * Set the end date.
      * @param pValue the date
      */
     private void setValueEndDate(final JDateDay pValue) {
@@ -496,6 +513,67 @@ public class AccountRate
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private AccountRate(final AccountRateList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Account */
+            Object myValue = pValues.getValue(FIELD_ACCOUNT);
+            if (myValue instanceof Integer) {
+                setValueAccount((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueAccount((String) myValue);
+            }
+
+            /* Store the Rate */
+            myValue = pValues.getValue(FIELD_RATE);
+            if (myValue instanceof JRate) {
+                setValueRate((JRate) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueRate((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueRate(myString);
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueRate(myFormatter.parseValue(myString, JRate.class));
+            }
+
+            /* Store the Bonus */
+            myValue = pValues.getValue(FIELD_BONUS);
+            if (myValue instanceof JRate) {
+                setValueBonus((JRate) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueBonus((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValueBonus(myString);
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueBonus(myFormatter.parseValue(myString, JRate.class));
+            }
+
+            /* Store the EndDate */
+            myValue = pValues.getValue(FIELD_ENDDATE);
+            if (myValue instanceof JDateDay) {
+                setValueEndDate((JDateDay) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -711,6 +789,11 @@ public class AccountRate
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return AccountRate.FIELD_DEFS;
         }
 
         @Override
@@ -953,6 +1036,24 @@ public class AccountRate
 
             /* Add to the list */
             append(myRate);
+        }
+
+        @Override
+        public AccountRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the rate */
+            AccountRate myRate = new AccountRate(this, pValues);
+
+            /* Check that this RateId has not been previously added */
+            if (!isIdUnique(myRate.getId())) {
+                myRate.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myRate);
+
+            /* Return it */
+            return myRate;
         }
     }
 }

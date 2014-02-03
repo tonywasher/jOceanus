@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
-import net.sourceforge.joceanus.jmoneywise.threads.CreateXmlBackup;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
@@ -188,11 +187,6 @@ public class MainTab
      */
     private JMenuItem theCreateQIF = null;
 
-    /**
-     * The CreateXml menu.
-     */
-    private JMenuItem theCreateXml = null;
-
     @Override
     public View getView() {
         return theView;
@@ -315,17 +309,6 @@ public class MainTab
     }
 
     @Override
-    protected void addBackupMenuItems(final JMenu pMenu) {
-        /* Create the file menu items */
-        theCreateXml = new JMenuItem("CreateXMLBackup");
-        theCreateXml.addActionListener(this);
-        pMenu.add(theCreateXml);
-
-        /* Pass call on */
-        super.addBackupMenuItems(pMenu);
-    }
-
-    @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
         return theRegister.hasUpdates() || theSpotView.hasUpdates() || theMaint.hasUpdates();
@@ -354,11 +337,6 @@ public class MainTab
         } else if (theCreateQIF.equals(o)) {
             /* Start a createQIF operation */
             createQIF();
-
-            /* If this event relates to the Create Xml item */
-        } else if (theCreateXml.equals(o)) {
-            /* Start a createXml operation */
-            createXml();
 
             /* else pass the event on */
         } else {
@@ -414,19 +392,6 @@ public class MainTab
 
         /* Create the worker thread */
         WriteQIF myThread = new WriteQIF(myStatus);
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
-     * Create XML Backup file.
-     */
-    public void createXml() {
-        /* Allocate the status */
-        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
-
-        /* Create the worker thread */
-        CreateXmlBackup myThread = new CreateXmlBackup(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

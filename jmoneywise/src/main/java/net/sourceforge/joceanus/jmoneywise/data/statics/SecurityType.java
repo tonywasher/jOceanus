@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -147,6 +148,17 @@ public class SecurityType
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private SecurityType(final SecurityTypeList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+    }
+
+    /**
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
@@ -164,6 +176,11 @@ public class SecurityType
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return SecurityType.FIELD_DEFS;
         }
 
         @Override
@@ -322,6 +339,24 @@ public class SecurityType
             if (mySecType.hasErrors()) {
                 throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the type */
+            SecurityType myType = new SecurityType(this, pValues);
+
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
 
         /**

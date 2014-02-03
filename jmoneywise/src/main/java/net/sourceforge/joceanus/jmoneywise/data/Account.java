@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountI
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -61,6 +62,7 @@ public class Account
      * List name.
      */
     public static final String LIST_NAME = MoneyWiseDataType.ACCOUNT.getListName();
+
     /**
      * Resource Bundle.
      */
@@ -666,6 +668,23 @@ public class Account
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Account(final AccountList pList,
+                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Create the InfoSet */
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -1065,6 +1084,11 @@ public class Account
             return LIST_NAME;
         }
 
+        @Override
+        public JDataFields getItemFields() {
+            return Account.FIELD_DEFS;
+        }
+
         /**
          * Obtain the account.
          * @return the account
@@ -1283,6 +1307,24 @@ public class Account
 
             /* Add the Account to the list */
             append(myAccount);
+        }
+
+        @Override
+        public Account addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the account */
+            Account myAccount = new Account(this, pValues);
+
+            /* Check that this AccountId has not been previously added */
+            if (!isIdUnique(myAccount.getId())) {
+                myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myAccount);
+
+            /* Return it */
+            return myAccount;
         }
     }
 }

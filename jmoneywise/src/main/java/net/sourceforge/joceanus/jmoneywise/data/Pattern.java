@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -313,6 +314,26 @@ public class Pattern
         setValueFrequency(pFrequency);
     }
 
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Pattern(final PatternList pList,
+                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Frequency */
+        Object myValue = pValues.getValue(FIELD_FREQ);
+        if (myValue instanceof Integer) {
+            setValueFrequency((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueFrequency((String) myValue);
+        }
+    }
+
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Event details */
@@ -555,6 +576,11 @@ public class Pattern
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return Pattern.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -747,6 +773,24 @@ public class Pattern
 
             /* Add to the list */
             append(myPattern);
+        }
+
+        @Override
+        public Pattern addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the account */
+            Pattern myPattern = new Pattern(this, pValues);
+
+            /* Check that this PatternId has not been previously added */
+            if (!isIdUnique(myPattern.getId())) {
+                myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPattern, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myPattern);
+
+            /* Return it */
+            return myPattern;
         }
     }
 }

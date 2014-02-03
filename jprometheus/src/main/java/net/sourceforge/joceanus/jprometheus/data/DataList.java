@@ -67,6 +67,12 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
+     * Obtain item fields.
+     * @return the item fields
+     */
+    public abstract JDataFields getItemFields();
+
+    /**
      * Declare fields.
      * @return the fields
      */
@@ -856,6 +862,14 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return the newly allocated item
      */
     public abstract T addNewItem();
+
+    /**
+     * Create a new element according to the DataValues.
+     * @param pValues the data values
+     * @return the newly allocated item
+     * @throws JOceanusException on error
+     */
+    public abstract T addValuesItem(final DataValues<E> pValues) throws JOceanusException;
 
     /**
      * Rewind items to the required version.

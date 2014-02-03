@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoT
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -547,6 +548,23 @@ public class Event
         useInfoSet = false;
     }
 
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private Event(final EventList pList,
+                  final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Create the InfoSet */
+        theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Event details */
@@ -938,6 +956,11 @@ public class Event
             return LIST_NAME;
         }
 
+        @Override
+        public JDataFields getItemFields() {
+            return Event.FIELD_DEFS;
+        }
+
         /**
          * EventGroupList field Id.
          */
@@ -1256,6 +1279,24 @@ public class Event
 
             /* Add the Event to the list */
             append(myEvent);
+        }
+
+        @Override
+        public Event addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the event */
+            Event myEvent = new Event(this, pValues);
+
+            /* Check that this EventId has not been previously added */
+            if (!isIdUnique(myEvent.getId())) {
+                myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myEvent, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myEvent);
+
+            /* Return it */
+            return myEvent;
         }
     }
 }

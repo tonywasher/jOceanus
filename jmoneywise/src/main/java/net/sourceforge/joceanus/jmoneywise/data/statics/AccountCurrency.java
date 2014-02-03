@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -218,6 +219,38 @@ public class AccountCurrency
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private AccountCurrency(final AccountCurrencyList pList,
+                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+
+        /* Store the Default */
+        Object myValue = pValues.getValue(FIELD_DEFAULT);
+        if (myValue instanceof Boolean) {
+            setValueDefault((Boolean) myValue);
+        }
+    }
+
+    @Override
+    public void resolveDataSetLinks() throws JOceanusException {
+        /* Update the Encryption details */
+        super.resolveDataSetLinks();
+
+        /* Access Relevant lists */
+        ValueSet myValues = getValueSet();
+
+        /* Adjust Default */
+        Object myDefault = myValues.getValue(FIELD_DEFAULT);
+        if (myDefault == null) {
+            setValueDefault(Boolean.FALSE);
+        }
+    }
+
+    /**
      * Set default indication.
      * @param pDefault the new indication
      */
@@ -293,6 +326,11 @@ public class AccountCurrency
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return AccountCurrency.FIELD_DEFS;
         }
 
         @Override
@@ -460,6 +498,24 @@ public class AccountCurrency
             if (myCurr.hasErrors()) {
                 throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public AccountCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the currency */
+            AccountCurrency myCurrency = new AccountCurrency(this, pValues);
+
+            /* Check that this CurrencyId has not been previously added */
+            if (!isIdUnique(myCurrency.getId())) {
+                myCurrency.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myCurrency, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myCurrency);
+
+            /* Return it */
+            return myCurrency;
         }
 
         /**

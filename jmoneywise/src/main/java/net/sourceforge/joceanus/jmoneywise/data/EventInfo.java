@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoT
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
@@ -285,6 +286,18 @@ public class EventInfo
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private EventInfo(final EventInfoList pList,
+                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, null, null, null);
     }
 
     @Override
@@ -567,6 +580,11 @@ public class EventInfo
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return EventInfo.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -710,6 +728,24 @@ public class EventInfo
             if (myInfo.hasErrors()) {
                 throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public EventInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the info */
+            EventInfo myInfo = new EventInfo(this, pValues);
+
+            /* Check that this InfoId has not been previously added */
+            if (!isIdUnique(myInfo.getId())) {
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myInfo);
+
+            /* Return it */
+            return myInfo;
         }
     }
 }

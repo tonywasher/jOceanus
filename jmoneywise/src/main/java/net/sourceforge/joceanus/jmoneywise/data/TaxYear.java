@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -749,6 +750,23 @@ public class TaxYear
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TaxYear(final TaxYearList pList,
+                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Create the InfoSet */
+        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
+    }
+
+    /**
      * Validate the taxYear.
      */
     @Override
@@ -824,6 +842,11 @@ public class TaxYear
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return TaxYear.FIELD_DEFS;
         }
 
         /**
@@ -1023,6 +1046,24 @@ public class TaxYear
             /* Add the TaxYear to the end of the list */
             append(myTaxYear);
             return myTaxYear;
+        }
+
+        @Override
+        public TaxYear addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the taxYear */
+            TaxYear myYear = new TaxYear(this, pValues);
+
+            /* Check that this YearId has not been previously added */
+            if (!isIdUnique(myYear.getId())) {
+                myYear.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myYear, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myYear);
+
+            /* Return it */
+            return myYear;
         }
     }
 }

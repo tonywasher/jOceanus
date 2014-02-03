@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -237,6 +238,18 @@ public class TaxYearInfo
         }
     }
 
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private TaxYearInfo(final TaxInfoList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, null, null, null);
+    }
+
     @Override
     public void deRegister() {
         /* Access the TaxInfoSet and deRegister this value */
@@ -418,6 +431,11 @@ public class TaxYearInfo
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return TaxYearInfo.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -561,6 +579,24 @@ public class TaxYearInfo
             if (myTaxInfo.hasErrors()) {
                 throw new JMoneyWiseDataException(myTaxInfo, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public TaxYearInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the info */
+            TaxYearInfo myInfo = new TaxYearInfo(this, pValues);
+
+            /* Check that this InfoId has not been previously added */
+            if (!isIdUnique(myInfo.getId())) {
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myInfo);
+
+            /* Return it */
+            return myInfo;
         }
     }
 }

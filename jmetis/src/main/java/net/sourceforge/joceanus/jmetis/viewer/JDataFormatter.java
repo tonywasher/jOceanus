@@ -256,6 +256,7 @@ public class JDataFormatter {
      * @param pClass the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws NumberFormatException on bad Integer format
      */
     public <T> T parseValue(final String pSource,
                             final Class<T> pClass) {

@@ -514,6 +514,11 @@ public class ControlKey
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return ControlKey.FIELD_DEFS;
+        }
+
+        @Override
         public boolean includeDataXML() {
             return false;
         }
@@ -582,6 +587,11 @@ public class ControlKey
 
         @Override
         public ControlKey addNewItem() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) {
             throw new UnsupportedOperationException();
         }
 

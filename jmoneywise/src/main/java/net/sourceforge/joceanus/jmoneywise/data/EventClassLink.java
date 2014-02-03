@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -242,6 +243,32 @@ public class EventClassLink
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private EventClassLink(final EventClassLinkList pList,
+                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Event */
+        Object myValue = pValues.getValue(FIELD_CLASS);
+        if (myValue instanceof Integer) {
+            setValueEvent((Integer) myValue);
+        }
+
+        /* Store the Class */
+        myValue = pValues.getValue(FIELD_CLASS);
+        if (myValue instanceof Integer) {
+            setValueEventClass((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueEventClass((String) myValue);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -393,6 +420,11 @@ public class EventClassLink
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return EventClassLink.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -497,6 +529,24 @@ public class EventClassLink
 
             /* Add to the list */
             append(myLink);
+        }
+
+        @Override
+        public EventClassLink addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the link */
+            EventClassLink myLink = new EventClassLink(this, pValues);
+
+            /* Check that this LinkId has not been previously added */
+            if (!isIdUnique(myLink.getId())) {
+                myLink.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myLink, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myLink);
+
+            /* Return it */
+            return myLink;
         }
     }
 }

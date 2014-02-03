@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.Acco
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -569,6 +570,61 @@ public class AccountCategory
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private AccountCategory(final AccountCategoryList pList,
+                            final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the Category Type */
+            myValue = pValues.getValue(FIELD_CATTYPE);
+            if (myValue instanceof Integer) {
+                setValueType((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueType((String) myValue);
+            }
+
+            /* Store the Parent */
+            myValue = pValues.getValue(FIELD_PARENT);
+            if (myValue instanceof Integer) {
+                setValueParent((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueParent((String) myValue);
+            }
+
+            /* Resolve the subCategory */
+            resolveSubCategory();
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -874,6 +930,11 @@ public class AccountCategory
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return AccountCategory.FIELD_DEFS;
+        }
+
+        @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
@@ -1101,6 +1162,24 @@ public class AccountCategory
 
             /* Add to the list */
             append(myCategory);
+        }
+
+        @Override
+        public AccountCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the category */
+            AccountCategory myCategory = new AccountCategory(this, pValues);
+
+            /* Check that this CategoryId has not been previously added */
+            if (!isIdUnique(myCategory.getId())) {
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myCategory);
+
+            /* Return it */
+            return myCategory;
         }
     }
 }

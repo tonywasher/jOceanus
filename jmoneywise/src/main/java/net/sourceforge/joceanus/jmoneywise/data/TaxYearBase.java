@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -320,6 +321,31 @@ public abstract class TaxYearBase
         /* Record the details */
         setValueTaxRegime(pRegime);
         setValueTaxYear(pDate);
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     */
+    protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
+                          final DataValues<MoneyWiseDataType> pValues) {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Year */
+        Object myValue = pValues.getValue(FIELD_TAXYEAR);
+        if (myValue instanceof JDateDay) {
+            setValueTaxYear((JDateDay) myValue);
+        }
+
+        /* Store the Regime */
+        myValue = pValues.getValue(FIELD_REGIME);
+        if (myValue instanceof Integer) {
+            setValueTaxRegime((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueTaxRegime((String) myValue);
+        }
     }
 
     /**

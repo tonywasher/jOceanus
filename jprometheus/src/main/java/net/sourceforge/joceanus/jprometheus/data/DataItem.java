@@ -815,6 +815,17 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Construct a new item.
+     * @param pList the list that this item is associated with
+     * @param pValues the data values
+     */
+    public DataItem(final DataList<?, E> pList,
+                    final DataValues<E> pValues) {
+        /* Record list and item references */
+        this(pList, pValues.getValue(FIELD_ID, Integer.class));
+    }
+
+    /**
      * Construct a new item based on an old item.
      * @param pList the list that this item is associated with
      * @param pBase the old item

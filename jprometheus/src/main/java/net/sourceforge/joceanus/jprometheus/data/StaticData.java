@@ -77,7 +77,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     /**
      * Order Field Id.
      */
-    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataOrder"));
+    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataOrder"));
 
     /**
      * Class Field Id.
@@ -584,6 +584,65 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected StaticData(final StaticList<T, S, E> pList,
+                         final DataValues<E> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Determine the class */
+            theEnumClass = pList.getEnumClass();
+
+            /* Store the Name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Description */
+            myValue = pValues.getValue(FIELD_DESC);
+            if (myValue instanceof String) {
+                setValueDesc((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueDesc((byte[]) myValue);
+            }
+
+            /* Store the class */
+            myValue = pValues.getValue(FIELD_CLASS);
+            if (myValue instanceof String) {
+                parseEnumValue((String) myValue);
+            } else {
+                parseEnumValue(getName());
+            }
+
+            /* Store the Order */
+            myValue = pValues.getValue(FIELD_ORDER);
+            if (myValue instanceof Integer) {
+                setValueOrder((Integer) myValue);
+            }
+
+            /* Store the Enabled flag */
+            myValue = pValues.getValue(FIELD_ENABLED);
+            if (myValue instanceof Boolean) {
+                setValueEnabled((Boolean) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Parse enum type.
      * @param pValue the value
      * @throws JOceanusException on error
@@ -635,19 +694,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         if (getStaticClass() == null) {
             throw new JPrometheusDataException(ERROR_BADID + " " + myClass.getSimpleName() + ": " + pId);
         }
-    }
-
-    /**
-     * Format a Static Data.
-     * @param pData the static data to format
-     * @return the formatted data
-     */
-    public static String format(final StaticData<?, ?, ?> pData) {
-        String myFormat;
-        myFormat = (pData != null)
-                                  ? pData.getName()
-                                  : "null";
-        return myFormat;
     }
 
     /**

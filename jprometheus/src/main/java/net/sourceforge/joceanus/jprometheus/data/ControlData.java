@@ -304,6 +304,11 @@ public class ControlData
         }
 
         @Override
+        public JDataFields getItemFields() {
+            return ControlData.FIELD_DEFS;
+        }
+
+        @Override
         public boolean includeDataXML() {
             return false;
         }
@@ -386,6 +391,11 @@ public class ControlData
 
         @Override
         public ControlData addNewItem() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) {
             throw new UnsupportedOperationException();
         }
 

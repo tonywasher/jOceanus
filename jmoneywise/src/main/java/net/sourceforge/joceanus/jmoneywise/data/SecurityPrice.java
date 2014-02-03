@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -272,6 +273,15 @@ public class SecurityPrice
     /**
      * Set the price.
      * @param pValue the price
+     * @throws JOceanusException on error
+     */
+    private void setValuePrice(final String pValue) throws JOceanusException {
+        getValueSet().setValue(FIELD_PRICE, pValue);
+    }
+
+    /**
+     * Set the price.
+     * @param pValue the price
      */
     public void setValuePrice(final EncryptedPrice pValue) {
         getValueSet().setValue(FIELD_PRICE, pValue);
@@ -387,6 +397,54 @@ public class SecurityPrice
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private SecurityPrice(final SecurityPriceList pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+            Object myValue = pValues.getValue(FIELD_DATE);
+            if (myValue instanceof JDateDay) {
+                setValueDate((JDateDay) myValue);
+            }
+
+            /* Store the Security */
+            myValue = pValues.getValue(FIELD_SECURITY);
+            if (myValue instanceof Integer) {
+                setValueSecurity((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueSecurity((String) myValue);
+            }
+
+            /* Store the Price */
+            myValue = pValues.getValue(FIELD_PRICE);
+            if (myValue instanceof JPrice) {
+                setValuePrice((JPrice) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValuePrice((byte[]) myValue);
+            } else if (myValue instanceof String) {
+                String myString = (String) myValue;
+                setValuePrice(myString);
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValuePrice(myFormatter.parseValue(myString, JPrice.class));
+            }
+
+            /* Catch Exceptions */
+        } catch (NumberFormatException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -600,6 +658,11 @@ public class SecurityPrice
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return SecurityPrice.FIELD_DEFS;
         }
 
         @Override
@@ -824,6 +887,24 @@ public class SecurityPrice
 
             /* Add to the list */
             append(myPrice);
+        }
+
+        @Override
+        public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the price */
+            SecurityPrice myPrice = new SecurityPrice(this, pValues);
+
+            /* Check that this PriceId has not been previously added */
+            if (!isIdUnique(myPrice.getId())) {
+                myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myPrice, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myPrice);
+
+            /* Return it */
+            return myPrice;
         }
     }
 }

@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.CreateDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.CreateExtract;
+import net.sourceforge.joceanus.jprometheus.threads.CreateXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.LoadBackup;
 import net.sourceforge.joceanus.jprometheus.threads.LoadDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.LoadExtract;
@@ -150,6 +151,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Load Extract menu item.
      */
     private static final String ITEM_LOADXTRACT = NLS_BUNDLE.getString("ItemLoadXtract");
+
+    /**
+     * Create Xml menu item.
+     */
+    private static final String ITEM_CREATEXML = NLS_BUNDLE.getString("ItemCreateXml");
 
     /**
      * Renew Security.
@@ -275,6 +281,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * The Load Extract menu item.
      */
     private JMenuItem theLoadExtract = null;
+
+    /**
+     * The Create XML menu item.
+     */
+    private JMenuItem theCreateXml = null;
 
     /**
      * The Update password menu item.
@@ -516,6 +527,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theLoadExtract = new JMenuItem(ITEM_LOADXTRACT);
         theLoadExtract.addActionListener(this);
         pMenu.add(theLoadExtract);
+        theCreateXml = new JMenuItem(ITEM_CREATEXML);
+        theCreateXml.addActionListener(this);
+        pMenu.add(theCreateXml);
     }
 
     /**
@@ -679,6 +693,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         } else if (theLoadExtract.equals(o)) {
             /* Start a load backup operation */
             loadExtract();
+
+            /* If this event relates to the Create Xml item */
+        } else if (theCreateXml.equals(o)) {
+            /* Start a createXml operation */
+            createXmlFile();
 
             /* If this event relates to the Update Password item */
         } else if (theUpdatePass.equals(o)) {
@@ -918,6 +937,19 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Create the worker thread */
         LoadExtract<T, E> myThread = new LoadExtract<T, E>(myStatus);
+        myStatus.registerThread(myThread);
+        startThread(myThread);
+    }
+
+    /**
+     * Create XML Backup file.
+     */
+    public void createXmlFile() {
+        /* Allocate the status */
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+
+        /* Create the worker thread */
+        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, false);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

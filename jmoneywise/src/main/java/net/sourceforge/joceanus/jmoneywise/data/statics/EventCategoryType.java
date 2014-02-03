@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -153,6 +154,17 @@ public class EventCategoryType
     }
 
     /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    private EventCategoryType(final EventCategoryTypeList pList,
+                              final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        super(pList, pValues);
+    }
+
+    /**
      * Represents a list of {@link EventCategoryType} objects.
      */
     public static class EventCategoryTypeList
@@ -170,6 +182,11 @@ public class EventCategoryType
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        @Override
+        public JDataFields getItemFields() {
+            return EventCategoryType.FIELD_DEFS;
         }
 
         @Override
@@ -342,6 +359,24 @@ public class EventCategoryType
             if (myCatType.hasErrors()) {
                 throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
+        }
+
+        @Override
+        public EventCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the type */
+            EventCategoryType myType = new EventCategoryType(this, pValues);
+
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
 
         /**

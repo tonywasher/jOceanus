@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -377,9 +378,7 @@ public abstract class AccountBase
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
-                                                             ? pValue
-                                                             : Boolean.FALSE);
+        getValueSet().setValue(FIELD_CLOSED, pValue);
     }
 
     /**
@@ -387,9 +386,7 @@ public abstract class AccountBase
      * @param pValue the value
      */
     private void setValueTaxFree(final Boolean pValue) {
-        getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
-                                                              ? pValue
-                                                              : Boolean.FALSE);
+        getValueSet().setValue(FIELD_TAXFREE, pValue);
     }
 
     /**
@@ -397,9 +394,7 @@ public abstract class AccountBase
      * @param pValue the value
      */
     private void setValueGrossInterest(final Boolean pValue) {
-        getValueSet().setValue(FIELD_GROSS, (pValue != null)
-                                                            ? pValue
-                                                            : Boolean.FALSE);
+        getValueSet().setValue(FIELD_GROSS, pValue);
     }
 
     /**
@@ -543,6 +538,68 @@ public abstract class AccountBase
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Store the name */
+            Object myValue = pValues.getValue(FIELD_NAME);
+            if (myValue instanceof String) {
+                setValueName((String) myValue);
+            } else if (myValue instanceof byte[]) {
+                setValueName((byte[]) myValue);
+            }
+
+            /* Store the Category */
+            myValue = pValues.getValue(FIELD_CATEGORY);
+            if (myValue instanceof Integer) {
+                setValueCategory((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCategory((String) myValue);
+            }
+
+            /* Store the Currency */
+            myValue = pValues.getValue(FIELD_CURRENCY);
+            if (myValue instanceof Integer) {
+                setValueCurrency((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueCurrency((String) myValue);
+            }
+
+            /* Store the taxFree flag */
+            myValue = pValues.getValue(FIELD_TAXFREE);
+            if (myValue instanceof Boolean) {
+                setValueTaxFree((Boolean) myValue);
+            }
+
+            /* Store the gross flag */
+            myValue = pValues.getValue(FIELD_GROSS);
+            if (myValue instanceof Boolean) {
+                setValueGrossInterest((Boolean) myValue);
+            }
+
+            /* Store the closed flag */
+            myValue = pValues.getValue(FIELD_CLOSED);
+            if (myValue instanceof Boolean) {
+                setValueClosed((Boolean) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
+    }
+
+    /**
      * Edit Constructor.
      * @param pList the list
      */
@@ -631,6 +688,24 @@ public abstract class AccountBase
                 throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
+        }
+
+        /* Adjust TaxFree */
+        Object myTaxFree = myValues.getValue(FIELD_CLOSED);
+        if (myTaxFree == null) {
+            setValueTaxFree(Boolean.FALSE);
+        }
+
+        /* Adjust Gross */
+        Object myGross = myValues.getValue(FIELD_CLOSED);
+        if (myGross == null) {
+            setValueGrossInterest(Boolean.FALSE);
+        }
+
+        /* Adjust Closed */
+        Object myClosed = myValues.getValue(FIELD_CLOSED);
+        if (myClosed == null) {
+            setValueClosed(Boolean.FALSE);
         }
     }
 
