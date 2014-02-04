@@ -144,8 +144,8 @@ public class JDecimalParser {
 
         /* Locate the decimal point if present */
         myPos = myWork.indexOf(useMoneyDecimal
-                ? pLocale.getMoneyDecimal()
-                : pLocale.getDecimal());
+                                              ? pLocale.getMoneyDecimal()
+                                              : pLocale.getDecimal());
 
         /* Assume no decimals */
         StringBuilder myDecimals = null;
@@ -343,7 +343,8 @@ public class JDecimalParser {
         char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
-        if (myWork.charAt(0) == myMinus) {
+        if ((myWork.length() > 0)
+            && (myWork.charAt(0) == myMinus)) {
             /* Ensure there is no whitespace between minus sign and number */
             myWork = myWork.deleteCharAt(0);
             trimBuffer(myWork);

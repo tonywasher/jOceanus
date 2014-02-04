@@ -210,8 +210,8 @@ public class OasisCell
     private Value getValueType() {
         String myType = theOasisCell.getOfficeValueTypeAttribute();
         return (myType != null)
-                ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
-                : null;
+                               ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
+                               : null;
     }
 
     @Override
@@ -250,7 +250,7 @@ public class OasisCell
             case CURRENCY:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JMoney.class);
             case FLOAT:
-                return parseValue(theOasisCell.getTextContent(), JMoney.class);
+                return parseValue(getTextContent(), JMoney.class);
             default:
                 return null;
         }
@@ -262,7 +262,7 @@ public class OasisCell
             case CURRENCY:
                 return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JPrice.class);
             case FLOAT:
-                return parseValue(theOasisCell.getTextContent(), JPrice.class);
+                return parseValue(getTextContent(), JPrice.class);
             default:
                 return null;
         }
@@ -318,12 +318,27 @@ public class OasisCell
                 case PERCENTAGE:
                 case FLOAT:
                 case CURRENCY:
-                    return theOasisCell.getTextContent();
+                    return getTextContent();
                 default:
                     break;
             }
         }
         return null;
+    }
+
+    /**
+     * Obtain text content of cell, formatting the value if the Text content is missing
+     * @return the text
+     */
+    private String getTextContent() {
+        String myRes = theOasisCell.getTextContent();
+        if (myRes.length() == 0) {
+            Double myValue = theOasisCell.getOfficeValueAttribute();
+            if (myValue != null) {
+                myRes = formatValue(myValue);
+            }
+        }
+        return myRes;
     }
 
     @Override
@@ -422,8 +437,8 @@ public class OasisCell
 
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute((pValue instanceof JRate)
-                    ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
-                    : OfficeValueTypeAttribute.Value.FLOAT.toString());
+                                                                              ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
+                                                                              : OfficeValueTypeAttribute.Value.FLOAT.toString());
             theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
             setTextContent(formatValue(pValue));
 

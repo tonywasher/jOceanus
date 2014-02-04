@@ -73,7 +73,7 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataVersion"));
+    public static final JDataField FIELD_DATAVERSION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Field ID for Control Key.
@@ -118,7 +118,7 @@ public class ControlData
      * @return data version
      */
     public static Integer getDataVersion(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_VERSION, Integer.class);
+        return pValueSet.getValue(FIELD_DATAVERSION, Integer.class);
     }
 
     /**
@@ -135,7 +135,7 @@ public class ControlData
      * @param pValue the value
      */
     private void setValueDataVersion(final Integer pValue) {
-        getValueSet().setValue(FIELD_VERSION, pValue);
+        getValueSet().setValue(FIELD_DATAVERSION, pValue);
     }
 
     /**
@@ -229,6 +229,42 @@ public class ControlData
         setValueDataVersion(pVersion);
     }
 
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ControlData(final ControlDataList pList,
+                        final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the Version */
+        Object myValue = pValues.getValue(FIELD_DATAVERSION);
+        if (myValue instanceof Integer) {
+            setValueDataVersion((Integer) myValue);
+        }
+
+        /* Store the ControlKey */
+        myValue = pValues.getValue(FIELD_CONTROLKEY);
+        if (myValue instanceof Integer) {
+            /* Store value */
+            Integer myInt = (Integer) myValue;
+            setValueControlKey(myInt);
+
+            /* Look up the ControlKey */
+            DataSet<?, ?> myData = getDataSet();
+            ControlKeyList myKeys = myData.getControlKeys();
+            ControlKey myControl = myKeys.findItemById(myInt);
+            if (myControl == null) {
+                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+            }
+            setValueControlKey(myControl);
+        }
+    }
+
     @Override
     public int compareTo(final ControlData pThat) {
         /* Handle the trivial cases */
@@ -250,14 +286,25 @@ public class ControlData
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JOceanusException {
+        /* Access Relevant lists */
         DataSet<?, ?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the ControlKeys */
-        ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
-        setValueControlKey(myNewKey);
+        /* Adjust ControlKey */
+        Object myKey = myValues.getValue(FIELD_CONTROLKEY);
+        if (myKey instanceof ControlKey) {
+            myKey = ((ControlKey) myKey).getId();
+        }
+        if (myKey instanceof Integer) {
+            ControlKey myNewKey = myKeys.findItemById((Integer) myKey);
+            if (myNewKey == null) {
+                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+            }
+            setValueControlKey(myNewKey);
+        }
     }
 
     /**
@@ -394,11 +441,6 @@ public class ControlData
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * Add a ControlData item from secure store.
          * @param pId the id
@@ -447,6 +489,24 @@ public class ControlData
             /* Add to the list by appending */
             theControl = myControl;
             append(myControl);
+        }
+
+        @Override
+        public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+            /* Create the controlData */
+            ControlData myControl = new ControlData(this, pValues);
+
+            /* Check that this controlId has not been previously added */
+            if (!isIdUnique(myControl.getId())) {
+                myControl.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JPrometheusDataException(myControl, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myControl);
+
+            /* Return it */
+            return myControl;
         }
     }
 }

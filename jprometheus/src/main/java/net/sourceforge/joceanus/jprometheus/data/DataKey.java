@@ -375,6 +375,66 @@ public class DataKey
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private DataKey(final DataKeyList pList,
+                    final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the ControlKey */
+        Object myValue = pValues.getValue(FIELD_CONTROLKEY);
+        if (myValue instanceof Integer) {
+            /* Store the integer */
+            Integer myInt = (Integer) myValue;
+            setValueControlKey(myInt);
+
+            /* Look up the ControlKey */
+            DataSet<?, ?> myData = getDataSet();
+            ControlKeyList myKeys = myData.getControlKeys();
+            ControlKey myControlKey = myKeys.findItemById(myInt);
+            if (myControlKey == null) {
+                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+            }
+
+            /* Store the keys */
+            setValueControlKey(myControlKey);
+
+            /* Store the KeyType */
+            myValue = pValues.getValue(FIELD_KEYTYPE);
+            if (myValue instanceof Integer) {
+                myInt = (Integer) myValue;
+                setValueKeyType(myInt);
+                setValueKeyType(SymKeyType.fromId(myInt));
+            }
+
+            /* Store the KeyDef */
+            myValue = pValues.getValue(FIELD_KEYDEF);
+            if (myValue instanceof byte[]) {
+                byte[] myBytes = (byte[]) myValue;
+                setValueSecuredKeyDef(myBytes);
+
+                /* Create the Symmetric Key from the wrapped data */
+                PasswordHash myHash = getControlKey().getPasswordHash();
+                CipherSet myCipher = myHash.getCipherSet();
+                SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
+                setValueDataKey(myKey);
+                setValuePasswordHash(myHash);
+
+                /* Access the Cipher */
+                setValueCipher(myKey.getDataCipher());
+
+                /* Register the DataKey */
+                myControlKey.registerDataKey(this);
+            }
+        }
+    }
+
+    /**
      * Constructor for a new DataKey in a new ControlKey set.
      * @param pList the list to add to
      * @param pControlKey the ControlKey to which this key belongs
@@ -584,11 +644,6 @@ public class DataKey
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * Add a DataKey from Database/Backup.
          * @param pId the id of the DataKey
@@ -613,6 +668,24 @@ public class DataKey
 
             /* Add to the list */
             add(myKey);
+            return myKey;
+        }
+
+        @Override
+        public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+            /* Create the dataKey */
+            DataKey myKey = new DataKey(this, pValues);
+
+            /* Check that this keyId has not been previously added */
+            if (!isIdUnique(myKey.getId())) {
+                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JPrometheusDataException(myKey, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myKey);
+
+            /* Return it */
             return myKey;
         }
 

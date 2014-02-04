@@ -311,6 +311,45 @@ public class ControlKey
     }
 
     /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws JOceanusException on error
+     */
+    private ControlKey(final ControlKeyList pList,
+                       final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the HashBytes */
+        Object myValue = pValues.getValue(FIELD_HASHBYTES);
+        if (myValue instanceof byte[]) {
+            setValueHashBytes((byte[]) myValue);
+        }
+
+        /* Access the Security manager */
+        DataSet<?, ?> myData = getDataSet();
+        SecureManager mySecure = myData.getSecurity();
+        JDataFormatter myFormatter = myData.getDataFormatter();
+
+        /* Record the security generator */
+        theSecurityGenerator = mySecure.getSecurityGenerator();
+
+        /* Resolve the password hash */
+        PasswordHash myHash = mySecure.resolvePasswordHash(getHashBytes(), NAME_DATABASE);
+
+        /* Store the password hash */
+        setValuePasswordHash(myHash);
+
+        /* Create the DataKey Map */
+        theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
+
+        /* Create the CipherSet and security generator */
+        theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
+        theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
+    }
+
+    /**
      * Constructor for a new ControlKey. This will create a set of DataKeys.
      * @param pList the list to which to add the key to
      * @throws JOceanusException on error
@@ -590,11 +629,6 @@ public class ControlKey
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) {
-            throw new UnsupportedOperationException();
-        }
-
         /**
          * Add a ControlKey item from a secure store.
          * @param pId the id of the ControlKey
@@ -615,6 +649,24 @@ public class ControlKey
 
             /* Add to the list */
             add(myKey);
+            return myKey;
+        }
+
+        @Override
+        public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
+            /* Create the controlKey */
+            ControlKey myKey = new ControlKey(this, pValues);
+
+            /* Check that this keyId has not been previously added */
+            if (!isIdUnique(myKey.getId())) {
+                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JPrometheusDataException(myKey, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myKey);
+
+            /* Return it */
             return myKey;
         }
 
