@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -96,7 +96,7 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * ThirdParty.
      */
-    THIRDPARTY(13, 12),
+    THIRDPARTY(13, 12, DataType.LINK),
 
     /**
      * Comments.
@@ -116,7 +116,7 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * Grant.
      */
-    OPTIONSGRANT(17, 16);
+    OPTIONSGRANT(17, 16, DataType.LINK);
 
     /**
      * Resource Bundle.
@@ -143,11 +143,6 @@ public enum EventInfoClass implements DataInfoClass {
      */
     private final DataType theDataType;
 
-    /**
-     * Is this a Link?.
-     */
-    private final boolean isLink;
-
     @Override
     public int getClassId() {
         return theId;
@@ -165,7 +160,7 @@ public enum EventInfoClass implements DataInfoClass {
 
     @Override
     public boolean isLink() {
-        return isLink;
+        return theDataType == DataType.LINK;
     }
 
     @Override
@@ -192,20 +187,6 @@ public enum EventInfoClass implements DataInfoClass {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
-        isLink = false;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     */
-    private EventInfoClass(final int uId,
-                           final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
-        theDataType = DataType.INTEGER;
-        isLink = true;
     }
 
     /**

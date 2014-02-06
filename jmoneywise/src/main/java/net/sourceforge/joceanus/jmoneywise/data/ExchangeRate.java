@@ -510,52 +510,11 @@ public final class ExchangeRate
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve currencies */
         MoneyWiseData myData = getDataSet();
         AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust from currency */
-        Object myCurr = myValues.getValue(FIELD_FROM);
-        if (myCurr instanceof AccountCurrency) {
-            myCurr = ((AccountCurrency) myCurr).getId();
-        }
-        if (myCurr instanceof Integer) {
-            AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
-            if (myCurrency == null) {
-                addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueFromCurrency(myCurrency);
-        } else if (myCurr instanceof String) {
-            AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
-            if (myCurrency == null) {
-                addError(ERROR_UNKNOWN, FIELD_FROM);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueFromCurrency(myCurrency);
-        }
-
-        /* Adjust to currency */
-        myCurr = myValues.getValue(FIELD_TO);
-        if (myCurr instanceof AccountCurrency) {
-            myCurr = ((AccountCurrency) myCurr).getId();
-        }
-        if (myCurr instanceof Integer) {
-            AccountCurrency myCurrency = myCurrencies.findItemById((Integer) myCurr);
-            if (myCurrency == null) {
-                addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueToCurrency(myCurrency);
-        } else if (myCurr instanceof String) {
-            AccountCurrency myCurrency = myCurrencies.findItemByName((String) myCurr);
-            if (myCurrency == null) {
-                addError(ERROR_UNKNOWN, FIELD_TO);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueToCurrency(myCurrency);
-        }
+        resolveDataLink(FIELD_FROM, myCurrencies);
+        resolveDataLink(FIELD_TO, myCurrencies);
     }
 
     /**

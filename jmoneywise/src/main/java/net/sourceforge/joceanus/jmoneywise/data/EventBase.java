@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -878,74 +877,15 @@ public abstract class EventBase
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
-        EventCategoryList myCategories = myData.getEventCategories();
         ValueSet myValues = getValueSet();
 
-        /* Adjust Debit */
-        Object myDebit = myValues.getValue(FIELD_DEBIT);
-        if (myDebit instanceof Account) {
-            myDebit = ((Account) myDebit).getId();
-        }
-        if (myDebit instanceof Integer) {
-            Account myAccount = myAccounts.findItemById((Integer) myDebit);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueDebit(myAccount);
-        } else if (myDebit instanceof String) {
-            Account myAccount = myAccounts.findItemByName((String) myDebit);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueDebit(myAccount);
-        }
-
-        /* Adjust Credit */
-        Object myCredit = myValues.getValue(FIELD_CREDIT);
-        if (myCredit instanceof Account) {
-            myCredit = ((Account) myCredit).getId();
-        }
-        if (myCredit instanceof Integer) {
-            Account myAccount = myAccounts.findItemById((Integer) myCredit);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCredit(myAccount);
-        } else if (myCredit instanceof String) {
-            Account myAccount = myAccounts.findItemByName((String) myCredit);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCredit(myAccount);
-        }
-
-        /* Adjust Category */
-        Object myCategory = myValues.getValue(FIELD_CATEGORY);
-        if (myCategory instanceof EventCategory) {
-            myCategory = ((EventCategory) myCategory).getId();
-        }
-        if (myCategory instanceof Integer) {
-            EventCategory myCat = myCategories.findItemById((Integer) myCategory);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCategory(myCat);
-        } else if (myCategory instanceof String) {
-            EventCategory myCat = myCategories.findItemByName((String) myCategory);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCategory(myCat);
-        }
+        /* Resolve data links */
+        resolveDataLink(FIELD_DEBIT, myAccounts);
+        resolveDataLink(FIELD_CREDIT, myAccounts);
+        resolveDataLink(FIELD_CATEGORY, myData.getEventCategories());
 
         /* Adjust Reconciled */
         Object myReconciled = myValues.getValue(FIELD_RECONCILED);

@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataValues;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSetHistory;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -767,6 +768,45 @@ public abstract class DataItem<E extends Enum<E>>
      * @throws JOceanusException on error
      */
     public void resolveDataSetLinks() throws JOceanusException {
+    }
+
+    /**
+     * Resolve a data link into a list.
+     * @param pField the field to resolve
+     * @param pList the list to resolve against
+     * @throws JOceanusException on error
+     */
+    protected void resolveDataLink(final JDataField pField,
+                                   final DataList<?, ?> pList) throws JOceanusException {
+        /* Access the values */
+        ValueSet myValues = getValueSet();
+
+        /* Access value for field */
+        Object myValue = myValues.getValue(pField);
+
+        /* Convert dataItem reference to Id */
+        if (myValue instanceof DataItem) {
+            myValue = ((DataItem<E>) myValue).getId();
+        }
+
+        /* Lookup Id reference */
+        if (myValue instanceof Integer) {
+            DataItem<?> myItem = pList.findItemById((Integer) myValue);
+            if (myItem == null) {
+                addError(ERROR_UNKNOWN, pField);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+            }
+            myValues.setValue(pField, myItem);
+
+            /* Lookup Name reference */
+        } else if (myValue instanceof String) {
+            DataItem<?> myItem = pList.findItemByName((String) myValue);
+            if (myItem == null) {
+                addError(ERROR_UNKNOWN, pField);
+                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
+            }
+            myValues.setValue(pField, myItem);
+        }
     }
 
     /**

@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -615,31 +614,9 @@ public class AccountRate
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        AccountList myAccounts = myData.getAccounts();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Account */
-        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
-        if (myAccount instanceof Account) {
-            myAccount = ((Account) myAccount).getId();
-        }
-        if (myAccount instanceof Integer) {
-            Account myAct = myAccounts.findItemById((Integer) myAccount);
-            if (myAct == null) {
-                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueAccount(myAct);
-        } else if (myAccount instanceof String) {
-            Account myAct = myAccounts.findItemByName((String) myAccount);
-            if (myAct == null) {
-                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueAccount(myAct);
-        }
+        resolveDataLink(FIELD_ACCOUNT, myData.getAccounts());
     }
 
     /**

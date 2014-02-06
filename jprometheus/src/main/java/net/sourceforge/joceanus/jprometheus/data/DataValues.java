@@ -106,6 +106,11 @@ public class DataValues<E extends Enum<E>> {
     protected static final String ATTR_SIZE = NLS_BUNDLE.getString("DataAttrSize");
 
     /**
+     * Data Version attribute.
+     */
+    protected static final String ATTR_VERS = NLS_BUNDLE.getString("DataAttrVersion");
+
+    /**
      * The item type.
      */
     private final String theItemType;

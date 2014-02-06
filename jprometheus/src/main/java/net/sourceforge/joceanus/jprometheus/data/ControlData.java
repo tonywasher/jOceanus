@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -196,15 +195,9 @@ public class ControlData
             setValueDataVersion(pVersion);
             setValueControlKey(pControlId);
 
-            /* Look up the ControlKey */
+            /* Resolve the ControlKey */
             DataSet<?, ?> myData = getDataSet();
-            ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControl = myKeys.findItemById(pControlId);
-            if (myControl == null) {
-                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-            }
-            setValueControlKey(myControl);
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -244,6 +237,8 @@ public class ControlData
         Object myValue = pValues.getValue(FIELD_DATAVERSION);
         if (myValue instanceof Integer) {
             setValueDataVersion((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueDataVersion(Integer.valueOf((String) myValue));
         }
 
         /* Store the ControlKey */
@@ -253,15 +248,9 @@ public class ControlData
             Integer myInt = (Integer) myValue;
             setValueControlKey(myInt);
 
-            /* Look up the ControlKey */
+            /* Resolve the ControlKey */
             DataSet<?, ?> myData = getDataSet();
-            ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControl = myKeys.findItemById(myInt);
-            if (myControl == null) {
-                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-            }
-            setValueControlKey(myControl);
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         }
     }
 
@@ -287,24 +276,9 @@ public class ControlData
 
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
-        /* Access Relevant lists */
+        /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        ControlKeyList myKeys = myData.getControlKeys();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust ControlKey */
-        Object myKey = myValues.getValue(FIELD_CONTROLKEY);
-        if (myKey instanceof ControlKey) {
-            myKey = ((ControlKey) myKey).getId();
-        }
-        if (myKey instanceof Integer) {
-            ControlKey myNewKey = myKeys.findItemById((Integer) myKey);
-            if (myNewKey == null) {
-                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-            }
-            setValueControlKey(myNewKey);
-        }
+        resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
     }
 
     /**

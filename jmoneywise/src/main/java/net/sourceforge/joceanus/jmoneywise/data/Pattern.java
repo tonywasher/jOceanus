@@ -339,46 +339,10 @@ public class Pattern
         /* Update the Event details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        FrequencyList myFrequencies = myData.getFrequencys();
-        PatternList myPatterns = getList();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Frequency */
-        Object myFrequency = myValues.getValue(FIELD_FREQ);
-        if (myFrequency instanceof Frequency) {
-            myFrequency = ((Frequency) myFrequency).getId();
-        }
-        if (myFrequency instanceof Integer) {
-            Frequency myFreq = myFrequencies.findItemById((Integer) myFrequency);
-            if (myFreq == null) {
-                addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
-            }
-            setValueFrequency(myFreq);
-        } else if (myFrequency instanceof String) {
-            Frequency myFreq = myFrequencies.findItemByName((String) myFrequency);
-            if (myFreq == null) {
-                addError(ERROR_UNKNOWN, FIELD_FREQ);
-                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
-            }
-            setValueFrequency(myFreq);
-        }
-
-        /* Adjust Parent */
-        Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof Pattern) {
-            myParent = ((Pattern) myParent).getId();
-        }
-        if (myParent instanceof Integer) {
-            Pattern myPattern = myPatterns.findItemById((Integer) myParent);
-            if (myPattern == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
-            }
-            setValueParent(myPattern);
-        }
+        resolveDataLink(FIELD_FREQ, myData.getFrequencys());
+        resolveDataLink(FIELD_PARENT, getList());
     }
 
     @Override

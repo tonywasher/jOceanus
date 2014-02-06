@@ -276,8 +276,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         S myClass = pInfo.getInfoClass();
         T myValue = theMap.get(myClass);
 
-        /* Reject if duplicate */
-        if (myValue != null) {
+        /* Reject if duplicate and not re-registration */
+        if ((myValue != null) && !myValue.getId().equals(pInfo.getId())) {
             throw new IllegalArgumentException("Duplicate information type " + pInfo.getInfoClass());
         }
 

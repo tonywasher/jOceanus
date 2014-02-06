@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -342,19 +341,12 @@ public class DataKey
             /* Determine the SymKeyType */
             setValueKeyType(SymKeyType.fromId(pKeyTypeId));
 
-            /* Look up the ControlKey */
+            /* Resolve the ControlKey */
             DataSet<?, ?> myData = getDataSet();
-            ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControlKey = myKeys.findItemById(pControlId);
-            if (myControlKey == null) {
-                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-            }
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+            ControlKey myControlKey = getControlKey();
 
-            /* Store the keys */
-            setValueControlKey(myControlKey);
-
-            /* Create the Symmetric Key from the wrapped data */
+            /* Derive the Symmetric Key from the wrapped data */
             PasswordHash myHash = myControlKey.getPasswordHash();
             CipherSet myCipher = myHash.getCipherSet();
             SymmetricKey myKey = myCipher.deriveSymmetricKey(pSecurityKey, getKeyType());
@@ -392,17 +384,10 @@ public class DataKey
             Integer myInt = (Integer) myValue;
             setValueControlKey(myInt);
 
-            /* Look up the ControlKey */
+            /* Resolve the ControlKey */
             DataSet<?, ?> myData = getDataSet();
-            ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControlKey = myKeys.findItemById(myInt);
-            if (myControlKey == null) {
-                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
-                throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-            }
-
-            /* Store the keys */
-            setValueControlKey(myControlKey);
+            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+            ControlKey myControlKey = getControlKey();
 
             /* Store the KeyType */
             myValue = pValues.getValue(FIELD_KEYTYPE);
@@ -515,17 +500,14 @@ public class DataKey
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JOceanusException {
+        /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        ControlKeyList myKeys = myData.getControlKeys();
-
-        /* Update to use the local copy of the ControlKeys */
-        ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
-        setValueControlKey(myNewKey);
+        resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+        ControlKey myControlKey = getControlKey();
 
         /* Register the Key */
-        myNewKey.registerDataKey(this);
+        myControlKey.registerDataKey(this);
     }
 
     /**

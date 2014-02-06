@@ -22,29 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Date;
-
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Representation of an information extension of an event.
@@ -190,67 +180,19 @@ public class EventInfo
 
         /* Protect against exceptions */
         try {
-            /* Look up the EventType */
+            /* Resolve data links */
             MoneyWiseData myData = getDataSet();
-            EventInfoTypeList myTypes = myData.getEventInfoTypes();
-            EventInfoType myType = myTypes.findItemById(pInfoTypeId);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueInfoType(myType);
+            resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getEvents());
 
-            /* Look up the Event */
-            EventList myEvents = myData.getEvents();
-            Event myOwner = myEvents.findItemById(pEventId);
-            if (myOwner == null) {
-                addError(ERROR_UNKNOWN, FIELD_OWNER);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueOwner(myOwner);
-
-            /* Switch on Info Class */
-            switch (myType.getDataType()) {
-                case INTEGER:
-                    setValueBytes(pValue, Integer.class);
-                    if (myType.isLink()) {
-                        DataItem<?> myLink = null;
-                        switch (myType.getInfoClass()) {
-                            case THIRDPARTY:
-                                myLink = myData.getAccounts().findItemById(getValue(Integer.class));
-                                break;
-                            default:
-                                break;
-                        }
-                        if (myLink == null) {
-                            addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-                        }
-                        setValueLink(myLink);
-                    }
-                    break;
-                case MONEY:
-                    setValueBytes(pValue, JMoney.class);
-                    break;
-                case UNITS:
-                    setValueBytes(pValue, JUnits.class);
-                    break;
-                case DILUTION:
-                    setValueBytes(pValue, JDilution.class);
-                    break;
-                case DATEDAY:
-                    setValueBytes(pValue, JDateDay.class);
-                    break;
-                case STRING:
-                    setValueBytes(pValue, String.class);
-                    break;
-                default:
-                    throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
-            }
+            /* Set the value */
+            setValue(pValue);
+            resolveLink();
 
             /* Access the EventInfoSet and register this data */
-            EventInfoSet mySet = myOwner.getInfoSet();
+            EventInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
+
         } catch (JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
@@ -278,6 +220,7 @@ public class EventInfo
         try {
             /* Set the value */
             setValue(pValue);
+            resolveLink();
 
             /* Access the EventInfoSet and register this data */
             EventInfoSet mySet = pEvent.getInfoSet();
@@ -297,7 +240,27 @@ public class EventInfo
     private EventInfo(final EventInfoList pList,
                       final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
-        super(pList, null, null, null);
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+            MoneyWiseData myData = getDataSet();
+            resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getEvents());
+
+            /* Set the value */
+            setValue(pValues.getValue(FIELD_VALUE));
+            resolveLink();
+
+            /* Access the EventInfoSet and register this data */
+            EventInfoSet mySet = getOwner().getInfoSet();
+            mySet.registerInfo(this);
+
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
     }
 
     @Override
@@ -343,46 +306,44 @@ public class EventInfo
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Events and InfoTypes */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        EventList myEvents = myData.getEvents();
-        EventInfoTypeList myTypes = myData.getEventInfoTypes();
+        resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
+        resolveDataLink(FIELD_OWNER, myData.getEvents());
 
-        /* Update to use the local copy of the Types */
+        /* Resolve any link value */
+        resolveLink();
+
+        /* Access the EventInfoSet and register this data */
+        EventInfoSet mySet = getOwner().getInfoSet();
+        mySet.registerInfo(this);
+    }
+
+    /**
+     * Resolve link reference.
+     * @throws JOceanusException on error
+     */
+    private void resolveLink() throws JOceanusException {
+        /* If we have a link */
         EventInfoType myType = getInfoType();
-        EventInfoType myNewType = myTypes.findItemById(myType.getId());
-        setValueInfoType(myNewType);
-
-        /* If we are using an account */
         if (myType.isLink()) {
-            Integer myId = getValue(Integer.class);
-            DataItem<?> myNewLink = null;
+            /* Access data */
+            MoneyWiseData myData = getDataSet();
+            ValueSet myValues = getValueSet();
+            Object myLinkId = myValues.getValue(FIELD_VALUE);
+
+            /* Switch on link type */
             switch (myType.getInfoClass()) {
                 case THIRDPARTY:
-                    myNewLink = myData.getAccounts().findItemById(myId);
+                    resolveDataLink(FIELD_LINK, myData.getAccounts());
+                    if (myLinkId == null) {
+                        setValueValue(getAccount().getId());
+                    }
                     break;
                 default:
                     break;
             }
-
-            /* Check link is valid */
-            if (myNewLink == null) {
-                addError(ERROR_UNKNOWN, FIELD_LINK);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-
-            /* Update link value */
-            setValueLink(myNewLink);
         }
-
-        /* Update to use the local copy of the Events */
-        Event myEvent = getOwner();
-        Event myOwner = myEvents.findItemById(myEvent.getId());
-        setValueOwner(myOwner);
-
-        /* Access the TaxInfoSet and register this data */
-        EventInfoSet mySet = myOwner.getInfoSet();
-        mySet.registerInfo(this);
     }
 
     @Override
@@ -393,124 +354,10 @@ public class EventInfo
         /* Switch on type of Data */
         EventInfoType myType = getInfoType();
         switch (myType.getDataType()) {
-            case INTEGER:
-                return myFormatter.formatObject(myType.isLink()
-                                                               ? getAccount()
-                                                               : getValue(Integer.class));
-            case MONEY:
-                return myFormatter.formatObject(getValue(JMoney.class));
-            case UNITS:
-                return myFormatter.formatObject(getValue(JUnits.class));
-            case DILUTION:
-                return myFormatter.formatObject(getValue(JDilution.class));
-            case DATEDAY:
-                return myFormatter.formatObject(getValue(JDateDay.class));
-            case STRING:
-                return myFormatter.formatObject(getValue(String.class));
+            case LINK:
+                return myFormatter.formatObject(getLink(DataItem.class));
             default:
-                return null;
-        }
-    }
-
-    /**
-     * Set Value.
-     * @param pValue the Value
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void setValue(final Object pValue) throws JOceanusException {
-        /* Access the info Type */
-        EventInfoType myType = getInfoType();
-
-        /* Access the DataSet and parser */
-        MoneyWiseData myDataSet = getDataSet();
-        JDataFormatter myFormatter = myDataSet.getDataFormatter();
-        JDecimalParser myParser = myFormatter.getDecimalParser();
-
-        /* Switch on Info Class */
-        boolean bValueOK = false;
-        switch (myType.getDataType()) {
-            case INTEGER:
-                if (myType.isLink()) {
-                    if (pValue instanceof String) {
-                        DataItem<?> myLink = null;
-                        String myName = (String) pValue;
-                        MoneyWiseData myData = getDataSet();
-                        switch (myType.getInfoClass()) {
-                            case THIRDPARTY:
-                                myLink = myData.getAccounts().findItemByName(myName);
-                                break;
-                            default:
-                                break;
-                        }
-                        if (myLink == null) {
-                            addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JMoneyWiseDataException(this, ERROR_VALIDATION + " " + myName);
-                        }
-                        setValueValue(myLink.getId());
-                        setValueLink(myLink);
-                        bValueOK = true;
-                    }
-                    if (pValue instanceof DataItem) {
-                        DataItem<?> myItem = (DataItem<?>) pValue;
-                        setValueValue(myItem.getId());
-                        setValueLink(myItem);
-                        bValueOK = true;
-                    }
-                } else if (pValue instanceof Integer) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                }
-                break;
-            case MONEY:
-                if (pValue instanceof JMoney) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                } else if (pValue instanceof String) {
-                    setValueValue(myParser.parseMoneyValue((String) pValue));
-                    bValueOK = true;
-                }
-                break;
-            case UNITS:
-                if (pValue instanceof JUnits) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                } else if (pValue instanceof String) {
-                    setValueValue(myParser.parseUnitsValue((String) pValue));
-                    bValueOK = true;
-                }
-                break;
-            case DILUTION:
-                if (pValue instanceof JDilution) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                } else if (pValue instanceof String) {
-                    setValueValue(myParser.parseDilutionValue((String) pValue));
-                    bValueOK = true;
-                }
-                break;
-            case DATEDAY:
-                if (pValue instanceof Date) {
-                    setValueValue(new JDateDay((Date) pValue));
-                    bValueOK = true;
-                } else if (pValue instanceof JDateDay) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                }
-                break;
-            case STRING:
-                if (pValue instanceof String) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                }
-                break;
-            default:
-                break;
-        }
-
-        /* Reject invalid value */
-        if (!bValueOK) {
-            throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
+                return myFormatter.formatObject(getValue(Object.class));
         }
     }
 

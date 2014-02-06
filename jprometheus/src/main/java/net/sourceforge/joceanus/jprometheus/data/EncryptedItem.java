@@ -31,9 +31,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -183,19 +180,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
         /* Store the id */
         setValueControlKey(pControlId);
 
-        /* Look up the Control keys */
+        /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        ControlKeyList myKeys = myData.getControlKeys();
-
-        /* Look up the ControlKey */
-        ControlKey myControl = myKeys.findItemById(pControlId);
-        if (myControl == null) {
-            addError(ERROR_UNKNOWN, FIELD_CONTROL);
-            throw new JPrometheusDataException(this, ERROR_RESOLUTION);
-        }
-
-        /* Store the ControlKey */
-        setValueControlKey(myControl);
+        resolveDataLink(FIELD_CONTROL, myData.getControlKeys());
+        theGenerator = getControlKey().getFieldGenerator();
     }
 
     /**
@@ -266,18 +254,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
 
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
+        /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        ControlKeyList myKeys = myData.getControlKeys();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust ControlKey */
-        Object myKey = myValues.getValue(FIELD_CONTROL);
-        if (myKey instanceof ControlKey) {
-            myKey = ((ControlKey) myKey).getId();
-        }
-        if (myKey instanceof Integer) {
-            setValueControlKey(myKeys.findItemById((Integer) myKey));
-        }
+        resolveDataLink(FIELD_CONTROL, myData.getControlKeys());
     }
 
     /**

@@ -64,6 +64,11 @@ import org.xml.sax.SAXException;
  */
 public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
+     * Entry suffix.
+     */
+    private static final String SUFFIX_ENTRY = ".xml";
+
+    /**
      * Delete error text.
      */
     private static final String ERROR_DELETE = "Failed to delete file";
@@ -82,6 +87,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      * The transformer.
      */
     private final Transformer theXformer;
+
+    /**
+     * The Data version.
+     */
+    private Integer theVersion;
 
     /**
      * Constructor.
@@ -120,6 +130,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         SecureManager mySecure = pData.getSecurity();
         PasswordHash myBase = pData.getPasswordHash();
         PasswordHash myHash = mySecure.clonePasswordHash(myBase);
+
+        /* Access the data version */
+        theVersion = pData.getControl().getDataVersion();
 
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
@@ -166,6 +179,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
      */
     public boolean createExtract(final T pData,
                                  final File pFile) throws JOceanusException {
+        /* Access the data version */
+        theVersion = pData.getControl().getDataVersion();
+
         /* Declare the number of stages */
         boolean bContinue = theTask.setNumStages(pData.getListMap().size());
 
@@ -214,7 +230,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                                        final ZipWriteFile pZipFile,
                                        final boolean pStoreIds) throws JOceanusException {
         /* Access the list name */
-        String myName = pList.listName();
+        String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Protect the workbook access */
         try (OutputStream myStream = pZipFile.getOutputStream(new File(myName))) {
@@ -261,6 +277,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Set the list type and size */
         myElement.setAttribute(DataValues.ATTR_TYPE, pList.getItemType().name());
         myElement.setAttribute(DataValues.ATTR_SIZE, Integer.toString(myTotal));
+        myElement.setAttribute(DataValues.ATTR_VERS, Integer.toString(theVersion));
 
         /* Access the number of reporting steps */
         int mySteps = theTask.getReportingSteps();
@@ -361,6 +378,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             myList.reSort();
         }
 
+        /* Create the control data */
+        if (bContinue) {
+            pData.getControlData().addOpenItem(null, theVersion);
+        }
+
         /* return success */
         return bContinue;
     }
@@ -375,7 +397,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     private boolean readXMLListFromFile(final DataList<?, E> pList,
                                         final ZipReadFile pZipFile) throws JOceanusException {
         /* Access the list name */
-        String myName = pList.listName();
+        String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Locate the correct entry */
         ZipFileContents myContents = pZipFile.getContents();
@@ -417,6 +439,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         if ((!Difference.isEqual(myElement.getNodeName(), pList.listName()))
             || (!Difference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
             throw new JPrometheusDataException("Invalid list type");
+        }
+
+        /* If this is the first Data version */
+        Integer myVersion = Integer.valueOf(myElement.getAttribute(DataValues.ATTR_VERS));
+        if (theVersion == null) {
+            theVersion = myVersion;
+        } else if (!theVersion.equals(myVersion)) {
+            throw new JPrometheusDataException("Inconsistent data version");
         }
 
         /* Access field types for list */

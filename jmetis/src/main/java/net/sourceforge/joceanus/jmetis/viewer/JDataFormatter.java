@@ -329,7 +329,7 @@ public class JDataFormatter {
      * @param pSource the source value
      * @param pClass the value type class
      * @return the formatted value
-     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws IllegalArgumentException on bad JDecimal format
      */
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClass) {
@@ -367,7 +367,7 @@ public class JDataFormatter {
      * @param pCurrCode the currency code
      * @param pClass the value type class
      * @return the formatted value
-     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws IllegalArgumentException on bad JDecimal format
      */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,

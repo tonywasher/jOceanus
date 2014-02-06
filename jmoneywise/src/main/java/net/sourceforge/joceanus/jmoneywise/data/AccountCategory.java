@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -664,53 +663,10 @@ public class AccountCategory
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve category type and parent */
         MoneyWiseData myData = getDataSet();
-        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-        AccountCategoryList myList = getList();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Category type */
-        Object myCatType = myValues.getValue(FIELD_CATTYPE);
-        if (myCatType instanceof AccountCategoryType) {
-            myCatType = ((AccountCategoryType) myCatType).getId();
-        }
-        if (myCatType instanceof Integer) {
-            AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        } else if (myCatType instanceof String) {
-            AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        }
-
-        /* Adjust Parent */
-        Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof AccountCategory) {
-            myParent = ((AccountCategory) myParent).getId();
-        }
-        if (myParent instanceof Integer) {
-            AccountCategory myCat = myList.findItemById((Integer) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
-        } else if (myParent instanceof String) {
-            AccountCategory myCat = myList.findItemByName((String) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
-        }
+        resolveDataLink(FIELD_CATTYPE, myData.getAccountCategoryTypes());
+        resolveDataLink(FIELD_PARENT, getList());
     }
 
     /**

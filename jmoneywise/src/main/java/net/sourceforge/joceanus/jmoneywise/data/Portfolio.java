@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -606,31 +605,10 @@ public class Portfolio
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve holding account */
         MoneyWiseData myData = getDataSet();
-        AccountList myAccounts = myData.getAccounts();
         ValueSet myValues = getValueSet();
-
-        /* Adjust Holding */
-        Object myHolding = myValues.getValue(FIELD_HOLDING);
-        if (myHolding instanceof Account) {
-            myHolding = ((Account) myHolding).getId();
-        }
-        if (myHolding instanceof Integer) {
-            Account myAccount = myAccounts.findItemById((Integer) myHolding);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_HOLDING);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueHolding(myAccount);
-        } else if (myHolding instanceof String) {
-            Account myAccount = myAccounts.findItemByName((String) myHolding);
-            if (myAccount == null) {
-                addError(ERROR_UNKNOWN, FIELD_HOLDING);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueHolding(myAccount);
-        }
+        resolveDataLink(FIELD_HOLDING, myData.getAccounts());
 
         /* Adjust TaxFree */
         Object myTaxFree = myValues.getValue(FIELD_TAXFREE);

@@ -33,13 +33,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -880,75 +876,12 @@ public class Security
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        SecurityTypeList myTypes = myData.getSecurityTypes();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-        PayeeList myPayees = myData.getPayees();
         ValueSet myValues = getValueSet();
-
-        /* Adjust Security type */
-        Object mySecType = myValues.getValue(FIELD_SECTYPE);
-        if (mySecType instanceof EventCategoryType) {
-            mySecType = ((EventCategoryType) mySecType).getId();
-        }
-        if (mySecType instanceof Integer) {
-            SecurityType myType = myTypes.findItemById((Integer) mySecType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_SECTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        } else if (mySecType instanceof String) {
-            SecurityType myType = myTypes.findItemByName((String) mySecType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_SECTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        }
-
-        /* Adjust Currency */
-        Object myCurrency = myValues.getValue(FIELD_CURRENCY);
-        if (myCurrency instanceof AccountCurrency) {
-            myCurrency = ((AccountCurrency) myCurrency).getId();
-        }
-        if (myCurrency instanceof Integer) {
-            AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
-            if (myCurr == null) {
-                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCurrency(myCurr);
-        } else if (myCurrency instanceof String) {
-            AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
-            if (myCurr == null) {
-                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueCurrency(myCurr);
-        }
-
-        /* Adjust Parent */
-        Object myOwner = myValues.getValue(FIELD_PARENT);
-        if (myOwner instanceof Payee) {
-            myOwner = ((Payee) myOwner).getId();
-        }
-        if (myOwner instanceof Integer) {
-            Payee myParent = myPayees.findItemById((Integer) myOwner);
-            if (myParent == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myParent);
-        } else if (myOwner instanceof String) {
-            Payee myParent = myPayees.findItemByName((String) myOwner);
-            if (myParent == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myParent);
-        }
+        resolveDataLink(FIELD_SECTYPE, myData.getSecurityTypes());
+        resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
+        resolveDataLink(FIELD_PARENT, myData.getPayees());
 
         /* Adjust Closed */
         Object myClosed = myValues.getValue(FIELD_CLOSED);

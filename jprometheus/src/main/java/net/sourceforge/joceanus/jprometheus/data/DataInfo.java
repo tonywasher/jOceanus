@@ -22,14 +22,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedField;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -66,7 +78,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     /**
      * InfoType Field Id.
      */
-    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataType"));
+    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataInfoType"));
 
     /**
      * Owner Field Id.
@@ -87,6 +99,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Invalid Data Type Error.
      */
     protected static final String ERROR_BADDATATYPE = NLS_BUNDLE.getString("ErrorDataType");
+
+    /**
+     * Invalid Data Error.
+     */
+    protected static final String ERROR_BADDATA = NLS_BUNDLE.getString("ErrorData");
 
     /**
      * Invalid Info Class Error.
@@ -266,8 +283,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set InfoType Id.
      * @param pId the info Type id
      */
-    private void setValueInfoType(final Integer pId) {
+    protected void setValueInfoType(final Integer pId) {
         getValueSet().setValue(FIELD_INFOTYPE, pId);
+    }
+
+    /**
+     * Set InfoType Name.
+     * @param pName the info Type name
+     */
+    protected void setValueInfoType(final String pName) {
+        getValueSet().setValue(FIELD_INFOTYPE, pName);
     }
 
     /**
@@ -282,8 +307,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set Owner id.
      * @param pId the owner id
      */
-    private void setValueOwner(final Integer pId) {
+    protected void setValueOwner(final Integer pId) {
         getValueSet().setValue(FIELD_OWNER, pId);
+    }
+
+    /**
+     * Set Owner name.
+     * @param pName the owner name
+     */
+    protected void setValueOwner(final String pName) {
+        getValueSet().setValue(FIELD_OWNER, pName);
     }
 
     /**
@@ -326,6 +359,24 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         ValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_LINK, pLink);
+    }
+
+    /**
+     * Set link id.
+     * @param pId the linkId
+     */
+    private void setValueLink(final Integer pId) {
+        ValueSet myValues = getValueSet();
+        myValues.setValue(FIELD_LINK, pId);
+    }
+
+    /**
+     * Set link name.
+     * @param pName the linkName
+     */
+    private void setValueLink(final String pName) {
+        ValueSet myValues = getValueSet();
+        myValues.setValue(FIELD_LINK, pName);
     }
 
     /**
@@ -374,13 +425,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
     }
 
     /**
-     * Set value.
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    protected abstract void setValue(final Object pValue) throws JOceanusException;
-
-    /**
      * Mark deleted.
      */
     public void markDeleted() {
@@ -414,6 +458,337 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         /* Record the parameters */
         setValueInfoType(pInfoType);
         setValueOwner(pOwner);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList the list
+     * @param pValues the values
+     * @throws JOceanusException on error
+     */
+    protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
+                       final DataValues<E> pValues) throws JOceanusException {
+        /* Initialise the item */
+        super(pList, pValues);
+
+        /* Store the InfoType */
+        Object myValue = pValues.getValue(FIELD_INFOTYPE);
+        if (myValue instanceof Integer) {
+            setValueInfoType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueInfoType((String) myValue);
+        }
+
+        /* Store the Owner */
+        myValue = pValues.getValue(FIELD_OWNER);
+        if (myValue instanceof Integer) {
+            setValueOwner((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueOwner((String) myValue);
+        }
+    }
+
+    /**
+     * Set Value.
+     * @param pValue the Value
+     * @throws JOceanusException on error
+     */
+    protected void setValue(final Object pValue) throws JOceanusException {
+        /* Access the info Type */
+        I myType = getInfoType();
+        S myClass = myType.getStaticClass();
+
+        /* Access the DataSet and parser */
+        DataSet<?, ?> myDataSet = getDataSet();
+        JDataFormatter myFormatter = myDataSet.getDataFormatter();
+        JDecimalParser myParser = myFormatter.getDecimalParser();
+
+        /* Switch on Info Class */
+        boolean bValueOK = false;
+        switch (myClass.getDataType()) {
+            case DATEDAY:
+                bValueOK = setDateValue(myFormatter.getDateFormatter(), pValue);
+                break;
+            case INTEGER:
+                bValueOK = setIntegerValue(myFormatter, pValue);
+                break;
+            case LINK:
+                bValueOK = setLinkValue(myFormatter, pValue);
+                break;
+            case STRING:
+                bValueOK = setStringValue(pValue);
+                break;
+            case CHARARRAY:
+                bValueOK = setCharArrayValue(pValue);
+                break;
+            case MONEY:
+                bValueOK = setMoneyValue(myParser, pValue);
+                break;
+            case RATE:
+                bValueOK = setRateValue(myParser, pValue);
+                break;
+            case UNITS:
+                bValueOK = setUnitsValue(myParser, pValue);
+                break;
+            case PRICE:
+                bValueOK = setPriceValue(myParser, pValue);
+                break;
+            case DILUTION:
+                bValueOK = setDilutionValue(myParser, pValue);
+                break;
+            default:
+                break;
+        }
+
+        /* Reject invalid value */
+        if (!bValueOK) {
+            throw new JPrometheusLogicException(this, ERROR_BADDATATYPE);
+        }
+    }
+
+    /**
+     * Set Date Value.
+     * @param pFormatter the date formatter
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setDateValue(final JDateDayFormatter pFormatter,
+                                 final Object pValue) throws JOceanusException {
+        try {
+            /* Handle various forms */
+            if (pValue instanceof Date) {
+                setValueValue(new JDateDay((Date) pValue));
+                return true;
+            } else if (pValue instanceof JDateDay) {
+                setValueValue(pValue);
+                return true;
+            } else if (pValue instanceof byte[]) {
+                setValueBytes((byte[]) pValue, JDateDay.class);
+                return true;
+            } else if (pValue instanceof String) {
+                setValueValue(pFormatter.parseDateDay((String) pValue));
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+        }
+        return false;
+    }
+
+    /**
+     * Set Integer Value.
+     * @param pFormatter the data formatter
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setIntegerValue(final JDataFormatter pFormatter,
+                                    final Object pValue) throws JOceanusException {
+        try {
+            /* Handle various forms */
+            if (pValue instanceof Integer) {
+                setValueValue(pValue);
+                return true;
+            } else if (pValue instanceof byte[]) {
+                setValueBytes((byte[]) pValue, Integer.class);
+                return true;
+            } else if (pValue instanceof String) {
+                setValueValue(pFormatter.parseValue((String) pValue, Integer.class));
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+        }
+        return false;
+    }
+
+    /**
+     * Set Link Value.
+     * @param pFormatter the data formatter
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setLinkValue(final JDataFormatter pFormatter,
+                                 final Object pValue) throws JOceanusException {
+        try {
+            /* Handle various forms */
+            if (pValue instanceof Integer) {
+                setValueValue(pValue);
+                setValueLink((Integer) pValue);
+                return true;
+            } else if (pValue instanceof byte[]) {
+                setValueBytes((byte[]) pValue, Integer.class);
+                setValueLink(getValue(Integer.class));
+                return true;
+            } else if (pValue instanceof String) {
+                setValueLink((String) pValue);
+                return true;
+            } else if (pValue instanceof DataItem<?>) {
+                DataItem<?> myItem = (DataItem<?>) pValue;
+                setValueValue(myItem.getId());
+                setValueLink(myItem);
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new JPrometheusDataException(pValue, ERROR_BADDATA, e);
+        }
+        return false;
+    }
+
+    /**
+     * Set String Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setStringValue(final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof String) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, String.class);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set CharArray Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setCharArrayValue(final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof char[]) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, char[].class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(((String) pValue).toCharArray());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Money Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setMoneyValue(final JDecimalParser pParser,
+                                  final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JMoney) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JMoney.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parseMoneyValue((String) pValue));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Rate Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setRateValue(final JDecimalParser pParser,
+                                 final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JRate) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JRate.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parseRateValue((String) pValue));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Rate Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setUnitsValue(final JDecimalParser pParser,
+                                  final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JUnits) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JUnits.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parseUnitsValue((String) pValue));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Rate Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setPriceValue(final JDecimalParser pParser,
+                                  final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JPrice) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JPrice.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parsePriceValue((String) pValue));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set Dilution Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws JOceanusException on error
+     */
+    private boolean setDilutionValue(final JDecimalParser pParser,
+                                     final Object pValue) throws JOceanusException {
+        /* Handle various forms */
+        if (pValue instanceof JDilution) {
+            setValueValue(pValue);
+            return true;
+        } else if (pValue instanceof byte[]) {
+            setValueBytes((byte[]) pValue, JDilution.class);
+            return true;
+        } else if (pValue instanceof String) {
+            setValueValue(pParser.parseDilutionValue((String) pValue));
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -171,12 +171,12 @@ public class JDateDayFormatter
 
         /* Build range description */
         String myFormat = (myStart == null)
-                ? JDateDayRange.DESC_UNBOUNDED
-                : formatDateDay(myStart);
+                                           ? JDateDayRange.DESC_UNBOUNDED
+                                           : formatDateDay(myStart);
         myFormat += JDateDayRange.DESC_LINK;
         myFormat += (myEnd == null)
-                ? JDateDayRange.DESC_UNBOUNDED
-                : formatDateDay(myEnd);
+                                   ? JDateDayRange.DESC_UNBOUNDED
+                                   : formatDateDay(myEnd);
 
         /* return the format */
         return myFormat;
@@ -186,8 +186,9 @@ public class JDateDayFormatter
      * Parse Date.
      * @param pValue Formatted Date
      * @return the Date
+     * @throws IllegalArgumentException on error
      */
-    public Date parseDate(final String pValue) {
+    public Date parseDate(final String pValue) throws IllegalArgumentException {
         /* Parse the date */
         try {
             return theDateFormat.parse(pValue);
@@ -201,8 +202,9 @@ public class JDateDayFormatter
      * Parse CalendarDay.
      * @param pValue Formatted CalendarDay
      * @return the CalendarDay
+     * @throws IllegalArgumentException on error
      */
-    public Calendar parseCalendarDay(final String pValue) {
+    public Calendar parseCalendarDay(final String pValue) throws IllegalArgumentException {
         Date myDate = parseDate(pValue);
         Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(myDate);
@@ -213,8 +215,9 @@ public class JDateDayFormatter
      * Parse DateDay.
      * @param pValue Formatted DateDay
      * @return the DateDay
+     * @throws IllegalArgumentException on error
      */
-    public JDateDay parseDateDay(final String pValue) {
+    public JDateDay parseDateDay(final String pValue) throws IllegalArgumentException {
         Date myDate = parseDate(pValue);
         return new JDateDay(myDate);
     }

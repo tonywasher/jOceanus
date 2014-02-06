@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -705,53 +704,10 @@ public final class EventCategory
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve category type and parent */
         MoneyWiseData myData = getDataSet();
-        EventCategoryTypeList myTypes = myData.getEventCategoryTypes();
-        EventCategoryList myList = getList();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Category type */
-        Object myCatType = myValues.getValue(FIELD_CATTYPE);
-        if (myCatType instanceof EventCategoryType) {
-            myCatType = ((EventCategoryType) myCatType).getId();
-        }
-        if (myCatType instanceof Integer) {
-            EventCategoryType myType = myTypes.findItemById((Integer) myCatType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        } else if (myCatType instanceof String) {
-            EventCategoryType myType = myTypes.findItemByName((String) myCatType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        }
-
-        /* Adjust Parent */
-        Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof EventCategory) {
-            myParent = ((EventCategory) myParent).getId();
-        }
-        if (myParent instanceof Integer) {
-            EventCategory myCat = myList.findItemById((Integer) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
-        } else if (myParent instanceof String) {
-            EventCategory myCat = myList.findItemByName((String) myParent);
-            if (myCat == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueParent(myCat);
-        }
+        resolveDataLink(FIELD_CATTYPE, myData.getEventCategoryTypes());
+        resolveDataLink(FIELD_PARENT, getList());
     }
 
     /**

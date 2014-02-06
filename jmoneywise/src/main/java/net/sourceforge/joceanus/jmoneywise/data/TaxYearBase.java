@@ -31,10 +31,8 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -378,31 +376,9 @@ public abstract class TaxYearBase
 
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        TaxRegimeList myRegimes = myData.getTaxRegimes();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Tax Regime */
-        Object myRegime = myValues.getValue(FIELD_REGIME);
-        if (myRegime instanceof TaxRegime) {
-            myRegime = ((TaxRegime) myRegime).getId();
-        }
-        if (myRegime instanceof Integer) {
-            TaxRegime myReg = myRegimes.findItemById((Integer) myRegime);
-            if (myReg == null) {
-                addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueTaxRegime(myReg);
-        } else if (myRegime instanceof String) {
-            TaxRegime myReg = myRegimes.findItemByName((String) myRegime);
-            if (myReg == null) {
-                addError(ERROR_UNKNOWN, FIELD_REGIME);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueTaxRegime(myReg);
-        }
+        resolveDataLink(FIELD_REGIME, myData.getTaxRegimes());
     }
 
     /**

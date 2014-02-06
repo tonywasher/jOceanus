@@ -115,5 +115,15 @@ public enum DataType {
     /**
      * Ratio.
      */
-    RATIO;
+    RATIO,
+
+    /**
+     * Link.
+     */
+    LINK,
+
+    /**
+     * LinkArray.
+     */
+    LINKARRAY;
 }

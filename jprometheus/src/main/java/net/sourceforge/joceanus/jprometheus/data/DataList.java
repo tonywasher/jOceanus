@@ -872,6 +872,15 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public abstract T addValuesItem(final DataValues<E> pValues) throws JOceanusException;
 
     /**
+     * Locate an item by name (if possible).
+     * @param pName the name of the item
+     * @return the matching item
+     */
+    public T findItemByName(final String pName) {
+        return null;
+    }
+
+    /**
      * Rewind items to the required version.
      * @param pVersion the version to rewind to
      */

@@ -27,18 +27,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
@@ -165,42 +161,20 @@ public class TaxYearInfo
         /* Initialise the item */
         super(pList, pId, pControlId, pInfoTypeId, pTaxYearId);
 
-        /* Look up the EventType */
-        MoneyWiseData myData = getDataSet();
-        TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
-        TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
-        if (myType == null) {
-            addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-        }
-        setValueInfoType(myType);
-
-        /* Look up the TaxYear */
-        TaxYearList myTaxYears = myData.getTaxYears();
-        TaxYear myOwner = myTaxYears.findItemById(pTaxYearId);
-        if (myOwner == null) {
-            addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-        }
-        setValueOwner(myOwner);
-
         /* Protect against exceptions */
         try {
-            /* Switch on Info Class */
-            switch (myType.getDataType()) {
-                case MONEY:
-                    setValueBytes(pValue, JMoney.class);
-                    break;
-                case RATE:
-                    setValueBytes(pValue, JRate.class);
-                    break;
-                default:
-                    throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
-            }
+            /* Resolve data links */
+            MoneyWiseData myData = getDataSet();
+            resolveDataLink(FIELD_INFOTYPE, myData.getTaxInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getTaxYears());
+
+            /* Set the value */
+            setValue(pValue);
 
             /* Access the TaxInfoSet and register this data */
-            TaxInfoSet mySet = myOwner.getInfoSet();
+            TaxInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
+
         } catch (JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
@@ -232,6 +206,7 @@ public class TaxYearInfo
             /* Access the TaxInfoSet and register this data */
             TaxInfoSet mySet = pTaxYear.getInfoSet();
             mySet.registerInfo(this);
+
         } catch (JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
@@ -247,7 +222,26 @@ public class TaxYearInfo
     private TaxYearInfo(final TaxInfoList pList,
                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
-        super(pList, null, null, null);
+        super(pList, pValues);
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+            MoneyWiseData myData = getDataSet();
+            resolveDataLink(FIELD_INFOTYPE, myData.getTaxInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getTaxYears());
+
+            /* Set the value */
+            setValue(pValues.getValue(FIELD_VALUE));
+
+            /* Access the TaxInfoSet and register this data */
+            TaxInfoSet mySet = getOwner().getInfoSet();
+            mySet.registerInfo(this);
+
+        } catch (JOceanusException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        }
     }
 
     @Override
@@ -293,31 +287,13 @@ public class TaxYearInfo
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access TaxYears and InfoTypes */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        TaxYearList myTaxYears = myData.getTaxYears();
-        TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
-
-        /* Update to use the local copy of the Types */
-        TaxYearInfoType myType = getInfoType();
-        TaxYearInfoType myNewType = myTypes.findItemById(myType.getId());
-        if (myNewType == null) {
-            addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-        }
-        setValueInfoType(myNewType);
-
-        /* Update to use the local copy of the TaxYears */
-        TaxYear myTaxYear = getOwner();
-        TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
-        if (myNewYear == null) {
-            addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-        }
-        setValueOwner(myNewYear);
+        resolveDataLink(FIELD_INFOTYPE, myData.getTaxInfoTypes());
+        resolveDataLink(FIELD_OWNER, myData.getTaxYears());
 
         /* Access the TaxInfoSet and register this data */
-        TaxInfoSet mySet = myNewYear.getInfoSet();
+        TaxInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -334,52 +310,6 @@ public class TaxYearInfo
                 return myFormatter.formatObject(getValue(JRate.class));
             default:
                 return null;
-        }
-    }
-
-    /**
-     * Set Value.
-     * @param pValue the Value
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void setValue(final Object pValue) throws JOceanusException {
-        /* Access the info Type */
-        TaxYearInfoType myType = getInfoType();
-
-        /* Access the DataSet and parser */
-        MoneyWiseData myDataSet = getDataSet();
-        JDataFormatter myFormatter = myDataSet.getDataFormatter();
-        JDecimalParser myParser = myFormatter.getDecimalParser();
-
-        /* Switch on Info Class */
-        boolean bValueOK = false;
-        switch (myType.getDataType()) {
-            case MONEY:
-                if (pValue instanceof JMoney) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                } else if (pValue instanceof String) {
-                    setValueValue(myParser.parseMoneyValue((String) pValue));
-                    bValueOK = true;
-                }
-                break;
-            case RATE:
-                if (pValue instanceof JRate) {
-                    setValueValue(pValue);
-                    bValueOK = true;
-                } else if (pValue instanceof String) {
-                    setValueValue(myParser.parseRateValue((String) pValue));
-                    bValueOK = true;
-                }
-                break;
-            default:
-                break;
-        }
-
-        /* Reject invalid value */
-        if (!bValueOK) {
-            throw new JMoneyWiseLogicException(this, ERROR_BADDATATYPE);
         }
     }
 

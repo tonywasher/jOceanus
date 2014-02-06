@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
@@ -481,31 +480,9 @@ public class SecurityPrice
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        AccountList myAccounts = myData.getAccounts();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Security */
-        Object mySecurity = myValues.getValue(FIELD_SECURITY);
-        if (mySecurity instanceof Account) {
-            mySecurity = ((Account) mySecurity).getId();
-        }
-        if (mySecurity instanceof Integer) {
-            Account mySec = myAccounts.findItemById((Integer) mySecurity);
-            if (mySec == null) {
-                addError(ERROR_UNKNOWN, FIELD_SECURITY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueSecurity(mySec);
-        } else if (mySecurity instanceof String) {
-            Account mySec = myAccounts.findItemByName((String) mySecurity);
-            if (mySec == null) {
-                addError(ERROR_UNKNOWN, FIELD_SECURITY);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueSecurity(mySec);
-        }
+        resolveDataLink(FIELD_SECURITY, myData.getAccounts());
     }
 
     /**

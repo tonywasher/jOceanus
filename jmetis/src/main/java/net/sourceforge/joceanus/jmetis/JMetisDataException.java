@@ -55,4 +55,12 @@ public class JMetisDataException
                                final Throwable e) {
         super(s, e);
     }
+
+    /**
+     * Create a new Metis Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public JMetisDataException(final String s) {
+        super(s);
+    }
 }

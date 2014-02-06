@@ -327,7 +327,7 @@ public class OasisCell
     }
 
     /**
-     * Obtain text content of cell, formatting the value if the Text content is missing
+     * Obtain text content of cell, formatting the value if the Text content is missing.
      * @return the text
      */
     private String getTextContent() {

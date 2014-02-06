@@ -33,9 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -585,31 +583,10 @@ public class Payee
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
+        /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        PayeeTypeList myTypes = myData.getPayeeTypes();
         ValueSet myValues = getValueSet();
-
-        /* Adjust Payee type */
-        Object myPayeeType = myValues.getValue(FIELD_PAYEETYPE);
-        if (myPayeeType instanceof EventCategoryType) {
-            myPayeeType = ((EventCategoryType) myPayeeType).getId();
-        }
-        if (myPayeeType instanceof Integer) {
-            PayeeType myType = myTypes.findItemById((Integer) myPayeeType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_PAYEETYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        } else if (myPayeeType instanceof String) {
-            PayeeType myType = myTypes.findItemByName((String) myPayeeType);
-            if (myType == null) {
-                addError(ERROR_UNKNOWN, FIELD_PAYEETYPE);
-                throw new JMoneyWiseDataException(this, ERROR_RESOLUTION);
-            }
-            setValueType(myType);
-        }
+        resolveDataLink(FIELD_PAYEETYPE, myData.getPayeeTypes());
 
         /* Adjust Closed */
         Object myClosed = myValues.getValue(FIELD_CLOSED);

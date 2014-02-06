@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -570,23 +569,8 @@ public class Event
         /* Update the Event details */
         super.resolveDataSetLinks();
 
-        /* Access Relevant lists */
-        EventList myEvents = getList();
-        ValueSet myValues = getValueSet();
-
-        /* Adjust Parent */
-        Object myParent = myValues.getValue(FIELD_PARENT);
-        if (myParent instanceof Event) {
-            myParent = ((Event) myParent).getId();
-        }
-        if (myParent instanceof Integer) {
-            Event myEvent = myEvents.findItemById((Integer) myParent);
-            if (myEvent == null) {
-                addError(ERROR_UNKNOWN, FIELD_PARENT);
-                throw new JMoneyWiseDataException(this, ERROR_VALIDATION);
-            }
-            setValueParent(myEvent);
-        }
+        /* Resolve data links */
+        resolveDataLink(FIELD_PARENT, getList());
     }
 
     /**

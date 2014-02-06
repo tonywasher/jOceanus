@@ -836,11 +836,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             return null;
         }
 
-        /**
-         * Search for a particular item by Name.
-         * @param pName The name of the item to search for
-         * @return The Item if present (or <code>null</code> if not found)
-         */
+        @Override
         public T findItemByName(final String pName) {
             /* Access the iterator */
             Iterator<T> myIterator = iterator();

@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,22 +41,22 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Parent Id.
      */
-    PARENT(2, 1),
+    PARENT(2, 1, DataType.LINK),
 
     /**
      * Alias Id.
      */
-    ALIAS(3, 2),
+    ALIAS(3, 2, DataType.LINK),
 
     /**
      * Portfolio Account.
      */
-    PORTFOLIO(4, 3),
+    PORTFOLIO(4, 3, DataType.LINK),
 
     /**
      * Holding Account.
      */
-    HOLDING(5, 4),
+    HOLDING(5, 4, DataType.LINK),
 
     /**
      * Comments.
@@ -76,7 +76,7 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * AutoExpense Category.
      */
-    AUTOEXPENSE(9, 8),
+    AUTOEXPENSE(9, 8, DataType.LINK),
 
     /**
      * WebSite.
@@ -143,11 +143,6 @@ public enum AccountInfoClass implements DataInfoClass {
      */
     private final DataType theDataType;
 
-    /**
-     * Is this a Link?.
-     */
-    private final boolean isLink;
-
     @Override
     public int getClassId() {
         return theId;
@@ -165,7 +160,7 @@ public enum AccountInfoClass implements DataInfoClass {
 
     @Override
     public boolean isLink() {
-        return isLink;
+        return theDataType == DataType.LINK;
     }
 
     @Override
@@ -192,20 +187,6 @@ public enum AccountInfoClass implements DataInfoClass {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
-        isLink = false;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the Id
-     * @param uOrder the default order.
-     */
-    private AccountInfoClass(final int uId,
-                             final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
-        theDataType = DataType.INTEGER;
-        isLink = true;
     }
 
     /**
