@@ -74,6 +74,11 @@ public class ZipReadFile {
     private AsymmetricKey theAsymKey = null;
 
     /**
+     * The header bytes.
+     */
+    private final byte[] theHeader;
+
+    /**
      * Is the ZipFile encrypted.
      * @return is the Zip File encrypted
      */
@@ -94,7 +99,9 @@ public class ZipReadFile {
      * @return the hash bytes
      */
     public byte[] getHashBytes() {
-        return Arrays.copyOf(theHashBytes, theHashBytes.length);
+        return (theHashBytes == null)
+                                     ? null
+                                     : Arrays.copyOf(theHashBytes, theHashBytes.length);
     }
 
     /**
@@ -121,7 +128,7 @@ public class ZipReadFile {
 
                 /* If this is EOF or a header record break the loop */
                 if ((myEntry == null)
-                        || (myEntry.getExtra() != null)) {
+                    || (myEntry.getExtra() != null)) {
                     break;
                 }
 
@@ -129,10 +136,16 @@ public class ZipReadFile {
                 theContents.addZipFileEntry(myEntry);
             }
 
-            /* Pick up security key if it is present */
-            theHashBytes = (myEntry == null)
-                                            ? null
-                                            : myEntry.getExtra();
+            /* If we have a header */
+            if (myEntry != null) {
+                /* Pick up security detail */
+                theHashBytes = myEntry.getExtra();
+                theHeader = readHeader(myHdrStream);
+            } else {
+                /* Record no security */
+                theHashBytes = null;
+                theHeader = null;
+            }
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -163,37 +176,8 @@ public class ZipReadFile {
             /* Store the hash and obtain the generator */
             PasswordHash myHash = pHash;
 
-            /* Initialise variables */
-            int myLen = 0;
-            int mySpace = BUFFERSIZE;
-            byte[] myBuffer = new byte[BUFFERSIZE];
-
-            /* Loop */
-            for (;;) {
-                /* Read the header entry */
-                int myRead = myHdrStream.read(myBuffer, myLen, mySpace);
-                if (myRead == -1) {
-                    break;
-                }
-
-                /* Adjust buffer */
-                myLen += myRead;
-                mySpace -= myRead;
-
-                /* If we have finished up the buffer */
-                if (mySpace == 0) {
-                    /* Increase the buffer */
-                    myBuffer = Arrays.copyOf(myBuffer, myLen
-                            + BUFFERSIZE);
-                    mySpace += BUFFERSIZE;
-                }
-            }
-
-            /* Cut down the buffer to size */
-            myBuffer = Arrays.copyOf(myBuffer, myLen);
-
             /* Parse the decrypted header */
-            byte[] myBytes = myHash.decryptBytes(myBuffer);
+            byte[] myBytes = myHash.decryptBytes(theHeader);
             theContents = new ZipFileContents(DataConverter.byteArrayToString(myBytes));
 
             /* Access the security details */
@@ -215,6 +199,43 @@ public class ZipReadFile {
         } catch (IOException e) {
             throw new JGordianIOException("Exception reading header of Zip file", e);
         }
+    }
+
+    /**
+     * Read the header.
+     * @param pHdrStream the header stream
+     * @return the header
+     * @throws IOException on error
+     */
+    private byte[] readHeader(final InputStream pHdrStream) throws IOException {
+        /* Initialise variables */
+        int myLen = 0;
+        int mySpace = BUFFERSIZE;
+        byte[] myBuffer = new byte[BUFFERSIZE];
+
+        /* Loop */
+        for (;;) {
+            /* Read the header entry */
+            int myRead = pHdrStream.read(myBuffer, myLen, mySpace);
+            if (myRead == -1) {
+                break;
+            }
+
+            /* Adjust buffer */
+            myLen += myRead;
+            mySpace -= myRead;
+
+            /* If we have finished up the buffer */
+            if (mySpace == 0) {
+                /* Increase the buffer */
+                myBuffer = Arrays.copyOf(myBuffer, myLen
+                                                   + BUFFERSIZE);
+                mySpace += BUFFERSIZE;
+            }
+        }
+
+        /* Cut down the buffer to size */
+        return Arrays.copyOf(myBuffer, myLen);
     }
 
     /**
@@ -247,7 +268,7 @@ public class ZipReadFile {
 
                 /* Break if we reached EOF or found the correct entry */
                 if ((myEntry == null)
-                        || (myEntry.getName().compareTo(myName) == 0)) {
+                    || (myEntry.getName().compareTo(myName) == 0)) {
                     break;
                 }
             }
@@ -256,7 +277,7 @@ public class ZipReadFile {
             if (myEntry == null) {
                 myZipFile.close();
                 throw new JGordianDataException("File not found - "
-                        + pFile.getFileName());
+                                                + pFile.getFileName());
             }
 
             /* Note the current input stream */

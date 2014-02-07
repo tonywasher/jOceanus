@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -548,6 +549,9 @@ public abstract class AccountBase
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Store the name */
@@ -578,18 +582,24 @@ public abstract class AccountBase
             myValue = pValues.getValue(FIELD_TAXFREE);
             if (myValue instanceof Boolean) {
                 setValueTaxFree((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueTaxFree(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Store the gross flag */
             myValue = pValues.getValue(FIELD_GROSS);
             if (myValue instanceof Boolean) {
                 setValueGrossInterest((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueGrossInterest(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Store the closed flag */
             myValue = pValues.getValue(FIELD_CLOSED);
             if (myValue instanceof Boolean) {
                 setValueClosed((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */
@@ -691,13 +701,13 @@ public abstract class AccountBase
         }
 
         /* Adjust TaxFree */
-        Object myTaxFree = myValues.getValue(FIELD_CLOSED);
+        Object myTaxFree = myValues.getValue(FIELD_TAXFREE);
         if (myTaxFree == null) {
             setValueTaxFree(Boolean.FALSE);
         }
 
         /* Adjust Gross */
-        Object myGross = myValues.getValue(FIELD_CLOSED);
+        Object myGross = myValues.getValue(FIELD_GROSS);
         if (myGross == null) {
             setValueGrossInterest(Boolean.FALSE);
         }

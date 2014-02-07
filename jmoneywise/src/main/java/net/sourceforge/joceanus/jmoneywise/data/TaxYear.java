@@ -1073,7 +1073,7 @@ public class TaxYear
 
                     /* Build info */
                     DataValues<MoneyWiseDataType> myValues = myItem.getValues(myYear);
-                    theInfoTypeList.addValuesItem(myValues);
+                    theInfoList.addValuesItem(myValues);
                 }
             }
 

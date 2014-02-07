@@ -1080,12 +1080,9 @@ public class Event
             EventInfoList myEventInfo = getEventInfo();
             myList.setEventInfos(myEventInfo.getEmptyList(ListStyle.EDIT));
 
-            /* Access the underlying data */
+            /* Loop through the Patterns */
             PatternList myPatterns = getDataSet().getPatterns();
             Iterator<Pattern> myIterator = myPatterns.iterator();
-            Event myEvent;
-
-            /* Loop through the Patterns */
             while (myIterator.hasNext()) {
                 Pattern myCurr = myIterator.next();
 
@@ -1100,7 +1097,7 @@ public class Event
                 /* Loop while we have an event to add */
                 for (;;) {
                     /* Access next event and break loop if no more */
-                    myEvent = myCurr.nextEvent(myList, pTaxYear, myDate);
+                    Event myEvent = myCurr.nextEvent(myList, pTaxYear, myDate);
                     if (myEvent == null) {
                         break;
                     }
@@ -1295,7 +1292,7 @@ public class Event
 
                     /* Build info */
                     DataValues<MoneyWiseDataType> myValues = myItem.getValues(myEvent);
-                    getEventInfoTypes().addValuesItem(myValues);
+                    getEventInfo().addValuesItem(myValues);
                 }
             }
 

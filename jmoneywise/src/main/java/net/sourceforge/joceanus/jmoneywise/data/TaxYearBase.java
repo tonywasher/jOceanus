@@ -30,7 +30,9 @@ import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -38,6 +40,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 /**
@@ -325,24 +328,37 @@ public abstract class TaxYearBase
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
+     * @throws JOceanusException on error
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
-                          final DataValues<MoneyWiseDataType> pValues) {
+                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store the Year */
-        Object myValue = pValues.getValue(FIELD_TAXYEAR);
-        if (myValue instanceof JDateDay) {
-            setValueTaxYear((JDateDay) myValue);
-        }
+        /* Protect against exceptions */
+        try {
+            /* Store the Year */
+            Object myValue = pValues.getValue(FIELD_TAXYEAR);
+            if (myValue instanceof JDateDay) {
+                setValueTaxYear((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueTaxYear(myParser.parseDateDay((String) myValue));
+            }
 
-        /* Store the Regime */
-        myValue = pValues.getValue(FIELD_REGIME);
-        if (myValue instanceof Integer) {
-            setValueTaxRegime((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueTaxRegime((String) myValue);
+            /* Store the Regime */
+            myValue = pValues.getValue(FIELD_REGIME);
+            if (myValue instanceof Integer) {
+                setValueTaxRegime((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueTaxRegime((String) myValue);
+            }
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
     }
 

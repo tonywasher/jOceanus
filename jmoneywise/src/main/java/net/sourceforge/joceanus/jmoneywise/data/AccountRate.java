@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
@@ -468,7 +469,8 @@ public class AccountRate
             setValueBonus(myParser.parseRateValue(pBonus));
 
             /* Catch Exceptions */
-        } catch (IllegalArgumentException | JOceanusException e) {
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -528,6 +530,9 @@ public class AccountRate
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access the formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Store the Account */
@@ -547,7 +552,6 @@ public class AccountRate
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueRate(myString);
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
                 setValueRate(myFormatter.parseValue(myString, JRate.class));
             }
 
@@ -560,7 +564,6 @@ public class AccountRate
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueBonus(myString);
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
                 setValueBonus(myFormatter.parseValue(myString, JRate.class));
             }
 
@@ -568,10 +571,13 @@ public class AccountRate
             myValue = pValues.getValue(FIELD_ENDDATE);
             if (myValue instanceof JDateDay) {
                 setValueEndDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueEndDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Catch Exceptions */
-        } catch (NumberFormatException
+        } catch (IllegalArgumentException
                 | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);

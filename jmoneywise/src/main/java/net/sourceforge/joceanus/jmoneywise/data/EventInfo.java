@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
@@ -187,7 +189,6 @@ public class EventInfo
 
             /* Set the value */
             setValue(pValue);
-            resolveLink();
 
             /* Access the EventInfoSet and register this data */
             EventInfoSet mySet = getOwner().getInfoSet();
@@ -220,7 +221,6 @@ public class EventInfo
         try {
             /* Set the value */
             setValue(pValue);
-            resolveLink();
 
             /* Access the EventInfoSet and register this data */
             EventInfoSet mySet = pEvent.getInfoSet();
@@ -251,7 +251,6 @@ public class EventInfo
 
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
-            resolveLink();
 
             /* Access the EventInfoSet and register this data */
             EventInfoSet mySet = getOwner().getInfoSet();
@@ -593,6 +592,24 @@ public class EventInfo
 
             /* Return it */
             return myInfo;
+        }
+
+        /**
+         * Resolve ValueLinks.
+         * @throws JOceanusException on error
+         */
+        public void resolveValueLinks() throws JOceanusException {
+            /* Loop through the Info items */
+            Iterator<EventInfo> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                EventInfo myCurr = myIterator.next();
+
+                /* If this is an infoItem */
+                if (myCurr.getInfoType().isLink()) {
+                    /* Resolve the link */
+                    myCurr.resolveLink();
+                }
+            }
         }
     }
 }

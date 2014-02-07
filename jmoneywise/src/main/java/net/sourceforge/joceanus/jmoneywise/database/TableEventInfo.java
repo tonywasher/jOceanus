@@ -84,6 +84,9 @@ public class TableEventInfo
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
+        /* Resolve ValueLinks */
+        theList.resolveValueLinks();
+
         /* Validate the events */
         DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theEvents.validate();
         if (myErrors != null) {

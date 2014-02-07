@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
@@ -357,7 +358,8 @@ public class SecurityPrice
             setValuePrice(myParser.parsePriceValue(pPrice));
 
             /* Catch Exceptions */
-        } catch (IllegalArgumentException | JOceanusException e) {
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
@@ -412,12 +414,18 @@ public class SecurityPrice
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(FIELD_DATE);
             if (myValue instanceof JDateDay) {
                 setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the Security */
@@ -437,12 +445,11 @@ public class SecurityPrice
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValuePrice(myString);
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
                 setValuePrice(myFormatter.parseValue(myString, JPrice.class));
             }
 
             /* Catch Exceptions */
-        } catch (NumberFormatException
+        } catch (IllegalArgumentException
                 | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);

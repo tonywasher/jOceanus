@@ -124,9 +124,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataI
                     theOwner.setDateColumn(iData);
                     break;
                 case INTEGER:
-                    if (!myClass.isLink()) {
-                        theOwner.setIntegerColumn(iData);
-                    }
+                    theOwner.setIntegerColumn(iData);
+                    break;
+                case LINK:
                     theOwner.setStringColumn(iData);
                     break;
                 default:
@@ -199,14 +199,12 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataI
                 theOwner.writeDate(iData, pInfo.getValue(JDateDay.class));
                 break;
             case INTEGER:
-                /* If this is a link */
-                if (myClass.isLink()) {
-                    /* Write the link name */
-                    theOwner.writeString(iData, pInfo.getLinkName());
-                } else {
-                    /* Write as integer */
-                    theOwner.writeInteger(iData, pInfo.getValue(Integer.class));
-                }
+                /* Write as integer */
+                theOwner.writeInteger(iData, pInfo.getValue(Integer.class));
+                break;
+            case LINK:
+                /* Write the link name */
+                theOwner.writeString(iData, pInfo.getLinkName());
                 break;
             case STRING:
                 theOwner.writeString(iData, pInfo.getValue(String.class));
@@ -240,20 +238,17 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataI
                     }
                     break;
                 case INTEGER:
-                    /* If this is a link */
-                    if (myClass.isLink()) {
-                        String myValue = theOwner.loadString(iData);
-                        if (myValue != null) {
-                            Integer myId = theOwner.loadInteger(iCol);
-                            pInfoList.addOpenItem(myId, pOwner, myClass, myValue);
-                        }
-                        /* else standard integer */
-                    } else {
-                        Integer myValue = theOwner.loadInteger(iData);
-                        if (myValue != null) {
-                            Integer myId = theOwner.loadInteger(iCol);
-                            pInfoList.addOpenItem(myId, pOwner, myClass, myValue);
-                        }
+                    Integer myInt = theOwner.loadInteger(iData);
+                    if (myInt != null) {
+                        Integer myId = theOwner.loadInteger(iCol);
+                        pInfoList.addOpenItem(myId, pOwner, myClass, myInt);
+                    }
+                    break;
+                case LINK:
+                    String myLink = theOwner.loadString(iData);
+                    if (myLink != null) {
+                        Integer myId = theOwner.loadInteger(iCol);
+                        pInfoList.addOpenItem(myId, pOwner, myClass, myLink);
                     }
                     break;
                 default:

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -827,6 +828,9 @@ public class Security
             myValue = pValues.getValue(FIELD_CLOSED);
             if (myValue instanceof Boolean) {
                 setValueClosed((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                JDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */

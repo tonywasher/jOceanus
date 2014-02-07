@@ -949,7 +949,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
 
         /* Create the worker thread */
-        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, false);
+        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, true);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

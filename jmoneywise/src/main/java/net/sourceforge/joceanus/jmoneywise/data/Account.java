@@ -1334,7 +1334,7 @@ public class Account
 
                     /* Build info */
                     DataValues<MoneyWiseDataType> myValues = myItem.getValues(myAccount);
-                    theInfoTypeList.addValuesItem(myValues);
+                    theInfoList.addValuesItem(myValues);
                 }
             }
 

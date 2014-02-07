@@ -84,6 +84,9 @@ public class TableAccountInfo
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
+        /* Resolve ValueLinks */
+        theList.resolveValueLinks();
+
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();
 

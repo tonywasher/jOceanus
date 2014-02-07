@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Arguments class for DataItem.
@@ -287,8 +286,8 @@ public class DataValues<E extends Enum<E>> {
 
     /**
      * Constructor.
-     * @param pItem the Item to obtain values from
-     * @param pItemName the item name
+     * @param pOwner the Owner of the DataInfo Item
+     * @param pInfo the values of the DataInfo Item
      */
     private DataValues(final DataItem<E> pOwner,
                        final InfoItem<E> pInfo) {
@@ -396,7 +395,7 @@ public class DataValues<E extends Enum<E>> {
             theChildren = new ArrayList<DataValues<E>>();
 
             /* Loop through the child values */
-            for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
+            for (Node myCurr = myChildren.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
                 /* If the child is the correct element */
                 if ((myCurr instanceof Element) && TAG_CHILD.equals(myCurr.getNodeName())) {
                     /* Access as element */
@@ -485,17 +484,17 @@ public class DataValues<E extends Enum<E>> {
      */
     private static Element getChild(final Element pParent,
                                     final String pName) {
-        /* Obtain the node list */
-        NodeList myList = pParent.getElementsByTagName(pName);
-        if (myList.getLength() == 0) {
-            return null;
+        /* Loop through the child values */
+        for (Node myCurr = pParent.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
+            /* If the child is the correct element */
+            if ((myCurr instanceof Element) && pName.equals(myCurr.getNodeName())) {
+                /* Return the element */
+                return (Element) myCurr;
+            }
         }
 
-        /* Access first element */
-        Node myNode = myList.item(0);
-        return (myNode instanceof Element)
-                                          ? (Element) myNode
-                                          : null;
+        /* Not found */
+        return null;
     }
 
     /**
@@ -680,6 +679,11 @@ public class DataValues<E extends Enum<E>> {
         @Override
         public int hashCode() {
             return theName.hashCode() + theId + theValue.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return theName + "=" + theValue;
         }
 
         /**

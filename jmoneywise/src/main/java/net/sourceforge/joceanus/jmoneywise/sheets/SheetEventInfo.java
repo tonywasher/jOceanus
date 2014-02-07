@@ -92,6 +92,9 @@ public class SheetEventInfo
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
+        /* Resolve ValueLinks */
+        theList.resolveValueLinks();
+
         /* Validate the events */
         theEvents.validateOnLoad();
     }

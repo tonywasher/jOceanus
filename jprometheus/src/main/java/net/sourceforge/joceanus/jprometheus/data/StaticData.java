@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -594,6 +595,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Determine the class */
@@ -627,16 +631,23 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             myValue = pValues.getValue(FIELD_ORDER);
             if (myValue instanceof Integer) {
                 setValueOrder((Integer) myValue);
+            } else if (myValue instanceof String) {
+                setValueOrder(myFormatter.parseValue((String) myValue, Integer.class));
             }
 
             /* Store the Enabled flag */
             myValue = pValues.getValue(FIELD_ENABLED);
             if (myValue instanceof Boolean) {
                 setValueEnabled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueEnabled(myFormatter.parseValue((String) myValue, Boolean.class));
+            } else {
+                setValueEnabled(Boolean.TRUE);
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (NumberFormatException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
         }

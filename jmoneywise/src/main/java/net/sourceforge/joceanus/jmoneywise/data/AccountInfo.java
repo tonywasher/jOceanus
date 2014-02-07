@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
@@ -209,7 +211,6 @@ public class AccountInfo
 
             /* Set the value */
             setValue(pValue);
-            resolveLink();
 
             /* Access the AccountInfoSet and register this data */
             AccountInfoSet mySet = getOwner().getInfoSet();
@@ -241,7 +242,6 @@ public class AccountInfo
         try {
             /* Set the value */
             setValue(pValue);
-            resolveLink();
 
             /* Access the AccountInfoSet and register this data */
             AccountInfoSet mySet = pAccount.getInfoSet();
@@ -272,7 +272,6 @@ public class AccountInfo
 
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
-            resolveLink();
 
             /* Access the AccountInfoSet and register this data */
             AccountInfoSet mySet = getOwner().getInfoSet();
@@ -628,6 +627,24 @@ public class AccountInfo
 
             /* Return it */
             return myInfo;
+        }
+
+        /**
+         * Resolve ValueLinks.
+         * @throws JOceanusException on error
+         */
+        public void resolveValueLinks() throws JOceanusException {
+            /* Loop through the Info items */
+            Iterator<AccountInfo> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                AccountInfo myCurr = myIterator.next();
+
+                /* If this is an infoItem */
+                if (myCurr.getInfoType().isLink()) {
+                    /* Resolve the link */
+                    myCurr.resolveLink();
+                }
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -504,6 +505,9 @@ public class Payee
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Store the Name */
@@ -534,6 +538,8 @@ public class Payee
             myValue = pValues.getValue(FIELD_CLOSED);
             if (myValue instanceof Boolean) {
                 setValueClosed((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */

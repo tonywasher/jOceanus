@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -724,12 +725,18 @@ public abstract class EventBase
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(FIELD_DATE);
             if (myValue instanceof JDateDay) {
                 setValueDate((JDateDay) myValue);
+            } else if (myValue instanceof String) {
+                JDateDayFormatter myParser = myFormatter.getDateFormatter();
+                setValueDate(myParser.parseDateDay((String) myValue));
             }
 
             /* Store the Debit */
@@ -765,7 +772,6 @@ public abstract class EventBase
             } else if (myValue instanceof String) {
                 String myString = (String) myValue;
                 setValueAmount(myString);
-                JDataFormatter myFormatter = getDataSet().getDataFormatter();
                 setValueAmount(myFormatter.parseValue(myString, JMoney.class));
             }
 
@@ -781,16 +787,21 @@ public abstract class EventBase
             myValue = pValues.getValue(FIELD_RECONCILED);
             if (myValue instanceof Boolean) {
                 setValueReconciled((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Store the split flag */
             myValue = pValues.getValue(FIELD_SPLIT);
             if (myValue instanceof Boolean) {
                 setValueSplit((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueSplit(myFormatter.parseValue((String) myValue, Boolean.class));
             }
 
             /* Catch Exceptions */
-        } catch (JOceanusException e) {
+        } catch (IllegalArgumentException
+                | JOceanusException e) {
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }

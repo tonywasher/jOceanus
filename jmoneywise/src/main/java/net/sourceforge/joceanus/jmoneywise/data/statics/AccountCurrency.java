@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -232,6 +233,9 @@ public class AccountCurrency
         Object myValue = pValues.getValue(FIELD_DEFAULT);
         if (myValue instanceof Boolean) {
             setValueDefault((Boolean) myValue);
+        } else if (myValue instanceof String) {
+            JDataFormatter myFormatter = getDataSet().getDataFormatter();
+            setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
         }
     }
 

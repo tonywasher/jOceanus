@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.w3c.dom.Document;
@@ -296,6 +297,12 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             /* Access as DataItem */
             DataItem<E> myItem = (DataItem<E>) myObject;
 
+            /* Skip over child items */
+            if ((myItem instanceof GroupedItem)
+                && (((GroupedItem<?>) myItem).isChild())) {
+                continue;
+            }
+
             /* Create DataValues for item */
             DataValues<E> myValues = new DataValues<E>(myItem);
 
@@ -371,11 +378,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             if (myList.includeDataXML()) {
                 /* Write the list details */
                 bContinue = readXMLListFromFile(myList, pZipFile);
-
-                /* Resolve links and reSort */
-                myList.resolveDataSetLinks();
-                myList.reSort();
             }
+
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
+            myList.reSort();
         }
 
         /* Create the control data */

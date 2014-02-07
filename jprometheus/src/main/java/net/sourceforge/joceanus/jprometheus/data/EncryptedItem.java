@@ -198,9 +198,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
         EncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
 
-        /* Handle bad usage */
+        /* Handle switched usage */
         if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
-            throw new IllegalArgumentException(ERROR_USAGE + " " + pField.getName());
+            myCurrent = null;
         }
 
         /* Create the new encrypted value */

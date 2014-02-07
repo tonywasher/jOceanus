@@ -282,6 +282,12 @@ public class SheetAccount
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
+
+        /* If we are not a backup */
+        if (!isBackup()) {
+            /* Resolve value links */
+            theInfoList.resolveValueLinks();
+        }
     }
 
     /**
