@@ -238,7 +238,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             Document myDocument = theBuilder.newDocument();
 
             /* Populate the document from the list */
-            boolean bContinue = populateXML(myDocument, pList, false);
+            boolean bContinue = populateXML(myDocument, pList, pStoreIds);
 
             /* Format the XML and write to stream */
             theXformer.transform(new DOMSource(myDocument), new StreamResult(myStream));
@@ -371,11 +371,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             if (myList.includeDataXML()) {
                 /* Write the list details */
                 bContinue = readXMLListFromFile(myList, pZipFile);
-            }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
+                /* Resolve links and reSort */
+                myList.resolveDataSetLinks();
+                myList.reSort();
+            }
         }
 
         /* Create the control data */

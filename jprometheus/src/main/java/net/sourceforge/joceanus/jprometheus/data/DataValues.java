@@ -123,7 +123,7 @@ public class DataValues<E extends Enum<E>> {
     /**
      * InfoSet values.
      */
-    private final List<InfoItem> theInfoItems;
+    private final List<InfoItem<E>> theInfoItems;
 
     /**
      * Child values.
@@ -134,7 +134,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Item Type.
      * @return the Item Type
      */
-    public String getItemType() {
+    public final String getItemType() {
         return theItemType;
     }
 
@@ -142,7 +142,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Field iterator.
      * @return the Field iterator
      */
-    public Iterator<Map.Entry<JDataField, Object>> fieldIterator() {
+    public final Iterator<Map.Entry<JDataField, Object>> fieldIterator() {
         return theFields.entrySet().iterator();
     }
 
@@ -150,7 +150,7 @@ public class DataValues<E extends Enum<E>> {
      * Does this item have InfoItems?
      * @return true/false
      */
-    public boolean hasInfoItems() {
+    public final boolean hasInfoItems() {
         return theInfoItems != null;
     }
 
@@ -158,7 +158,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain InfoItems iterator.
      * @return the iterator
      */
-    public Iterator<InfoItem> infoIterator() {
+    public final Iterator<InfoItem<E>> infoIterator() {
         return theInfoItems.iterator();
     }
 
@@ -166,7 +166,7 @@ public class DataValues<E extends Enum<E>> {
      * Does this item have children?
      * @return true/false
      */
-    public boolean hasChildren() {
+    public final boolean hasChildren() {
         return theChildren != null;
     }
 
@@ -174,7 +174,7 @@ public class DataValues<E extends Enum<E>> {
      * Obtain Child iterator.
      * @return the iterator
      */
-    public Iterator<DataValues<E>> childIterator() {
+    public final Iterator<DataValues<E>> childIterator() {
         return theChildren.iterator();
     }
 
@@ -225,7 +225,7 @@ public class DataValues<E extends Enum<E>> {
         /* If the item is an infoSet item */
         if (pItem instanceof InfoSetItem) {
             /* Access InfoSet */
-            DataInfoSet<?, ?, ?, ?, ?> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
+            DataInfoSet<?, ?, ?, ?, E> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -233,7 +233,7 @@ public class DataValues<E extends Enum<E>> {
                 theInfoItems = null;
             } else {
                 /* Allocate infoItems list */
-                theInfoItems = new ArrayList<InfoItem>();
+                theInfoItems = new ArrayList<InfoItem<E>>();
 
                 /* Iterator over the values */
                 Iterator<?> myInfoIterator = myInfoSet.iterator();
@@ -243,10 +243,10 @@ public class DataValues<E extends Enum<E>> {
                     /* If this is a DataInfo item */
                     if (myCurr instanceof DataInfo) {
                         /* Access as DataArguments */
-                        DataInfo<?, ?, ?, ?, ?> myItem = (DataInfo<?, ?, ?, ?, ?>) myCurr;
+                        DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
 
                         /* Add item to the list */
-                        InfoItem myInfo = new InfoItem(myItem);
+                        InfoItem<E> myInfo = new InfoItem<E>(myItem);
                         theInfoItems.add(myInfo);
                     }
                 }
@@ -283,6 +283,39 @@ public class DataValues<E extends Enum<E>> {
         } else {
             theChildren = null;
         }
+    }
+
+    /**
+     * Constructor.
+     * @param pItem the Item to obtain values from
+     * @param pItemName the item name
+     */
+    private DataValues(final DataItem<E> pOwner,
+                       final InfoItem<E> pInfo) {
+        /* Store Item type */
+        theItemType = "";
+
+        /* Create the map and list */
+        theFields = new LinkedHashMap<JDataField, Object>();
+
+        /* Store the id if available */
+        Integer myId = pInfo.getId();
+        if (myId != null) {
+            theFields.put(DataItem.FIELD_ID, myId);
+        }
+
+        /* Store the Info Type */
+        theFields.put(DataInfo.FIELD_INFOTYPE, pInfo.getName());
+
+        /* Store the Owner */
+        theFields.put(DataInfo.FIELD_OWNER, pOwner.getId());
+
+        /* Store the value */
+        theFields.put(DataInfo.FIELD_VALUE, pInfo.getValue());
+
+        /* Set other fields to null */
+        theInfoItems = null;
+        theChildren = null;
     }
 
     /**
@@ -336,7 +369,7 @@ public class DataValues<E extends Enum<E>> {
         Element myInfoSet = getChild(pElement, TAG_INFOSET);
         if (myInfoSet != null) {
             /* Allocate infoItems list */
-            theInfoItems = new ArrayList<InfoItem>();
+            theInfoItems = new ArrayList<InfoItem<E>>();
 
             /* Loop through the child values */
             for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
@@ -346,7 +379,7 @@ public class DataValues<E extends Enum<E>> {
                     Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    InfoItem myInfo = new InfoItem(myChild);
+                    InfoItem<E> myInfo = new InfoItem<E>(myChild);
                     theInfoItems.add(myInfo);
                 }
             }
@@ -510,7 +543,7 @@ public class DataValues<E extends Enum<E>> {
             myElement.appendChild(myInfoSet);
 
             /* Loop through the items */
-            for (InfoItem myInfo : theInfoItems) {
+            for (InfoItem<E> myInfo : theInfoItems) {
                 /* Create the element */
                 Element myItem = pDocument.createElement(myInfo.getName());
                 myInfoSet.appendChild(myItem);
@@ -548,8 +581,9 @@ public class DataValues<E extends Enum<E>> {
 
     /**
      * InfoItem class.
+     * @param <E> the data type enum class
      */
-    public static final class InfoItem {
+    public static final class InfoItem<E extends Enum<E>> {
         /**
          * Name of item.
          */
@@ -632,7 +666,7 @@ public class DataValues<E extends Enum<E>> {
             }
 
             /* Access the object as an InfoItem */
-            InfoItem myItem = (InfoItem) pThat;
+            InfoItem<E> myItem = (InfoItem<E>) pThat;
 
             if (!theName.equals(myItem.getName())) {
                 return false;
@@ -646,6 +680,15 @@ public class DataValues<E extends Enum<E>> {
         @Override
         public int hashCode() {
             return theName.hashCode() + theId + theValue.hashCode();
+        }
+
+        /**
+         * Obtain DataValues.
+         * @param pOwner the owner
+         * @return the dataValues
+         */
+        public DataValues<E> getValues(final DataItem<E> pOwner) {
+            return new DataValues<E>(pOwner, this);
         }
     }
 }

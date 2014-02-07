@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedListIterator;
@@ -41,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearI
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -1061,6 +1063,19 @@ public class TaxYear
 
             /* Add to the list */
             append(myYear);
+
+            /* Loop through the info items */
+            if (pValues.hasInfoItems()) {
+                /* Loop through the items */
+                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                while (myIterator.hasNext()) {
+                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+
+                    /* Build info */
+                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myYear);
+                    theInfoTypeList.addValuesItem(myValues);
+                }
+            }
 
             /* Return it */
             return myYear;

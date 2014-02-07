@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -158,7 +159,7 @@ public class Event
      * Obtain Debit Units.
      * @return the Debit Units
      */
-    public JUnits getDebitUnits() {
+    public final JUnits getDebitUnits() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.DEBITUNITS, JUnits.class)
                          : null;
@@ -168,7 +169,7 @@ public class Event
      * Obtain Credit Units.
      * @return the Credit Units
      */
-    public JUnits getCreditUnits() {
+    public final JUnits getCreditUnits() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.CREDITUNITS, JUnits.class)
                          : null;
@@ -178,7 +179,7 @@ public class Event
      * Obtain Tax Credit.
      * @return the Tax Credit
      */
-    public JMoney getTaxCredit() {
+    public final JMoney getTaxCredit() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.TAXCREDIT, JMoney.class)
                          : null;
@@ -188,7 +189,7 @@ public class Event
      * Obtain Dilution.
      * @return the Dilution
      */
-    public JDilution getDilution() {
+    public final JDilution getDilution() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.DILUTION, JDilution.class)
                          : null;
@@ -198,7 +199,7 @@ public class Event
      * Obtain Qualifying Years.
      * @return the Years
      */
-    public Integer getYears() {
+    public final Integer getYears() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.QUALIFYYEARS, Integer.class)
                          : null;
@@ -208,7 +209,7 @@ public class Event
      * Obtain credit date.
      * @return the credit date
      */
-    public JDateDay getCreditDate() {
+    public final JDateDay getCreditDate() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.CREDITDATE, JDateDay.class)
                          : null;
@@ -218,7 +219,7 @@ public class Event
      * Obtain National Insurance.
      * @return the NatInsurance
      */
-    public JMoney getNatInsurance() {
+    public final JMoney getNatInsurance() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.NATINSURANCE, JMoney.class)
                          : null;
@@ -228,7 +229,7 @@ public class Event
      * Obtain Deemed Benefit.
      * @return the Benefit
      */
-    public JMoney getDeemedBenefit() {
+    public final JMoney getDeemedBenefit() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.DEEMEDBENEFIT, JMoney.class)
                          : null;
@@ -238,7 +239,7 @@ public class Event
      * Obtain Pension.
      * @return the Pension
      */
-    public JMoney getPension() {
+    public final JMoney getPension() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.PENSION, JMoney.class)
                          : null;
@@ -248,7 +249,7 @@ public class Event
      * Obtain Donation.
      * @return the Donation
      */
-    public JMoney getCharityDonation() {
+    public final JMoney getCharityDonation() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.CHARITYDONATION, JMoney.class)
                          : null;
@@ -258,7 +259,7 @@ public class Event
      * Obtain Reference.
      * @return the Reference
      */
-    public String getReference() {
+    public final String getReference() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.REFERENCE, String.class)
                          : null;
@@ -268,7 +269,7 @@ public class Event
      * Obtain Comments.
      * @return the Comments
      */
-    public String getComments() {
+    public final String getComments() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.COMMENTS, String.class)
                          : null;
@@ -278,7 +279,7 @@ public class Event
      * Obtain ThirdParty.
      * @return the ThirdParty
      */
-    public Account getThirdParty() {
+    public final Account getThirdParty() {
         return hasInfoSet
                          ? theInfoSet.getAccount(EventInfoClass.THIRDPARTY)
                          : null;
@@ -288,7 +289,7 @@ public class Event
      * Obtain Credit Amount.
      * @return the Credit Amount
      */
-    public JMoney getCreditAmount() {
+    public final JMoney getCreditAmount() {
         return hasInfoSet
                          ? theInfoSet.getValue(EventInfoClass.CREDITAMOUNT, JMoney.class)
                          : null;
@@ -632,7 +633,7 @@ public class Event
      * Calculate the tax credit for an event.
      * @return the calculated tax credit
      */
-    public JMoney calculateTaxCredit() {
+    public final JMoney calculateTaxCredit() {
         MoneyWiseData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
@@ -663,7 +664,7 @@ public class Event
      * @param pUnits the new units
      * @throws JOceanusException on error
      */
-    public void setDebitUnits(final JUnits pUnits) throws JOceanusException {
+    public final void setDebitUnits(final JUnits pUnits) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DEBITUNITS, pUnits);
     }
 
@@ -672,7 +673,7 @@ public class Event
      * @param pUnits the new units
      * @throws JOceanusException on error
      */
-    public void setCreditUnits(final JUnits pUnits) throws JOceanusException {
+    public final void setCreditUnits(final JUnits pUnits) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITUNITS, pUnits);
     }
 
@@ -681,7 +682,7 @@ public class Event
      * @param pCredit the new credit
      * @throws JOceanusException on error
      */
-    public void setTaxCredit(final JMoney pCredit) throws JOceanusException {
+    public final void setTaxCredit(final JMoney pCredit) throws JOceanusException {
         setInfoSetValue(EventInfoClass.TAXCREDIT, pCredit);
     }
 
@@ -690,7 +691,7 @@ public class Event
      * @param pDilution the new dilution
      * @throws JOceanusException on error
      */
-    public void setDilution(final JDilution pDilution) throws JOceanusException {
+    public final void setDilution(final JDilution pDilution) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DILUTION, pDilution);
     }
 
@@ -699,7 +700,7 @@ public class Event
      * @param pYears the new years
      * @throws JOceanusException on error
      */
-    public void setYears(final Integer pYears) throws JOceanusException {
+    public final void setYears(final Integer pYears) throws JOceanusException {
         setInfoSetValue(EventInfoClass.QUALIFYYEARS, pYears);
     }
 
@@ -708,7 +709,7 @@ public class Event
      * @param pCreditDate the new credit date
      * @throws JOceanusException on error
      */
-    public void setCreditDate(final JDateDay pCreditDate) throws JOceanusException {
+    public final void setCreditDate(final JDateDay pCreditDate) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITDATE, pCreditDate);
     }
 
@@ -717,7 +718,7 @@ public class Event
      * @param pNatIns the new insurance
      * @throws JOceanusException on error
      */
-    public void setNatInsurance(final JMoney pNatIns) throws JOceanusException {
+    public final void setNatInsurance(final JMoney pNatIns) throws JOceanusException {
         setInfoSetValue(EventInfoClass.NATINSURANCE, pNatIns);
     }
 
@@ -726,7 +727,7 @@ public class Event
      * @param pBenefit the new benefit
      * @throws JOceanusException on error
      */
-    public void setBenefit(final JMoney pBenefit) throws JOceanusException {
+    public final void setBenefit(final JMoney pBenefit) throws JOceanusException {
         setInfoSetValue(EventInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
@@ -735,7 +736,7 @@ public class Event
      * @param pPension the new pension
      * @throws JOceanusException on error
      */
-    public void setPension(final JMoney pPension) throws JOceanusException {
+    public final void setPension(final JMoney pPension) throws JOceanusException {
         setInfoSetValue(EventInfoClass.PENSION, pPension);
     }
 
@@ -744,7 +745,7 @@ public class Event
      * @param pDonation the new donation
      * @throws JOceanusException on error
      */
-    public void setDonation(final JMoney pDonation) throws JOceanusException {
+    public final void setDonation(final JMoney pDonation) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CHARITYDONATION, pDonation);
     }
 
@@ -753,7 +754,7 @@ public class Event
      * @param pValue the new credit amount
      * @throws JOceanusException on error
      */
-    public void setCreditAmount(final JMoney pValue) throws JOceanusException {
+    public final void setCreditAmount(final JMoney pValue) throws JOceanusException {
         setInfoSetValue(EventInfoClass.CREDITAMOUNT, pValue);
     }
 
@@ -762,7 +763,7 @@ public class Event
      * @param pReference the new reference
      * @throws JOceanusException on error
      */
-    public void setReference(final String pReference) throws JOceanusException {
+    public final void setReference(final String pReference) throws JOceanusException {
         setInfoSetValue(EventInfoClass.REFERENCE, pReference);
     }
 
@@ -771,7 +772,7 @@ public class Event
      * @param pComments the new comments
      * @throws JOceanusException on error
      */
-    public void setComments(final String pComments) throws JOceanusException {
+    public final void setComments(final String pComments) throws JOceanusException {
         setInfoSetValue(EventInfoClass.COMMENTS, pComments);
     }
 
@@ -780,7 +781,7 @@ public class Event
      * @param pParty the new thirdParty
      * @throws JOceanusException on error
      */
-    public void setThirdParty(final Account pParty) throws JOceanusException {
+    public final void setThirdParty(final Account pParty) throws JOceanusException {
         setInfoSetValue(EventInfoClass.THIRDPARTY, pParty);
     }
 
@@ -1267,6 +1268,12 @@ public class Event
 
         @Override
         public Event addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* If the item has children */
+            if (pValues.hasChildren()) {
+                /* Note that the item is split */
+                pValues.addValue(FIELD_SPLIT, Boolean.TRUE);
+            }
+
             /* Create the event */
             Event myEvent = new Event(this, pValues);
 
@@ -1278,6 +1285,44 @@ public class Event
 
             /* Add to the list */
             append(myEvent);
+
+            /* Loop through the info items */
+            if (pValues.hasInfoItems()) {
+                /* Loop through the items */
+                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                while (myIterator.hasNext()) {
+                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+
+                    /* Build info */
+                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myEvent);
+                    getEventInfoTypes().addValuesItem(myValues);
+                }
+            }
+
+            /* Loop through the children */
+            if (pValues.hasChildren()) {
+                /* Loop through the items */
+                Iterator<DataValues<MoneyWiseDataType>> myIterator = pValues.childIterator();
+                while (myIterator.hasNext()) {
+                    DataValues<MoneyWiseDataType> myValues = myIterator.next();
+
+                    /* Note that the item is split */
+                    myValues.addValue(FIELD_SPLIT, Boolean.TRUE);
+                    myValues.addValue(FIELD_PARENT, myEvent);
+
+                    /* Copy missing values from parent */
+                    myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
+                    if (myValues.getValue(FIELD_DEBIT) == null) {
+                        myValues.addValue(FIELD_DEBIT, pValues.getValue(FIELD_DEBIT));
+                    }
+                    if (myValues.getValue(FIELD_CREDIT) == null) {
+                        myValues.addValue(FIELD_CREDIT, pValues.getValue(FIELD_CREDIT));
+                    }
+
+                    /* Build item */
+                    addValuesItem(myValues);
+                }
+            }
 
             /* Return it */
             return myEvent;

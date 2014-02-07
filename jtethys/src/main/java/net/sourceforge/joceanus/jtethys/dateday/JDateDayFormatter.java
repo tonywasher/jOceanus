@@ -188,7 +188,7 @@ public class JDateDayFormatter
      * @return the Date
      * @throws IllegalArgumentException on error
      */
-    public Date parseDate(final String pValue) throws IllegalArgumentException {
+    public Date parseDate(final String pValue) {
         /* Parse the date */
         try {
             return theDateFormat.parse(pValue);
@@ -204,7 +204,7 @@ public class JDateDayFormatter
      * @return the CalendarDay
      * @throws IllegalArgumentException on error
      */
-    public Calendar parseCalendarDay(final String pValue) throws IllegalArgumentException {
+    public Calendar parseCalendarDay(final String pValue) {
         Date myDate = parseDate(pValue);
         Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(myDate);
@@ -217,7 +217,7 @@ public class JDateDayFormatter
      * @return the DateDay
      * @throws IllegalArgumentException on error
      */
-    public JDateDay parseDateDay(final String pValue) throws IllegalArgumentException {
+    public JDateDay parseDateDay(final String pValue) {
         Date myDate = parseDate(pValue);
         return new JDateDay(myDate);
     }

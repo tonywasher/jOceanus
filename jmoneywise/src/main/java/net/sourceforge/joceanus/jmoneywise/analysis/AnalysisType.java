@@ -81,9 +81,9 @@ public enum AnalysisType {
      */
     public BucketAttribute getDefaultValue() {
         BucketAttribute[] myValues = getValues();
-        return (myValues == null)
-                ? null
-                : myValues[0];
+        return (myValues.length > 0)
+                                    ? myValues[0]
+                                    : null;
     }
 
     /**
@@ -103,7 +103,7 @@ public enum AnalysisType {
             case TAXBASIS:
                 return TaxBasisAttribute.values();
             default:
-                return null;
+                throw new IllegalArgumentException("Invalid Attribute type " + toString());
         }
     }
 }

@@ -445,7 +445,7 @@ public abstract class EventBase
      * Set reconciled state.
      * @param pValue the value
      */
-    protected void setValueReconciled(final Boolean pValue) {
+    protected final void setValueReconciled(final Boolean pValue) {
         getValueSet().setValue(FIELD_RECONCILED, pValue);
     }
 
@@ -453,7 +453,7 @@ public abstract class EventBase
      * Set split state.
      * @param pValue the value
      */
-    protected void setValueSplit(final Boolean pValue) {
+    protected final void setValueSplit(final Boolean pValue) {
         getValueSet().setValue(FIELD_SPLIT, pValue);
     }
 
@@ -773,6 +773,8 @@ public abstract class EventBase
             myValue = pValues.getValue(FIELD_PARENT);
             if (myValue instanceof Integer) {
                 setValueParent((Integer) myValue);
+            } else if (myValue instanceof EventBase) {
+                setValueParent((EventBase) myValue);
             }
 
             /* Store the reconciled flag */

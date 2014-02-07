@@ -741,6 +741,12 @@ public class Pattern
 
         @Override
         public Pattern addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* If the item has children */
+            if (pValues.hasChildren()) {
+                /* Note that the item is split */
+                pValues.addValue(FIELD_SPLIT, Boolean.TRUE);
+            }
+
             /* Create the account */
             Pattern myPattern = new Pattern(this, pValues);
 
@@ -752,6 +758,31 @@ public class Pattern
 
             /* Add to the list */
             append(myPattern);
+
+            /* Loop through the children */
+            if (pValues.hasChildren()) {
+                /* Loop through the items */
+                Iterator<DataValues<MoneyWiseDataType>> myIterator = pValues.childIterator();
+                while (myIterator.hasNext()) {
+                    DataValues<MoneyWiseDataType> myValues = myIterator.next();
+
+                    /* Note that the item is split */
+                    myValues.addValue(FIELD_SPLIT, Boolean.TRUE);
+                    myValues.addValue(FIELD_PARENT, myPattern);
+
+                    /* Copy missing values from parent */
+                    myValues.addValue(FIELD_DATE, pValues.getValue(FIELD_DATE));
+                    if (myValues.getValue(FIELD_DEBIT) == null) {
+                        myValues.addValue(FIELD_DEBIT, pValues.getValue(FIELD_DEBIT));
+                    }
+                    if (myValues.getValue(FIELD_CREDIT) == null) {
+                        myValues.addValue(FIELD_CREDIT, pValues.getValue(FIELD_CREDIT));
+                    }
+
+                    /* Build item */
+                    addValuesItem(myValues);
+                }
+            }
 
             /* Return it */
             return myPattern;

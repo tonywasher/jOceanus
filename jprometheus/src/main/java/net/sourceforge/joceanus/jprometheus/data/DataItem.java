@@ -361,6 +361,14 @@ public abstract class DataItem<E extends Enum<E>>
      * @return the dataSet
      */
     public DataSet<?, ?> getDataSet() {
+        return getTheDataSet();
+    }
+
+    /**
+     * Obtain the dataSet.
+     * @return the dataSet
+     */
+    private DataSet<?, ?> getTheDataSet() {
         return theList.getDataSet();
     }
 
@@ -849,9 +857,9 @@ public abstract class DataItem<E extends Enum<E>>
         pList.setNewId(this);
 
         /* Create the touch status */
-        DataSet<?, ?> myData = getDataSet();
+        DataSet<?, ?> myData = getTheDataSet();
         Class<E> myClass = (Class<E>) myData.getEnumClass();
-        theTouchStatus = new DataTouch<E>(getDataSet(), myClass);
+        theTouchStatus = new DataTouch<E>(myData, myClass);
     }
 
     /**

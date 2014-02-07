@@ -24,13 +24,17 @@ package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.io.File;
 
+import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
+import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * LoaderThread extension to create an XML backup.
@@ -40,6 +44,16 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
         extends LoaderThread<T, E> {
     /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Number 10.
+     */
+    private static final int TEN = 10;
+
+    /**
      * Task description.
      */
     private static final String TASK_NAME = "Create XML Backup";
@@ -48,11 +62,6 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
      * Cancel error text.
      */
     private static final String ERROR_CANCEL = "Operation cancelled";
-
-    /**
-     * FileName.
-     */
-    protected static final String FILE_NAME = "c:\\Users\\Tony\\TestXML.zip";
 
     /**
      * Data Control.
@@ -98,8 +107,39 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             /* Initialise the status window */
             theStatus.initTask(TASK_NAME);
 
-            /* Determine the file */
-            myFile = new File(FILE_NAME);
+            /* Access the Backup preferences */
+            PreferenceManager myMgr = theControl.getPreferenceMgr();
+            BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
+
+            /* Determine the archive name */
+            String myBackupDir = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR);
+            String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+            Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
+
+            /* Create the name of the file */
+            StringBuilder myName = new StringBuilder(BUFFER_LEN);
+            myName.append(myBackupDir);
+            myName.append(File.separator);
+            myName.append(myPrefix);
+
+            /* If we are doing time-stamps */
+            if (doTimeStamp) {
+                /* Obtain the current date/time */
+                JDateDay myNow = new JDateDay();
+
+                myName.append(myNow.getYear());
+                if (myNow.getMonth() < TEN) {
+                    myName.append('0');
+                }
+                myName.append(myNow.getMonth());
+                if (myNow.getDay() < TEN) {
+                    myName.append('0');
+                }
+                myName.append(myNow.getDay());
+            }
+
+            /* Set the standard backup name */
+            myFile = new File(myName.toString() + ZipReadFile.ZIPFILE_EXT);
 
             /* Access the data */
             T myData = theControl.getData();

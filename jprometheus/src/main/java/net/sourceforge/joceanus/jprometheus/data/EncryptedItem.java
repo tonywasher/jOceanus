@@ -79,7 +79,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Get the ControlKey for this item.
      * @return the ControlKey
      */
-    public ControlKey getControlKey() {
+    public final ControlKey getControlKey() {
         return getControlKey(getValueSet());
     }
 
@@ -87,7 +87,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Get the ControlKeyId for this item.
      * @return the ControlKeyId
      */
-    public Integer getControlKeyId() {
+    public final Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
         return (myKey == null)
                               ? null
@@ -167,7 +167,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * Set ControlKey.
      * @param pControlKey the Control Key
      */
-    protected void setControlKey(final ControlKey pControlKey) {
+    protected final void setControlKey(final ControlKey pControlKey) {
         setValueControlKey(pControlKey);
     }
 
@@ -176,7 +176,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pControlId the Control Id
      * @throws JOceanusException on error
      */
-    protected void setControlKey(final Integer pControlId) throws JOceanusException {
+    protected final void setControlKey(final Integer pControlId) throws JOceanusException {
         /* Store the id */
         setValueControlKey(pControlId);
 
@@ -192,8 +192,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValue the value to set
      * @throws JOceanusException on error
      */
-    protected void setEncryptedValue(final JDataField pField,
-                                     final Object pValue) throws JOceanusException {
+    protected final void setEncryptedValue(final JDataField pField,
+                                           final Object pValue) throws JOceanusException {
         /* Obtain the existing value */
         EncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
@@ -218,9 +218,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pClass the class of the value
      * @throws JOceanusException on error
      */
-    protected void setEncryptedValue(final JDataField pField,
-                                     final byte[] pEncrypted,
-                                     final Class<?> pClass) throws JOceanusException {
+    protected final void setEncryptedValue(final JDataField pField,
+                                           final byte[] pEncrypted,
+                                           final Class<?> pClass) throws JOceanusException {
         /* Create the new encrypted value */
         EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 

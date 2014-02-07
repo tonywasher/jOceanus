@@ -283,7 +283,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set InfoType Id.
      * @param pId the info Type id
      */
-    protected void setValueInfoType(final Integer pId) {
+    protected final void setValueInfoType(final Integer pId) {
         getValueSet().setValue(FIELD_INFOTYPE, pId);
     }
 
@@ -291,7 +291,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set InfoType Name.
      * @param pName the info Type name
      */
-    protected void setValueInfoType(final String pName) {
+    protected final void setValueInfoType(final String pName) {
         getValueSet().setValue(FIELD_INFOTYPE, pName);
     }
 
@@ -307,7 +307,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set Owner id.
      * @param pId the owner id
      */
-    protected void setValueOwner(final Integer pId) {
+    protected final void setValueOwner(final Integer pId) {
         getValueSet().setValue(FIELD_OWNER, pId);
     }
 
@@ -315,7 +315,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set Owner name.
      * @param pName the owner name
      */
-    protected void setValueOwner(final String pName) {
+    protected final void setValueOwner(final String pName) {
         getValueSet().setValue(FIELD_OWNER, pName);
     }
 
@@ -513,7 +513,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                 bValueOK = setIntegerValue(myFormatter, pValue);
                 break;
             case LINK:
-                bValueOK = setLinkValue(myFormatter, pValue);
+                bValueOK = setLinkValue(pValue);
                 break;
             case STRING:
                 bValueOK = setStringValue(pValue);
@@ -605,13 +605,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
     /**
      * Set Link Value.
-     * @param pFormatter the data formatter
      * @param pValue the Value
      * @return is value valid true/false
      * @throws JOceanusException on error
      */
-    private boolean setLinkValue(final JDataFormatter pFormatter,
-                                 final Object pValue) throws JOceanusException {
+    private boolean setLinkValue(final Object pValue) throws JOceanusException {
         try {
             /* Handle various forms */
             if (pValue instanceof Integer) {
