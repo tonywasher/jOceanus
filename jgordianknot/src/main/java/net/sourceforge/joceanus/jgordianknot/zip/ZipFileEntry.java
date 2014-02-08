@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipEntry;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianCryptoException;
@@ -442,12 +443,14 @@ public class ZipFileEntry {
 
     /**
      * Build input stream.
+     * @param pService the executor service
      * @param pStream the current input stream.
      * @param pAsymKey the asymmetric key.
      * @return the new input stream
      * @throws JOceanusException on error
      */
-    public InputStream buildInputStream(final InputStream pStream,
+    public InputStream buildInputStream(final ExecutorService pService,
+                                        final InputStream pStream,
                                         final AsymmetricKey pAsymKey) throws JOceanusException {
         /* Protect against exceptions */
         try {
@@ -463,7 +466,7 @@ public class ZipFileEntry {
 
             /* Build the input stream */
             CipherSet myCipherSet = pAsymKey.getCipherSet();
-            return theStreamList.buildInputStream(pStream, myCipherSet);
+            return theStreamList.buildInputStream(pService, pStream, myCipherSet);
 
             /* Catch exceptions */
         } catch (SignatureException e) {

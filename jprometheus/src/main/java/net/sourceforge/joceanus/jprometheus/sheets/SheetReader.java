@@ -135,7 +135,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
     /**
      * Load a Backup Workbook.
-     * @param pFile the backup file to write to
+     * @param pFile the backup file to load from
      * @return the loaded DataSet
      * @throws JOceanusException on error
      */
@@ -144,40 +144,59 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         isBackup = true;
 
         /* Access the zip file */
-        ZipReadFile myFile = new ZipReadFile(pFile);
+        try (ZipReadFile myFile = new ZipReadFile(pFile)) {
+            /* Obtain the hash bytes from the file */
+            byte[] myHashBytes = myFile.getHashBytes();
 
-        /* Obtain the hash bytes from the file */
-        byte[] myHashBytes = myFile.getHashBytes();
+            /* Access the Security manager */
+            SecureManager mySecurity = theTask.getSecurity();
 
-        /* Access the Security manager */
-        SecureManager mySecurity = theTask.getSecurity();
+            /* Obtain the initialised password hash */
+            PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
 
-        /* Obtain the initialised password hash */
-        PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+            /* Associate this password hash with the ZipFile */
+            myFile.setPasswordHash(myHash);
 
-        /* Associate this password hash with the ZipFile */
-        myFile.setPasswordHash(myHash);
+            /* Access ZipFile contents */
+            ZipFileContents myContents = myFile.getContents();
 
-        /* Access ZipFile contents */
-        ZipFileContents myContents = myFile.getContents();
+            /* Loop through the file entries */
+            Iterator<ZipFileEntry> myIterator = myContents.iterator();
+            ZipFileEntry myEntry = null;
+            while (myIterator.hasNext()) {
+                /* Access the entry */
+                myEntry = myIterator.next();
 
-        /* Loop through the file entries */
-        Iterator<ZipFileEntry> myIterator = myContents.iterator();
-        ZipFileEntry myEntry = null;
-        while (myIterator.hasNext()) {
-            /* Access the entry */
-            myEntry = myIterator.next();
-
-            /* Break loop if we have the right entry */
-            if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
-                break;
+                /* Break loop if we have the right entry */
+                if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
+                    break;
+                }
             }
+
+            /* Load the workBook */
+            loadEntry(myFile, myEntry);
+
+        } catch (IOException e) {
+            /* Report the error */
+            throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
         }
 
+        /* Return the new DataSet */
+        return theData;
+    }
+
+    /**
+     * Load a Backup Workbook.
+     * @param pFile the zip file
+     * @param pEntry the zip file entry
+     * @throws JOceanusException on error
+     */
+    public void loadEntry(final ZipReadFile pFile,
+                          final ZipFileEntry pEntry) throws JOceanusException {
         /* Protect the workbook retrieval */
-        try (InputStream myStream = myFile.getInputStream(myEntry)) {
+        try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(myEntry.getFileName()));
+            boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
             if (bContinue) {
@@ -193,11 +212,8 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
             }
         } catch (IOException e) {
             /* Report the error */
-            throw new JPrometheusIOException("Failed to load Backup Workbook: " + pFile.getName(), e);
+            throw new JPrometheusIOException("Failed to load Backup Workbook: " + pEntry.getFileName(), e);
         }
-
-        /* Return the new DataSet */
-        return theData;
     }
 
     /**

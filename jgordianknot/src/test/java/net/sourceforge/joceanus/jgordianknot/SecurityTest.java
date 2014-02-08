@@ -189,10 +189,8 @@ public class SecurityTest {
      */
     protected static void extractZipFile(File pZipFile,
                                          File pDirectory) throws JOceanusException {
-        try {
-            /* Access the Zip file */
-            ZipReadFile myZipFile = new ZipReadFile(pZipFile);
-
+        /* Protect against exceptions */
+        try (ZipReadFile myZipFile = new ZipReadFile(pZipFile)) {
             /* Check for security */
             byte[] myHashBytes = myZipFile.getHashBytes();
             if (myHashBytes != null) {
@@ -403,7 +401,7 @@ public class SecurityTest {
     private static void printSet(String setName,
                                  Set<String> algorithms) {
         System.out.println(setName
-                + ":");
+                           + ":");
         if (algorithms.isEmpty()) {
             System.out.println("            None available.");
         } else {
@@ -411,7 +409,7 @@ public class SecurityTest {
             while (it.hasNext()) {
                 String name = it.next();
                 System.out.println("            "
-                        + name);
+                                   + name);
             }
         }
     }

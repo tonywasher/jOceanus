@@ -25,6 +25,9 @@ package net.sourceforge.joceanus.jgordianknot.zip;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+
+import javax.swing.SwingWorker;
 
 import SevenZip.Compression.LZMA.Decoder;
 import SevenZip.Compression.LZMA.Encoder;
@@ -52,15 +55,17 @@ public final class LZMAInputStream
     private final InputStream theSource;
 
     /**
-     * The decoder thread.
+     * The decoder service.
      */
-    private final DecoderThread theThread;
+    private final DecoderService theService;
 
     /**
      * Constructor.
+     * @param pService the execution service
      * @param pInput the input stream to wrap
      */
-    public LZMAInputStream(final InputStream pInput) {
+    public LZMAInputStream(final ExecutorService pService,
+                           final InputStream pInput) {
         /* Store the target */
         theInput = pInput;
 
@@ -69,9 +74,9 @@ public final class LZMAInputStream
         theSink = myPipe.getSink();
         theSource = myPipe.getSource();
 
-        /* Create decoder thread */
-        theThread = new DecoderThread();
-        theThread.start();
+        /* Create decoder service */
+        theService = new DecoderService();
+        pService.execute(theService);
     }
 
     @Override
@@ -80,7 +85,7 @@ public final class LZMAInputStream
         int myResult = read(pBytes, 0, pBytes.length);
 
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Read the bytes from the source */
         return myResult;
@@ -92,7 +97,7 @@ public final class LZMAInputStream
         int myResult = theSource.read();
 
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Read the bytes from the source */
         return myResult;
@@ -107,7 +112,7 @@ public final class LZMAInputStream
         int myResult = theSource.read(pBuffer, pOffset, pLength);
 
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Read the bytes from the source */
         return myResult;
@@ -120,10 +125,10 @@ public final class LZMAInputStream
     }
 
     /**
-     * The decoder thread.
+     * The decoder service.
      */
-    private final class DecoderThread
-            extends Thread {
+    private final class DecoderService
+            extends SwingWorker<Void, Void> {
         /**
          * The decoder.
          */
@@ -137,7 +142,7 @@ public final class LZMAInputStream
         /**
          * Constructor.
          */
-        private DecoderThread() {
+        private DecoderService() {
             /* Create the decoder */
             theDecoder = new Decoder();
             theError = null;
@@ -154,7 +159,7 @@ public final class LZMAInputStream
         }
 
         @Override
-        public void run() {
+        public Void doInBackground() throws IOException {
             try {
                 byte[] myProperties = new byte[Encoder.kPropSize];
 
@@ -162,7 +167,7 @@ public final class LZMAInputStream
                 int n = theInput.read(myProperties, 0, Encoder.kPropSize);
                 if (n != Encoder.kPropSize) {
                     theError = new IOException("input stream too short");
-                    return;
+                    return null;
                 }
 
                 /* Set the decoder properties */
@@ -177,6 +182,9 @@ public final class LZMAInputStream
             } catch (IOException e) {
                 theError = e;
             }
+
+            /* Return null value */
+            return null;
         }
     }
 }

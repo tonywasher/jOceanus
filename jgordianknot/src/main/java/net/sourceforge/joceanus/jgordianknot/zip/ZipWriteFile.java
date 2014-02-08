@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -104,6 +106,11 @@ public class ZipWriteFile
     private String theFileName = null;
 
     /**
+     * The Thread executor.
+     */
+    private final ExecutorService theExecutor;
+
+    /**
      * The active output stream.
      */
     private OutputStream theOutput = null;
@@ -154,6 +161,9 @@ public class ZipWriteFile
             /* reSeed the random number generator */
             theGenerator.reSeedRandom();
 
+            /* Create the Executor service */
+            theExecutor = Executors.newSingleThreadExecutor();
+
             /* Create an Elliptic asymmetric key */
             theAsymKey = theGenerator.generateEllipticAsymmetricKey();
             theNumEncrypts = theGenerator.getNumCipherSteps();
@@ -191,6 +201,7 @@ public class ZipWriteFile
             theGenerator = null;
             theAsymKey = null;
             theNumEncrypts = -1;
+            theExecutor = null;
 
             /* Create the output streams */
             FileOutputStream myOutFile = new FileOutputStream(pFile);
@@ -232,7 +243,7 @@ public class ZipWriteFile
             theFileName = pFile.getPath();
             theEntry = new ZipEntry(isEncrypted()
                                                  ? FILE_PREFIX
-                                                         + theFileNo
+                                                   + theFileNo
                                                  : theFileName);
             theStream.putNextEntry(theEntry);
 
@@ -267,7 +278,7 @@ public class ZipWriteFile
                 theOutput = myEncrypt;
 
                 /* Attach an LZMA output stream onto the output */
-                LZMAOutputStream myZip = new LZMAOutputStream(theOutput);
+                LZMAOutputStream myZip = new LZMAOutputStream(theExecutor, theOutput);
                 theOutput = myZip;
 
                 /* Create a final mac stream */
@@ -325,13 +336,16 @@ public class ZipWriteFile
         /* Close any open output stream */
         closeOutputStream();
 
+        /* terminate the executor */
+        theExecutor.shutdown();
+
         /* If the stream is open */
         if (theStream != null) {
             /* Protect against exceptions */
             try {
                 /* If we have stored files and are encrypted */
                 if ((theFileNo > 0)
-                        && (isEncrypted())) {
+                    && (isEncrypted())) {
                     /* Create a new zipFileEntry */
                     ZipFileEntry myEntry = theContents.addZipFileHeader();
 
@@ -344,7 +358,7 @@ public class ZipWriteFile
                     /* Create the header entry */
                     ++theFileNo;
                     theEntry = new ZipEntry(FILE_PREFIX
-                            + theFileNo);
+                                            + theFileNo);
 
                     /* Declare the password hash and encrypt the header */
                     theEntry.setExtra(theHash.getHashBytes());

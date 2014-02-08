@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.threads;
 
+import java.util.concurrent.ExecutionException;
+
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -53,22 +55,21 @@ public abstract class LoaderThread<T extends DataSet<T, E>, E extends Enum<E>>
 
     @Override
     public void done() {
+        /* Protect against exceptions */
         try {
-            /* If we are not cancelled */
-            if (!isCancelled()) {
-                /* Get the newly loaded data */
-                T myData = get();
+            /* Get the newly loaded data */
+            T myData = get();
 
-                /* If we have new data */
-                if (myData != null) {
-                    /* Activate the data and obtain any errors */
-                    theControl.setData(myData);
-                    addErrorList(theControl.getErrors());
-                }
+            /* If we are not cancelled and have data */
+            if (!isCancelled() && (myData != null)) {
+                /* Activate the data and obtain any errors */
+                theControl.setData(myData);
+                addErrorList(theControl.getErrors());
             }
 
             /* Catch any exception to keep thread interface clean */
-        } catch (Exception e) {
+        } catch (InterruptedException
+                | ExecutionException e) {
             /* Report the failure */
             addError(new JPrometheusIOException("Failed to obtain and activate new data", e));
         }

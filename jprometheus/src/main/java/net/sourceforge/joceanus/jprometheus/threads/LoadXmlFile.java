@@ -89,7 +89,8 @@ public class LoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Determine the archive name */
         File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
-        String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+        String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX)
+                          + CreateXmlFile.SUFFIX_FILE;
 
         /* Determine the name of the file to load */
         FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, ZipReadFile.ZIPFILE_EXT);

@@ -29,6 +29,7 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import net.sourceforge.joceanus.jgordianknot.JGordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.CipherMode;
@@ -107,12 +108,14 @@ public abstract class ZipStreamSpec {
 
     /**
      * Build input stream.
+     * @param pService the executor service
      * @param pCurrent the current input stream
      * @param pCipherSet the cipher set
      * @return the new input stream
      * @throws JOceanusException on error
      */
-    protected abstract InputStream buildInputStream(final InputStream pCurrent,
+    protected abstract InputStream buildInputStream(final ExecutorService pService,
+                                                    final InputStream pCurrent,
                                                     final CipherSet pCipherSet) throws JOceanusException;
 
     /**
@@ -293,12 +296,14 @@ public abstract class ZipStreamSpec {
 
         /**
          * Build Input Stream.
+         * @param pService the executor service
          * @param pCurrent the current input stream
          * @param pCipherSet the CipherSet
          * @return the constructed input stream
          * @throws JOceanusException on error
          */
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Loop through the streamSpecs */
             InputStream myCurrent = pCurrent;
@@ -307,7 +312,7 @@ public abstract class ZipStreamSpec {
                 ZipStreamSpec mySpec = myIterator.next();
 
                 /* Allocate properties for the streamSpec. */
-                myCurrent = mySpec.buildInputStream(myCurrent, pCipherSet);
+                myCurrent = mySpec.buildInputStream(pService, myCurrent, pCipherSet);
             }
 
             /* Return the input stream */
@@ -409,7 +414,8 @@ public abstract class ZipStreamSpec {
         }
 
         @Override
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
             SymmetricKey myKey = pCipherSet.deriveSymmetricKey(theKeySpec, theKeyType);
@@ -495,7 +501,8 @@ public abstract class ZipStreamSpec {
         }
 
         @Override
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
             StreamKey myKey = pCipherSet.deriveStreamKey(theKeySpec, theKeyType);
@@ -567,7 +574,8 @@ public abstract class ZipStreamSpec {
         }
 
         @Override
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Create the digest stream */
             SecurityGenerator myGenerator = pCipherSet.getSecurityGenerator();
@@ -654,7 +662,8 @@ public abstract class ZipStreamSpec {
         }
 
         @Override
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Create the Mac stream */
             DataMac myMac = pCipherSet.deriveDataMac(theKeySpec, theMacSpec);
@@ -690,10 +699,11 @@ public abstract class ZipStreamSpec {
         }
 
         @Override
-        protected InputStream buildInputStream(final InputStream pCurrent,
+        protected InputStream buildInputStream(final ExecutorService pService,
+                                               final InputStream pCurrent,
                                                final CipherSet pCipherSet) throws JOceanusException {
             /* Create the decryption stream */
-            return new LZMAInputStream(pCurrent);
+            return new LZMAInputStream(pService, pCurrent);
         }
     }
 

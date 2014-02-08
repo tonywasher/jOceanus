@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -42,7 +44,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Class used to extract from a ZipFile.
  */
-public class ZipReadFile {
+public class ZipReadFile
+        implements AutoCloseable {
     /**
      * The ZipFile extension.
      */
@@ -77,6 +80,11 @@ public class ZipReadFile {
      * The header bytes.
      */
     private final byte[] theHeader;
+
+    /**
+     * The Thread executor.
+     */
+    private final ExecutorService theExecutor;
 
     /**
      * Is the ZipFile encrypted.
@@ -141,10 +149,14 @@ public class ZipReadFile {
                 /* Pick up security detail */
                 theHashBytes = myEntry.getExtra();
                 theHeader = readHeader(myHdrStream);
+
+                /* Create the Executor service */
+                theExecutor = Executors.newCachedThreadPool();
             } else {
                 /* Record no security */
                 theHashBytes = null;
                 theHeader = null;
+                theExecutor = null;
             }
 
             /* Catch exceptions */
@@ -286,7 +298,7 @@ public class ZipReadFile {
             /* If the file is encrypted */
             if (isEncrypted()) {
                 /* Verify Encryption details */
-                myCurrent = pFile.buildInputStream(myCurrent, theAsymKey);
+                myCurrent = pFile.buildInputStream(theExecutor, myCurrent, theAsymKey);
             }
 
             /* return the new stream */
@@ -296,5 +308,11 @@ public class ZipReadFile {
         } catch (IOException e) {
             throw new JGordianIOException("Exception creating new Input stream", e);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        /* terminate the executor */
+        theExecutor.shutdown();
     }
 }

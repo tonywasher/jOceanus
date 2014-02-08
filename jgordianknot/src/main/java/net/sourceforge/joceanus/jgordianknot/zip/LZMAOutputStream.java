@@ -25,6 +25,10 @@ package net.sourceforge.joceanus.jgordianknot.zip;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+
+import javax.swing.SwingWorker;
 
 import SevenZip.Compression.LZMA.Encoder;
 
@@ -51,9 +55,9 @@ public final class LZMAOutputStream
     private final OutputStream theTarget;
 
     /**
-     * The encoder thread.
+     * The encoder service.
      */
-    private final EncoderThread theThread;
+    private final EncoderService theService;
 
     /**
      * Obtain the next stream.
@@ -65,9 +69,11 @@ public final class LZMAOutputStream
 
     /**
      * Constructor.
+     * @param pService the execution service
      * @param pOutput the output stream to wrap
      */
-    public LZMAOutputStream(final OutputStream pOutput) {
+    public LZMAOutputStream(final ExecutorService pService,
+                            final OutputStream pOutput) {
         /* Store the target */
         theTarget = pOutput;
 
@@ -76,9 +82,9 @@ public final class LZMAOutputStream
         theSink = myPipe.getSink();
         theSource = myPipe.getSource();
 
-        /* Create encoder thread */
-        theThread = new EncoderThread();
-        theThread.start();
+        /* Create encoder service */
+        theService = new EncoderService();
+        pService.execute(theService);
     }
 
     @Override
@@ -86,7 +92,7 @@ public final class LZMAOutputStream
                       final int pOffset,
                       final int pLength) throws IOException {
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Write to the sink */
         theSink.write(pBytes, pOffset, pLength);
@@ -95,7 +101,7 @@ public final class LZMAOutputStream
     @Override
     public void write(final byte[] pBytes) throws IOException {
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Write to the sink */
         theSink.write(pBytes);
@@ -104,7 +110,7 @@ public final class LZMAOutputStream
     @Override
     public void write(final int pByte) throws IOException {
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
 
         /* Write to the sink */
         theSink.write(pByte);
@@ -120,22 +126,23 @@ public final class LZMAOutputStream
         /* Close the sink */
         theSink.close();
 
-        /* Wait for thread to terminate */
+        /* Wait for service to terminate */
         try {
-            theThread.join();
-        } catch (InterruptedException e) {
+            theService.get();
+        } catch (InterruptedException
+                | ExecutionException e) {
             throw new IOException(e.getMessage(), e);
         }
 
         /* Check for error */
-        theThread.checkForError();
+        theService.checkForError();
     }
 
     /**
-     * The encoder thread.
+     * The encoder service.
      */
-    private final class EncoderThread
-            extends Thread {
+    private final class EncoderService
+            extends SwingWorker<Void, Void> {
         /**
          * The encoder.
          */
@@ -149,7 +156,7 @@ public final class LZMAOutputStream
         /**
          * Constructor.
          */
-        private EncoderThread() {
+        private EncoderService() {
             /* Create the encoder */
             theEncoder = new Encoder();
             theError = null;
@@ -166,7 +173,7 @@ public final class LZMAOutputStream
         }
 
         @Override
-        public void run() {
+        protected Void doInBackground() throws IOException {
             try {
                 /* Set end markerMode on */
                 theEncoder.SetEndMarkerMode(true);
@@ -179,9 +186,14 @@ public final class LZMAOutputStream
 
                 /* Close the target */
                 theTarget.close();
+
+                /* Catch and record any errors */
             } catch (IOException e) {
                 theError = e;
             }
+
+            /* Return null value */
+            return null;
         }
     }
 }

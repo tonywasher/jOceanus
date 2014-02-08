@@ -139,12 +139,9 @@ public class Backup {
                                final SecureManager pSecurity,
                                final File pZipFile) throws JOceanusException {
         /* Protect against exceptions */
-        try {
+        try (ZipReadFile myFile = new ZipReadFile(pZipFile)) {
             /* Install an event handler */
             theAdminClient.setEventHandler(new SubversionHandler());
-
-            /* Access the zipFile */
-            ZipReadFile myFile = new ZipReadFile(pZipFile);
 
             /* Obtain the hash bytes from the file */
             byte[] myHashBytes = myFile.getHashBytes();
@@ -172,7 +169,8 @@ public class Backup {
 
             /* Read the data from the input stream */
             theAdminClient.doLoad(pRepository, myStream);
-        } catch (SVNException e) {
+        } catch (IOException
+                | SVNException e) {
             throw new JThemisIOException("Failed", e);
         }
 

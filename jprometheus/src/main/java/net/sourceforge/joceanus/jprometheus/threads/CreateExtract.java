@@ -96,7 +96,8 @@ public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Create extract */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            mySheet.createExtract(theStatus, theControl.getData(), myFile);
+            T myOldData = theControl.getData();
+            mySheet.createExtract(theStatus, myOldData, myFile);
 
             /* File created, so delete on error */
             doDelete = true;
@@ -105,19 +106,19 @@ public class CreateExtract<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask("Reading Extract");
 
             /* Load workbook */
-            T myData = mySheet.loadExtract(theStatus, myFile);
+            T myNewData = mySheet.loadExtract(theStatus, myFile);
 
             /* Initialise the status window */
             theStatus.initTask("Re-applying Security");
 
             /* Initialise the security, from the original data */
-            myData.initialiseSecurity(theStatus, theControl.getData());
+            myNewData.initialiseSecurity(theStatus, myOldData);
 
             /* Initialise the status window */
             theStatus.initTask("Verifying Extract");
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

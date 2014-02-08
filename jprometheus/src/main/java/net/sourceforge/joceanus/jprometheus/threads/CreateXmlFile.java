@@ -54,6 +54,11 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
     private static final int TEN = 10;
 
     /**
+     * File indicator.
+     */
+    protected static final String SUFFIX_FILE = "XML";
+
+    /**
      * Task description.
      */
     private static final String TASK_NAME = "Create XML Backup";
@@ -121,6 +126,7 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             myName.append(myBackupDir);
             myName.append(File.separator);
             myName.append(myPrefix);
+            myName.append(SUFFIX_FILE);
 
             /* If we are doing time-stamps */
             if (doTimeStamp) {
@@ -142,15 +148,15 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             myFile = new File(myName.toString() + ZipReadFile.ZIPFILE_EXT);
 
             /* Access the data */
-            T myData = theControl.getData();
+            T myOldData = theControl.getData();
 
             /* Create a new formatter */
             DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<T, E>(theStatus);
 
             /* Create backup */
             boolean bContinue = isSecure
-                                        ? myFormatter.createBackup(myData, myFile)
-                                        : myFormatter.createExtract(myData, myFile);
+                                        ? myFormatter.createBackup(myOldData, myFile)
+                                        : myFormatter.createExtract(myOldData, myFile);
 
             /* File created, so delete on error */
             doDelete = true;
@@ -171,13 +177,13 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask("Re-applying Security");
 
             /* Initialise the security, from the original data */
-            myNewData.initialiseSecurity(theStatus, theControl.getData());
+            myNewData.initialiseSecurity(theStatus, myOldData);
 
             /* Initialise the status window */
             theStatus.initTask("Verifying Backup");
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

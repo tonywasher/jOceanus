@@ -86,7 +86,6 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
 
     @Override
     public T performTask() throws JOceanusException {
-        T myData = null;
         boolean doDelete = false;
         File myFile = null;
 
@@ -131,7 +130,8 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
 
             /* Create backup */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            mySheet.createBackup(theStatus, theControl.getData(), myFile, myType);
+            T myOldData = theControl.getData();
+            mySheet.createBackup(theStatus, myOldData, myFile, myType);
 
             /* File created, so delete on error */
             doDelete = true;
@@ -140,10 +140,10 @@ public class CreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
             theStatus.initTask("Verifying Backup");
 
             /* Load workbook */
-            myData = mySheet.loadBackup(theStatus, myFile);
+            T myNewData = mySheet.loadBackup(theStatus, myFile);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(theControl.getData());
+            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

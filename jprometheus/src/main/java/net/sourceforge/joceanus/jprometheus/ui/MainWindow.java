@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jprometheus.threads.CreateXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.LoadBackup;
 import net.sourceforge.joceanus.jprometheus.threads.LoadDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.LoadExtract;
+import net.sourceforge.joceanus.jprometheus.threads.LoadXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.PurgeDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.RenewSecurity;
 import net.sourceforge.joceanus.jprometheus.threads.StoreDatabase;
@@ -156,6 +157,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
      * Create Xml menu item.
      */
     private static final String ITEM_CREATEXML = NLS_BUNDLE.getString("ItemCreateXml");
+
+    /**
+     * Load Xml menu item.
+     */
+    private static final String ITEM_LOADXML = NLS_BUNDLE.getString("ItemLoadXml");
 
     /**
      * Renew Security.
@@ -288,6 +294,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private JMenuItem theCreateXml = null;
 
     /**
+     * The Load XML menu item.
+     */
+    private JMenuItem theLoadXml = null;
+
+    /**
      * The Update password menu item.
      */
     private JMenuItem theUpdatePass = null;
@@ -320,7 +331,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * The Thread executor.
      */
-    private ExecutorService theExecutor = null;
+    private final ExecutorService theExecutor;
 
     /**
      * The Started Help window.
@@ -530,6 +541,9 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theCreateXml = new JMenuItem(ITEM_CREATEXML);
         theCreateXml.addActionListener(this);
         pMenu.add(theCreateXml);
+        theLoadXml = new JMenuItem(ITEM_LOADXML);
+        theLoadXml.addActionListener(this);
+        pMenu.add(theLoadXml);
     }
 
     /**
@@ -699,6 +713,11 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             /* Start a createXml operation */
             createXmlFile();
 
+            /* If this event relates to the Load Xml item */
+        } else if (theLoadXml.equals(o)) {
+            /* Start a loadXml operation */
+            loadXmlFile();
+
             /* If this event relates to the Update Password item */
         } else if (theUpdatePass.equals(o)) {
             /* Start an Update Password operation */
@@ -753,6 +772,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         /* If we have changes disable the create backup options */
         theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
         theWriteExtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        theCreateXml.setEnabled(!hasChanges && !hasUpdates && hasControl);
 
         /* If we have changes disable the security options */
         theUpdatePass.setEnabled(!hasChanges && !hasUpdates);
@@ -761,6 +781,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         /* If we have updates disable the load backup/database option */
         theLoadBackup.setEnabled(!hasUpdates);
         theLoadExtract.setEnabled(!hasUpdates);
+        theLoadXml.setEnabled(!hasUpdates);
         theLoadDBase.setEnabled(!hasUpdates);
 
         /* If we have updates or no changes disable the save database */
@@ -944,12 +965,25 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Create XML Backup file.
      */
-    public void createXmlFile() {
+    private void createXmlFile() {
         /* Allocate the status */
         ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
 
         /* Create the worker thread */
         CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, true);
+        myStatus.registerThread(myThread);
+        startThread(myThread);
+    }
+
+    /**
+     * Load XML Backup file.
+     */
+    private void loadXmlFile() {
+        /* Allocate the status */
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+
+        /* Create the worker thread */
+        LoadXmlFile<T, E> myThread = new LoadXmlFile<T, E>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

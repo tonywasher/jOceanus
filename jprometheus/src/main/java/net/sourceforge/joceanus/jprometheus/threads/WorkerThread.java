@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
@@ -116,25 +117,24 @@ public abstract class WorkerThread<T>
     protected abstract T performTask() throws JOceanusException;
 
     @Override
-    public T doInBackground() {
-        T myResult;
-
-        try {
-            /* Call work function */
-            myResult = performTask();
-
-            /* Return result */
-            return myResult;
-
-            /* Catch any exception to keep thread interface clean */
-        } catch (Exception e) {
-            addError(new JPrometheusIOException("Failed to perform background task", e));
-            return null;
-        }
+    public T doInBackground() throws JOceanusException {
+        /* Call work function */
+        return performTask();
     }
 
     @Override
     public void done() {
+        /* Protect against exceptions */
+        try {
+            /* Force out any exceptions that occurred in the thread */
+            get();
+
+            /* Catch exceptions */
+        } catch (InterruptedException
+                | ExecutionException e) {
+            addError(new JPrometheusIOException("Failed to perform background task", e));
+        }
+
         /* Update the Status Bar */
         completeStatusBar();
     }

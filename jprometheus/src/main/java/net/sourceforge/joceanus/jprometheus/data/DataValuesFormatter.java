@@ -331,25 +331,27 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public boolean loadZipFile(final T pData,
                                final File pFile) throws JOceanusException {
         /* Access the zip file */
-        ZipReadFile myZipFile = new ZipReadFile(pFile);
+        try (ZipReadFile myZipFile = new ZipReadFile(pFile)) {
+            /* Obtain the hash bytes from the file */
+            byte[] myHashBytes = myZipFile.getHashBytes();
 
-        /* Obtain the hash bytes from the file */
-        byte[] myHashBytes = myZipFile.getHashBytes();
+            /* If this is a secure ZipFile */
+            if (myHashBytes != null) {
+                /* Access the Security manager */
+                SecureManager mySecurity = theTask.getSecurity();
 
-        /* If this is a secure ZipFile */
-        if (myHashBytes != null) {
-            /* Access the Security manager */
-            SecureManager mySecurity = theTask.getSecurity();
+                /* Obtain the initialised password hash */
+                PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
 
-            /* Obtain the initialised password hash */
-            PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
+                /* Associate this password hash with the ZipFile */
+                myZipFile.setPasswordHash(myHash);
+            }
 
-            /* Associate this password hash with the ZipFile */
-            myZipFile.setPasswordHash(myHash);
+            /* Parse the Zip File */
+            return parseZipFile(pData, myZipFile);
+        } catch (IOException e) {
+            throw new JPrometheusIOException("Failed to load file", e);
         }
-
-        /* Parse the Zip File */
-        return parseZipFile(pData, myZipFile);
     }
 
     /**
