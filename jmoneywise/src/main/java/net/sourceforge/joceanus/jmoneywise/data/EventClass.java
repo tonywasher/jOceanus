@@ -55,6 +55,7 @@ public class EventClass
      * List name.
      */
     public static final String LIST_NAME = MoneyWiseDataType.EVENTCLASS.getListName();
+
     /**
      * Resource Bundle.
      */
@@ -282,39 +283,6 @@ public class EventClass
                          final EventClass pClass) {
         /* Set standard values */
         super(pList, pClass);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the Class id
-     * @param pControlId the control id
-     * @param pName the Encrypted Name of the event class
-     * @param pDesc the Encrypted Description of the event class
-     * @throws JOceanusException on error
-     */
-    protected EventClass(final EventClassList pList,
-                         final Integer pId,
-                         final Integer pControlId,
-                         final byte[] pName,
-                         final byte[] pDesc) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Set ControlId */
-            setControlKey(pControlId);
-
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -633,31 +601,6 @@ public class EventClass
                                 final String pDesc) throws JOceanusException {
             /* Create the tag */
             EventClass myClass = new EventClass(this, pId, pName, pDesc);
-
-            /* Check that this ClassId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myClass);
-        }
-
-        /**
-         * Load an Encrypted Class.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pName the encrypted name
-         * @param pDesc the encrypted description
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final byte[] pName,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create the tag */
-            EventClass myClass = new EventClass(this, pId, pControlId, pName, pDesc);
 
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(pId)) {

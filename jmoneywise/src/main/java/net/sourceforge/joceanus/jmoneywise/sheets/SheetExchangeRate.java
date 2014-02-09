@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRatio;
  * @author Tony Washer
  */
 public class SheetExchangeRate
-        extends SheetDataItem<ExchangeRate, MoneyWiseDataType> {
+                              extends SheetDataItem<ExchangeRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */
@@ -94,16 +95,15 @@ public class SheetExchangeRate
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myFromId = loadInteger(COL_FROM);
-        Integer myToId = loadInteger(COL_TO);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(ExchangeRate.FIELD_FROM, loadInteger(COL_FROM));
+        myValues.addValue(ExchangeRate.FIELD_TO, loadInteger(COL_TO));
+        myValues.addValue(ExchangeRate.FIELD_RATE, loadRatio(COL_RATE));
 
-        /* Access the Date and Rate */
-        JDateDay myDate = loadDate(COL_DATE);
-        JRatio myRate = loadRatio(COL_RATE);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myDate, myFromId, myToId, myRate);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SheetExchangeRate
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
+        /* Validate the exchange Rates */
         theList.validateOnLoad();
     }
 }

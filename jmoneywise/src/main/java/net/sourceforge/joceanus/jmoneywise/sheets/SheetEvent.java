@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
@@ -41,6 +42,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -52,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetEvent
-        extends SheetDataItem<Event, MoneyWiseDataType> {
+                       extends SheetDataItem<Event, MoneyWiseDataType> {
     /**
      * NamedArea for Events.
      */
@@ -170,25 +172,20 @@ public class SheetEvent
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myDebitId = loadInteger(COL_DEBIT);
-        Integer myCreditId = loadInteger(COL_CREDIT);
-        Integer myCatId = loadInteger(COL_CATEGORY);
-        Integer myParentId = loadInteger(COL_PARENT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
+        myValues.addValue(Event.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Event.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(Event.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
+        myValues.addValue(Event.FIELD_DEBIT, loadInteger(COL_DEBIT));
+        myValues.addValue(Event.FIELD_CREDIT, loadInteger(COL_CREDIT));
+        myValues.addValue(Event.FIELD_AMOUNT, loadBytes(COL_AMOUNT));
+        myValues.addValue(Event.FIELD_RECONCILED, loadBoolean(COL_RECONCILED));
+        myValues.addValue(Event.FIELD_SPLIT, loadBoolean(COL_SPLIT));
+        myValues.addValue(Event.FIELD_PARENT, loadInteger(COL_PARENT));
 
-        /* Load flags */
-        Boolean myReconciled = loadBoolean(COL_RECONCILED);
-        Boolean mySplit = loadBoolean(COL_SPLIT);
-
-        /* Access the date and years */
-        JDateDay myDate = loadDate(COL_DATE);
-
-        /* Access the binary values */
-        byte[] myAmount = loadBytes(COL_AMOUNT);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled, mySplit, myParentId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -572,6 +569,9 @@ public class SheetEvent
                 }
             }
 
+            /* Resolve ValueLinks */
+            myInfoList.resolveValueLinks();
+
             /* Sort the list */
             myList.resolveDataSetLinks();
             myList.reSort();
@@ -592,7 +592,7 @@ public class SheetEvent
      * EventInfoSet sheet.
      */
     private static class SheetEventInfoSet
-            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+                                          extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

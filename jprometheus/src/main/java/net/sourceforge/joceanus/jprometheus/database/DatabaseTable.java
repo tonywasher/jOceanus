@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -246,10 +247,10 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Load an individual item from the result set.
-     * @param pId the id of the item
+     * @return the values for the row
      * @throws JOceanusException on error
      */
-    protected abstract void loadItem(Integer pId) throws JOceanusException;
+    protected abstract DataValues<E> loadValues() throws JOceanusException;
 
     /**
      * Set a field value for an item.
@@ -315,10 +316,9 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
             while (nextLine()) {
                 /* Read in the results */
                 theTable.loadResults(theResults);
-                Integer myId = theTable.getIntegerValue(DataItem.FIELD_ID);
 
                 /* Load the next item */
-                loadItem(myId);
+                theList.addValuesItem(loadValues());
 
                 /* Report the progress */
                 myCount++;
@@ -731,5 +731,20 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
         } catch (SQLException e) {
             throw new JPrometheusIOException("Failed to purge " + getTableName(), e);
         }
+    }
+
+    /**
+     * Obtain row values.
+     * @param pName the name of the item
+     * @return the row values.
+     * @throws JOceanusException on error
+     */
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Allocate the values */
+        DataValues<E> myValues = new DataValues<E>(pName);
+
+        /* Add the id and return the new values */
+        myValues.addValue(DataItem.FIELD_ID, theTable.getIntegerValue(DataItem.FIELD_ID));
+        return myValues;
     }
 }

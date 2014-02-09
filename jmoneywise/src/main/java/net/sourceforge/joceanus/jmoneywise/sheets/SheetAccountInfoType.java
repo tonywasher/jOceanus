@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountInfoType
-        extends SheetStaticData<AccountInfoType, MoneyWiseDataType> {
+                                 extends SheetStaticData<AccountInfoType, MoneyWiseDataType> {
     /**
      * NamedArea for AccountInfoType.
      */
@@ -89,8 +90,11 @@ public class SheetAccountInfoType
                                      final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountInfoType.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -101,6 +105,15 @@ public class SheetAccountInfoType
                                      final String pDesc) throws JOceanusException {
         /* Create the item */
         theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 
     /**

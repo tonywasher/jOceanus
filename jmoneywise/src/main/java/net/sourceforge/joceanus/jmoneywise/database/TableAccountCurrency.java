@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
@@ -38,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableStaticData extension for AccountCategoryType.
  * @author Tony Washer
  */
-public class TableAccountCurrency
-        extends TableStaticData<AccountCurrency, MoneyWiseDataType> {
+public class TableAccountCurrency extends TableStaticData<AccountCurrency, MoneyWiseDataType> {
     /**
      * The table name.
      */
@@ -68,28 +67,16 @@ public class TableAccountCurrency
     }
 
     @Override
-    protected void loadTheItem(final Integer pId,
-                               final Integer pControlId,
-                               final Boolean isEnabled,
-                               final Integer pOrder,
-                               final byte[] pType,
-                               final byte[] pDesc) throws JOceanusException {
-        /* Note needed */
-    }
-
-    @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
-        Integer myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
-        byte[] myType = myTableDef.getBinaryValue(StaticData.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(StaticData.FIELD_DESC);
-        Boolean myDefault = myTableDef.getBooleanValue(AccountCurrency.FIELD_DEFAULT);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myEnabled, myOrder, myType, myDesc, myDefault);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
+        myValues.addValue(AccountCurrency.FIELD_DEFAULT, myTableDef.getBooleanValue(AccountCurrency.FIELD_DEFAULT));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -102,5 +89,14 @@ public class TableAccountCurrency
         } else {
             super.setFieldValue(pItem, iField);
         }
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* Sort the data */
+        theList.reSort();
+
+        /* Validate the data */
+        theList.validateOnLoad();
     }
 }

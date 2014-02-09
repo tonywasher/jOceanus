@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategory
-        extends SheetDataItem<EventCategory, MoneyWiseDataType> {
+                               extends SheetDataItem<EventCategory, MoneyWiseDataType> {
     /**
      * NamedArea for EventCategories.
      */
@@ -104,17 +105,16 @@ public class SheetEventCategory
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myCatId = loadInteger(COL_TYPE);
-        Integer myParentId = loadInteger(COL_PARENT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategory.OBJECT_NAME);
+        myValues.addValue(EventCategory.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(EventCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(EventCategory.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(EventCategory.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(EventCategory.FIELD_DESC, loadBytes(COL_DESC));
 
-        /* Access the Name and description */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId, myParentId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

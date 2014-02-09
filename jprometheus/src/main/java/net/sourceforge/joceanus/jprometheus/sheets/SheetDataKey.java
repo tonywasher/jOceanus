@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetDataKey
-        extends SheetDataItem<DataKey, CryptographyDataType> {
+                         extends SheetDataItem<DataKey, CryptographyDataType> {
     /**
      * SheetName for Keys.
      */
@@ -83,15 +84,14 @@ public class SheetDataKey
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControl = loadInteger(COL_CONTROLID);
-        Integer myKeyType = loadInteger(COL_KEYTYPE);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        myValues.addValue(DataKey.FIELD_CONTROLKEY, loadInteger(COL_CONTROLID));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
-        /* Access the Binary values */
-        byte[] myKey = loadBytes(COL_KEYDATA);
-
-        /* Add the DataKey */
-        theList.addSecureItem(pId, myControl, myKeyType, myKey);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
  * @author Tony Washer
  */
 public class SecurityPrice
-        extends EncryptedItem<MoneyWiseDataType>
+                          extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<SecurityPrice> {
     /**
      * Object name.
@@ -366,44 +366,6 @@ public class SecurityPrice
     }
 
     /**
-     * Secure Constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the control id
-     * @param pSecurityId the security id
-     * @param pDate the date
-     * @param pPrice the price
-     * @throws JOceanusException on error
-     */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
-                          final Integer pId,
-                          final Integer pControlId,
-                          final Integer pSecurityId,
-                          final JDateDay pDate,
-                          final byte[] pPrice) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the Id */
-            setValueSecurity(pSecurityId);
-
-            /* Store the controlId */
-            setControlKey(pControlId);
-
-            /* Record the date and price */
-            setValueDate(pDate);
-            setValuePrice(pPrice);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -628,7 +590,7 @@ public class SecurityPrice
      * Price List.
      */
     public static class SecurityPriceList
-            extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
+                                         extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -838,33 +800,6 @@ public class SecurityPrice
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
-                myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPrice, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPrice);
-        }
-
-        /**
-         * Load an Encrypted price.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pDate the date
-         * @param pSecurityId the security id
-         * @param pPrice the price
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final JDateDay pDate,
-                                  final Integer pSecurityId,
-                                  final byte[] pPrice) throws JOceanusException {
-            /* Create the price and PricePoint */
-            SecurityPrice myPrice = new SecurityPrice(this, pId, pControlId, pSecurityId, pDate, pPrice);
-
-            /* Check that this PriceId has not been previously added */
-            if (!isIdUnique(pId)) {
                 myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
                 throw new JMoneyWiseDataException(myPrice, ERROR_VALIDATION);
             }

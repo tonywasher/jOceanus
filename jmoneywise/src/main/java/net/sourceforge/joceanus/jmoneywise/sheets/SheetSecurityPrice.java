@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetSecurityPrice
-        extends SheetDataItem<SecurityPrice, MoneyWiseDataType> {
+                               extends SheetDataItem<SecurityPrice, MoneyWiseDataType> {
     /**
      * NamedArea for Prices.
      */
@@ -95,16 +96,15 @@ public class SheetSecurityPrice
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer mySecId = loadInteger(COL_SECURITY);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        myValues.addValue(SecurityPrice.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
+        myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(SecurityPrice.FIELD_PRICE, loadBytes(COL_PRICE));
 
-        /* Access the rates and end-date */
-        JDateDay myDate = loadDate(COL_DATE);
-        byte[] myPriceBytes = loadBytes(COL_PRICE);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, mySecId, myPriceBytes);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

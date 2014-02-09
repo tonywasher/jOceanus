@@ -32,19 +32,18 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TableEncrypted extension for Event.
  * @author Tony Washer
  */
-public class TableEvent
-        extends TableEncrypted<Event, MoneyWiseDataType> {
+public class TableEvent extends TableEncrypted<Event, MoneyWiseDataType> {
     /**
      * The name of the Events table.
      */
@@ -86,21 +85,23 @@ public class TableEvent
 
     /* Load the event */
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        JDateDay myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
-        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
-        Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
-        Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
-        Boolean myReconciled = myTableDef.getBooleanValue(EventBase.FIELD_RECONCILED);
-        Boolean mySplit = myTableDef.getBooleanValue(EventBase.FIELD_SPLIT);
-        Integer myParentId = myTableDef.getIntegerValue(EventBase.FIELD_PARENT);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myReconciled, mySplit, myParentId);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Event.OBJECT_NAME);
+        myValues.addValue(Event.FIELD_DATE, myTableDef.getDateValue(Event.FIELD_DATE));
+        myValues.addValue(Event.FIELD_CATEGORY, myTableDef.getIntegerValue(Event.FIELD_CATEGORY));
+        myValues.addValue(Event.FIELD_DEBIT, myTableDef.getIntegerValue(Event.FIELD_DEBIT));
+        myValues.addValue(Event.FIELD_CREDIT, myTableDef.getIntegerValue(Event.FIELD_CREDIT));
+        myValues.addValue(Event.FIELD_AMOUNT, myTableDef.getBinaryValue(Event.FIELD_AMOUNT));
+        myValues.addValue(Event.FIELD_RECONCILED, myTableDef.getBooleanValue(Event.FIELD_RECONCILED));
+        myValues.addValue(Event.FIELD_SPLIT, myTableDef.getBooleanValue(Event.FIELD_SPLIT));
+        myValues.addValue(Event.FIELD_PARENT, myTableDef.getIntegerValue(Event.FIELD_PARENT));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override

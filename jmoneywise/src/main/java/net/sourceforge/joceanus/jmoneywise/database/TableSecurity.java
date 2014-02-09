@@ -25,14 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
@@ -42,8 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Security.
  */
-public class TableSecurity
-        extends TableEncrypted<Security, MoneyWiseDataType> {
+public class TableSecurity extends TableEncrypted<Security, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -83,20 +81,22 @@ public class TableSecurity
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myTypeId = myTableDef.getIntegerValue(Security.FIELD_SECTYPE);
-        Integer myParentId = myTableDef.getIntegerValue(Security.FIELD_PARENT);
-        Integer myCurrencyId = myTableDef.getIntegerValue(Security.FIELD_CURRENCY);
-        byte[] myName = myTableDef.getBinaryValue(Security.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(Security.FIELD_DESC);
-        byte[] mySymbol = myTableDef.getBinaryValue(Security.FIELD_SYMBOL);
-        Boolean isClosed = myTableDef.getBooleanValue(Security.FIELD_CLOSED);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, myTypeId, myParentId, mySymbol, myCurrencyId, isClosed);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClassLink.OBJECT_NAME);
+        myValues.addValue(Security.FIELD_NAME, myTableDef.getBinaryValue(Security.FIELD_NAME));
+        myValues.addValue(Security.FIELD_DESC, myTableDef.getBinaryValue(Security.FIELD_DESC));
+        myValues.addValue(Security.FIELD_SECTYPE, myTableDef.getIntegerValue(Security.FIELD_SECTYPE));
+        myValues.addValue(Security.FIELD_PARENT, myTableDef.getIntegerValue(Security.FIELD_PARENT));
+        myValues.addValue(Security.FIELD_CURRENCY, myTableDef.getIntegerValue(Security.FIELD_CURRENCY));
+        myValues.addValue(Security.FIELD_SYMBOL, myTableDef.getBinaryValue(Security.FIELD_SYMBOL));
+        myValues.addValue(Security.FIELD_CLOSED, myTableDef.getBooleanValue(Security.FIELD_CLOSED));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -133,9 +133,6 @@ public class TableSecurity
         theList.touchUnderlyingItems();
 
         /* Validate the securities */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theList.validateOnLoad();
     }
 }

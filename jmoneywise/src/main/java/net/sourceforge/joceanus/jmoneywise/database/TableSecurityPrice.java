@@ -26,27 +26,23 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TableEncrypted extension for SecurityPrice.
  * @author Tony Washer
  */
-public class TableSecurityPrice
-        extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
+public class TableSecurityPrice extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * The name of the Prices table.
      */
@@ -83,16 +79,18 @@ public class TableSecurityPrice
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer mySecurityId = myTableDef.getIntegerValue(SecurityPrice.FIELD_SECURITY);
-        JDateDay myDate = myTableDef.getDateValue(SecurityPrice.FIELD_DATE);
-        byte[] myPrice = myTableDef.getBinaryValue(SecurityPrice.FIELD_PRICE);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, mySecurityId, myPrice);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        myValues.addValue(SecurityPrice.FIELD_SECURITY, myTableDef.getIntegerValue(SecurityPrice.FIELD_SECURITY));
+        myValues.addValue(SecurityPrice.FIELD_DATE, myTableDef.getDateValue(SecurityPrice.FIELD_DATE));
+        myValues.addValue(SecurityPrice.FIELD_PRICE, myTableDef.getBinaryValue(SecurityPrice.FIELD_PRICE));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -121,9 +119,6 @@ public class TableSecurityPrice
         theList.touchUnderlyingItems();
 
         /* Validate the security prices */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theList.validateOnLoad();
     }
 }

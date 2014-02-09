@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class AccountRate
-        extends EncryptedItem<MoneyWiseDataType>
+                        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountRate> {
     /**
      * Object name.
@@ -477,49 +477,6 @@ public class AccountRate
     }
 
     /**
-     * Secure Constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param uControlId the control id
-     * @param uAccountId the account id
-     * @param pEndDate the end date
-     * @param pRate the rate
-     * @param pBonus the bonus
-     * @throws JOceanusException on error
-     */
-    private AccountRate(final AccountRateList pList,
-                        final Integer uId,
-                        final Integer uControlId,
-                        final Integer uAccountId,
-                        final JDateDay pEndDate,
-                        final byte[] pRate,
-                        final byte[] pBonus) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the Id */
-            setValueAccount(uAccountId);
-
-            /* Store the controlId */
-            setControlKey(uControlId);
-
-            /* Record the date */
-            setValueEndDate(pEndDate);
-
-            /* Set the encrypted objects */
-            setValueRate(pRate);
-            setValueBonus(pBonus);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -758,7 +715,7 @@ public class AccountRate
      * List class.
      */
     public static class AccountRateList
-            extends EncryptedList<AccountRate, MoneyWiseDataType> {
+                                       extends EncryptedList<AccountRate, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -986,34 +943,6 @@ public class AccountRate
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
-                throw new JMoneyWiseDataException(myRate, "Duplicate RateId");
-            }
-
-            /* Add to the list */
-            append(myRate);
-        }
-
-        /**
-         * Load an Encrypted Rate.
-         * @param uId the id
-         * @param uControlId the control id
-         * @param uAccountId the account id
-         * @param pRate the Rate
-         * @param pDate the end date
-         * @param pBonus the Bonus
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
-                                  final Integer uAccountId,
-                                  final byte[] pRate,
-                                  final JDateDay pDate,
-                                  final byte[] pBonus) throws JOceanusException {
-            /* Create the period */
-            AccountRate myRate = new AccountRate(this, uId, uControlId, uAccountId, pDate, pRate, pBonus);
-
-            /* Check that this RateId has not been previously added */
-            if (!isIdUnique(uId)) {
                 throw new JMoneyWiseDataException(myRate, "Duplicate RateId");
             }
 

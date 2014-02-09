@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCurrency
-        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+                            extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -196,30 +196,6 @@ public class AccountCurrency
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the Account Currency with
-     * @param pId ID of Account Currency
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the account currency enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of Account Currency
-     * @param pDesc Encrypted Description of Account Currency
-     * @param pDefault is this the default currency
-     * @throws JOceanusException on error
-     */
-    private AccountCurrency(final AccountCurrencyList pList,
-                            final Integer pId,
-                            final Integer pControlId,
-                            final Boolean isEnabled,
-                            final Integer pOrder,
-                            final byte[] pName,
-                            final byte[] pDesc,
-                            final Boolean pDefault) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-        setValueDefault(pDefault);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -316,7 +292,7 @@ public class AccountCurrency
      * Represents a list of {@link AccountCurrency} objects.
      */
     public static class AccountCurrencyList
-            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+                                           extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -454,45 +430,6 @@ public class AccountCurrency
             }
 
             /* Add the Account Currency to the list */
-            append(myCurr);
-
-            /* Validate the AccountCurrency */
-            myCurr.validate();
-
-            /* Handle validation failure */
-            if (myCurr.hasErrors()) {
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add an AccountCurrency to the list.
-         * @param pId the Id of the account currency
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the account currency enabled
-         * @param pOrder the sort order
-         * @param pCurrency the encrypted Name of the account currency
-         * @param pDesc the Encrypted Description of the account currency
-         * @param pDefault is this the default currency
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pCurrency,
-                                  final byte[] pDesc,
-                                  final Boolean pDefault) throws JOceanusException {
-            /* Create a new Account Currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pId, pControlId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
-
-            /* Check that this AccountCurrencyId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
-
-            /* Add the AccountCurrency to the list */
             append(myCurr);
 
             /* Validate the AccountCurrency */

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategoryType
-        extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
+                                   extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
 
     /**
      * NamedArea for Category Types.
@@ -100,8 +101,11 @@ public class SheetEventCategoryType
                                      final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategoryType.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     /**
@@ -121,6 +125,15 @@ public class SheetEventCategoryType
                                      final String pDesc) throws JOceanusException {
         /* Create the item */
         theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 
     /**

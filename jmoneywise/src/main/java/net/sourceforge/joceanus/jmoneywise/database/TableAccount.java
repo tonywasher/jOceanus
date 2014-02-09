@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
@@ -41,8 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for Account.
  * @author Tony Washer
  */
-public class TableAccount
-        extends TableEncrypted<Account, MoneyWiseDataType> {
+public class TableAccount extends TableEncrypted<Account, MoneyWiseDataType> {
     /**
      * The name of the Account table.
      */
@@ -81,19 +81,21 @@ public class TableAccount
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
-        Integer myCategoryId = myTableDef.getIntegerValue(AccountBase.FIELD_CATEGORY);
-        Boolean isClosed = myTableDef.getBooleanValue(AccountBase.FIELD_CLOSED);
-        Boolean isTaxFree = myTableDef.getBooleanValue(AccountBase.FIELD_TAXFREE);
-        Boolean isGross = myTableDef.getBooleanValue(AccountBase.FIELD_GROSS);
-        Integer myCurrencyId = myTableDef.getIntegerValue(AccountBase.FIELD_CURRENCY);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myCategoryId, isClosed, isTaxFree, isGross, myCurrencyId);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
+        myValues.addValue(Account.FIELD_NAME, myTableDef.getBinaryValue(Account.FIELD_NAME));
+        myValues.addValue(Account.FIELD_CATEGORY, myTableDef.getIntegerValue(Account.FIELD_CATEGORY));
+        myValues.addValue(Account.FIELD_CURRENCY, myTableDef.getIntegerValue(Account.FIELD_CURRENCY));
+        myValues.addValue(Account.FIELD_GROSS, myTableDef.getBooleanValue(Account.FIELD_GROSS));
+        myValues.addValue(Account.FIELD_TAXFREE, myTableDef.getBooleanValue(Account.FIELD_TAXFREE));
+        myValues.addValue(Account.FIELD_CLOSED, myTableDef.getBooleanValue(Account.FIELD_CLOSED));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override

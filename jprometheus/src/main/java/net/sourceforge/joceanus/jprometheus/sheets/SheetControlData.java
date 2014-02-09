@@ -24,8 +24,10 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
+import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -33,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlData
-        extends SheetDataItem<ControlData, CryptographyDataType> {
+                             extends SheetDataItem<ControlData, CryptographyDataType> {
     /**
      * SheetName for ControlData.
      */
@@ -83,14 +85,13 @@ public class SheetControlData
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myVersion = loadInteger(COL_VERSION);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        myValues.addValue(ControlData.FIELD_DATAVERSION, loadInteger(COL_VERSION));
+        myValues.addValue(ControlData.FIELD_CONTROLKEY, loadInteger(COL_CONTROLID));
 
-        /* Access the Control Key */
-        Integer myControl = loadInteger(COL_CONTROLID);
-
-        /* Add the Control */
-        theList.addSecureItem(pId, myVersion, myControl);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

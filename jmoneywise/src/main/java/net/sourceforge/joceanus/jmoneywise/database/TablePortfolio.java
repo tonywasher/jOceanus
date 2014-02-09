@@ -23,14 +23,13 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
@@ -39,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Portfolio.
  */
-public class TablePortfolio
-        extends TableEncrypted<Portfolio, MoneyWiseDataType> {
+public class TablePortfolio extends TableEncrypted<Portfolio, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -75,18 +73,20 @@ public class TablePortfolio
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        byte[] myName = myTableDef.getBinaryValue(Portfolio.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(Portfolio.FIELD_DESC);
-        Integer myHoldingId = myTableDef.getIntegerValue(Portfolio.FIELD_HOLDING);
-        Boolean isTaxFree = myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE);
-        Boolean isClosed = myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, myHoldingId, isTaxFree, isClosed);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClassLink.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_NAME, myTableDef.getBinaryValue(Portfolio.FIELD_NAME));
+        myValues.addValue(Portfolio.FIELD_DESC, myTableDef.getBinaryValue(Portfolio.FIELD_DESC));
+        myValues.addValue(Portfolio.FIELD_HOLDING, myTableDef.getIntegerValue(Portfolio.FIELD_HOLDING));
+        myValues.addValue(Portfolio.FIELD_TAXFREE, myTableDef.getBooleanValue(Portfolio.FIELD_TAXFREE));
+        myValues.addValue(Portfolio.FIELD_CLOSED, myTableDef.getBooleanValue(Portfolio.FIELD_CLOSED));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -118,10 +118,7 @@ public class TablePortfolio
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the portfolios */
+        theList.validateOnLoad();
     }
 }

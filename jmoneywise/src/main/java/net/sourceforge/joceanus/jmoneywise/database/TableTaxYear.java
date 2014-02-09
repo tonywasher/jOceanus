@@ -31,19 +31,18 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * DatabaseTable extension for TaxYear.
  * @author Tony Washer
  */
-public class TableTaxYear
-        extends DatabaseTable<TaxYear, MoneyWiseDataType> {
+public class TableTaxYear extends DatabaseTable<TaxYear, MoneyWiseDataType> {
     /**
      * The name of the TaxYears table.
      */
@@ -78,14 +77,17 @@ public class TableTaxYear
     }
 
     @Override
-    public void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        JDateDay myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
-        Integer myRegime = myTableDef.getIntegerValue(TaxYearBase.FIELD_REGIME);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myRegime, myYear);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
+        myValues.addValue(TaxYear.FIELD_TAXYEAR, myTableDef.getDateValue(TaxYear.FIELD_TAXYEAR));
+        myValues.addValue(TaxYear.FIELD_REGIME, myTableDef.getIntegerValue(TaxYear.FIELD_REGIME));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override

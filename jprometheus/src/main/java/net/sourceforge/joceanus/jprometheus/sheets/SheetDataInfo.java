@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-        extends SheetDataItem<T, E> {
+                                                                                          extends SheetDataItem<T, E> {
     /**
      * InfoType column.
      */
@@ -112,5 +113,18 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     protected int getLastColumn() {
         /* Return the last column */
         return COL_VALUE;
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+
+        /* Add the info and return the new values */
+        myValues.addValue(DataInfo.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));
+        myValues.addValue(DataInfo.FIELD_OWNER, loadInteger(COL_OWNER));
+        myValues.addValue(DataInfo.FIELD_VALUE, loadBytes(COL_VALUE));
+        return myValues;
     }
 }

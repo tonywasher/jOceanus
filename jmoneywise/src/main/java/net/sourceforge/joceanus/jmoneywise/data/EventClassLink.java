@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Event Class Link for an event.
  */
 public class EventClassLink
-        extends DataItem<MoneyWiseDataType>
+                           extends DataItem<MoneyWiseDataType>
         implements Comparable<EventClassLink> {
     /**
      * Object name.
@@ -202,25 +202,6 @@ public class EventClassLink
                              final EventClassLink pTagLink) {
         /* Set standard values */
         super(pList, pTagLink);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the TagLink id
-     * @param pEventId the id of the event
-     * @param pClassId the id of the eventClass
-     */
-    protected EventClassLink(final EventClassLinkList pList,
-                             final Integer pId,
-                             final Integer pEventId,
-                             final Integer pClassId) {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Store the IDs */
-        setValueEvent(pEventId);
-        setValueEventClass(pClassId);
     }
 
     /**
@@ -403,7 +384,7 @@ public class EventClassLink
      * The EventClassLink List class.
      */
     public static class EventClassLinkList
-            extends DataList<EventClassLink, MoneyWiseDataType> {
+                                          extends DataList<EventClassLink, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -497,29 +478,6 @@ public class EventClassLink
                                 final String pClass) throws JOceanusException {
             /* Create the link */
             EventClassLink myLink = new EventClassLink(this, pId, pEvent, pClass);
-
-            /* Check that this LinkId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myLink, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myLink);
-        }
-
-        /**
-         * Load a secure Category.
-         * @param pId the id
-         * @param pEventId the event id
-         * @param pClassId the class id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pEventId,
-                                  final Integer pClassId) throws JOceanusException {
-            /* Create the link */
-            EventClassLink myLink = new EventClassLink(this, pId, pEventId, pClassId);
 
             /* Check that this LinkId has not been previously added */
             if (!isIdUnique(pId)) {

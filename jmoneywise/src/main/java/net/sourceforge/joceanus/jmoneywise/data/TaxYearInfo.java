@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class TaxYearInfo
-        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+                        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -140,45 +140,6 @@ public class TaxYearInfo
         /* Record the Detail */
         setValueInfoType(pType);
         setValueOwner(pTaxYear);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the control id
-     * @param pInfoTypeId the info id
-     * @param pTaxYearId the TaxYear id
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private TaxYearInfo(final TaxInfoList pList,
-                        final Integer pId,
-                        final Integer pControlId,
-                        final Integer pInfoTypeId,
-                        final int pTaxYearId,
-                        final byte[] pValue) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pControlId, pInfoTypeId, pTaxYearId);
-
-        /* Protect against exceptions */
-        try {
-            /* Resolve data links */
-            MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getTaxInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getTaxYears());
-
-            /* Set the value */
-            setValue(pValue);
-
-            /* Access the TaxInfoSet and register this data */
-            TaxInfoSet mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
-
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -344,7 +305,7 @@ public class TaxYearInfo
      * TaxYearInfoList.
      */
     public static class TaxInfoList
-            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+                                   extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -434,41 +395,6 @@ public class TaxYearInfo
 
             /* return it */
             return myInfo;
-        }
-
-        /**
-         * Allow a TaxYearInfo to be added.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pInfoTypeId the info type id
-         * @param pTaxYearId the taxYear id
-         * @param pValue the data
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Integer pInfoTypeId,
-                                  final Integer pTaxYearId,
-                                  final byte[] pValue) throws JOceanusException {
-            /* Create the info */
-            TaxYearInfo myInfo = new TaxYearInfo(this, pId, pControlId, pInfoTypeId, pTaxYearId, pValue);
-
-            /* Check that this DataId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
-
-            /* Validate the information */
-            myInfo.validate();
-
-            /* Handle validation failure */
-            if (myInfo.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myInfo);
         }
 
         @Override

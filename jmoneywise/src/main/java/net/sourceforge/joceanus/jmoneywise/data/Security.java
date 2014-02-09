@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Security class.
  */
 public class Security
-        extends EncryptedItem<MoneyWiseDataType>
+                     extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Security> {
     /**
      * Object name.
@@ -663,58 +663,6 @@ public class Security
     }
 
     /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the Security id
-     * @param pControlId the control id
-     * @param pName the Encrypted Name of the security
-     * @param pDesc the Encrypted Description of the security
-     * @param pSecTypeId the id of the security type
-     * @param pParentId the id of the parent
-     * @param pSymbol the security symbol
-     * @param pCurrencyId the id of the currency
-     * @param pClosed is the security closed?
-     * @throws JOceanusException on error
-     */
-    protected Security(final SecurityList pList,
-                       final Integer pId,
-                       final Integer pControlId,
-                       final byte[] pName,
-                       final byte[] pDesc,
-                       final Integer pSecTypeId,
-                       final Integer pParentId,
-                       final byte[] pSymbol,
-                       final Integer pCurrencyId,
-                       final Boolean pClosed) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs */
-            setValueType(pSecTypeId);
-            setValueParent(pParentId);
-            setValueCurrency(pCurrencyId);
-
-            /* Set ControlId */
-            setControlKey(pControlId);
-
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-            setValueSymbol(pSymbol);
-
-            /* Store closed flag */
-            setValueClosed(pClosed);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
@@ -1108,7 +1056,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-            extends EncryptedList<Security, MoneyWiseDataType> {
+                                    extends EncryptedList<Security, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -1282,41 +1230,6 @@ public class Security
                                 final Boolean pClosed) throws JOceanusException {
             /* Create the security */
             Security mySecurity = new Security(this, pId, pName, pDesc, pSecType, pParent, pSymbol, pCurrency, pClosed);
-
-            /* Check that this SecurityId has not been previously added */
-            if (!isIdUnique(pId)) {
-                mySecurity.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(mySecurity, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(mySecurity);
-        }
-
-        /**
-         * Load an Encrypted Security.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pName the encrypted name
-         * @param pDesc the encrypted description
-         * @param pSecTypeId the security type id
-         * @param pParentId the parent id
-         * @param pSymbol the security symbol
-         * @param pCurrencyId the security currency
-         * @param pClosed is the security closed?
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final byte[] pName,
-                                  final byte[] pDesc,
-                                  final Integer pSecTypeId,
-                                  final Integer pParentId,
-                                  final byte[] pSymbol,
-                                  final Integer pCurrencyId,
-                                  final Boolean pClosed) throws JOceanusException {
-            /* Create the security */
-            Security mySecurity = new Security(this, pId, pControlId, pName, pDesc, pSecTypeId, pParentId, pSymbol, pCurrencyId, pClosed);
 
             /* Check that this SecurityId has not been previously added */
             if (!isIdUnique(pId)) {

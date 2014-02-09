@@ -23,14 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
@@ -40,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension EventClass.
  * @author Tony Washer
  */
-public class TableEventClass
-        extends TableEncrypted<EventClass, MoneyWiseDataType> {
+public class TableEventClass extends TableEncrypted<EventClass, MoneyWiseDataType> {
     /**
      * The name of the EventClass table.
      */
@@ -73,15 +70,17 @@ public class TableEventClass
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        byte[] myName = myTableDef.getBinaryValue(EventClass.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(EventClass.FIELD_DESC);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
+        myValues.addValue(EventClass.FIELD_NAME, myTableDef.getBinaryValue(EventClass.FIELD_NAME));
+        myValues.addValue(EventClass.FIELD_DESC, myTableDef.getBinaryValue(EventClass.FIELD_DESC));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -104,9 +103,6 @@ public class TableEventClass
         theList.reSort();
 
         /* Validate the event tags */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theList.validateOnLoad();
     }
 }

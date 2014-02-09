@@ -26,27 +26,23 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TableEncrypted extension for AccountRate.
  * @author Tony Washer
  */
-public class TableAccountRate
-        extends TableEncrypted<AccountRate, MoneyWiseDataType> {
+public class TableAccountRate extends TableEncrypted<AccountRate, MoneyWiseDataType> {
     /**
      * The name of the Rates table.
      */
@@ -84,17 +80,19 @@ public class TableAccountRate
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myAccountId = myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
-        byte[] myRate = myTableDef.getBinaryValue(AccountRate.FIELD_RATE);
-        byte[] myBonus = myTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
-        JDateDay myEndDate = myTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myAccountId, myRate, myEndDate, myBonus);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
+        myValues.addValue(AccountRate.FIELD_ACCOUNT, myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT));
+        myValues.addValue(AccountRate.FIELD_RATE, myTableDef.getBinaryValue(AccountRate.FIELD_RATE));
+        myValues.addValue(AccountRate.FIELD_BONUS, myTableDef.getBinaryValue(AccountRate.FIELD_BONUS));
+        myValues.addValue(AccountRate.FIELD_ENDDATE, myTableDef.getDateValue(AccountRate.FIELD_ENDDATE));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -125,9 +123,6 @@ public class TableAccountRate
         theList.touchUnderlyingItems();
 
         /* Validate the account rates */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theList.validateOnLoad();
     }
 }

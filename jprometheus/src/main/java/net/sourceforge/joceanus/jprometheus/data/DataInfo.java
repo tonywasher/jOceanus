@@ -789,6 +789,28 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         return false;
     }
 
+    @Override
+    public void validate() {
+        I myType = getInfoType();
+        O myOwner = getOwner();
+        Object myValue = getValue(Object.class);
+
+        /* InfoType must be non-null */
+        if (myType == null) {
+            addError(ERROR_MISSING, FIELD_INFOTYPE);
+        }
+
+        /* Owner must be non-null */
+        if (myOwner == null) {
+            addError(ERROR_MISSING, FIELD_OWNER);
+        }
+
+        /* Value must be non-null */
+        if (myValue == null) {
+            addError(ERROR_MISSING, FIELD_VALUE);
+        }
+    }
+
     /**
      * List class for DataInfo.
      * @param <T> the DataType

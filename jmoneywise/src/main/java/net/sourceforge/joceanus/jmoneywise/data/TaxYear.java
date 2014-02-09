@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class TaxYear
-        extends TaxYearBase
+                    extends TaxYearBase
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -710,27 +710,6 @@ public class TaxYear
     }
 
     /**
-     * Secure constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pRegimeId the regime id
-     * @param pDate the date
-     * @throws JOceanusException on error
-     */
-    public TaxYear(final TaxYearList pList,
-                   final Integer pId,
-                   final Integer pRegimeId,
-                   final JDateDay pDate) throws JOceanusException {
-        /* Initialise item */
-        super(pList, pId, pRegimeId, pDate);
-
-        /* Create the InfoSet */
-        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * Open constructor.
      * @param pList the list
      * @param pId the id
@@ -815,7 +794,7 @@ public class TaxYear
      * The Tax Year List class.
      */
     public static class TaxYearList
-            extends TaxYearBaseList<TaxYear> {
+                                   extends TaxYearBaseList<TaxYear> {
         /**
          * Local Report fields.
          */
@@ -994,35 +973,6 @@ public class TaxYear
         @Override
         public TaxYear addNewItem() {
             throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Allow a tax parameter to be added.
-         * @param pId the id
-         * @param pRegimeId the regime id
-         * @param pDate the date
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pRegimeId,
-                                  final JDateDay pDate) throws JOceanusException {
-            /* Create the tax year */
-            TaxYear myTaxYear = new TaxYear(this, pId, pRegimeId, pDate);
-
-            /* Check that this TaxYearId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myTaxYear.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTaxYear, ERROR_VALIDATION);
-            }
-
-            /* Check that this TaxYear has not been previously added */
-            if (findTaxYearForDate(new JDateDay(pDate)) != null) {
-                myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
-                throw new JMoneyWiseDataException(myTaxYear, ERROR_VALIDATION);
-            }
-
-            /* Add the TaxYear to the end of the list */
-            append(myTaxYear);
         }
 
         /**

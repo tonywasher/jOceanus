@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -63,13 +64,17 @@ public class TableTaxBasis
     }
 
     @Override
-    protected void loadTheItem(final Integer pId,
-                               final Integer pControlId,
-                               final Boolean isEnabled,
-                               final Integer iOrder,
-                               final byte[] pType,
-                               final byte[] pDesc) throws JOceanusException {
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pType, pDesc);
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(TaxBasis.OBJECT_NAME);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* Sort the data */
+        theList.reSort();
+
+        /* Validate the data */
+        theList.validateOnLoad();
     }
 }

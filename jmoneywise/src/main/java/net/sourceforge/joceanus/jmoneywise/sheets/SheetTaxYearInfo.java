@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfo
-        extends SheetDataInfo<TaxYearInfo, MoneyWiseDataType> {
+                             extends SheetDataInfo<TaxYearInfo, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYearInfo.
      */
@@ -86,12 +87,18 @@ public class SheetTaxYearInfo
                                      final Integer pInfoTypeId,
                                      final Integer pOwnerId,
                                      final byte[] pValue) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYearInfo.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
+        /* Validate info */
+        theList.validateOnLoad();
+
         /* Touch underlying items */
         theTaxYears.touchUnderlyingItems();
 

@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,8 +41,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
-public class SheetAccountRate
-        extends SheetDataItem<AccountRate, MoneyWiseDataType> {
+public class SheetAccountRate extends SheetDataItem<AccountRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */
@@ -100,17 +100,16 @@ public class SheetAccountRate
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myActId = loadInteger(COL_ACCOUNT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
+        myValues.addValue(AccountRate.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(AccountRate.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
+        myValues.addValue(AccountRate.FIELD_RATE, loadBytes(COL_RATE));
+        myValues.addValue(AccountRate.FIELD_BONUS, loadBytes(COL_BONUS));
+        myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
 
-        /* Access the rates and end-date */
-        byte[] myRateBytes = loadBytes(COL_RATE);
-        byte[] myBonusBytes = loadBytes(COL_BONUS);
-        JDateDay myEndDate = loadDate(COL_ENDDATE);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

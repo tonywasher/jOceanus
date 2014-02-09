@@ -24,9 +24,10 @@ package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
-import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
+import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -40,11 +41,6 @@ public class TableControlData
     protected static final String TABLE_NAME = ControlData.LIST_NAME;
 
     /**
-     * The control data list.
-     */
-    private ControlDataList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -53,25 +49,27 @@ public class TableControlData
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addIntegerColumn(ControlData.FIELD_VERSION);
+        myTableDef.addIntegerColumn(ControlData.FIELD_DATAVERSION);
         myTableDef.addReferenceColumn(ControlData.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        theList = pData.getControlData();
-        setList(theList);
+        setList(pData.getControlData());
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<CryptographyDataType> loadValues() throws JOceanusException {
+        /* Access table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);
-        Integer myControl = myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myVers, myControl);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        myValues.addValue(ControlData.FIELD_DATAVERSION, myTableDef.getIntegerValue(ControlData.FIELD_DATAVERSION));
+        myValues.addValue(ControlData.FIELD_CONTROLKEY, myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -79,7 +77,7 @@ public class TableControlData
                                  final JDataField pField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (ControlData.FIELD_VERSION.equals(pField)) {
+        if (ControlData.FIELD_DATAVERSION.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getDataVersion());
         } else if (ControlData.FIELD_CONTROLKEY.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getControlKeyId());

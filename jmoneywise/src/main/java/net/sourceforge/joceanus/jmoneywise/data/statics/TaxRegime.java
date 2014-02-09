@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxRegime
-        extends StaticData<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
+                      extends StaticData<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -128,27 +128,6 @@ public class TaxRegime
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the TaxRegime with
-     * @param pId ID of TaxRegime
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the regime enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of TaxRegime
-     * @param pDesc Encrypted Description of TaxRegime
-     * @throws JOceanusException on error
-     */
-    private TaxRegime(final TaxRegimeList pList,
-                      final Integer pId,
-                      final Integer pControlId,
-                      final Boolean isEnabled,
-                      final Integer pOrder,
-                      final byte[] pName,
-                      final byte[] pDesc) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -187,7 +166,7 @@ public class TaxRegime
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList
-            extends StaticList<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
+                                     extends StaticList<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -332,43 +311,6 @@ public class TaxRegime
             }
 
             /* Add the Tax Regime to the list */
-            append(myTaxReg);
-
-            /* Validate the TaxRegime */
-            myTaxReg.validate();
-
-            /* Handle validation failure */
-            if (myTaxReg.hasErrors()) {
-                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a TaxRegime.
-         * @param pId the Id of the tax regime
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the regime enabled
-         * @param pOrder the sort order
-         * @param pTaxRegime the Encrypted Name of the tax regime
-         * @param pDesc the Encrypted Description of the tax regime
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pTaxRegime,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create a new tax regime */
-            TaxRegime myTaxReg = new TaxRegime(this, pId, pControlId, isEnabled, pOrder, pTaxRegime, pDesc);
-
-            /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
-            }
-
-            /* Add the TaxRegime to the list */
             append(myTaxReg);
 
             /* Validate the TaxRegime */

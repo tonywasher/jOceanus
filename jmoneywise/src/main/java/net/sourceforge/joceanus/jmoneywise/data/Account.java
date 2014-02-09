@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class Account
-        extends AccountBase
+                    extends AccountBase
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -610,37 +610,6 @@ public class Account
     }
 
     /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the Account id
-     * @param pControlId the control id
-     * @param pName the Encrypted Name of the account
-     * @param pActCatId the Account category id
-     * @param isClosed is the account closed?
-     * @param isTaxFree is the account taxFree?
-     * @param isGross is the account grossInterest?
-     * @param uCurrencyId the Account currency id
-     * @throws JOceanusException on error
-     */
-    private Account(final AccountList pList,
-                    final Integer pId,
-                    final Integer pControlId,
-                    final byte[] pName,
-                    final Integer pActCatId,
-                    final Boolean isClosed,
-                    final Boolean isTaxFree,
-                    final Boolean isGross,
-                    final Integer uCurrencyId) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, uCurrencyId);
-
-        /* Create the InfoSet */
-        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
@@ -1040,7 +1009,7 @@ public class Account
      * The Account List class.
      */
     public static class AccountList
-            extends AccountBaseList<Account> {
+                                   extends AccountBaseList<Account> {
         /**
          * Local Report fields.
          */
@@ -1270,45 +1239,6 @@ public class Account
             /* Add the Account to the list */
             append(myAccount);
             return myAccount;
-        }
-
-        /**
-         * Add an Account.
-         * @param pId the Id of the account
-         * @param pControlId the control id
-         * @param pName the Encrypted Name of the account
-         * @param pActCatId the Id of the account category
-         * @param isClosed is the account closed?
-         * @param isTaxFree is the account taxFree?
-         * @param isGross is the account gross Interest?
-         * @param pCurrencyId the Account currency id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final byte[] pName,
-                                  final Integer pActCatId,
-                                  final Boolean isClosed,
-                                  final Boolean isTaxFree,
-                                  final Boolean isGross,
-                                  final Integer pCurrencyId) throws JOceanusException {
-            /* Create the new account */
-            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, pCurrencyId);
-
-            /* Check that this AccountId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
-            }
-
-            /* Check that this Account has not been previously added */
-            if (findItemByName(myAccount.getName()) != null) {
-                myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
-            }
-
-            /* Add the Account to the list */
-            append(myAccount);
         }
 
         @Override

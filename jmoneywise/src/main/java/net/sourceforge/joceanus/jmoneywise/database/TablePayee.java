@@ -25,14 +25,12 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
@@ -42,8 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Payee.
  */
-public class TablePayee
-        extends TableEncrypted<Payee, MoneyWiseDataType> {
+public class TablePayee extends TableEncrypted<Payee, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -80,17 +77,19 @@ public class TablePayee
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myTypeId = myTableDef.getIntegerValue(Payee.FIELD_PAYEETYPE);
-        byte[] myName = myTableDef.getBinaryValue(Payee.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(Payee.FIELD_DESC);
-        Boolean isClosed = myTableDef.getBooleanValue(Payee.FIELD_CLOSED);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, myTypeId, isClosed);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        myValues.addValue(Payee.FIELD_NAME, myTableDef.getBinaryValue(Payee.FIELD_NAME));
+        myValues.addValue(Payee.FIELD_DESC, myTableDef.getBinaryValue(Payee.FIELD_DESC));
+        myValues.addValue(Payee.FIELD_PAYEETYPE, myTableDef.getIntegerValue(Payee.FIELD_PAYEETYPE));
+        myValues.addValue(Payee.FIELD_CLOSED, myTableDef.getBooleanValue(Payee.FIELD_CLOSED));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -120,10 +119,7 @@ public class TablePayee
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the payees */
+        theList.validateOnLoad();
     }
 }

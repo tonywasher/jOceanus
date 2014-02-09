@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jprometheus.data.ControlKey;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlKey
-        extends SheetDataItem<ControlKey, CryptographyDataType> {
+                            extends SheetDataItem<ControlKey, CryptographyDataType> {
     /**
      * SheetName for Keys.
      */
@@ -78,11 +79,12 @@ public class SheetControlKey
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the binary values */
-        byte[] myHash = loadBytes(COL_KEYDATA);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
+        myValues.addValue(ControlKey.FIELD_PASSHASH, loadBytes(COL_KEYDATA));
 
-        /* Add the Control */
-        theList.addSecureItem(pId, myHash);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

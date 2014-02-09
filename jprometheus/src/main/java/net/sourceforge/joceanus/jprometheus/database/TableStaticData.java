@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jprometheus.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -33,8 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
-        extends TableEncrypted<T, E> {
+public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>> extends TableEncrypted<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -55,37 +55,6 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
         mySortCol.setSortOrder(SortOrder.ASCENDING);
     }
 
-    /**
-     * Load the static data.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param isEnabled is the item enabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    protected abstract void loadTheItem(final Integer pId,
-                                        final Integer pControlId,
-                                        final Boolean isEnabled,
-                                        final Integer iOrder,
-                                        final byte[] pName,
-                                        final byte[] pDesc) throws JOceanusException;
-
-    @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
-        TableDefinition myTableDef = getTableDef();
-        Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
-        Integer myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
-        byte[] myType = myTableDef.getBinaryValue(StaticData.FIELD_NAME);
-        byte[] myDesc = myTableDef.getBinaryValue(StaticData.FIELD_DESC);
-
-        /* Add into the list */
-        loadTheItem(pId, pControlId, myEnabled, myOrder, myType, myDesc);
-    }
-
     @Override
     protected void setFieldValue(final T pItem,
                                  final JDataField iField) throws JOceanusException {
@@ -102,5 +71,19 @@ public abstract class TableStaticData<T extends StaticData<T, ?, E>, E extends E
         } else {
             super.setFieldValue(pItem, iField);
         }
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+        TableDefinition myTableDef = getTableDef();
+
+        /* Add the info and return the new values */
+        myValues.addValue(StaticData.FIELD_NAME, myTableDef.getBinaryValue(StaticData.FIELD_NAME));
+        myValues.addValue(StaticData.FIELD_DESC, myTableDef.getBinaryValue(StaticData.FIELD_DESC));
+        myValues.addValue(StaticData.FIELD_ORDER, myTableDef.getIntegerValue(StaticData.FIELD_ORDER));
+        myValues.addValue(StaticData.FIELD_ENABLED, myTableDef.getBooleanValue(StaticData.FIELD_ENABLED));
+        return myValues;
     }
 }

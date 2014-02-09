@@ -519,50 +519,6 @@ public final class EventCategory
     }
 
     /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the Category id
-     * @param pControlId the control id
-     * @param pName the Encrypted Name of the event category
-     * @param pDesc the Encrypted Description of the category
-     * @param pCatTypeId the id of the category type
-     * @param pParentId the id of the parent category
-     * @throws JOceanusException on error
-     */
-    protected EventCategory(final EventCategoryList pList,
-                            final Integer pId,
-                            final Integer pControlId,
-                            final byte[] pName,
-                            final byte[] pDesc,
-                            final Integer pCatTypeId,
-                            final Integer pParentId) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs */
-            setValueType(pCatTypeId);
-            setValueParent(pParentId);
-
-            /* Set ControlId */
-            setControlKey(pControlId);
-
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Resolve the subCategory */
-            resolveSubCategory();
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
@@ -1170,35 +1126,6 @@ public final class EventCategory
                                 final String pParent) throws JOceanusException {
             /* Create the category */
             EventCategory myCategory = new EventCategory(this, pId, pName, pDesc, pCategoryType, pParent);
-
-            /* Check that this CategoryId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myCategory);
-        }
-
-        /**
-         * Load an Encrypted Category.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pName the encrypted name
-         * @param pDesc the encrypted description
-         * @param pCategoryId the category id
-         * @param pParentId the parent id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final byte[] pName,
-                                  final byte[] pDesc,
-                                  final Integer pCategoryId,
-                                  final Integer pParentId) throws JOceanusException {
-            /* Create the category */
-            EventCategory myCategory = new EventCategory(this, pId, pControlId, pName, pDesc, pCategoryId, pParentId);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {

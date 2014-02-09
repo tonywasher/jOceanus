@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * @author Tony Washer
  */
 public class Pattern
-        extends EventBase {
+                    extends EventBase {
     /**
      * The name of the object.
      */
@@ -248,39 +248,6 @@ public class Pattern
         MoneyWiseData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
         setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.MONTHLY));
-    }
-
-    /**
-     * Secure Constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the control Id
-     * @param pDate the date
-     * @param pDebitId the debit Id
-     * @param pCreditId the credit id
-     * @param pCatId the category id
-     * @param pAmount the amount
-     * @param pFreqId the frequency id
-     * @param pSplit is the pattern split?
-     * @param pParentId the parent id
-     * @throws JOceanusException on error
-     */
-    private Pattern(final PatternList pList,
-                    final Integer pId,
-                    final Integer pControlId,
-                    final JDateDay pDate,
-                    final Integer pDebitId,
-                    final Integer pCreditId,
-                    final Integer pCatId,
-                    final byte[] pAmount,
-                    final Integer pFreqId,
-                    final Boolean pSplit,
-                    final Integer pParentId) throws JOceanusException {
-        /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE, pSplit, pParentId);
-
-        /* Record the IDs */
-        setValueFrequency(pFreqId);
     }
 
     /**
@@ -508,7 +475,7 @@ public class Pattern
      * The list.
      */
     public static class PatternList
-            extends EventBaseList<Pattern> {
+                                   extends EventBaseList<Pattern> {
         /**
          * Local Report fields.
          */
@@ -700,43 +667,6 @@ public class Pattern
             /* Add to the list */
             append(myPattern);
             return myPattern;
-        }
-
-        /**
-         * Allow a pattern to be added.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pDate the date
-         * @param pDebitId the account id
-         * @param pCreditId the partner id
-         * @param pCatId the category type id
-         * @param pFreqId the frequency id
-         * @param pAmount the amount
-         * @param pSplit is the pattern split
-         * @param pParentId the parent id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final JDateDay pDate,
-                                  final Integer pDebitId,
-                                  final Integer pCreditId,
-                                  final byte[] pAmount,
-                                  final Integer pCatId,
-                                  final Integer pFreqId,
-                                  final Boolean pSplit,
-                                  final Integer pParentId) throws JOceanusException {
-            /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDebitId, pCreditId, pCatId, pAmount, pFreqId, pSplit, pParentId);
-
-            /* Check that this PatternId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPattern, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPattern);
         }
 
         @Override

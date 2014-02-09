@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
+                      extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -128,27 +128,6 @@ public class Frequency
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the Frequency with
-     * @param pId ID of Frequency
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the frequency enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of Frequency
-     * @param pDesc Encrypted Description of TaxRegime
-     * @throws JOceanusException on error
-     */
-    private Frequency(final FrequencyList pList,
-                      final Integer pId,
-                      final Integer pControlId,
-                      final Boolean isEnabled,
-                      final Integer pOrder,
-                      final byte[] pName,
-                      final byte[] pDesc) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -163,7 +142,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
+                                     extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -300,43 +279,6 @@ public class Frequency
                                 final String pDesc) throws JOceanusException {
             /* Create a new Frequency */
             Frequency myFreq = new Frequency(this, pId, isEnabled, pOrder, pFrequency, pDesc);
-
-            /* Check that this FrequencyId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
-            }
-
-            /* Add the Frequency to the list */
-            append(myFreq);
-
-            /* Validate the Frequency */
-            myFreq.validate();
-
-            /* Handle validation failure */
-            if (myFreq.hasErrors()) {
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a Frequency.
-         * @param pId the Id of the frequency
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the frequency enabled
-         * @param pOrder the sort order
-         * @param pFrequency the Encrypted Name of the frequency
-         * @param pDesc the Encrypted Description of the frequency
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pFrequency,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create a new Frequency */
-            Frequency myFreq = new Frequency(this, pId, pControlId, isEnabled, pOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {

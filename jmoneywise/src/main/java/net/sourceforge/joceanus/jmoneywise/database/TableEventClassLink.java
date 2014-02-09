@@ -23,14 +23,12 @@
 package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
@@ -40,8 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * DatabaseTable extension for EventClassLink.
  * @author Tony Washer
  */
-public class TableEventClassLink
-        extends DatabaseTable<EventClassLink, MoneyWiseDataType> {
+public class TableEventClassLink extends DatabaseTable<EventClassLink, MoneyWiseDataType> {
     /**
      * The name of the EventClassLink table.
      */
@@ -73,14 +70,17 @@ public class TableEventClassLink
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myEventId = myTableDef.getIntegerValue(EventClassLink.FIELD_EVENT);
-        Integer myTagId = myTableDef.getIntegerValue(EventClassLink.FIELD_CLASS);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myEventId, myTagId);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClassLink.OBJECT_NAME);
+        myValues.addValue(EventClassLink.FIELD_EVENT, myTableDef.getIntegerValue(EventClassLink.FIELD_EVENT));
+        myValues.addValue(EventClassLink.FIELD_CLASS, myTableDef.getIntegerValue(EventClassLink.FIELD_CLASS));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -106,10 +106,7 @@ public class TableEventClassLink
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the class links */
+        theList.validateOnLoad();
     }
 }

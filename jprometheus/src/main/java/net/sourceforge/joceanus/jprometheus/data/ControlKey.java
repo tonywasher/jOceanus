@@ -265,52 +265,6 @@ public class ControlKey
     }
 
     /**
-     * Secure Constructor.
-     * @param pList the list to which to add the key to
-     * @param pId the id of the ControlKey
-     * @param pHashBytes the hash bytes
-     * @throws JOceanusException on error
-     */
-    private ControlKey(final ControlKeyList pList,
-                       final Integer pId,
-                       final byte[] pHashBytes) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the details */
-            setValueHashBytes(pHashBytes);
-
-            /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            SecureManager mySecure = myData.getSecurity();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
-
-            /* Resolve the password hash */
-            PasswordHash myHash = mySecure.resolvePasswordHash(pHashBytes, NAME_DATABASE);
-
-            /* Store the password hash */
-            setValuePasswordHash(myHash);
-
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet and security generator */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -322,7 +276,7 @@ public class ControlKey
         super(pList, pValues);
 
         /* Store the HashBytes */
-        Object myValue = pValues.getValue(FIELD_HASHBYTES);
+        Object myValue = pValues.getValue(FIELD_PASSHASH);
         if (myValue instanceof byte[]) {
             setValueHashBytes((byte[]) myValue);
         }
@@ -629,29 +583,6 @@ public class ControlKey
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * Add a ControlKey item from a secure store.
-         * @param pId the id of the ControlKey
-         * @param pHashBytes the HashBytes
-         * @return the new item
-         * @throws JOceanusException on error
-         */
-        public ControlKey addSecureItem(final Integer pId,
-                                        final byte[] pHashBytes) throws JOceanusException {
-            /* Create the ControlKey */
-            ControlKey myKey = new ControlKey(this, pId, pHashBytes);
-
-            /* Check that this KeyId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(myKey, ERROR_DUPLICATE);
-            }
-
-            /* Add to the list */
-            add(myKey);
-            return myKey;
-        }
-
         @Override
         public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws JOceanusException {
             /* Create the controlKey */
@@ -752,8 +683,13 @@ public class ControlKey
          * @throws JOceanusException on error
          */
         private ControlKey cloneControlKey(final ControlKey pControlKey) throws JOceanusException {
+            /* Build data values */
+            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlKey.OBJECT_NAME);
+            myValues.addValue(ControlKey.FIELD_ID, pControlKey.getId());
+            myValues.addValue(ControlKey.FIELD_PASSHASH, pControlKey.getHashBytes());
+
             /* Clone the control key */
-            ControlKey myControl = addSecureItem(pControlKey.getId(), pControlKey.getHashBytes());
+            ControlKey myControl = addValuesItem(myValues);
 
             /* Access the DataKey List */
             DataSet<?, ?> myData = getDataSet();

@@ -29,9 +29,11 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -41,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSecurity
-        extends SheetDataItem<Security, MoneyWiseDataType> {
+                          extends SheetDataItem<Security, MoneyWiseDataType> {
     /**
      * NamedArea for Securities.
      */
@@ -120,22 +122,19 @@ public class SheetSecurity
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myTypeId = loadInteger(COL_TYPE);
-        Integer myParentId = loadInteger(COL_PARENT);
-        Integer myCurrencyId = loadInteger(COL_CURRENCY);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        myValues.addValue(Security.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
+        myValues.addValue(Security.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(Security.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(Security.FIELD_SYMBOL, loadBytes(COL_SYMBOL));
+        myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the Name and description */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-        byte[] mySymbol = loadBytes(COL_SYMBOL);
-
-        /* Access the Flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myTypeId, myParentId, mySymbol, myCurrencyId, isClosed);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

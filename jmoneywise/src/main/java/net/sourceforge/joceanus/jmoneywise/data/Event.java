@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * @author Tony Washer
  */
 public class Event
-        extends EventBase
+                  extends EventBase
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * The name of the object.
@@ -481,41 +481,6 @@ public class Event
     }
 
     /**
-     * Secure constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the controlId
-     * @param pDate the date
-     * @param pDebit the debit id
-     * @param pCredit the credit id
-     * @param pAmount the amount
-     * @param pCategory the category id
-     * @param pReconciled is the event reconciled
-     * @param pSplit is the event split
-     * @param pParent the parent id
-     * @throws JOceanusException on error
-     */
-    protected Event(final EventList pList,
-                    final Integer pId,
-                    final Integer pControlId,
-                    final JDateDay pDate,
-                    final Integer pDebit,
-                    final Integer pCredit,
-                    final byte[] pAmount,
-                    final Integer pCategory,
-                    final Boolean pReconciled,
-                    final Boolean pSplit,
-                    final Integer pParent) throws JOceanusException {
-        /* Initialise item */
-        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
-
-        /* Create the InfoSet */
-        theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * Open constructor.
      * @param pList the list
      * @param pId the id
@@ -853,7 +818,7 @@ public class Event
      * @param <T> the Event type
      */
     public abstract static class BaseEventList<T extends Event>
-            extends EventBaseList<T> {
+                                                                extends EventBaseList<T> {
         /**
          * The EventInfo List.
          */
@@ -925,7 +890,7 @@ public class Event
      * The Event List class.
      */
     public static class EventList
-            extends BaseEventList<Event> {
+                                 extends BaseEventList<Event> {
         /**
          * Local Report fields.
          */
@@ -1224,43 +1189,6 @@ public class Event
             /* Add the Event to the list */
             append(myEvent);
             return myEvent;
-        }
-
-        /**
-         * Allow an event to be added.
-         * @param pId the id
-         * @param pControlId the control Id
-         * @param pDate the date
-         * @param pDebitId the debit id
-         * @param pCreditId the credit id
-         * @param pAmount the amount
-         * @param pCatId the category id
-         * @param pReconciled is the event reconciled
-         * @param pSplit is the event split
-         * @param pParentId the parent id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final JDateDay pDate,
-                                  final Integer pDebitId,
-                                  final Integer pCreditId,
-                                  final byte[] pAmount,
-                                  final Integer pCatId,
-                                  final Boolean pReconciled,
-                                  final Boolean pSplit,
-                                  final Integer pParentId) throws JOceanusException {
-            /* Create the new Event */
-            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled, pSplit, pParentId);
-
-            /* Check that this EventId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myEvent, ERROR_VALIDATION);
-            }
-
-            /* Add the Event to the list */
-            append(myEvent);
         }
 
         @Override

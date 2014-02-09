@@ -29,10 +29,12 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -43,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetPattern
-        extends SheetDataItem<Pattern, MoneyWiseDataType> {
+                         extends SheetDataItem<Pattern, MoneyWiseDataType> {
     /**
      * NamedArea for Patterns.
      */
@@ -137,25 +139,20 @@ public class SheetPattern
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myDebitId = loadInteger(COL_DEBIT);
-        Integer myCreditId = loadInteger(COL_CREDIT);
-        Integer myCatId = loadInteger(COL_CATEGORY);
-        Integer myFreqId = loadInteger(COL_FREQ);
-        Integer myParentId = loadInteger(COL_PARENT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
+        myValues.addValue(Pattern.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Pattern.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(Pattern.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
+        myValues.addValue(Pattern.FIELD_DEBIT, loadInteger(COL_DEBIT));
+        myValues.addValue(Pattern.FIELD_CREDIT, loadInteger(COL_CREDIT));
+        myValues.addValue(Pattern.FIELD_AMOUNT, loadBytes(COL_AMOUNT));
+        myValues.addValue(Pattern.FIELD_SPLIT, loadBoolean(COL_SPLIT));
+        myValues.addValue(Pattern.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(Pattern.FIELD_FREQ, loadInteger(COL_FREQ));
 
-        /* Access the flags */
-        Boolean mySplit = loadBoolean(COL_SPLIT);
-
-        /* Access the date */
-        JDateDay myDate = loadDate(COL_DATE);
-
-        /* Access the binary values */
-        byte[] myAmount = loadBytes(COL_AMOUNT);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId, mySplit, myParentId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

@@ -26,28 +26,24 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * TabelEncrypted extension for Pattern.
  * @author Tony Washer
  */
-public class TablePattern
-        extends TableEncrypted<Pattern, MoneyWiseDataType> {
+public class TablePattern extends TableEncrypted<Pattern, MoneyWiseDataType> {
     /**
      * The name of the Patterns table.
      */
@@ -88,21 +84,23 @@ public class TablePattern
     }
 
     @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        JDateDay myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
-        Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
-        Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
-        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
-        Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
-        Boolean mySplit = myTableDef.getBooleanValue(EventBase.FIELD_SPLIT);
-        Integer myParentId = myTableDef.getIntegerValue(EventBase.FIELD_PARENT);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq, mySplit, myParentId);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Pattern.OBJECT_NAME);
+        myValues.addValue(Pattern.FIELD_DATE, myTableDef.getDateValue(Pattern.FIELD_DATE));
+        myValues.addValue(Pattern.FIELD_CATEGORY, myTableDef.getIntegerValue(Pattern.FIELD_CATEGORY));
+        myValues.addValue(Pattern.FIELD_DEBIT, myTableDef.getIntegerValue(Pattern.FIELD_DEBIT));
+        myValues.addValue(Pattern.FIELD_CREDIT, myTableDef.getIntegerValue(Pattern.FIELD_CREDIT));
+        myValues.addValue(Pattern.FIELD_AMOUNT, myTableDef.getBinaryValue(Pattern.FIELD_AMOUNT));
+        myValues.addValue(Pattern.FIELD_SPLIT, myTableDef.getBooleanValue(Pattern.FIELD_SPLIT));
+        myValues.addValue(Pattern.FIELD_PARENT, myTableDef.getIntegerValue(Pattern.FIELD_PARENT));
+        myValues.addValue(Pattern.FIELD_FREQ, myTableDef.getIntegerValue(Pattern.FIELD_FREQ));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -140,10 +138,7 @@ public class TablePattern
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the events */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the patterns */
+        theList.validateOnLoad();
     }
 }

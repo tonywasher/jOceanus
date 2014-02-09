@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey;
-import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -38,11 +38,6 @@ public class TableControlKeys
      * The name of the ControlKeys table.
      */
     protected static final String TABLE_NAME = ControlKey.LIST_NAME;
-
-    /**
-     * The control key list.
-     */
-    private ControlKeyList theList = null;
 
     /**
      * Constructor.
@@ -58,18 +53,20 @@ public class TableControlKeys
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        theList = pData.getControlKeys();
-        setList(theList);
+        setList(pData.getControlKeys());
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<CryptographyDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        byte[] myHash = myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myHash);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
+        myValues.addValue(ControlKey.FIELD_PASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override

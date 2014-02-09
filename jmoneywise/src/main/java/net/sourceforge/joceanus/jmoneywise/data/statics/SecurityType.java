@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+                         extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -127,27 +127,6 @@ public class SecurityType
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the SecurityType with
-     * @param pId ID of SecurityType
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the securityType enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of SecurityType
-     * @param pDesc Encrypted Description of SecurityType
-     * @throws JOceanusException on error
-     */
-    private SecurityType(final SecurityTypeList pList,
-                         final Integer pId,
-                         final Integer pControlId,
-                         final Boolean isEnabled,
-                         final Integer pOrder,
-                         final byte[] pName,
-                         final byte[] pDesc) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -162,7 +141,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+                                        extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -293,43 +272,6 @@ public class SecurityType
             }
 
             /* Add the Security Type to the list */
-            append(mySecType);
-
-            /* Validate the SecurityType */
-            mySecType.validate();
-
-            /* Handle validation failure */
-            if (mySecType.hasErrors()) {
-                throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a SecurityType to the list.
-         * @param pId the Id of the security type
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the security type enabled
-         * @param pOrder the sort order
-         * @param pSecType the encrypted Name of the security type
-         * @param pDesc the Encrypted Description of the security type
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pSecType,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create a new SecurityType */
-            SecurityType mySecType = new SecurityType(this, pId, pControlId, isEnabled, pOrder, pSecType, pDesc);
-
-            /* Check that this SecurityTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                mySecType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
-            }
-
-            /* Add the SecurityType to the list */
             append(mySecType);
 
             /* Validate the SecurityType */

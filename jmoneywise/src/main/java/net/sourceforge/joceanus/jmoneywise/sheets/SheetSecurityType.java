@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSecurityType
-        extends SheetStaticData<SecurityType, MoneyWiseDataType> {
+                              extends SheetStaticData<SecurityType, MoneyWiseDataType> {
     /**
      * NamedArea for SecurityTypes.
      */
@@ -99,8 +100,11 @@ public class SheetSecurityType
                                      final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityType.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     /**
@@ -120,6 +124,15 @@ public class SheetSecurityType
                                      final String pDesc) throws JOceanusException {
         /* Create the item */
         theList.addOpenItem(uId, isEnabled, iOrder, pName, pDesc);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 
     /**

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -1078,5 +1079,20 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setCharArrayValue(pChars);
         }
+    }
+
+    /**
+     * Obtain row values.
+     * @param pName the name of the item
+     * @return the row values.
+     * @throws JOceanusException on error
+     */
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Allocate the values */
+        DataValues<E> myValues = new DataValues<E>(pName);
+
+        /* Add the id and return the new values */
+        myValues.addValue(DataItem.FIELD_ID, loadInteger(COL_ID));
+        return myValues;
     }
 }

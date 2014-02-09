@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
-        extends SheetDataItem<T, E> {
+                                                                                        extends SheetDataItem<T, E> {
     /**
      * Enabled column.
      */
@@ -190,5 +191,19 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     protected int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+
+        /* Add the info and return the new values */
+        myValues.addValue(StaticData.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(StaticData.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
+        myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
+        return myValues;
     }
 }

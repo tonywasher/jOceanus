@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public abstract class AccountBase
-        extends EncryptedItem<MoneyWiseDataType>
+                                 extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountBase> {
     /**
      * Object name.
@@ -441,55 +441,6 @@ public abstract class AccountBase
                           final AccountBase pAccount) {
         /* Set standard values */
         super(pList, pAccount);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param uId the Account id
-     * @param uControlId the control id
-     * @param pName the Encrypted Name of the account
-     * @param uCategoryId the Account category id
-     * @param isClosed is the account closed?
-     * @param isTaxFree is the account taxFree?
-     * @param isGross is the account grossInterest?
-     * @param uCurrencyId the Account currency id
-     * @throws JOceanusException on error
-     */
-    protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
-                          final Integer uId,
-                          final Integer uControlId,
-                          final byte[] pName,
-                          final Integer uCategoryId,
-                          final Boolean isClosed,
-                          final Boolean isTaxFree,
-                          final Boolean isGross,
-                          final Integer uCurrencyId) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs */
-            setValueCategory(uCategoryId);
-            setValueCurrency(uCurrencyId);
-
-            /* Set ControlId */
-            setControlKey(uControlId);
-
-            /* Set the flags */
-            setValueClosed(isClosed);
-            setValueTaxFree(isTaxFree);
-            setValueGrossInterest(isGross);
-
-            /* Record the encrypted values */
-            setValueName(pName);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -948,7 +899,7 @@ public abstract class AccountBase
      * @param <T> the dataType
      */
     public abstract static class AccountBaseList<T extends AccountBase>
-            extends EncryptedList<T, MoneyWiseDataType> {
+                                                                        extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */

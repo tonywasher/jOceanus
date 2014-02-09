@@ -26,28 +26,24 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.DatabaseTable;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 
 /**
  * TableEncrypted extension for ExchangeRate.
  * @author Tony Washer
  */
 public class TableExchangeRate
-        extends DatabaseTable<ExchangeRate, MoneyWiseDataType> {
+                              extends DatabaseTable<ExchangeRate, MoneyWiseDataType> {
     /**
      * The name of the ExchangeRate table.
      */
@@ -91,16 +87,19 @@ public class TableExchangeRate
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        JDateDay myDate = myTableDef.getDateValue(ExchangeRate.FIELD_DATE);
-        Integer myFromId = myTableDef.getIntegerValue(ExchangeRate.FIELD_FROM);
-        Integer myToId = myTableDef.getIntegerValue(ExchangeRate.FIELD_TO);
-        JRatio myRate = myTableDef.getRatioValue(ExchangeRate.FIELD_RATE, theFormatter);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myDate, myFromId, myToId, myRate);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        myValues.addValue(ExchangeRate.FIELD_DATE, myTableDef.getDateValue(ExchangeRate.FIELD_DATE));
+        myValues.addValue(ExchangeRate.FIELD_FROM, myTableDef.getIntegerValue(ExchangeRate.FIELD_FROM));
+        myValues.addValue(ExchangeRate.FIELD_TO, myTableDef.getIntegerValue(ExchangeRate.FIELD_TO));
+        myValues.addValue(ExchangeRate.FIELD_RATE, myTableDef.getRatioValue(ExchangeRate.FIELD_RATE, theFormatter));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -130,10 +129,7 @@ public class TableExchangeRate
         /* Touch underlying items */
         theList.touchUnderlyingItems();
 
-        /* Validate the account categories */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the exchangeRates */
+        theList.validateOnLoad();
     }
 }

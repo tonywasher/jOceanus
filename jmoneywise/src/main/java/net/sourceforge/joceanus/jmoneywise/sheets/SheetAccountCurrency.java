@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountCurrency
-        extends SheetStaticData<AccountCurrency, MoneyWiseDataType> {
+                                 extends SheetStaticData<AccountCurrency, MoneyWiseDataType> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -94,11 +95,12 @@ public class SheetAccountCurrency
                                      final Integer pOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JOceanusException {
-        /* Access the Default indication */
-        Boolean isDefault = loadBoolean(COL_DEFAULT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
+        myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
 
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, pOrder, pName, pDesc, isDefault);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -154,6 +156,15 @@ public class SheetAccountCurrency
     protected int getLastColumn() {
         /* Return the last column */
         return COL_DEFAULT;
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 
     /**

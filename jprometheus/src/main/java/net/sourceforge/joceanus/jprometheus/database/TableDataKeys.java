@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataKey;
-import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -38,11 +38,6 @@ public class TableDataKeys
      * The name of the Static table.
      */
     protected static final String TABLE_NAME = DataKey.LIST_NAME;
-
-    /**
-     * The DataKey data list.
-     */
-    private DataKeyList theList = null;
 
     /**
      * Constructor.
@@ -60,20 +55,22 @@ public class TableDataKeys
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        theList = pData.getDataKeys();
-        setList(theList);
+        setList(pData.getDataKeys());
     }
 
     @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
+    protected DataValues<CryptographyDataType> loadValues() throws JOceanusException {
+        /* Access the table definition */
         TableDefinition myTableDef = getTableDef();
-        Integer myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
-        Integer myKeyType = myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
-        byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF);
 
-        /* Add into the list */
-        theList.addSecureItem(pId, myControl, myKeyType, myKey);
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        myValues.addValue(DataKey.FIELD_CONTROLKEY, myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYDEF, myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF));
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxYearInfoType
-        extends StaticData<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+                            extends StaticData<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -137,27 +137,6 @@ public class TaxYearInfoType
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the TaxYear Info Type with
-     * @param pId ID of TaxYear Info Type
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the TaxYear info type enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of TaxYear Info Type
-     * @param pDesc Encrypted Description of TaxYear Info Type
-     * @throws JOceanusException on error
-     */
-    private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final Integer pId,
-                            final Integer pControlId,
-                            final Boolean isEnabled,
-                            final Integer pOrder,
-                            final byte[] pName,
-                            final byte[] pDesc) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -172,7 +151,7 @@ public class TaxYearInfoType
      * Represents a list of {@link TaxYearInfoType} objects.
      */
     public static class TaxYearInfoTypeList
-            extends StaticList<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+                                           extends StaticList<TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -311,43 +290,6 @@ public class TaxYearInfoType
             append(myInfoType);
 
             /* Validate the TaxYearInfoType */
-            myInfoType.validate();
-
-            /* Handle validation failure */
-            if (myInfoType.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a TaxYearInfoType to the list.
-         * @param pId the Id of the TaxYear info type
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the TaxYear info type enabled
-         * @param pOrder the sort order
-         * @param pInfoType the encrypted Name of the TaxYear info type
-         * @param pDesc the Encrypted Description of the TaxYear info type
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pInfoType,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create a new TaxYear Info Type */
-            TaxYearInfoType myInfoType = new TaxYearInfoType(this, pId, pControlId, isEnabled, pOrder, pInfoType, pDesc);
-
-            /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
-
-            /* Add the Info Type to the list */
-            append(myInfoType);
-
-            /* Validate the InfoType */
             myInfoType.validate();
 
             /* Handle validation failure */

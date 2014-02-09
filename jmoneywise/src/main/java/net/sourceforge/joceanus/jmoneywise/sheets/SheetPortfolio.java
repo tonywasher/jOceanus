@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPortfolio
-        extends SheetDataItem<Portfolio, MoneyWiseDataType> {
+                           extends SheetDataItem<Portfolio, MoneyWiseDataType> {
     /**
      * NamedArea for Portfolios.
      */
@@ -109,20 +110,16 @@ public class SheetPortfolio
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myHoldingId = loadInteger(COL_HOLDING);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Portfolio.FIELD_HOLDING, loadInteger(COL_HOLDING));
+        myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the Name and description */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-
-        /* Access the Flags */
-        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myHoldingId, isTaxFree, isClosed);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

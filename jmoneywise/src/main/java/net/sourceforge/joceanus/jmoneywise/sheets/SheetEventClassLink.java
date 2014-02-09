@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventClass;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -33,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventClassLink
-        extends SheetDataItem<EventClassLink, MoneyWiseDataType> {
+                                extends SheetDataItem<EventClassLink, MoneyWiseDataType> {
     /**
      * NamedArea for Event Classes.
      */
@@ -82,12 +84,13 @@ public class SheetEventClassLink
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myEventId = loadInteger(COL_EVENT);
-        Integer myClassId = loadInteger(COL_CLASS);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
+        myValues.addValue(EventClassLink.FIELD_EVENT, loadInteger(COL_EVENT));
+        myValues.addValue(EventClassLink.FIELD_CLASS, loadInteger(COL_CLASS));
 
-        /* Load the item */
-        theList.addSecureItem(pId, myEventId, myClassId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

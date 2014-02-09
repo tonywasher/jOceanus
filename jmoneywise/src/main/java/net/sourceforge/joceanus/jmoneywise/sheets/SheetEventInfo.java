@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventInfo
-        extends SheetDataInfo<EventInfo, MoneyWiseDataType> {
+                           extends SheetDataInfo<EventInfo, MoneyWiseDataType> {
     /**
      * NamedArea for EventInfo.
      */
@@ -86,14 +87,18 @@ public class SheetEventInfo
                                      final Integer pInfoTypeId,
                                      final Integer pOwnerId,
                                      final byte[] pValue) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventInfo.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks */
+        /* Resolve ValueLinks and validate */
         theList.resolveValueLinks();
+        theList.validateOnLoad();
 
         /* Validate the events */
         theEvents.validateOnLoad();

@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Portfolio class.
  */
 public class Portfolio
-        extends EncryptedItem<MoneyWiseDataType>
+                      extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Portfolio> {
     /**
      * Object name.
@@ -434,50 +434,6 @@ public class Portfolio
     }
 
     /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the portfolio id
-     * @param pControlId the control id
-     * @param pName the Encrypted Name of the portfolio
-     * @param pDesc the Encrypted Description of the portfolio
-     * @param pHoldingId the Holding account id
-     * @param pTaxFree is the portfolio taxFree?
-     * @param pClosed is the portfolio closed?
-     * @throws JOceanusException on error
-     */
-    protected Portfolio(final PortfolioList pList,
-                        final Integer pId,
-                        final Integer pControlId,
-                        final byte[] pName,
-                        final byte[] pDesc,
-                        final Integer pHoldingId,
-                        final Boolean pTaxFree,
-                        final Boolean pClosed) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Set ControlId */
-            setControlKey(pControlId);
-            setValueHolding(pHoldingId);
-
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Store flags */
-            setValueClosed(pClosed);
-            setValueTaxFree(pTaxFree);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
@@ -773,7 +729,7 @@ public class Portfolio
      * The Portfolio List class.
      */
     public static class PortfolioList
-            extends EncryptedList<Portfolio, MoneyWiseDataType> {
+                                     extends EncryptedList<Portfolio, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -943,37 +899,6 @@ public class Portfolio
                                 final Boolean pClosed) throws JOceanusException {
             /* Create the portfolio */
             Portfolio myPortfolio = new Portfolio(this, pId, pName, pDesc, pHolding, pTaxFree, pClosed);
-
-            /* Check that this PortfolioId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPortfolio.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPortfolio, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPortfolio);
-        }
-
-        /**
-         * Load an Encrypted Portfolio.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pName the encrypted name
-         * @param pDesc the encrypted description
-         * @param pHoldingId the Holding account id
-         * @param pTaxFree is the portfolio taxFree?
-         * @param pClosed is the portfolio closed?
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final byte[] pName,
-                                  final byte[] pDesc,
-                                  final Integer pHoldingId,
-                                  final Boolean pTaxFree,
-                                  final Boolean pClosed) throws JOceanusException {
-            /* Create the portfolio */
-            Portfolio myPortfolio = new Portfolio(this, pId, pControlId, pName, pDesc, pHoldingId, pTaxFree, pClosed);
 
             /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(pId)) {

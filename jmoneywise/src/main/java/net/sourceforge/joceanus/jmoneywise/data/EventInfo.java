@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventInfo
-        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+                      extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -159,45 +159,6 @@ public class EventInfo
         /* Record the Detail */
         setValueInfoType(pType);
         setValueOwner(pEvent);
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the control id
-     * @param pInfoTypeId the info id
-     * @param pEventId the Event id
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private EventInfo(final EventInfoList pList,
-                      final Integer pId,
-                      final Integer pControlId,
-                      final Integer pInfoTypeId,
-                      final Integer pEventId,
-                      final byte[] pValue) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pControlId, pInfoTypeId, pEventId);
-
-        /* Protect against exceptions */
-        try {
-            /* Resolve data links */
-            MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getEvents());
-
-            /* Set the value */
-            setValue(pValue);
-
-            /* Access the EventInfoSet and register this data */
-            EventInfoSet mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
-
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -409,7 +370,7 @@ public class EventInfo
      * EventInfoList.
      */
     public static class EventInfoList
-            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+                                     extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -499,41 +460,6 @@ public class EventInfo
 
             /* return it */
             return myInfo;
-        }
-
-        /**
-         * Allow an EventInfo to be added.
-         * @param pId the id
-         * @param pControlId the control id
-         * @param pInfoTypeId the info type id
-         * @param pEventId the event id
-         * @param pValue the data
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Integer pInfoTypeId,
-                                  final Integer pEventId,
-                                  final byte[] pValue) throws JOceanusException {
-            /* Create the info */
-            EventInfo myInfo = new EventInfo(this, pId, pControlId, pInfoTypeId, pEventId, pValue);
-
-            /* Check that this DataId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
-
-            /* Validate the information */
-            myInfo.validate();
-
-            /* Handle validation failure */
-            if (myInfo.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myInfo);
         }
 
         @Override

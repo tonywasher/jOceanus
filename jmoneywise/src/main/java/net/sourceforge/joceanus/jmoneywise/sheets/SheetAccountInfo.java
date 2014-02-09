@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountInfo
-        extends SheetDataInfo<AccountInfo, MoneyWiseDataType> {
+                             extends SheetDataInfo<AccountInfo, MoneyWiseDataType> {
     /**
      * NamedArea for AccountInfo.
      */
@@ -86,14 +87,18 @@ public class SheetAccountInfo
                                      final Integer pInfoTypeId,
                                      final Integer pOwnerId,
                                      final byte[] pValue) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountInfo.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks */
+        /* Resolve ValueLinks and validate */
         theList.resolveValueLinks();
+        theList.validateOnLoad();
 
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();

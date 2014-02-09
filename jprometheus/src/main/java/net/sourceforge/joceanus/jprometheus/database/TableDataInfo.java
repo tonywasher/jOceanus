@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -32,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-        extends TableEncrypted<T, E> {
+                                                                                          extends TableEncrypted<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -53,34 +54,6 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
         myTableDef.addEncryptedColumn(DataInfo.FIELD_VALUE, DataInfo.DATALEN);
     }
 
-    /**
-     * Load the data info.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param pInfoTypeId the infoType id
-     * @param pOwnerId the owner id
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    protected abstract void loadTheItem(final Integer pId,
-                                        final Integer pControlId,
-                                        final Integer pInfoTypeId,
-                                        final Integer pOwnerId,
-                                        final byte[] pValue) throws JOceanusException;
-
-    @Override
-    protected void loadItem(final Integer pId,
-                            final Integer pControlId) throws JOceanusException {
-        /* Get the various fields */
-        TableDefinition myTableDef = getTableDef();
-        Integer myInfoType = myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE);
-        Integer myOwner = myTableDef.getIntegerValue(DataInfo.FIELD_OWNER);
-        byte[] myValue = myTableDef.getBinaryValue(DataInfo.FIELD_VALUE);
-
-        /* Add into the list */
-        loadTheItem(pId, pControlId, myInfoType, myOwner, myValue);
-    }
-
     @Override
     protected void setFieldValue(final T pItem,
                                  final JDataField iField) throws JOceanusException {
@@ -95,5 +68,18 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
         } else {
             super.setFieldValue(pItem, iField);
         }
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+        TableDefinition myTableDef = getTableDef();
+
+        /* Add the info and return the new values */
+        myValues.addValue(DataInfo.FIELD_INFOTYPE, myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE));
+        myValues.addValue(DataInfo.FIELD_OWNER, myTableDef.getIntegerValue(DataInfo.FIELD_OWNER));
+        myValues.addValue(DataInfo.FIELD_VALUE, myTableDef.getBinaryValue(DataInfo.FIELD_VALUE));
+        return myValues;
     }
 }

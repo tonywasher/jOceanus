@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxBasis
-        extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+                     extends StaticData<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -133,27 +133,6 @@ public class TaxBasis
     }
 
     /**
-     * Secure Constructor.
-     * @param pList The list to associate the TaxBasis with
-     * @param pId ID of TaxBasis
-     * @param pControlId the control id of the new item
-     * @param isEnabled is the TaxBasis enabled
-     * @param pOrder the sort order
-     * @param pName Encrypted Name of TaxBasis
-     * @param pDesc Encrypted Description of TaxBasis
-     * @throws JOceanusException on error
-     */
-    private TaxBasis(final TaxBasisList pList,
-                     final Integer pId,
-                     final Integer pControlId,
-                     final Boolean isEnabled,
-                     final Integer pOrder,
-                     final byte[] pName,
-                     final byte[] pDesc) throws JOceanusException {
-        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -198,7 +177,7 @@ public class TaxBasis
      * Represents a list of {@link TaxBasis} objects.
      */
     public static class TaxBasisList
-            extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
+                                    extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -346,43 +325,6 @@ public class TaxBasis
             append(myBasis);
 
             /* Validate the Basis */
-            myBasis.validate();
-
-            /* Handle validation failure */
-            if (myBasis.hasErrors()) {
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a TaxBasis.
-         * @param pId the Id of the tax basis
-         * @param pControlId the control id of the new item
-         * @param isEnabled is the TaxBasis enabled
-         * @param pOrder the sort order
-         * @param pTaxBasis the Encrypted Name of the tax basis
-         * @param pDesc the Encrypted Description of the tax basis
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pControlId,
-                                  final Boolean isEnabled,
-                                  final Integer pOrder,
-                                  final byte[] pTaxBasis,
-                                  final byte[] pDesc) throws JOceanusException {
-            /* Create a new Tax Basis */
-            TaxBasis myBasis = new TaxBasis(this, pId, pControlId, isEnabled, pOrder, pTaxBasis, pDesc);
-
-            /* Check that this TaxBasisId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
-            }
-
-            /* Add the Tax Basis to the list */
-            append(myBasis);
-
-            /* Validate the TaxBasis */
             myBasis.validate();
 
             /* Handle validation failure */

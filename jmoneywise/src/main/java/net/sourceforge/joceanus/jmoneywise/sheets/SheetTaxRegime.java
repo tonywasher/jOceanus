@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxRegime
-        extends SheetStaticData<TaxRegime, MoneyWiseDataType> {
+                           extends SheetStaticData<TaxRegime, MoneyWiseDataType> {
 
     /**
      * NamedArea for Tax Regimes.
@@ -100,8 +101,11 @@ public class SheetTaxRegime
                                      final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxRegime.OBJECT_NAME);
+
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     /**
@@ -121,6 +125,15 @@ public class SheetTaxRegime
                                      final String pDesc) throws JOceanusException {
         /* Create the item */
         theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 
     /**

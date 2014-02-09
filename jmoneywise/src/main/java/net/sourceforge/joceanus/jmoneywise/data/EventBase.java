@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public abstract class EventBase
-        extends EncryptedItem<MoneyWiseDataType>
+                               extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<EventBase>, GroupedItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -608,59 +608,6 @@ public abstract class EventBase
     protected EventBase(final EventBaseList<? extends EventBase> pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
-    }
-
-    /**
-     * Secure constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pControlId the controlId
-     * @param pDate the date
-     * @param pDebit the debit id
-     * @param pCredit the credit id
-     * @param pAmount the amount
-     * @param pCategory the category id
-     * @param pReconciled is the event reconciled
-     * @param pSplit is the event split
-     * @param pParent the parent id
-     * @throws JOceanusException on error
-     */
-    protected EventBase(final EventBaseList<? extends EventBase> pList,
-                        final Integer pId,
-                        final Integer pControlId,
-                        final JDateDay pDate,
-                        final Integer pDebit,
-                        final Integer pCredit,
-                        final byte[] pAmount,
-                        final Integer pCategory,
-                        final Boolean pReconciled,
-                        final Boolean pSplit,
-                        final Integer pParent) throws JOceanusException {
-        /* Initialise item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs that we will look up */
-            setValueDebit(pDebit);
-            setValueCredit(pCredit);
-            setValueParent(pParent);
-            setValueCategory(pCategory);
-            setControlKey(pControlId);
-            setValueReconciled(pReconciled);
-            setValueSplit(pSplit);
-
-            /* Create the date */
-            setValueDate(pDate);
-
-            /* Record the encrypted values */
-            setValueAmount(pAmount);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -1445,7 +1392,7 @@ public abstract class EventBase
      * @param <T> the dataType
      */
     public abstract static class EventBaseList<T extends EventBase>
-            extends EncryptedList<T, MoneyWiseDataType> {
+                                                                    extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */

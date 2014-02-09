@@ -360,33 +360,6 @@ public final class ExchangeRate
     }
 
     /**
-     * Secure constructor.
-     * @param pList the List to add to
-     * @param pId the Category id
-     * @param pDate the Date of the exchange rate
-     * @param pFromId the id of the from currency
-     * @param pToId the id of the to currency
-     * @param pRate the exchangeRate
-     */
-    protected ExchangeRate(final ExchangeRateList pList,
-                           final Integer pId,
-                           final JDateDay pDate,
-                           final Integer pFromId,
-                           final Integer pToId,
-                           final JRatio pRate) {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Store the IDs */
-        setValueFromCurrency(pFromId);
-        setValueToCurrency(pToId);
-
-        /* Record the values */
-        setValueDate(pDate);
-        setValueExchangeRate(pRate);
-    }
-
-    /**
      * Open constructor.
      * @param pList the List to add to
      * @param pId the id
@@ -838,33 +811,6 @@ public final class ExchangeRate
                                 final JRatio pRate) throws JOceanusException {
             /* Create the rate */
             ExchangeRate myRate = new ExchangeRate(this, pId, pDate, pFrom, pTo, pRate);
-
-            /* Check that this CategoryId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myRate);
-        }
-
-        /**
-         * Load an Encrypted Category.
-         * @param pId the id
-         * @param pDate the date of the exchange rate
-         * @param pFromId the from currency id
-         * @param pToId the to currency id
-         * @param pRate the exchangeRate parent id
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final JDateDay pDate,
-                                  final Integer pFromId,
-                                  final Integer pToId,
-                                  final JRatio pRate) throws JOceanusException {
-            /* Create the category */
-            ExchangeRate myRate = new ExchangeRate(this, pId, pDate, pFromId, pToId, pRate);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {

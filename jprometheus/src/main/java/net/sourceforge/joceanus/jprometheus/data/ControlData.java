@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -175,38 +174,6 @@ public class ControlData
     }
 
     /**
-     * Secure Constructor.
-     * @param pList the owning list
-     * @param pId the id
-     * @param pVersion the data version
-     * @param pControlId the control key id
-     * @throws JOceanusException on error
-     */
-    private ControlData(final ControlDataList pList,
-                        final Integer pId,
-                        final Integer pVersion,
-                        final Integer pControlId) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the values */
-            setValueDataVersion(pVersion);
-            setValueControlKey(pControlId);
-
-            /* Resolve the ControlKey */
-            DataSet<?, ?> myData = getDataSet();
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Open (no security) constructor.
      * @param pList the owning list
      * @param pId the id
@@ -335,16 +302,11 @@ public class ControlData
         }
 
         /**
-         * The single element of the list.
-         */
-        private ControlData theControl = null;
-
-        /**
          * Get the single element.
          * @return the control data
          */
         public ControlData getControl() {
-            return theControl;
+            return peekFirst();
         }
 
         /**
@@ -406,42 +368,12 @@ public class ControlData
             /* Clone the control data */
             ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
-            theControl = myControl;
             return myControl;
         }
 
         @Override
         public ControlData addNewItem() {
             throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Add a ControlData item from secure store.
-         * @param pId the id
-         * @param pVersion the version
-         * @param pControlId the controlId
-         * @throws JOceanusException on error
-         */
-        public void addSecureItem(final Integer pId,
-                                  final Integer pVersion,
-                                  final Integer pControlId) throws JOceanusException {
-            /* Create the ControlData */
-            ControlData myControl = new ControlData(this, pId, pVersion, pControlId);
-
-            /* Check that this ControlId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myControl.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(myControl, ERROR_DUPLICATE);
-            }
-
-            /* Only one control data is allowed */
-            if (theControl != null) {
-                throw new JPrometheusLogicException(myControl, ERROR_CTLEXISTS);
-            }
-
-            /* Add to the list by appending */
-            theControl = myControl;
-            append(myControl);
         }
 
         /**
@@ -455,13 +387,7 @@ public class ControlData
             /* Create the ControlData */
             ControlData myControl = new ControlData(this, pId, pVersion);
 
-            /* Only one static is allowed */
-            if (theControl != null) {
-                throw new JPrometheusLogicException(myControl, ERROR_CTLEXISTS);
-            }
-
             /* Add to the list by appending */
-            theControl = myControl;
             append(myControl);
         }
 

@@ -22,15 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDataInfo;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -73,27 +71,21 @@ public class TableAccountInfo
     }
 
     @Override
-    protected void loadTheItem(final Integer pId,
-                               final Integer pControlId,
-                               final Integer pInfoTypeId,
-                               final Integer pOwnerId,
-                               final byte[] pValue) throws JOceanusException {
-        /* Add into the list */
-        theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(AccountInfo.OBJECT_NAME);
     }
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks */
+        /* Resolve ValueLinks and validate */
         theList.resolveValueLinks();
+        theList.validateOnLoad();
 
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();
 
-        /* Validate the events */
-        DataErrorList<DataItem<MoneyWiseDataType>> myErrors = theAccounts.validate();
-        if (myErrors != null) {
-            throw new JMoneyWiseDataException(myErrors, DataItem.ERROR_VALIDATION);
-        }
+        /* Validate the accounts */
+        theAccounts.validateOnLoad();
     }
 }

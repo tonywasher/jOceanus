@@ -436,8 +436,11 @@ public class DataValues<E extends Enum<E>> {
      */
     public void addValue(final JDataField pField,
                          final Object pValue) {
-        /* Add the field */
-        theFields.put(pField, pValue);
+        /* If the value is non-null */
+        if (pValue != null) {
+            /* Add the field */
+            theFields.put(pField, pValue);
+        }
     }
 
     /**

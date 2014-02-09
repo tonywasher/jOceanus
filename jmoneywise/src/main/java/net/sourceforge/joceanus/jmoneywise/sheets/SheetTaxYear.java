@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -50,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetTaxYear
-        extends SheetDataItem<TaxYear, MoneyWiseDataType> {
+                         extends SheetDataItem<TaxYear, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYears.
      */
@@ -128,14 +129,13 @@ public class SheetTaxYear
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myRegimeId = loadInteger(COL_REGIME);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
+        myValues.addValue(TaxYear.FIELD_TAXYEAR, loadDate(COL_TAXYEAR));
+        myValues.addValue(TaxYear.FIELD_REGIME, loadInteger(COL_REGIME));
 
-        /* Access the dates */
-        JDateDay myYear = loadDate(COL_TAXYEAR);
-
-        /* Add the Tax Year */
-        theList.addSecureItem(pId, myRegimeId, myYear);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -393,7 +393,7 @@ public class SheetTaxYear
      * TaxYearInfoSet sheet.
      */
     private static class SheetTaxInfoSet
-            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+                                        extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

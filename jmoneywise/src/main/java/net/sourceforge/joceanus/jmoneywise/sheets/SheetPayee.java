@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPayee
-        extends SheetDataItem<Payee, MoneyWiseDataType> {
+                       extends SheetDataItem<Payee, MoneyWiseDataType> {
     /**
      * NamedArea for Payees.
      */
@@ -104,19 +105,16 @@ public class SheetPayee
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myTypeId = loadInteger(COL_TYPE);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        myValues.addValue(Payee.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Payee.FIELD_PAYEETYPE, loadInteger(COL_TYPE));
+        myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the Name and description */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-
-        /* Access the Flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myTypeId, isClosed);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override

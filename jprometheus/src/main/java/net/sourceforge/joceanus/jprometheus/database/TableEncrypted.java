@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -31,8 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends DatabaseTable<T, E> {
+public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>> extends DatabaseTable<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -45,25 +45,6 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
         myTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, TableControlKeys.TABLE_NAME);
     }
 
-    /**
-     * Load an individual item from the result set.
-     * @param pId the Id of the item
-     * @param pControlId the ControlKey id of the item
-     * @throws JOceanusException on error
-     */
-    protected abstract void loadItem(final Integer pId,
-                                     final Integer pControlId) throws JOceanusException;
-
-    @Override
-    protected void loadItem(final Integer pId) throws JOceanusException {
-        /* Get the various fields */
-        TableDefinition myTableDef = getTableDef();
-        Integer myControlId = myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
-
-        /* Add into the list */
-        loadItem(pId, myControlId);
-    }
-
     @Override
     protected void setFieldValue(final T pItem,
                                  final JDataField iField) throws JOceanusException {
@@ -74,5 +55,16 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
         } else {
             super.setFieldValue(pItem, iField);
         }
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+        TableDefinition myTableDef = getTableDef();
+
+        /* Add the control id and return the new values */
+        myValues.addValue(EncryptedItem.FIELD_CONTROL, myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL));
+        return myValues;
     }
 }

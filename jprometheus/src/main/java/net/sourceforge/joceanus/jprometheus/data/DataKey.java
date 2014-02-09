@@ -315,58 +315,6 @@ public class DataKey
     }
 
     /**
-     * Secure Constructor.
-     * @param pList the list to add to
-     * @param pId the id of the DataKey
-     * @param pControlId the id of the ControlKey
-     * @param pKeyTypeId the id of the KeyType
-     * @param pSecurityKey the encrypted symmetric key
-     * @throws JOceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final Integer pId,
-                    final Integer pControlId,
-                    final Integer pKeyTypeId,
-                    final byte[] pSecurityKey) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the IDs */
-            setValueControlKey(pControlId);
-            setValueKeyType(pKeyTypeId);
-            setValueSecuredKeyDef(pSecurityKey);
-
-            /* Determine the SymKeyType */
-            setValueKeyType(SymKeyType.fromId(pKeyTypeId));
-
-            /* Resolve the ControlKey */
-            DataSet<?, ?> myData = getDataSet();
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-            ControlKey myControlKey = getControlKey();
-
-            /* Derive the Symmetric Key from the wrapped data */
-            PasswordHash myHash = myControlKey.getPasswordHash();
-            CipherSet myCipher = myHash.getCipherSet();
-            SymmetricKey myKey = myCipher.deriveSymmetricKey(pSecurityKey, getKeyType());
-            setValueDataKey(myKey);
-            setValuePasswordHash(myHash);
-
-            /* Access the Cipher */
-            setValueCipher(myKey.getDataCipher());
-
-            /* Register the DataKey */
-            myControlKey.registerDataKey(this);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -624,33 +572,6 @@ public class DataKey
         @Override
         public DataKey addNewItem() {
             throw new UnsupportedOperationException();
-        }
-
-        /**
-         * Add a DataKey from Database/Backup.
-         * @param pId the id of the DataKey
-         * @param pControlId the id of the ControlKey
-         * @param pKeyTypeId the id of the KeyType
-         * @param pSecurityKey the encrypted symmetric key
-         * @return the new item
-         * @throws JOceanusException on error
-         */
-        public DataKey addSecureItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Integer pKeyTypeId,
-                                     final byte[] pSecurityKey) throws JOceanusException {
-            /* Create the DataKey */
-            DataKey myKey = new DataKey(this, pId, pControlId, pKeyTypeId, pSecurityKey);
-
-            /* Check that this KeyId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JPrometheusDataException(myKey, ERROR_DUPLICATE);
-            }
-
-            /* Add to the list */
-            add(myKey);
-            return myKey;
         }
 
         @Override

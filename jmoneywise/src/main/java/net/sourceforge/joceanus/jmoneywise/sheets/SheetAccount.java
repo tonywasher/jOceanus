@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -54,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetAccount
-        extends SheetDataItem<Account, MoneyWiseDataType> {
+                         extends SheetDataItem<Account, MoneyWiseDataType> {
     /**
      * NamedArea for Accounts.
      */
@@ -159,21 +160,18 @@ public class SheetAccount
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myCategoryId = loadInteger(COL_ACCOUNTCAT);
-        Integer myCurrencyId = loadInteger(COL_CURRENCY);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
+        myValues.addValue(Account.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(Account.FIELD_CATEGORY, loadInteger(COL_ACCOUNTCAT));
+        myValues.addValue(Account.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
+        myValues.addValue(Account.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(Account.FIELD_GROSS, loadBoolean(COL_GROSS));
+        myValues.addValue(Account.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
+        myValues.addValue(Account.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
-        Boolean isGross = loadBoolean(COL_GROSS);
-
-        /* Access the binary values */
-        byte[] myName = loadBytes(COL_NAME);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree, isGross, myCurrencyId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
@@ -467,6 +465,9 @@ public class SheetAccount
             myList.resolveDataSetLinks();
             myList.reSort();
 
+            /* Resolve ValueLinks */
+            myInfoList.resolveValueLinks();
+
             /* Touch underlying items */
             myList.touchUnderlyingItems();
 
@@ -607,7 +608,7 @@ public class SheetAccount
      * AccountInfoSet sheet.
      */
     private static class SheetAccountInfoSet
-            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+                                            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

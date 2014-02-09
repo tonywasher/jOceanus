@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -39,8 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SheetDataItem extension for AccountCategory.
  * @author Tony Washer
  */
-public class SheetAccountCategory
-        extends SheetDataItem<AccountCategory, MoneyWiseDataType> {
+public class SheetAccountCategory extends SheetDataItem<AccountCategory, MoneyWiseDataType> {
     /**
      * NamedArea for Categories.
      */
@@ -104,17 +104,16 @@ public class SheetAccountCategory
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myCatId = loadInteger(COL_TYPE);
-        Integer myParentId = loadInteger(COL_PARENT);
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCategory.OBJECT_NAME);
+        myValues.addValue(AccountCategory.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(AccountCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(AccountCategory.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(AccountCategory.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(AccountCategory.FIELD_DESC, loadBytes(COL_DESC));
 
-        /* Access the Name and description */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-
-        /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId, myParentId);
+        /* Add into the list */
+        theList.addValuesItem(myValues);
     }
 
     @Override
