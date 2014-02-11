@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class TaxYearInfo
-                        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -140,38 +140,6 @@ public class TaxYearInfo
         /* Record the Detail */
         setValueInfoType(pType);
         setValueOwner(pTaxYear);
-    }
-
-    /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pInfoType the info type
-     * @param pTaxYear the TaxYear
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private TaxYearInfo(final TaxInfoList pList,
-                        final Integer pId,
-                        final TaxYearInfoType pInfoType,
-                        final TaxYear pTaxYear,
-                        final Object pValue) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pInfoType, pTaxYear);
-
-        /* Protect against exceptions */
-        try {
-            /* Set the value */
-            setValue(pValue);
-
-            /* Access the TaxInfoSet and register this data */
-            TaxInfoSet mySet = pTaxYear.getInfoSet();
-            mySet.registerInfo(this);
-
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -305,7 +273,7 @@ public class TaxYearInfo
      * TaxYearInfoList.
      */
     public static class TaxInfoList
-                                   extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -398,7 +366,7 @@ public class TaxYearInfo
         }
 
         @Override
-        public void addOpenItem(final Integer pId,
+        public void addInfoItem(final Integer pId,
                                 final TaxYear pTaxYear,
                                 final TaxYearInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
@@ -416,8 +384,15 @@ public class TaxYearInfo
                 throw new JMoneyWiseDataException(pTaxYear, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
+            /* Create the values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYearInfo.OBJECT_NAME);
+            myValues.addValue(FIELD_ID, pId);
+            myValues.addValue(FIELD_INFOTYPE, myInfoType);
+            myValues.addValue(FIELD_OWNER, pTaxYear);
+            myValues.addValue(FIELD_VALUE, pValue);
+
             /* Create a new Tax Info */
-            TaxYearInfo myTaxInfo = new TaxYearInfo(this, pId, myInfoType, pTaxYear, pValue);
+            TaxYearInfo myTaxInfo = new TaxYearInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {

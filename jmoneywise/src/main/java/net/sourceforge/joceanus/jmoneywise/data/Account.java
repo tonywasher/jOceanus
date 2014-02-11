@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public class Account
-                    extends AccountBase
+        extends AccountBase
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -610,35 +610,6 @@ public class Account
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the account
-     * @param pCategory the Account category
-     * @param isClosed is the account closed?
-     * @param isTaxFree is the account taxFree?
-     * @param isGross is the account grossInterest?
-     * @param pCurrency the Account currency
-     * @throws JOceanusException on error
-     */
-    private Account(final AccountList pList,
-                    final Integer pId,
-                    final String pName,
-                    final String pCategory,
-                    final Boolean isClosed,
-                    final Boolean isTaxFree,
-                    final Boolean isGross,
-                    final String pCurrency) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
-
-        /* Create the InfoSet */
-        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
@@ -1009,7 +980,7 @@ public class Account
      * The Account List class.
      */
     public static class AccountList
-                                   extends AccountBaseList<Account> {
+            extends AccountBaseList<Account> {
         /**
          * Local Report fields.
          */
@@ -1200,45 +1171,6 @@ public class Account
         @Override
         public Account addNewItem() {
             return null;
-        }
-
-        /**
-         * Add an Account.
-         * @param pId the is
-         * @param pName the Name of the account
-         * @param pCategory the Name of the account category
-         * @param isClosed is the account closed?
-         * @param isTaxFree is the account taxFree?
-         * @param isGross is the account gross Interest?
-         * @param pCurrency the Account currency
-         * @return the new account
-         * @throws JOceanusException on error
-         */
-        public Account addOpenItem(final Integer pId,
-                                   final String pName,
-                                   final String pCategory,
-                                   final Boolean isClosed,
-                                   final Boolean isTaxFree,
-                                   final Boolean isGross,
-                                   final String pCurrency) throws JOceanusException {
-            /* Create the new account */
-            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
-
-            /* Check that this AccountId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myAccount, ERROR_VALIDATION);
-            }
-
-            /* Check that this Account has not been previously added */
-            if (findItemByName(myAccount.getName()) != null) {
-                myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myAccount, "Duplicate Account");
-            }
-
-            /* Add the Account to the list */
-            append(myAccount);
-            return myAccount;
         }
 
         @Override

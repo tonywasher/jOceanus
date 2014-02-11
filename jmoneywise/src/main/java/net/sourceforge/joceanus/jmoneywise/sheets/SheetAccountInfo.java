@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountInfo
-                             extends SheetDataInfo<AccountInfo, MoneyWiseDataType> {
+        extends SheetDataInfo<AccountInfo, MoneyWiseDataType> {
     /**
      * NamedArea for AccountInfo.
      */
@@ -82,16 +82,9 @@ public class SheetAccountInfo
     }
 
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Integer pInfoTypeId,
-                                     final Integer pOwnerId,
-                                     final byte[] pValue) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountInfo.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        return getSecureRowValues(AccountInfo.OBJECT_NAME);
     }
 
     @Override

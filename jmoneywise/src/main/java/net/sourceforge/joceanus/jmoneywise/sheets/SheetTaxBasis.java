@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxBasis
-                          extends SheetStaticData<TaxBasis, MoneyWiseDataType> {
+        extends SheetStaticData<TaxBasis, MoneyWiseDataType> {
     /**
      * NamedArea for Tax Bases.
      */
@@ -53,11 +53,6 @@ public class SheetTaxBasis
     protected static final String AREA_TAXBASISNAMES = TaxBasis.OBJECT_NAME + "Names";
 
     /**
-     * TaxCategories data list.
-     */
-    private final TaxBasisList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -66,8 +61,8 @@ public class SheetTaxBasis
         super(pReader, AREA_TAXBASES);
 
         /* Access the Tax Basis list */
-        theList = pReader.getData().getTaxBases();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getTaxBases());
     }
 
     /**
@@ -79,60 +74,20 @@ public class SheetTaxBasis
         super(pWriter, AREA_TAXBASES, AREA_TAXBASISNAMES);
 
         /* Access the Tax Basis list */
-        theList = pWriter.getData().getTaxBases();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTaxBases());
     }
 
-    /**
-     * Load encrypted.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxBasis.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
-    }
-
-    /**
-     * Load clear text.
-     * @param pId the id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void loadClearTextItem(final Integer pId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+        return getSecureRowValues(TaxBasis.OBJECT_NAME);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(TaxBasis.OBJECT_NAME);
     }
 
     /**
@@ -177,7 +132,7 @@ public class SheetTaxBasis
                 DataRow myRow = myView.getRowByIndex(i);
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */

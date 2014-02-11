@@ -29,14 +29,13 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -45,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetPattern
-                         extends SheetDataItem<Pattern, MoneyWiseDataType> {
+        extends SheetEncrypted<Pattern, MoneyWiseDataType> {
     /**
      * NamedArea for Patterns.
      */
@@ -97,9 +96,9 @@ public class SheetPattern
     private final PatternList theList;
 
     /**
-     * Last loaded parent.
+     * The active parent.
      */
-    private Pattern theLastParent = null;
+    private Pattern theActiveParent = null;
 
     /**
      * Last debit.
@@ -138,10 +137,9 @@ public class SheetPattern
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
-        myValues.addValue(Pattern.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Pattern.OBJECT_NAME);
         myValues.addValue(Pattern.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Pattern.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Pattern.FIELD_DEBIT, loadInteger(COL_DEBIT));
@@ -151,48 +149,71 @@ public class SheetPattern
         myValues.addValue(Pattern.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Pattern.FIELD_FREQ, loadInteger(COL_FREQ));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the Account */
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Access key details */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
-        String myCategory = loadString(COL_CATEGORY);
-        String myFrequency = loadString(COL_FREQ);
-
-        /* Access the date */
         JDateDay myDate = loadDate(COL_DATE);
-
-        /* Access the string values */
-        String myAmount = loadString(COL_AMOUNT);
+        Boolean isSplit = Boolean.FALSE;
+        Pattern myParent = null;
 
         /* If we don't have a date */
-        if ((myDate == null) && (theLastParent != null)) {
-            /* Pick up last date */
-            myDate = theLastParent.getDate();
-
-            /* Pick up debit and credit from last values */
-            if (myDebit == null) {
-                myDebit = theLastDebit;
+        if (myDate == null) {
+            /* If this is the first child */
+            if (theActiveParent == null) {
+                /* Access the last item as the active parent */
+                theActiveParent = getLastItem();
+                if (theActiveParent != null) {
+                    /* Mark it as a group */
+                    theActiveParent.setSplit(Boolean.TRUE);
+                }
             }
-            if (myCredit == null) {
-                myCredit = theLastCredit;
+
+            /* If we have a valid parent */
+            if (theActiveParent != null) {
+                /* Pick up last date */
+                myDate = theActiveParent.getDate();
+
+                /* Pick up debit and credit from last values */
+                if (myDebit == null) {
+                    myDebit = theLastDebit;
+                }
+                if (myCredit == null) {
+                    myCredit = theLastCredit;
+                }
+
+                /* Note that we are split and record the active parent */
+                isSplit = Boolean.TRUE;
+                myParent = theActiveParent;
             }
 
-            /* Load the item */
-            theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, theLastParent);
-            theLastParent.setSplit(Boolean.TRUE);
+            /* else reset the active parent */
         } else {
-            /* Load the item */
-            theLastParent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, null);
+            theActiveParent = null;
         }
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Pattern.OBJECT_NAME);
+        myValues.addValue(Pattern.FIELD_DATE, myDate);
+        myValues.addValue(Pattern.FIELD_CATEGORY, loadString(COL_CATEGORY));
+        myValues.addValue(Pattern.FIELD_DEBIT, myDebit);
+        myValues.addValue(Pattern.FIELD_CREDIT, myCredit);
+        myValues.addValue(Pattern.FIELD_AMOUNT, loadString(COL_AMOUNT));
+        myValues.addValue(Pattern.FIELD_FREQ, loadString(COL_FREQ));
+        myValues.addValue(Pattern.FIELD_SPLIT, isSplit);
+        myValues.addValue(Pattern.FIELD_PARENT, myParent);
 
         /* Store last credit and debit */
         theLastCredit = myCredit;
         theLastDebit = myDebit;
+
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -358,7 +379,11 @@ public class SheetPattern
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
-                /* If we have a null date */
+                /* Set defaults */
+                Boolean isSplit = Boolean.FALSE;
+                Pattern myParent = null;
+
+                /* If we don't have a date */
                 if ((myDate == null) && (myLastParent != null)) {
                     /* Pick up last date */
                     myDate = myLastParent.getDate();
@@ -371,12 +396,30 @@ public class SheetPattern
                         myCredit = myLastCredit;
                     }
 
-                    /* Add the pattern */
-                    myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, myLastParent);
+                    /* Mark parent as split */
+                    isSplit = Boolean.TRUE;
                     myLastParent.setSplit(Boolean.TRUE);
-                } else {
-                    /* Add the pattern */
-                    myLastParent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, null);
+                    myParent = myLastParent;
+                }
+
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Pattern.OBJECT_NAME);
+                myValues.addValue(Pattern.FIELD_DATE, myDate);
+                myValues.addValue(Pattern.FIELD_CATEGORY, myCategory);
+                myValues.addValue(Pattern.FIELD_DEBIT, myDebit);
+                myValues.addValue(Pattern.FIELD_CREDIT, myCredit);
+                myValues.addValue(Pattern.FIELD_AMOUNT, myAmount);
+                myValues.addValue(Pattern.FIELD_FREQ, myFrequency);
+                myValues.addValue(Pattern.FIELD_SPLIT, isSplit);
+                myValues.addValue(Pattern.FIELD_PARENT, myParent);
+
+                /* Add the pattern */
+                Pattern myPattern = myList.addValuesItem(myValues);
+
+                /* If we were not a child */
+                if (myParent == null) {
+                    /* Note the last parent */
+                    myLastParent = myPattern;
                 }
 
                 /* Store last credit/debit */

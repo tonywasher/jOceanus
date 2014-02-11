@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetFrequency
-                           extends SheetStaticData<Frequency, MoneyWiseDataType> {
+        extends SheetStaticData<Frequency, MoneyWiseDataType> {
 
     /**
      * NamedArea for Frequencies.
@@ -54,11 +54,6 @@ public class SheetFrequency
     protected static final String AREA_FREQUENCYNAMES = Frequency.OBJECT_NAME + "Names";
 
     /**
-     * Frequencies data list.
-     */
-    private final FrequencyList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -67,8 +62,8 @@ public class SheetFrequency
         super(pReader, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
-        theList = pReader.getData().getFrequencys();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getFrequencys());
     }
 
     /**
@@ -80,60 +75,20 @@ public class SheetFrequency
         super(pWriter, AREA_FREQUENCIES, AREA_FREQUENCYNAMES);
 
         /* Access the Frequency list */
-        theList = pWriter.getData().getFrequencys();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getFrequencys());
     }
 
-    /**
-     * Load encrypted.
-     * @param pId the id
-     * @param pControlId the controlId
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName name
-     * @param pDesc description
-     * @throws JOceanusException on error
-     */
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Frequency.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
-    }
-
-    /**
-     * Load clear text.
-     * @param pId the id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void loadClearTextItem(final Integer pId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+        return getSecureRowValues(Frequency.OBJECT_NAME);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(Frequency.OBJECT_NAME);
     }
 
     /**

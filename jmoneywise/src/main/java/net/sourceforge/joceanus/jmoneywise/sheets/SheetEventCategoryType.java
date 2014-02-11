@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventCategoryType
-                                   extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
+        extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
 
     /**
      * NamedArea for Category Types.
@@ -54,11 +54,6 @@ public class SheetEventCategoryType
     protected static final String AREA_CATTYPENAMES = EventCategoryType.OBJECT_NAME + "Names";
 
     /**
-     * EventCategoryTypes data list.
-     */
-    private final EventCategoryTypeList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -67,8 +62,8 @@ public class SheetEventCategoryType
         super(pReader, AREA_CATTYPES);
 
         /* Access the Category Type list */
-        theList = pReader.getData().getEventCategoryTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getEventCategoryTypes());
     }
 
     /**
@@ -80,60 +75,20 @@ public class SheetEventCategoryType
         super(pWriter, AREA_CATTYPES, AREA_CATTYPENAMES);
 
         /* Access the Category Type list */
-        theList = pWriter.getData().getEventCategoryTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getEventCategoryTypes());
     }
 
-    /**
-     * Load encrypted.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategoryType.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
-    }
-
-    /**
-     * Load clear text.
-     * @param pId the id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void loadClearTextItem(final Integer pId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
+        return getSecureRowValues(EventCategoryType.OBJECT_NAME);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(EventCategoryType.OBJECT_NAME);
     }
 
     /**
@@ -178,7 +133,7 @@ public class SheetEventCategoryType
                 DataRow myRow = myView.getRowByIndex(i);
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */

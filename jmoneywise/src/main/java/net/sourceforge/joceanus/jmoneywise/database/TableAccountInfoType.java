@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,11 +43,6 @@ public class TableAccountInfoType
     protected static final String TABLE_NAME = AccountInfoType.LIST_NAME;
 
     /**
-     * The InfoType list.
-     */
-    private AccountInfoTypeList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,22 +53,12 @@ public class TableAccountInfoType
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getActInfoTypes();
-        setList(theList);
+        setList(myData.getActInfoTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(AccountInfoType.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
     }
 }

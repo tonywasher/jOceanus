@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Event Class Link for an event.
  */
 public class EventClassLink
-                           extends DataItem<MoneyWiseDataType>
+        extends DataItem<MoneyWiseDataType>
         implements Comparable<EventClassLink> {
     /**
      * Object name.
@@ -205,25 +205,6 @@ public class EventClassLink
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pEvent the Event to link
-     * @param pClass the name of the event class
-     */
-    protected EventClassLink(final EventClassLinkList pList,
-                             final Integer pId,
-                             final Event pEvent,
-                             final String pClass) {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Store the links */
-        setValueEvent(pEvent);
-        setValueEventClass(pClass);
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -384,7 +365,7 @@ public class EventClassLink
      * The EventClassLink List class.
      */
     public static class EventClassLinkList
-                                          extends DataList<EventClassLink, MoneyWiseDataType> {
+            extends DataList<EventClassLink, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -464,29 +445,6 @@ public class EventClassLink
             EventClassLink myLink = new EventClassLink(this);
             add(myLink);
             return myLink;
-        }
-
-        /**
-         * Allow a link to be added.
-         * @param pId the id
-         * @param pEvent the event
-         * @param pClass the eventClass name
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Event pEvent,
-                                final String pClass) throws JOceanusException {
-            /* Create the link */
-            EventClassLink myLink = new EventClassLink(this, pId, pEvent, pClass);
-
-            /* Check that this LinkId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myLink.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myLink, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myLink);
         }
 
         @Override

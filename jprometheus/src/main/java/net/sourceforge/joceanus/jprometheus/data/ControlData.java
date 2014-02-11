@@ -174,22 +174,6 @@ public class ControlData
     }
 
     /**
-     * Open (no security) constructor.
-     * @param pList the owning list
-     * @param pId the id
-     * @param pVersion the data version
-     */
-    private ControlData(final ControlDataList pList,
-                        final Integer pId,
-                        final Integer pVersion) {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Record the values */
-        setValueDataVersion(pVersion);
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -377,18 +361,17 @@ public class ControlData
         }
 
         /**
-         * Add a ControlData item from insecure store.
-         * @param pId the id
+         * Add new ControlData item for new security.
          * @param pVersion the version
          * @throws JOceanusException on error
          */
-        public void addOpenItem(final Integer pId,
-                                final Integer pVersion) throws JOceanusException {
+        public void addNewControl(final Integer pVersion) throws JOceanusException {
             /* Create the ControlData */
-            ControlData myControl = new ControlData(this, pId, pVersion);
+            DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(ControlData.OBJECT_NAME);
+            myValues.addValue(FIELD_DATAVERSION, pVersion);
 
-            /* Add to the list by appending */
-            append(myControl);
+            /* Add the item */
+            addValuesItem(myValues);
         }
 
         @Override

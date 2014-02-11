@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
-                                                                                                                        extends EncryptedItem<E>
+        extends EncryptedItem<E>
         implements Comparable<T> {
     /**
      * Resource Bundle.
@@ -504,44 +504,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     /**
-     * Open constructor.
-     * @param pList The list to associate the Static Data with
-     * @param pId the id of the new item
-     * @param isEnabled is the account type enabled
-     * @param pOrder the sort order
-     * @param pValue the name of the new item
-     * @param pDesc the description of the new item
-     * @throws JOceanusException on error
-     */
-    protected StaticData(final StaticList<T, S, E> pList,
-                         final Integer pId,
-                         final Boolean isEnabled,
-                         final Integer pOrder,
-                         final String pValue,
-                         final String pDesc) throws JOceanusException {
-        /* Call super constructor */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the details */
-            setValueEnabled(isEnabled);
-            setValueOrder(pOrder);
-            setValueName(pValue);
-            setValueDesc(pDesc);
-
-            /* Determine the class */
-            theEnumClass = pList.getEnumClass();
-            parseEnumId(pId);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JPrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -640,31 +602,6 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     /**
-     * Parse enum id.
-     * @param pId the id
-     * @throws JOceanusException on error
-     */
-    private void parseEnumId(final int pId) throws JOceanusException {
-        Class<S> myClass = getEnumClass();
-        S[] myEnums = myClass.getEnumConstants();
-
-        /* Loop through the enum constants */
-        for (S myValue : myEnums) {
-            /* If this is the desired value */
-            if (myValue.getClassId() == pId) {
-                /* Store the class and details */
-                setValueClass(myValue);
-                break;
-            }
-        }
-
-        /* Reject if we didn't find the class */
-        if (getStaticClass() == null) {
-            throw new JPrometheusDataException(ERROR_BADID + " " + myClass.getSimpleName() + ": " + pId);
-        }
-    }
-
-    /**
      * Set a new name.
      * @param pName the name
      * @throws JOceanusException on error
@@ -754,7 +691,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @param <E> the data type enum class
      */
     public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
-                                                                                                                                   extends EncryptedList<T, E> {
+            extends EncryptedList<T, E> {
         /**
          * Obtain the enumClass.
          * @return the enumClass

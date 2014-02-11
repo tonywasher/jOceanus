@@ -34,11 +34,16 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetDataKey
-                         extends SheetDataItem<DataKey, CryptographyDataType> {
+        extends SheetDataItem<DataKey, CryptographyDataType> {
     /**
      * SheetName for Keys.
      */
     private static final String SHEET_NAME = DataKey.class.getSimpleName();
+
+    /**
+     * ControlId column.
+     */
+    private static final int COL_CONTROLID = COL_ID + 1;
 
     /**
      * KeyType column.
@@ -83,20 +88,21 @@ public class SheetDataKey
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_CONTROLKEY, loadInteger(COL_CONTROLID));
         myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final DataKey pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());

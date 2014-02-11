@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
@@ -54,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
  * @author Tony Washer
  */
 public class SecurityPrice
-                          extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<SecurityPrice> {
     /**
      * Object name.
@@ -329,43 +328,6 @@ public class SecurityPrice
     }
 
     /**
-     * Open Constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pSecurity the security name
-     * @param pDate the date
-     * @param pPrice the price
-     * @throws JOceanusException on error
-     */
-    private SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
-                          final Integer pId,
-                          final String pSecurity,
-                          final JDateDay pDate,
-                          final String pPrice) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Access the DataSet and parser */
-            MoneyWiseData myDataSet = getDataSet();
-            JDataFormatter myFormatter = myDataSet.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
-            /* Record security, date and price */
-            setValueSecurity(pSecurity);
-            setValueDate(pDate);
-            setValuePrice(myParser.parsePriceValue(pPrice));
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -590,7 +552,7 @@ public class SecurityPrice
      * Price List.
      */
     public static class SecurityPriceList
-                                         extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
+            extends EncryptedList<SecurityPrice, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -781,31 +743,6 @@ public class SecurityPrice
                     mySpot.clearHistory();
                 }
             }
-        }
-
-        /**
-         * Add a Price.
-         * @param pId the id
-         * @param pDate the date
-         * @param pSecurity the security
-         * @param pPrice the price
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final JDateDay pDate,
-                                final String pSecurity,
-                                final String pPrice) throws JOceanusException {
-            /* Create the PricePoint */
-            SecurityPrice myPrice = new SecurityPrice(this, pId, pSecurity, pDate, pPrice);
-
-            /* Check that this PriceId has not been previously added */
-            if (!isIdUnique(myPrice.getId())) {
-                myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPrice, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPrice);
         }
 
         @Override

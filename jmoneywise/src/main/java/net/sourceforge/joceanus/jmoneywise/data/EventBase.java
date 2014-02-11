@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
@@ -52,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * @author Tony Washer
  */
 public abstract class EventBase
-                               extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<EventBase>, GroupedItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -608,57 +607,6 @@ public abstract class EventBase
     protected EventBase(final EventBaseList<? extends EventBase> pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
-    }
-
-    /**
-     * Open constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param pDate the date
-     * @param pDebit the debit account
-     * @param pCredit the credit account
-     * @param pAmount the amount
-     * @param pCategory the category
-     * @param pReconciled is the event reconciled
-     * @param pSplit is the event split
-     * @param pParent the parent
-     * @throws JOceanusException on error
-     */
-    protected EventBase(final EventBaseList<? extends EventBase> pList,
-                        final Integer uId,
-                        final JDateDay pDate,
-                        final String pDebit,
-                        final String pCredit,
-                        final String pAmount,
-                        final String pCategory,
-                        final Boolean pReconciled,
-                        final Boolean pSplit,
-                        final EventBase pParent) throws JOceanusException {
-        /* Initialise item */
-        super(pList, uId);
-
-        /* Protect against exceptions */
-        try {
-            /* Access the parser */
-            MoneyWiseData myDataSet = getDataSet();
-            JDataFormatter myFormatter = myDataSet.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
-            /* Record the standard values */
-            setValueDebit(pDebit);
-            setValueCredit(pCredit);
-            setValueParent(pParent);
-            setValueCategory(pCategory);
-            setValueReconciled(pReconciled);
-            setValueSplit(pSplit);
-            setValueDate(pDate);
-            setValueAmount(myParser.parseMoneyValue(pAmount));
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -1392,7 +1340,7 @@ public abstract class EventBase
      * @param <T> the dataType
      */
     public abstract static class EventBaseList<T extends EventBase>
-                                                                    extends EncryptedList<T, MoneyWiseDataType> {
+            extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */

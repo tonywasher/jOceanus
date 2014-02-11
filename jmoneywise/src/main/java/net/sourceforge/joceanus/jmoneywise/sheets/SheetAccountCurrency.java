@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetAccountCurrency
-                                 extends SheetStaticData<AccountCurrency, MoneyWiseDataType> {
+        extends SheetStaticData<AccountCurrency, MoneyWiseDataType> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -58,11 +58,6 @@ public class SheetAccountCurrency
     private static final int COL_DEFAULT = COL_DESC + 1;
 
     /**
-     * AccountCurrencies data list.
-     */
-    private final AccountCurrencyList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -70,9 +65,9 @@ public class SheetAccountCurrency
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
-        /* Access the Account Type list */
-        theList = pReader.getData().getAccountCurrencies();
-        setDataList(theList);
+        /* Access the list */
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getAccountCurrencies());
     }
 
     /**
@@ -83,37 +78,29 @@ public class SheetAccountCurrency
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTCURRENCIES, AREA_ACCOUNTCURRNAMES);
 
-        /* Access the Account Type list */
-        theList = pWriter.getData().getAccountCurrencies();
-        setDataList(theList);
+        /* Access the list */
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getAccountCurrencies());
     }
 
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer pOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(AccountCurrency.OBJECT_NAME);
+        myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
+
+        /* Return the values */
+        return myValues;
+    }
+
+    @Override
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
         myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
-    }
-
-    @Override
-    protected void loadClearTextItem(final Integer uId,
-                                     final Boolean isEnabled,
-                                     final Integer pOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Access the Default indication */
-        Boolean isDefault = loadBoolean(COL_DEFAULT);
-
-        /* Create the item */
-        theList.addOpenItem(uId, isEnabled, pOrder, pName, pDesc, isDefault);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -158,15 +145,6 @@ public class SheetAccountCurrency
         return COL_DEFAULT;
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
-    }
-
     /**
      * Load the Account Currencies from an archive.
      * @param pTask the task control
@@ -209,7 +187,7 @@ public class SheetAccountCurrency
                 DataRow myRow = myView.getRowByIndex(i);
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventInfoType
-                          extends StaticData<EventInfoType, EventInfoClass, MoneyWiseDataType> {
+        extends StaticData<EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -136,25 +136,6 @@ public class EventInfoType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the InfoType with
-     * @param pId the id of the new item
-     * @param isEnabled is the type enabled
-     * @param pOrder the sort order
-     * @param pName Name of InfoType
-     * @param pDesc Description of InfoType
-     * @throws JOceanusException on error
-     */
-    private EventInfoType(final EventInfoTypeList pList,
-                          final Integer pId,
-                          final Boolean isEnabled,
-                          final Integer pOrder,
-                          final String pName,
-                          final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -169,7 +150,7 @@ public class EventInfoType
      * Represents a list of {@link EventInfoType} objects.
      */
     public static class EventInfoTypeList
-                                         extends StaticList<EventInfoType, EventInfoClass, MoneyWiseDataType> {
+            extends StaticList<EventInfoType, EventInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -273,41 +254,6 @@ public class EventInfoType
             append(myType);
 
             /* Validate the EventInfoType */
-            myType.validate();
-
-            /* Handle validation failure */
-            if (myType.hasErrors()) {
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add an InfoType to the list.
-         * @param pId the id of the new item
-         * @param isEnabled is the type enabled
-         * @param pOrder the sort order
-         * @param pInfoType the Name of the InfoType
-         * @param pDesc the Description of the InfoType
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pInfoType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new InfoType */
-            EventInfoType myType = new EventInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
-
-            /* Check that this InfoId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-            }
-
-            /* Add the InfoType to the list */
-            append(myType);
-
-            /* Validate the TaxRegime */
             myType.validate();
 
             /* Handle validation failure */

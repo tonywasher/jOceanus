@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountInfo
-                        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -181,36 +181,6 @@ public class AccountInfo
         /* Record the Detail */
         setValueInfoType(pType);
         setValueOwner(pAccount);
-    }
-
-    /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pInfoType the info type
-     * @param pAccount the Account
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private AccountInfo(final AccountInfoList pList,
-                        final Integer pId,
-                        final AccountInfoType pInfoType,
-                        final Account pAccount,
-                        final Object pValue) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pInfoType, pAccount);
-
-        try {
-            /* Set the value */
-            setValue(pValue);
-
-            /* Access the AccountInfoSet and register this data */
-            AccountInfoSet mySet = pAccount.getInfoSet();
-            mySet.registerInfo(this);
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -405,7 +375,7 @@ public class AccountInfo
      * AccountInfoList.
      */
     public static class AccountInfoList
-                                       extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -498,7 +468,7 @@ public class AccountInfo
         }
 
         @Override
-        public void addOpenItem(final Integer pId,
+        public void addInfoItem(final Integer pId,
                                 final Account pAccount,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
@@ -516,8 +486,15 @@ public class AccountInfo
                 throw new JMoneyWiseDataException(pAccount, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
-            /* Create a new Account Info Type */
-            AccountInfo myInfo = new AccountInfo(this, pId, myInfoType, pAccount, pValue);
+            /* Create the values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYearInfo.OBJECT_NAME);
+            myValues.addValue(FIELD_ID, pId);
+            myValues.addValue(FIELD_INFOTYPE, myInfoType);
+            myValues.addValue(FIELD_OWNER, pAccount);
+            myValues.addValue(FIELD_VALUE, pValue);
+
+            /* Create a new Account Info */
+            AccountInfo myInfo = new AccountInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -527,14 +504,6 @@ public class AccountInfo
 
             /* Add the Info to the list */
             append(myInfo);
-
-            /* Validate the Info */
-            myInfo.validate();
-
-            /* Handle validation failure */
-            if (myInfo.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
         }
 
         @Override

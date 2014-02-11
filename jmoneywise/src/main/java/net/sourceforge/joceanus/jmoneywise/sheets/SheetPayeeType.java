@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPayeeType
-                           extends SheetStaticData<PayeeType, MoneyWiseDataType> {
+        extends SheetStaticData<PayeeType, MoneyWiseDataType> {
     /**
      * NamedArea for PayeeTypes.
      */
@@ -53,11 +53,6 @@ public class SheetPayeeType
     protected static final String AREA_PAYEETYPENAMES = PayeeType.OBJECT_NAME + "Names";
 
     /**
-     * PayeeTypes data list.
-     */
-    private final PayeeTypeList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -66,8 +61,8 @@ public class SheetPayeeType
         super(pReader, AREA_PAYEETYPES);
 
         /* Access the Payee Type list */
-        theList = pReader.getData().getPayeeTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getPayeeTypes());
     }
 
     /**
@@ -79,60 +74,20 @@ public class SheetPayeeType
         super(pWriter, AREA_PAYEETYPES, AREA_PAYEETYPENAMES);
 
         /* Access the Payee Type list */
-        theList = pWriter.getData().getPayeeTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getPayeeTypes());
     }
 
-    /**
-     * Load encrypted.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(PayeeType.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
-    }
-
-    /**
-     * Load clear text.
-     * @param uId the id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    @Override
-    protected void loadClearTextItem(final Integer uId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(uId, isEnabled, iOrder, pName, pDesc);
+        return getSecureRowValues(PayeeType.OBJECT_NAME);
     }
 
     @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(PayeeType.OBJECT_NAME);
     }
 
     /**
@@ -177,7 +132,7 @@ public class SheetPayeeType
                 DataRow myRow = myView.getRowByIndex(i);
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */

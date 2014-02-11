@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class Frequency
-                      extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
+        extends StaticData<Frequency, FrequencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -109,25 +109,6 @@ public class Frequency
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Frequency with
-     * @param pId ID of Frequency
-     * @param isEnabled is the frequency enabled
-     * @param pOrder the sort order
-     * @param pName Name of Frequency
-     * @param pDesc Description of Frequency
-     * @throws JOceanusException on error
-     */
-    private Frequency(final FrequencyList pList,
-                      final Integer pId,
-                      final Boolean isEnabled,
-                      final Integer pOrder,
-                      final String pName,
-                      final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -142,7 +123,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-                                     extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
+            extends StaticList<Frequency, FrequencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -260,41 +241,6 @@ public class Frequency
             /* Handle validation failure */
             if (myFrequency.hasErrors()) {
                 throw new JMoneyWiseDataException(myFrequency, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a Frequency to the list.
-         * @param pId ID of Frequency
-         * @param isEnabled is the frequency enabled
-         * @param pOrder the sort order
-         * @param pFrequency the Name of the frequency
-         * @param pDesc the Description of the frequency
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pFrequency,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Frequency */
-            Frequency myFreq = new Frequency(this, pId, isEnabled, pOrder, pFrequency, pDesc);
-
-            /* Check that this FrequencyId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
-            }
-
-            /* Add the Frequency to the list */
-            append(myFreq);
-
-            /* Validate the Frequency */
-            myFreq.validate();
-
-            /* Handle validation failure */
-            if (myFreq.hasErrors()) {
-                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
         }
 

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.sheets;
 
 import net.sourceforge.joceanus.jprometheus.data.ControlData;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
-import net.sourceforge.joceanus.jprometheus.data.DataKey;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlData
-                             extends SheetDataItem<ControlData, CryptographyDataType> {
+        extends SheetDataItem<ControlData, CryptographyDataType> {
     /**
      * SheetName for ControlData.
      */
@@ -84,34 +83,37 @@ public class SheetControlData
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        DataValues<CryptographyDataType> myValues = getRowValues(ControlData.OBJECT_NAME);
         myValues.addValue(ControlData.FIELD_DATAVERSION, loadInteger(COL_VERSION));
         myValues.addValue(ControlData.FIELD_CONTROLKEY, loadInteger(COL_CONTROLID));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the specific values */
-        Integer myVersion = loadInteger(COL_VERSION);
+    protected DataValues<CryptographyDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<CryptographyDataType> myValues = getRowValues(ControlData.OBJECT_NAME);
+        myValues.addValue(ControlData.FIELD_DATAVERSION, loadInteger(COL_VERSION));
 
-        /* Add the Control */
-        theList.addOpenItem(pId, myVersion);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final ControlData pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeInteger(COL_VERSION, pItem.getDataVersion());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
     @Override
     protected void insertOpenItem(final ControlData pItem) throws JOceanusException {
+        super.insertOpenItem(pItem);
         writeInteger(COL_VERSION, pItem.getDataVersion());
     }
 

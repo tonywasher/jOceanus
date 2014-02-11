@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -41,7 +41,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
-public class SheetAccountRate extends SheetDataItem<AccountRate, MoneyWiseDataType> {
+public class SheetAccountRate
+        extends SheetEncrypted<AccountRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */
@@ -99,37 +100,35 @@ public class SheetAccountRate extends SheetDataItem<AccountRate, MoneyWiseDataTy
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
-        myValues.addValue(AccountRate.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(AccountRate.OBJECT_NAME);
         myValues.addValue(AccountRate.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
         myValues.addValue(AccountRate.FIELD_RATE, loadBytes(COL_RATE));
         myValues.addValue(AccountRate.FIELD_BONUS, loadBytes(COL_BONUS));
         myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the account */
-        String myAccount = loadString(COL_ACCOUNT);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
+        myValues.addValue(AccountRate.FIELD_ACCOUNT, loadString(COL_ACCOUNT));
+        myValues.addValue(AccountRate.FIELD_RATE, loadString(COL_RATE));
+        myValues.addValue(AccountRate.FIELD_BONUS, loadString(COL_BONUS));
+        myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
 
-        /* Access the name and description bytes */
-        String myRate = loadString(COL_RATE);
-        String myBonus = loadString(COL_BONUS);
-        JDateDay myEndDate = loadDate(COL_ENDDATE);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myAccount, myRate, myEndDate, myBonus);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final AccountRate pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_ACCOUNT, pItem.getAccountId());
         writeBytes(COL_RATE, pItem.getRateBytes());
         writeBytes(COL_BONUS, pItem.getBonusBytes());
@@ -139,6 +138,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate, MoneyWiseDataTy
     @Override
     protected void insertOpenItem(final AccountRate pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_ACCOUNT, pItem.getAccountName());
         writeDecimal(COL_RATE, pItem.getRate());
         writeDecimal(COL_BONUS, pItem.getBonus());
@@ -249,8 +249,15 @@ public class SheetAccountRate extends SheetDataItem<AccountRate, MoneyWiseDataTy
                     myExpiry = myCell.getDateValue();
                 }
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myAccount, myRate, myExpiry, myBonus);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountRate.OBJECT_NAME);
+                myValues.addValue(AccountRate.FIELD_ACCOUNT, myAccount);
+                myValues.addValue(AccountRate.FIELD_RATE, myRate);
+                myValues.addValue(AccountRate.FIELD_BONUS, myBonus);
+                myValues.addValue(AccountRate.FIELD_ENDDATE, myExpiry);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;

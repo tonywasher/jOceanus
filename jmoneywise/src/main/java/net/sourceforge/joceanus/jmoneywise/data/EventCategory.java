@@ -519,45 +519,6 @@ public final class EventCategory
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the event category
-     * @param pDesc the description of the category
-     * @param pCategory the Category type
-     * @param pParent the Parent Category
-     * @throws JOceanusException on error
-     */
-    protected EventCategory(final EventCategoryList pList,
-                            final Integer pId,
-                            final String pName,
-                            final String pDesc,
-                            final String pCategory,
-                            final String pParent) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the links */
-            setValueType(pCategory);
-            setValueParent(pParent);
-
-            /* Record the string values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Resolve the subCategory */
-            resolveSubCategory();
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -1108,33 +1069,6 @@ public final class EventCategory
                 default:
                     return null;
             }
-        }
-
-        /**
-         * Allow a category to be added.
-         * @param pId the id
-         * @param pName the name
-         * @param pDesc the description
-         * @param pCategoryType the category type
-         * @param pParent the parent category
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final String pName,
-                                final String pDesc,
-                                final String pCategoryType,
-                                final String pParent) throws JOceanusException {
-            /* Create the category */
-            EventCategory myCategory = new EventCategory(this, pId, pName, pDesc, pCategoryType, pParent);
-
-            /* Check that this CategoryId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myCategory);
         }
 
         @Override

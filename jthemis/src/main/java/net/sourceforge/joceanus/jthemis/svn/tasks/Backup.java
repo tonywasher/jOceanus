@@ -214,20 +214,17 @@ public class Backup {
                                   final PasswordHash pHash,
                                   final File pRepository,
                                   final File pBackupDir) throws JOceanusException {
-        ZipWriteFile myZipFile = null;
-        OutputStream myStream = null;
-        boolean bSuccess = true;
+        /* Access the name of the repository */
+        String myName = pRepository.getName();
+        File myEntryName = new File(DATA_NAME);
+
+        /* Determine the prefix for backups */
+        String myPrefix = thePreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
         File myZipName = null;
+        long revLast;
 
         /* Protect against exceptions */
         try {
-            /* Access the name of the repository */
-            String myName = pRepository.getName();
-            File myEntryName = new File(DATA_NAME);
-
-            /* Determine the prefix for backups */
-            String myPrefix = thePreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
-
             /* Determine the repository name */
             String myRepoName = buildURL(myName);
             SVNURL myURL = SVNURL.parseURIEncoded(myRepoName);
@@ -237,7 +234,7 @@ public class Backup {
             myRepo.setAuthenticationManager(theAuth);
 
             /* Determine the most recent revision # in the repository */
-            long revLast = myRepo.getDatedRevision(new Date());
+            revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
             myZipName = new File(pBackupDir.getPath(), myPrefix + myName + ZipReadFile.ZIPFILE_EXT);
@@ -257,28 +254,30 @@ public class Backup {
                     return;
                 }
             }
+        } catch (SVNException e) {
+            throw new JThemisIOException("Failed to analyse existing backup", e);
+        }
 
-            /* Declare the single stage */
-            if ((!theTask.setNumStages(1)) || (!theTask.setNewStage(myName))) {
-                return;
-            }
+        /* Declare the single stage */
+        if ((!theTask.setNumStages(1)) || (!theTask.setNewStage(myName))) {
+            return;
+        }
 
-            /* Declare the number of revisions */
-            int myNumRevisions = (int) revLast;
-            if (!theTask.setNumSteps(myNumRevisions)) {
-                return;
-            }
+        /* Declare the number of revisions */
+        int myNumRevisions = (int) revLast;
+        if (!theTask.setNumSteps(myNumRevisions)) {
+            return;
+        }
 
-            /* Note presumption of failure */
-            bSuccess = false;
+        /* Note presumption of failure */
+        boolean doDelete = true;
 
-            /* Create a clone of the password hash */
-            PasswordHash myHash = pManager.clonePasswordHash(pHash);
+        /* Create a clone of the password hash */
+        PasswordHash myHash = pManager.clonePasswordHash(pHash);
 
-            /* Create the new Zip file */
-            myZipFile = new ZipWriteFile(myHash, myZipName);
-            myStream = myZipFile.getOutputStream(myEntryName);
-
+        /* Protect against exceptions */
+        try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, myZipName);
+             OutputStream myStream = myZipFile.getOutputStream(myEntryName)) {
             /* Access the current entry and set the number of revisions */
             ZipFileEntry myEntry = myZipFile.getCurrentEntry();
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);
@@ -288,43 +287,21 @@ public class Backup {
 
             /* Close the stream */
             myStream.close();
-            myStream = null;
-
-            /* Close the Zip file */
             myZipFile.close();
-            myZipFile = null;
 
             /* Note success */
-            bSuccess = true;
+            doDelete = false;
 
             /* Handle other exceptions */
-        } catch (SVNException | IOException e) {
+        } catch (SVNException
+                | IOException e) {
             throw new JThemisIOException("Failed to dump repository to zipfile", e);
 
             /* Clean up on exit */
         } finally {
-            /* Protect while cleaning up */
-            try {
-                /* Close the output stream */
-                if (myStream != null) {
-                    myStream.close();
-                }
-
-                /* Close the Zip file */
-                if (myZipFile != null) {
-                    myZipFile.close();
-                }
-
-                /* Ignore errors */
-            } catch (Exception ex) {
-                thePreferenceMgr.getLogger().log(Level.SEVERE, "Close failure", ex);
-            }
-
             /* Delete the file on error */
-            if ((!bSuccess) && (myZipName != null)) {
-                if (myZipName.exists() && !myZipName.delete()) {
-                    thePreferenceMgr.getLogger().log(Level.SEVERE, "Failed to delete file on failure");
-                }
+            if (doDelete && !myZipName.delete()) {
+                thePreferenceMgr.getLogger().log(Level.SEVERE, "Failed to delete file on failure");
             }
         }
     }

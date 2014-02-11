@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * @author Tony Washer
  */
 public class Event
-                  extends EventBase
+        extends EventBase
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * The name of the object.
@@ -481,39 +481,6 @@ public class Event
     }
 
     /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pDate the date
-     * @param pDebit the debit account
-     * @param pCredit the credit account
-     * @param pAmount the amount
-     * @param pCategory the category
-     * @param pReconciled is the event reconciled
-     * @param pSplit is the event split
-     * @param pParent the parent
-     * @throws JOceanusException on error
-     */
-    protected Event(final EventList pList,
-                    final Integer pId,
-                    final JDateDay pDate,
-                    final String pDebit,
-                    final String pCredit,
-                    final String pAmount,
-                    final String pCategory,
-                    final Boolean pReconciled,
-                    final Boolean pSplit,
-                    final Event pParent) throws JOceanusException {
-        /* Initialise item */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
-
-        /* Create the InfoSet */
-        theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
-        hasInfoSet = true;
-        useInfoSet = false;
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
@@ -818,7 +785,7 @@ public class Event
      * @param <T> the Event type
      */
     public abstract static class BaseEventList<T extends Event>
-                                                                extends EventBaseList<T> {
+            extends EventBaseList<T> {
         /**
          * The EventInfo List.
          */
@@ -890,7 +857,7 @@ public class Event
      * The Event List class.
      */
     public static class EventList
-                                 extends BaseEventList<Event> {
+            extends BaseEventList<Event> {
         /**
          * Local Report fields.
          */
@@ -1151,43 +1118,6 @@ public class Event
 
             /* Add to list and return */
             add(myEvent);
-            return myEvent;
-        }
-
-        /**
-         * Allow an event to be added.
-         * @param pId the id
-         * @param pDate the date
-         * @param pDebit the debit account
-         * @param pCredit the credit account
-         * @param pAmount the amount
-         * @param pCategory the category
-         * @param pReconciled is the event reconciled
-         * @param pSplit is the event split
-         * @param pParent the parent
-         * @return the new event
-         * @throws JOceanusException on error
-         */
-        public Event addOpenItem(final Integer pId,
-                                 final JDateDay pDate,
-                                 final String pDebit,
-                                 final String pCredit,
-                                 final String pAmount,
-                                 final String pCategory,
-                                 final Boolean pReconciled,
-                                 final Boolean pSplit,
-                                 final Event pParent) throws JOceanusException {
-            /* Create the new Event */
-            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
-
-            /* Check that this EventId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myEvent, ERROR_VALIDATION);
-            }
-
-            /* Add the Event to the list */
-            append(myEvent);
             return myEvent;
         }
 

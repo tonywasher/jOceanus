@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Payee class.
  */
 public class Payee
-                  extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Payee> {
     /**
      * Object name.
@@ -414,44 +414,6 @@ public class Payee
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the event payee
-     * @param pDesc the description of the payee
-     * @param pPayeeType the Payee type
-     * @param pClosed is the payee closed?
-     * @throws JOceanusException on error
-     */
-    protected Payee(final PayeeList pList,
-                    final Integer pId,
-                    final String pName,
-                    final String pDesc,
-                    final String pPayeeType,
-                    final Boolean pClosed) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the links */
-            setValueType(pPayeeType);
-
-            /* Record the string values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Store closed flag */
-            setValueClosed(pClosed);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -699,7 +661,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-                                 extends EncryptedList<Payee, MoneyWiseDataType> {
+            extends EncryptedList<Payee, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -892,33 +854,6 @@ public class Payee
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Allow a payee to be added.
-         * @param pId the id
-         * @param pName the name
-         * @param pDesc the description
-         * @param pPayeeType the payee type
-         * @param pClosed is the payee closed
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final String pName,
-                                final String pDesc,
-                                final String pPayeeType,
-                                final Boolean pClosed) throws JOceanusException {
-            /* Create the payee */
-            Payee myPayee = new Payee(this, pId, pName, pDesc, pPayeeType, pClosed);
-
-            /* Check that this PayeeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPayee.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPayee, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPayee);
         }
 
         @Override

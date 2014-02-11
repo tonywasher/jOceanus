@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventClassLink
-                                extends SheetDataItem<EventClassLink, MoneyWiseDataType> {
+        extends SheetDataItem<EventClassLink, MoneyWiseDataType> {
     /**
      * NamedArea for Event Classes.
      */
@@ -83,19 +83,20 @@ public class SheetEventClassLink
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
         myValues.addValue(EventClassLink.FIELD_EVENT, loadInteger(COL_EVENT));
         myValues.addValue(EventClassLink.FIELD_CLASS, loadInteger(COL_CLASS));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final EventClassLink pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeInteger(COL_EVENT, pItem.getEventId());
         writeInteger(COL_CLASS, pItem.getEventClassId());
     }

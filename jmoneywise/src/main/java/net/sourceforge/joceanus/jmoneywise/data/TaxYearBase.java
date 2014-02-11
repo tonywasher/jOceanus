@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * @author Tony Washer
  */
 public abstract class TaxYearBase
-                                 extends DataItem<MoneyWiseDataType>
+        extends DataItem<MoneyWiseDataType>
         implements Comparable<TaxYearBase> {
     /**
      * Object name.
@@ -285,26 +285,6 @@ public abstract class TaxYearBase
     }
 
     /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pRegime the tax regime
-     * @param pDate the date
-     * @throws JOceanusException on error
-     */
-    protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
-                          final int pId,
-                          final String pRegime,
-                          final JDateDay pDate) throws JOceanusException {
-        /* Initialise item */
-        super(pList, pId);
-
-        /* Record the details */
-        setValueTaxRegime(pRegime);
-        setValueTaxYear(pDate);
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -466,7 +446,7 @@ public abstract class TaxYearBase
      * @param <T> the dataType
      */
     public abstract static class TaxYearBaseList<T extends TaxYearBase>
-                                                                        extends DataList<T, MoneyWiseDataType> {
+            extends DataList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */

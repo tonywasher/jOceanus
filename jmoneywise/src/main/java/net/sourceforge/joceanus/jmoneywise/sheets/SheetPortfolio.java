@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPortfolio
-                           extends SheetDataItem<Portfolio, MoneyWiseDataType> {
+        extends SheetEncrypted<Portfolio, MoneyWiseDataType> {
     /**
      * NamedArea for Portfolios.
      */
@@ -109,38 +109,37 @@ public class SheetPortfolio
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
-        myValues.addValue(Portfolio.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_HOLDING, loadInteger(COL_HOLDING));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
         myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
-        String myHolding = loadString(COL_HOLDING);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_HOLDING, loadString(COL_HOLDING));
+        myValues.addValue(Portfolio.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(Portfolio.FIELD_DESC, loadString(COL_DESC));
+        myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
+        myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the Flags */
-        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myHolding, isTaxFree, isClosed);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_HOLDING, pItem.getHoldingId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -151,6 +150,7 @@ public class SheetPortfolio
     @Override
     protected void insertOpenItem(final Portfolio pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
         writeString(COL_HOLDING, pItem.getHoldingName());
@@ -261,8 +261,16 @@ public class SheetPortfolio
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = myCell.getBooleanValue();
 
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
+                myValues.addValue(Portfolio.FIELD_NAME, myName);
+                myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
+                myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
+                myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myHolding, isTaxFree, isClosed);
 
                 /* Report the progress */
                 myCount++;

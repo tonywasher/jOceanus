@@ -60,11 +60,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     protected static final int COL_ID = 0;
 
     /**
-     * ControlId column.
-     */
-    protected static final int COL_CONTROLID = COL_ID + 1;
-
-    /**
      * The task control.
      */
     private final TaskControl<?> theTask;
@@ -120,6 +115,11 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     private DataView theActiveView = null;
 
     /**
+     * The last loaded item.
+     */
+    private T theLastItem = null;
+
+    /**
      * The Row number of the current row.
      */
     private int theCurrRow = 0;
@@ -135,6 +135,14 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      */
     protected boolean isBackup() {
         return isBackup;
+    }
+
+    /**
+     * Obtain the last loaded item.
+     * @return the item
+     */
+    protected T getLastItem() {
+        return theLastItem;
     }
 
     /**
@@ -229,15 +237,11 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                 /* Access the row */
                 theActiveRow = myIterator.next();
 
-                /* Access the ID */
-                Integer myID = loadInteger(COL_ID);
-
                 /* load the item */
-                if (isBackup) {
-                    loadSecureItem(myID);
-                } else {
-                    loadOpenItem(myID);
-                }
+                DataValues<E> myValues = (isBackup)
+                                                   ? loadSecureValues()
+                                                   : loadOpenValues();
+                theLastItem = theList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;
@@ -337,9 +341,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                 /* Create the new row */
                 newRow();
 
-                /* Write the id */
-                writeInteger(COL_ID, myCurr.getId());
-
                 /* insert the item */
                 if (isBackup) {
                     insertSecureItem(myCurr);
@@ -383,7 +384,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
         int myCol = pColumn;
 
         /* If we should adjust the column */
-        if ((isAdjusted) && (myCol > COL_CONTROLID)) {
+        if ((isAdjusted) && (myCol > SheetEncrypted.COL_CONTROLID)) {
             /* Decrement column */
             myCol--;
         }
@@ -394,17 +395,18 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Load secure item from spreadsheet.
-     * @param pId the id
+     * @return the secure values
      * @throws JOceanusException on error
      */
-    protected abstract void loadSecureItem(final Integer pId) throws JOceanusException;
+    protected abstract DataValues<E> loadSecureValues() throws JOceanusException;
 
     /**
      * Load open item from spreadsheet.
-     * @param pId the id
+     * @return the open values
      * @throws JOceanusException on error
      */
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
+    protected DataValues<E> loadOpenValues() throws JOceanusException {
+        return null;
     }
 
     /**
@@ -420,7 +422,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pItem the item
      * @throws JOceanusException on error
      */
-    protected abstract void insertSecureItem(final T pItem) throws JOceanusException;
+    protected void insertSecureItem(final T pItem) throws JOceanusException {
+        /* Write the id */
+        writeInteger(COL_ID, pItem.getId());
+    }
 
     /**
      * Insert open item into spreadsheet.
@@ -428,6 +433,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected void insertOpenItem(final T pItem) throws JOceanusException {
+        /* Write the id */
+        writeInteger(COL_ID, pItem.getId());
     }
 
     /**

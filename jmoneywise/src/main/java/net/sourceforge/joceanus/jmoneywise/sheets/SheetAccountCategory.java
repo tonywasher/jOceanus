@@ -33,14 +33,15 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for AccountCategory.
  * @author Tony Washer
  */
-public class SheetAccountCategory extends SheetDataItem<AccountCategory, MoneyWiseDataType> {
+public class SheetAccountCategory
+        extends SheetEncrypted<AccountCategory, MoneyWiseDataType> {
     /**
      * NamedArea for Categories.
      */
@@ -103,37 +104,35 @@ public class SheetAccountCategory extends SheetDataItem<AccountCategory, MoneyWi
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCategory.OBJECT_NAME);
-        myValues.addValue(AccountCategory.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(AccountCategory.OBJECT_NAME);
         myValues.addValue(AccountCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(AccountCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(AccountCategory.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(AccountCategory.FIELD_DESC, loadBytes(COL_DESC));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the links */
-        String myType = loadString(COL_TYPE);
-        String myParent = loadString(COL_PARENT);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCategory.OBJECT_NAME);
+        myValues.addValue(AccountCategory.FIELD_CATTYPE, loadString(COL_TYPE));
+        myValues.addValue(AccountCategory.FIELD_PARENT, loadString(COL_PARENT));
+        myValues.addValue(AccountCategory.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(AccountCategory.FIELD_DESC, loadString(COL_DESC));
 
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, myParent);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final AccountCategory pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
         writeInteger(COL_PARENT, pItem.getParentCategoryId());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -143,6 +142,7 @@ public class SheetAccountCategory extends SheetDataItem<AccountCategory, MoneyWi
     @Override
     protected void insertOpenItem(final AccountCategory pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_TYPE, pItem.getCategoryTypeName());
         writeString(COL_PARENT, pItem.getParentCategoryName());
         writeString(COL_NAME, pItem.getName());
@@ -250,8 +250,14 @@ public class SheetAccountCategory extends SheetDataItem<AccountCategory, MoneyWi
                     myParent = myCell.getStringValue();
                 }
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, myParent);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountCategory.OBJECT_NAME);
+                myValues.addValue(AccountCategory.FIELD_CATTYPE, myType);
+                myValues.addValue(AccountCategory.FIELD_PARENT, myParent);
+                myValues.addValue(AccountCategory.FIELD_NAME, myName);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventCategoryType
-                              extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
+        extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -114,25 +114,6 @@ public class EventCategoryType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Category Type with
-     * @param uId ID of Category Type
-     * @param isEnabled is the EventCategoryType enabled
-     * @param uOrder the sort order
-     * @param pName Name of Category Type
-     * @param pDesc Description of Category Type
-     * @throws JOceanusException on error
-     */
-    private EventCategoryType(final EventCategoryTypeList pList,
-                              final Integer uId,
-                              final Boolean isEnabled,
-                              final Integer uOrder,
-                              final String pName,
-                              final String pDesc) throws JOceanusException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -147,7 +128,7 @@ public class EventCategoryType
      * Represents a list of {@link EventCategoryType} objects.
      */
     public static class EventCategoryTypeList
-                                             extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
+            extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -252,41 +233,6 @@ public class EventCategoryType
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
-                myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
-            }
-
-            /* Add the Category Type to the list */
-            append(myCatType);
-
-            /* Validate the EventCategoryType */
-            myCatType.validate();
-
-            /* Handle validation failure */
-            if (myCatType.hasErrors()) {
-                throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a EventCategoryType to the list.
-         * @param pId ID of Category Type
-         * @param isEnabled is the EventCategoryType enabled
-         * @param pOrder the sort order
-         * @param pCatType the Name of the category type
-         * @param pDesc the Description of the category type
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pCatType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Category Type */
-            EventCategoryType myCatType = new EventCategoryType(this, pId, isEnabled, pOrder, pCatType, pDesc);
-
-            /* Check that this EventCategoryTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
                 throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }

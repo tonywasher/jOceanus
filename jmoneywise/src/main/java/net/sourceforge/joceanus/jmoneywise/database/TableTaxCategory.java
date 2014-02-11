@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,11 +43,6 @@ public class TableTaxCategory
     private static final String TABLE_NAME = TaxCategory.LIST_NAME;
 
     /**
-     * The tax category list.
-     */
-    private TaxCategoryList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,22 +53,12 @@ public class TableTaxCategory
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getTaxCategories();
-        setList(theList);
+        setList(myData.getTaxCategories());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxCategory.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
     }
 }

@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventBase;
@@ -46,6 +45,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetEvent
-                       extends SheetDataItem<Event, MoneyWiseDataType> {
+        extends SheetEncrypted<Event, MoneyWiseDataType> {
     /**
      * NamedArea for Events.
      */
@@ -118,7 +118,7 @@ public class SheetEvent
     /**
      * Last loaded parent.
      */
-    private Event theLastParent = null;
+    private Event theActiveParent = null;
 
     /**
      * Last debit.
@@ -144,10 +144,17 @@ public class SheetEvent
         theInfoList = myData.getEventInfo();
         setDataList(theList);
 
-        /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                                 ? null
-                                 : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+        /* If this is a backup load */
+        if (isBackup()) {
+            /* No need for info sheet */
+            theInfoSheet = null;
+
+            /* else extract load */
+        } else {
+            /* Set up info Sheet and ask for two-pass load */
+            theInfoSheet = new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+            requestDoubleLoad();
+        }
     }
 
     /**
@@ -171,10 +178,9 @@ public class SheetEvent
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
-        myValues.addValue(Event.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Event.OBJECT_NAME);
         myValues.addValue(Event.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Event.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Event.FIELD_DEBIT, loadInteger(COL_DEBIT));
@@ -184,52 +190,77 @@ public class SheetEvent
         myValues.addValue(Event.FIELD_SPLIT, loadBoolean(COL_SPLIT));
         myValues.addValue(Event.FIELD_PARENT, loadInteger(COL_PARENT));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the Account */
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Access key details */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
-        String myCategory = loadString(COL_CATEGORY);
-
-        /* Access the date and name and description bytes */
         JDateDay myDate = loadDate(COL_DATE);
-
-        /* Load flags */
-        Boolean myReconciled = loadBoolean(COL_RECONCILED);
-
-        /* Access the binary values */
-        String myAmount = loadString(COL_AMOUNT);
+        Boolean isSplit = Boolean.FALSE;
+        Event myParent = null;
 
         /* If we don't have a date */
-        Event myEvent;
-        if ((myDate == null) && (theLastParent != null)) {
-            /* Pick up last date */
-            myDate = theLastParent.getDate();
-
-            /* Pick up debit and credit from last values */
-            if (myDebit == null) {
-                myDebit = theLastDebit;
-            }
-            if (myCredit == null) {
-                myCredit = theLastCredit;
+        if (myDate == null) {
+            /* If this is the first child */
+            if (theActiveParent == null) {
+                /* Access the last item as the active parent */
+                theActiveParent = getLastItem();
+                if (theActiveParent != null) {
+                    /* Mark it as a group */
+                    theActiveParent.setSplit(Boolean.TRUE);
+                }
             }
 
-            /* Load the item */
-            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.TRUE, theLastParent);
-            theLastParent.setSplit(Boolean.TRUE);
+            /* If we have a valid parent */
+            if (theActiveParent != null) {
+                /* Pick up last date */
+                myDate = theActiveParent.getDate();
+
+                /* Pick up debit and credit from last values */
+                if (myDebit == null) {
+                    myDebit = theLastDebit;
+                }
+                if (myCredit == null) {
+                    myCredit = theLastCredit;
+                }
+
+                /* Note that we are split and record the active parent */
+                isSplit = Boolean.TRUE;
+                myParent = theActiveParent;
+            }
+
+            /* else reset the active parent */
         } else {
-            /* Load the item */
-            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, null);
-            theLastParent = myEvent;
+            theActiveParent = null;
         }
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Event.OBJECT_NAME);
+        myValues.addValue(Event.FIELD_DATE, myDate);
+        myValues.addValue(Event.FIELD_CATEGORY, loadString(COL_CATEGORY));
+        myValues.addValue(Event.FIELD_DEBIT, myDebit);
+        myValues.addValue(Event.FIELD_CREDIT, myCredit);
+        myValues.addValue(Event.FIELD_AMOUNT, loadString(COL_AMOUNT));
+        myValues.addValue(Event.FIELD_RECONCILED, loadBoolean(COL_RECONCILED));
+        myValues.addValue(Event.FIELD_SPLIT, isSplit);
+        myValues.addValue(Event.FIELD_PARENT, myParent);
 
         /* Store last credit and debit */
         theLastCredit = myCredit;
         theLastDebit = myDebit;
+
+        /* Return the values */
+        return myValues;
+    }
+
+    @Override
+    protected void loadSecondPass(final Integer pId) throws JOceanusException {
+        /* Access the event */
+        Event myEvent = theList.findItemById(pId);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -238,7 +269,7 @@ public class SheetEvent
     @Override
     protected void insertSecureItem(final Event pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeDate(COL_DATE, pItem.getDate());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
@@ -251,6 +282,9 @@ public class SheetEvent
 
     @Override
     protected void insertOpenItem(final Event pItem) throws JOceanusException {
+        /* Write headers */
+        super.insertOpenItem(pItem);
+
         /* Determine whether we are a child event */
         boolean isChild = pItem.getParent() != null;
 
@@ -265,7 +299,7 @@ public class SheetEvent
 
         /* If we are a child */
         if (isChild) {
-            /* Only fill in debit credit if they are different */
+            /* Only fill in debit/credit if they are different */
             if (!Difference.isEqual(myDebit, theLastDebit)) {
                 writeString(COL_DEBIT, myDebit);
             }
@@ -515,8 +549,11 @@ public class SheetEvent
                         myThirdParty = myCell.getStringValue();
                     }
 
-                    /* If we have a null date */
-                    Event myEvent;
+                    /* Set defaults */
+                    Boolean isSplit = Boolean.FALSE;
+                    Event myParent = null;
+
+                    /* If we don't have a date */
                     if ((myDate == null) && (myLastParent != null)) {
                         /* Pick up last date */
                         myDate = myLastParent.getDate();
@@ -529,12 +566,29 @@ public class SheetEvent
                             myCredit = myLastCredit;
                         }
 
-                        /* Add the event */
-                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.TRUE, myLastParent);
+                        /* Mark parent as split */
+                        isSplit = Boolean.TRUE;
                         myLastParent.setSplit(Boolean.TRUE);
-                    } else {
-                        /* Add the event */
-                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, null);
+                        myParent = myLastParent;
+                    }
+
+                    /* Build data values */
+                    DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Event.OBJECT_NAME);
+                    myValues.addValue(Event.FIELD_DATE, myDate);
+                    myValues.addValue(Event.FIELD_CATEGORY, myCategory);
+                    myValues.addValue(Event.FIELD_DEBIT, myDebit);
+                    myValues.addValue(Event.FIELD_CREDIT, myCredit);
+                    myValues.addValue(Event.FIELD_AMOUNT, myAmount);
+                    myValues.addValue(Event.FIELD_RECONCILED, myReconciled);
+                    myValues.addValue(Event.FIELD_SPLIT, isSplit);
+                    myValues.addValue(Event.FIELD_PARENT, myParent);
+
+                    /* Add the event */
+                    Event myEvent = myList.addValuesItem(myValues);
+
+                    /* If we were not a child */
+                    if (myParent == null) {
+                        /* Note the last parent */
                         myLastParent = myEvent;
                     }
 
@@ -543,17 +597,17 @@ public class SheetEvent
                     myLastCredit = myCredit;
 
                     /* Add information relating to the account */
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.COMMENTS, myDesc);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.TAXCREDIT, myTaxCredit);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.NATINSURANCE, myNatInsurance);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DEEMEDBENEFIT, myBenefit);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DEBITUNITS, myDebitUnits);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CREDITUNITS, myCreditUnits);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DILUTION, myDilution);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.REFERENCE, myReference);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.QUALIFYYEARS, myYears);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CHARITYDONATION, myDonation);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.THIRDPARTY, myThirdParty);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.COMMENTS, myDesc);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.TAXCREDIT, myTaxCredit);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.NATINSURANCE, myNatInsurance);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.DEEMEDBENEFIT, myBenefit);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.DEBITUNITS, myDebitUnits);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.CREDITUNITS, myCreditUnits);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.DILUTION, myDilution);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.REFERENCE, myReference);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.QUALIFYYEARS, myYears);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.CHARITYDONATION, myDonation);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.THIRDPARTY, myThirdParty);
 
                     /* Report the progress */
                     myCount++;
@@ -592,7 +646,7 @@ public class SheetEvent
      * EventInfoSet sheet.
      */
     private static class SheetEventInfoSet
-                                          extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

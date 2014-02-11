@@ -22,80 +22,63 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Extension of SheetDataItem class for accessing a sheet that is related to a data info type.
+ * Extension of SheetDataItem class for accessing a sheet that is related to an encrypted data type.
  * @author Tony Washer
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends Enum<E>>
-        extends SheetEncrypted<T, E> {
+public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
+        extends SheetDataItem<T, E> {
     /**
-     * InfoType column.
+     * ControlId column.
      */
-    private static final int COL_INFOTYPE = COL_CONTROLID + 1;
+    protected static final int COL_CONTROLID = COL_ID + 1;
 
     /**
-     * Owner column.
-     */
-    private static final int COL_OWNER = COL_INFOTYPE + 1;
-
-    /**
-     * Value column.
-     */
-    private static final int COL_VALUE = COL_OWNER + 1;
-
-    /**
-     * Constructor for loading a spreadsheet.
+     * Constructor for a load operation.
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected SheetDataInfo(final SheetReader<?> pReader,
-                            final String pRange) {
-        /* Call super constructor */
+    protected SheetEncrypted(final SheetReader<?> pReader,
+                             final String pRange) {
+        /* Pass call on */
         super(pReader, pRange);
     }
 
     /**
-     * Constructor for creating a spreadsheet.
+     * Constructor for a write operation.
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
      */
-    protected SheetDataInfo(final SheetWriter<?> pWriter,
-                            final String pRange) {
-        /* Call super constructor */
+    protected SheetEncrypted(final SheetWriter<?> pWriter,
+                             final String pRange) {
+        /* Pass call on */
         super(pWriter, pRange);
     }
 
     @Override
     protected void insertSecureItem(final T pItem) throws JOceanusException {
-        /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());
-        writeInteger(COL_OWNER, pItem.getOwnerId());
-        writeBytes(COL_VALUE, pItem.getValueBytes());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
-    @Override
-    protected int getLastColumn() {
-        /* Return the last column */
-        return COL_VALUE;
-    }
-
-    @Override
+    /**
+     * Obtain row values.
+     * @param pName the name of the item
+     * @return the row values.
+     * @throws JOceanusException on error
+     */
     protected DataValues<E> getSecureRowValues(final String pName) throws JOceanusException {
-        /* Obtain the values */
-        DataValues<E> myValues = super.getSecureRowValues(pName);
+        /* Allocate the values */
+        DataValues<E> myValues = super.getRowValues(pName);
 
-        /* Add the info and return the new values */
-        myValues.addValue(DataInfo.FIELD_CONTROL, loadInteger(COL_CONTROLID));
-        myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));
-        myValues.addValue(DataInfo.FIELD_OWNER, loadInteger(COL_OWNER));
-        myValues.addValue(DataInfo.FIELD_VALUE, loadBytes(COL_VALUE));
+        /* Add the control id and return the new values */
+        myValues.addValue(EncryptedItem.FIELD_CONTROL, loadInteger(COL_CONTROLID));
         return myValues;
     }
 }

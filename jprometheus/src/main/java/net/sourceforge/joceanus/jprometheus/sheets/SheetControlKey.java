@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetControlKey
-                            extends SheetDataItem<ControlKey, CryptographyDataType> {
+        extends SheetDataItem<ControlKey, CryptographyDataType> {
     /**
      * SheetName for Keys.
      */
@@ -78,18 +78,19 @@ public class SheetControlKey
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_PASSHASH, loadBytes(COL_KEYDATA));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final ControlKey pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeBytes(COL_KEYDATA, pItem.getHashBytes());
     }
 

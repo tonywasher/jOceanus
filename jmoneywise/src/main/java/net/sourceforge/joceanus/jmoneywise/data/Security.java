@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Security class.
  */
 public class Security
-                     extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Security> {
     /**
      * Object name.
@@ -663,55 +663,6 @@ public class Security
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the security
-     * @param pDesc the description of the security
-     * @param pSecType the Security type
-     * @param pParent the Parent
-     * @param pSymbol the security symbol
-     * @param pClosed is the security closed?
-     * @param pCurrency the Security currency
-     * @throws JOceanusException on error
-     */
-    protected Security(final SecurityList pList,
-                       final Integer pId,
-                       final String pName,
-                       final String pDesc,
-                       final String pSecType,
-                       final String pParent,
-                       final String pSymbol,
-                       final String pCurrency,
-                       final Boolean pClosed) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the links */
-            setValueType(pSecType);
-            setValueParent(pParent);
-
-            /* Store the currency */
-            setValueCurrency(pCurrency);
-
-            /* Record the string values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-            setValueSymbol(pSymbol);
-
-            /* Store closed flag */
-            setValueClosed(pClosed);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -770,6 +721,8 @@ public class Security
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
+            } else if (myValue instanceof AccountCurrency) {
+                setValueCurrency((AccountCurrency) myValue);
             }
 
             /* Store the closed flag */
@@ -1056,7 +1009,7 @@ public class Security
      * The Security List class.
      */
     public static class SecurityList
-                                    extends EncryptedList<Security, MoneyWiseDataType> {
+            extends EncryptedList<Security, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -1206,39 +1159,6 @@ public class Security
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Allow a security to be added.
-         * @param pId the id
-         * @param pName the name
-         * @param pDesc the description
-         * @param pSecType the security type
-         * @param pParent the parent
-         * @param pSymbol the security symbol
-         * @param pCurrency the security currency
-         * @param pClosed is the security closed?
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final String pName,
-                                final String pDesc,
-                                final String pSecType,
-                                final String pParent,
-                                final String pSymbol,
-                                final String pCurrency,
-                                final Boolean pClosed) throws JOceanusException {
-            /* Create the security */
-            Security mySecurity = new Security(this, pId, pName, pDesc, pSecType, pParent, pSymbol, pCurrency, pClosed);
-
-            /* Check that this SecurityId has not been previously added */
-            if (!isIdUnique(pId)) {
-                mySecurity.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(mySecurity, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(mySecurity);
         }
 
         @Override

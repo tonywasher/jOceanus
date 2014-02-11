@@ -389,7 +389,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
         /* Create the control data */
         if (bContinue) {
-            pData.getControlData().addOpenItem(null, theVersion);
+            pData.getControlData().addNewControl(theVersion);
         }
 
         /* return success */

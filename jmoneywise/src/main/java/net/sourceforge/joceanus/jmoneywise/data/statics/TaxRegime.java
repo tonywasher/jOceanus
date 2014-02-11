@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxRegime
-                      extends StaticData<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
+        extends StaticData<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -109,25 +109,6 @@ public class TaxRegime
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the TaxRegime with
-     * @param pId the id of the new item
-     * @param isEnabled is the regime enabled
-     * @param pOrder the sort order
-     * @param pName Name of Tax Regime
-     * @param pDesc Description of Tax Regime
-     * @throws JOceanusException on error
-     */
-    private TaxRegime(final TaxRegimeList pList,
-                      final Integer pId,
-                      final Boolean isEnabled,
-                      final Integer pOrder,
-                      final String pName,
-                      final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -166,7 +147,7 @@ public class TaxRegime
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList
-                                     extends StaticList<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
+            extends StaticList<TaxRegime, TaxRegimeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -284,41 +265,6 @@ public class TaxRegime
             /* Handle validation failure */
             if (myTaxRegime.hasErrors()) {
                 throw new JMoneyWiseDataException(myTaxRegime, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a TaxRegime to the list.
-         * @param pId the id of the new item
-         * @param isEnabled is the regime enabled
-         * @param pOrder the sort order
-         * @param pTaxRegime the Name of the tax regime
-         * @param pDesc the Description of the tax regime
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pTaxRegime,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Tax Regime */
-            TaxRegime myTaxReg = new TaxRegime(this, pId, isEnabled, pOrder, pTaxRegime, pDesc);
-
-            /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myTaxReg.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
-            }
-
-            /* Add the Tax Regime to the list */
-            append(myTaxReg);
-
-            /* Validate the TaxRegime */
-            myTaxReg.validate();
-
-            /* Handle validation failure */
-            if (myTaxReg.hasErrors()) {
-                throw new JMoneyWiseDataException(myTaxReg, ERROR_VALIDATION);
             }
         }
 

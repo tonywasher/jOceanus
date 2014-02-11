@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
+import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -33,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <E> the data type enum class
  */
 public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends Enum<E>>
-                                                                                        extends SheetDataItem<T, E> {
+        extends SheetEncrypted<T, E> {
     /**
      * Enabled column.
      */
@@ -55,41 +56,20 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     protected static final int COL_DESC = COL_NAME + 1;
 
     /**
-     * Load the Static Data from backup.
-     * @param pId the data id
-     * @param pControlId the control Id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    protected abstract void loadEncryptedItem(final Integer pId,
-                                              final Integer pControlId,
-                                              final Boolean isEnabled,
-                                              final Integer iOrder,
-                                              final byte[] pName,
-                                              final byte[] pDesc) throws JOceanusException;
-
-    /**
-     * Load the static data from extract.
-     * @param pId the Id
-     * @param isEnabled isEnabled
-     * @param iOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    protected abstract void loadClearTextItem(final Integer pId,
-                                              final Boolean isEnabled,
-                                              final Integer iOrder,
-                                              final String pName,
-                                              final String pDesc) throws JOceanusException;
-
-    /**
      * The name of the items.
      */
     private String theNames = null;
+
+    /**
+     * The data list.
+     */
+    private DataList<T, E> theList;
+
+    @Override
+    protected void setDataList(final DataList<T, E> pList) {
+        super.setDataList(pList);
+        theList = pList;
+    }
 
     /**
      * Constructor for loading a spreadsheet.
@@ -119,38 +99,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Integer myControlId = loadInteger(COL_CONTROLID);
-        Boolean myEnabled = loadBoolean(COL_ENABLED);
-        Integer myOrder = loadInteger(COL_ORDER);
-
-        /* Access the name and description bytes */
-        byte[] myNameBytes = loadBytes(COL_NAME);
-        byte[] myDescBytes = loadBytes(COL_DESC);
-
-        /* Load the item */
-        loadEncryptedItem(pId, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
-    }
-
-    @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the IDs */
-        Boolean myEnabled = loadBoolean(COL_ENABLED);
-        Integer myOrder = loadInteger(COL_ORDER);
-
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
-
-        /* Load the item */
-        loadClearTextItem(pId, myEnabled, myOrder, myName, myDesc);
-    }
-
-    @Override
     protected void insertSecureItem(final T pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -160,6 +111,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     @Override
     protected void insertOpenItem(final T pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
         writeString(COL_NAME, pItem.getName());
@@ -194,9 +146,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getSecureRowValues(final String pName) throws JOceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
+        DataValues<E> myValues = super.getSecureRowValues(pName);
 
         /* Add the info and return the new values */
         myValues.addValue(StaticData.FIELD_CONTROL, loadInteger(COL_CONTROLID));
@@ -205,5 +157,27 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
         myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
         myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
         return myValues;
+    }
+
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
+        /* Obtain the values */
+        DataValues<E> myValues = super.getRowValues(pName);
+
+        /* Add the info and return the new values */
+        myValues.addValue(StaticData.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(StaticData.FIELD_DESC, loadString(COL_DESC));
+        myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
+        myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
+        return myValues;
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* reSort the list */
+        theList.reSort();
+
+        /* Validate the items */
+        theList.validateOnLoad();
     }
 }

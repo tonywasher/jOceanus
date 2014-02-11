@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
@@ -51,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class AccountRate
-                        extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountRate> {
     /**
      * Object name.
@@ -433,50 +432,6 @@ public class AccountRate
     }
 
     /**
-     * Open Constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param pAccount the account name
-     * @param pEndDate the end date
-     * @param pRate the rate
-     * @param pBonus the bonus
-     * @throws JOceanusException on error
-     */
-    private AccountRate(final AccountRateList pList,
-                        final Integer uId,
-                        final String pAccount,
-                        final JDateDay pEndDate,
-                        final String pRate,
-                        final String pBonus) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Protect against exceptions */
-        try {
-            /* Access the parser */
-            MoneyWiseData myDataSet = getDataSet();
-            JDataFormatter myFormatter = myDataSet.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
-            /* Record the account */
-            setValueAccount(pAccount);
-
-            /* Record the date */
-            setValueEndDate(pEndDate);
-
-            /* Set the encrypted objects */
-            setValueRate(myParser.parseRateValue(pRate));
-            setValueBonus(myParser.parseRateValue(pBonus));
-
-            /* Catch Exceptions */
-        } catch (IllegalArgumentException
-                | JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -715,7 +670,7 @@ public class AccountRate
      * List class.
      */
     public static class AccountRateList
-                                       extends EncryptedList<AccountRate, MoneyWiseDataType> {
+            extends EncryptedList<AccountRate, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -922,32 +877,6 @@ public class AccountRate
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Allow a rate to be added.
-         * @param uId the id
-         * @param pAccount the account
-         * @param pRate the Rate
-         * @param pDate the end date
-         * @param pBonus the Bonus
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer uId,
-                                final String pAccount,
-                                final String pRate,
-                                final JDateDay pDate,
-                                final String pBonus) throws JOceanusException {
-            /* Create the ratePeriod */
-            AccountRate myRate = new AccountRate(this, uId, pAccount, pDate, pRate, pBonus);
-
-            /* Check that this RateId has not been previously added */
-            if (!isIdUnique(myRate.getId())) {
-                throw new JMoneyWiseDataException(myRate, "Duplicate RateId");
-            }
-
-            /* Add to the list */
-            append(myRate);
         }
 
         @Override

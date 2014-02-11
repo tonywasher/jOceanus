@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetSecurityPrice
-                               extends SheetDataItem<SecurityPrice, MoneyWiseDataType> {
+        extends SheetEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * NamedArea for Prices.
      */
@@ -95,35 +95,33 @@ public class SheetSecurityPrice
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
-        myValues.addValue(SecurityPrice.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
         myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(SecurityPrice.FIELD_PRICE, loadBytes(COL_PRICE));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the Security */
-        String mySecurity = loadString(COL_SECURITY);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        myValues.addValue(SecurityPrice.FIELD_SECURITY, loadString(COL_SECURITY));
+        myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(SecurityPrice.FIELD_PRICE, loadString(COL_PRICE));
 
-        /* Access the name and description bytes */
-        JDateDay myDate = loadDate(COL_DATE);
-        String myPrice = loadString(COL_PRICE);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myDate, mySecurity, myPrice);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final SecurityPrice pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_SECURITY, pItem.getSecurityId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_PRICE, pItem.getPriceBytes());
@@ -132,6 +130,7 @@ public class SheetSecurityPrice
     @Override
     protected void insertOpenItem(final SecurityPrice pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_SECURITY, pItem.getSecurityName());
         writeDate(COL_DATE, pItem.getDate());
         writeDecimal(COL_PRICE, pItem.getPrice());
@@ -238,7 +237,7 @@ public class SheetSecurityPrice
                     if (myCell == null) {
                         continue;
                     }
-                    String myAccount = myCell.getStringValue();
+                    String mySecurity = myCell.getStringValue();
 
                     /* Handle price which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
@@ -246,8 +245,14 @@ public class SheetSecurityPrice
                         /* Access the formatted cell */
                         String myPrice = myCell.getStringValue();
 
-                        /* Add the item to the data set */
-                        myList.addOpenItem(0, myDate, myAccount, myPrice);
+                        /* Build data values */
+                        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(SecurityPrice.OBJECT_NAME);
+                        myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurity);
+                        myValues.addValue(SecurityPrice.FIELD_DATE, myDate);
+                        myValues.addValue(SecurityPrice.FIELD_PRICE, myPrice);
+
+                        /* Add the value into the list */
+                        myList.addValuesItem(myValues);
                     }
 
                     /* Report the progress */

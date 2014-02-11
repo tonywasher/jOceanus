@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCurrency
-                            extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+        extends StaticData<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -174,28 +174,6 @@ public class AccountCurrency
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Account Currency with
-     * @param pId the id
-     * @param isEnabled is the account currency enabled
-     * @param pOrder the sort order
-     * @param pName Name of Account Currency
-     * @param pDesc Description of Account Currency
-     * @param pDefault is this the default currency
-     * @throws JOceanusException on error
-     */
-    private AccountCurrency(final AccountCurrencyList pList,
-                            final Integer pId,
-                            final Boolean isEnabled,
-                            final Integer pOrder,
-                            final String pName,
-                            final String pDesc,
-                            final Boolean pDefault) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-        setValueDefault(pDefault);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -292,7 +270,7 @@ public class AccountCurrency
      * Represents a list of {@link AccountCurrency} objects.
      */
     public static class AccountCurrencyList
-                                           extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
+            extends StaticList<AccountCurrency, AccountCurrencyClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -396,43 +374,6 @@ public class AccountCurrency
             append(myCurr);
 
             /* Validate the Currency */
-            myCurr.validate();
-
-            /* Handle validation failure */
-            if (myCurr.hasErrors()) {
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add an AccountCurrency to the list.
-         * @param pId the Id of the account currency
-         * @param isEnabled is the account currency enabled
-         * @param pOrder the sort order
-         * @param pCurrency the Name of the account currency
-         * @param pDesc the Description of the account currency
-         * @param pDefault is this the default currency
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pCurrency,
-                                final String pDesc,
-                                final Boolean pDefault) throws JOceanusException {
-            /* Create a new Account Currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
-
-            /* Check that this AccountCurrencyTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
-                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
-            }
-
-            /* Add the Account Currency to the list */
-            append(myCurr);
-
-            /* Validate the AccountCurrency */
             myCurr.validate();
 
             /* Handle validation failure */

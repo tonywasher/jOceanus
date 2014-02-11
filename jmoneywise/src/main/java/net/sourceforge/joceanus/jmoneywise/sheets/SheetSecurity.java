@@ -29,13 +29,12 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -43,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetSecurity
-                          extends SheetDataItem<Security, MoneyWiseDataType> {
+        extends SheetEncrypted<Security, MoneyWiseDataType> {
     /**
      * NamedArea for Securities.
      */
@@ -121,10 +120,9 @@ public class SheetSecurity
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
-        myValues.addValue(Security.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
@@ -133,33 +131,30 @@ public class SheetSecurity
         myValues.addValue(Security.FIELD_SYMBOL, loadBytes(COL_SYMBOL));
         myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the name */
-        String myType = loadString(COL_TYPE);
-        String myParent = loadString(COL_PARENT);
-        String myCurrency = loadString(COL_CURRENCY);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
+        myValues.addValue(Security.FIELD_SECTYPE, loadString(COL_TYPE));
+        myValues.addValue(Security.FIELD_PARENT, loadString(COL_PARENT));
+        myValues.addValue(Security.FIELD_CURRENCY, loadString(COL_CURRENCY));
+        myValues.addValue(Security.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(Security.FIELD_DESC, loadString(COL_DESC));
+        myValues.addValue(Security.FIELD_SYMBOL, loadString(COL_SYMBOL));
+        myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
-        String mySymbol = loadString(COL_SYMBOL);
-
-        /* Access the Flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, myParent, mySymbol, myCurrency, isClosed);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final Security pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getSecurityTypeId());
         writeInteger(COL_PARENT, pItem.getParentId());
         writeInteger(COL_CURRENCY, pItem.getSecurityCurrencyId());
@@ -172,6 +167,7 @@ public class SheetSecurity
     @Override
     protected void insertOpenItem(final Security pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_TYPE, pItem.getSecurityTypeName());
         writeString(COL_PARENT, pItem.getParentName());
         writeString(COL_CURRENCY, pItem.getSecurityCurrencyName());
@@ -297,8 +293,17 @@ public class SheetSecurity
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = myCell.getBooleanValue();
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, myParent, mySymbol, myCurrency.getName(), isClosed);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
+                myValues.addValue(Security.FIELD_NAME, myName);
+                myValues.addValue(Security.FIELD_SECTYPE, myType);
+                myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
+                myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
+                myValues.addValue(Security.FIELD_PARENT, myParent);
+                myValues.addValue(Security.FIELD_CLOSED, isClosed);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;

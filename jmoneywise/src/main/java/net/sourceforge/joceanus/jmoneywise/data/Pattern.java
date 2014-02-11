@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
  * @author Tony Washer
  */
 public class Pattern
-                    extends EventBase {
+        extends EventBase {
     /**
      * The name of the object.
      */
@@ -251,37 +251,6 @@ public class Pattern
     }
 
     /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pDate the date
-     * @param pDebit the debit account
-     * @param pCredit the credit account
-     * @param pCategory the category
-     * @param pAmount the amount
-     * @param pFrequency the frequency
-     * @param pSplit is the pattern split?
-     * @param pParent the parent
-     * @throws JOceanusException on error
-     */
-    private Pattern(final PatternList pList,
-                    final Integer pId,
-                    final JDateDay pDate,
-                    final String pDebit,
-                    final String pCredit,
-                    final String pCategory,
-                    final String pAmount,
-                    final String pFrequency,
-                    final Boolean pSplit,
-                    final Pattern pParent) throws JOceanusException {
-        /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pSplit, pParent);
-
-        /* Record the values */
-        setValueFrequency(pFrequency);
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values
@@ -475,7 +444,7 @@ public class Pattern
      * The list.
      */
     public static class PatternList
-                                   extends EventBaseList<Pattern> {
+            extends EventBaseList<Pattern> {
         /**
          * Local Report fields.
          */
@@ -629,43 +598,6 @@ public class Pattern
             /* Set the Date as the start of the range */
             myPattern.setDate(RANGE_PATTERN.getStart());
             add(myPattern);
-            return myPattern;
-        }
-
-        /**
-         * Allow a pattern to be added.
-         * @param pId the id
-         * @param pDate the date
-         * @param pDebit the debit account
-         * @param pCredit the credit account
-         * @param pAmount the amount
-         * @param pCategory the category type
-         * @param pFrequency the frequency
-         * @param pSplit is the pattern split
-         * @param pParent the parent
-         * @return the allocated pattern
-         * @throws JOceanusException on error
-         */
-        public Pattern addOpenItem(final Integer pId,
-                                   final JDateDay pDate,
-                                   final String pDebit,
-                                   final String pCredit,
-                                   final String pAmount,
-                                   final String pCategory,
-                                   final String pFrequency,
-                                   final Boolean pSplit,
-                                   final Pattern pParent) throws JOceanusException {
-            /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pDate, pDebit, pCredit, pCategory, pAmount, pFrequency, pSplit, pParent);
-
-            /* Check that this PatternId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPattern, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPattern);
             return myPattern;
         }
 

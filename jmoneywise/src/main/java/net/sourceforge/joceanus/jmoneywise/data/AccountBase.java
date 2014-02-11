@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public abstract class AccountBase
-                                 extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<AccountBase> {
     /**
      * Object name.
@@ -444,52 +444,6 @@ public abstract class AccountBase
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param uId the id
-     * @param sName the Name of the account
-     * @param pCategory the Account category
-     * @param isClosed is the account closed?
-     * @param isTaxFree is the account taxFree?
-     * @param isGross is the account grossInterest?
-     * @param pCurrency the Account currency
-     * @throws JOceanusException on error
-     */
-    protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
-                          final Integer uId,
-                          final String sName,
-                          final String pCategory,
-                          final Boolean isClosed,
-                          final Boolean isTaxFree,
-                          final Boolean isGross,
-                          final String pCurrency) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, uId);
-
-        /* Protect against exceptions */
-        try {
-            /* Store the category */
-            setValueCategory(pCategory);
-
-            /* Store the currency */
-            setValueCurrency(pCurrency);
-
-            /* Record the encrypted values */
-            setValueName(sName);
-
-            /* Set the closed and tax free indications */
-            setValueClosed(isClosed);
-            setValueTaxFree(isTaxFree);
-            setValueGrossInterest(isGross);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -527,6 +481,8 @@ public abstract class AccountBase
                 setValueCurrency((Integer) myValue);
             } else if (myValue instanceof String) {
                 setValueCurrency((String) myValue);
+            } else if (myValue instanceof AccountCurrency) {
+                setValueCurrency((AccountCurrency) myValue);
             }
 
             /* Store the taxFree flag */
@@ -899,7 +855,7 @@ public abstract class AccountBase
      * @param <T> the dataType
      */
     public abstract static class AccountBaseList<T extends AccountBase>
-                                                                        extends EncryptedList<T, MoneyWiseDataType> {
+            extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */

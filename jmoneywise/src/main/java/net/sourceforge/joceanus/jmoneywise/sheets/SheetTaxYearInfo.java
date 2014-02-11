@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfo
-                             extends SheetDataInfo<TaxYearInfo, MoneyWiseDataType> {
+        extends SheetDataInfo<TaxYearInfo, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYearInfo.
      */
@@ -82,16 +82,9 @@ public class SheetTaxYearInfo
     }
 
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Integer pInfoTypeId,
-                                     final Integer pOwnerId,
-                                     final byte[] pValue) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYearInfo.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        return getSecureRowValues(TaxYearInfo.OBJECT_NAME);
     }
 
     @Override

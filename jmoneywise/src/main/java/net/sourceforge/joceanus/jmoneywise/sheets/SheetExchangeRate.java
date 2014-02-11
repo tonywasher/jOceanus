@@ -28,15 +28,13 @@ import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 
 /**
  * SheetDataItem extension for ExchangeRate.
  * @author Tony Washer
  */
 public class SheetExchangeRate
-                              extends SheetDataItem<ExchangeRate, MoneyWiseDataType> {
+        extends SheetDataItem<ExchangeRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */
@@ -94,7 +92,7 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
@@ -102,27 +100,27 @@ public class SheetExchangeRate
         myValues.addValue(ExchangeRate.FIELD_TO, loadInteger(COL_TO));
         myValues.addValue(ExchangeRate.FIELD_RATE, loadRatio(COL_RATE));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the links */
-        String myFrom = loadString(COL_FROM);
-        String myTo = loadString(COL_TO);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(ExchangeRate.FIELD_FROM, loadString(COL_FROM));
+        myValues.addValue(ExchangeRate.FIELD_TO, loadString(COL_TO));
+        myValues.addValue(ExchangeRate.FIELD_RATE, loadRatio(COL_RATE));
 
-        /* Access the date and rate */
-        JDateDay myDate = loadDate(COL_DATE);
-        JRatio myRate = loadRatio(COL_RATE);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myDate, myFrom, myTo, myRate);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final ExchangeRate pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeInteger(COL_FROM, pItem.getFromCurrencyId());
         writeInteger(COL_TO, pItem.getToCurrencyId());
         writeDate(COL_DATE, pItem.getDate());
@@ -132,6 +130,7 @@ public class SheetExchangeRate
     @Override
     protected void insertOpenItem(final ExchangeRate pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_FROM, pItem.getFromCurrencyName());
         writeString(COL_TO, pItem.getToCurrencyName());
         writeDate(COL_DATE, pItem.getDate());

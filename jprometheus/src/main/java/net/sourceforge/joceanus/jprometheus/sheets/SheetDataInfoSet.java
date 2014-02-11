@@ -234,28 +234,28 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends DataI
                     JDateDay myDate = theOwner.loadDate(iData);
                     if (myDate != null) {
                         Integer myId = theOwner.loadInteger(iCol);
-                        pInfoList.addOpenItem(myId, pOwner, myClass, myDate);
+                        pInfoList.addInfoItem(myId, pOwner, myClass, myDate);
                     }
                     break;
                 case INTEGER:
                     Integer myInt = theOwner.loadInteger(iData);
                     if (myInt != null) {
                         Integer myId = theOwner.loadInteger(iCol);
-                        pInfoList.addOpenItem(myId, pOwner, myClass, myInt);
+                        pInfoList.addInfoItem(myId, pOwner, myClass, myInt);
                     }
                     break;
                 case LINK:
                     String myLink = theOwner.loadString(iData);
                     if (myLink != null) {
                         Integer myId = theOwner.loadInteger(iCol);
-                        pInfoList.addOpenItem(myId, pOwner, myClass, myLink);
+                        pInfoList.addInfoItem(myId, pOwner, myClass, myLink);
                     }
                     break;
                 default:
                     String myValue = theOwner.loadString(iData);
                     if (myValue != null) {
                         Integer myId = theOwner.loadInteger(iCol);
-                        pInfoList.addOpenItem(myId, pOwner, myClass, myValue);
+                        pInfoList.addInfoItem(myId, pOwner, myClass, myValue);
                     }
                     break;
             }

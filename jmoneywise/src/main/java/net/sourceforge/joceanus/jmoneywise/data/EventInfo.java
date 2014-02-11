@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class EventInfo
-                      extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -159,37 +159,6 @@ public class EventInfo
         /* Record the Detail */
         setValueInfoType(pType);
         setValueOwner(pEvent);
-    }
-
-    /**
-     * Open constructor.
-     * @param pList the list
-     * @param pId the id
-     * @param pInfoType the info type
-     * @param pEvent the Event
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private EventInfo(final EventInfoList pList,
-                      final Integer pId,
-                      final EventInfoType pInfoType,
-                      final Event pEvent,
-                      final Object pValue) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId, pInfoType, pEvent);
-
-        /* Protect against exceptions */
-        try {
-            /* Set the value */
-            setValue(pValue);
-
-            /* Access the EventInfoSet and register this data */
-            EventInfoSet mySet = pEvent.getInfoSet();
-            mySet.registerInfo(this);
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
     }
 
     /**
@@ -370,7 +339,7 @@ public class EventInfo
      * EventInfoList.
      */
     public static class EventInfoList
-                                     extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -463,7 +432,7 @@ public class EventInfo
         }
 
         @Override
-        public void addOpenItem(final Integer pId,
+        public void addInfoItem(final Integer pId,
                                 final Event pEvent,
                                 final EventInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
@@ -481,8 +450,15 @@ public class EventInfo
                 throw new JMoneyWiseDataException(pEvent, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
+            /* Create the values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYearInfo.OBJECT_NAME);
+            myValues.addValue(FIELD_ID, pId);
+            myValues.addValue(FIELD_INFOTYPE, myInfoType);
+            myValues.addValue(FIELD_OWNER, pEvent);
+            myValues.addValue(FIELD_VALUE, pValue);
+
             /* Create a new Event Info */
-            EventInfo myInfo = new EventInfo(this, pId, myInfoType, pEvent, pValue);
+            EventInfo myInfo = new EventInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -492,14 +468,6 @@ public class EventInfo
 
             /* Add the Event Info to the list */
             append(myInfo);
-
-            /* Validate the Info */
-            myInfo.validate();
-
-            /* Handle validation failure */
-            if (myInfo.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
-            }
         }
 
         @Override

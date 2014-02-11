@@ -35,8 +35,11 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
@@ -47,6 +50,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -55,7 +59,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetAccount
-                         extends SheetDataItem<Account, MoneyWiseDataType> {
+        extends SheetEncrypted<Account, MoneyWiseDataType> {
     /**
      * NamedArea for Accounts.
      */
@@ -159,10 +163,9 @@ public class SheetAccount
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
-        myValues.addValue(Account.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Account.OBJECT_NAME);
         myValues.addValue(Account.FIELD_CATEGORY, loadInteger(COL_ACCOUNTCAT));
         myValues.addValue(Account.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Account.FIELD_NAME, loadBytes(COL_NAME));
@@ -170,24 +173,23 @@ public class SheetAccount
         myValues.addValue(Account.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
         myValues.addValue(Account.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the Account */
-        String myName = loadString(COL_NAME);
-        String myCategory = loadString(COL_ACCOUNTCAT);
-        String myCurrency = loadString(COL_CURRENCY);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
+        myValues.addValue(Account.FIELD_CATEGORY, loadString(COL_ACCOUNTCAT));
+        myValues.addValue(Account.FIELD_CURRENCY, loadString(COL_CURRENCY));
+        myValues.addValue(Account.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(Account.FIELD_GROSS, loadBoolean(COL_GROSS));
+        myValues.addValue(Account.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
+        myValues.addValue(Account.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
-        Boolean isGross = loadBoolean(COL_GROSS);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree, isGross, myCurrency);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
@@ -202,7 +204,7 @@ public class SheetAccount
     @Override
     protected void insertSecureItem(final Account pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_ACCOUNTCAT, pItem.getAccountCategoryId());
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
@@ -214,6 +216,7 @@ public class SheetAccount
     @Override
     protected void insertOpenItem(final Account pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_NAME, pItem.getName());
         writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
         writeBoolean(COL_CLOSED, pItem.isClosed());
@@ -359,8 +362,17 @@ public class SheetAccount
                     isClosed = myCell.getBooleanValue();
                 }
 
-                /* Add the value into the tables */
-                myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree, isGross, myCurrency.getName());
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Account.OBJECT_NAME);
+                myValues.addValue(Account.FIELD_NAME, myName);
+                myValues.addValue(Account.FIELD_CATEGORY, myAcType);
+                myValues.addValue(Account.FIELD_CURRENCY, myCurrency);
+                myValues.addValue(Account.FIELD_GROSS, isGross);
+                myValues.addValue(Account.FIELD_TAXFREE, isTaxFree);
+                myValues.addValue(Account.FIELD_CLOSED, isClosed);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;
@@ -442,14 +454,14 @@ public class SheetAccount
                 }
 
                 /* Add information relating to the account */
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.MATURITY, myMaturity);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.PARENT, myParent);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.ALIAS, myAlias);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.PORTFOLIO, myPortfolio);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.HOLDING, myHolding);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.SYMBOL, mySymbol);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OPENINGBALANCE, myBalance);
-                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.MATURITY, myMaturity);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.PARENT, myParent);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.ALIAS, myAlias);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.PORTFOLIO, myPortfolio);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.HOLDING, myHolding);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.SYMBOL, mySymbol);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.OPENINGBALANCE, myBalance);
+                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
 
                 /* Process alternate view */
                 processAlternate(pData, myView, myRow);
@@ -532,13 +544,26 @@ public class SheetAccount
             /* Access Holding account */
             String myHolding = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-            /* Add the value into the finance tables */
-            myPortfolioList.addOpenItem(0, myName, null, myHolding, isTaxFree, isClosed);
+            /* Build data values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
+            myValues.addValue(Portfolio.FIELD_NAME, myName);
+            myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
+            myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
+            myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            myPortfolioList.addValuesItem(myValues);
 
             /* If this is a payee */
         } else if (myPayeeTypeList.findItemByName(myType) != null) {
-            /* Add the value into the finance tables */
-            myPayeeList.addOpenItem(0, myName, null, myType, isClosed);
+            /* Build data values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            myValues.addValue(Payee.FIELD_NAME, myName);
+            myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
+            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            myPayeeList.addValuesItem(myValues);
         } else {
             /* Look for separator in category */
             int iIndex = myType.indexOf(EventCategory.STR_SEP);
@@ -561,8 +586,17 @@ public class SheetAccount
                     /* Access Symbol */
                     String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-                    /* Add the value into the tables */
-                    mySecurityList.addOpenItem(0, myName, null, mySecType, myParent, mySymbol, pData.getDefaultCurrency().getName(), isClosed);
+                    /* Build data values */
+                    DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
+                    myValues.addValue(Security.FIELD_NAME, myName);
+                    myValues.addValue(Security.FIELD_SECTYPE, mySecType);
+                    myValues.addValue(Security.FIELD_CURRENCY, pData.getDefaultCurrency());
+                    myValues.addValue(Security.FIELD_PARENT, myParent);
+                    myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
+                    myValues.addValue(Security.FIELD_CLOSED, isClosed);
+
+                    /* Add the value into the list */
+                    mySecurityList.addValuesItem(myValues);
                 }
             }
         }
@@ -608,7 +642,7 @@ public class SheetAccount
      * AccountInfoSet sheet.
      */
     private static class SheetAccountInfoSet
-                                            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

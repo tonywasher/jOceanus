@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SecurityType data type.
  */
 public class SecurityType
-                         extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+        extends StaticData<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -108,25 +108,6 @@ public class SecurityType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the SecurityType with
-     * @param pId the id
-     * @param isEnabled is the securityType enabled
-     * @param pOrder the sort order
-     * @param pName Name of SecurityType
-     * @param pDesc Description of SecurityType
-     * @throws JOceanusException on error
-     */
-    private SecurityType(final SecurityTypeList pList,
-                         final Integer pId,
-                         final Boolean isEnabled,
-                         final Integer pOrder,
-                         final String pName,
-                         final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -141,7 +122,7 @@ public class SecurityType
      * Represents a list of {@link SecurityType} objects.
      */
     public static class SecurityTypeList
-                                        extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
+            extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -240,41 +221,6 @@ public class SecurityType
             append(mySecType);
 
             /* Validate the SecType */
-            mySecType.validate();
-
-            /* Handle validation failure */
-            if (mySecType.hasErrors()) {
-                throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a SecurityType to the list.
-         * @param pId the Id of the security type
-         * @param isEnabled is the security type enabled
-         * @param pOrder the sort order
-         * @param pSecType the Name of the security type
-         * @param pDesc the Description of the security type
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pSecType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Security Type */
-            SecurityType mySecType = new SecurityType(this, pId, isEnabled, pOrder, pSecType, pDesc);
-
-            /* Check that this AccountCategoryTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                mySecType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
-            }
-
-            /* Add the Security Type to the list */
-            append(mySecType);
-
-            /* Validate the SecurityType */
             mySecType.validate();
 
             /* Handle validation failure */

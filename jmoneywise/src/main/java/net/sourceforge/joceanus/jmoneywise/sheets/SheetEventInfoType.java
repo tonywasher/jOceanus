@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventInfoType
-                               extends SheetStaticData<EventInfoType, MoneyWiseDataType> {
+        extends SheetStaticData<EventInfoType, MoneyWiseDataType> {
     /**
      * NamedArea for EventInfoType.
      */
@@ -53,11 +53,6 @@ public class SheetEventInfoType
     protected static final String AREA_EVENTINFOTYPENAMES = EventInfoType.OBJECT_NAME + "Names";
 
     /**
-     * EventInfoTypes data list.
-     */
-    private final EventInfoTypeList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -66,8 +61,8 @@ public class SheetEventInfoType
         super(pReader, AREA_EVENTINFOTYPES);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getEventInfoTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getEventInfoTypes());
     }
 
     /**
@@ -79,41 +74,20 @@ public class SheetEventInfoType
         super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getEventInfoTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getEventInfoTypes());
     }
 
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventInfoType.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        return getSecureRowValues(EventInfoType.OBJECT_NAME);
     }
 
     @Override
-    protected void loadClearTextItem(final Integer pId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(EventInfoType.OBJECT_NAME);
     }
 
     /**
@@ -158,7 +132,7 @@ public class SheetEventInfoType
                 DataRow myRow = myView.getRowByIndex(i);
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Add the value into the finance tables */
+                /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());
 
                 /* Report the progress */

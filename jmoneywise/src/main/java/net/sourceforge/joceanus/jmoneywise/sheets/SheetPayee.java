@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetPayee
-                       extends SheetDataItem<Payee, MoneyWiseDataType> {
+        extends SheetEncrypted<Payee, MoneyWiseDataType> {
     /**
      * NamedArea for Payees.
      */
@@ -104,39 +104,35 @@ public class SheetPayee
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
-        myValues.addValue(Payee.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_PAYEETYPE, loadInteger(COL_TYPE));
         myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the name */
-        String myType = loadString(COL_TYPE);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        myValues.addValue(Payee.FIELD_PAYEETYPE, loadString(COL_TYPE));
+        myValues.addValue(Payee.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(Payee.FIELD_DESC, loadString(COL_DESC));
+        myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
-
-        /* Access the Flags */
-        Boolean isClosed = loadBoolean(COL_CLOSED);
-
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType, isClosed);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final Payee pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getPayeeTypeId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -146,6 +142,7 @@ public class SheetPayee
     @Override
     protected void insertOpenItem(final Payee pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_TYPE, pItem.getPayeeTypeName());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
@@ -249,8 +246,14 @@ public class SheetPayee
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = myCell.getBooleanValue();
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType, isClosed);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+                myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
+                myValues.addValue(Payee.FIELD_NAME, myName);
+                myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;

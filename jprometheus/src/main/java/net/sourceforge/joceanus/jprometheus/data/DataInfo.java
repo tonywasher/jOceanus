@@ -477,6 +477,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
             setValueInfoType((Integer) myValue);
         } else if (myValue instanceof String) {
             setValueInfoType((String) myValue);
+        } else if (myValue instanceof StaticData) {
+            setValueInfoType((I) myValue);
         }
 
         /* Store the Owner */
@@ -485,6 +487,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
             setValueOwner((Integer) myValue);
         } else if (myValue instanceof String) {
             setValueOwner((String) myValue);
+        } else if (myValue instanceof DataItem) {
+            setValueOwner((O) myValue);
         }
     }
 
@@ -871,14 +875,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                                         final I pInfoType);
 
         /**
-         * Add a DataInfo to the list.
-         * @param uId the Id of the info
-         * @param pOwner the owner of the info
-         * @param pInfoClass the Class of the data info type
-         * @param pValue the value of the data info
+         * Add an info Item to the list.
+         * @param pId the Id
+         * @param pOwner the owner
+         * @param pInfoClass the infoClass
+         * @param pValue the value
          * @throws JOceanusException on error
          */
-        public abstract void addOpenItem(final Integer uId,
+        public abstract void addInfoItem(final Integer pId,
                                          final O pOwner,
                                          final S pInfoClass,
                                          final Object pValue) throws JOceanusException;

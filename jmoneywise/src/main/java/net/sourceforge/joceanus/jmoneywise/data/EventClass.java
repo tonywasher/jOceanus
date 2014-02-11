@@ -286,34 +286,6 @@ public class EventClass
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the event class
-     * @param pDesc the description of the event class
-     * @throws JOceanusException on error
-     */
-    protected EventClass(final EventClassList pList,
-                         final Integer pId,
-                         final String pName,
-                         final String pDesc) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -587,29 +559,6 @@ public class EventClass
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Allow a class to be added.
-         * @param pId the id
-         * @param pName the name
-         * @param pDesc the description
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final String pName,
-                                final String pDesc) throws JOceanusException {
-            /* Create the tag */
-            EventClass myClass = new EventClass(this, pId, pName, pDesc);
-
-            /* Check that this ClassId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myClass);
         }
 
         @Override

@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * @author Tony Washer
  */
 public class SheetTaxYear
-                         extends SheetDataItem<TaxYear, MoneyWiseDataType> {
+        extends SheetDataItem<TaxYear, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYears.
      */
@@ -101,10 +101,17 @@ public class SheetTaxYear
         theInfoList = theData.getTaxInfo();
         setDataList(theList);
 
-        /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                                 ? null
-                                 : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+        /* If this is a backup load */
+        if (isBackup()) {
+            /* No need for info sheet */
+            theInfoSheet = null;
+
+            /* else extract load */
+        } else {
+            /* Set up info Sheet and ask for two-pass load */
+            theInfoSheet = new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+            requestDoubleLoad();
+        }
     }
 
     /**
@@ -128,26 +135,31 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
         myValues.addValue(TaxYear.FIELD_TAXYEAR, loadDate(COL_TAXYEAR));
         myValues.addValue(TaxYear.FIELD_REGIME, loadInteger(COL_REGIME));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the Strings */
-        String myTaxRegime = loadString(COL_REGIME);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
+        myValues.addValue(TaxYear.FIELD_TAXYEAR, loadDate(COL_TAXYEAR));
+        myValues.addValue(TaxYear.FIELD_REGIME, loadString(COL_REGIME));
 
-        /* Access the year */
-        JDateDay myYear = loadDate(COL_TAXYEAR);
+        /* Return the values */
+        return myValues;
+    }
 
-        /* Add the Tax Year */
-        TaxYear myTaxYear = theList.addOpenItem(pId, myTaxRegime, myYear);
+    @Override
+    protected void loadSecondPass(final Integer pId) throws JOceanusException {
+        /* Access the taxYear */
+        TaxYear myTaxYear = theList.findItemById(pId);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myTaxYear);
@@ -156,6 +168,7 @@ public class SheetTaxYear
     @Override
     protected void insertSecureItem(final TaxYear pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertSecureItem(pItem);
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeInteger(COL_REGIME, pItem.getTaxRegimeId());
     }
@@ -163,6 +176,7 @@ public class SheetTaxYear
     @Override
     protected void insertOpenItem(final TaxYear pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeString(COL_REGIME, pItem.getTaxRegimeName());
 
@@ -336,30 +350,35 @@ public class SheetTaxYear
                     myHiCapTaxRate = myCell.getStringValue();
                 }
 
-                /* Add the Tax Year */
-                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myDate);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYear.OBJECT_NAME);
+                myValues.addValue(TaxYear.FIELD_TAXYEAR, myDate);
+                myValues.addValue(TaxYear.FIELD_REGIME, myTaxRegime);
+
+                /* Add the value into the list */
+                TaxYear myTaxYear = myList.addValuesItem(myValues);
 
                 /* Add information relating to the tax year */
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ALLOWANCE, myAllowance);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RENTALALLOWANCE, myRentalAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOTAXBAND, myLoTaxBand);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BASICTAXBAND, myBasicTaxBand);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CAPITALALLOWANCE, myCapitalAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOAGEALLOWANCE, myLoAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HIAGEALLOWANCE, myHiAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AGEALLOWANCELIMIT, myAgeAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, myAddAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, myAddIncBound);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LOTAXRATE, myLoTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BASICTAXRATE, myBasicTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HITAXRATE, myHiTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALTAXRATE, myAddTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.INTERESTTAXRATE, myIntTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DIVIDENDTAXRATE, myDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HIDIVIDENDTAXRATE, myHiDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myAddDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CAPITALTAXRATE, myCapTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HICAPITALTAXRATE, myHiCapTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ALLOWANCE, myAllowance);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.RENTALALLOWANCE, myRentalAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.LOTAXBAND, myLoTaxBand);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.BASICTAXBAND, myBasicTaxBand);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.CAPITALALLOWANCE, myCapitalAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.LOAGEALLOWANCE, myLoAgeAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HIAGEALLOWANCE, myHiAgeAllow);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.AGEALLOWANCELIMIT, myAgeAllowLimit);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ADDITIONALALLOWANCELIMIT, myAddAllowLimit);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD, myAddIncBound);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.LOTAXRATE, myLoTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.BASICTAXRATE, myBasicTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HITAXRATE, myHiTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ADDITIONALTAXRATE, myAddTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.INTERESTTAXRATE, myIntTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.DIVIDENDTAXRATE, myDivTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HIDIVIDENDTAXRATE, myHiDivTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE, myAddDivTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.CAPITALTAXRATE, myCapTaxRate);
+                myInfoList.addInfoItem(null, myTaxYear, TaxYearInfoClass.HICAPITALTAXRATE, myHiCapTaxRate);
 
                 /* Report the progress */
                 myCount++;
@@ -393,7 +412,7 @@ public class SheetTaxYear
      * TaxYearInfoSet sheet.
      */
     private static class SheetTaxInfoSet
-                                        extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
+            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
 
         /**
          * Constructor.

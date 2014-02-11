@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * PayeeType data type.
  */
 public class PayeeType
-                      extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+        extends StaticData<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -108,25 +108,6 @@ public class PayeeType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the PayeeType with
-     * @param pId the id
-     * @param isEnabled is the payeeType enabled
-     * @param pOrder the sort order
-     * @param pName Name of PayeeType
-     * @param pDesc Description of PayeeType
-     * @throws JOceanusException on error
-     */
-    private PayeeType(final PayeeTypeList pList,
-                      final Integer pId,
-                      final Boolean isEnabled,
-                      final Integer pOrder,
-                      final String pName,
-                      final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -141,7 +122,7 @@ public class PayeeType
      * Represents a list of {@link PayeeType} objects.
      */
     public static class PayeeTypeList
-                                     extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
+            extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -237,41 +218,6 @@ public class PayeeType
             }
 
             /* Add the PayeeType to the list */
-            append(myPayeeType);
-
-            /* Validate the PayeeType */
-            myPayeeType.validate();
-
-            /* Handle validation failure */
-            if (myPayeeType.hasErrors()) {
-                throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a PayeeType to the list.
-         * @param pId the Id of the payee type
-         * @param isEnabled is the payee type enabled
-         * @param pOrder the sort order
-         * @param pPayeeType the Name of the payee type
-         * @param pDesc the Description of the payee type
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pPayeeType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Payee Type */
-            PayeeType myPayeeType = new PayeeType(this, pId, isEnabled, pOrder, pPayeeType, pDesc);
-
-            /* Check that this PayeeTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPayeeType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
-            }
-
-            /* Add the Payee Type to the list */
             append(myPayeeType);
 
             /* Validate the PayeeType */

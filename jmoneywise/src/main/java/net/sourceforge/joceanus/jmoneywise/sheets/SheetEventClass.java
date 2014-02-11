@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetEventClass
-                            extends SheetDataItem<EventClass, MoneyWiseDataType> {
+        extends SheetEncrypted<EventClass, MoneyWiseDataType> {
     /**
      * NamedArea for Event Classes.
      */
@@ -90,31 +90,31 @@ public class SheetEventClass
     }
 
     @Override
-    protected void loadSecureItem(final Integer pId) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
-        myValues.addValue(EventClass.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(EventClass.OBJECT_NAME);
         myValues.addValue(EventClass.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(EventClass.FIELD_DESC, loadBytes(COL_DESC));
 
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
-    protected void loadOpenItem(final Integer pId) throws JOceanusException {
-        /* Access the name and description bytes */
-        String myName = loadString(COL_NAME);
-        String myDesc = loadString(COL_DESC);
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
+        myValues.addValue(EventClass.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(EventClass.FIELD_DESC, loadString(COL_DESC));
 
-        /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc);
+        /* Return the values */
+        return myValues;
     }
 
     @Override
     protected void insertSecureItem(final EventClass pItem) throws JOceanusException {
         /* Set the fields */
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        super.insertSecureItem(pItem);
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
     }
@@ -122,6 +122,7 @@ public class SheetEventClass
     @Override
     protected void insertOpenItem(final EventClass pItem) throws JOceanusException {
         /* Set the fields */
+        super.insertOpenItem(pItem);
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
     }
@@ -201,8 +202,12 @@ public class SheetEventClass
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myName = myCell.getStringValue();
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null);
+                /* Build data values */
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(EventCategory.OBJECT_NAME);
+                myValues.addValue(EventClass.FIELD_NAME, myName);
+
+                /* Add the value into the list */
+                myList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;

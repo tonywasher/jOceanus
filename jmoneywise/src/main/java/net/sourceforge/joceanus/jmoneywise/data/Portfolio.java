@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Portfolio class.
  */
 public class Portfolio
-                      extends EncryptedItem<MoneyWiseDataType>
+        extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<Portfolio> {
     /**
      * Object name.
@@ -434,45 +434,6 @@ public class Portfolio
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pName the Name of the event category
-     * @param pDesc the description of the category
-     * @param pHolding the Holding account id
-     * @param pTaxFree is the portfolio taxFree?
-     * @param pClosed is the portfolio closed?
-     * @throws JOceanusException on error
-     */
-    protected Portfolio(final PortfolioList pList,
-                        final Integer pId,
-                        final String pName,
-                        final String pDesc,
-                        final String pHolding,
-                        final Boolean pTaxFree,
-                        final Boolean pClosed) throws JOceanusException {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Protect against exceptions */
-        try {
-            /* Record the string values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-            setValueHolding(pHolding);
-
-            /* Store flags */
-            setValueClosed(pClosed);
-            setValueTaxFree(pTaxFree);
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -729,7 +690,7 @@ public class Portfolio
      * The Portfolio List class.
      */
     public static class PortfolioList
-                                     extends EncryptedList<Portfolio, MoneyWiseDataType> {
+            extends EncryptedList<Portfolio, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -879,35 +840,6 @@ public class Portfolio
 
             /* Return not found */
             return null;
-        }
-
-        /**
-         * Allow a portfolio to be added.
-         * @param pId the id
-         * @param pName the name
-         * @param pDesc the description
-         * @param pHolding the Holding account
-         * @param pTaxFree is the portfolio taxFree?
-         * @param pClosed is the portfolio closed?
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final String pName,
-                                final String pDesc,
-                                final String pHolding,
-                                final Boolean pTaxFree,
-                                final Boolean pClosed) throws JOceanusException {
-            /* Create the portfolio */
-            Portfolio myPortfolio = new Portfolio(this, pId, pName, pDesc, pHolding, pTaxFree, pClosed);
-
-            /* Check that this PortfolioId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myPortfolio.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myPortfolio, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myPortfolio);
         }
 
         @Override

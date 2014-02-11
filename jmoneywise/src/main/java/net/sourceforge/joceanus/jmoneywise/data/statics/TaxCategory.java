@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TaxCategory
-                        extends StaticData<TaxCategory, TaxCategoryClass, MoneyWiseDataType> {
+        extends StaticData<TaxCategory, TaxCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -114,25 +114,6 @@ public class TaxCategory
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Tax Category with
-     * @param pId ID of TaxCategory
-     * @param isEnabled is the TaxCategory enabled
-     * @param pOrder the sort order
-     * @param pName Name of Tax Category
-     * @param pDesc Description of Tax Category
-     * @throws JOceanusException on error
-     */
-    private TaxCategory(final TaxCategoryList pList,
-                        final Integer pId,
-                        final Boolean isEnabled,
-                        final Integer pOrder,
-                        final String pName,
-                        final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -147,7 +128,7 @@ public class TaxCategory
      * Represents a list of {@link TaxCategory} objects.
      */
     public static class TaxCategoryList
-                                       extends StaticList<TaxCategory, TaxCategoryClass, MoneyWiseDataType> {
+            extends StaticList<TaxCategory, TaxCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -252,41 +233,6 @@ public class TaxCategory
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
-                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
-
-            /* Add the Tax Category to the list */
-            append(myCategory);
-
-            /* Validate the Category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add a TaxCategory to the list.
-         * @param pId ID of TaxCategory
-         * @param isEnabled is the TaxCategory enabled
-         * @param pOrder the sort order
-         * @param pTaxCategory the Name of the tax bucket
-         * @param pDesc the Description of the tax bucket
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pTaxCategory,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Tax Category */
-            TaxCategory myCategory = new TaxCategory(this, pId, isEnabled, pOrder, pTaxCategory, pDesc);
-
-            /* Check that this TaxCategoryId has not been previously added */
-            if (!isIdUnique(pId)) {
                 myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
                 throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
             }

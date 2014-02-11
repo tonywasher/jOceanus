@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -44,11 +43,6 @@ public class TableEventInfoType
     protected static final String TABLE_NAME = EventInfoType.LIST_NAME;
 
     /**
-     * The InfoType list.
-     */
-    private EventInfoTypeList theList = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -59,22 +53,12 @@ public class TableEventInfoType
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getEventInfoTypes();
-        setList(theList);
+        setList(myData.getEventInfoTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(EventInfoType.OBJECT_NAME);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
     }
 }

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountInfoType
-                            extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+        extends StaticData<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -146,25 +146,6 @@ public class AccountInfoType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Account Info Type with
-     * @param pId the id
-     * @param isEnabled is the account info type enabled
-     * @param pOrder the sort order
-     * @param pName Name of Account Info Type
-     * @param pDesc Description of Account Info Type
-     * @throws JOceanusException on error
-     */
-    private AccountInfoType(final AccountInfoTypeList pList,
-                            final Integer pId,
-                            final Boolean isEnabled,
-                            final Integer pOrder,
-                            final String pName,
-                            final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -179,7 +160,7 @@ public class AccountInfoType
      * Represents a list of {@link AccountInfoType} objects.
      */
     public static class AccountInfoTypeList
-                                           extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+            extends StaticList<AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -283,41 +264,6 @@ public class AccountInfoType
             append(myInfoType);
 
             /* Validate the ActType */
-            myInfoType.validate();
-
-            /* Handle validation failure */
-            if (myInfoType.hasErrors()) {
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add an Open AccountInfoType to the list.
-         * @param pId the Id of the account info type
-         * @param isEnabled is the account info type enabled
-         * @param pOrder the sort order
-         * @param pInfoType the Name of the account info type
-         * @param pDesc the Description of the account info type
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pInfoType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Account Info Type */
-            AccountInfoType myInfoType = new AccountInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
-
-            /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myInfoType, ERROR_VALIDATION);
-            }
-
-            /* Add the Account Info Type to the list */
-            append(myInfoType);
-
-            /* Validate the AccountInfoType */
             myInfoType.validate();
 
             /* Handle validation failure */

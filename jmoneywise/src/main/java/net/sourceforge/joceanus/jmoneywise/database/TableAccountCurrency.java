@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -38,16 +37,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableStaticData extension for AccountCategoryType.
  * @author Tony Washer
  */
-public class TableAccountCurrency extends TableStaticData<AccountCurrency, MoneyWiseDataType> {
+public class TableAccountCurrency
+        extends TableStaticData<AccountCurrency, MoneyWiseDataType> {
     /**
      * The table name.
      */
     protected static final String TABLE_NAME = AccountCurrency.LIST_NAME;
-
-    /**
-     * The account currency list.
-     */
-    private AccountCurrencyList theList = null;
 
     /**
      * Constructors.
@@ -62,8 +57,7 @@ public class TableAccountCurrency extends TableStaticData<AccountCurrency, Money
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getAccountCurrencies();
-        setList(theList);
+        setList(myData.getAccountCurrencies());
     }
 
     @Override
@@ -89,14 +83,5 @@ public class TableAccountCurrency extends TableStaticData<AccountCurrency, Money
         } else {
             super.setFieldValue(pItem, iField);
         }
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
-        theList.reSort();
-
-        /* Validate the data */
-        theList.validateOnLoad();
     }
 }

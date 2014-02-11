@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class SheetTaxYearInfoType
-                                 extends SheetStaticData<TaxYearInfoType, MoneyWiseDataType> {
+        extends SheetStaticData<TaxYearInfoType, MoneyWiseDataType> {
     /**
      * NamedArea for TaxYearInfoType.
      */
@@ -54,11 +54,6 @@ public class SheetTaxYearInfoType
     protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
 
     /**
-     * TaxYearInfoTypes data list.
-     */
-    private final TaxYearInfoTypeList theList;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -67,8 +62,8 @@ public class SheetTaxYearInfoType
         super(pReader, AREA_TAXINFOTYPES);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getTaxInfoTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pReader.getData();
+        setDataList(myData.getTaxInfoTypes());
     }
 
     /**
@@ -80,41 +75,20 @@ public class SheetTaxYearInfoType
         super(pWriter, AREA_TAXINFOTYPES, AREA_TAXINFOTYPENAMES);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getTaxInfoTypes();
-        setDataList(theList);
+        MoneyWiseData myData = pWriter.getData();
+        setDataList(myData.getTaxInfoTypes());
     }
 
     @Override
-    protected void loadEncryptedItem(final Integer pId,
-                                     final Integer pControlId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final byte[] pName,
-                                     final byte[] pDesc) throws JOceanusException {
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYearInfoType.OBJECT_NAME);
-
-        /* Add into the list */
-        theList.addValuesItem(myValues);
+        return getSecureRowValues(TaxYearInfoType.OBJECT_NAME);
     }
 
     @Override
-    protected void loadClearTextItem(final Integer pId,
-                                     final Boolean isEnabled,
-                                     final Integer iOrder,
-                                     final String pName,
-                                     final String pDesc) throws JOceanusException {
-        /* Create the item */
-        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* reSort the list */
-        theList.reSort();
-
-        /* Validate the items */
-        theList.validateOnLoad();
+    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
+        /* Build data values */
+        return getRowValues(TaxYearInfoType.OBJECT_NAME);
     }
 
     /**
@@ -164,7 +138,7 @@ public class SheetTaxYearInfoType
 
                 /* Ignore TaxRegime */
                 if (!TaxRegime.OBJECT_NAME.equals(myValue)) {
-                    /* Add the value into the finance tables */
+                    /* Add the value into the tables */
                     myList.addBasicItem(myValue);
                 }
 

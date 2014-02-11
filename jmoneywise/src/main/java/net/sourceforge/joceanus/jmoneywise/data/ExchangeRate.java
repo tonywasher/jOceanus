@@ -360,33 +360,6 @@ public final class ExchangeRate
     }
 
     /**
-     * Open constructor.
-     * @param pList the List to add to
-     * @param pId the id
-     * @param pDate the Date of the exchange rate
-     * @param pFrom the name of the from currency
-     * @param pTo the name of the to currency
-     * @param pRate the exchangeRate
-     */
-    protected ExchangeRate(final ExchangeRateList pList,
-                           final Integer pId,
-                           final JDateDay pDate,
-                           final String pFrom,
-                           final String pTo,
-                           final JRatio pRate) {
-        /* Initialise the item */
-        super(pList, pId);
-
-        /* Store the links */
-        setValueFromCurrency(pFrom);
-        setValueToCurrency(pTo);
-
-        /* Record the string values */
-        setValueDate(pDate);
-        setValueExchangeRate(pRate);
-    }
-
-    /**
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
@@ -793,33 +766,6 @@ public final class ExchangeRate
             ExchangeRate myRate = new ExchangeRate(this);
             add(myRate);
             return myRate;
-        }
-
-        /**
-         * Allow a category to be added.
-         * @param pId the id
-         * @param pDate the date of the exchange rate
-         * @param pFrom the from currency name
-         * @param pTo the to currency name
-         * @param pRate the exchangeRate parent id
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final JDateDay pDate,
-                                final String pFrom,
-                                final String pTo,
-                                final JRatio pRate) throws JOceanusException {
-            /* Create the rate */
-            ExchangeRate myRate = new ExchangeRate(this, pId, pDate, pFrom, pTo, pRate);
-
-            /* Check that this CategoryId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myRate.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myRate, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myRate);
         }
 
         @Override

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class AccountCategoryType
-                                extends StaticData<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
+        extends StaticData<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -109,25 +109,6 @@ public class AccountCategoryType
     }
 
     /**
-     * Open Constructor.
-     * @param pList The list to associate the Account Category Type with
-     * @param pId the id
-     * @param isEnabled is the account category type enabled
-     * @param pOrder the sort order
-     * @param pName Name of Account Category Type
-     * @param pDesc Description of Account Category Type
-     * @throws JOceanusException on error
-     */
-    private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pName,
-                                final String pDesc) throws JOceanusException {
-        super(pList, pId, isEnabled, pOrder, pName, pDesc);
-    }
-
-    /**
      * Values constructor.
      * @param pList The list to associate the item with
      * @param pValues the values
@@ -142,7 +123,7 @@ public class AccountCategoryType
      * Represents a list of {@link AccountCategoryType} objects.
      */
     public static class AccountCategoryTypeList
-                                               extends StaticList<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
+            extends StaticList<AccountCategoryType, AccountCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -241,41 +222,6 @@ public class AccountCategoryType
             append(myActType);
 
             /* Validate the ActType */
-            myActType.validate();
-
-            /* Handle validation failure */
-            if (myActType.hasErrors()) {
-                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
-            }
-        }
-
-        /**
-         * Add an AccountCategoryType to the list.
-         * @param pId the Id of the account category type
-         * @param isEnabled is the account category type enabled
-         * @param pOrder the sort order
-         * @param pActCatType the Name of the account category type
-         * @param pDesc the Description of the account category type
-         * @throws JOceanusException on error
-         */
-        public void addOpenItem(final Integer pId,
-                                final Boolean isEnabled,
-                                final Integer pOrder,
-                                final String pActCatType,
-                                final String pDesc) throws JOceanusException {
-            /* Create a new Account Category Type */
-            AccountCategoryType myActType = new AccountCategoryType(this, pId, isEnabled, pOrder, pActCatType, pDesc);
-
-            /* Check that this AccountCategoryTypeId has not been previously added */
-            if (!isIdUnique(pId)) {
-                myActType.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
-            }
-
-            /* Add the Account Category Type to the list */
-            append(myActType);
-
-            /* Validate the AccountCategoryType */
             myActType.validate();
 
             /* Handle validation failure */
