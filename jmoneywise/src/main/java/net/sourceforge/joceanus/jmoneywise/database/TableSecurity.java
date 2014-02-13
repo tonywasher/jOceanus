@@ -26,7 +26,6 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
@@ -41,7 +40,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Security.
  */
-public class TableSecurity extends TableEncrypted<Security, MoneyWiseDataType> {
+public class TableSecurity
+        extends TableEncrypted<Security, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -86,7 +86,7 @@ public class TableSecurity extends TableEncrypted<Security, MoneyWiseDataType> {
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClassLink.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myTableDef.getBinaryValue(Security.FIELD_NAME));
         myValues.addValue(Security.FIELD_DESC, myTableDef.getBinaryValue(Security.FIELD_DESC));
         myValues.addValue(Security.FIELD_SECTYPE, myTableDef.getIntegerValue(Security.FIELD_SECTYPE));
@@ -128,9 +128,6 @@ public class TableSecurity extends TableEncrypted<Security, MoneyWiseDataType> {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the securities */
         theList.validateOnLoad();

@@ -178,9 +178,6 @@ public class SheetAccountRate
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the rates */
         theList.validateOnLoad();
     }
@@ -269,9 +266,6 @@ public class SheetAccountRate
             /* Resolve links and reSort */
             myList.resolveDataSetLinks();
             myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
 
             /* Validate the rates */
             myList.validateOnLoad();

@@ -524,7 +524,7 @@ public abstract class DataItem<E extends Enum<E>>
     /**
      * Clear the touch status flag.
      */
-    protected void clearActive() {
+    public void clearActive() {
         theTouchStatus.resetTouches();
     }
 

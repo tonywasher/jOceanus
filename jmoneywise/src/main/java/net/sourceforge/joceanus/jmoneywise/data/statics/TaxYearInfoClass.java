@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
-import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -175,6 +175,11 @@ public enum TaxYearInfoClass implements DataInfoClass {
 
     @Override
     public boolean isLink() {
+        return false;
+    }
+
+    @Override
+    public boolean isLinkSet() {
         return false;
     }
 

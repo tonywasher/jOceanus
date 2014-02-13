@@ -41,7 +41,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for Account Category.
  * @author Tony Washer
  */
-public class TableAccountCategory extends TableEncrypted<AccountCategory, MoneyWiseDataType> {
+public class TableAccountCategory
+        extends TableEncrypted<AccountCategory, MoneyWiseDataType> {
     /**
      * The name of the Category table.
      */
@@ -117,9 +118,6 @@ public class TableAccountCategory extends TableEncrypted<AccountCategory, MoneyW
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the data */
         theList.validateOnLoad();

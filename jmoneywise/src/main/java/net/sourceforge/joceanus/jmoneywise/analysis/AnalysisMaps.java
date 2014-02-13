@@ -80,6 +80,7 @@ public class AnalysisMaps {
                 addPriceToMap(myPrice);
 
                 /* Touch underlying items */
+                myPrice.clearActive();
                 myPrice.touchUnderlyingItems();
             }
         }
@@ -233,9 +234,9 @@ public class AnalysisMaps {
         @Override
         public String formatObject() {
             return theSecurity.formatObject()
-                    + "("
-                    + size()
-                    + ")";
+                   + "("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -283,6 +284,7 @@ public class AnalysisMaps {
                 addRateToMap(myRate);
 
                 /* Touch underlying items */
+                myRate.clearActive();
                 myRate.touchUnderlyingItems();
             }
         }
@@ -328,7 +330,7 @@ public class AnalysisMaps {
 
                     /* break loop if we have the correct record */
                     if ((myDate == null)
-                            || (myDate.compareTo(pDate) >= 0)) {
+                        || (myDate.compareTo(pDate) >= 0)) {
                         return myCurr;
                     }
                 }
@@ -381,9 +383,9 @@ public class AnalysisMaps {
         @Override
         public String formatObject() {
             return theAccount.formatObject()
-                    + "("
-                    + size()
-                    + ")";
+                   + "("
+                   + size()
+                   + ")";
         }
 
         @Override

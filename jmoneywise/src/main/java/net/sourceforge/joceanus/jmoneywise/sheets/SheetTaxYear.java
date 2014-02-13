@@ -213,9 +213,6 @@ public class SheetTaxYear
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Calculate the date range */
         theData.calculateDateRange();
     }
@@ -392,9 +389,6 @@ public class SheetTaxYear
             /* Sort the list */
             myList.resolveDataSetLinks();
             myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
 
             /* Validate the tax years */
             myList.validateOnLoad();

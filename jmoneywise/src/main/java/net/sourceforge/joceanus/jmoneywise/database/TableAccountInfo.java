@@ -82,9 +82,6 @@ public class TableAccountInfo
         theList.resolveValueLinks();
         theList.validateOnLoad();
 
-        /* Touch underlying items of accounts */
-        theAccounts.touchUnderlyingItems();
-
         /* Validate the accounts */
         theAccounts.validateOnLoad();
     }

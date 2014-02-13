@@ -67,7 +67,7 @@ public class MoneyWiseDatabase
         addTable(new TableTaxYearInfoType(this));
         addTable(new TableAccountInfoType(this));
         addTable(new TableEventInfoType(this));
-        addTable(new TableEventClass(this));
+        addTable(new TableEventTag(this));
         addTable(new TableAccountCategory(this));
         addTable(new TableEventCategory(this));
         addTable(new TableTaxYear(this));
@@ -83,6 +83,5 @@ public class MoneyWiseDatabase
         addTable(new TableEvent(this));
         addTable(new TableEventInfo(this));
         addTable(new TablePattern(this));
-        addTable(new TableEventClassLink(this));
     }
 }

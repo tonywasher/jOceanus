@@ -216,6 +216,7 @@ public class EventInfoSet
         /* Reference and comments are always available */
             case REFERENCE:
             case COMMENTS:
+            case EVENTTAG:
                 return JDataFieldRequired.CANEXIST;
 
                 /* NatInsurance and benefit can only occur on salary */
@@ -399,8 +400,10 @@ public class EventInfoSet
         /* Loop through the classes */
         for (EventInfoClass myClass : EventInfoClass.values()) {
             /* Access info for class */
-            EventInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            boolean isExisting = isExisting(myClass);
+            EventInfo myInfo = myClass.isLinkSet()
+                                                  ? null
+                                                  : getInfo(myClass);
 
             /* Determine requirements for class */
             JDataFieldRequired myState = isClassRequired(myClass);

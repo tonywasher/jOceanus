@@ -186,9 +186,6 @@ public class SheetEventCategory
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the event categories */
         theList.validateOnLoad();
     }
@@ -269,9 +266,6 @@ public class SheetEventCategory
             /* Resolve links and reSort */
             myList.resolveDataSetLinks();
             myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
 
             /* Validate the event categories */
             myList.validateOnLoad();

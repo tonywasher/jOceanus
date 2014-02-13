@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for AccountRate.
  * @author Tony Washer
  */
-public class TableAccountRate extends TableEncrypted<AccountRate, MoneyWiseDataType> {
+public class TableAccountRate
+        extends TableEncrypted<AccountRate, MoneyWiseDataType> {
     /**
      * The name of the Rates table.
      */
@@ -118,9 +119,6 @@ public class TableAccountRate extends TableEncrypted<AccountRate, MoneyWiseDataT
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the account rates */
         theList.validateOnLoad();

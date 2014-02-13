@@ -517,6 +517,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
                 bValueOK = setIntegerValue(myFormatter, pValue);
                 break;
             case LINK:
+            case LINKSET:
                 bValueOK = setLinkValue(pValue);
                 break;
             case STRING:

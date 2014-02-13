@@ -167,9 +167,6 @@ public class SheetSecurityPrice
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the prices */
         theList.validateOnLoad();
     }
@@ -266,9 +263,6 @@ public class SheetSecurityPrice
             /* Resolve links and reSort */
             myList.resolveDataSetLinks();
             myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
 
             /* Validate the prices */
             myList.validateOnLoad();

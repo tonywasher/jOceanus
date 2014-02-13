@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -41,12 +41,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SheetDataItem extension for EventClass.
  * @author Tony Washer
  */
-public class SheetEventClass
-        extends SheetEncrypted<EventClass, MoneyWiseDataType> {
+public class SheetEventTag
+        extends SheetEncrypted<EventTag, MoneyWiseDataType> {
     /**
      * NamedArea for Event Classes.
      */
-    private static final String AREA_EVENTCLASSES = EventClass.LIST_NAME;
+    private static final String AREA_EVENTCLASSES = EventTag.LIST_NAME;
 
     /**
      * Name column.
@@ -61,13 +61,13 @@ public class SheetEventClass
     /**
      * Class data list.
      */
-    private final EventClassList theList;
+    private final EventTagList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventClass(final MoneyWiseReader pReader) {
+    protected SheetEventTag(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_EVENTCLASSES);
 
@@ -80,7 +80,7 @@ public class SheetEventClass
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventClass(final MoneyWiseWriter pWriter) {
+    protected SheetEventTag(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_EVENTCLASSES);
 
@@ -92,9 +92,9 @@ public class SheetEventClass
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(EventClass.OBJECT_NAME);
-        myValues.addValue(EventClass.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(EventClass.FIELD_DESC, loadBytes(COL_DESC));
+        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(EventTag.OBJECT_NAME);
+        myValues.addValue(EventTag.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(EventTag.FIELD_DESC, loadBytes(COL_DESC));
 
         /* Return the values */
         return myValues;
@@ -103,16 +103,16 @@ public class SheetEventClass
     @Override
     protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
-        myValues.addValue(EventClass.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(EventClass.FIELD_DESC, loadString(COL_DESC));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
+        myValues.addValue(EventTag.FIELD_NAME, loadString(COL_NAME));
+        myValues.addValue(EventTag.FIELD_DESC, loadString(COL_DESC));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final EventClass pItem) throws JOceanusException {
+    protected void insertSecureItem(final EventTag pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -120,7 +120,7 @@ public class SheetEventClass
     }
 
     @Override
-    protected void insertOpenItem(final EventClass pItem) throws JOceanusException {
+    protected void insertOpenItem(final EventTag pItem) throws JOceanusException {
         /* Set the fields */
         super.insertOpenItem(pItem);
         writeString(COL_NAME, pItem.getName());
@@ -168,7 +168,7 @@ public class SheetEventClass
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of tags */
-        EventClassList myList = pData.getEventClasses();
+        EventTagList myList = pData.getEventClasses();
 
         /* Protect against exceptions */
         try {
@@ -180,7 +180,7 @@ public class SheetEventClass
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(EventClass.LIST_NAME)) {
+            if (!pTask.setNewStage(EventTag.LIST_NAME)) {
                 return false;
             }
 
@@ -203,8 +203,8 @@ public class SheetEventClass
                 String myName = myCell.getStringValue();
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(EventCategory.OBJECT_NAME);
-                myValues.addValue(EventClass.FIELD_NAME, myName);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(EventTag.OBJECT_NAME);
+                myValues.addValue(EventTag.FIELD_NAME, myName);
 
                 /* Add the value into the list */
                 myList.addValuesItem(myValues);

@@ -221,9 +221,6 @@ public class SheetSecurity
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the securities */
         theList.validateOnLoad();
     }

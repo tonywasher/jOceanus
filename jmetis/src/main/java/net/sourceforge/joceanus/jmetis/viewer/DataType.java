@@ -123,7 +123,7 @@ public enum DataType {
     LINK,
 
     /**
-     * LinkArray.
+     * LinkSet.
      */
-    LINKARRAY;
+    LINKSET;
 }

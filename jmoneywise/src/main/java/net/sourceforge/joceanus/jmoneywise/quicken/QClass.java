@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QClassLineType;
@@ -48,13 +48,13 @@ public final class QClass
     /**
      * The class.
      */
-    private final EventClass theClass;
+    private final EventTag theClass;
 
     /**
      * Obtain the class.
      * @return the class
      */
-    public EventClass getEventClass() {
+    public EventTag getEventClass() {
         return theClass;
     }
 
@@ -80,7 +80,7 @@ public final class QClass
      * @param pClass the class
      */
     protected QClass(final QAnalysis pAnalysis,
-                     final EventClass pClass) {
+                     final EventTag pClass) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -123,7 +123,7 @@ public final class QClass
         /**
          * Class Map.
          */
-        private final Map<EventClass, QClass> theClasses;
+        private final Map<EventTag, QClass> theClasses;
 
         /**
          * The analysis.
@@ -150,14 +150,14 @@ public final class QClass
             theAnalysis = pAnalysis;
 
             /* Create the map */
-            theClasses = new LinkedHashMap<EventClass, QClass>();
+            theClasses = new LinkedHashMap<EventTag, QClass>();
         }
 
         /**
          * Register class.
          * @param pClass the class
          */
-        protected void registerClass(final EventClass pClass) {
+        protected void registerClass(final EventTag pClass) {
             /* Look up the class in the map */
             QClass myClass = theClasses.get(pClass);
 

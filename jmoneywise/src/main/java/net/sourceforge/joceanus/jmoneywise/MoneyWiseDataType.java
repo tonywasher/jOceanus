@@ -101,9 +101,9 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     TAXYEARINFO,
 
     /**
-     * EventClass.
+     * EventTag.
      */
-    EVENTCLASS,
+    EVENTTAG,
 
     /**
      * AccountCategory.
@@ -164,11 +164,6 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
      * EventInfo.
      */
     EVENTINFO,
-
-    /**
-     * EventClassLink.
-     */
-    EVENTCLASSLINK,
 
     /**
      * Pattern.

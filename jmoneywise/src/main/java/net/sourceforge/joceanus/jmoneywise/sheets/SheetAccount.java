@@ -480,9 +480,6 @@ public class SheetAccount
             /* Resolve ValueLinks */
             myInfoList.resolveValueLinks();
 
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
-
             /* Resolve Alternate lists */
             resolveAlternate(pData);
 
@@ -613,28 +610,19 @@ public class SheetAccount
         PayeeList myPayeeList = pData.getPayees();
         PortfolioList myPortfolioList = pData.getPortfolios();
 
-        /* Sort the lists */
+        /* Sort the payee list and validate */
         myPayeeList.resolveDataSetLinks();
         myPayeeList.reSort();
-
-        /* Touch underlying items and validate */
-        myPayeeList.touchUnderlyingItems();
         myPayeeList.validateOnLoad();
 
-        /* Sort the lists */
+        /* Sort the security list and validate */
         mySecurityList.resolveDataSetLinks();
         mySecurityList.reSort();
-
-        /* Touch underlying items and validate */
-        mySecurityList.touchUnderlyingItems();
         mySecurityList.validateOnLoad();
 
-        /* Sort the lists */
+        /* Sort the portfolio list and validate */
         myPortfolioList.resolveDataSetLinks();
         myPortfolioList.reSort();
-
-        /* Touch underlying items and validate */
-        myPortfolioList.touchUnderlyingItems();
         myPortfolioList.validateOnLoad();
     }
 

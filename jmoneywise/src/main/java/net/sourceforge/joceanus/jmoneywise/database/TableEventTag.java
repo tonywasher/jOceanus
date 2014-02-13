@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -38,28 +38,28 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension EventClass.
  * @author Tony Washer
  */
-public class TableEventClass extends TableEncrypted<EventClass, MoneyWiseDataType> {
+public class TableEventTag extends TableEncrypted<EventTag, MoneyWiseDataType> {
     /**
      * The name of the EventClass table.
      */
-    protected static final String TABLE_NAME = EventClass.LIST_NAME;
+    protected static final String TABLE_NAME = EventTag.LIST_NAME;
 
     /**
      * The tag list.
      */
-    private EventClassList theList = null;
+    private EventTagList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventClass(final Database<?> pDatabase) {
+    protected TableEventTag(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        myTableDef.addEncryptedColumn(EventClass.FIELD_NAME, EventClass.NAMELEN);
-        myTableDef.addNullEncryptedColumn(EventClass.FIELD_DESC, EventClass.DESCLEN);
+        myTableDef.addEncryptedColumn(EventTag.FIELD_NAME, EventTag.NAMELEN);
+        myTableDef.addNullEncryptedColumn(EventTag.FIELD_DESC, EventTag.DESCLEN);
     }
 
     @Override
@@ -75,22 +75,22 @@ public class TableEventClass extends TableEncrypted<EventClass, MoneyWiseDataTyp
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClass.OBJECT_NAME);
-        myValues.addValue(EventClass.FIELD_NAME, myTableDef.getBinaryValue(EventClass.FIELD_NAME));
-        myValues.addValue(EventClass.FIELD_DESC, myTableDef.getBinaryValue(EventClass.FIELD_DESC));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
+        myValues.addValue(EventTag.FIELD_NAME, myTableDef.getBinaryValue(EventTag.FIELD_NAME));
+        myValues.addValue(EventTag.FIELD_DESC, myTableDef.getBinaryValue(EventTag.FIELD_DESC));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void setFieldValue(final EventClass pItem,
+    protected void setFieldValue(final EventTag pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (EventClass.FIELD_NAME.equals(iField)) {
+        if (EventTag.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (EventClass.FIELD_DESC.equals(iField)) {
+        } else if (EventTag.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);

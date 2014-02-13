@@ -40,4 +40,10 @@ public interface DataInfoClass
      * @return true/false
      */
     boolean isLink();
+
+    /**
+     * is this a Link Set?
+     * @return true/false
+     */
+    boolean isLinkSet();
 }

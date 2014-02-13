@@ -43,23 +43,23 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * Tag for an event.
  */
-public class EventClass
+public class EventTag
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<EventClass> {
+        implements Comparable<EventTag> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTCLASS.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTTAG.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTCLASS.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.EVENTTAG.getListName();
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventClass.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventTag.class.getName());
 
     /**
      * Local Report fields.
@@ -265,13 +265,13 @@ public class EventClass
     }
 
     @Override
-    public EventClass getBase() {
-        return (EventClass) super.getBase();
+    public EventTag getBase() {
+        return (EventTag) super.getBase();
     }
 
     @Override
-    public EventClassList getList() {
-        return (EventClassList) super.getList();
+    public EventTagList getList() {
+        return (EventTagList) super.getList();
     }
 
     /**
@@ -279,8 +279,8 @@ public class EventClass
      * @param pList the list
      * @param pClass The Class to copy
      */
-    protected EventClass(final EventClassList pList,
-                         final EventClass pClass) {
+    protected EventTag(final EventTagList pList,
+                         final EventTag pClass) {
         /* Set standard values */
         super(pList, pClass);
     }
@@ -291,7 +291,7 @@ public class EventClass
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private EventClass(final EventClassList pList,
+    private EventTag(final EventTagList pList,
                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -325,13 +325,13 @@ public class EventClass
      * Edit Constructor.
      * @param pList the list
      */
-    public EventClass(final EventClassList pList) {
+    public EventTag(final EventTagList pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
     }
 
     @Override
-    public int compareTo(final EventClass pThat) {
+    public int compareTo(final EventTag pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -370,7 +370,7 @@ public class EventClass
 
     @Override
     public void validate() {
-        EventClassList myList = getList();
+        EventTagList myList = getList();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -410,10 +410,10 @@ public class EventClass
     @Override
     public boolean applyChanges(final DataItem<?> pClass) {
         /* Can only update from an event class */
-        if (!(pClass instanceof EventClass)) {
+        if (!(pClass instanceof EventTag)) {
             return false;
         }
-        EventClass myClass = (EventClass) pClass;
+        EventTag myClass = (EventTag) pClass;
 
         /* Store the current detail into history */
         pushHistory();
@@ -435,8 +435,8 @@ public class EventClass
     /**
      * The Event Tag List class.
      */
-    public static class EventClassList
-            extends EncryptedList<EventClass, MoneyWiseDataType> {
+    public static class EventTagList
+            extends EncryptedList<EventTag, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -454,7 +454,7 @@ public class EventClass
 
         @Override
         public JDataFields getItemFields() {
-            return EventClass.FIELD_DEFS;
+            return EventTag.FIELD_DEFS;
         }
 
         @Override
@@ -466,27 +466,27 @@ public class EventClass
          * Construct an empty CORE EventClass list.
          * @param pData the DataSet for the list
          */
-        protected EventClassList(final MoneyWiseData pData) {
-            super(EventClass.class, pData, MoneyWiseDataType.EVENTCLASS, ListStyle.CORE);
+        protected EventTagList(final MoneyWiseData pData) {
+            super(EventTag.class, pData, MoneyWiseDataType.EVENTTAG, ListStyle.CORE);
         }
 
         @Override
-        protected EventClassList getEmptyList(final ListStyle pStyle) {
-            EventClassList myList = new EventClassList(this);
+        protected EventTagList getEmptyList(final ListStyle pStyle) {
+            EventTagList myList = new EventTagList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventClassList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventClassList) super.cloneList(pDataSet);
+        public EventTagList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (EventTagList) super.cloneList(pDataSet);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EventClassList(final EventClassList pSource) {
+        protected EventTagList(final EventTagList pSource) {
             super(pSource);
         }
 
@@ -496,13 +496,13 @@ public class EventClass
          * @return the newly added item
          */
         @Override
-        public EventClass addCopyItem(final DataItem<?> pClass) {
+        public EventTag addCopyItem(final DataItem<?> pClass) {
             /* Can only clone an EventClass */
-            if (!(pClass instanceof EventClass)) {
+            if (!(pClass instanceof EventTag)) {
                 return null;
             }
 
-            EventClass myClass = new EventClass(this, (EventClass) pClass);
+            EventTag myClass = new EventTag(this, (EventTag) pClass);
             add(myClass);
             return myClass;
         }
@@ -512,8 +512,8 @@ public class EventClass
          * @return the new item
          */
         @Override
-        public EventClass addNewItem() {
-            EventClass myClass = new EventClass(this);
+        public EventTag addNewItem() {
+            EventTag myClass = new EventTag(this);
             add(myClass);
             return myClass;
         }
@@ -525,12 +525,12 @@ public class EventClass
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
-            Iterator<EventClass> myIterator = iterator();
+            Iterator<EventTag> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventClass myCurr = myIterator.next();
+                EventTag myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -545,13 +545,13 @@ public class EventClass
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public EventClass findItemByName(final String pName) {
+        public EventTag findItemByName(final String pName) {
             /* Access the iterator */
-            Iterator<EventClass> myIterator = iterator();
+            Iterator<EventTag> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventClass myCurr = myIterator.next();
+                EventTag myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -562,9 +562,9 @@ public class EventClass
         }
 
         @Override
-        public EventClass addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public EventTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the class */
-            EventClass myClass = new EventClass(this, pValues);
+            EventTag myClass = new EventTag(this, pValues);
 
             /* Check that this ClassId has not been previously added */
             if (!isIdUnique(myClass.getId())) {

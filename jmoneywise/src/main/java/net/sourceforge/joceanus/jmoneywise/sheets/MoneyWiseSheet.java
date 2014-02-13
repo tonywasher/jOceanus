@@ -359,7 +359,7 @@ public class MoneyWiseSheet
             }
 
             if (bContinue) {
-                bContinue = SheetEventClass.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetEventTag.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {

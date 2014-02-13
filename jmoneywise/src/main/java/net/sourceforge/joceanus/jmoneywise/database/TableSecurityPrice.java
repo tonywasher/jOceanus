@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for SecurityPrice.
  * @author Tony Washer
  */
-public class TableSecurityPrice extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
+public class TableSecurityPrice
+        extends TableEncrypted<SecurityPrice, MoneyWiseDataType> {
     /**
      * The name of the Prices table.
      */
@@ -114,9 +115,6 @@ public class TableSecurityPrice extends TableEncrypted<SecurityPrice, MoneyWiseD
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the security prices */
         theList.validateOnLoad();

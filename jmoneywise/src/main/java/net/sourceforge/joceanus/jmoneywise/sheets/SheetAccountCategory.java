@@ -186,9 +186,6 @@ public class SheetAccountCategory
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the account categories */
         theList.validateOnLoad();
     }
@@ -269,9 +266,6 @@ public class SheetAccountCategory
             /* Resolve links and reSort */
             myList.resolveDataSetLinks();
             myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
 
             /* Validate the account categories */
             myList.validateOnLoad();

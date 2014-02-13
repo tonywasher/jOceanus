@@ -92,9 +92,6 @@ public class SheetTaxYearInfo
         /* Validate info */
         theList.validateOnLoad();
 
-        /* Touch underlying items */
-        theTaxYears.touchUnderlyingItems();
-
         /* Validate the tax years */
         theTaxYears.validateOnLoad();
     }

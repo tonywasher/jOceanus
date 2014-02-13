@@ -185,9 +185,6 @@ public class SheetPayee
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the payees */
         theList.validateOnLoad();
     }

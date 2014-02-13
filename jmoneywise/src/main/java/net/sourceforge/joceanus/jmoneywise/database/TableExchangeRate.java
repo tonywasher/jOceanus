@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TableExchangeRate
-                              extends DatabaseTable<ExchangeRate, MoneyWiseDataType> {
+        extends DatabaseTable<ExchangeRate, MoneyWiseDataType> {
     /**
      * The name of the ExchangeRate table.
      */
@@ -125,9 +125,6 @@ public class TableExchangeRate
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the exchangeRates */
         theList.validateOnLoad();

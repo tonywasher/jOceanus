@@ -39,9 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.EventClass.EventClassList;
-import net.sourceforge.joceanus.jmoneywise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -221,8 +220,8 @@ public class MoneyWiseData
      * Obtain EventClasses.
      * @return the EventClasses
      */
-    public EventClassList getEventClasses() {
-        return getDataList(MoneyWiseDataType.EVENTCLASS, EventClassList.class);
+    public EventTagList getEventClasses() {
+        return getDataList(MoneyWiseDataType.EVENTTAG, EventTagList.class);
     }
 
     /**
@@ -346,14 +345,6 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain EventClass Links.
-     * @return the EventClass Links
-     */
-    public EventClassLinkList getEventClassLinks() {
-        return getDataList(MoneyWiseDataType.EVENTCLASSLINK, EventClassLinkList.class);
-    }
-
-    /**
      * Obtain Date range.
      * @return the Date Range
      */
@@ -428,8 +419,8 @@ public class MoneyWiseData
                 return new AccountInfoTypeList(this);
             case EVENTINFOTYPE:
                 return new EventInfoTypeList(this);
-            case EVENTCLASS:
-                return new EventClassList(this);
+            case EVENTTAG:
+                return new EventTagList(this);
             case ACCOUNTCATEGORY:
                 return new AccountCategoryList(this);
             case EVENTCATEGORY:
@@ -460,8 +451,6 @@ public class MoneyWiseData
                 return new EventList(this);
             case EVENTINFO:
                 return new EventInfoList(this);
-            case EVENTCLASSLINK:
-                return new EventClassLinkList(this);
             default:
                 throw new IllegalArgumentException(pListType.toString());
         }
@@ -536,7 +525,12 @@ public class MoneyWiseData
             /* Access list and switch on type */
             DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
             switch (myEntry.getKey()) {
-            /* Reset the flags on low-lying data */
+            /* Ignore lists that are never referenced */
+                case TAXBASIS:
+                case TAXTYPE:
+                    break;
+
+                /* Reset the flags on low-lying data */
                 case ACCOUNTTYPE:
                 case PAYEETYPE:
                 case SECURITYTYPE:
@@ -547,7 +541,7 @@ public class MoneyWiseData
                 case TAXINFOTYPE:
                 case ACCOUNTINFOTYPE:
                 case EVENTINFOTYPE:
-                case EVENTCLASS:
+                case EVENTTAG:
                     myList.clearActive();
                     break;
 
@@ -567,6 +561,18 @@ public class MoneyWiseData
                 case EXCHANGERATE:
                 case PATTERN:
                     myList.touchUnderlyingItems();
+                    break;
+
+                /* Ignore lists that will be handled during analysis */
+                case EVENT:
+                case ACCOUNTRATE:
+                case SECURITYPRICE:
+                    break;
+
+                /* Ignore info lists that will be handled by their owner */
+                case EVENTINFO:
+                case ACCOUNTINFO:
+                case TAXYEARINFO:
                     break;
 
                 default:

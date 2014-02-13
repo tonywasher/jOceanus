@@ -164,6 +164,11 @@ public enum AccountInfoClass implements DataInfoClass {
     }
 
     @Override
+    public boolean isLinkSet() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {

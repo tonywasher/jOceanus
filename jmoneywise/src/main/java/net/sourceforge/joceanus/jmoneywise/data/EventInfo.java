@@ -88,6 +88,14 @@ public class EventInfo
     }
 
     /**
+     * Obtain Event Tag.
+     * @return the Event Tag
+     */
+    public EventTag getEventTag() {
+        return getEventTag(getValueSet());
+    }
+
+    /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
      * @return the Money
@@ -107,11 +115,25 @@ public class EventInfo
                                      : pValueSet.getValue(FIELD_LINK, Account.class);
     }
 
+    /**
+     * Obtain Linked EventTag.
+     * @param pValueSet the valueSet
+     * @return the EventTag
+     */
+    public static EventTag getEventTag(final ValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, EventTag.class);
+    }
+
     @Override
     public String getLinkName() {
         DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Account) {
             return ((Account) myItem).getName();
+        }
+        if (myItem instanceof EventTag) {
+            return ((EventTag) myItem).getName();
         }
         return null;
     }
@@ -269,6 +291,12 @@ public class EventInfo
                         setValueValue(getAccount().getId());
                     }
                     break;
+                case EVENTTAG:
+                    resolveDataLink(FIELD_LINK, myData.getEventClasses());
+                    if (myLinkId == null) {
+                        setValueValue(getEventTag().getId());
+                    }
+                    break;
                 default:
                     break;
             }
@@ -284,6 +312,7 @@ public class EventInfo
         EventInfoType myType = getInfoType();
         switch (myType.getDataType()) {
             case LINK:
+            case LINKSET:
                 return myFormatter.formatObject(getLink(DataItem.class));
             default:
                 return myFormatter.formatObject(getValue(Object.class));
@@ -329,6 +358,9 @@ public class EventInfo
         switch (getInfoClass()) {
             case THIRDPARTY:
                 getAccount().touchItem(getOwner());
+                break;
+            case EVENTTAG:
+                getEventTag().touchItem(getOwner());
                 break;
             default:
                 break;

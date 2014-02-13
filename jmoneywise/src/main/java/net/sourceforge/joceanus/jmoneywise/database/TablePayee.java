@@ -40,7 +40,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Payee.
  */
-public class TablePayee extends TableEncrypted<Payee, MoneyWiseDataType> {
+public class TablePayee
+        extends TableEncrypted<Payee, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -115,9 +116,6 @@ public class TablePayee extends TableEncrypted<Payee, MoneyWiseDataType> {
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the payees */
         theList.validateOnLoad();

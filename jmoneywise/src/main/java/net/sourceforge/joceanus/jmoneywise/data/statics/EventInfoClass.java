@@ -116,7 +116,12 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * Grant.
      */
-    OPTIONSGRANT(17, 16, DataType.LINK);
+    OPTIONSGRANT(17, 16, DataType.LINK),
+
+    /**
+     * EventTag.
+     */
+    EVENTTAG(18, 17, DataType.LINKSET);
 
     /**
      * Resource Bundle.
@@ -160,7 +165,18 @@ public enum EventInfoClass implements DataInfoClass {
 
     @Override
     public boolean isLink() {
-        return theDataType == DataType.LINK;
+        switch (theDataType) {
+            case LINK:
+            case LINKSET:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean isLinkSet() {
+        return theDataType == DataType.LINKSET;
     }
 
     @Override

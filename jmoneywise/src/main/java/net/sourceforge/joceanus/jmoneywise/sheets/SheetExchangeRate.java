@@ -171,9 +171,6 @@ public class SheetExchangeRate
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the exchange Rates */
         theList.validateOnLoad();
     }

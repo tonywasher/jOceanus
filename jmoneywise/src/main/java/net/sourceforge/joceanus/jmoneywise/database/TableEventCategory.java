@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * TableEncrypted extension for Event Category.
  * @author Tony Washer
  */
-public class TableEventCategory extends TableEncrypted<EventCategory, MoneyWiseDataType> {
+public class TableEventCategory
+        extends TableEncrypted<EventCategory, MoneyWiseDataType> {
     /**
      * The name of the Category table.
      */
@@ -118,9 +119,6 @@ public class TableEventCategory extends TableEncrypted<EventCategory, MoneyWiseD
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the event categories */
         theList.validateOnLoad();

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventClassLink;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
@@ -38,7 +37,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * TableEncrypted extension for Portfolio.
  */
-public class TablePortfolio extends TableEncrypted<Portfolio, MoneyWiseDataType> {
+public class TablePortfolio
+        extends TableEncrypted<Portfolio, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
@@ -78,7 +78,7 @@ public class TablePortfolio extends TableEncrypted<Portfolio, MoneyWiseDataType>
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventClassLink.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myTableDef.getBinaryValue(Portfolio.FIELD_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, myTableDef.getBinaryValue(Portfolio.FIELD_DESC));
         myValues.addValue(Portfolio.FIELD_HOLDING, myTableDef.getIntegerValue(Portfolio.FIELD_HOLDING));
@@ -114,9 +114,6 @@ public class TablePortfolio extends TableEncrypted<Portfolio, MoneyWiseDataType>
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
 
         /* Validate the portfolios */
         theList.validateOnLoad();

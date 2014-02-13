@@ -196,9 +196,6 @@ public class SheetPortfolio
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Touch underlying items */
-        theList.touchUnderlyingItems();
-
         /* Validate the portfolios */
         theList.validateOnLoad();
     }
