@@ -121,6 +121,40 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         return super.skipField(pField);
     }
 
+    @Override
+    public String toString() {
+        /* Access InfoType */
+        I myInfoType = getInfoType();
+        if (myInfoType == null) {
+            return super.formatObject();
+        }
+
+        /* Access class */
+        return myInfoType.getName() + "=" + formatObject();
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access InfoType */
+        I myInfoType = getInfoType();
+        if (myInfoType == null) {
+            return super.formatObject();
+        }
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+        S myInfoClass = myInfoType.getStaticClass();
+
+        /* Switch on type of Data */
+        switch (myInfoClass.getDataType()) {
+            case LINK:
+            case LINKSET:
+                return myFormatter.formatObject(getLink());
+            default:
+                return myFormatter.formatObject(getValue(Object.class));
+        }
+    }
+
     /**
      * Obtain InfoType.
      * @return the InfoTypeId
@@ -159,7 +193,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Obtain Link.
      * @param <X> the link type
      * @param pClass the class of the link
-     * @return the Account
+     * @return the Link
      */
     public <X extends DataItem<?>> X getLink(final Class<X> pClass) {
         return getLink(getValueSet(), pClass);
@@ -171,6 +205,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      */
     public String getLinkName() {
         return null;
+    }
+
+    /**
+     * Obtain Link.
+     * @return the Link
+     */
+    protected Object getLink() {
+        return getLink(getValueSet());
     }
 
     /**
@@ -269,6 +311,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, pClass);
+    }
+
+    /**
+     * Obtain Associated Link.
+     * @param pValueSet the valueSet
+     * @return the Link
+     */
+    protected static Object getLink(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_LINK, Object.class);
     }
 
     /**
@@ -374,7 +425,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Set link name.
      * @param pName the linkName
      */
-    private void setValueLink(final String pName) {
+    protected void setValueLink(final String pName) {
         ValueSet myValues = getValueSet();
         myValues.setValue(FIELD_LINK, pName);
     }

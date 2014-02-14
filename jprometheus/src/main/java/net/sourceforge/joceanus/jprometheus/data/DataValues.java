@@ -256,7 +256,7 @@ public class DataValues<E extends Enum<E>> {
             theInfoItems = null;
         }
 
-        /* If the item is an grouped item */
+        /* If the item is a grouped item */
         if (pItem instanceof GroupedItem) {
             /* Access child iterator */
             Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();

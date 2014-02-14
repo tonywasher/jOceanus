@@ -29,6 +29,10 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Representation of an set of DataInfo links for a DataItem.
@@ -44,7 +48,17 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     /**
      * Item separator.
      */
-    private static final char ITEM_SEP = ',';
+    protected static final String ITEM_SEP = ",";
+
+    /**
+     * The local fields.
+     */
+    private final JDataFields theLocalFields = new JDataFields(DataInfoLinkSet.class.getSimpleName());
+
+    /**
+     * The number of fields.
+     */
+    private int theNumFields = 0;
 
     /**
      * List of items.
@@ -65,6 +79,29 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * The infoType.
      */
     private final DataInfoList<T, O, I, S, E> theInfoList;
+
+    @Override
+    public JDataFields getDataFields() {
+        return (theLocalFields == null)
+                                       ? DataInfo.FIELD_DEFS
+                                       : theLocalFields;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle out of range */
+        int iIndex = pField.getIndex();
+        if ((iIndex < 0)
+            || iIndex >= theNumFields) {
+            return JDataFieldValue.UNKNOWN;
+        }
+        if (iIndex >= theLinks.size()) {
+            return JDataFieldValue.SKIP;
+        }
+
+        /* Access the element */
+        return theLinks.get(iIndex);
+    }
 
     @Override
     public String formatObject() {
@@ -133,22 +170,62 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
             /* Add a copy item */
             T myNew = pList.addCopyItem(myLink);
             theLinks.add(myNew);
+            theLocalFields.declareIndexField(theInfoType.getName());
+            theNumFields++;
         }
     }
 
     /**
      * Add link to Item.
      * @param pItem the item to link to
+     * @throws JOceanusException on error
      */
-    public void linkItem(final T pItem) {
+    public void linkItem(final T pItem) throws JOceanusException {
         /* If the item is not already linked */
         if (!isItemLinked(pItem)) {
+            /* Perform any necessary splits on the item */
+            splitItem(pItem);
+
             /* Add the item to the list */
             theLinks.add(pItem);
 
-            /* Sort the links */
-            sortLinks();
+            /* If we need an additional field */
+            if (theLinks.size() > theNumFields) {
+                /* Allocate it */
+                theLocalFields.declareIndexField(theInfoType.getName());
+                theNumFields++;
+            }
         }
+    }
+
+    /**
+     * Split multi-name item.
+     * @param pNameList the list to split
+     * @throws JOceanusException on error
+     */
+    private void splitItem(final T pItem) throws JOceanusException {
+        /* Ignore if this is not a load of a string */
+        Object myValue = pItem.getLink();
+        if (!(myValue instanceof String)) {
+            return;
+        }
+
+        /* Ignore if this is not a load of a combined list */
+        String myString = (String) myValue;
+        int iIndex = myString.indexOf(ITEM_SEP);
+        if (iIndex == -1) {
+            return;
+        }
+
+        /* Adjust the existing value */
+        pItem.setValueLink(myString.substring(0, iIndex));
+
+        /* Create the new item */
+        T myItem = theInfoList.addNewItem(theOwner, theInfoType);
+        myItem.setValueLink(myString.substring(iIndex + 1));
+
+        /* Link the new item */
+        linkItem(myItem);
     }
 
     /**
@@ -169,13 +246,13 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
      * @return true/false
      */
     public boolean isItemLinked(final T pItem) {
-        return theLinks.indexOf(pItem) == -1;
+        return theLinks.indexOf(pItem) != -1;
     }
 
     /**
      * Sort the list.
      */
-    private void sortLinks() {
+    protected void sortLinks() {
         /* Sort using natural comparison */
         Collections.sort(theLinks);
     }
@@ -193,6 +270,11 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
         Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
             T myLink = myIterator.next();
+
+            /* Ignore deleted elements */
+            if (myLink.isDeleted()) {
+                continue;
+            }
 
             /* If this is not the first item */
             if (!isFirst) {

@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -303,22 +302,6 @@ public class EventInfo
         }
     }
 
-    @Override
-    public String formatObject() {
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Switch on type of Data */
-        EventInfoType myType = getInfoType();
-        switch (myType.getDataType()) {
-            case LINK:
-            case LINKSET:
-                return myFormatter.formatObject(getLink(DataItem.class));
-            default:
-                return myFormatter.formatObject(getValue(Object.class));
-        }
-    }
-
     /**
      * Update eventInfo from an eventInfo extract.
      * @param pEventInfo the changed eventInfo
@@ -457,7 +440,7 @@ public class EventInfo
                                        final EventInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             EventInfo myInfo = new EventInfo(this, pOwner, pInfoType);
-            add(myInfo);
+            append(myInfo);
 
             /* return it */
             return myInfo;

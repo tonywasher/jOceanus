@@ -347,10 +347,27 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     }
 
     /**
+     * Sort linkSets.
+     */
+    public void sortLinkSets() {
+        /* Loop through each existing value */
+        for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
+            /* If this is an instance of a LinkSet */
+            if (myValue instanceof DataInfoLinkSet) {
+                /* Pass call to linkSet */
+                DataInfoLinkSet<T, O, I, S, E> mySet = (DataInfoLinkSet<T, O, I, S, E>) myValue;
+                mySet.sortLinks();
+            }
+        }
+
+    }
+
+    /**
      * Register Info.
      * @param pInfo the info to register
+     * @throws JOceanusException on error
      */
-    public void registerInfo(final T pInfo) {
+    public void registerInfo(final T pInfo) throws JOceanusException {
         /* Obtain the existing Map value */
         S myClass = pInfo.getInfoClass();
 

@@ -188,9 +188,6 @@ public class JDataFields {
      * @return the field
      */
     private JDataField declareDataField(final String pName) {
-        /* Check the name */
-        checkUniqueName(pName);
-
         /* Create the field */
         JDataField myField = new JDataField(pName);
 

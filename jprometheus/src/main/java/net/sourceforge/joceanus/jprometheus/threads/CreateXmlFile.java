@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.zip.ZipReadFile;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jprometheus.JPrometheusCancelException;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValuesFormatter;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
@@ -198,13 +197,6 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
             if (!bContinue) {
                 throw new JPrometheusCancelException(ERROR_CANCEL);
             }
-
-            /* Catch any exceptions */
-        } catch (JOceanusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JPrometheusIOException("Failed", e);
-            /* Catch any exceptions */
         } finally {
             /* Delete the file */
             if ((doDelete) && (!myFile.delete())) {

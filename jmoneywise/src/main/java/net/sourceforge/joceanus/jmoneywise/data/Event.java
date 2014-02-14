@@ -504,6 +504,11 @@ public class Event
 
         /* Resolve data links */
         resolveDataLink(FIELD_PARENT, getList());
+
+        /* Sort linkSets */
+        if (hasInfoSet) {
+            theInfoSet.sortLinkSets();
+        }
     }
 
     /**

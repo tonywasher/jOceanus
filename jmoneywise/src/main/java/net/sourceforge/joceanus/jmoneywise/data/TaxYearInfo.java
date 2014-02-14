@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.data;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -35,8 +34,6 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * Representation of an information extension of a TaxYear.
@@ -224,22 +221,6 @@ public class TaxYearInfo
         /* Access the TaxInfoSet and register this data */
         TaxInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
-    }
-
-    @Override
-    public String formatObject() {
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Switch on type of Data */
-        switch (getInfoType().getDataType()) {
-            case MONEY:
-                return myFormatter.formatObject(getValue(JMoney.class));
-            case RATE:
-                return myFormatter.formatObject(getValue(JRate.class));
-            default:
-                return null;
-        }
     }
 
     /**

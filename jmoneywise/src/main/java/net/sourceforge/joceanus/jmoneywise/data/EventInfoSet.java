@@ -109,6 +109,10 @@ public class EventInfoSet
                 /* Access account of object */
                 myValue = getAccount(pInfoClass);
                 break;
+            case EVENTTAG:
+                /* Access InfoSetList */
+                myValue = getInfoLinkSet(pInfoClass);
+                break;
             default:
                 /* Access value of object */
                 myValue = getField(pInfoClass);

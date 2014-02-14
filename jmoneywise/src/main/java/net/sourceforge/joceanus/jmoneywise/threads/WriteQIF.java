@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.threads;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
@@ -72,34 +71,25 @@ public class WriteQIF
 
     @Override
     public Void performTask() throws JOceanusException {
-        /* Catch Exceptions */
-        try {
-            /* Initialise the status window */
-            theStatus.initTask("Analysing Data");
+        /* Initialise the status window */
+        theStatus.initTask("Analysing Data");
 
-            /* Load configuration */
-            PreferenceManager myMgr = theView.getPreferenceMgr();
-            QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
+        /* Load configuration */
+        PreferenceManager myMgr = theView.getPreferenceMgr();
+        QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
-            /* Create QIF analysis */
-            QDataSet myQData = new QDataSet(theStatus, theView, myPrefs);
+        /* Create QIF analysis */
+        QDataSet myQData = new QDataSet(theStatus, theView, myPrefs);
 
-            /* Initialise the status window */
-            theStatus.initTask("Writing QIF file");
+        /* Initialise the status window */
+        theStatus.initTask("Writing QIF file");
 
-            /* Create file */
-            boolean bContinue = myQData.outputData(theStatus);
+        /* Create file */
+        boolean bContinue = myQData.outputData(theStatus);
 
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new JMoneyWiseCancelException("Operation Cancelled");
-            }
-
-            /* Catch any exceptions */
-        } catch (JOceanusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JMoneyWiseIOException("Failed", e);
+        /* Check for cancellation */
+        if (!bContinue) {
+            throw new JMoneyWiseCancelException("Operation Cancelled");
         }
 
         /* Return nothing */

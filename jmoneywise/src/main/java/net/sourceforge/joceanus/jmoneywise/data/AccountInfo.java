@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -303,20 +302,6 @@ public class AccountInfo
                 default:
                     break;
             }
-        }
-    }
-
-    @Override
-    public String formatObject() {
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Switch on type of Data */
-        switch (getInfoType().getDataType()) {
-            case LINK:
-                return myFormatter.formatObject(getLink(DataItem.class));
-            default:
-                return myFormatter.formatObject(getValue(Object.class));
         }
     }
 

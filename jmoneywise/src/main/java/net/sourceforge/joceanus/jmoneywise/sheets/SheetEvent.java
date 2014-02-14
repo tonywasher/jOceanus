@@ -549,6 +549,13 @@ public class SheetEvent
                         myThirdParty = myCell.getStringValue();
                     }
 
+                    /* Handle TagList which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myTagList = null;
+                    if (myCell != null) {
+                        myTagList = myCell.getStringValue();
+                    }
+
                     /* Set defaults */
                     Boolean isSplit = Boolean.FALSE;
                     Event myParent = null;
@@ -608,6 +615,7 @@ public class SheetEvent
                     myInfoList.addInfoItem(null, myEvent, EventInfoClass.QUALIFYYEARS, myYears);
                     myInfoList.addInfoItem(null, myEvent, EventInfoClass.CHARITYDONATION, myDonation);
                     myInfoList.addInfoItem(null, myEvent, EventInfoClass.THIRDPARTY, myThirdParty);
+                    myInfoList.addInfoItem(null, myEvent, EventInfoClass.EVENTTAG, myTagList);
 
                     /* Report the progress */
                     myCount++;

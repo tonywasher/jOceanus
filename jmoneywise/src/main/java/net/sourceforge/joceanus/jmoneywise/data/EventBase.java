@@ -59,6 +59,11 @@ public abstract class EventBase
     public static final String OBJECT_NAME = EventBase.class.getSimpleName();
 
     /**
+     * Blank character.
+     */
+    private static final char CHAR_BLANK = ' ';
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventBase.class.getName());
@@ -168,6 +173,37 @@ public abstract class EventBase
 
         /* Pass call on */
         return super.includeXmlField(pField);
+    }
+
+    @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access Key Values */
+        EncryptedValueSet myValues = getValueSet();
+        Object myDebit = myValues.getValue(FIELD_DEBIT, Object.class);
+        Object myCredit = myValues.getValue(FIELD_CREDIT, Object.class);
+        Object myCategory = myValues.getValue(FIELD_CATEGORY, Object.class);
+        Object myAmount = myValues.getValue(FIELD_AMOUNT, Object.class);
+
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(myFormatter.formatObject(myCategory));
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(myFormatter.formatObject(myAmount));
+        myBuilder.append(CHAR_BLANK);
+        myBuilder.append(myFormatter.formatObject(myDebit));
+        myBuilder.append("->");
+        myBuilder.append(myFormatter.formatObject(myCredit));
+
+        /* return it */
+        return myBuilder.toString();
     }
 
     /**
