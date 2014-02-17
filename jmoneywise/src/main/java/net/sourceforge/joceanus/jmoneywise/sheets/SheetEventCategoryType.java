@@ -72,7 +72,7 @@ public class SheetEventCategoryType
      */
     protected SheetEventCategoryType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_CATTYPES, AREA_CATTYPENAMES);
+        super(pWriter, AREA_CATTYPES);
 
         /* Access the Category Type list */
         MoneyWiseData myData = pWriter.getData();
@@ -81,12 +81,6 @@ public class SheetEventCategoryType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(EventCategoryType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(EventCategoryType.OBJECT_NAME);
     }

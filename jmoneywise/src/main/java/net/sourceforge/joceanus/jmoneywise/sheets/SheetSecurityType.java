@@ -71,7 +71,7 @@ public class SheetSecurityType
      */
     protected SheetSecurityType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_SECURITYTYPES, AREA_SECURITYTYPENAMES);
+        super(pWriter, AREA_SECURITYTYPES);
 
         /* Access the Security Type list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetSecurityType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(SecurityType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(SecurityType.OBJECT_NAME);
     }

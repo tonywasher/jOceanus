@@ -76,7 +76,7 @@ public class SheetAccountCurrency
      */
     protected SheetAccountCurrency(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_ACCOUNTCURRENCIES, AREA_ACCOUNTCURRNAMES);
+        super(pWriter, AREA_ACCOUNTCURRENCIES);
 
         /* Access the list */
         MoneyWiseData myData = pWriter.getData();
@@ -85,16 +85,6 @@ public class SheetAccountCurrency
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(AccountCurrency.OBJECT_NAME);
-        myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCurrency.OBJECT_NAME);
         myValues.addValue(AccountCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
@@ -110,33 +100,6 @@ public class SheetAccountCurrency
 
         /* Set default indication */
         writeBoolean(COL_DEFAULT, pItem.isDefault());
-    }
-
-    @Override
-    protected void insertOpenItem(final AccountCurrency pItem) throws JOceanusException {
-        /* Insert standard fields */
-        super.insertOpenItem(pItem);
-
-        /* Set default indication */
-        writeBoolean(COL_DEFAULT, pItem.isDefault());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Prepare standard fields */
-        super.prepareSheet();
-
-        /* Write titles */
-        writeHeader(COL_DEFAULT, AccountCurrency.FIELD_DEFAULT.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Format standard fields */
-        super.formatSheet();
-
-        /* Set default column types */
-        setBooleanColumn(COL_DEFAULT);
     }
 
     @Override

@@ -71,7 +71,7 @@ public class SheetEventInfoType
      */
     protected SheetEventInfoType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
+        super(pWriter, AREA_EVENTINFOTYPES);
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetEventInfoType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(EventInfoType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(EventInfoType.OBJECT_NAME);
     }

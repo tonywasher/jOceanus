@@ -106,23 +106,10 @@ public class SheetPayee
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Payee.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_PAYEETYPE, loadInteger(COL_TYPE));
         myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
-        myValues.addValue(Payee.FIELD_PAYEETYPE, loadString(COL_TYPE));
-        myValues.addValue(Payee.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(Payee.FIELD_DESC, loadString(COL_DESC));
         myValues.addValue(Payee.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
         /* Return the values */
@@ -137,40 +124,6 @@ public class SheetPayee
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void insertOpenItem(final Payee pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_TYPE, pItem.getPayeeTypeName());
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-        writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_TYPE, Payee.FIELD_PAYEETYPE.getName());
-        writeHeader(COL_NAME, Payee.FIELD_NAME.getName());
-        writeHeader(COL_DESC, Payee.FIELD_DESC.getName());
-        writeHeader(COL_CLOSED, Payee.FIELD_CLOSED.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
-        setStringColumn(COL_TYPE);
-        setBooleanColumn(COL_CLOSED);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_PAYEENAMES);
-
-        /* Set validation */
-        applyDataValidation(COL_TYPE, SheetPayeeType.AREA_PAYEETYPENAMES);
     }
 
     @Override

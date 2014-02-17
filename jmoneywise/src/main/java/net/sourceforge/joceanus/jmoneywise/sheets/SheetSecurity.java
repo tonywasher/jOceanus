@@ -122,29 +122,13 @@ public class SheetSecurity
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Security.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Security.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Security.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(Security.FIELD_SYMBOL, loadBytes(COL_SYMBOL));
-        myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
-        myValues.addValue(Security.FIELD_SECTYPE, loadString(COL_TYPE));
-        myValues.addValue(Security.FIELD_PARENT, loadString(COL_PARENT));
-        myValues.addValue(Security.FIELD_CURRENCY, loadString(COL_CURRENCY));
-        myValues.addValue(Security.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(Security.FIELD_DESC, loadString(COL_DESC));
-        myValues.addValue(Security.FIELD_SYMBOL, loadString(COL_SYMBOL));
         myValues.addValue(Security.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
         /* Return the values */
@@ -162,51 +146,6 @@ public class SheetSecurity
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_SYMBOL, pItem.getSymbolBytes());
         writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void insertOpenItem(final Security pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_TYPE, pItem.getSecurityTypeName());
-        writeString(COL_PARENT, pItem.getParentName());
-        writeString(COL_CURRENCY, pItem.getSecurityCurrencyName());
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-        writeString(COL_SYMBOL, pItem.getSymbol());
-        writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_TYPE, Security.FIELD_SECTYPE.getName());
-        writeHeader(COL_PARENT, Security.FIELD_PARENT.getName());
-        writeHeader(COL_CURRENCY, Security.FIELD_CURRENCY.getName());
-        writeHeader(COL_NAME, Security.FIELD_NAME.getName());
-        writeHeader(COL_DESC, Security.FIELD_DESC.getName());
-        writeHeader(COL_SYMBOL, Security.FIELD_SYMBOL.getName());
-        writeHeader(COL_CLOSED, Security.FIELD_CLOSED.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
-        setStringColumn(COL_TYPE);
-        setStringColumn(COL_PARENT);
-        setStringColumn(COL_SYMBOL);
-        setStringColumn(COL_CURRENCY);
-        setBooleanColumn(COL_CLOSED);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_SECURITYNAMES);
-
-        /* Set validation */
-        applyDataValidation(COL_TYPE, SheetSecurityType.AREA_SECURITYTYPENAMES);
-        applyDataValidation(COL_CURRENCY, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
-        applyDataValidation(COL_PARENT, SheetPayee.AREA_PAYEENAMES);
     }
 
     @Override

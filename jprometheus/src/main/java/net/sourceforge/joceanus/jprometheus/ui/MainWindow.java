@@ -48,11 +48,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.threads.CreateBackup;
 import net.sourceforge.joceanus.jprometheus.threads.CreateDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.CreateExtract;
 import net.sourceforge.joceanus.jprometheus.threads.CreateXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.LoadBackup;
 import net.sourceforge.joceanus.jprometheus.threads.LoadDatabase;
-import net.sourceforge.joceanus.jprometheus.threads.LoadExtract;
 import net.sourceforge.joceanus.jprometheus.threads.LoadXmlFile;
 import net.sourceforge.joceanus.jprometheus.threads.PurgeDatabase;
 import net.sourceforge.joceanus.jprometheus.threads.RenewSecurity;
@@ -144,19 +142,14 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private static final String ITEM_RESTOREBACK = NLS_BUNDLE.getString("ItemRestoreBackup");
 
     /**
-     * Create Extract menu item.
-     */
-    private static final String ITEM_MAKEXTRACT = NLS_BUNDLE.getString("ItemCreateXtract");
-
-    /**
-     * Load Extract menu item.
-     */
-    private static final String ITEM_LOADXTRACT = NLS_BUNDLE.getString("ItemLoadXtract");
-
-    /**
      * Create Xml menu item.
      */
     private static final String ITEM_CREATEXML = NLS_BUNDLE.getString("ItemCreateXml");
+
+    /**
+     * Create Xml Xtract menu item.
+     */
+    private static final String ITEM_CREATEXTRACT = NLS_BUNDLE.getString("ItemCreateXtract");
 
     /**
      * Load Xml menu item.
@@ -279,17 +272,12 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     private JMenuItem theLoadBackup = null;
 
     /**
-     * The Write Extract menu item.
+     * The Create XML Extract menu item.
      */
-    private JMenuItem theWriteExtract = null;
+    private JMenuItem theCreateXtract = null;
 
     /**
-     * The Load Extract menu item.
-     */
-    private JMenuItem theLoadExtract = null;
-
-    /**
-     * The Create XML menu item.
+     * The Create XML Backup menu item.
      */
     private JMenuItem theCreateXml = null;
 
@@ -532,15 +520,12 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
         theLoadBackup = new JMenuItem(ITEM_RESTOREBACK);
         theLoadBackup.addActionListener(this);
         pMenu.add(theLoadBackup);
-        theWriteExtract = new JMenuItem(ITEM_MAKEXTRACT);
-        theWriteExtract.addActionListener(this);
-        pMenu.add(theWriteExtract);
-        theLoadExtract = new JMenuItem(ITEM_LOADXTRACT);
-        theLoadExtract.addActionListener(this);
-        pMenu.add(theLoadExtract);
         theCreateXml = new JMenuItem(ITEM_CREATEXML);
         theCreateXml.addActionListener(this);
         pMenu.add(theCreateXml);
+        theCreateXtract = new JMenuItem(ITEM_CREATEXTRACT);
+        theCreateXtract.addActionListener(this);
+        pMenu.add(theCreateXtract);
         theLoadXml = new JMenuItem(ITEM_LOADXML);
         theLoadXml.addActionListener(this);
         pMenu.add(theLoadXml);
@@ -663,11 +648,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             /* Start a write backup operation */
             writeBackup();
 
-            /* If this event relates to the Write Extract item */
-        } else if (theWriteExtract.equals(o)) {
-            /* Start a write extract operation */
-            writeExtract();
-
             /* If this event relates to the Save Database item */
         } else if (theSaveDBase.equals(o)) {
             /* Start a store database operation */
@@ -703,15 +683,15 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
             /* Start a restore backup operation */
             restoreBackup();
 
-            /* If this event relates to the Load extract item */
-        } else if (theLoadExtract.equals(o)) {
-            /* Start a load backup operation */
-            loadExtract();
-
-            /* If this event relates to the Create Xml item */
+            /* If this event relates to the Create Xml Backup item */
         } else if (theCreateXml.equals(o)) {
-            /* Start a createXml operation */
-            createXmlFile();
+            /* Start a createXmlBackup operation */
+            createXmlBackup();
+
+            /* If this event relates to the Create Xml Xtract item */
+        } else if (theCreateXtract.equals(o)) {
+            /* Start a createXmlXtract operation */
+            createXmlXtract();
 
             /* If this event relates to the Load Xml item */
         } else if (theLoadXml.equals(o)) {
@@ -771,7 +751,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* If we have changes disable the create backup options */
         theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
-        theWriteExtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        theCreateXtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
         theCreateXml.setEnabled(!hasChanges && !hasUpdates && hasControl);
 
         /* If we have changes disable the security options */
@@ -780,7 +760,6 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* If we have updates disable the load backup/database option */
         theLoadBackup.setEnabled(!hasUpdates);
-        theLoadExtract.setEnabled(!hasUpdates);
         theLoadXml.setEnabled(!hasUpdates);
         theLoadDBase.setEnabled(!hasUpdates);
 
@@ -937,40 +916,27 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Write Extract.
-     */
-    private void writeExtract() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
-
-        /* Create the worker thread */
-        CreateExtract<T, E> myThread = new CreateExtract<T, E>(myStatus);
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
-     * Load Extract.
-     */
-    private void loadExtract() {
-        /* Allocate the status */
-        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, theStatusBar);
-
-        /* Create the worker thread */
-        LoadExtract<T, E> myThread = new LoadExtract<T, E>(myStatus);
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
      * Create XML Backup file.
      */
-    private void createXmlFile() {
+    private void createXmlBackup() {
         /* Allocate the status */
         ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
 
         /* Create the worker thread */
         CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, true);
+        myStatus.registerThread(myThread);
+        startThread(myThread);
+    }
+
+    /**
+     * Create XML Xtract file.
+     */
+    private void createXmlXtract() {
+        /* Allocate the status */
+        ThreadStatus<T, E> myStatus = new ThreadStatus<T, E>(theView, getStatusBar());
+
+        /* Create the worker thread */
+        CreateXmlFile<T, E> myThread = new CreateXmlFile<T, E>(myStatus, false);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

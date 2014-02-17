@@ -72,7 +72,7 @@ public class SheetTaxYearInfoType
      */
     protected SheetTaxYearInfoType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TAXINFOTYPES, AREA_TAXINFOTYPENAMES);
+        super(pWriter, AREA_TAXINFOTYPES);
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
@@ -81,12 +81,6 @@ public class SheetTaxYearInfoType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(TaxYearInfoType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxYearInfoType.OBJECT_NAME);
     }

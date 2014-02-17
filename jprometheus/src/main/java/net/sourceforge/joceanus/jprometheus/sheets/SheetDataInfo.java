@@ -87,12 +87,11 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     }
 
     @Override
-    protected DataValues<E> getSecureRowValues(final String pName) throws JOceanusException {
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getSecureRowValues(pName);
+        DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
-        myValues.addValue(DataInfo.FIELD_CONTROL, loadInteger(COL_CONTROLID));
         myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));
         myValues.addValue(DataInfo.FIELD_OWNER, loadInteger(COL_OWNER));
         myValues.addValue(DataInfo.FIELD_VALUE, loadBytes(COL_VALUE));

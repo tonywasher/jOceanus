@@ -54,8 +54,6 @@ public class MoneyWiseReader
      */
     @Override
     protected void registerSheets() {
-        boolean isBackup = isBackup();
-
         /* Register the sheets */
         addSheet(new SheetAccountCategoryType(this));
         addSheet(new SheetPayeeType(this));
@@ -73,9 +71,7 @@ public class MoneyWiseReader
         addSheet(new SheetAccountCategory(this));
         addSheet(new SheetEventCategory(this));
         addSheet(new SheetTaxYear(this));
-        if (isBackup) {
-            addSheet(new SheetTaxYearInfo(this));
-        }
+        addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetExchangeRate(this));
         addSheet(new SheetPayee(this));
         addSheet(new SheetSecurity(this));
@@ -83,13 +79,9 @@ public class MoneyWiseReader
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetSecurityPrice(this));
-        if (isBackup) {
-            addSheet(new SheetAccountInfo(this));
-        }
+        addSheet(new SheetAccountInfo(this));
         addSheet(new SheetEvent(this));
-        if (isBackup) {
-            addSheet(new SheetEventInfo(this));
-        }
+        addSheet(new SheetEventInfo(this));
         addSheet(new SheetPattern(this));
     }
 

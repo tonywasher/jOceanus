@@ -26,10 +26,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
@@ -96,21 +94,6 @@ public class SheetPattern
     private final PatternList theList;
 
     /**
-     * The active parent.
-     */
-    private Pattern theActiveParent = null;
-
-    /**
-     * Last debit.
-     */
-    private String theLastDebit = null;
-
-    /**
-     * Last credit.
-     */
-    private String theLastCredit = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -139,7 +122,7 @@ public class SheetPattern
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Pattern.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Pattern.OBJECT_NAME);
         myValues.addValue(Pattern.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Pattern.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Pattern.FIELD_DEBIT, loadInteger(COL_DEBIT));
@@ -148,69 +131,6 @@ public class SheetPattern
         myValues.addValue(Pattern.FIELD_SPLIT, loadBoolean(COL_SPLIT));
         myValues.addValue(Pattern.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Pattern.FIELD_FREQ, loadInteger(COL_FREQ));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Access key details */
-        String myDebit = loadString(COL_DEBIT);
-        String myCredit = loadString(COL_CREDIT);
-        JDateDay myDate = loadDate(COL_DATE);
-        Boolean isSplit = Boolean.FALSE;
-        Pattern myParent = null;
-
-        /* If we don't have a date */
-        if (myDate == null) {
-            /* If this is the first child */
-            if (theActiveParent == null) {
-                /* Access the last item as the active parent */
-                theActiveParent = getLastItem();
-                if (theActiveParent != null) {
-                    /* Mark it as a group */
-                    theActiveParent.setSplit(Boolean.TRUE);
-                }
-            }
-
-            /* If we have a valid parent */
-            if (theActiveParent != null) {
-                /* Pick up last date */
-                myDate = theActiveParent.getDate();
-
-                /* Pick up debit and credit from last values */
-                if (myDebit == null) {
-                    myDebit = theLastDebit;
-                }
-                if (myCredit == null) {
-                    myCredit = theLastCredit;
-                }
-
-                /* Note that we are split and record the active parent */
-                isSplit = Boolean.TRUE;
-                myParent = theActiveParent;
-            }
-
-            /* else reset the active parent */
-        } else {
-            theActiveParent = null;
-        }
-
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Pattern.OBJECT_NAME);
-        myValues.addValue(Pattern.FIELD_DATE, myDate);
-        myValues.addValue(Pattern.FIELD_CATEGORY, loadString(COL_CATEGORY));
-        myValues.addValue(Pattern.FIELD_DEBIT, myDebit);
-        myValues.addValue(Pattern.FIELD_CREDIT, myCredit);
-        myValues.addValue(Pattern.FIELD_AMOUNT, loadString(COL_AMOUNT));
-        myValues.addValue(Pattern.FIELD_FREQ, loadString(COL_FREQ));
-        myValues.addValue(Pattern.FIELD_SPLIT, isSplit);
-        myValues.addValue(Pattern.FIELD_PARENT, myParent);
-
-        /* Store last credit and debit */
-        theLastCredit = myCredit;
-        theLastDebit = myDebit;
 
         /* Return the values */
         return myValues;
@@ -231,73 +151,9 @@ public class SheetPattern
     }
 
     @Override
-    protected void insertOpenItem(final Pattern pItem) throws JOceanusException {
-        /* Determine whether we are a child event */
-        boolean isChild = pItem.getParent() == null;
-
-        /* Access debit/credit names */
-        String myDebit = pItem.getDebitName();
-        String myCredit = pItem.getCreditName();
-
-        /* Write standard values */
-        writeString(COL_CATEGORY, pItem.getCategoryName());
-        writeString(COL_FREQ, pItem.getFrequencyName());
-        writeDecimal(COL_AMOUNT, pItem.getAmount());
-
-        /* If we are a child */
-        if (isChild) {
-            /* Only fill in debit credit if they are different */
-            if (Difference.isEqual(myDebit, theLastDebit)) {
-                writeString(COL_DEBIT, myDebit);
-            }
-            if (Difference.isEqual(myCredit, theLastCredit)) {
-                writeString(COL_CREDIT, myCredit);
-            }
-        } else {
-            writeDate(COL_DATE, pItem.getDate());
-            writeString(COL_DEBIT, myDebit);
-            writeString(COL_CREDIT, myCredit);
-        }
-
-        /* Store last credit and debit */
-        theLastCredit = myCredit;
-        theLastDebit = myDebit;
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
-        writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
-        writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
-        writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
-        writeHeader(COL_CATEGORY, EventBase.FIELD_CATEGORY.getName());
-        writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_DEBIT);
-        setStringColumn(COL_CREDIT);
-        setStringColumn(COL_CATEGORY);
-        setStringColumn(COL_FREQ);
-        setDateColumn(COL_DATE);
-        setMoneyColumn(COL_AMOUNT);
-
-        /* Apply Validation */
-        applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_CATEGORY, SheetEventCategoryType.AREA_CATTYPENAMES);
-        applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
-    }
-
-    @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return (isBackup())
-                           ? COL_PARENT
-                           : COL_FREQ;
+        return COL_PARENT;
     }
 
     @Override

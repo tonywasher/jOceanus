@@ -91,40 +91,4 @@ public abstract class SpreadSheet<T extends DataSet<T, ?>> {
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);
     }
-
-    /**
-     * Load an Extract Workbook.
-     * @param pTask Task Control for task
-     * @param pFile the extract file to load from
-     * @return the newly loaded data
-     * @throws JOceanusException on error
-     */
-    public T loadExtract(final TaskControl<T> pTask,
-                         final File pFile) throws JOceanusException {
-        /* Create a Sheet Reader object */
-        SheetReader<T> myReader = getSheetReader(pTask);
-
-        /* Load the extract file */
-        T myData = myReader.loadExtract(pFile);
-
-        /* Return the data */
-        return myData;
-    }
-
-    /**
-     * Create an Extract Workbook.
-     * @param pTask Task Control for task
-     * @param pData Data to write out
-     * @param pFile the extract file to write to
-     * @throws JOceanusException on error
-     */
-    public void createExtract(final TaskControl<T> pTask,
-                              final T pData,
-                              final File pFile) throws JOceanusException {
-        /* Create a SheetWriter object */
-        SheetWriter<T> myWriter = getSheetWriter(pTask);
-
-        /* Create the Extract file */
-        myWriter.createExtract(pData, pFile);
-    }
 }

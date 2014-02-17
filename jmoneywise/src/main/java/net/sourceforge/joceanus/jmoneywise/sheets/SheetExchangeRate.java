@@ -105,19 +105,6 @@ public class SheetExchangeRate
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
-        myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
-        myValues.addValue(ExchangeRate.FIELD_FROM, loadString(COL_FROM));
-        myValues.addValue(ExchangeRate.FIELD_TO, loadString(COL_TO));
-        myValues.addValue(ExchangeRate.FIELD_RATE, loadRatio(COL_RATE));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
     protected void insertSecureItem(final ExchangeRate pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
@@ -125,38 +112,6 @@ public class SheetExchangeRate
         writeInteger(COL_TO, pItem.getToCurrencyId());
         writeDate(COL_DATE, pItem.getDate());
         writeDecimal(COL_RATE, pItem.getExchangeRate());
-    }
-
-    @Override
-    protected void insertOpenItem(final ExchangeRate pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_FROM, pItem.getFromCurrencyName());
-        writeString(COL_TO, pItem.getToCurrencyName());
-        writeDate(COL_DATE, pItem.getDate());
-        writeDecimal(COL_RATE, pItem.getExchangeRate());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_FROM, ExchangeRate.FIELD_FROM.getName());
-        writeHeader(COL_TO, ExchangeRate.FIELD_TO.getName());
-        writeHeader(COL_DATE, ExchangeRate.FIELD_DATE.getName());
-        writeHeader(COL_RATE, ExchangeRate.FIELD_RATE.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setDateColumn(COL_DATE);
-        setStringColumn(COL_FROM);
-        setStringColumn(COL_TO);
-        setRatioColumn(COL_RATE);
-
-        /* Set validation */
-        applyDataValidation(COL_FROM, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
-        applyDataValidation(COL_TO, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
     }
 
     @Override

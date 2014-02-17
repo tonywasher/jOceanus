@@ -94,16 +94,6 @@ public class SheetControlData
     }
 
     @Override
-    protected DataValues<CryptographyDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(ControlData.OBJECT_NAME);
-        myValues.addValue(ControlData.FIELD_DATAVERSION, loadInteger(COL_VERSION));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
     protected void insertSecureItem(final ControlData pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
@@ -112,28 +102,8 @@ public class SheetControlData
     }
 
     @Override
-    protected void insertOpenItem(final ControlData pItem) throws JOceanusException {
-        super.insertOpenItem(pItem);
-        writeInteger(COL_VERSION, pItem.getDataVersion());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_VERSION, ControlData.FIELD_VERSION.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set default column types */
-        setIntegerColumn(COL_VERSION);
-    }
-
-    @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return isBackup()
-                         ? COL_CONTROLID
-                         : COL_VERSION;
+        return COL_CONTROLID;
     }
 }

@@ -32,16 +32,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearBase;
-import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -78,16 +74,6 @@ public class SheetTaxYear
     private final TaxYearList theList;
 
     /**
-     * TaxYear info list.
-     */
-    private final TaxInfoList theInfoList;
-
-    /**
-     * DataInfoSet Helper.
-     */
-    private final SheetTaxInfoSet theInfoSheet;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -98,20 +84,7 @@ public class SheetTaxYear
         /* Access the Lists */
         theData = pReader.getData();
         theList = theData.getTaxYears();
-        theInfoList = theData.getTaxInfo();
         setDataList(theList);
-
-        /* If this is a backup load */
-        if (isBackup()) {
-            /* No need for info sheet */
-            theInfoSheet = null;
-
-            /* else extract load */
-        } else {
-            /* Set up info Sheet and ask for two-pass load */
-            theInfoSheet = new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
-            requestDoubleLoad();
-        }
     }
 
     /**
@@ -125,13 +98,7 @@ public class SheetTaxYear
         /* Access the TaxYears list */
         MoneyWiseData myData = pWriter.getData();
         theList = myData.getTaxYears();
-        theInfoList = myData.getTaxInfo();
         setDataList(theList);
-
-        /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                                 ? null
-                                 : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     @Override
@@ -146,65 +113,11 @@ public class SheetTaxYear
     }
 
     @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TaxYear.OBJECT_NAME);
-        myValues.addValue(TaxYear.FIELD_TAXYEAR, loadDate(COL_TAXYEAR));
-        myValues.addValue(TaxYear.FIELD_REGIME, loadString(COL_REGIME));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected void loadSecondPass(final Integer pId) throws JOceanusException {
-        /* Access the taxYear */
-        TaxYear myTaxYear = theList.findItemById(pId);
-
-        /* Load infoSet items */
-        theInfoSheet.loadDataInfoSet(theInfoList, myTaxYear);
-    }
-
-    @Override
     protected void insertSecureItem(final TaxYear pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeInteger(COL_REGIME, pItem.getTaxRegimeId());
-    }
-
-    @Override
-    protected void insertOpenItem(final TaxYear pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeDate(COL_TAXYEAR, pItem.getTaxYear());
-        writeString(COL_REGIME, pItem.getTaxRegimeName());
-
-        /* Write infoSet fields */
-        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_TAXYEAR, TaxYearBase.FIELD_TAXYEAR.getName());
-        writeHeader(COL_REGIME, TaxYearBase.FIELD_REGIME.getName());
-
-        /* prepare infoSet sheet */
-        theInfoSheet.prepareSheet();
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_REGIME);
-        setDateColumn(COL_TAXYEAR);
-
-        /* Apply validation */
-        applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
-
-        /* Format the info sheet */
-        theInfoSheet.formatSheet();
     }
 
     @Override
@@ -219,17 +132,8 @@ public class SheetTaxYear
 
     @Override
     protected int getLastColumn() {
-        /* Set default */
-        int myLastCol = COL_REGIME;
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Name range plus infoSet */
-            myLastCol += theInfoSheet.getXtraColumnCount();
-        }
-
         /* Return the last column */
-        return myLastCol;
+        return COL_REGIME;
     }
 
     /**
@@ -400,24 +304,5 @@ public class SheetTaxYear
 
         /* Return to caller */
         return true;
-    }
-
-    /**
-     * TaxYearInfoSet sheet.
-     */
-    private static class SheetTaxInfoSet
-            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass, MoneyWiseDataType> {
-
-        /**
-         * Constructor.
-         * @param pClass the info type class
-         * @param pOwner the Owner
-         * @param pBaseCol the base column
-         */
-        public SheetTaxInfoSet(final Class<TaxYearInfoClass> pClass,
-                               final SheetDataItem<TaxYear, MoneyWiseDataType> pOwner,
-                               final int pBaseCol) {
-            super(pClass, pOwner, pBaseCol);
-        }
     }
 }

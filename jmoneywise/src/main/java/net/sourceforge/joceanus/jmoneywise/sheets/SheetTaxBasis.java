@@ -71,7 +71,7 @@ public class SheetTaxBasis
      */
     protected SheetTaxBasis(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TAXBASES, AREA_TAXBASISNAMES);
+        super(pWriter, AREA_TAXBASES);
 
         /* Access the Tax Basis list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetTaxBasis
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(TaxBasis.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxBasis.OBJECT_NAME);
     }

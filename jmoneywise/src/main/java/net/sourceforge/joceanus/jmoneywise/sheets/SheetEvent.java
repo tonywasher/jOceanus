@@ -28,23 +28,17 @@ import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
-import net.sourceforge.joceanus.jmoneywise.data.EventBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -106,31 +100,6 @@ public class SheetEvent
     private final EventList theList;
 
     /**
-     * Event info list.
-     */
-    private final EventInfoList theInfoList;
-
-    /**
-     * DataInfoSet Helper.
-     */
-    private final SheetEventInfoSet theInfoSheet;
-
-    /**
-     * Last loaded parent.
-     */
-    private Event theActiveParent = null;
-
-    /**
-     * Last debit.
-     */
-    private String theLastDebit = null;
-
-    /**
-     * Last credit.
-     */
-    private String theLastCredit = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -141,20 +110,7 @@ public class SheetEvent
         /* Access the Lists */
         MoneyWiseData myData = pReader.getData();
         theList = myData.getEvents();
-        theInfoList = myData.getEventInfo();
         setDataList(theList);
-
-        /* If this is a backup load */
-        if (isBackup()) {
-            /* No need for info sheet */
-            theInfoSheet = null;
-
-            /* else extract load */
-        } else {
-            /* Set up info Sheet and ask for two-pass load */
-            theInfoSheet = new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
-            requestDoubleLoad();
-        }
     }
 
     /**
@@ -168,19 +124,13 @@ public class SheetEvent
         /* Access the Events list */
         MoneyWiseData myData = pWriter.getData();
         theList = myData.getEvents();
-        theInfoList = myData.getEventInfo();
         setDataList(theList);
-
-        /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                                 ? null
-                                 : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Event.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Event.OBJECT_NAME);
         myValues.addValue(Event.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Event.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Event.FIELD_DEBIT, loadInteger(COL_DEBIT));
@@ -192,78 +142,6 @@ public class SheetEvent
 
         /* Return the values */
         return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Access key details */
-        String myDebit = loadString(COL_DEBIT);
-        String myCredit = loadString(COL_CREDIT);
-        JDateDay myDate = loadDate(COL_DATE);
-        Boolean isSplit = Boolean.FALSE;
-        Event myParent = null;
-
-        /* If we don't have a date */
-        if (myDate == null) {
-            /* If this is the first child */
-            if (theActiveParent == null) {
-                /* Access the last item as the active parent */
-                theActiveParent = getLastItem();
-                if (theActiveParent != null) {
-                    /* Mark it as a group */
-                    theActiveParent.setSplit(Boolean.TRUE);
-                }
-            }
-
-            /* If we have a valid parent */
-            if (theActiveParent != null) {
-                /* Pick up last date */
-                myDate = theActiveParent.getDate();
-
-                /* Pick up debit and credit from last values */
-                if (myDebit == null) {
-                    myDebit = theLastDebit;
-                }
-                if (myCredit == null) {
-                    myCredit = theLastCredit;
-                }
-
-                /* Note that we are split and record the active parent */
-                isSplit = Boolean.TRUE;
-                myParent = theActiveParent;
-            }
-
-            /* else reset the active parent */
-        } else {
-            theActiveParent = null;
-        }
-
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Event.OBJECT_NAME);
-        myValues.addValue(Event.FIELD_DATE, myDate);
-        myValues.addValue(Event.FIELD_CATEGORY, loadString(COL_CATEGORY));
-        myValues.addValue(Event.FIELD_DEBIT, myDebit);
-        myValues.addValue(Event.FIELD_CREDIT, myCredit);
-        myValues.addValue(Event.FIELD_AMOUNT, loadString(COL_AMOUNT));
-        myValues.addValue(Event.FIELD_RECONCILED, loadBoolean(COL_RECONCILED));
-        myValues.addValue(Event.FIELD_SPLIT, isSplit);
-        myValues.addValue(Event.FIELD_PARENT, myParent);
-
-        /* Store last credit and debit */
-        theLastCredit = myCredit;
-        theLastDebit = myDebit;
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected void loadSecondPass(final Integer pId) throws JOceanusException {
-        /* Access the event */
-        Event myEvent = theList.findItemById(pId);
-
-        /* Load infoSet items */
-        theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
     }
 
     @Override
@@ -281,88 +159,9 @@ public class SheetEvent
     }
 
     @Override
-    protected void insertOpenItem(final Event pItem) throws JOceanusException {
-        /* Write headers */
-        super.insertOpenItem(pItem);
-
-        /* Determine whether we are a child event */
-        boolean isChild = pItem.getParent() != null;
-
-        /* Access debit/credit names */
-        String myDebit = pItem.getDebitName();
-        String myCredit = pItem.getCreditName();
-
-        /* Write standard values */
-        writeDecimal(COL_AMOUNT, pItem.getAmount());
-        writeBoolean(COL_RECONCILED, pItem.isReconciled());
-        writeString(COL_CATEGORY, pItem.getCategoryName());
-
-        /* If we are a child */
-        if (isChild) {
-            /* Only fill in debit/credit if they are different */
-            if (!Difference.isEqual(myDebit, theLastDebit)) {
-                writeString(COL_DEBIT, myDebit);
-            }
-            if (!Difference.isEqual(myCredit, theLastCredit)) {
-                writeString(COL_CREDIT, myCredit);
-            }
-        } else {
-            writeDate(COL_DATE, pItem.getDate());
-            writeString(COL_DEBIT, myDebit);
-            writeString(COL_CREDIT, myCredit);
-        }
-
-        /* Store last credit and debit */
-        theLastCredit = myCredit;
-        theLastDebit = myDebit;
-
-        /* Write infoSet fields */
-        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
-        writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
-        writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
-        writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
-        writeHeader(COL_CATEGORY, EventBase.FIELD_CATEGORY.getName());
-        writeHeader(COL_RECONCILED, EventBase.FIELD_RECONCILED.getName());
-
-        /* prepare the info sheet */
-        theInfoSheet.prepareSheet();
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_DEBIT);
-        setStringColumn(COL_CREDIT);
-        setStringColumn(COL_CATEGORY);
-
-        /* Set Number columns */
-        setDateColumn(COL_DATE);
-        setMoneyColumn(COL_AMOUNT);
-        setBooleanColumn(COL_RECONCILED);
-
-        /* Apply validation */
-        applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_CATEGORY, SheetEventCategoryType.AREA_CATTYPENAMES);
-
-        /* Format the info sheet */
-        theInfoSheet.formatSheet();
-
-        applyDataFilter(COL_DEBIT);
-    }
-
-    @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return (isBackup())
-                           ? COL_PARENT
-                           : COL_RECONCILED + theInfoSheet.getXtraColumnCount();
+        return COL_PARENT;
     }
 
     @Override
@@ -370,12 +169,6 @@ public class SheetEvent
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* If we are not a backup */
-        if (!isBackup()) {
-            /* Resolve value links */
-            theInfoList.resolveValueLinks();
-        }
     }
 
     /**
@@ -648,33 +441,5 @@ public class SheetEvent
 
         /* Return to caller */
         return true;
-    }
-
-    /**
-     * EventInfoSet sheet.
-     */
-    private static class SheetEventInfoSet
-            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
-
-        /**
-         * Constructor.
-         * @param pClass the info type class
-         * @param pOwner the Owner
-         * @param pBaseCol the base column
-         */
-        public SheetEventInfoSet(final Class<EventInfoClass> pClass,
-                                 final SheetDataItem<Event, MoneyWiseDataType> pOwner,
-                                 final int pBaseCol) {
-            super(pClass, pOwner, pBaseCol);
-        }
-
-        @Override
-        public void formatSheet() throws JOceanusException {
-            /* Apply basic formatting */
-            super.formatSheet();
-
-            /* Set the Validations */
-            applyDataValidation(EventInfoClass.THIRDPARTY, SheetAccount.AREA_ACCOUNTNAMES);
-        }
     }
 }

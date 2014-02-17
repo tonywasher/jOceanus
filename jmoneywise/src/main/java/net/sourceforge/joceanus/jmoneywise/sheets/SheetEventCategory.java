@@ -106,24 +106,11 @@ public class SheetEventCategory
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(EventCategory.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategory.OBJECT_NAME);
         myValues.addValue(EventCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(EventCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(EventCategory.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(EventCategory.FIELD_DESC, loadBytes(COL_DESC));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategory.OBJECT_NAME);
-        myValues.addValue(EventCategory.FIELD_CATTYPE, loadString(COL_TYPE));
-        myValues.addValue(EventCategory.FIELD_PARENT, loadString(COL_PARENT));
-        myValues.addValue(EventCategory.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(EventCategory.FIELD_DESC, loadString(COL_DESC));
 
         /* Return the values */
         return myValues;
@@ -137,41 +124,6 @@ public class SheetEventCategory
         writeInteger(COL_PARENT, pItem.getParentCategoryId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
-    }
-
-    @Override
-    protected void insertOpenItem(final EventCategory pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_TYPE, pItem.getCategoryTypeName());
-        writeString(COL_PARENT, pItem.getParentCategoryName());
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_TYPE, EventCategory.FIELD_CATTYPE.getName());
-        writeHeader(COL_PARENT, EventCategory.FIELD_PARENT.getName());
-        writeHeader(COL_NAME, EventCategory.FIELD_NAME.getName());
-        writeHeader(COL_DESC, EventCategory.FIELD_DESC.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
-        setStringColumn(COL_TYPE);
-        setStringColumn(COL_PARENT);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_EVTCATNAMES);
-
-        /* Set validation */
-        applyDataValidation(COL_TYPE, SheetEventCategoryType.AREA_CATTYPENAMES);
-        applyDataValidation(COL_PARENT, AREA_EVTCATNAMES);
     }
 
     @Override

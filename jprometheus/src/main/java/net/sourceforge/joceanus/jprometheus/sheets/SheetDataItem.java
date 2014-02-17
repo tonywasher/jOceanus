@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -73,21 +72,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * The workbook.
      */
     private DataWorkBook theWorkBook = null;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one?
-     */
-    private final boolean isBackup;
-
-    /**
-     * Do we need two passes to load the spreadSheet?
-     */
-    private boolean isDoubleLoad = false;
-
-    /**
-     * Do we adjust columns in the spreadsheet for an encrypted data item?
-     */
-    private boolean isAdjusted = false;
 
     /**
      * The DataList.
@@ -130,14 +114,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     private int theBaseRow = 0;
 
     /**
-     * Is the sheet a backup or editable sheet.
-     * @return true/false
-     */
-    protected boolean isBackup() {
-        return isBackup;
-    }
-
-    /**
      * Obtain the last loaded item.
      * @return the item
      */
@@ -156,9 +132,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
         theTask = pReader.getTask();
         theReader = pReader;
         theRangeName = pRange;
-
-        /* Note whether this is a backup */
-        isBackup = pReader.isBackup();
     }
 
     /**
@@ -172,9 +145,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
         theTask = pWriter.getTask();
         theWorkBook = pWriter.getWorkBook();
         theRangeName = pRange;
-
-        /* Note whether this is a backup */
-        isBackup = pWriter.isBackup();
     }
 
     /**
@@ -184,15 +154,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     protected void setDataList(final DataList<T, E> pList) {
         /* Store parameters */
         theList = pList;
-        isAdjusted = (!isBackup) && (theList instanceof EncryptedList);
-    }
-
-    /**
-     * Request double load.
-     */
-    protected void requestDoubleLoad() {
-        /* Store request */
-        isDoubleLoad = true;
     }
 
     /**
@@ -226,9 +187,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             int myTotal = theActiveView.getRowCount();
 
             /* Declare the number of steps */
-            if (!theTask.setNumSteps((isDoubleLoad)
-                                                   ? myTotal << 1
-                                                   : myTotal)) {
+            if (!theTask.setNumSteps(myTotal)) {
                 return false;
             }
 
@@ -238,37 +197,13 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                 theActiveRow = myIterator.next();
 
                 /* load the item */
-                DataValues<E> myValues = (isBackup)
-                                                   ? loadSecureValues()
-                                                   : loadOpenValues();
+                DataValues<E> myValues = loadSecureValues();
                 theLastItem = theList.addValuesItem(myValues);
 
                 /* Report the progress */
                 myCount++;
                 if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                     return false;
-                }
-            }
-
-            /* If we need a second pass */
-            if (isDoubleLoad) {
-                /* Loop through the rows of the range */
-                myIterator = theActiveView.iterator();
-                for (theCurrRow = 0; myIterator.hasNext(); theCurrRow++) {
-                    /* Access the row */
-                    theActiveRow = myIterator.next();
-
-                    /* Access the ID */
-                    Integer myID = loadInteger(COL_ID);
-
-                    /* load the item */
-                    loadSecondPass(myID);
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
-                        return false;
-                    }
                 }
             }
 
@@ -309,9 +244,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             }
 
             /* Determine size of sheet */
-            int myNumRows = (isBackup)
-                                      ? myTotal
-                                      : myTotal + 1;
+            int myNumRows = myTotal;
             int myNumCols = getLastColumn() + 1;
 
             /* Create the sheet */
@@ -321,15 +254,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
             theBaseRow = 0;
             theCurrRow = theBaseRow;
             int myCount = 0;
-
-            /* If this is an open write */
-            if (!isBackup) {
-                /* Create a new row */
-                newRow();
-
-                /* Format Header */
-                formatHeader();
-            }
 
             /* Access the iterator */
             Iterator<T> myItemIterator = theList.iterator();
@@ -342,11 +266,7 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                 newRow();
 
                 /* insert the item */
-                if (isBackup) {
-                    insertSecureItem(myCurr);
-                } else {
-                    insertOpenItem(myCurr);
-                }
+                insertSecureItem(myCurr);
 
                 /* Report the progress */
                 myCount++;
@@ -354,12 +274,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                 if (((myCount % mySteps) == 0) && (!theTask.setStepsDone(myCount))) {
                     return false;
                 }
-            }
-
-            /* If this is an open write */
-            if (!isBackup) {
-                /* format the data */
-                formatData();
             }
 
             /* If data was written then name the range */
@@ -375,25 +289,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     }
 
     /**
-     * Adjust column.
-     * @param pColumn the initial column
-     * @return the adjusted column
-     */
-    private int adjustColumn(final int pColumn) {
-        /* Initialise the result */
-        int myCol = pColumn;
-
-        /* If we should adjust the column */
-        if ((isAdjusted) && (myCol > SheetEncrypted.COL_CONTROLID)) {
-            /* Decrement column */
-            myCol--;
-        }
-
-        /* return the adjusted column */
-        return myCol;
-    }
-
-    /**
      * Load secure item from spreadsheet.
      * @return the secure values
      * @throws JOceanusException on error
@@ -401,38 +296,11 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     protected abstract DataValues<E> loadSecureValues() throws JOceanusException;
 
     /**
-     * Load open item from spreadsheet.
-     * @return the open values
-     * @throws JOceanusException on error
-     */
-    protected DataValues<E> loadOpenValues() throws JOceanusException {
-        return null;
-    }
-
-    /**
-     * Load second pass.
-     * @param pId the id
-     * @throws JOceanusException on error
-     */
-    protected void loadSecondPass(final Integer pId) throws JOceanusException {
-    }
-
-    /**
      * Insert secure item into spreadsheet.
      * @param pItem the item
      * @throws JOceanusException on error
      */
     protected void insertSecureItem(final T pItem) throws JOceanusException {
-        /* Write the id */
-        writeInteger(COL_ID, pItem.getId());
-    }
-
-    /**
-     * Insert open item into spreadsheet.
-     * @param pItem the item
-     * @throws JOceanusException on error
-     */
-    protected void insertOpenItem(final T pItem) throws JOceanusException {
         /* Write the id */
         writeInteger(COL_ID, pItem.getId());
     }
@@ -447,56 +315,10 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     }
 
     /**
-     * Prepare sheet for writing.
-     * @throws JOceanusException on error
-     */
-    protected void prepareSheet() throws JOceanusException {
-    }
-
-    /**
-     * Format sheet after writing.
-     * @throws JOceanusException on error
-     */
-    protected void formatSheet() throws JOceanusException {
-    }
-
-    /**
      * Determine last active column.
      * @return the last active column
      */
     protected abstract int getLastColumn();
-
-    /**
-     * Adjust for header.
-     * @throws JOceanusException on error
-     */
-    private void formatHeader() throws JOceanusException {
-        /* Write the Id header */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-
-        /* Prepare sheet */
-        prepareSheet();
-
-        /* Adjust rows */
-        theCurrRow++;
-        theBaseRow++;
-    }
-
-    /**
-     * Format sheet after data has been written.
-     * @throws JOceanusException on error
-     */
-    private void formatData() throws JOceanusException {
-        /* Hide the ID column */
-        setIntegerColumn(COL_ID);
-        setHiddenColumn(COL_ID);
-
-        /* Freeze the titles */
-        freezeTitles();
-
-        /* Format the sheet data */
-        formatSheet();
-    }
 
     /**
      * Create a new row.
@@ -513,7 +335,6 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
     protected void nameRange() throws JOceanusException {
         /* Adjust column if necessary */
         int myCol = getLastColumn();
-        myCol = adjustColumn(myCol);
 
         /* Name the range */
         CellPosition myFirst = new CellPosition(0, theBaseRow);
@@ -529,12 +350,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      */
     protected void nameColumnRange(final int pOffset,
                                    final String pName) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Name the range */
-        CellPosition myFirst = new CellPosition(myCol, theBaseRow);
-        CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
+        CellPosition myFirst = new CellPosition(pOffset, theBaseRow);
+        CellPosition myLast = new CellPosition(pOffset, theCurrRow - 1);
         theWorkSheet.declareRange(pName, myFirst, myLast);
     }
 
@@ -546,12 +364,9 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      */
     public void applyDataValidation(final int pOffset,
                                     final String pList) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Name the range */
-        CellPosition myFirst = new CellPosition(myCol, theBaseRow);
-        CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
+        CellPosition myFirst = new CellPosition(pOffset, theBaseRow);
+        CellPosition myLast = new CellPosition(pOffset, theCurrRow - 1);
         theWorkSheet.applyDataValidation(myFirst, myLast, pList);
     }
 
@@ -570,11 +385,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected void applyDataFilter(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Freeze the top row */
-        CellPosition myPoint = new CellPosition(myCol, 0);
+        CellPosition myPoint = new CellPosition(pOffset, 0);
         theWorkSheet.applyDataFilter(myPoint, theCurrRow);
     }
 
@@ -583,11 +395,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setHiddenColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setHidden(true);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setHidden(true);
     }
 
     /**
@@ -595,11 +404,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setDateColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.DATE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.DATE);
     }
 
     /**
@@ -607,11 +413,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setStringColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.STRING);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.STRING);
     }
 
     /**
@@ -619,11 +422,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setMoneyColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.MONEY);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.MONEY);
     }
 
     /**
@@ -631,11 +431,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setPriceColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.PRICE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.PRICE);
     }
 
     /**
@@ -643,11 +440,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setUnitsColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.UNITS);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.UNITS);
     }
 
     /**
@@ -655,11 +449,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setRateColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.RATE);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.RATE);
     }
 
     /**
@@ -667,11 +458,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setDilutionColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.DILUTION);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.DILUTION);
     }
 
     /**
@@ -679,11 +467,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setRatioColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.RATIO);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.RATIO);
     }
 
     /**
@@ -691,11 +476,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setBooleanColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.BOOLEAN);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.BOOLEAN);
     }
 
     /**
@@ -703,11 +485,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @param pOffset the offset of the column
      */
     protected void setIntegerColumn(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.INTEGER);
+        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(CellStyleType.INTEGER);
     }
 
     /**
@@ -717,11 +496,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected Integer loadInteger(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -735,11 +511,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @return the date
      */
     protected Boolean loadBoolean(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -754,11 +527,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JDateDay loadDate(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -773,11 +543,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JMoney loadMoney(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -792,11 +559,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JPrice loadPrice(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -811,11 +575,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JRate loadRate(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -830,11 +591,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JUnits loadUnits(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -849,11 +607,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JDilution loadDilution(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -868,11 +623,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected JRatio loadRatio(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -886,11 +638,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @return the string
      */
     protected String loadString(final int pOffset) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -905,11 +654,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected byte[] loadBytes(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -924,11 +670,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected char[] loadChars(final int pOffset) throws JOceanusException {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
         /* Access the cells by reference */
-        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
         /* Return the value */
         return (myCell != null)
@@ -946,11 +689,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                                 final Integer pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setIntegerValue(pValue);
         }
     }
@@ -965,11 +705,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                                 final Boolean pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setBooleanValue(pValue);
         }
     }
@@ -984,11 +721,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                              final JDateDay pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setDateValue(pValue);
         }
     }
@@ -1003,11 +737,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                                 final JDecimal pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setDecimalValue(pValue);
         }
     }
@@ -1022,11 +753,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                                final String pHeader) throws JOceanusException {
         /* If we have non-null value */
         if (pHeader != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setHeaderValue(pHeader);
         }
     }
@@ -1041,11 +769,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                                final String pValue) throws JOceanusException {
         /* If we have non-null value */
         if (pValue != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setStringValue(pValue);
         }
     }
@@ -1060,11 +785,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                               final byte[] pBytes) throws JOceanusException {
         /* If we have non-null bytes */
         if (pBytes != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setBytesValue(pBytes);
         }
     }
@@ -1079,11 +801,8 @@ public abstract class SheetDataItem<T extends DataItem<E> & Comparable<? super T
                               final char[] pChars) throws JOceanusException {
         /* If we have non-null chars */
         if (pChars != null) {
-            /* Adjust column if necessary */
-            int myCol = adjustColumn(pOffset);
-
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(pOffset);
             myCell.setCharArrayValue(pChars);
         }
     }

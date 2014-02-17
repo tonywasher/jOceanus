@@ -84,7 +84,7 @@ public class SheetEventInfo
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        return getSecureRowValues(EventInfo.OBJECT_NAME);
+        return getRowValues(EventInfo.OBJECT_NAME);
     }
 
     @Override

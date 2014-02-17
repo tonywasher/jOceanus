@@ -67,13 +67,8 @@ public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? s
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
-    /**
-     * Obtain row values.
-     * @param pName the name of the item
-     * @return the row values.
-     * @throws JOceanusException on error
-     */
-    protected DataValues<E> getSecureRowValues(final String pName) throws JOceanusException {
+    @Override
+    protected DataValues<E> getRowValues(final String pName) throws JOceanusException {
         /* Allocate the values */
         DataValues<E> myValues = super.getRowValues(pName);
 

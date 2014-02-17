@@ -84,7 +84,7 @@ public class SheetTaxYearInfo
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        return getSecureRowValues(TaxYearInfo.OBJECT_NAME);
+        return getRowValues(TaxYearInfo.OBJECT_NAME);
     }
 
     @Override

@@ -102,23 +102,10 @@ public class SheetAccountRate
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(AccountRate.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
         myValues.addValue(AccountRate.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
         myValues.addValue(AccountRate.FIELD_RATE, loadBytes(COL_RATE));
         myValues.addValue(AccountRate.FIELD_BONUS, loadBytes(COL_BONUS));
-        myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
-        myValues.addValue(AccountRate.FIELD_ACCOUNT, loadString(COL_ACCOUNT));
-        myValues.addValue(AccountRate.FIELD_RATE, loadString(COL_RATE));
-        myValues.addValue(AccountRate.FIELD_BONUS, loadString(COL_BONUS));
         myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
 
         /* Return the values */
@@ -133,37 +120,6 @@ public class SheetAccountRate
         writeBytes(COL_RATE, pItem.getRateBytes());
         writeBytes(COL_BONUS, pItem.getBonusBytes());
         writeDate(COL_ENDDATE, pItem.getEndDate());
-    }
-
-    @Override
-    protected void insertOpenItem(final AccountRate pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_ACCOUNT, pItem.getAccountName());
-        writeDecimal(COL_RATE, pItem.getRate());
-        writeDecimal(COL_BONUS, pItem.getBonus());
-        writeDate(COL_ENDDATE, pItem.getEndDate());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_ACCOUNT, AccountRate.FIELD_ACCOUNT.getName());
-        writeHeader(COL_RATE, AccountRate.FIELD_RATE.getName());
-        writeHeader(COL_BONUS, AccountRate.FIELD_BONUS.getName());
-        writeHeader(COL_ENDDATE, AccountRate.FIELD_ENDDATE.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_ACCOUNT);
-        setRateColumn(COL_RATE);
-        setRateColumn(COL_BONUS);
-        setDateColumn(COL_ENDDATE);
-
-        /* Set validation */
-        applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override

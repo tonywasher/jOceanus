@@ -71,7 +71,7 @@ public class SheetPayeeType
      */
     protected SheetPayeeType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_PAYEETYPES, AREA_PAYEETYPENAMES);
+        super(pWriter, AREA_PAYEETYPES);
 
         /* Access the Payee Type list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetPayeeType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(PayeeType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(PayeeType.OBJECT_NAME);
     }

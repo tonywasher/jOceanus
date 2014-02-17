@@ -72,7 +72,7 @@ public class SheetFrequency
      */
     protected SheetFrequency(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_FREQUENCIES, AREA_FREQUENCYNAMES);
+        super(pWriter, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
         MoneyWiseData myData = pWriter.getData();
@@ -81,12 +81,6 @@ public class SheetFrequency
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(Frequency.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(Frequency.OBJECT_NAME);
     }

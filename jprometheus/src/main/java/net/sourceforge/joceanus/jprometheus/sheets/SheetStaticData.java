@@ -56,11 +56,6 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     protected static final int COL_DESC = COL_NAME + 1;
 
     /**
-     * The name of the items.
-     */
-    private String theNames = null;
-
-    /**
      * The data list.
      */
     private DataList<T, E> theList;
@@ -86,16 +81,11 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      * @param pRange the range to create
-     * @param pNames the name range to create
      */
     protected SheetStaticData(final SheetWriter<?> pWriter,
-                              final String pRange,
-                              final String pNames) {
+                              final String pRange) {
         /* Call super constructor */
         super(pWriter, pRange);
-
-        /* Record the names */
-        theNames = pNames;
     }
 
     @Override
@@ -109,54 +99,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     }
 
     @Override
-    protected void insertOpenItem(final T pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeBoolean(COL_ENABLED, pItem.getEnabled());
-        writeInteger(COL_ORDER, pItem.getOrder());
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_ORDER, StaticData.FIELD_ORDER.getName());
-        writeHeader(COL_ENABLED, StaticData.FIELD_ENABLED.getName());
-        writeHeader(COL_NAME, StaticData.FIELD_NAME.getName());
-        writeHeader(COL_DESC, StaticData.FIELD_DESC.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set default column types */
-        setBooleanColumn(COL_ENABLED);
-        setIntegerColumn(COL_ORDER);
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, theNames);
-    }
-
-    @Override
     protected int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
-    }
-
-    @Override
-    protected DataValues<E> getSecureRowValues(final String pName) throws JOceanusException {
-        /* Obtain the values */
-        DataValues<E> myValues = super.getSecureRowValues(pName);
-
-        /* Add the info and return the new values */
-        myValues.addValue(StaticData.FIELD_CONTROL, loadInteger(COL_CONTROLID));
-        myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(StaticData.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
-        myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
-        return myValues;
     }
 
     @Override
@@ -165,8 +110,8 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
         DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
-        myValues.addValue(StaticData.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(StaticData.FIELD_DESC, loadString(COL_DESC));
+        myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(StaticData.FIELD_DESC, loadBytes(COL_DESC));
         myValues.addValue(StaticData.FIELD_ORDER, loadInteger(COL_ORDER));
         myValues.addValue(StaticData.FIELD_ENABLED, loadBoolean(COL_ENABLED));
         return myValues;

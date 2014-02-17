@@ -97,22 +97,10 @@ public class SheetSecurityPrice
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(SecurityPrice.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
         myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(SecurityPrice.FIELD_PRICE, loadBytes(COL_PRICE));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
-        myValues.addValue(SecurityPrice.FIELD_SECURITY, loadString(COL_SECURITY));
-        myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
-        myValues.addValue(SecurityPrice.FIELD_PRICE, loadString(COL_PRICE));
 
         /* Return the values */
         return myValues;
@@ -125,34 +113,6 @@ public class SheetSecurityPrice
         writeInteger(COL_SECURITY, pItem.getSecurityId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_PRICE, pItem.getPriceBytes());
-    }
-
-    @Override
-    protected void insertOpenItem(final SecurityPrice pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_SECURITY, pItem.getSecurityName());
-        writeDate(COL_DATE, pItem.getDate());
-        writeDecimal(COL_PRICE, pItem.getPrice());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_SECURITY, SecurityPrice.FIELD_SECURITY.getName());
-        writeHeader(COL_DATE, SecurityPrice.FIELD_DATE.getName());
-        writeHeader(COL_PRICE, SecurityPrice.FIELD_PRICE.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_SECURITY);
-        setDateColumn(COL_DATE);
-        setPriceColumn(COL_PRICE);
-
-        /* Apply validation */
-        applyDataValidation(COL_SECURITY, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override

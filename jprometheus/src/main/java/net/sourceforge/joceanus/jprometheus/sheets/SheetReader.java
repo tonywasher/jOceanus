@@ -81,11 +81,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
     private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
-     * Is this a backup sheet.
-     */
-    private boolean isBackup = false;
-
-    /**
      * get task control.
      * @return the task control
      */
@@ -99,14 +94,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      */
     protected DataWorkBook getWorkBook() {
         return theWorkBook;
-    }
-
-    /**
-     * Is the sheet a backup or editable sheet.
-     * @return true/false
-     */
-    protected boolean isBackup() {
-        return isBackup;
     }
 
     /**
@@ -140,9 +127,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     public T loadBackup(final File pFile) throws JOceanusException {
-        /* Note the type of file */
-        isBackup = true;
-
         /* Access the zip file */
         try (ZipReadFile myFile = new ZipReadFile(pFile)) {
             /* Obtain the hash bytes from the file */
@@ -226,9 +210,6 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         /* Protect the workbook retrieval */
         try (FileInputStream myInFile = new FileInputStream(pFile);
              InputStream myStream = new BufferedInputStream(myInFile)) {
-            /* Note the type of file */
-            isBackup = false;
-
             /* Determine the type of the workbook */
             WorkBookType myType = WorkBookType.determineType(pFile.getName());
 
@@ -283,14 +264,9 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
         /* Initialise the list */
         theSheets = new ArrayList<SheetDataItem<?, ?>>();
 
-        /* If this is a backup */
-        if (isBackup()) {
-            /* Add security details */
-            theSheets.add(new SheetControlKey(this));
-            theSheets.add(new SheetDataKey(this));
-        }
-
-        /* Add the items */
+        /* Add security details */
+        theSheets.add(new SheetControlKey(this));
+        theSheets.add(new SheetDataKey(this));
         theSheets.add(new SheetControlData(this));
 
         /* register additional sheets */

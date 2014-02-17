@@ -111,24 +111,10 @@ public class SheetPortfolio
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Portfolio.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_HOLDING, loadInteger(COL_HOLDING));
         myValues.addValue(Portfolio.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Portfolio.FIELD_DESC, loadBytes(COL_DESC));
-        myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
-        myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
-        myValues.addValue(Portfolio.FIELD_HOLDING, loadString(COL_HOLDING));
-        myValues.addValue(Portfolio.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(Portfolio.FIELD_DESC, loadString(COL_DESC));
         myValues.addValue(Portfolio.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
         myValues.addValue(Portfolio.FIELD_CLOSED, loadBoolean(COL_CLOSED));
 
@@ -145,43 +131,6 @@ public class SheetPortfolio
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void insertOpenItem(final Portfolio pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-        writeString(COL_HOLDING, pItem.getHoldingName());
-        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
-        writeBoolean(COL_CLOSED, pItem.isClosed());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_NAME, Portfolio.FIELD_NAME.getName());
-        writeHeader(COL_DESC, Portfolio.FIELD_DESC.getName());
-        writeHeader(COL_HOLDING, Portfolio.FIELD_HOLDING.getName());
-        writeHeader(COL_TAXFREE, Portfolio.FIELD_TAXFREE.getName());
-        writeHeader(COL_CLOSED, Portfolio.FIELD_CLOSED.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
-        setStringColumn(COL_HOLDING);
-        setBooleanColumn(COL_TAXFREE);
-        setBooleanColumn(COL_CLOSED);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_PORTFOLIONAMES);
-
-        /* Set validation */
-        applyDataValidation(COL_HOLDING, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override

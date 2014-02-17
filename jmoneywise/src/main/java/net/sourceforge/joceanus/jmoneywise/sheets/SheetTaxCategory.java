@@ -71,7 +71,7 @@ public class SheetTaxCategory
      */
     protected SheetTaxCategory(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TAXCATEGORIES, AREA_TAXCATEGORYNAMES);
+        super(pWriter, AREA_TAXCATEGORIES);
 
         /* Access the Tax Type list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetTaxCategory
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(TaxCategory.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxCategory.OBJECT_NAME);
     }

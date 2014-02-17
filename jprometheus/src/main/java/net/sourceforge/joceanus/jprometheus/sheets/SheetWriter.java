@@ -22,9 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -75,11 +73,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     private List<SheetDataItem<?, ?>> theSheets = null;
 
     /**
-     * Is this a backup sheet.
-     */
-    private boolean isBackup = false;
-
-    /**
      * get thread status.
      * @return the status
      */
@@ -93,14 +86,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
      */
     protected DataWorkBook getWorkBook() {
         return theWorkBook;
-    }
-
-    /**
-     * Is the sheet a backup or editable sheet.
-     * @return true/false
-     */
-    protected boolean isBackup() {
-        return isBackup;
     }
 
     /**
@@ -149,9 +134,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         /* Protect the workbook access */
         try (ZipWriteFile myZipFile = new ZipWriteFile(myHash, pFile);
              OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
-            /* Note the type of file */
-            isBackup = true;
-
             /* Record the DataSet */
             theData = pData;
 
@@ -183,52 +165,6 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
     }
 
     /**
-     * Create an Extract Workbook.
-     * @param pData Data to write out
-     * @param pFile the backup file to write to
-     * @throws JOceanusException on error
-     */
-    public void createExtract(final T pData,
-                              final File pFile) throws JOceanusException {
-        /* Assume failure */
-        boolean bSuccess = false;
-
-        /* Protect the workbook access */
-        try (FileOutputStream myOutFile = new FileOutputStream(pFile);
-             BufferedOutputStream myStream = new BufferedOutputStream(myOutFile)) {
-            /* Note the type of file */
-            isBackup = false;
-
-            /* Record the DataSet */
-            theData = pData;
-
-            /* Determine the type of the workbook */
-            WorkBookType myType = WorkBookType.determineType(pFile.getName());
-
-            /* Initialise the WorkBook */
-            initialiseWorkBook(myType);
-
-            /* Write the data to the work book */
-            writeWorkBook(myStream);
-
-            /* Close the Stream to force out errors */
-            myStream.close();
-
-            /* Set success to avoid deleting file */
-            bSuccess = true;
-        } catch (IOException e) {
-            /* Report the error */
-            throw new JPrometheusIOException("Failed to create Editable Workbook: " + pFile.getName(), e);
-        } finally {
-            /* Delete the file on error */
-            if ((!bSuccess) && (!pFile.delete())) {
-                /* Nothing that we can do. At least we tried */
-                theTask.getLogger().log(Level.SEVERE, ERROR_DELETE);
-            }
-        }
-    }
-
-    /**
      * Register sheets.
      */
     protected abstract void registerSheets();
@@ -245,14 +181,9 @@ public abstract class SheetWriter<T extends DataSet<T, ?>> {
         /* Initialise the list */
         theSheets = new ArrayList<SheetDataItem<?, ?>>();
 
-        /* If this is a backup */
-        if (isBackup()) {
-            /* Add security details */
-            theSheets.add(new SheetControlKey(this));
-            theSheets.add(new SheetDataKey(this));
-        }
-
-        /* Add the items */
+        /* Add security details */
+        theSheets.add(new SheetControlKey(this));
+        theSheets.add(new SheetDataKey(this));
         theSheets.add(new SheetControlData(this));
 
         /* register additional sheets */

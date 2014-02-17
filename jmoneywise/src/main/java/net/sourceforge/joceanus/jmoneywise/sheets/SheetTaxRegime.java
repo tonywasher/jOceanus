@@ -72,7 +72,7 @@ public class SheetTaxRegime
      */
     protected SheetTaxRegime(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TAXREGIMES, AREA_TAXREGIMENAMES);
+        super(pWriter, AREA_TAXREGIMES);
 
         /* Access the TaxRegime list */
         MoneyWiseData myData = pWriter.getData();
@@ -81,12 +81,6 @@ public class SheetTaxRegime
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(TaxRegime.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(TaxRegime.OBJECT_NAME);
     }

@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventTag;
 import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -92,20 +91,9 @@ public class SheetEventTag
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(EventTag.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
         myValues.addValue(EventTag.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(EventTag.FIELD_DESC, loadBytes(COL_DESC));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
-        myValues.addValue(EventTag.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(EventTag.FIELD_DESC, loadString(COL_DESC));
 
         /* Return the values */
         return myValues;
@@ -117,28 +105,6 @@ public class SheetEventTag
         super.insertSecureItem(pItem);
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
-    }
-
-    @Override
-    protected void insertOpenItem(final EventTag pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_NAME, EventCategory.FIELD_NAME.getName());
-        writeHeader(COL_DESC, EventCategory.FIELD_DESC.getName());
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_DESC);
     }
 
     @Override

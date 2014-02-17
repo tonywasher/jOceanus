@@ -30,8 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountBase;
-import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -43,13 +41,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataInfoSet;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -106,16 +101,6 @@ public class SheetAccount
     private final AccountList theList;
 
     /**
-     * Account info list.
-     */
-    private final AccountInfoList theInfoList;
-
-    /**
-     * DataInfoSet Helper.
-     */
-    private final SheetAccountInfoSet theInfoSheet;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the input spreadsheet
      */
@@ -126,20 +111,7 @@ public class SheetAccount
         /* Access the Lists */
         MoneyWiseData myData = pReader.getData();
         theList = myData.getAccounts();
-        theInfoList = myData.getAccountInfo();
         setDataList(theList);
-
-        /* If this is a backup load */
-        if (isBackup()) {
-            /* No need for info sheet */
-            theInfoSheet = null;
-
-            /* else extract load */
-        } else {
-            /* Set up info Sheet and ask for two-pass load */
-            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
-            requestDoubleLoad();
-        }
     }
 
     /**
@@ -153,19 +125,13 @@ public class SheetAccount
         /* Access the Accounts list */
         MoneyWiseData myData = pWriter.getData();
         theList = myData.getAccounts();
-        theInfoList = myData.getAccountInfo();
         setDataList(theList);
-
-        /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                                 ? null
-                                 : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getSecureRowValues(Account.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
         myValues.addValue(Account.FIELD_CATEGORY, loadInteger(COL_ACCOUNTCAT));
         myValues.addValue(Account.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Account.FIELD_NAME, loadBytes(COL_NAME));
@@ -175,30 +141,6 @@ public class SheetAccount
 
         /* Return the values */
         return myValues;
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
-        myValues.addValue(Account.FIELD_CATEGORY, loadString(COL_ACCOUNTCAT));
-        myValues.addValue(Account.FIELD_CURRENCY, loadString(COL_CURRENCY));
-        myValues.addValue(Account.FIELD_NAME, loadString(COL_NAME));
-        myValues.addValue(Account.FIELD_GROSS, loadBoolean(COL_GROSS));
-        myValues.addValue(Account.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
-        myValues.addValue(Account.FIELD_CLOSED, loadBoolean(COL_CLOSED));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected void loadSecondPass(final Integer pId) throws JOceanusException {
-        /* Access the account */
-        Account myAccount = theList.findItemById(pId);
-
-        /* Load infoSet items */
-        theInfoSheet.loadDataInfoSet(theInfoList, myAccount);
     }
 
     @Override
@@ -214,68 +156,9 @@ public class SheetAccount
     }
 
     @Override
-    protected void insertOpenItem(final Account pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertOpenItem(pItem);
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
-        writeBoolean(COL_CLOSED, pItem.isClosed());
-        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
-        writeBoolean(COL_GROSS, pItem.isGrossInterest());
-        writeString(COL_CURRENCY, pItem.getAccountCurrencyName());
-
-        /* Write infoSet fields */
-        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
-    }
-
-    @Override
-    protected void prepareSheet() throws JOceanusException {
-        /* Write titles */
-        writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
-        writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
-        writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
-        writeHeader(COL_TAXFREE, AccountBase.FIELD_TAXFREE.getName());
-        writeHeader(COL_GROSS, AccountBase.FIELD_GROSS.getName());
-        writeHeader(COL_CURRENCY, AccountBase.FIELD_CURRENCY.getName());
-
-        /* prepare infoSet sheet */
-        theInfoSheet.prepareSheet();
-    }
-
-    @Override
-    protected void formatSheet() throws JOceanusException {
-        /* Set the column types */
-        setStringColumn(COL_NAME);
-        setStringColumn(COL_ACCOUNTCAT);
-        setBooleanColumn(COL_CLOSED);
-        setBooleanColumn(COL_TAXFREE);
-        setBooleanColumn(COL_GROSS);
-        setStringColumn(COL_CURRENCY);
-
-        /* Set the name column range */
-        nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
-
-        /* Set the Validations */
-        applyDataValidation(COL_ACCOUNTCAT, SheetAccountCategory.AREA_ACTCATEGORIES);
-        applyDataValidation(COL_CURRENCY, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
-
-        /* Format the info sheet */
-        theInfoSheet.formatSheet();
-    }
-
-    @Override
     protected int getLastColumn() {
-        /* Set default */
-        int myLastCol = COL_CURRENCY;
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Name range plus infoSet */
-            myLastCol += theInfoSheet.getXtraColumnCount();
-        }
-
         /* Return the last column */
-        return myLastCol;
+        return COL_CURRENCY;
     }
 
     @Override
@@ -283,12 +166,6 @@ public class SheetAccount
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* If we are not a backup */
-        if (!isBackup()) {
-            /* Resolve value links */
-            theInfoList.resolveValueLinks();
-        }
     }
 
     /**
@@ -624,34 +501,5 @@ public class SheetAccount
         myPortfolioList.resolveDataSetLinks();
         myPortfolioList.reSort();
         myPortfolioList.validateOnLoad();
-    }
-
-    /**
-     * AccountInfoSet sheet.
-     */
-    private static class SheetAccountInfoSet
-            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
-
-        /**
-         * Constructor.
-         * @param pClass the info type class
-         * @param pOwner the Owner
-         * @param pBaseCol the base column
-         */
-        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
-                                   final SheetDataItem<Account, MoneyWiseDataType> pOwner,
-                                   final int pBaseCol) {
-            super(pClass, pOwner, pBaseCol);
-        }
-
-        @Override
-        public void formatSheet() throws JOceanusException {
-            /* Apply basic formatting */
-            super.formatSheet();
-
-            /* Set the Validations */
-            applyDataValidation(AccountInfoClass.PARENT, AREA_ACCOUNTNAMES);
-            applyDataValidation(AccountInfoClass.ALIAS, AREA_ACCOUNTNAMES);
-        }
     }
 }

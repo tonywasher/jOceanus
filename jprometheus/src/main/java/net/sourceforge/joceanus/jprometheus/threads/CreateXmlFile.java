@@ -157,41 +157,44 @@ public class CreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
                                         ? myFormatter.createBackup(myOldData, myFile)
                                         : myFormatter.createExtract(myOldData, myFile);
 
-            /* File created, so delete on error */
-            doDelete = true;
+            /* If this is a secure backup */
+            if (isSecure) {
+                /* File created, so delete on error */
+                doDelete = true;
 
-            /* Initialise the status window */
-            theStatus.initTask("Reading Backup");
+                /* Initialise the status window */
+                theStatus.initTask("Reading Backup");
 
-            /* Load workbook */
-            T myNewData = theControl.getNewData();
-            bContinue = myFormatter.loadZipFile(myNewData, myFile);
+                /* Load workbook */
+                T myNewData = theControl.getNewData();
+                bContinue = myFormatter.loadZipFile(myNewData, myFile);
 
-            /* Check for cancellation */
-            if (!bContinue) {
-                throw new JPrometheusCancelException(ERROR_CANCEL);
+                /* Check for cancellation */
+                if (!bContinue) {
+                    throw new JPrometheusCancelException(ERROR_CANCEL);
+                }
+
+                /* Initialise the status window */
+                theStatus.initTask("Re-applying Security");
+
+                /* Initialise the security, from the original data */
+                myNewData.initialiseSecurity(theStatus, myOldData);
+
+                /* Initialise the status window */
+                theStatus.initTask("Verifying Backup");
+
+                /* Create a difference set between the two data copies */
+                DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
+
+                /* If the difference set is non-empty */
+                if (!myDiff.isEmpty()) {
+                    /* Throw an exception */
+                    throw new JPrometheusDataException(myDiff, "Backup is inconsistent");
+                }
+
+                /* OK so switch off flag */
+                doDelete = false;
             }
-
-            /* Initialise the status window */
-            theStatus.initTask("Re-applying Security");
-
-            /* Initialise the security, from the original data */
-            myNewData.initialiseSecurity(theStatus, myOldData);
-
-            /* Initialise the status window */
-            theStatus.initTask("Verifying Backup");
-
-            /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myOldData);
-
-            /* If the difference set is non-empty */
-            if (!myDiff.isEmpty()) {
-                /* Throw an exception */
-                throw new JPrometheusDataException(myDiff, "Backup is inconsistent");
-            }
-
-            /* OK so switch off flag */
-            doDelete = false;
 
             /* Check for cancellation */
             if (!bContinue) {

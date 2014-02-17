@@ -71,7 +71,7 @@ public class SheetAccountCategoryType
      */
     protected SheetAccountCategoryType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_ACCOUNTCATTYPES, AREA_ACCOUNTCATTYPENAMES);
+        super(pWriter, AREA_ACCOUNTCATTYPES);
 
         /* Access the Account Type list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetAccountCategoryType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(AccountCategoryType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(AccountCategoryType.OBJECT_NAME);
     }

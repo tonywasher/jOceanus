@@ -71,7 +71,7 @@ public class SheetAccountInfoType
      */
     protected SheetAccountInfoType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_ACCOUNTINFOTYPES, AREA_ACCOUNTINFOTYPENAMES);
+        super(pWriter, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
@@ -80,12 +80,6 @@ public class SheetAccountInfoType
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        return getSecureRowValues(AccountInfoType.OBJECT_NAME);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadOpenValues() throws JOceanusException {
         /* Build data values */
         return getRowValues(AccountInfoType.OBJECT_NAME);
     }
