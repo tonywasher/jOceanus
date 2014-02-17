@@ -176,7 +176,7 @@ public final class JSvnManager {
         myMainMenu.add(theTasks);
 
         /* Create the JDataWindow menuItem */
-        theShowDataMgr = new JMenuItem("DataManager");
+        theShowDataMgr = new JMenuItem("DataViewer");
         theShowDataMgr.addActionListener(myMenuListener);
         myMainMenu.add(theShowDataMgr);
 
@@ -190,12 +190,12 @@ public final class JSvnManager {
         theExtractTag.addActionListener(myMenuListener);
         theTasks.add(theExtractTag);
 
-        /* Create the CreateWC menuItem */
+        /* Create the UpdateWC menuItem */
         theUpdateWC = new JMenuItem("UpdateWorkingCopy");
         theUpdateWC.addActionListener(myMenuListener);
         theTasks.add(theUpdateWC);
 
-        /* Create the CreateWC menuItem */
+        /* Create the RevertWC menuItem */
         theRevertWC = new JMenuItem("RevertWorkingCopy");
         theRevertWC.addActionListener(myMenuListener);
         theTasks.add(theRevertWC);

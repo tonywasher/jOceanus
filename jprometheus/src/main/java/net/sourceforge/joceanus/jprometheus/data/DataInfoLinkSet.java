@@ -200,7 +200,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
 
     /**
      * Split multi-name item.
-     * @param pNameList the list to split
+     * @param pItem the item to split
      * @throws JOceanusException on error
      */
     private void splitItem(final T pItem) throws JOceanusException {

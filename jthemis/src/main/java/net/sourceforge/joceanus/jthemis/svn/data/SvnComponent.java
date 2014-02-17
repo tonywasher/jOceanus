@@ -594,7 +594,7 @@ public final class SvnComponent
                 /* Access the name */
                 String myName = pEntry.getName();
 
-                /* Create the tag and add to the list */
+                /* Create the component and add to the list */
                 SvnComponent myComp = new SvnComponent(theRepository, myName);
                 add(myComp);
             }

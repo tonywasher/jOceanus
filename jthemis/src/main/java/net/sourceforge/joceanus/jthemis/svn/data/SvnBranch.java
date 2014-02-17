@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistoryMap.RevisionPath;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag.SvnTagList;
 import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId;
@@ -63,7 +64,7 @@ public final class SvnBranch
     private static final String BRANCH_PREFIX = "v";
 
     /**
-     * The branch prefix.
+     * The branch seperator.
      */
     private static final String BRANCH_SEP = ".";
 
@@ -132,6 +133,11 @@ public final class SvnBranch
      */
     private static final JDataField FIELD_LTREV = FIELD_DEFS.declareLocalField("LastTagRevision");
 
+    /**
+     * RevisionPath.
+     */
+    private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
+
     @Override
     public String formatObject() {
         return getBranchName();
@@ -179,6 +185,9 @@ public final class SvnBranch
                                             ? myRev
                                             : JDataFieldValue.SKIP;
         }
+        if (FIELD_REVPATH.equals(pField)) {
+            return theRevisionPath;
+        }
 
         /* Unknown */
         return JDataFieldValue.UNKNOWN;
@@ -193,6 +202,11 @@ public final class SvnBranch
      * Parent Component.
      */
     private final SvnComponent theComponent;
+
+    /**
+     * RevisionPath.
+     */
+    private RevisionPath theRevisionPath;
 
     /**
      * Major version.
@@ -230,6 +244,11 @@ public final class SvnBranch
     private boolean isTrunk = false;
 
     /**
+     * Is this a virtual branch.
+     */
+    private boolean isVirtual = false;
+
+    /**
      * The project definition.
      */
     private MvnProjectDefinition theProject = null;
@@ -243,6 +262,14 @@ public final class SvnBranch
      * Project status.
      */
     private ProjectStatus theProjectStatus = ProjectStatus.RAW;
+
+    /**
+     * Is this a virtual branch?
+     * @return true/false
+     */
+    public boolean isVirtual() {
+        return isVirtual;
+    }
 
     /**
      * Get the repository for this branch.
@@ -586,6 +613,18 @@ public final class SvnBranch
     }
 
     /**
+     * Discover HistoryPath.
+     * @throws JOceanusException on error
+     */
+    private void discoverHistory() throws JOceanusException {
+        /* Access history map */
+        RevisionHistoryMap myHistMap = theRepository.getHistoryMap();
+
+        /* Determine the next major branch */
+        theRevisionPath = myHistMap.discoverBranch(this);
+    }
+
+    /**
      * Determine next delta branch.
      * @return the next delta branch
      */
@@ -868,7 +907,15 @@ public final class SvnBranch
                 SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getBranchesPath());
 
                 /* List the branch directories */
-                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
+                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false,
+                        SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler(false));
+
+                /* Access the tags directory URL */
+                myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
+
+                /* List the branch directories */
+                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false,
+                        SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler(true));
 
             } catch (SVNException e) {
                 throw new JThemisIOException("Failed to discover branches for " + theComponent.getName(), e);
@@ -876,10 +923,8 @@ public final class SvnBranch
                 myRepo.releaseClientManager(myMgr);
             }
 
-            /* Access list iterator */
-            Iterator<SvnBranch> myIterator = iterator();
-
             /* Loop to the last entry */
+            Iterator<SvnBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
                 SvnBranch myBranch = myIterator.next();
@@ -887,17 +932,22 @@ public final class SvnBranch
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
-                /* Parse project file */
-                MvnProjectDefinition myProject = myRepo.parseProjectURL(myBranch.getURLPath());
-                myBranch.theProject = myProject;
+                /* If this is a real branch */
+                if (!myBranch.isVirtual()) {
+                    /* Parse project file */
+                    MvnProjectDefinition myProject = myRepo.parseProjectURL(myBranch.getURLPath());
+                    myBranch.theProject = myProject;
 
-                /* Register the branch */
-                if (myProject != null) {
-                    myRepo.registerBranch(myProject.getDefinition(), myBranch);
+                    /* Register the branch */
+                    if (myProject != null) {
+                        myRepo.registerBranch(myProject.getDefinition(), myBranch);
+                    }
+
+                    /* Analyse history map */
+                    myBranch.discoverHistory();
                 }
 
-                /* Discover tags and last revision */
-                myBranch.discoverLastRevision();
+                /* Discover tags */
                 myBranch.getTagList().discover(pReport);
             }
         }
@@ -1215,6 +1265,18 @@ public final class SvnBranch
          */
         private final class ListDirHandler
                 implements ISVNDirEntryHandler {
+            /**
+             * Are we looking at tags?
+             */
+            private final boolean isTags;
+
+            /**
+             * Constructor.
+             * @param pTags is this a search for tags?
+             */
+            private ListDirHandler(final boolean pTags) {
+                isTags = pTags;
+            }
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -1232,11 +1294,29 @@ public final class SvnBranch
                     return;
                 }
 
+                /* If this is tags */
+                if (isTags) {
+                    /* Locate the tag separator */
+                    int iIndex = myName.indexOf('-');
+                    if (iIndex == -1) {
+                        return;
+                    }
+
+                    /* Access branch name */
+                    myName = myName.substring(0, iIndex);
+
+                    /* Ignore if branch is already known */
+                    if (locateBranch(myName) != null) {
+                        return;
+                    }
+                }
+
                 /* Strip prefix */
                 myName = myName.substring(BRANCH_PREFIX.length());
 
                 /* Create the branch and add to the list */
                 SvnBranch myBranch = new SvnBranch(theComponent, myName);
+                myBranch.isVirtual = isTags;
                 add(myBranch);
             }
         }

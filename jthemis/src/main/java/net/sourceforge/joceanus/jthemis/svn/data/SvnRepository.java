@@ -111,6 +111,11 @@ public class SvnRepository
      */
     private static final JDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
 
+    /**
+     * HistoryMap field id.
+     */
+    private static final JDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
+
     @Override
     public String formatObject() {
         return getPath();
@@ -138,6 +143,9 @@ public class SvnRepository
         }
         if (FIELD_TAGMAP.equals(pField)) {
             return theTagMap;
+        }
+        if (FIELD_HISTMAP.equals(pField)) {
+            return theRevisionHistory;
         }
 
         /* Unknown */
@@ -188,6 +196,11 @@ public class SvnRepository
      * Tag Map.
      */
     private final Map<MvnProjectId, SvnTag> theTagMap;
+
+    /**
+     * RevisionHistory Map.
+     */
+    private final RevisionHistoryMap theRevisionHistory;
 
     /**
      * Obtain the repository base.
@@ -254,6 +267,14 @@ public class SvnRepository
     }
 
     /**
+     * Get the revisionHistoryMap for this repository.
+     * @return the historyMap
+     */
+    public RevisionHistoryMap getHistoryMap() {
+        return theRevisionHistory;
+    }
+
+    /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
@@ -281,6 +302,9 @@ public class SvnRepository
 
         /* Create component list */
         theComponents = new SvnComponentList(this);
+
+        /* Create RevisionHistoryMap */
+        theRevisionHistory = new RevisionHistoryMap(this);
 
         /* Report start of analysis */
         pReport.initTask("Analysing components");
@@ -517,7 +541,6 @@ public class SvnRepository
         /* Access client */
         SVNClientManager myMgr = getClientManager();
         SVNWCClient myClient = myMgr.getWCClient();
-        ByteArrayInputStream myStream = null;
 
         /* Create the byte array stream */
         ByteArrayOutputStream myBaos = new ByteArrayOutputStream(BUFFER_STREAM);
@@ -526,7 +549,7 @@ public class SvnRepository
         try {
             /* Read the entry into the outputStream and create an input stream from it */
             myClient.doGetFileContents(pURL, SVNRevision.HEAD, SVNRevision.HEAD, true, myBaos);
-            myStream = new ByteArrayInputStream(myBaos.toByteArray());
+            return new ByteArrayInputStream(myBaos.toByteArray());
         } catch (SVNException e) {
             /* Access the error code */
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
@@ -537,13 +560,10 @@ public class SvnRepository
             }
 
             /* Set stream to null */
-            myStream = null;
+            return null;
+        } finally {
+            /* Release the client manager */
+            releaseClientManager(myMgr);
         }
-
-        /* Release the client manager */
-        releaseClientManager(myMgr);
-
-        /* Return the stream */
-        return myStream;
     }
 }

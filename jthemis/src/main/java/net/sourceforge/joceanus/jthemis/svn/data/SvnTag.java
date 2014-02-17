@@ -313,10 +313,10 @@ public final class SvnTag
         }
 
         /* Compare tag numbers */
-        if (theTag > pThat.theTag) {
+        if (theTag < pThat.theTag) {
             return -1;
         }
-        if (theTag < pThat.theTag) {
+        if (theTag > pThat.theTag) {
             return 1;
         }
         return 0;
