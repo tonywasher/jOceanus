@@ -337,7 +337,9 @@ public class ZipWriteFile
         closeOutputStream();
 
         /* terminate the executor */
-        theExecutor.shutdown();
+        if (theExecutor != null) {
+            theExecutor.shutdown();
+        }
 
         /* If the stream is open */
         if (theStream != null) {
