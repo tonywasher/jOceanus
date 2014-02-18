@@ -178,6 +178,14 @@ public class RevisionHistory
     }
 
     /**
+     * Has CopyDirs?
+     * @return true/false
+     */
+    public boolean hasCopyDirs() {
+        return !theCopyDirs.isEmpty();
+    }
+
+    /**
      * Is the origin?
      * @return true/false
      */
@@ -248,11 +256,12 @@ public class RevisionHistory
         for (Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
             /* Access the key */
             String myPath = myEntry.getKey();
+            SVNLogEntryPath myDetail = myEntry.getValue();
+            String myCopyPath = myDetail.getCopyPath();
 
             /* If the entry starts with our path */
             if (myPath.startsWith(pPath)) {
                 /* Access the detail */
-                SVNLogEntryPath myDetail = myEntry.getValue();
                 SVNNodeKind myKind = myDetail.getKind();
 
                 /* If this is a file */
@@ -264,11 +273,9 @@ public class RevisionHistory
                 } else if (myKind.equals(SVNNodeKind.DIR)) {
                     /* Access the copy path */
                     String myDir = myDetail.getPath();
-                    String myCopyPath = myDetail.getCopyPath();
 
                     /* If this a copy of a directory */
-                    if ((myCopyPath != null)
-                        && (myDir.startsWith(pPath))) {
+                    if (myCopyPath != null) {
                         /* If this is an initialisation of the directory */
                         if (myDir.equals(pPath)) {
                             /* Check that this is not a second origin */
@@ -287,6 +294,24 @@ public class RevisionHistory
                         }
                     }
                 }
+
+                /* else if this is a copy of a root of the directory */
+            } else if ((pPath.startsWith(myPath))
+                       && (myCopyPath != null)) {
+                /* Check that this is not a second origin */
+                if (isOrigin) {
+                    throw new UnsupportedOperationException("second origin for path");
+                }
+
+                /* Determine the new name for the directory */
+                StringBuilder myBuilder = new StringBuilder(pPath);
+                myBuilder.delete(0, myPath.length());
+                myBuilder.insert(0, myCopyPath);
+
+                /* Record the origin */
+
+                theOrigin = new RevisionKey(myBuilder.toString(), SVNRevision.create(myDetail.getCopyRevision()));
+                isOrigin = true;
             }
         }
     }

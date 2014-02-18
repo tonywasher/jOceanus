@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -31,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistory.CopyDir;
 import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistory.RevisionKey;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
@@ -88,7 +90,14 @@ public class RevisionHistoryMap
      * @throws JOceanusException on error
      */
     protected RevisionPath discoverBranch(final SvnBranch pBranch) throws JOceanusException {
-        return new RevisionPath(this, pBranch.getURLPath());
+        /* Discover the path */
+        RevisionPath myPath = new RevisionPath(this, pBranch.getURLPath());
+
+        /* Expand CopyDirectories */
+        myPath.expandCopyDirs();
+
+        /* Return the path */
+        return myPath;
     }
 
     /**
@@ -186,6 +195,14 @@ public class RevisionHistoryMap
         }
 
         /**
+         * Obtain the basedOn link.
+         * @return the log entry
+         */
+        public RevisionHistory getBasedOn() {
+            return theFirstHistory;
+        }
+
+        /**
          * Constructor.
          * @param pHistoryMap the History Map
          * @param pPath the path to document
@@ -195,6 +212,18 @@ public class RevisionHistoryMap
                             final String pPath) throws JOceanusException {
             /* Default to HEAD revision */
             this(pHistoryMap, pPath, SVNRevision.HEAD);
+        }
+
+        /**
+         * Constructor.
+         * @param pHistoryMap the History Map
+         * @param pKey the revisionPath
+         * @throws JOceanusException on error
+         */
+        public RevisionPath(final RevisionHistoryMap pHistoryMap,
+                            final RevisionKey pKey) throws JOceanusException {
+            /* Extract the details from the revisionKey */
+            this(pHistoryMap, pKey.getPath(), pKey.getRevision());
         }
 
         /**
@@ -224,8 +253,8 @@ public class RevisionHistoryMap
             /* If we have a source for the directory */
             if (theOrigin != null) {
                 /* Obtain the source path */
-                theSourcePath = new RevisionPath(theHistoryMap, theOrigin.getPath(), theOrigin.getRevision());
-                theLastHistory.setBasedOn(theSourcePath.theFirstHistory);
+                theSourcePath = new RevisionPath(theHistoryMap, theOrigin);
+                theLastHistory.setBasedOn(theSourcePath.getBasedOn());
             }
         }
 
@@ -255,6 +284,39 @@ public class RevisionHistoryMap
                 throw new JThemisIOException("Failed to get revision history", e);
             } finally {
                 myRepo.releaseClientManager(myClientMgr);
+            }
+        }
+
+        /**
+         * Expand CopyDirectories.
+         * @throws JOceanusException on error
+         */
+        private void expandCopyDirs() throws JOceanusException {
+            /* loop through the revisions */
+            for (RevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
+                /* Ignore if no copyDirs */
+                if (!myRevision.hasCopyDirs()) {
+                    continue;
+                }
+
+                /* Loop through any CopyDirectories */
+                Iterator<CopyDir> myIterator = myRevision.copyDirIterator();
+                while (myIterator.hasNext()) {
+                    CopyDir myCopyDir = myIterator.next();
+
+                    /* If the directory has not been expanded */
+                    if (myCopyDir.getBasedOn() == null) {
+                        /* Analyse the source */
+                        RevisionKey mySource = myCopyDir.getSource();
+                        RevisionPath myPath = new RevisionPath(theHistoryMap, mySource);
+
+                        /* Store the details */
+                        myCopyDir.setBasedOn(myPath.getBasedOn());
+
+                        /* Expand the copy path */
+                        myPath.expandCopyDirs();
+                    }
+                }
             }
         }
 
