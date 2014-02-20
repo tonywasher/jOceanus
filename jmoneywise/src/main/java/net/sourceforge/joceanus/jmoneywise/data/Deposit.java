@@ -525,7 +525,7 @@ public class Deposit
         resolveDataLink(FIELD_PARENT, myData.getPayees());
 
         /* Adjust Gross */
-        Object myGross = myValues.getValue(FIELD_TAXFREE);
+        Object myGross = myValues.getValue(FIELD_GROSS);
         if (myGross == null) {
             setValueGross(Boolean.FALSE);
         }
@@ -669,7 +669,7 @@ public class Deposit
 
         /* Update the gross status if required */
         if (!Difference.isEqual(isGross(), myDeposit.isGross())) {
-            setValueTaxFree(myDeposit.isGross());
+            setValueGross(myDeposit.isGross());
         }
 
         /* Update the taxFree status if required */
