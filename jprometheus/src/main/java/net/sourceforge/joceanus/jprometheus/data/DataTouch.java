@@ -63,6 +63,15 @@ public class DataTouch<E extends Enum<E>>
     }
 
     /**
+     * Constructor.
+     * @param pSource the source map
+     */
+    protected void copyMap(final DataTouch<E> pSource) {
+        /* Create the map */
+        putAll(pSource);
+    }
+
+    /**
      * Is the DataSet locked.
      * @return true/false
      */

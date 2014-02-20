@@ -176,7 +176,7 @@ public class AccountCategoryType
         public AccountCategoryType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountCategoryType */
             if (!(pItem instanceof AccountCategoryType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             AccountCategoryType myType = new AccountCategoryType(this, (AccountCategoryType) pItem);

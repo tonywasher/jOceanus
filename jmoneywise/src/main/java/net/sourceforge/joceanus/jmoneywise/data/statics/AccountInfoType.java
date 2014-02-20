@@ -218,7 +218,7 @@ public class AccountInfoType
         public AccountInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             AccountInfoType myType = new AccountInfoType(this, (AccountInfoType) pItem);

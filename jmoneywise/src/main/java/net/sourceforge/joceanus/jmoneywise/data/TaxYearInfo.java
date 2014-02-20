@@ -322,7 +322,7 @@ public class TaxYearInfo
         public TaxYearInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxYearInfo */
             if (!(pItem instanceof TaxYearInfo)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxYearInfo myInfo = new TaxYearInfo(this, (TaxYearInfo) pItem);

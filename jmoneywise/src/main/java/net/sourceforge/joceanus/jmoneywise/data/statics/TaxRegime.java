@@ -210,7 +210,7 @@ public class TaxRegime
         public TaxRegime addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxRegime */
             if (!(pItem instanceof TaxRegime)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxRegime myRegime = new TaxRegime(this, (TaxRegime) pItem);

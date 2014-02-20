@@ -175,7 +175,7 @@ public class SecurityType
         public SecurityType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a SecurityType */
             if (!(pItem instanceof SecurityType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             SecurityType myType = new SecurityType(this, (SecurityType) pItem);

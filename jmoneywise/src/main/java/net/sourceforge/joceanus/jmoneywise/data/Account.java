@@ -1156,7 +1156,7 @@ public class Account
         public Account addCopyItem(final DataItem<?> pAccount) {
             /* Can only clone an Account */
             if (!(pAccount instanceof Account)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             Account myAccount = new Account(this, (Account) pAccount);

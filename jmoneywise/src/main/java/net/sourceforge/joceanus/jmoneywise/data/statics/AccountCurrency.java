@@ -328,7 +328,7 @@ public class AccountCurrency
         public AccountCurrency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountCurrency */
             if (!(pItem instanceof AccountCurrency)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             AccountCurrency myCurr = new AccountCurrency(this, (AccountCurrency) pItem);

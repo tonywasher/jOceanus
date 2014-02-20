@@ -428,7 +428,7 @@ public class AccountInfo
         public AccountInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountInfo */
             if (!(pItem instanceof AccountInfo)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             AccountInfo myInfo = new AccountInfo(this, (AccountInfo) pItem);

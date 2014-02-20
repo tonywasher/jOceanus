@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
@@ -281,6 +282,14 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain Deposits.
+     * @return the Deposits
+     */
+    public DepositList getDeposits() {
+        return getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+    }
+
+    /**
      * Obtain Accounts.
      * @return the Accounts
      */
@@ -435,6 +444,8 @@ public class MoneyWiseData
                 return new PayeeList(this);
             case SECURITY:
                 return new SecurityList(this);
+            case DEPOSIT:
+                return new DepositList(this);
             case ACCOUNT:
                 return new AccountList(this);
             case PORTFOLIO:
@@ -551,6 +562,7 @@ public class MoneyWiseData
                 case TAXYEAR:
                 case PAYEE:
                 case SECURITY:
+                case DEPOSIT:
                 case ACCOUNT:
                 case PORTFOLIO:
                     myList.clearActive();

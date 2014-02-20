@@ -27,10 +27,13 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -384,6 +387,7 @@ public class SheetAccount
         SecurityTypeList mySecTypeList = pData.getSecurityTypes();
         SecurityList mySecurityList = pData.getSecurities();
         PayeeList myPayeeList = pData.getPayees();
+        DepositList myDepositList = pData.getDeposits();
         PortfolioList myPortfolioList = pData.getPortfolios();
 
         /* Access name and type */
@@ -398,8 +402,12 @@ public class SheetAccount
             isTaxFree = myCell.getBooleanValue();
         }
 
-        /* Skip gross */
-        iAdjust++;
+        /* Handle gross which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isGross = Boolean.FALSE;
+        if (myCell != null) {
+            isGross = myCell.getBooleanValue();
+        }
 
         /* Handle closed which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
@@ -428,6 +436,15 @@ public class SheetAccount
             /* Add the value into the list */
             myPortfolioList.addValuesItem(myValues);
 
+            /* Build data values */
+            myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            myValues.addValue(Payee.FIELD_NAME, myName);
+            myValues.addValue(Payee.FIELD_PAYEETYPE, "Institution");
+            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            myPayeeList.addValuesItem(myValues);
+
             /* If this is a payee */
         } else if (myPayeeTypeList.findItemByName(myType) != null) {
             /* Build data values */
@@ -442,16 +459,20 @@ public class SheetAccount
             /* Look for separator in category */
             int iIndex = myType.indexOf(EventCategory.STR_SEP);
             if (iIndex != -1) {
+                /* Access Parent account */
+                myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+                String myParent = null;
+                if (myCell != null) {
+                    myParent = myCell.getStringValue();
+                }
+                if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
+                    return;
+                }
+
                 /* Access subCategory as security type */
                 String mySecType = myType.substring(iIndex + 1);
                 if (mySecTypeList.findItemByName(mySecType) != null) {
-                    /* Access Parent account */
-                    String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-                    if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
-                        return;
-                    }
-
-                    /* Skip four columns */
+                    /* Skip portfolio,holding,maturity and opening columns */
                     iAdjust++;
                     iAdjust++;
                     iAdjust++;
@@ -471,7 +492,27 @@ public class SheetAccount
 
                     /* Add the value into the list */
                     mySecurityList.addValuesItem(myValues);
+                } else {
+                    /* Skip alias,portfolio and holding columns */
+                    iAdjust++;
+                    iAdjust++;
+                    iAdjust++;
+
+                    /* Build data values */
+                    DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
+                    myValues.addValue(Deposit.FIELD_NAME, myName);
+                    myValues.addValue(Deposit.FIELD_CATEGORY, myType);
+                    myValues.addValue(Deposit.FIELD_CURRENCY, pData.getDefaultCurrency());
+                    myValues.addValue(Deposit.FIELD_PARENT, myParent);
+                    myValues.addValue(Deposit.FIELD_GROSS, isGross);
+                    myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);
+                    myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
+
+                    /* Add the value into the list */
+                    myDepositList.addValuesItem(myValues);
                 }
+            } else {
+                throw new JMoneyWiseLogicException("Unexpected Account");
             }
         }
     }
@@ -485,6 +526,7 @@ public class SheetAccount
         /* Access lists */
         SecurityList mySecurityList = pData.getSecurities();
         PayeeList myPayeeList = pData.getPayees();
+        DepositList myDepositList = pData.getDeposits();
         PortfolioList myPortfolioList = pData.getPortfolios();
 
         /* Sort the payee list and validate */
@@ -496,6 +538,11 @@ public class SheetAccount
         mySecurityList.resolveDataSetLinks();
         mySecurityList.reSort();
         mySecurityList.validateOnLoad();
+
+        /* Sort the portfolio list and validate */
+        myDepositList.resolveDataSetLinks();
+        myDepositList.reSort();
+        myDepositList.validateOnLoad();
 
         /* Sort the portfolio list and validate */
         myPortfolioList.resolveDataSetLinks();

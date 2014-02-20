@@ -126,19 +126,44 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     PAYEE,
 
     /**
+     * PayeeInfo.
+     */
+    // PAYEEINFO,
+
+    /**
      * Securities.
      */
     SECURITY,
 
     /**
-     * Account.
+     * SecurityInfo.
      */
-    ACCOUNT,
+    // SECURITYINFO,
+
+    /**
+     * Deposit.
+     */
+    DEPOSIT,
+
+    /**
+     * DepositInfo.
+     */
+    // DEPOSITINFO,
 
     /**
      * Portfolio.
      */
     PORTFOLIO,
+
+    /**
+     * PortfolioInfo.
+     */
+    // PORTFOLIOINFO,
+
+    /**
+     * Account.
+     */
+    ACCOUNT,
 
     /**
      * AccountInfo.

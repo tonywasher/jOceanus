@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * @author Tony Washer
  */
 public class TaxYear
-        extends TaxYearBase
+        extends TaxYearBase<TaxYear>
         implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
@@ -937,7 +937,7 @@ public class TaxYear
         public TaxYear addCopyItem(final DataItem<?> pTaxYear) {
             /* Can only clone a TaxYear */
             if (!(pTaxYear instanceof TaxYear)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxYear myYear = new TaxYear(this, (TaxYear) pTaxYear);

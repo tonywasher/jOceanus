@@ -191,7 +191,7 @@ public class TaxCategory
         public TaxCategory addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxCategory */
             if (!(pItem instanceof TaxCategory)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxCategory myCategory = new TaxCategory(this, (TaxCategory) pItem);

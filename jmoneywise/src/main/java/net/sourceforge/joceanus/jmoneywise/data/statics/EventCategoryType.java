@@ -191,7 +191,7 @@ public class EventCategoryType
         public EventCategoryType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a EventCategoryType */
             if (!(pItem instanceof EventCategoryType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             EventCategoryType myType = new EventCategoryType(this, (EventCategoryType) pItem);

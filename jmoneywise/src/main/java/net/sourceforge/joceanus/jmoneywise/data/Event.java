@@ -1106,7 +1106,7 @@ public class Event
                 add(myEvent);
                 return myEvent;
             }
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**

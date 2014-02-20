@@ -618,7 +618,7 @@ public class SecurityPrice
                 add(myPrice);
                 return myPrice;
             } else {
-                return null;
+                throw new UnsupportedOperationException();
             }
         }
 

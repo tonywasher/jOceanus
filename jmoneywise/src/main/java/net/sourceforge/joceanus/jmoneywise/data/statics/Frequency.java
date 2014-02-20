@@ -194,7 +194,7 @@ public class Frequency
         public Frequency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a Frequency */
             if (!(pItem instanceof Frequency)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             Frequency myFreq = new Frequency(this, (Frequency) pItem);

@@ -30,41 +30,30 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Tag for an event.
+ * Class representing an account that can be part of a transaction.
+ * @param <T> the actual dataType
  */
-public class EventTag
+public abstract class AssetBase<T extends AssetBase<T>>
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<EventTag> {
-    /**
-     * Object name.
-     */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTTAG.getItemName();
-
-    /**
-     * List name.
-     */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTTAG.getListName();
-
+        implements Comparable<T> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventTag.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AssetBase.class.getName());
 
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AssetBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
@@ -76,10 +65,10 @@ public class EventTag
      */
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
+    /**
+     * isClosed Field Id.
+     */
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
     @Override
     public String formatObject() {
@@ -99,6 +88,9 @@ public class EventTag
         }
         if (FIELD_DESC.equals(pField)) {
             return getDesc() != null;
+        }
+        if (FIELD_CLOSED.equals(pField)) {
+            return isClosed();
         }
 
         /* Pass call on */
@@ -151,6 +143,14 @@ public class EventTag
      */
     private EncryptedString getDescField() {
         return getDescField(getValueSet());
+    }
+
+    /**
+     * Is the asset closed?
+     * @return true/false
+     */
+    public Boolean isClosed() {
+        return isClosed(getValueSet());
     }
 
     /**
@@ -208,6 +208,15 @@ public class EventTag
     }
 
     /**
+     * Is the asset closed?
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isClosed(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
+    }
+
+    /**
      * Set name value.
      * @param pValue the value
      * @throws JOceanusException on error
@@ -259,30 +268,33 @@ public class EventTag
         getValueSet().setValue(FIELD_DESC, pValue);
     }
 
+    /**
+     * Set closed indication.
+     * @param pValue the value
+     */
+    private void setValueClosed(final Boolean pValue) {
+        getValueSet().setValue(FIELD_CLOSED, pValue);
+    }
+
     @Override
     public MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
-    public EventTag getBase() {
-        return (EventTag) super.getBase();
-    }
-
-    @Override
-    public EventTagList getList() {
-        return (EventTagList) super.getList();
+    public AssetBaseList<T> getList() {
+        return (AssetBaseList<T>) super.getList();
     }
 
     /**
      * Copy Constructor.
      * @param pList the list
-     * @param pClass The Class to copy
+     * @param pAsset The Asset to copy
      */
-    protected EventTag(final EventTagList pList,
-                       final EventTag pClass) {
+    protected AssetBase(final AssetBaseList<T> pList,
+                        final AssetBase<T> pAsset) {
         /* Set standard values */
-        super(pList, pClass);
+        super(pList, pAsset);
     }
 
     /**
@@ -291,14 +303,17 @@ public class EventTag
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private EventTag(final EventTagList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    protected AssetBase(final AssetBaseList<T> pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Protect against exceptions */
         try {
-            /* Store the Name */
+            /* Store the name */
             Object myValue = pValues.getValue(FIELD_NAME);
             if (myValue instanceof String) {
                 setValueName((String) myValue);
@@ -314,6 +329,14 @@ public class EventTag
                 setValueDesc((byte[]) myValue);
             }
 
+            /* Store the closed flag */
+            myValue = pValues.getValue(FIELD_CLOSED);
+            if (myValue instanceof Boolean) {
+                setValueClosed((Boolean) myValue);
+            } else if (myValue instanceof String) {
+                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
+            }
+
             /* Catch Exceptions */
         } catch (JOceanusException e) {
             /* Pass on exception */
@@ -325,13 +348,13 @@ public class EventTag
      * Edit Constructor.
      * @param pList the list
      */
-    public EventTag(final EventTagList pList) {
+    public AssetBase(final AssetBaseList<T> pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
     }
 
     @Override
-    public int compareTo(final EventTag pThat) {
+    public int compareTo(final T pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -350,8 +373,23 @@ public class EventTag
         return super.compareId(pThat);
     }
 
+    @Override
+    public void resolveDataSetLinks() throws JOceanusException {
+        /* Update the Encryption details */
+        super.resolveDataSetLinks();
+
+        /* Resolve data links */
+        ValueSet myValues = getValueSet();
+
+        /* Adjust Closed */
+        Object myClosed = myValues.getValue(FIELD_CLOSED);
+        if (myClosed == null) {
+            setValueClosed(Boolean.FALSE);
+        }
+    }
+
     /**
-     * Set a new tag name.
+     * Set a new name.
      * @param pName the new name
      * @throws JOceanusException on error
      */
@@ -368,24 +406,34 @@ public class EventTag
         setValueDesc(pDesc);
     }
 
+    /**
+     * Set a new closed indication.
+     * @param isClosed the new closed indication
+     */
+    public void setClosed(final Boolean isClosed) {
+        setValueClosed(isClosed);
+    }
+
+    /**
+     * Validate the account.
+     */
     @Override
     public void validate() {
-        EventTagList myList = getList();
         String myName = getName();
         String myDesc = getDesc();
+        AssetBaseList<?> myList = getList();
 
         /* Name must be non-null */
         if (myName == null) {
             addError(ERROR_MISSING, FIELD_NAME);
 
-            /* Else check the name */
+            /* Check that the name is unique */
         } else {
-            /* The description must not be too long */
+            /* The name must not be too long */
             if (myName.length() > NAMELEN) {
                 addError(ERROR_LENGTH, FIELD_NAME);
             }
 
-            /* Check that the name is unique */
             if (myList.countInstances(myName) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
             }
@@ -393,129 +441,60 @@ public class EventTag
 
         /* Check description length */
         if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, FIELD_NAME);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
+            addError(ERROR_LENGTH, FIELD_DESC);
         }
     }
 
     /**
-     * Update base tag from an edited tag.
-     * @param pClass the edited class
-     * @return whether changes have been made
+     * Update base asset from an edited asset.
+     * @param pAsset the edited asset
      */
-    @Override
-    public boolean applyChanges(final DataItem<?> pClass) {
-        /* Can only update from an event class */
-        if (!(pClass instanceof EventTag)) {
-            return false;
-        }
-        EventTag myClass = (EventTag) pClass;
-
-        /* Store the current detail into history */
-        pushHistory();
-
-        /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myClass.getName())) {
-            setValueName(myClass.getNameField());
+    protected void applyBasicChanges(final AssetBase<T> pAsset) {
+        /* Update the name if required */
+        if (!Difference.isEqual(getName(), pAsset.getName())) {
+            setValueName(pAsset.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myClass.getDesc())) {
-            setValueDesc(myClass.getDescField());
+        if (!Difference.isEqual(getDesc(), pAsset.getDesc())) {
+            setValueDesc(pAsset.getDescField());
         }
 
-        /* Check for changes */
-        return checkForHistory();
+        /* Update the closed indication if required */
+        if (!Difference.isEqual(isClosed(), pAsset.isClosed())) {
+            setValueClosed(pAsset.isClosed());
+        }
     }
 
     /**
-     * The Event Tag List class.
+     * The Asset List class.
+     * @param <T> the dataType
      */
-    public static class EventTagList
-            extends EncryptedList<EventTag, MoneyWiseDataType> {
-        /**
-         * Local Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
-
-        @Override
-        public JDataFields declareFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public String listName() {
-            return LIST_NAME;
-        }
-
-        @Override
-        public JDataFields getItemFields() {
-            return EventTag.FIELD_DEFS;
-        }
-
+    public abstract static class AssetBaseList<T extends AssetBase<T>>
+            extends EncryptedList<T, MoneyWiseDataType> {
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
         }
 
         /**
-         * Construct an empty CORE EventClass list.
+         * Construct an empty CORE list.
          * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
          */
-        protected EventTagList(final MoneyWiseData pData) {
-            super(EventTag.class, pData, MoneyWiseDataType.EVENTTAG, ListStyle.CORE);
-        }
-
-        @Override
-        protected EventTagList getEmptyList(final ListStyle pStyle) {
-            EventTagList myList = new EventTagList(this);
-            myList.setStyle(pStyle);
-            return myList;
-        }
-
-        @Override
-        public EventTagList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventTagList) super.cloneList(pDataSet);
+        protected AssetBaseList(final MoneyWiseData pData,
+                                final Class<T> pClass,
+                                final MoneyWiseDataType pItemType) {
+            super(pClass, pData, pItemType, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EventTagList(final EventTagList pSource) {
+        protected AssetBaseList(final AssetBaseList<T> pSource) {
             super(pSource);
-        }
-
-        /**
-         * Add a new item to the core list.
-         * @param pClass item
-         * @return the newly added item
-         */
-        @Override
-        public EventTag addCopyItem(final DataItem<?> pClass) {
-            /* Can only clone an EventClass */
-            if (!(pClass instanceof EventTag)) {
-                throw new UnsupportedOperationException();
-            }
-
-            EventTag myClass = new EventTag(this, (EventTag) pClass);
-            add(myClass);
-            return myClass;
-        }
-
-        /**
-         * Add a new item to the edit list.
-         * @return the new item
-         */
-        @Override
-        public EventTag addNewItem() {
-            EventTag myClass = new EventTag(this);
-            add(myClass);
-            return myClass;
         }
 
         /**
@@ -525,12 +504,12 @@ public class EventTag
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
-            Iterator<EventTag> myIterator = iterator();
+            Iterator<T> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventTag myCurr = myIterator.next();
+                T myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -545,13 +524,13 @@ public class EventTag
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public EventTag findItemByName(final String pName) {
+        public T findItemByName(final String pName) {
             /* Access the iterator */
-            Iterator<EventTag> myIterator = iterator();
+            Iterator<T> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventTag myCurr = myIterator.next();
+                T myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -559,24 +538,6 @@ public class EventTag
 
             /* Return not found */
             return null;
-        }
-
-        @Override
-        public EventTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-            /* Create the class */
-            EventTag myClass = new EventTag(this, pValues);
-
-            /* Check that this ClassId has not been previously added */
-            if (!isIdUnique(myClass.getId())) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
-            }
-
-            /* Add to the list */
-            append(myClass);
-
-            /* Return it */
-            return myClass;
         }
     }
 }

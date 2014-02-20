@@ -422,7 +422,7 @@ public class EventInfo
         public EventInfo addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an EventInfo */
             if (!(pItem instanceof EventInfo)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             EventInfo myInfo = new EventInfo(this, (EventInfo) pItem);

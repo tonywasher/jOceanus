@@ -46,10 +46,11 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 /**
  * Tax Year Class representing taxation parameters for a tax year.
  * @author Tony Washer
+ * @param <T> the dataType
  */
-public abstract class TaxYearBase
+public abstract class TaxYearBase<T extends TaxYearBase<T>>
         extends DataItem<MoneyWiseDataType>
-        implements Comparable<TaxYearBase> {
+        implements Comparable<T> {
     /**
      * Object name.
      */
@@ -279,8 +280,8 @@ public abstract class TaxYearBase
      * @param pList The List to build into
      * @param pTaxYear The TaxYear to copy
      */
-    protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
-                          final TaxYearBase pTaxYear) {
+    protected TaxYearBase(final TaxYearBaseList<T> pList,
+                          final TaxYearBase<T> pTaxYear) {
         super(pList, pTaxYear);
     }
 
@@ -290,7 +291,7 @@ public abstract class TaxYearBase
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
+    protected TaxYearBase(final TaxYearBaseList<T> pList,
                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
@@ -326,12 +327,12 @@ public abstract class TaxYearBase
      * Edit constructor.
      * @param pList the list
      */
-    protected TaxYearBase(final DataList<TaxYearBase, MoneyWiseDataType> pList) {
+    protected TaxYearBase(final DataList<T, MoneyWiseDataType> pList) {
         super(pList, 0);
     }
 
     @Override
-    public int compareTo(final TaxYearBase pThat) {
+    public int compareTo(final T pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -427,7 +428,7 @@ public abstract class TaxYearBase
         }
 
         /* Access as TaxYear */
-        TaxYearBase myTaxYear = (TaxYearBase) pTaxYear;
+        TaxYearBase<?> myTaxYear = (TaxYearBase<?>) pTaxYear;
 
         /* Store the current detail into history */
         pushHistory();
@@ -445,7 +446,7 @@ public abstract class TaxYearBase
      * The Tax Year List class.
      * @param <T> the dataType
      */
-    public abstract static class TaxYearBaseList<T extends TaxYearBase>
+    public abstract static class TaxYearBaseList<T extends TaxYearBase<T>>
             extends DataList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.

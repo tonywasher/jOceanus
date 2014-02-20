@@ -208,7 +208,7 @@ public class EventInfoType
         public EventInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an EventInfoType */
             if (!(pItem instanceof EventInfoType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             EventInfoType myType = new EventInfoType(this, (EventInfoType) pItem);

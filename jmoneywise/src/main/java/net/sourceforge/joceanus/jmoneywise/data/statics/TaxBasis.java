@@ -221,7 +221,7 @@ public class TaxBasis
         public TaxBasis addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TaxBasis */
             if (!(pItem instanceof TaxBasis)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxBasis myBasis = new TaxBasis(this, (TaxBasis) pItem);

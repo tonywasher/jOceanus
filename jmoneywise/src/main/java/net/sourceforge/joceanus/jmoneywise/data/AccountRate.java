@@ -803,7 +803,7 @@ public class AccountRate
         public AccountRate addCopyItem(final DataItem<?> pRate) {
             /* Can only clone an AccountRate */
             if (!(pRate instanceof AccountRate)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             AccountRate myRate = new AccountRate(this, (AccountRate) pRate);

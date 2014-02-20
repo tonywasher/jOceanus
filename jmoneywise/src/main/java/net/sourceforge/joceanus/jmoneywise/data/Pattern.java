@@ -579,7 +579,7 @@ public class Pattern
         public Pattern addCopyItem(final DataItem<?> pPattern) {
             /* Can only clone from Pattern */
             if (!(pPattern instanceof Pattern)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             Pattern myPattern = new Pattern(this, (Pattern) pPattern);

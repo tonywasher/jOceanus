@@ -175,7 +175,7 @@ public class PayeeType
         public PayeeType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a PayeeType */
             if (!(pItem instanceof PayeeType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             PayeeType myType = new PayeeType(this, (PayeeType) pItem);

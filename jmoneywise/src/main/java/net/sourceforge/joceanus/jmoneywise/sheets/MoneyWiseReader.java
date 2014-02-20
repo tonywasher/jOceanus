@@ -75,6 +75,7 @@ public class MoneyWiseReader
         addSheet(new SheetExchangeRate(this));
         addSheet(new SheetPayee(this));
         addSheet(new SheetSecurity(this));
+        addSheet(new SheetDeposit(this));
         addSheet(new SheetAccount(this));
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetAccountRate(this));

@@ -410,6 +410,14 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Obtain the touchStatus.
+     * @return the touch status
+     */
+    public DataTouch<E> getTouchStatus() {
+        return theTouchStatus;
+    }
+
+    /**
      * Get the EditState for this item.
      * @return the EditState
      */
@@ -768,7 +776,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pItem the original item
      */
     private void copyFlags(final DataItem<E> pItem) {
-        // isActive = pItem.isActive();
+        theTouchStatus.copyMap(pItem.theTouchStatus);
     }
 
     /**

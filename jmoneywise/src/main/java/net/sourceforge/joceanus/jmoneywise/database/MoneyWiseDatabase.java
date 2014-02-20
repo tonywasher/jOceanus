@@ -75,6 +75,7 @@ public class MoneyWiseDatabase
         addTable(new TableExchangeRate(this));
         addTable(new TablePayee(this));
         addTable(new TableSecurity(this));
+        addTable(new TableDeposit(this));
         addTable(new TableAccount(this));
         addTable(new TablePortfolio(this));
         addTable(new TableAccountRate(this));

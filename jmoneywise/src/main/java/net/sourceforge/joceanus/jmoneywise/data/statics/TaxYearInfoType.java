@@ -190,7 +190,7 @@ public class TaxYearInfoType
         public TaxYearInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an TaxYearInfoType */
             if (!(pItem instanceof TaxYearInfoType)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             TaxYearInfoType myType = new TaxYearInfoType(this, (TaxYearInfoType) pItem);

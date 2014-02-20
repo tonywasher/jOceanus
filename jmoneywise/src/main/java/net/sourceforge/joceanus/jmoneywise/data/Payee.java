@@ -23,14 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.data;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -40,15 +36,13 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Payee class.
  */
 public class Payee
-        extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<Payee> {
+        extends AssetBase<Payee> {
     /**
      * Object name.
      */
@@ -60,34 +54,14 @@ public class Payee
     public static final String LIST_NAME = MoneyWiseDataType.PAYEE.getListName();
 
     /**
-     * Resource Bundle.
-     */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Payee.class.getName());
-
-    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
-
-    /**
-     * Name Field Id.
-     */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
-
-    /**
-     * Description Field Id.
-     */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
+    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AssetBase.FIELD_DEFS);
 
     /**
      * PayeeType Field Id.
      */
     public static final JDataField FIELD_PAYEETYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.PAYEETYPE.getItemName());
-
-    /**
-     * isClosed Field Id.
-     */
-    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
     @Override
     public JDataFields declareFields() {
@@ -95,81 +69,14 @@ public class Payee
     }
 
     @Override
-    public String formatObject() {
-        return getName();
-    }
-
-    @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
     public boolean includeXmlField(final JDataField pField) {
         /* Determine whether fields should be included */
-        if (FIELD_NAME.equals(pField)) {
-            return true;
-        }
-        if (FIELD_DESC.equals(pField)) {
-            return getDesc() != null;
-        }
         if (FIELD_PAYEETYPE.equals(pField)) {
             return true;
-        }
-        if (FIELD_CLOSED.equals(pField)) {
-            return isClosed();
         }
 
         /* Pass call on */
         return super.includeXmlField(pField);
-    }
-
-    /**
-     * Obtain Name.
-     * @return the name
-     */
-    public String getName() {
-        return getName(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted name.
-     * @return the bytes
-     */
-    public byte[] getNameBytes() {
-        return getNameBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Name Field.
-     * @return the Field
-     */
-    private EncryptedString getNameField() {
-        return getNameField(getValueSet());
-    }
-
-    /**
-     * Obtain Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return getDesc(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @return the bytes
-     */
-    public byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Description Field.
-     * @return the Field
-     */
-    private EncryptedString getDescField() {
-        return getDescField(getValueSet());
     }
 
     /**
@@ -214,135 +121,12 @@ public class Payee
     }
 
     /**
-     * Is the payee closed?
-     * @return true/false
-     */
-    public Boolean isClosed() {
-        return isClosed(getValueSet());
-    }
-
-    /**
-     * Obtain Name.
-     * @param pValueSet the valueSet
-     * @return the Name
-     */
-    public static String getName(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
-    }
-
-    /**
-     * Obtain Encrypted Name.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
-    }
-
-    /**
-     * Obtain Encrypted name field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
-    }
-
-    /**
-     * Obtain Description.
-     * @param pValueSet the valueSet
-     * @return the description
-     */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Obtain Encrypted description field.
-     * @param pValueSet the valueSet
-     * @return the Field
-     */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
-    }
-
-    /**
      * Obtain PayeeType.
      * @param pValueSet the valueSet
      * @return the PayeeType
      */
     public static PayeeType getPayeeType(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PAYEETYPE, PayeeType.class);
-    }
-
-    /**
-     * Is the payee closed?
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isClosed(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
-    }
-
-    /**
-     * Set name value.
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private void setValueName(final String pValue) throws JOceanusException {
-        setEncryptedValue(FIELD_NAME, pValue);
-    }
-
-    /**
-     * Set name value.
-     * @param pBytes the value
-     * @throws JOceanusException on error
-     */
-    private void setValueName(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_NAME, pBytes, String.class);
-    }
-
-    /**
-     * Set name value.
-     * @param pValue the value
-     */
-    private void setValueName(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_NAME, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     * @throws JOceanusException on error
-     */
-    private void setValueDesc(final String pValue) throws JOceanusException {
-        setEncryptedValue(FIELD_DESC, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pBytes the value
-     * @throws JOceanusException on error
-     */
-    private void setValueDesc(final byte[] pBytes) throws JOceanusException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     */
-    private void setValueDesc(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_DESC, pValue);
     }
 
     /**
@@ -367,19 +151,6 @@ public class Payee
      */
     private void setValueType(final String pValue) {
         getValueSet().setValue(FIELD_PAYEETYPE, pValue);
-    }
-
-    /**
-     * Set closed indication.
-     * @param pValue the value
-     */
-    private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, pValue);
-    }
-
-    @Override
-    public MoneyWiseData getDataSet() {
-        return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
@@ -424,47 +195,12 @@ public class Payee
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Access formatter */
-        JDataFormatter myFormatter = getDataSet().getDataFormatter();
-
-        /* Protect against exceptions */
-        try {
-            /* Store the Name */
-            Object myValue = pValues.getValue(FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
-            }
-
-            /* Store the Description */
-            myValue = pValues.getValue(FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
-            }
-
-            /* Store the PayeeType */
-            myValue = pValues.getValue(FIELD_PAYEETYPE);
-            if (myValue instanceof Integer) {
-                setValueType((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueType((String) myValue);
-            }
-
-            /* Store the closed flag */
-            myValue = pValues.getValue(FIELD_CLOSED);
-            if (myValue instanceof Boolean) {
-                setValueClosed((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
-            }
-
-            /* Catch Exceptions */
-        } catch (JOceanusException e) {
-            /* Pass on exception */
-            throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
+        /* Store the PayeeType */
+        Object myValue = pValues.getValue(FIELD_PAYEETYPE);
+        if (myValue instanceof Integer) {
+            setValueType((Integer) myValue);
+        } else if (myValue instanceof String) {
+            setValueType((String) myValue);
         }
     }
 
@@ -473,8 +209,7 @@ public class Payee
      * @param pList the list
      */
     public Payee(final PayeeList pList) {
-        super(pList, 0);
-        setControlKey(pList.getControlKey());
+        super(pList);
     }
 
     @Override
@@ -493,40 +228,18 @@ public class Payee
             return iDiff;
         }
 
-        /* Check the names */
-        iDiff = Difference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+        /* Compare the underlying base */
+        return super.compareTo(pThat);
     }
 
     @Override
     public void resolveDataSetLinks() throws JOceanusException {
-        /* Update the Encryption details */
+        /* Update the Base details */
         super.resolveDataSetLinks();
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        ValueSet myValues = getValueSet();
         resolveDataLink(FIELD_PAYEETYPE, myData.getPayeeTypes());
-
-        /* Adjust Closed */
-        Object myClosed = myValues.getValue(FIELD_CLOSED);
-        if (myClosed == null) {
-            setValueClosed(Boolean.FALSE);
-        }
-    }
-
-    /**
-     * Set a new payee name.
-     * @param pName the new name
-     * @throws JOceanusException on error
-     */
-    public void setPayeeName(final String pName) throws JOceanusException {
-        setValueName(pName);
     }
 
     /**
@@ -535,23 +248,6 @@ public class Payee
      */
     public void setPayeeType(final PayeeType pType) {
         setValueType(pType);
-    }
-
-    /**
-     * Set a new description.
-     * @param pDesc the description
-     * @throws JOceanusException on error
-     */
-    public void setDescription(final String pDesc) throws JOceanusException {
-        setValueDesc(pDesc);
-    }
-
-    /**
-     * Set a new closed indication.
-     * @param isClosed the new closed indication
-     */
-    public void setClosed(final Boolean isClosed) {
-        setValueClosed(isClosed);
     }
 
     @Override
@@ -564,30 +260,9 @@ public class Payee
     public void validate() {
         PayeeList myList = getList();
         PayeeType myPayeeType = getPayeeType();
-        String myName = getName();
-        String myDesc = getDesc();
 
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, FIELD_NAME);
-
-            /* Check that the name is valid */
-        } else {
-            /* The name must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, FIELD_NAME);
-            }
-
-            /* The name must be unique */
-            if (myList.countInstances(myName) > 1) {
-                addError(ERROR_DUPLICATE, FIELD_NAME);
-            }
-        }
-
-        /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, FIELD_DESC);
-        }
+        /* Validate base components */
+        super.validate();
 
         /* PayeeType must be non-null */
         if (myPayeeType == null) {
@@ -633,24 +308,12 @@ public class Payee
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myPayee.getName())) {
-            setValueName(myPayee.getNameField());
-        }
-
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myPayee.getDesc())) {
-            setValueDesc(myPayee.getDescField());
-        }
+        /* Apply basic changes */
+        applyBasicChanges(myPayee);
 
         /* Update the category type if required */
         if (!Difference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
             setValueType(myPayee.getPayeeType());
-        }
-
-        /* Update the closed status if required */
-        if (!Difference.isEqual(isClosed(), myPayee.isClosed())) {
-            setValueClosed(myPayee.isClosed());
         }
 
         /* Check for changes */
@@ -661,7 +324,7 @@ public class Payee
      * The Payee List class.
      */
     public static class PayeeList
-            extends EncryptedList<Payee, MoneyWiseDataType> {
+            extends AssetBaseList<Payee> {
         /**
          * Local Report fields.
          */
@@ -692,7 +355,7 @@ public class Payee
          * @param pData the DataSet for the list
          */
         public PayeeList(final MoneyWiseData pData) {
-            super(Payee.class, pData, MoneyWiseDataType.PAYEE, ListStyle.CORE);
+            super(pData, Payee.class, MoneyWiseDataType.PAYEE);
         }
 
         @Override
@@ -728,7 +391,7 @@ public class Payee
             while (myIterator.hasNext()) {
                 Payee myCurr = myIterator.next();
 
-                /* Ignore deleted events */
+                /* Ignore deleted payees */
                 if (myCurr.isDeleted()) {
                     continue;
                 }
@@ -751,7 +414,7 @@ public class Payee
         public Payee addCopyItem(final DataItem<?> pPayee) {
             /* Can only clone a Payee */
             if (!(pPayee instanceof Payee)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             Payee myPayee = new Payee(this, (Payee) pPayee);
@@ -768,28 +431,6 @@ public class Payee
             Payee myPayee = new Payee(this);
             add(myPayee);
             return myPayee;
-        }
-
-        /**
-         * Count the instances of a string.
-         * @param pName the string to check for
-         * @return The # of instances of the name
-         */
-        protected int countInstances(final String pName) {
-            /* Access the iterator */
-            Iterator<Payee> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Payee myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
         }
 
         /**
@@ -812,27 +453,6 @@ public class Payee
 
             /* Return to caller */
             return iCount;
-        }
-
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
-        public Payee findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<Payee> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Payee myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
         }
 
         /**

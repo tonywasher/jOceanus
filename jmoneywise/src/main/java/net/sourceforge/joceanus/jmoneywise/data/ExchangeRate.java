@@ -749,7 +749,7 @@ public final class ExchangeRate
         public ExchangeRate addCopyItem(final DataItem<?> pRate) {
             /* Can only clone an ExchangeRate */
             if (!(pRate instanceof ExchangeRate)) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             ExchangeRate myRate = new ExchangeRate(this, (ExchangeRate) pRate);
