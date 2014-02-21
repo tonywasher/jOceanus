@@ -286,6 +286,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return (AssetBaseList<T>) super.getList();
     }
 
+    @Override
+    public boolean isLocked() {
+        return isClosed();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

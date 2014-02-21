@@ -74,10 +74,14 @@ public class MoneyWiseReader
         addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetExchangeRate(this));
         addSheet(new SheetPayee(this));
+        addSheet(new SheetPayeeInfo(this));
         addSheet(new SheetSecurity(this));
+        addSheet(new SheetSecurityInfo(this));
         addSheet(new SheetDeposit(this));
+        addSheet(new SheetDepositInfo(this));
         addSheet(new SheetAccount(this));
         addSheet(new SheetPortfolio(this));
+        addSheet(new SheetPortfolioInfo(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetSecurityPrice(this));
         addSheet(new SheetAccountInfo(this));

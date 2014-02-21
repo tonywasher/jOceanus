@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryL
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
@@ -45,8 +46,11 @@ import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Pattern.PatternList;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
@@ -274,6 +278,14 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain PayeeInfo.
+     * @return the Payee Info
+     */
+    public PayeeInfoList getPayeeInfo() {
+        return getDataList(MoneyWiseDataType.PAYEEINFO, PayeeInfoList.class);
+    }
+
+    /**
      * Obtain Securities.
      * @return the Securities
      */
@@ -282,11 +294,27 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain SecurityInfo.
+     * @return the Security Info
+     */
+    public SecurityInfoList getSecurityInfo() {
+        return getDataList(MoneyWiseDataType.SECURITYINFO, SecurityInfoList.class);
+    }
+
+    /**
      * Obtain Deposits.
      * @return the Deposits
      */
     public DepositList getDeposits() {
         return getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+    }
+
+    /**
+     * Obtain DepositInfo.
+     * @return the Deposit Info
+     */
+    public DepositInfoList getDepositInfo() {
+        return getDataList(MoneyWiseDataType.DEPOSITINFO, DepositInfoList.class);
     }
 
     /**
@@ -303,6 +331,14 @@ public class MoneyWiseData
      */
     public PortfolioList getPortfolios() {
         return getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+    }
+
+    /**
+     * Obtain PortfolioInfo.
+     * @return the Portfolio Info
+     */
+    public PortfolioInfoList getPortfolioInfo() {
+        return getDataList(MoneyWiseDataType.PORTFOLIOINFO, PortfolioInfoList.class);
     }
 
     /**
@@ -442,14 +478,22 @@ public class MoneyWiseData
                 return new ExchangeRateList(this);
             case PAYEE:
                 return new PayeeList(this);
+            case PAYEEINFO:
+                return new PayeeInfoList(this);
             case SECURITY:
                 return new SecurityList(this);
+            case SECURITYINFO:
+                return new SecurityInfoList(this);
             case DEPOSIT:
                 return new DepositList(this);
+            case DEPOSITINFO:
+                return new DepositInfoList(this);
             case ACCOUNT:
                 return new AccountList(this);
             case PORTFOLIO:
                 return new PortfolioList(this);
+            case PORTFOLIOINFO:
+                return new PortfolioInfoList(this);
             case ACCOUNTRATE:
                 return new AccountRateList(this);
             case SECURITYPRICE:
@@ -585,6 +629,10 @@ public class MoneyWiseData
                 case EVENTINFO:
                 case ACCOUNTINFO:
                 case TAXYEARINFO:
+                case PAYEEINFO:
+                case SECURITYINFO:
+                case DEPOSITINFO:
+                case PORTFOLIOINFO:
                     break;
 
                 default:

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
@@ -38,20 +36,20 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Representation of an information extension of an account.
+ * Representation of an information extension of a security.
  * @author Tony Washer
  */
-public class AccountInfo
-        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+public class SecurityInfo
+        extends DataInfo<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.ACCOUNTINFO.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.SECURITYINFO.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.ACCOUNTINFO.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.SECURITYINFO.getListName();
 
     /**
      * Local Report fields.
@@ -74,24 +72,8 @@ public class AccountInfo
     }
 
     @Override
-    public Account getOwner() {
-        return getOwner(getValueSet(), Account.class);
-    }
-
-    /**
-     * Obtain Account.
-     * @return the Account
-     */
-    public Account getAccount() {
-        return getAccount(getValueSet());
-    }
-
-    /**
-     * Obtain EventCategory.
-     * @return the EventCategory
-     */
-    public EventCategory getEventCategory() {
-        return getEventCategory(getValueSet());
+    public Security getOwner() {
+        return getOwner(getValueSet(), Security.class);
     }
 
     /**
@@ -103,53 +85,19 @@ public class AccountInfo
         return getInfoType(pValueSet, AccountInfoType.class);
     }
 
-    /**
-     * Obtain Linked Account.
-     * @param pValueSet the valueSet
-     * @return the Account
-     */
-    public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, Account.class);
-    }
-
-    /**
-     * Obtain Linked EventCategory.
-     * @param pValueSet the valueSet
-     * @return the EventCategory
-     */
-    public static EventCategory getEventCategory(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, EventCategory.class);
-    }
-
-    @Override
-    public String getLinkName() {
-        DataItem<?> myItem = getLink(DataItem.class);
-        if (myItem instanceof Account) {
-            return ((Account) myItem).getName();
-        }
-        if (myItem instanceof EventCategory) {
-            return ((EventCategory) myItem).getName();
-        }
-        return null;
-    }
-
     @Override
     public MoneyWiseData getDataSet() {
         return (MoneyWiseData) super.getDataSet();
     }
 
     @Override
-    public AccountInfo getBase() {
-        return (AccountInfo) super.getBase();
+    public SecurityInfo getBase() {
+        return (SecurityInfo) super.getBase();
     }
 
     @Override
-    public AccountInfoList getList() {
-        return (AccountInfoList) super.getList();
+    public SecurityInfoList getList() {
+        return (SecurityInfoList) super.getList();
     }
 
     /**
@@ -157,8 +105,8 @@ public class AccountInfo
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected AccountInfo(final AccountInfoList pList,
-                          final AccountInfo pInfo) {
+    protected SecurityInfo(final SecurityInfoList pList,
+                           final SecurityInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
         setControlKey(pList.getControlKey());
@@ -167,19 +115,19 @@ public class AccountInfo
     /**
      * Edit Constructor.
      * @param pList the list
-     * @param pAccount the account
+     * @param pSecurity the security
      * @param pType the type
      */
-    private AccountInfo(final AccountInfoList pList,
-                        final Account pAccount,
-                        final AccountInfoType pType) {
+    private SecurityInfo(final SecurityInfoList pList,
+                         final Security pSecurity,
+                         final AccountInfoType pType) {
         /* Initialise the item */
         super(pList);
         setControlKey(pList.getControlKey());
 
         /* Record the Detail */
         setValueInfoType(pType);
-        setValueOwner(pAccount);
+        setValueOwner(pSecurity);
     }
 
     /**
@@ -188,8 +136,8 @@ public class AccountInfo
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private AccountInfo(final AccountInfoList pList,
-                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private SecurityInfo(final SecurityInfoList pList,
+                         final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -198,13 +146,13 @@ public class AccountInfo
             /* Resolve links */
             MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getAccounts());
+            resolveDataLink(FIELD_OWNER, myData.getSecurities());
 
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
 
-            /* Access the AccountInfoSet and register this data */
-            AccountInfoSet mySet = getOwner().getInfoSet();
+            /* Access the SecurityInfoSet and register this data */
+            SecurityInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (JOceanusException e) {
@@ -215,8 +163,8 @@ public class AccountInfo
 
     @Override
     public void deRegister() {
-        /* Access the AccountInfoSet and register this value */
-        AccountInfoSet mySet = getOwner().getInfoSet();
+        /* Access the SecurityInfoSet and register this value */
+        SecurityInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -226,7 +174,7 @@ public class AccountInfo
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
-    public int compareTo(final AccountInfo pThat) {
+    public int compareTo(final SecurityInfo pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -235,7 +183,7 @@ public class AccountInfo
             return -1;
         }
 
-        /* Compare the Accounts */
+        /* Compare the Securities */
         int iDiff = getOwner().compareTo(pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
@@ -259,108 +207,45 @@ public class AccountInfo
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
-        resolveDataLink(FIELD_OWNER, myData.getAccounts());
+        resolveDataLink(FIELD_OWNER, myData.getSecurities());
 
-        /* Resolve any link value */
-        resolveLink();
-
-        /* Access the AccountInfoSet and register this data */
-        AccountInfoSet mySet = getOwner().getInfoSet();
+        /* Access the SecurityInfoSet and register this data */
+        SecurityInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
     /**
-     * Resolve link reference.
-     * @throws JOceanusException on error
-     */
-    private void resolveLink() throws JOceanusException {
-        /* If we have a link */
-        AccountInfoType myType = getInfoType();
-        if (myType.isLink()) {
-            /* Access data */
-            MoneyWiseData myData = getDataSet();
-            ValueSet myValues = getValueSet();
-            Object myLinkId = myValues.getValue(FIELD_VALUE);
-
-            /* Switch on link type */
-            switch (myType.getInfoClass()) {
-                case ALIAS:
-                case PARENT:
-                case PORTFOLIO:
-                case HOLDING:
-                    resolveDataLink(FIELD_LINK, myData.getAccounts());
-                    if (myLinkId == null) {
-                        setValueValue(getAccount().getId());
-                    }
-                    break;
-                case AUTOEXPENSE:
-                    resolveDataLink(FIELD_LINK, myData.getEventCategories());
-                    if (myLinkId == null) {
-                        setValueValue(getEventCategory().getId());
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Update accountInfo from an accountInfo extract.
-     * @param pActInfo the changed accountInfo
+     * Update securityInfo from a securityInfo extract.
+     * @param pInfo the changed securityInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pActInfo) {
-        /* Can only update from AccountInfo */
-        if (!(pActInfo instanceof AccountInfo)) {
+    public boolean applyChanges(final DataItem<?> pInfo) {
+        /* Can only update from SecurityInfo */
+        if (!(pInfo instanceof SecurityInfo)) {
             return false;
         }
 
-        /* Access as AccountInfo */
-        AccountInfo myActInfo = (AccountInfo) pActInfo;
+        /* Access as SecurityInfo */
+        SecurityInfo mySecInfo = (SecurityInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myActInfo.getField())) {
-            setValueValue(myActInfo.getField());
-            if (getInfoType().isLink()) {
-                setValueLink(myActInfo.getLink(DataItem.class));
-            }
+        if (!Difference.isEqual(getField(), mySecInfo.getField())) {
+            setValueValue(mySecInfo.getField());
         }
 
         /* Check for changes */
         return checkForHistory();
     }
 
-    @Override
-    public void touchUnderlyingItems() {
-        /* touch info class */
-        super.touchUnderlyingItems();
-
-        /* Switch on info class */
-        switch (getInfoClass()) {
-            case PARENT:
-            case ALIAS:
-            case PORTFOLIO:
-            case HOLDING:
-                getAccount().touchItem(this);
-                break;
-            case AUTOEXPENSE:
-                getEventCategory().touchItem(this);
-                break;
-            default:
-                break;
-        }
-    }
-
     /**
-     * AccountInfoList.
+     * SecurityInfoList.
      */
-    public static class AccountInfoList
-            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
+    public static class SecurityInfoList
+            extends DataInfoList<SecurityInfo, Security, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -378,7 +263,7 @@ public class AccountInfo
 
         @Override
         public JDataFields getItemFields() {
-            return AccountInfo.FIELD_DEFS;
+            return SecurityInfo.FIELD_DEFS;
         }
 
         @Override
@@ -390,62 +275,62 @@ public class AccountInfo
          * Set base list for Edit InfoList.
          * @param pBase the base list
          */
-        protected void setBase(final AccountInfoList pBase) {
+        protected void setBase(final SecurityInfoList pBase) {
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
         }
 
         /**
-         * Construct an empty CORE account list.
+         * Construct an empty CORE info list.
          * @param pData the DataSet for the list
          */
-        protected AccountInfoList(final MoneyWiseData pData) {
-            super(AccountInfo.class, pData, MoneyWiseDataType.ACCOUNTINFO, ListStyle.CORE);
+        protected SecurityInfoList(final MoneyWiseData pData) {
+            super(SecurityInfo.class, pData, MoneyWiseDataType.SECURITYINFO, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountInfoList(final AccountInfoList pSource) {
+        private SecurityInfoList(final SecurityInfoList pSource) {
             super(pSource);
         }
 
         @Override
-        protected AccountInfoList getEmptyList(final ListStyle pStyle) {
-            AccountInfoList myList = new AccountInfoList(this);
+        protected SecurityInfoList getEmptyList(final ListStyle pStyle) {
+            SecurityInfoList myList = new SecurityInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public AccountInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (AccountInfoList) super.cloneList(pDataSet);
+        public SecurityInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (SecurityInfoList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountInfo addCopyItem(final DataItem<?> pItem) {
-            /* Can only clone an AccountInfo */
-            if (!(pItem instanceof AccountInfo)) {
+        public SecurityInfo addCopyItem(final DataItem<?> pItem) {
+            /* Can only clone a SecurityInfo */
+            if (!(pItem instanceof SecurityInfo)) {
                 throw new UnsupportedOperationException();
             }
 
-            AccountInfo myInfo = new AccountInfo(this, (AccountInfo) pItem);
+            SecurityInfo myInfo = new SecurityInfo(this, (SecurityInfo) pItem);
             add(myInfo);
             return myInfo;
         }
 
         @Override
-        public AccountInfo addNewItem() {
-            return null;
+        public SecurityInfo addNewItem() {
+            throw new UnsupportedOperationException();
         }
 
         @Override
-        protected AccountInfo addNewItem(final Account pOwner,
-                                         final AccountInfoType pInfoType) {
+        protected SecurityInfo addNewItem(final Security pOwner,
+                                          final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            AccountInfo myInfo = new AccountInfo(this, pOwner, pInfoType);
+            SecurityInfo myInfo = new SecurityInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -454,7 +339,7 @@ public class AccountInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Account pAccount,
+                                final Security pSecurity,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
             /* Ignore item if it is null */
@@ -468,18 +353,18 @@ public class AccountInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pAccount, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
+                throw new JMoneyWiseDataException(pSecurity, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(SecurityInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
-            myValues.addValue(FIELD_OWNER, pAccount);
+            myValues.addValue(FIELD_OWNER, pSecurity);
             myValues.addValue(FIELD_VALUE, pValue);
 
-            /* Create a new Account Info */
-            AccountInfo myInfo = new AccountInfo(this, myValues);
+            /* Create a new Security Info */
+            SecurityInfo myInfo = new SecurityInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -492,9 +377,9 @@ public class AccountInfo
         }
 
         @Override
-        public AccountInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public SecurityInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the info */
-            AccountInfo myInfo = new AccountInfo(this, pValues);
+            SecurityInfo myInfo = new SecurityInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -507,24 +392,6 @@ public class AccountInfo
 
             /* Return it */
             return myInfo;
-        }
-
-        /**
-         * Resolve ValueLinks.
-         * @throws JOceanusException on error
-         */
-        public void resolveValueLinks() throws JOceanusException {
-            /* Loop through the Info items */
-            Iterator<AccountInfo> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                AccountInfo myCurr = myIterator.next();
-
-                /* If this is an infoItem */
-                if (myCurr.getInfoType().isLink()) {
-                    /* Resolve the link */
-                    myCurr.resolveLink();
-                }
-            }
         }
     }
 }

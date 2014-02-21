@@ -25,24 +25,34 @@ package net.sourceforge.joceanus.jmoneywise.data;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.EditState;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
+import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Portfolio class.
  */
 public class Portfolio
-        extends AssetBase<Portfolio> {
+        extends AssetBase<Portfolio>
+        implements InfoSetItem<MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -74,6 +84,16 @@ public class Portfolio
     public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
 
     /**
+     * PortfolioInfoSet field Id.
+     */
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+
+    /**
+     * Bad InfoSet Error Text.
+     */
+    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
      * Holding Invalid Error Text.
      */
     private static final String ERROR_BADHOLD = NLS_BUNDLE.getString("ErrorBadHolding");
@@ -82,6 +102,21 @@ public class Portfolio
      * Holding Closed Error Text.
      */
     private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
+
+    /**
+     * Do we have an InfoSet.
+     */
+    private final boolean hasInfoSet;
+
+    /**
+     * Should we use infoSet for DataState etc.
+     */
+    private final boolean useInfoSet;
+
+    /**
+     * PortfolioInfoSet.
+     */
+    private final PortfolioInfoSet theInfoSet;
 
     @Override
     public JDataFields declareFields() {
@@ -100,6 +135,110 @@ public class Portfolio
 
         /* Pass call on */
         return super.includeXmlField(pField);
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_INFOSET.equals(pField)) {
+            return hasInfoSet
+                             ? theInfoSet
+                             : JDataFieldValue.SKIP;
+        }
+
+        /* Handle infoSet fields */
+        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        if ((theInfoSet != null) && (myClass != null)) {
+            return theInfoSet.getFieldValue(pField);
+        }
+
+        /* Pass onwards */
+        return super.getFieldValue(pField);
+    }
+
+    @Override
+    public PortfolioInfoSet getInfoSet() {
+        return theInfoSet;
+    }
+
+    /**
+     * Obtain WebSite.
+     * @return the webSite
+     */
+    public char[] getWebSite() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain CustNo.
+     * @return the customer #
+     */
+    public char[] getCustNo() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain UserId.
+     * @return the userId
+     */
+    public char[] getUserId() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain Password.
+     * @return the password
+     */
+    public char[] getPassword() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain SortCode.
+     * @return the sort code
+     */
+    public char[] getSortCode() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain Reference.
+     * @return the reference
+     */
+    public char[] getReference() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain Account.
+     * @return the account
+     */
+    public char[] getAccount() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
+                         : null;
+    }
+
+    /**
+     * Obtain Notes.
+     * @return the notes
+     */
+    public char[] getNotes() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
+                         : null;
     }
 
     /**
@@ -200,6 +339,115 @@ public class Portfolio
         return (PortfolioList) super.getList();
     }
 
+    @Override
+    public DataState getState() {
+        /* Pop history for self */
+        DataState myState = super.getState();
+
+        /* If we should use the InfoSet */
+        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public EditState getEditState() {
+        /* Pop history for self */
+        EditState myState = super.getEditState();
+
+        /* If we should use the InfoSet */
+        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getEditState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public boolean hasHistory() {
+        /* Check for history for self */
+        boolean hasHistory = super.hasHistory();
+
+        /* If we should use the InfoSet */
+        if ((!hasHistory) && (useInfoSet)) {
+            /* Check history for infoSet */
+            hasHistory = theInfoSet.hasHistory();
+        }
+
+        /* Return details */
+        return hasHistory;
+    }
+
+    @Override
+    public void pushHistory() {
+        /* Push history for self */
+        super.pushHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Push history for infoSet */
+            theInfoSet.pushHistory();
+        }
+    }
+
+    @Override
+    public void popHistory() {
+        /* Pop history for self */
+        super.popHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Pop history for infoSet */
+            theInfoSet.popHistory();
+        }
+    }
+
+    @Override
+    public boolean checkForHistory() {
+        /* Check for history for self */
+        boolean bChanges = super.checkForHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Check for history for infoSet */
+            bChanges |= theInfoSet.checkForHistory();
+        }
+
+        /* return result */
+        return bChanges;
+    }
+
+    @Override
+    public Difference fieldChanged(final JDataField pField) {
+        /* Handle InfoSet fields */
+        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        if (myClass != null) {
+            return (useInfoSet)
+                               ? theInfoSet.fieldChanged(myClass)
+                               : Difference.IDENTICAL;
+        }
+
+        /* Check super fields */
+        return super.fieldChanged(pField);
+    }
+
+    @Override
+    public void setDeleted(final boolean bDeleted) {
+        /* Pass call to infoSet if required */
+        if (useInfoSet) {
+            theInfoSet.setDeleted(bDeleted);
+        }
+
+        /* Pass call onwards */
+        super.setDeleted(bDeleted);
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list
@@ -209,6 +457,27 @@ public class Portfolio
                         final Portfolio pPortfolio) {
         /* Set standard values */
         super(pList, pPortfolio);
+
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+                theInfoSet.cloneDataInfoSet(pPortfolio.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
     }
 
     /**
@@ -248,6 +517,11 @@ public class Portfolio
             /* Pass on exception */
             throw new JMoneyWiseDataException(this, ERROR_CREATEITEM, e);
         }
+
+        /* Create the InfoSet */
+        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
@@ -256,6 +530,12 @@ public class Portfolio
      */
     public Portfolio(final PortfolioList pList) {
         super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new PortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
+        setClosed(Boolean.FALSE);
     }
 
     @Override
@@ -292,6 +572,95 @@ public class Portfolio
         setValueTaxFree(isTaxFree);
     }
 
+    /**
+     * Set a new WebSite.
+     * @param pWebSite the new webSite
+     * @throws JOceanusException on error
+     */
+    public void setWebSite(final char[] pWebSite) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
+    }
+
+    /**
+     * Set a new CustNo.
+     * @param pCustNo the new custNo
+     * @throws JOceanusException on error
+     */
+    public void setCustNo(final char[] pCustNo) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
+    }
+
+    /**
+     * Set a new UserId.
+     * @param pUserId the new userId
+     * @throws JOceanusException on error
+     */
+    public void setUserId(final char[] pUserId) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.USERID, pUserId);
+    }
+
+    /**
+     * Set a new Password.
+     * @param pPassword the new password
+     * @throws JOceanusException on error
+     */
+    public void setPassword(final char[] pPassword) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
+    }
+
+    /**
+     * Set a new SortCode.
+     * @param pSortCode the new sort code
+     * @throws JOceanusException on error
+     */
+    public void setSortCode(final char[] pSortCode) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
+    }
+
+    /**
+     * Set a new Account.
+     * @param pAccount the new account
+     * @throws JOceanusException on error
+     */
+    public void setAccount(final char[] pAccount) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
+    }
+
+    /**
+     * Set a new Reference.
+     * @param pReference the new reference
+     * @throws JOceanusException on error
+     */
+    public void setReference(final char[] pReference) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
+    }
+
+    /**
+     * Set a new Notes.
+     * @param pNotes the new notes
+     * @throws JOceanusException on error
+     */
+    public void setNotes(final char[] pNotes) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.NOTES, pNotes);
+    }
+
+    /**
+     * Set an infoSet value.
+     * @param pInfoClass the class of info to set
+     * @param pValue the value to set
+     * @throws JOceanusException on error
+     */
+    private void setInfoSetValue(final AccountInfoClass pInfoClass,
+                                 final Object pValue) throws JOceanusException {
+        /* Reject if there is no infoSet */
+        if (!hasInfoSet) {
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+        }
+
+        /* Set the value */
+        theInfoSet.setValue(pInfoClass, pValue);
+    }
+
     @Override
     public void validate() {
         Deposit myHolding = getHolding();
@@ -312,6 +681,12 @@ public class Portfolio
             if (!isClosed() && myHolding.isClosed()) {
                 addError(ERROR_HOLDCLOSED, FIELD_HOLDING);
             }
+        }
+
+        /* If we have an infoSet */
+        if (theInfoSet != null) {
+            /* Validate the InfoSet */
+            theInfoSet.validate();
         }
 
         /* Set validation flag */
@@ -368,6 +743,16 @@ public class Portfolio
             return FIELD_DEFS;
         }
 
+        /**
+         * The PortfolioInfo List.
+         */
+        private PortfolioInfoList theInfoList = null;
+
+        /**
+         * The AccountInfoType list.
+         */
+        private AccountInfoTypeList theInfoTypeList = null;
+
         @Override
         public String listName() {
             return LIST_NAME;
@@ -381,6 +766,28 @@ public class Portfolio
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
+        }
+
+        /**
+         * Obtain the portfolioInfoList.
+         * @return the portfolio info list
+         */
+        public PortfolioInfoList getPortfolioInfo() {
+            if (theInfoList == null) {
+                theInfoList = getDataSet().getPortfolioInfo();
+            }
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the accountInfoTypeList.
+         * @return the account info type list
+         */
+        public AccountInfoTypeList getActInfoTypes() {
+            if (theInfoTypeList == null) {
+                theInfoTypeList = getDataSet().getActInfoTypes();
+            }
+            return theInfoTypeList;
         }
 
         /**
@@ -418,6 +825,13 @@ public class Portfolio
         public PortfolioList deriveEditList() {
             /* Build an empty List */
             PortfolioList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getActInfoTypes();
+
+            /* Create info List */
+            PortfolioInfoList myPortInfo = getPortfolioInfo();
+            myList.theInfoList = myPortInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the portfolios */
             Iterator<Portfolio> myIterator = iterator();
@@ -479,6 +893,19 @@ public class Portfolio
 
             /* Add to the list */
             append(myPortfolio);
+
+            /* Loop through the info items */
+            if (pValues.hasInfoItems()) {
+                /* Loop through the items */
+                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                while (myIterator.hasNext()) {
+                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+
+                    /* Build info */
+                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPortfolio);
+                    theInfoList.addValuesItem(myValues);
+                }
+            }
 
             /* Return it */
             return myPortfolio;

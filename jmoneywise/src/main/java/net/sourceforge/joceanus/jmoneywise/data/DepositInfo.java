@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -38,20 +38,20 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Representation of an information extension of an event.
+ * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class EventInfo
-        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+public class DepositInfo
+        extends DataInfo<DepositInfo, Deposit, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTINFO.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.DEPOSITINFO.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTINFO.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.DEPOSITINFO.getListName();
 
     /**
      * Local Report fields.
@@ -64,75 +64,53 @@ public class EventInfo
     }
 
     @Override
-    public EventInfoType getInfoType() {
-        return getInfoType(getValueSet(), EventInfoType.class);
+    public AccountInfoType getInfoType() {
+        return getInfoType(getValueSet(), AccountInfoType.class);
     }
 
     @Override
-    public EventInfoClass getInfoClass() {
+    public AccountInfoClass getInfoClass() {
         return getInfoType().getInfoClass();
     }
 
     @Override
-    public Event getOwner() {
-        return getOwner(getValueSet(), Event.class);
+    public Deposit getOwner() {
+        return getOwner(getValueSet(), Deposit.class);
     }
 
     /**
-     * Obtain Account.
-     * @return the Account
+     * Obtain EventCategory.
+     * @return the EventCategory
      */
-    public Account getAccount() {
-        return getAccount(getValueSet());
-    }
-
-    /**
-     * Obtain Event Tag.
-     * @return the Event Tag
-     */
-    public EventTag getEventTag() {
-        return getEventTag(getValueSet());
+    public EventCategory getEventCategory() {
+        return getEventCategory(getValueSet());
     }
 
     /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
-     * @return the Money
+     * @return the InfoType
      */
-    public static EventInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, EventInfoType.class);
+    public static AccountInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, AccountInfoType.class);
     }
 
     /**
-     * Obtain Linked Account.
+     * Obtain Linked EventCategory.
      * @param pValueSet the valueSet
-     * @return the Account
+     * @return the EventCategory
      */
-    public static Account getAccount(final ValueSet pValueSet) {
+    public static EventCategory getEventCategory(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
-                                     : pValueSet.getValue(FIELD_LINK, Account.class);
-    }
-
-    /**
-     * Obtain Linked EventTag.
-     * @param pValueSet the valueSet
-     * @return the EventTag
-     */
-    public static EventTag getEventTag(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, EventTag.class);
+                                     : pValueSet.getValue(FIELD_LINK, EventCategory.class);
     }
 
     @Override
     public String getLinkName() {
         DataItem<?> myItem = getLink(DataItem.class);
-        if (myItem instanceof Account) {
-            return ((Account) myItem).getName();
-        }
-        if (myItem instanceof EventTag) {
-            return ((EventTag) myItem).getName();
+        if (myItem instanceof EventCategory) {
+            return ((EventCategory) myItem).getName();
         }
         return null;
     }
@@ -143,13 +121,13 @@ public class EventInfo
     }
 
     @Override
-    public EventInfo getBase() {
-        return (EventInfo) super.getBase();
+    public DepositInfo getBase() {
+        return (DepositInfo) super.getBase();
     }
 
     @Override
-    public EventInfoList getList() {
-        return (EventInfoList) super.getList();
+    public DepositInfoList getList() {
+        return (DepositInfoList) super.getList();
     }
 
     /**
@@ -157,8 +135,8 @@ public class EventInfo
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected EventInfo(final EventInfoList pList,
-                        final EventInfo pInfo) {
+    protected DepositInfo(final DepositInfoList pList,
+                          final DepositInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
         setControlKey(pList.getControlKey());
@@ -167,19 +145,19 @@ public class EventInfo
     /**
      * Edit Constructor.
      * @param pList the list
-     * @param pEvent the event
+     * @param pDeposit the deposit
      * @param pType the type
      */
-    private EventInfo(final EventInfoList pList,
-                      final Event pEvent,
-                      final EventInfoType pType) {
+    private DepositInfo(final DepositInfoList pList,
+                        final Deposit pDeposit,
+                        final AccountInfoType pType) {
         /* Initialise the item */
         super(pList);
         setControlKey(pList.getControlKey());
 
         /* Record the Detail */
         setValueInfoType(pType);
-        setValueOwner(pEvent);
+        setValueOwner(pDeposit);
     }
 
     /**
@@ -188,8 +166,8 @@ public class EventInfo
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private EventInfo(final EventInfoList pList,
-                      final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private DepositInfo(final DepositInfoList pList,
+                        final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -197,14 +175,14 @@ public class EventInfo
         try {
             /* Resolve links */
             MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
-            resolveDataLink(FIELD_OWNER, myData.getEvents());
+            resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
+            resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
 
-            /* Access the EventInfoSet and register this data */
-            EventInfoSet mySet = getOwner().getInfoSet();
+            /* Access the DepositInfoSet and register this data */
+            DepositInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (JOceanusException e) {
@@ -215,18 +193,18 @@ public class EventInfo
 
     @Override
     public void deRegister() {
-        /* Access the EventInfoSet and register this value */
-        EventInfoSet mySet = getOwner().getInfoSet();
+        /* Access the DepositInfoSet and register this value */
+        DepositInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
     /**
      * Compare this data to another to establish sort order.
-     * @param pThat The EventInfo to compare to
+     * @param pThat The AccountInfo to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
-    public int compareTo(final EventInfo pThat) {
+    public int compareTo(final DepositInfo pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -235,7 +213,7 @@ public class EventInfo
             return -1;
         }
 
-        /* Compare the Events */
+        /* Compare the Deposits */
         int iDiff = getOwner().compareTo(pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
@@ -258,14 +236,14 @@ public class EventInfo
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
-        resolveDataLink(FIELD_OWNER, myData.getEvents());
+        resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
+        resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
         /* Resolve any link value */
         resolveLink();
 
-        /* Access the EventInfoSet and register this data */
-        EventInfoSet mySet = getOwner().getInfoSet();
+        /* Access the DepositInfoSet and register this data */
+        DepositInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -275,7 +253,7 @@ public class EventInfo
      */
     private void resolveLink() throws JOceanusException {
         /* If we have a link */
-        EventInfoType myType = getInfoType();
+        AccountInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
             MoneyWiseData myData = getDataSet();
@@ -284,16 +262,10 @@ public class EventInfo
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
-                case THIRDPARTY:
-                    resolveDataLink(FIELD_LINK, myData.getAccounts());
+                case AUTOEXPENSE:
+                    resolveDataLink(FIELD_LINK, myData.getEventCategories());
                     if (myLinkId == null) {
-                        setValueValue(getAccount().getId());
-                    }
-                    break;
-                case EVENTTAG:
-                    resolveDataLink(FIELD_LINK, myData.getEventClasses());
-                    if (myLinkId == null) {
-                        setValueValue(getEventTag().getId());
+                        setValueValue(getEventCategory().getId());
                     }
                     break;
                 default:
@@ -303,28 +275,28 @@ public class EventInfo
     }
 
     /**
-     * Update eventInfo from an eventInfo extract.
-     * @param pEventInfo the changed eventInfo
+     * Update depositInfo from a depositInfo extract.
+     * @param pInfo the changed depositInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pEventInfo) {
-        /* Can only update from EventInfo */
-        if (!(pEventInfo instanceof EventInfo)) {
+    public boolean applyChanges(final DataItem<?> pInfo) {
+        /* Can only update from DepositInfo */
+        if (!(pInfo instanceof DepositInfo)) {
             return false;
         }
 
-        /* Access as EventInfo */
-        EventInfo myEventInfo = (EventInfo) pEventInfo;
+        /* Access as DepositInfo */
+        DepositInfo myDepInfo = (DepositInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myEventInfo.getField())) {
-            setValueValue(myEventInfo.getField());
+        if (!Difference.isEqual(getField(), myDepInfo.getField())) {
+            setValueValue(myDepInfo.getField());
             if (getInfoType().isLink()) {
-                setValueLink(myEventInfo.getLink(DataItem.class));
+                setValueLink(myDepInfo.getLink(DataItem.class));
             }
         }
 
@@ -339,11 +311,8 @@ public class EventInfo
 
         /* Switch on info class */
         switch (getInfoClass()) {
-            case THIRDPARTY:
-                getAccount().touchItem(getOwner());
-                break;
-            case EVENTTAG:
-                getEventTag().touchItem(getOwner());
+            case AUTOEXPENSE:
+                getEventCategory().touchItem(this);
                 break;
             default:
                 break;
@@ -351,10 +320,10 @@ public class EventInfo
     }
 
     /**
-     * EventInfoList.
+     * DepositInfoList.
      */
-    public static class EventInfoList
-            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+    public static class DepositInfoList
+            extends DataInfoList<DepositInfo, Deposit, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -372,7 +341,7 @@ public class EventInfo
 
         @Override
         public JDataFields getItemFields() {
-            return EventInfo.FIELD_DEFS;
+            return DepositInfo.FIELD_DEFS;
         }
 
         @Override
@@ -384,7 +353,7 @@ public class EventInfo
          * Set base list for Edit InfoList.
          * @param pBase the base list
          */
-        protected void setBase(final EventInfoList pBase) {
+        protected void setBase(final DepositInfoList pBase) {
             /* Set the style and base */
             setStyle(ListStyle.EDIT);
             super.setBase(pBase);
@@ -394,53 +363,53 @@ public class EventInfo
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */
-        protected EventInfoList(final MoneyWiseData pData) {
-            super(EventInfo.class, pData, MoneyWiseDataType.EVENTINFO, ListStyle.CORE);
+        protected DepositInfoList(final MoneyWiseData pData) {
+            super(DepositInfo.class, pData, MoneyWiseDataType.DEPOSITINFO, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventInfoList(final EventInfoList pSource) {
+        private DepositInfoList(final DepositInfoList pSource) {
             super(pSource);
         }
 
         @Override
-        public EventInfoList getEmptyList(final ListStyle pStyle) {
-            EventInfoList myList = new EventInfoList(this);
+        protected DepositInfoList getEmptyList(final ListStyle pStyle) {
+            DepositInfoList myList = new DepositInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventInfoList) super.cloneList(pDataSet);
+        public DepositInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (DepositInfoList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventInfo addCopyItem(final DataItem<?> pItem) {
-            /* Can only clone an EventInfo */
-            if (!(pItem instanceof EventInfo)) {
+        public DepositInfo addCopyItem(final DataItem<?> pItem) {
+            /* Can only clone a DepositInfo */
+            if (!(pItem instanceof DepositInfo)) {
                 throw new UnsupportedOperationException();
             }
 
-            EventInfo myInfo = new EventInfo(this, (EventInfo) pItem);
+            DepositInfo myInfo = new DepositInfo(this, (DepositInfo) pItem);
             add(myInfo);
             return myInfo;
         }
 
         @Override
-        public EventInfo addNewItem() {
+        public DepositInfo addNewItem() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        protected EventInfo addNewItem(final Event pOwner,
-                                       final EventInfoType pInfoType) {
+        protected DepositInfo addNewItem(final Deposit pOwner,
+                                         final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            EventInfo myInfo = new EventInfo(this, pOwner, pInfoType);
-            append(myInfo);
+            DepositInfo myInfo = new DepositInfo(this, pOwner, pInfoType);
+            add(myInfo);
 
             /* return it */
             return myInfo;
@@ -448,8 +417,8 @@ public class EventInfo
 
         @Override
         public void addInfoItem(final Integer pId,
-                                final Event pEvent,
-                                final EventInfoClass pInfoClass,
+                                final Deposit pDeposit,
+                                final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
@@ -460,35 +429,35 @@ public class EventInfo
             MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
+            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JMoneyWiseDataException(pEvent, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
+                throw new JMoneyWiseDataException(pDeposit, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TaxYearInfo.OBJECT_NAME);
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
-            myValues.addValue(FIELD_OWNER, pEvent);
+            myValues.addValue(FIELD_OWNER, pDeposit);
             myValues.addValue(FIELD_VALUE, pValue);
 
-            /* Create a new Event Info */
-            EventInfo myInfo = new EventInfo(this, myValues);
+            /* Create a new Deposit Info */
+            DepositInfo myInfo = new DepositInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(myInfo.getId())) {
+            if (!isIdUnique(pId)) {
                 myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
                 throw new JMoneyWiseDataException(myInfo, ERROR_VALIDATION);
             }
 
-            /* Add the Event Info to the list */
+            /* Add the Info to the list */
             append(myInfo);
         }
 
         @Override
-        public EventInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public DepositInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the info */
-            EventInfo myInfo = new EventInfo(this, pValues);
+            DepositInfo myInfo = new DepositInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -509,9 +478,9 @@ public class EventInfo
          */
         public void resolveValueLinks() throws JOceanusException {
             /* Loop through the Info items */
-            Iterator<EventInfo> myIterator = iterator();
+            Iterator<DepositInfo> myIterator = iterator();
             while (myIterator.hasNext()) {
-                EventInfo myCurr = myIterator.next();
+                DepositInfo myCurr = myIterator.next();
 
                 /* If this is an infoItem */
                 if (myCurr.getInfoType().isLink()) {

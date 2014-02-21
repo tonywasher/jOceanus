@@ -332,7 +332,7 @@ public class TaxYearInfo
 
         @Override
         public TaxYearInfo addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
@@ -388,6 +389,7 @@ public class SheetAccount
         SecurityList mySecurityList = pData.getSecurities();
         PayeeList myPayeeList = pData.getPayees();
         DepositList myDepositList = pData.getDeposits();
+        DepositInfoList myDepInfoList = pData.getDepositInfo();
         PortfolioList myPortfolioList = pData.getPortfolios();
 
         /* Access name and type */
@@ -493,10 +495,33 @@ public class SheetAccount
                     /* Add the value into the list */
                     mySecurityList.addValuesItem(myValues);
                 } else {
-                    /* Skip alias,portfolio and holding columns */
+                    /* Skip portfolio and holding columns */
                     iAdjust++;
                     iAdjust++;
+
+                    /* Handle maturity which may be missing */
+                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+                    JDateDay myMaturity = null;
+                    if (myCell != null) {
+                        myMaturity = myCell.getDateValue();
+                    }
+
+                    /* Handle opening balance which may be missing */
+                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+                    String myBalance = null;
+                    if (myCell != null) {
+                        myBalance = myCell.getStringValue();
+                    }
+
+                    /* Skip symbol */
                     iAdjust++;
+
+                    /* Handle autoExpense which may be missing */
+                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+                    String myAutoExpense = null;
+                    if (myCell != null) {
+                        myAutoExpense = myCell.getStringValue();
+                    }
 
                     /* Build data values */
                     DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
@@ -509,7 +534,12 @@ public class SheetAccount
                     myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
 
                     /* Add the value into the list */
-                    myDepositList.addValuesItem(myValues);
+                    Deposit myDeposit = myDepositList.addValuesItem(myValues);
+
+                    /* Add information relating to the deposit */
+                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.MATURITY, myMaturity);
+                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.OPENINGBALANCE, myBalance);
+                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
                 }
             } else {
                 throw new JMoneyWiseLogicException("Unexpected Account");
@@ -527,6 +557,7 @@ public class SheetAccount
         SecurityList mySecurityList = pData.getSecurities();
         PayeeList myPayeeList = pData.getPayees();
         DepositList myDepositList = pData.getDeposits();
+        DepositInfoList myDepInfoList = pData.getDepositInfo();
         PortfolioList myPortfolioList = pData.getPortfolios();
 
         /* Sort the payee list and validate */
@@ -539,9 +570,10 @@ public class SheetAccount
         mySecurityList.reSort();
         mySecurityList.validateOnLoad();
 
-        /* Sort the portfolio list and validate */
+        /* Sort the deposit list and validate */
         myDepositList.resolveDataSetLinks();
         myDepositList.reSort();
+        myDepInfoList.resolveDataSetLinks();
         myDepositList.validateOnLoad();
 
         /* Sort the portfolio list and validate */

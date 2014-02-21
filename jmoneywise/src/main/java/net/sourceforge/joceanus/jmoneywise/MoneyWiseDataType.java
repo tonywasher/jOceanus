@@ -128,7 +128,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
      * PayeeInfo.
      */
-    // PAYEEINFO,
+    PAYEEINFO,
 
     /**
      * Securities.
@@ -138,7 +138,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
      * SecurityInfo.
      */
-    // SECURITYINFO,
+    SECURITYINFO,
 
     /**
      * Deposit.
@@ -148,7 +148,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
      * DepositInfo.
      */
-    // DEPOSITINFO,
+    DEPOSITINFO,
 
     /**
      * Portfolio.
@@ -158,7 +158,7 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
      * PortfolioInfo.
      */
-    // PORTFOLIOINFO,
+    PORTFOLIOINFO,
 
     /**
      * Account.

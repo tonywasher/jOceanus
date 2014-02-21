@@ -137,9 +137,6 @@ public class SheetPayee
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the payees */
-        theList.validateOnLoad();
     }
 
     /**

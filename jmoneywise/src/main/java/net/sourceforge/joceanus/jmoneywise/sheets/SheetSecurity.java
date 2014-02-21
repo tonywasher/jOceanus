@@ -159,9 +159,6 @@ public class SheetSecurity
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the securities */
-        theList.validateOnLoad();
     }
 
     /**

@@ -74,10 +74,14 @@ public class MoneyWiseDatabase
         addTable(new TableTaxYearInfo(this));
         addTable(new TableExchangeRate(this));
         addTable(new TablePayee(this));
+        addTable(new TablePayeeInfo(this));
         addTable(new TableSecurity(this));
+        addTable(new TableSecurityInfo(this));
         addTable(new TableDeposit(this));
+        addTable(new TableDepositInfo(this));
         addTable(new TableAccount(this));
         addTable(new TablePortfolio(this));
+        addTable(new TablePortfolioInfo(this));
         addTable(new TableAccountRate(this));
         addTable(new TableSecurityPrice(this));
         addTable(new TableAccountInfo(this));

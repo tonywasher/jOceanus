@@ -166,9 +166,6 @@ public class SheetDeposit
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the deposits */
-        theList.validateOnLoad();
     }
 
     /**

@@ -116,8 +116,5 @@ public class TablePayee
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the payees */
-        theList.validateOnLoad();
     }
 }

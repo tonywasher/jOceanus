@@ -132,8 +132,5 @@ public class TableDeposit
         /* Resolve links and sort the data */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the deposits */
-        theList.validateOnLoad();
     }
 }

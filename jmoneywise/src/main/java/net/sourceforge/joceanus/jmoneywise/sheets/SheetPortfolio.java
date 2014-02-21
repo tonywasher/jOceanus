@@ -144,9 +144,6 @@ public class SheetPortfolio
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
-
-        /* Validate the portfolios */
-        theList.validateOnLoad();
     }
 
     /**
