@@ -30,15 +30,15 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.BranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -138,7 +138,8 @@ public class VersionMgr {
             /* Determine the source to copy from */
             SVNURL mySrcURL = pSource.getURL();
             SVNCopySource mySource = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, mySrcURL);
-            SVNCopySource[] mySrcs = new SVNCopySource[] { mySource };
+            SVNCopySource[] mySrcs = new SVNCopySource[]
+            { mySource };
 
             /* Copy the source tag to the new branch */
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
@@ -182,7 +183,8 @@ public class VersionMgr {
             /* Determine the source to copy from */
             SVNURL mySrcURL = pSource.getURL();
             SVNCopySource mySource = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, mySrcURL);
-            SVNCopySource[] mySrcs = new SVNCopySource[] { mySource };
+            SVNCopySource[] mySrcs = new SVNCopySource[]
+            { mySource };
 
             /* Copy the source branch to the new tag */
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
@@ -209,18 +211,18 @@ public class VersionMgr {
         /* Loop through branches */
         for (SvnBranch myBranch : pBranches) {
             /* If the branch is tag-gable */
-            if (myBranch.isTaggable()) {
-                /* Determine the new tag */
-                myTag = myBranch.nextTag();
+            // if (myBranch.isTaggable()) {
+            /* Determine the new tag */
+            // myTag = myBranch.nextTag();
 
-                /* Create the tag */
-                createTag(myTag, myBranch);
+            /* Create the tag */
+            // createTag(myTag, myBranch);
 
-                /* else not tag-able */
-            } else {
-                /* Just use latest tag */
-                myTag = myBranch.getTagList().latestTag();
-            }
+            /* else not tag-able */
+            // } else {
+            /* Just use latest tag */
+            myTag = myBranch.getTagList().latestTag();
+            // }
 
             /* Add it to the list */
             myList.add(myTag);
@@ -241,7 +243,7 @@ public class VersionMgr {
      * @throws JOceanusException on error
      */
     public List<SvnBranch> createBranches(final Collection<SvnTag> pTags,
-                                       final BranchOpType pBranchType) throws JOceanusException {
+                                          final BranchOpType pBranchType) throws JOceanusException {
         /* Create the list of branches */
         List<SvnBranch> myList = new ArrayList<SvnBranch>();
 
@@ -250,7 +252,7 @@ public class VersionMgr {
             /* Determine the new branch */
             SvnBranch myBranch = myTag.getBranch();
             SvnComponent myComp = myBranch.getComponent();
-            SvnBranchList myBranches = myComp.getBranchList();
+            SvnBranchList myBranches = myComp.getBranches();
             myBranch = myBranches.nextBranch(myTag.getBranch(), pBranchType);
 
             /* Create the branch */

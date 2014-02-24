@@ -21,7 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * Classes to manage the POM file.
+ * Package to provide a framework for source control data.
  */
-package net.sourceforge.joceanus.jthemis.svn.project;
+package net.sourceforge.joceanus.jthemis.scm.data;
 

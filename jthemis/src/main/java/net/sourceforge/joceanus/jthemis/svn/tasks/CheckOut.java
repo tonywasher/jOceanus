@@ -28,8 +28,8 @@ import java.util.Collection;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisCancelException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy;
@@ -111,7 +111,7 @@ public class CheckOut {
             /* Checkout the branch */
             SVNURL myURL = pBranch.getURL();
             theReport.setNewStage(pBranch.getComponent().getName());
-            theReport.setNumStages(pBranch.getNumElements());
+            // theReport.setNumStages(pBranch.getNumElements());
             myUpdate.doCheckout(myURL, pPath, SVNRevision.HEAD, pRevision, SVNDepth.INFINITY, false);
         } catch (SVNException e) {
             throw new JThemisIOException("Failed to checkOut branch "
@@ -170,7 +170,8 @@ public class CheckOut {
         SVNWCClient myClient = theMgr.getWCClient();
 
         /* Allocate single path array */
-        File[] myPaths = { pPath };
+        File[] myPaths =
+        { pPath };
 
         /* Protect against exceptions */
         try {

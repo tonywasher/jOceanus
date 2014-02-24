@@ -25,13 +25,10 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
 
@@ -50,7 +47,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * @author Tony Washer
  */
 public final class SvnComponent
-        implements JDataContents, Comparable<SvnComponent> {
+        extends ScmComponent<SvnComponent, SvnRepository> {
     /**
      * The trunk directory.
      */
@@ -74,87 +71,20 @@ public final class SvnComponent
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponent.class.getSimpleName());
-
-    /**
-     * Repository field id.
-     */
-    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
-
-    /**
-     * Name field id.
-     */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
-
-    /**
-     * Branches field id.
-     */
-    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
-
-    @Override
-    public String formatObject() {
-        return theName;
-    }
+    private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponent.class.getSimpleName(), ScmComponent.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_NAME.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_BRAN.equals(pField)) {
-            return theBranches;
-        }
-
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
-    }
-
-    /**
-     * Parent Repository.
-     */
-    private final SvnRepository theRepository;
-
-    /**
-     * Component Name.
-     */
-    private final String theName;
-
-    /**
-     * BranchList.
-     */
-    private final SvnBranchList theBranches;
-
-    /**
-     * Get the repository for this component.
-     * @return the repository
-     */
-    public SvnRepository getRepository() {
-        return theRepository;
-    }
-
-    /**
-     * Obtain the component name.
-     * @return the component name
-     */
-    public String getName() {
-        return theName;
-    }
-
     /**
      * Get the branch list for this branch.
      * @return the branch list
      */
-    public SvnBranchList getBranchList() {
-        return theBranches;
+    @Override
+    public SvnBranchList getBranches() {
+        return (SvnBranchList) super.getBranches();
     }
 
     /**
@@ -164,12 +94,12 @@ public final class SvnComponent
      */
     protected SvnComponent(final SvnRepository pParent,
                            final String pName) {
-        /* Store values */
-        theName = pName;
-        theRepository = pParent;
+        /* Call super constructor */
+        super(pParent, pName);
 
         /* Create branch list */
-        theBranches = new SvnBranchList(this);
+        SvnBranchList myBranches = new SvnBranchList(this);
+        setBranches(myBranches);
     }
 
     /**
@@ -238,7 +168,7 @@ public final class SvnComponent
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
-        myBuilder.append(theRepository.getPath());
+        myBuilder.append(getRepository().getPath());
 
         /* Build the component directory */
         myBuilder.append(SvnRepository.SEP_URL);
@@ -257,96 +187,24 @@ public final class SvnComponent
         try {
             return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
-            theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
+            getRepository().getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
-    }
-
-    @Override
-    public int compareTo(final SvnComponent pThat) {
-        int iCompare;
-
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the repositories */
-        iCompare = theRepository.compareTo(pThat.theRepository);
-        if (iCompare != 0) {
-            return iCompare;
-        }
-
-        /* Compare names */
-        return theName.compareTo(pThat.theName);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Check that the classes are the same */
-        if (pThat instanceof SvnComponent) {
-            return false;
-        }
-        SvnComponent myThat = (SvnComponent) pThat;
-
-        /* Compare fields */
-        if (!theRepository.equals(myThat.theRepository)) {
-            return false;
-        }
-        return theName.equals(myThat.theName);
-    }
-
-    @Override
-    public int hashCode() {
-        return (theRepository.hashCode() * SvnRepository.HASH_PRIME) + theName.hashCode();
     }
 
     /**
      * List of components.
      */
     public static final class SvnComponentList
-            extends OrderedList<SvnComponent>
-            implements JDataContents {
+            extends ScmComponentList<SvnComponent, SvnRepository> {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponentList.class.getSimpleName());
-
-        /**
-         * Size field id.
-         */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
-
-        @Override
-        public String formatObject() {
-            return "ComponentList(" + size() + ")";
-        }
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnComponentList.class.getSimpleName(), ScmComponentList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-
-            /* Unknown */
-            return JDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -402,7 +260,7 @@ public final class SvnComponent
             while (myIterator.hasNext()) {
                 /* Access the Component */
                 SvnComponent myComponent = myIterator.next();
-                SvnBranchList myBranches = myComponent.getBranchList();
+                SvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());
@@ -430,12 +288,9 @@ public final class SvnComponent
          * @return the relevant branch or Null
          */
         protected SvnBranch locateBranch(final SVNURL pURL) {
-            /* Access list iterator */
+            /* Loop through the components */
             Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
             while (myIterator.hasNext()) {
-                /* Access the Component */
                 SvnComponent myComponent = myIterator.next();
 
                 /* Access branch URL */
@@ -449,7 +304,7 @@ public final class SvnComponent
                 /* If this is parent of the passed URL */
                 if (pURL.getPath().startsWith(myCompURL.getPath())) {
                     /* Look at this components branches */
-                    return myComponent.getBranchList().locateBranch(pURL);
+                    return myComponent.getBranches().locateBranch(pURL);
                 }
             }
 
@@ -457,85 +312,19 @@ public final class SvnComponent
             return null;
         }
 
-        /**
-         * Locate Component.
-         * @param pName the component to locate
-         * @return the relevant component or Null
-         */
-        protected SvnComponent locateComponent(final String pName) {
-            /* Access list iterator */
-            Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Component */
-                SvnComponent myComponent = myIterator.next();
-
-                /* If this is the correct component */
-                if (pName.equals(myComponent.getName())) {
-                    /* Return the component */
-                    return myComponent;
-                }
-            }
-
-            /* Not found */
-            return null;
-        }
-
-        /**
-         * Locate Branch.
-         * @param pComponent the component to locate
-         * @param pVersion the version to locate
-         * @return the relevant branch or Null
-         */
+        @Override
         protected SvnBranch locateBranch(final String pComponent,
                                          final String pVersion) {
-            /* Access list iterator */
-            Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Component */
-                SvnComponent myComponent = myIterator.next();
-
-                /* If this is the correct component */
-                if (pComponent.equals(myComponent.getName())) {
-                    /* Search in this components branches */
-                    return myComponent.getBranchList().locateBranch(pVersion);
-                }
-            }
-
-            /* Not found */
-            return null;
+            /* Pass call on */
+            return (SvnBranch) super.locateBranch(pComponent, pVersion);
         }
 
-        /**
-         * Locate Tag.
-         * @param pComponent the component to locate
-         * @param pVersion the version to locate
-         * @param pTag the tag to locate
-         * @return the relevant tag or Null
-         */
+        @Override
         protected SvnTag locateTag(final String pComponent,
                                    final String pVersion,
                                    final int pTag) {
-            /* Access list iterator */
-            Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Component */
-                SvnComponent myComponent = myIterator.next();
-
-                /* If this is the correct component */
-                if (pComponent.equals(myComponent.getName())) {
-                    /* Search in this components branches */
-                    return myComponent.getBranchList().locateTag(pVersion, pTag);
-                }
-            }
-
-            /* Not found */
-            return null;
+            /* Pass call on */
+            return (SvnTag) super.locateTag(pComponent, pVersion, pTag);
         }
 
         /**
@@ -544,16 +333,13 @@ public final class SvnComponent
          * @throws JOceanusException on error
          */
         private void registerDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Access list iterator */
+            /* Loop through the entries */
             Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
             while (myIterator.hasNext()) {
-                /* Access the Component */
                 SvnComponent myComponent = myIterator.next();
 
                 /* register dependencies */
-                SvnBranchList myBranches = myComponent.getBranchList();
+                SvnBranchList myBranches = myComponent.getBranches();
                 myBranches.registerDependencies(pReport);
             }
         }
@@ -564,14 +350,12 @@ public final class SvnComponent
          * @throws JOceanusException on error
          */
         protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Access list iterator */
+            /* Loop through the entries */
             Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
             while (myIterator.hasNext()) {
                 /* Access the Component and resolve dependencies */
                 SvnComponent myComp = myIterator.next();
-                SvnBranchList myBranches = myComp.getBranchList();
+                SvnBranchList myBranches = myComp.getBranches();
                 myBranches.propagateDependencies(pReport);
             }
         }

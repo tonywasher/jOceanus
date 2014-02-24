@@ -26,22 +26,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent.SvnComponentList;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId;
 
 import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;
@@ -55,12 +51,7 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
  * @author Tony Washer
  */
 public class SvnRepository
-        implements JDataContents, Comparable<SvnRepository> {
-    /**
-     * The Hash Prime.
-     */
-    protected static final int HASH_PRIME = 17;
-
+        extends ScmRepository<SvnRepository> {
     /**
      * URL separator character.
      */
@@ -84,32 +75,12 @@ public class SvnRepository
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnRepository.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(SvnRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
 
     /**
      * Base field id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
-
-    /**
-     * Name field id.
-     */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
-
-    /**
-     * Components field id.
-     */
-    private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
-
-    /**
-     * BranchMap field id.
-     */
-    private static final JDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
-
-    /**
-     * TagMap field id.
-     */
-    private static final JDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
 
     /**
      * HistoryMap field id.
@@ -132,45 +103,18 @@ public class SvnRepository
         if (FIELD_BASE.equals(pField)) {
             return theBase;
         }
-        if (FIELD_NAME.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponents;
-        }
-        if (FIELD_BRNMAP.equals(pField)) {
-            return theBranchMap;
-        }
-        if (FIELD_TAGMAP.equals(pField)) {
-            return theTagMap;
-        }
         if (FIELD_HISTMAP.equals(pField)) {
             return theRevisionHistory;
         }
 
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        /* pass call on */
+        return super.getFieldValue(pField);
     }
-
-    /**
-     * The Logger.
-     */
-    private final Logger theLogger;
-
-    /**
-     * The Preference Manager.
-     */
-    private final PreferenceManager thePreferenceMgr;
 
     /**
      * The Preferences.
      */
     private final SubVersionPreferences thePreferences;
-
-    /**
-     * Repository Name.
-     */
-    private final String theName;
 
     /**
      * Repository Base.
@@ -183,21 +127,6 @@ public class SvnRepository
     private final SvnClientManager theClientMgrPool;
 
     /**
-     * ComponentList.
-     */
-    private final SvnComponentList theComponents;
-
-    /**
-     * Branch Map.
-     */
-    private final Map<MvnProjectId, SvnBranch> theBranchMap;
-
-    /**
-     * Tag Map.
-     */
-    private final Map<MvnProjectId, SvnTag> theTagMap;
-
-    /**
      * RevisionHistory Map.
      */
     private final RevisionHistoryMap theRevisionHistory;
@@ -208,30 +137,6 @@ public class SvnRepository
      */
     public String getBase() {
         return theBase;
-    }
-
-    /**
-     * Obtain the repository name.
-     * @return the name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    /**
-     * Obtain logger.
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return theLogger;
-    }
-
-    /**
-     * Obtain the preference manager.
-     * @return the preference manager
-     */
-    public PreferenceManager getPreferenceMgr() {
-        return thePreferenceMgr;
     }
 
     /**
@@ -258,12 +163,9 @@ public class SvnRepository
         theClientMgrPool.releaseClientMgr(pMgr);
     }
 
-    /**
-     * Get the component list for this repository.
-     * @return the component list
-     */
-    public SvnComponentList getComponentList() {
-        return theComponents;
+    @Override
+    public SvnComponentList getComponents() {
+        return (SvnComponentList) super.getComponents();
     }
 
     /**
@@ -282,26 +184,22 @@ public class SvnRepository
      */
     public SvnRepository(final PreferenceManager pPreferenceMgr,
                          final ReportStatus pReport) throws JOceanusException {
-        /* Store the preference manager */
-        thePreferenceMgr = pPreferenceMgr;
-        theLogger = thePreferenceMgr.getLogger();
-
-        /* Allocate the maps */
-        theBranchMap = new HashMap<MvnProjectId, SvnBranch>();
-        theTagMap = new HashMap<MvnProjectId, SvnTag>();
+        /* Call super constructor */
+        super(pPreferenceMgr);
 
         /* Access the Repository base */
-        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+        thePreferences = pPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access the Repository base */
         theBase = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
-        theName = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME);
+        setName(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME));
 
         /* Create a client manager pool */
         theClientMgrPool = new SvnClientManager(thePreferences);
 
         /* Create component list */
-        theComponents = new SvnComponentList(this);
+        SvnComponentList myComponents = new SvnComponentList(this);
+        setComponents(myComponents);
 
         /* Create RevisionHistoryMap */
         theRevisionHistory = new RevisionHistoryMap(this);
@@ -310,7 +208,7 @@ public class SvnRepository
         pReport.initTask("Analysing components");
 
         /* Discover components */
-        theComponents.discover(pReport);
+        myComponents.discover(pReport);
 
         /* Report completion of pass */
         pReport.initTask("Component Analysis complete");
@@ -364,7 +262,7 @@ public class SvnRepository
         }
 
         /* Compare names */
-        return theName.compareTo(pThat.theName);
+        return super.compareTo(pThat);
     }
 
     @Override
@@ -378,7 +276,7 @@ public class SvnRepository
         }
 
         /* Check that the classes are the same */
-        if (pThat instanceof SvnRepository) {
+        if (!(pThat instanceof SvnRepository)) {
             return false;
         }
         SvnRepository myThat = (SvnRepository) pThat;
@@ -387,48 +285,33 @@ public class SvnRepository
         if (!theBase.equals(myThat.theBase)) {
             return false;
         }
-        return theName.equals(myThat.theName);
+        return super.equals(myThat);
     }
 
     @Override
     public int hashCode() {
-        return (theBase.hashCode() * HASH_PRIME) + theName.hashCode();
+        return (theBase.hashCode() * HASH_PRIME) + super.hashCode();
     }
 
-    /**
-     * Locate Component.
-     * @param pName the component to locate
-     * @return the relevant component or Null
-     */
+    @Override
     public SvnComponent locateComponent(final String pName) {
         /* Locate component in component list */
-        return theComponents.locateComponent(pName);
+        return (SvnComponent) super.locateComponent(pName);
     }
 
-    /**
-     * Locate Branch.
-     * @param pComponent the component to locate
-     * @param pVersion the version to locate
-     * @return the relevant branch or Null
-     */
+    @Override
     public SvnBranch locateBranch(final String pComponent,
                                   final String pVersion) {
         /* Locate branch in component list */
-        return theComponents.locateBranch(pComponent, pVersion);
+        return (SvnBranch) super.locateBranch(pComponent, pVersion);
     }
 
-    /**
-     * Locate Branch.
-     * @param pComponent the component to locate
-     * @param pVersion the version to locate
-     * @param pTag the tag to locate
-     * @return the relevant branch or Null
-     */
+    @Override
     public SvnTag locateTag(final String pComponent,
                             final String pVersion,
                             final int pTag) {
         /* Locate Tag in component list */
-        return theComponents.locateTag(pComponent, pVersion, pTag);
+        return (SvnTag) super.locateTag(pComponent, pVersion, pTag);
     }
 
     /**
@@ -438,49 +321,19 @@ public class SvnRepository
      */
     protected SvnBranch locateBranch(final SVNURL pURL) {
         /* Locate branch in component list */
-        return theComponents.locateBranch(pURL);
+        return getComponents().locateBranch(pURL);
     }
 
-    /**
-     * Locate branch.
-     * @param pId the project id for the branch
-     * @return the branch
-     */
+    @Override
     protected SvnBranch locateBranch(final MvnProjectId pId) {
         /* Lookup mapping */
-        return theBranchMap.get(pId);
+        return (SvnBranch) super.locateBranch(pId);
     }
 
-    /**
-     * Locate tag.
-     * @param pId the project id for the tag
-     * @return the tag
-     */
+    @Override
     protected SvnTag locateTag(final MvnProjectId pId) {
         /* Lookup mapping */
-        return theTagMap.get(pId);
-    }
-
-    /**
-     * Register branch.
-     * @param pId the project id for the branch
-     * @param pBranch the branch
-     */
-    protected void registerBranch(final MvnProjectId pId,
-                                  final SvnBranch pBranch) {
-        /* Store mapping */
-        theBranchMap.put(pId, pBranch);
-    }
-
-    /**
-     * Register tag.
-     * @param pId the project id for the branch
-     * @param pTag the tag
-     */
-    protected void registerTag(final MvnProjectId pId,
-                               final SvnTag pTag) {
-        /* Store mapping */
-        theTagMap.put(pId, pTag);
+        return (SvnTag) super.locateTag(pId);
     }
 
     /**
@@ -525,7 +378,7 @@ public class SvnRepository
                 try {
                     myInput.close();
                 } catch (IOException e) {
-                    theLogger.log(Level.SEVERE, "Close Failure", e);
+                    getLogger().log(Level.SEVERE, "Close Failure", e);
                 }
             }
         }

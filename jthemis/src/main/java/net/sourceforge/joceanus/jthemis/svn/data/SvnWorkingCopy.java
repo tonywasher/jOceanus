@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.UpdateStatus.UpdateStatusList;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;

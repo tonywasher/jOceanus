@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.project;
+package net.sourceforge.joceanus.jthemis.scm.maven;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId.ProjectList;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectList;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;

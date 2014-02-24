@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.project;
+package net.sourceforge.joceanus.jthemis.scm.maven;
 
 import java.util.ArrayList;
 

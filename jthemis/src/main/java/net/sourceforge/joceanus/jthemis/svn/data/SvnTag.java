@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -35,10 +34,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmTag;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.svn.project.MvnProjectId.ProjectStatus;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -52,15 +52,9 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
  * Represents a tag of a branch.
- * @author Tony
  */
 public final class SvnTag
-        implements JDataContents, Comparable<SvnTag> {
-    /**
-     * The tag prefix.
-     */
-    private static final String PREFIX_TAG = "-b";
-
+        extends ScmTag<SvnTag, SvnBranch, SvnComponent, SvnRepository> {
     /**
      * The buffer length.
      */
@@ -69,7 +63,7 @@ public final class SvnTag
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnTag.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(SvnTag.class.getSimpleName(), ScmTag.FIELD_DEFS);
 
     /**
      * Repository field id.
@@ -82,34 +76,9 @@ public final class SvnTag
     private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
     /**
-     * Branch field id.
-     */
-    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
-
-    /**
-     * Name field id.
-     */
-    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
-
-    /**
-     * Project definition field id.
-     */
-    private static final JDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
-
-    /**
      * Dependencies field id.
      */
     private static final JDataField FIELD_DEPENDS = FIELD_DEFS.declareLocalField("Dependencies");
-
-    /**
-     * Revision field id.
-     */
-    private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("Revision");
-
-    @Override
-    public String formatObject() {
-        return getTagName();
-    }
 
     @Override
     public JDataFields getDataFields() {
@@ -125,26 +94,14 @@ public final class SvnTag
         if (FIELD_COMP.equals(pField)) {
             return theComponent;
         }
-        if (FIELD_BRAN.equals(pField)) {
-            return theBranch;
-        }
-        if (FIELD_NAME.equals(pField)) {
-            return getTagName();
-        }
-        if (FIELD_PROJECT.equals(pField)) {
-            return theProject;
-        }
         if (FIELD_DEPENDS.equals(pField)) {
             return (theDependencies.isEmpty())
                                               ? JDataFieldValue.SKIP
                                               : theDependencies;
         }
-        if (FIELD_LREV.equals(pField)) {
-            return theRevision;
-        }
 
-        /* Unknown */
-        return JDataFieldValue.UNKNOWN;
+        /* pass onwards */
+        return super.getFieldValue(pField);
     }
 
     /**
@@ -158,21 +115,6 @@ public final class SvnTag
     private final SvnComponent theComponent;
 
     /**
-     * The Branch to which this Tag belongs.
-     */
-    private final SvnBranch theBranch;
-
-    /**
-     * The Tag number.
-     */
-    private final int theTag;
-
-    /**
-     * The project definition.
-     */
-    private MvnProjectDefinition theProject = null;
-
-    /**
      * The dependency map.
      */
     private Map<SvnComponent, SvnTag> theDependencies;
@@ -183,34 +125,19 @@ public final class SvnTag
     private ProjectStatus theProjectStatus = ProjectStatus.RAW;
 
     /**
-     * The Last Changed Revision.
-     */
-    private final long theRevision;
-
-    /**
      * Constructor.
      * @param pParent the Parent branch
      * @param pTag the tag number
-     * @param pRevision the revision that created this tag
      */
     private SvnTag(final SvnBranch pParent,
-                   final int pTag,
-                   final long pRevision) {
+                   final int pTag) {
+        /* Call super constructor */
+        super(pParent, pTag);
+
         /* Store values */
-        theBranch = pParent;
         theRepository = pParent.getRepository();
         theComponent = pParent.getComponent();
-        theTag = pTag;
-        theRevision = pRevision;
         theDependencies = new HashMap<SvnComponent, SvnTag>();
-    }
-
-    /**
-     * Get the tag name for this tag.
-     * @return the tag name
-     */
-    public String getTagName() {
-        return theBranch.getBranchName() + PREFIX_TAG + theTag;
     }
 
     /**
@@ -230,35 +157,11 @@ public final class SvnTag
     }
 
     /**
-     * Get the branch for this tag.
-     * @return the branch
-     */
-    public SvnBranch getBranch() {
-        return theBranch;
-    }
-
-    /**
-     * Get Project Definition.
-     * @return the project definition
-     */
-    public MvnProjectDefinition getProjectDefinition() {
-        return theProject;
-    }
-
-    /**
      * Get Dependencies.
      * @return the dependencies
      */
     public Map<SvnComponent, SvnTag> getDependencies() {
         return theDependencies;
-    }
-
-    /**
-     * Get the revision for this tag.
-     * @return the revision
-     */
-    public long getRevision() {
-        return theRevision;
     }
 
     /**
@@ -292,73 +195,6 @@ public final class SvnTag
             theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
-    }
-
-    @Override
-    public int compareTo(final SvnTag pThat) {
-        int iCompare;
-
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the branches */
-        iCompare = theBranch.compareTo(pThat.theBranch);
-        if (iCompare != 0) {
-            return iCompare;
-        }
-
-        /* Compare tag numbers */
-        if (theTag < pThat.theTag) {
-            return -1;
-        }
-        if (theTag > pThat.theTag) {
-            return 1;
-        }
-        return 0;
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Check that the classes are the same */
-        if (pThat instanceof SvnTag) {
-            return false;
-        }
-        SvnTag myThat = (SvnTag) pThat;
-
-        /* Compare fields */
-        if (!theBranch.equals(myThat.theBranch)) {
-            return false;
-        }
-        return theTag == myThat.theTag;
-    }
-
-    @Override
-    public int hashCode() {
-        return (theBranch.hashCode() * SvnRepository.HASH_PRIME) + theTag;
-    }
-
-    /**
-     * Clone the definition.
-     * @param pDefinition the definition to clone
-     * @throws JOceanusException on error
-     */
-    public void cloneDefinition(final MvnProjectDefinition pDefinition) throws JOceanusException {
-        /* clone the project definition */
-        theProject = new MvnProjectDefinition(pDefinition);
-        theProject.setSnapshotVersion(getTagName());
     }
 
     /**
@@ -494,46 +330,17 @@ public final class SvnTag
     /**
      * List of tags.
      */
-    public static final class SvnTagList
-            extends OrderedList<SvnTag>
+    public static class SvnTagList
+            extends ScmTagList<SvnTag, SvnBranch, SvnComponent, SvnRepository>
             implements JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagList.class.getSimpleName());
-
-        /**
-         * Size field id.
-         */
-        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
-
-        /**
-         * Last Revision field id.
-         */
-        private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("LastRevision");
-
-        @Override
-        public String formatObject() {
-            return "TagList(" + size() + ")";
-        }
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnTagList.class.getSimpleName(), ScmTagList.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_LREV.equals(pField)) {
-                return theLastRevision;
-            }
-
-            /* Unknown */
-            return JDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -542,46 +349,23 @@ public final class SvnTag
         private final SvnComponent theComponent;
 
         /**
-         * The parent branch.
-         */
-        private final SvnBranch theBranch;
-
-        /**
-         * The prefix.
-         */
-        private final String thePrefix;
-
-        /**
-         * The last revision.
-         */
-        private long theLastRevision = -1;
-
-        /**
-         * Get the last revision for this tag list.
-         * @return the last revision
-         */
-        public long getLastRevision() {
-            return theLastRevision;
-        }
-
-        /**
          * Constructor.
          * @param pParent the parent branch
          */
         protected SvnTagList(final SvnBranch pParent) {
             /* Call super constructor */
-            super(SvnTag.class);
+            super(SvnTag.class, pParent);
 
             /* Store parent for use by entry handler */
-            theBranch = pParent;
             theComponent = (pParent == null)
                                             ? null
                                             : pParent.getComponent();
+        }
 
-            /* Build prefix */
-            thePrefix = (pParent == null)
-                                         ? null
-                                         : theBranch.getBranchName() + PREFIX_TAG;
+        @Override
+        protected SvnTag createNewTag(final SvnBranch pBranch,
+                                      final int pTag) {
+            return new SvnTag(pBranch, pTag);
         }
 
         /**
@@ -606,7 +390,7 @@ public final class SvnTag
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JThemisIOException("Failed to discover tags for " + theBranch.getBranchName(), e);
+                throw new JThemisIOException("Failed to discover tags for " + getBranch().getBranchName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -624,7 +408,7 @@ public final class SvnTag
 
                 /* Parse project file */
                 MvnProjectDefinition myProject = myRepo.parseProjectURL(myTag.getURLPath());
-                myTag.theProject = myProject;
+                myTag.setProjectDefinition(myProject);
 
                 /* Register the tag */
                 if (myProject != null) {
@@ -696,96 +480,6 @@ public final class SvnTag
         }
 
         /**
-         * Locate tag.
-         * @param pTag the tag
-         * @return the relevant tag or Null
-         */
-        public SvnTag locateTag(final SvnTag pTag) {
-            /* Access list iterator */
-            Iterator<SvnTag> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Tag */
-                SvnTag myTag = myIterator.next();
-
-                /* If this is the correct tag */
-                int iCompare = myTag.compareTo(pTag);
-                if (iCompare > 0) {
-                    break;
-                }
-                if (iCompare < 0) {
-                    continue;
-                }
-                return myTag;
-            }
-
-            /* Not found */
-            return null;
-        }
-
-        /**
-         * Locate Tag.
-         * @param pTag the tag to locate
-         * @return the relevant tag or Null
-         */
-        protected SvnTag locateTag(final int pTag) {
-            /* Access list iterator */
-            Iterator<SvnTag> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Tag */
-                SvnTag myTag = myIterator.next();
-
-                /* If this is the correct tag */
-                if (pTag == myTag.theTag) {
-                    /* return the tag */
-                    return myTag;
-                }
-            }
-
-            /* Not found */
-            return null;
-        }
-
-        /**
-         * Determine latest tag.
-         * @return the latestt tag
-         */
-        public SvnTag latestTag() {
-            /* Access list iterator */
-            Iterator<SvnTag> myIterator = iterator();
-            SvnTag myTag = null;
-
-            /* Loop to the last entry */
-            while (myIterator.hasNext()) {
-                /* Access the next tag */
-                myTag = myIterator.next();
-            }
-
-            /* Return the tag */
-            return myTag;
-        }
-
-        /**
-         * Determine next tag.
-         * @return the next tag
-         */
-        public SvnTag nextTag() {
-            /* Access latest tag */
-            SvnTag myTag = latestTag();
-
-            /* Determine the largest current tag */
-            int myTagNo = (myTag == null)
-                                         ? 0
-                                         : myTag.theTag;
-
-            /* Create the tag */
-            return new SvnTag(theBranch, myTagNo + 1, -1);
-        }
-
-        /**
          * The Directory Entry Handler.
          */
         private final class ListDirHandler
@@ -803,20 +497,16 @@ public final class SvnTag
 
                 /* Access the name and ignore if it does not start with correct prefix */
                 String myName = pEntry.getName();
-                if (!myName.startsWith(thePrefix)) {
+                if (!myName.startsWith(getPrefix())) {
                     return;
                 }
-                myName = myName.substring(thePrefix.length());
+                myName = myName.substring(getPrefix().length());
 
                 /* Determine tag and last revision */
                 int myTagNo = Integer.parseInt(myName);
-                long myRev = pEntry.getRevision();
-
-                /* Adjust last revision */
-                theLastRevision = Math.max(theLastRevision, myRev);
 
                 /* Create the tag and add to the list */
-                SvnTag myTag = new SvnTag(theBranch, myTagNo, myRev);
+                SvnTag myTag = new SvnTag(getBranch(), myTagNo);
                 add(myTag);
             }
         }
