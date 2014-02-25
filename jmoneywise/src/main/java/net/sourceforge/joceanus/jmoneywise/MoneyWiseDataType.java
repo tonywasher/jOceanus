@@ -176,6 +176,16 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     ACCOUNTRATE,
 
     /**
+     * DepositRate.
+     */
+    DEPOSITRATE,
+
+    /**
+     * AccountPrice.
+     */
+    ACCOUNTPRICE,
+
+    /**
      * SecurityPrice.
      */
     SECURITYPRICE,

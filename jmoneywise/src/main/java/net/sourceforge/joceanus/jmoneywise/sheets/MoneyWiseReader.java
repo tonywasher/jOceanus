@@ -83,6 +83,8 @@ public class MoneyWiseReader
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetPortfolioInfo(this));
         addSheet(new SheetAccountRate(this));
+        addSheet(new SheetDepositRate(this));
+        addSheet(new SheetAccountPrice(this));
         addSheet(new SheetSecurityPrice(this));
         addSheet(new SheetAccountInfo(this));
         addSheet(new SheetEvent(this));

@@ -26,17 +26,17 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
  * Extension of AccountPrice to cater for spot prices.
  * @author Tony Washer
  */
-public class SpotPrices
+public class SpotSecurityPrices
         implements JDataContents {
     /**
      * Resource Bundle.
@@ -131,7 +131,7 @@ public class SpotPrices
     /**
      * The portfolio.
      */
-    private final Account thePortfolio;
+    private final Portfolio thePortfolio;
 
     /**
      * The date.
@@ -141,13 +141,13 @@ public class SpotPrices
     /**
      * The prices.
      */
-    private final SpotList thePrices;
+    private final SpotSecurityList thePrices;
 
     /**
      * Obtain portfolio.
      * @return the portfolio
      */
-    public Account getPortfolio() {
+    public Portfolio getPortfolio() {
         return thePortfolio;
     }
 
@@ -195,7 +195,7 @@ public class SpotPrices
      * Obtain prices.
      * @return the prices
      */
-    public SpotList getPrices() {
+    public SpotSecurityList getPrices() {
         return thePrices;
     }
 
@@ -204,8 +204,8 @@ public class SpotPrices
      * @param uIndex the index
      * @return the spotPrice
      */
-    public SpotPrice get(final long uIndex) {
-        return (SpotPrice) thePrices.get((int) uIndex);
+    public SpotSecurityPrice get(final long uIndex) {
+        return (SpotSecurityPrice) thePrices.get((int) uIndex);
     }
 
     /**
@@ -214,21 +214,21 @@ public class SpotPrices
      * @param pPortfolio the portfolio
      * @param pDate the date
      */
-    public SpotPrices(final View pView,
-                      final Account pPortfolio,
-                      final JDateDay pDate) {
+    public SpotSecurityPrices(final View pView,
+                              final Portfolio pPortfolio,
+                              final JDateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
         theDate = pDate;
         thePortfolio = pPortfolio;
-        thePrices = new SpotList(this);
+        thePrices = new SpotSecurityList(this);
     }
 
     /**
      * The Spot Prices List class.
      */
-    public static class SpotList
-            extends EncryptedList<SpotPrice, MoneyWiseDataType> {
+    public static class SpotSecurityList
+            extends EncryptedList<SpotSecurityPrice, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -278,16 +278,16 @@ public class SpotPrices
 
         @Override
         public String listName() {
-            return SpotList.class.getSimpleName();
+            return SpotSecurityList.class.getSimpleName();
         }
 
         @Override
         public JDataFields getItemFields() {
-            return SpotPrice.FIELD_DEFS;
+            return SpotSecurityPrice.FIELD_DEFS;
         }
 
         @Override
-        protected SpotList getEmptyList(final ListStyle pStyle) {
+        protected SpotSecurityList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 
@@ -304,7 +304,7 @@ public class SpotPrices
         /**
          * The portfolio.
          */
-        private final Account thePortfolio;
+        private final Portfolio thePortfolio;
 
         /**
          * The next date.
@@ -336,48 +336,48 @@ public class SpotPrices
          * Constructor.
          * @param pPrices the spot price control
          */
-        public SpotList(final SpotPrices pPrices) {
+        public SpotSecurityList(final SpotSecurityPrices pPrices) {
             /* Build initial list */
-            super(SpotPrice.class, pPrices.getData(), MoneyWiseDataType.SECURITYPRICE);
+            super(SpotSecurityPrice.class, pPrices.getData(), MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();
             thePortfolio = pPrices.getPortfolio();
 
-            /* Loop through the Accounts */
+            /* Loop through the Securities */
             MoneyWiseData myData = theView.getData();
-            Iterator<Account> myActIterator = myData.getAccounts().listIterator();
-            while (myActIterator.hasNext()) {
-                Account myAccount = myActIterator.next();
+            Iterator<Security> mySecIterator = myData.getSecurities().listIterator();
+            while (mySecIterator.hasNext()) {
+                Security mySecurity = mySecIterator.next();
                 /* Ignore accounts that are wrong portfolio, have no prices or are aliases */
-                if ((!Difference.isEqual(myAccount.getPortfolio(), thePortfolio)) || (!myAccount.hasUnits()) || (myAccount.isAlias())) {
-                    continue;
-                }
+                // if ((!Difference.isEqual(myPortfolio, thePortfolio))) {
+                // continue;
+                // }
 
                 /* Create a SpotPrice entry */
-                SpotPrice mySpot = new SpotPrice(this, myAccount);
-                mySpot.setId(myAccount.getId());
+                SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
+                mySpot.setId(mySecurity.getId());
                 mySpot.setDate(new JDateDay(theDate));
                 add(mySpot);
 
                 /* If the account is closed then hide the entry */
-                if (myAccount.isClosed()) {
+                if (mySecurity.isClosed()) {
                     mySpot.setDeleted(true);
                 }
             }
 
             /* Set the base for this list */
-            AccountPriceList myPrices = myData.getAccountPrices();
+            SecurityPriceList myPrices = myData.getSecurityPrices();
             setBase(myPrices);
 
             /* Loop through the prices */
-            Iterator<AccountPrice> myIterator = myPrices.listIterator();
+            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasNext()) {
-                AccountPrice myPrice = myIterator.next();
+                SecurityPrice myPrice = myIterator.next();
                 /* Ignore accounts that are wrong type */
-                if (!Difference.isEqual(myPrice.getSecurity().getPortfolio(), thePortfolio)) {
-                    continue;
-                }
+                // if (!Difference.isEqual(myPrice.getSecurity().getPortfolio(), thePortfolio)) {
+                // continue;
+                // }
 
                 /* Test the Date */
                 int iDiff = theDate.compareTo(myPrice.getDate());
@@ -390,8 +390,8 @@ public class SpotPrices
                 }
 
                 /* Access the Spot Price */
-                Account mySecurity = myPrice.getSecurity();
-                SpotPrice mySpot = findItemById(mySecurity.getId());
+                Security mySecurity = myPrice.getSecurity();
+                SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
 
                 /* If we are exactly the date */
                 if (iDiff == 0) {
@@ -421,17 +421,17 @@ public class SpotPrices
 
         /* Disable Add a new item */
         @Override
-        public SpotPrice addCopyItem(final DataItem<?> pElement) {
+        public SpotSecurityPrice addCopyItem(final DataItem<?> pElement) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public SpotPrice addNewItem() {
+        public SpotSecurityPrice addNewItem() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public SpotPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
+        public SpotSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
         }
 
@@ -441,12 +441,12 @@ public class SpotPrices
         @Override
         public void findEditState() {
             /* Access the iterator */
-            Iterator<SpotPrice> myIterator = listIterator();
+            Iterator<SpotSecurityPrice> myIterator = listIterator();
             EditState myEdit = EditState.CLEAN;
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                SpotPrice myCurr = myIterator.next();
+                SpotSecurityPrice myCurr = myIterator.next();
                 /* Switch on new state */
                 switch (myCurr.getState()) {
                     case NEW:
@@ -470,11 +470,11 @@ public class SpotPrices
         @Override
         public boolean hasUpdates() {
             /* Access the iterator */
-            Iterator<SpotPrice> myIterator = listIterator();
+            Iterator<SpotSecurityPrice> myIterator = listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SecurityPrice myCurr = myIterator.next();
 
                 /* Switch on state */
                 switch (myCurr.getState()) {
@@ -499,12 +499,12 @@ public class SpotPrices
      * Spot Price class.
      * @author Tony Washer
      */
-    public static final class SpotPrice
-            extends AccountPrice {
+    public static final class SpotSecurityPrice
+            extends SecurityPrice {
         /**
          * Object name.
          */
-        public static final String OBJECT_NAME = SpotPrice.class.getSimpleName();
+        public static final String OBJECT_NAME = SpotSecurityPrice.class.getSimpleName();
 
         /**
          * List name.
@@ -514,7 +514,7 @@ public class SpotPrices
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -569,8 +569,8 @@ public class SpotPrices
         }
 
         @Override
-        public AccountPrice getBase() {
-            return (AccountPrice) super.getBase();
+        public SecurityPrice getBase() {
+            return (SecurityPrice) super.getBase();
         }
 
         /**
@@ -578,8 +578,8 @@ public class SpotPrices
          * @param pList the Spot Price List
          * @param pSecurity the price for the date
          */
-        private SpotPrice(final SpotList pList,
-                          final Account pSecurity) {
+        private SpotSecurityPrice(final SpotSecurityList pList,
+                                  final Security pSecurity) {
             super(pList, pSecurity);
 
             /* Store base values */

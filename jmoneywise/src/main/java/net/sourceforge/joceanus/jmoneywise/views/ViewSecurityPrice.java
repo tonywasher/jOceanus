@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -43,11 +43,11 @@ import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
- * Extension of AccountPrice to cater for diluted prices.
+ * Extension of SecurityPrice to cater for diluted prices.
  * @author Tony Washer
  */
-public class ViewPrice
-        extends AccountPrice {
+public class ViewSecurityPrice
+        extends SecurityPrice {
     /**
      * Object name.
      */
@@ -61,7 +61,7 @@ public class ViewPrice
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountPrice.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, SecurityPrice.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -134,8 +134,8 @@ public class ViewPrice
     }
 
     @Override
-    public AccountPrice getBase() {
-        return (AccountPrice) super.getBase();
+    public SecurityPrice getBase() {
+        return (SecurityPrice) super.getBase();
     }
 
     /**
@@ -143,29 +143,29 @@ public class ViewPrice
      */
     protected final void calculateDiluted() {
         /* Access the list for the item */
-        ViewPriceList myList = (ViewPriceList) getList();
+        // ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
 
         /* Set null default dilution */
         setValueDilution(null);
         setValueDilutedPrice(null);
 
         /* Access Price and date */
-        JDateDay myDate = getDate();
-        JPrice myPrice = getPrice();
-        Account mySecurity = getSecurity();
+        // JDateDay myDate = getDate();
+        // JPrice myPrice = getPrice();
+        // Security mySecurity = getSecurity();
 
         /* If we have can look at dilutions */
-        if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
-            /* Determine the dilution factor for the date */
-            JDilution myDilution = myList.getDilutions().getDilutionFactor(mySecurity, myDate);
+        // if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
+        /* Determine the dilution factor for the date */
+        // JDilution myDilution = null; // myList.getDilutions().getDilutionFactor(mySecurity, myDate);
 
-            /* If we have a dilution factor */
-            if (myDilution != null) {
-                /* Store dilution details */
-                setValueDilution(myDilution);
-                setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
-            }
-        }
+        /* If we have a dilution factor */
+        // if (myDilution != null) {
+        /* Store dilution details */
+        // setValueDilution(myDilution);
+        // setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
+        // }
+        // }
     }
 
     /**
@@ -173,13 +173,13 @@ public class ViewPrice
      * @param pList the list
      * @param pPrice The Price
      */
-    protected ViewPrice(final ViewPriceList pList,
-                        final AccountPrice pPrice) {
+    protected ViewSecurityPrice(final ViewSecurityPriceList pList,
+                                final SecurityPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
 
         /* Determine whether the account has dilutions */
-        hasDilutions = ((ViewPriceList) getList()).hasDilutions;
+        hasDilutions = ((ViewSecurityPriceList) getList()).hasDilutions;
 
         /* Calculate diluted values */
         calculateDiluted();
@@ -189,11 +189,11 @@ public class ViewPrice
      * Standard constructor for a newly inserted price.
      * @param pList the list
      */
-    private ViewPrice(final ViewPriceList pList) {
+    private ViewSecurityPrice(final ViewSecurityPriceList pList) {
         super(pList, pList.getSecurity());
 
         /* Determine whether the account has dilutions */
-        hasDilutions = ((ViewPriceList) getList()).hasDilutions;
+        hasDilutions = ((ViewSecurityPriceList) getList()).hasDilutions;
     }
 
     @Override
@@ -212,12 +212,12 @@ public class ViewPrice
     /**
      * Price List.
      */
-    public static class ViewPriceList
-            extends EncryptedList<ViewPrice, MoneyWiseDataType> {
+    public static class ViewSecurityPriceList
+            extends EncryptedList<ViewSecurityPrice, MoneyWiseDataType> {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ViewPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ViewSecurityPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -226,7 +226,7 @@ public class ViewPrice
 
         @Override
         public String listName() {
-            return ViewPriceList.class.getSimpleName();
+            return ViewSecurityPriceList.class.getSimpleName();
         }
 
         @Override
@@ -235,7 +235,7 @@ public class ViewPrice
         }
 
         @Override
-        protected ViewPriceList getEmptyList(final ListStyle pStyle) {
+        protected ViewSecurityPriceList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 
@@ -270,7 +270,7 @@ public class ViewPrice
         /**
          * The security.
          */
-        private final Account theSecurity;
+        private final Security theSecurity;
 
         /**
          * Dilutions list.
@@ -286,7 +286,7 @@ public class ViewPrice
          * Obtain security.
          * @return the security
          */
-        private Account getSecurity() {
+        private Security getSecurity() {
             return theSecurity;
         }
 
@@ -311,33 +311,29 @@ public class ViewPrice
          * @param pView The master view
          * @param pSecurity The security to extract prices for
          */
-        public ViewPriceList(final View pView,
-                             final Account pSecurity) {
+        public ViewSecurityPriceList(final View pView,
+                                     final Security pSecurity) {
             /* Declare the data and set the style */
-            super(ViewPrice.class, pView.getData(), MoneyWiseDataType.SECURITYPRICE);
+            super(ViewSecurityPrice.class, pView.getData(), MoneyWiseDataType.SECURITYPRICE);
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */
-            if ((pSecurity != null) && (pSecurity.getAlias() != null)) {
-                theSecurity = pSecurity.getAlias();
-            } else {
-                theSecurity = pSecurity;
-            }
+            theSecurity = pSecurity;
 
             /* Access the base prices */
-            AccountPriceList myPrices = getDataSet().getAccountPrices();
+            SecurityPriceList myPrices = getDataSet().getSecurityPrices();
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
             theDilutions = pView.getDilutions();
-            hasDilutions = theDilutions.hasDilution(theSecurity);
+            hasDilutions = false; // theDilutions.hasDilution(theSecurity);
 
             /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = myPrices.listIterator();
+            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SecurityPrice myCurr = myIterator.next();
                 /* Check the account */
                 int myResult = theSecurity.compareTo(myCurr.getSecurity());
 
@@ -347,7 +343,7 @@ public class ViewPrice
                 }
 
                 /* Copy the item */
-                ViewPrice myItem = new ViewPrice(this, myCurr);
+                ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
                 add(myItem);
             }
         }
@@ -359,7 +355,7 @@ public class ViewPrice
         }
 
         @Override
-        public ViewPrice addCopyItem(final DataItem<?> pElement) {
+        public ViewSecurityPrice addCopyItem(final DataItem<?> pElement) {
             throw new UnsupportedOperationException();
         }
 
@@ -368,15 +364,15 @@ public class ViewPrice
          * @return the newly added item
          */
         @Override
-        public ViewPrice addNewItem() {
-            ViewPrice myPrice = new ViewPrice(this);
+        public ViewSecurityPrice addNewItem() {
+            ViewSecurityPrice myPrice = new ViewSecurityPrice(this);
             myPrice.setSecurity(theSecurity);
             add(myPrice);
             return myPrice;
         }
 
         @Override
-        public ViewPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
+        public ViewSecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) {
             throw new UnsupportedOperationException();
         }
     }

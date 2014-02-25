@@ -27,8 +27,8 @@ import javax.swing.SortOrder;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -39,34 +39,33 @@ import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * TableEncrypted extension for AccountRate.
+ * TableEncrypted extension for AccountPrice.
  * @author Tony Washer
  */
-public class TableAccountRate
-        extends TableEncrypted<AccountRate, MoneyWiseDataType> {
+public class TableAccountPrice
+        extends TableEncrypted<AccountPrice, MoneyWiseDataType> {
     /**
-     * The name of the Rates table.
+     * The name of the Prices table.
      */
-    protected static final String TABLE_NAME = AccountRate.LIST_NAME;
+    protected static final String TABLE_NAME = AccountPrice.LIST_NAME;
 
     /**
-     * The rate list.
+     * The price list.
      */
-    private AccountRateList theList = null;
+    private AccountPriceList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccountRate(final Database<?> pDatabase) {
+    protected TableAccountPrice(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        myTableDef.addEncryptedColumn(AccountRate.FIELD_RATE, EncryptedData.RATELEN);
-        myTableDef.addNullEncryptedColumn(AccountRate.FIELD_BONUS, EncryptedData.RATELEN);
-        ColumnDefinition myDateCol = myTableDef.addNullDateColumn(AccountRate.FIELD_ENDDATE);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountPrice.FIELD_SECURITY, TableAccount.TABLE_NAME);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(AccountPrice.FIELD_DATE);
+        myTableDef.addEncryptedColumn(AccountPrice.FIELD_PRICE, EncryptedData.PRICELEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -76,7 +75,7 @@ public class TableAccountRate
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getAccountRates();
+        theList = myData.getAccountPrices();
         setList(theList);
     }
 
@@ -86,29 +85,26 @@ public class TableAccountRate
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
-        myValues.addValue(AccountRate.FIELD_ACCOUNT, myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT));
-        myValues.addValue(AccountRate.FIELD_RATE, myTableDef.getBinaryValue(AccountRate.FIELD_RATE));
-        myValues.addValue(AccountRate.FIELD_BONUS, myTableDef.getBinaryValue(AccountRate.FIELD_BONUS));
-        myValues.addValue(AccountRate.FIELD_ENDDATE, myTableDef.getDateValue(AccountRate.FIELD_ENDDATE));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountPrice.OBJECT_NAME);
+        myValues.addValue(AccountPrice.FIELD_SECURITY, myTableDef.getIntegerValue(AccountPrice.FIELD_SECURITY));
+        myValues.addValue(AccountPrice.FIELD_DATE, myTableDef.getDateValue(AccountPrice.FIELD_DATE));
+        myValues.addValue(AccountPrice.FIELD_PRICE, myTableDef.getBinaryValue(AccountPrice.FIELD_PRICE));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void setFieldValue(final AccountRate pItem,
+    protected void setFieldValue(final AccountPrice pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (AccountRate.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAccountId());
-        } else if (AccountRate.FIELD_RATE.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getRateBytes());
-        } else if (AccountRate.FIELD_BONUS.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getBonusBytes());
-        } else if (AccountRate.FIELD_ENDDATE.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getEndDate());
+        if (AccountPrice.FIELD_SECURITY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getSecurityId());
+        } else if (AccountPrice.FIELD_DATE.equals(iField)) {
+            myTableDef.setDateValue(iField, pItem.getDate());
+        } else if (AccountPrice.FIELD_PRICE.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getPriceBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }
@@ -120,7 +116,7 @@ public class TableAccountRate
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Validate the account rates */
+        /* Validate the security prices */
         theList.validateOnLoad();
     }
 }

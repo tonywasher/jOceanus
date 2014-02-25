@@ -26,9 +26,9 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
@@ -107,8 +107,8 @@ public class QPortfolioEvent
                 return buildIncomeQIF();
             case TRANSFER:
                 return (isCredit)
-                        ? buildXferInQIF()
-                        : buildXferOutQIF();
+                                 ? buildXferInQIF()
+                                 : buildXferOutQIF();
             case STOCKRIGHTSWAIVED:
                 return buildXferOutQIF();
             case STOCKRIGHTSTAKEN:
@@ -155,8 +155,8 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (useBuyX)
-                ? QActionType.BUYX
-                : QActionType.BUY);
+                                                          ? QActionType.BUYX
+                                                          : QActionType.BUY);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
@@ -173,8 +173,8 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        SecurityPriceList myPrices = getAnalysis().getDataSet().getPrices();
-        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        AccountPriceList myPrices = getAnalysis().getDataSet().getAccountPrices();
+        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
@@ -234,8 +234,8 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (useBuyX4Event)
-                ? QActionType.BUYX
-                : QActionType.BUY);
+                                                                ? QActionType.BUYX
+                                                                : QActionType.BUY);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
@@ -249,13 +249,13 @@ public class QPortfolioEvent
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
-                ? new JDecimal(1)
-                : new JDecimal(myUnits);
+                                                     ? new JDecimal(1)
+                                                     : new JDecimal(myUnits);
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        SecurityPriceList myPrices = getAnalysis().getDataSet().getPrices();
-        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        AccountPriceList myPrices = getAnalysis().getDataSet().getAccountPrices();
+        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
@@ -341,12 +341,12 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, zeroUnits
-                ? useSellX4Event
-                        ? QActionType.RTRNCAPX
-                        : QActionType.RTRNCAP
-                : useSellX4Event
-                        ? QActionType.SELLX
-                        : QActionType.SELL);
+                                                          ? useSellX4Event
+                                                                          ? QActionType.RTRNCAPX
+                                                                          : QActionType.RTRNCAP
+                                                          : useSellX4Event
+                                                                          ? QActionType.SELLX
+                                                                          : QActionType.SELL);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
@@ -362,8 +362,8 @@ public class QPortfolioEvent
         if (!zeroUnits) {
             /* Add the Quantity (as a simple decimal) */
             JDecimal myUnitValue = (autoCorrectZeroUnits)
-                    ? new JDecimal(1)
-                    : new JDecimal(myUnits);
+                                                         ? new JDecimal(1)
+                                                         : new JDecimal(myUnits);
             addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
         }
 
@@ -497,8 +497,8 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (isDebit)
-                ? QActionType.SHRSOUT
-                : QActionType.SHRSIN);
+                                                          ? QActionType.SHRSOUT
+                                                          : QActionType.SHRSIN);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, myEvent.getDebit());
@@ -567,10 +567,10 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (isReinvested)
-                ? QActionType.REINVDIV
-                : (useDivX4Event)
-                        ? QActionType.DIVX
-                        : QActionType.DIV);
+                                                               ? QActionType.REINVDIV
+                                                               : (useDivX4Event)
+                                                                                ? QActionType.DIVX
+                                                                                : QActionType.DIV);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, mySecurity);
@@ -587,8 +587,8 @@ public class QPortfolioEvent
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
-                ? new JDecimal(1)
-                : new JDecimal(myUnits);
+                                                     ? new JDecimal(1)
+                                                     : new JDecimal(myUnits);
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* If we have a description */
@@ -732,8 +732,8 @@ public class QPortfolioEvent
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (!zeroUnits)
-                ? QActionType.SELL
-                : QActionType.RTRNCAP);
+                                                             ? QActionType.SELL
+                                                             : QActionType.RTRNCAP);
 
         /* Add the Security */
         addAccountLine(QPortfolioLineType.SECURITY, myDebit);
@@ -749,8 +749,8 @@ public class QPortfolioEvent
         if (!zeroUnits) {
             /* Add the Quantity (as a simple decimal) */
             JDecimal myUnitValue = (autoCorrectZeroUnits)
-                    ? new JDecimal(1)
-                    : new JDecimal(myDebitUnits);
+                                                         ? new JDecimal(1)
+                                                         : new JDecimal(myDebitUnits);
             addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
         }
 

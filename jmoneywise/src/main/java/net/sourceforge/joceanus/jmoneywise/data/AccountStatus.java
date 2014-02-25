@@ -213,7 +213,7 @@ public class AccountStatus
     /**
      * Initial Price.
      */
-    private SecurityPrice theInitPrice = null;
+    private AccountPrice theInitPrice = null;
 
     /**
      * Is this closeable?
@@ -296,7 +296,7 @@ public class AccountStatus
      * Obtain Initial Price.
      * @return the price
      */
-    protected SecurityPrice getInitPrice() {
+    protected AccountPrice getInitPrice() {
         return theInitPrice;
     }
 
@@ -475,11 +475,11 @@ public class AccountStatus
             hasRates = true;
 
             /* If we are being touched by a price */
-        } else if (pObject instanceof SecurityPrice) {
+        } else if (pObject instanceof AccountPrice) {
             /* Note flags */
             hasPrices = true;
             if (theInitPrice == null) {
-                theInitPrice = (SecurityPrice) pObject;
+                theInitPrice = (AccountPrice) pObject;
             }
 
             /* If we are being touched by a pattern */

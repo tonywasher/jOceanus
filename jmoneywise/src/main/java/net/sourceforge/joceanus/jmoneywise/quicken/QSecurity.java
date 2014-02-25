@@ -32,9 +32,9 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QSecurityLineType;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
@@ -154,7 +154,7 @@ public final class QSecurity
      * Add Price.
      * @param pPrice the price to add
      */
-    protected void addPrice(final SecurityPrice pPrice) {
+    protected void addPrice(final AccountPrice pPrice) {
         /* Add the price */
         QPrice myQIF = new QPrice(theAnalysis, pPrice);
         thePrices.add(myQIF);
@@ -260,16 +260,16 @@ public final class QSecurity
          * @param pDate the latest date for prices
          */
         protected void buildPrices(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                   final SecurityPriceList pPrices,
+                                   final AccountPriceList pPrices,
                                    final JDateDay pDate) {
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();
             int myCount = 0;
 
             /* Loop through the security prices */
-            Iterator<SecurityPrice> myIterator = pPrices.iterator();
+            Iterator<AccountPrice> myIterator = pPrices.iterator();
             while (myIterator.hasNext()) {
-                SecurityPrice myPrice = myIterator.next();
+                AccountPrice myPrice = myIterator.next();
 
                 /* If the price is too late */
                 if (pDate.compareTo(myPrice.getDate()) < 0) {

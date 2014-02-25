@@ -29,7 +29,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -41,22 +42,22 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
-public class SheetAccountRate
-        extends SheetEncrypted<AccountRate, MoneyWiseDataType> {
+public class SheetDepositRate
+        extends SheetEncrypted<DepositRate, MoneyWiseDataType> {
     /**
      * NamedArea for Rates.
      */
-    private static final String AREA_RATES = AccountRate.LIST_NAME;
+    private static final String AREA_RATES = DepositRate.LIST_NAME;
 
     /**
-     * Account column.
+     * Deposit column.
      */
-    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
+    private static final int COL_DEPOSIT = COL_CONTROLID + 1;
 
     /**
      * Rate column.
      */
-    private static final int COL_RATE = COL_ACCOUNT + 1;
+    private static final int COL_RATE = COL_DEPOSIT + 1;
 
     /**
      * Bonus column.
@@ -71,18 +72,18 @@ public class SheetAccountRate
     /**
      * Rates data list.
      */
-    private final AccountRateList theList;
+    private final DepositRateList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountRate(final MoneyWiseReader pReader) {
+    protected SheetDepositRate(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_RATES);
 
         /* Access the Rates list */
-        theList = pReader.getData().getAccountRates();
+        theList = pReader.getData().getDepositRates();
         setDataList(theList);
     }
 
@@ -90,12 +91,12 @@ public class SheetAccountRate
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountRate(final MoneyWiseWriter pWriter) {
+    protected SheetDepositRate(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_RATES);
 
         /* Access the Rates list */
-        theList = pWriter.getData().getAccountRates();
+        theList = pWriter.getData().getDepositRates();
         setDataList(theList);
     }
 
@@ -103,20 +104,20 @@ public class SheetAccountRate
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
-        myValues.addValue(AccountRate.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
-        myValues.addValue(AccountRate.FIELD_RATE, loadBytes(COL_RATE));
-        myValues.addValue(AccountRate.FIELD_BONUS, loadBytes(COL_BONUS));
-        myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
+        myValues.addValue(DepositRate.FIELD_DEPOSIT, loadInteger(COL_DEPOSIT));
+        myValues.addValue(DepositRate.FIELD_RATE, loadBytes(COL_RATE));
+        myValues.addValue(DepositRate.FIELD_BONUS, loadBytes(COL_BONUS));
+        myValues.addValue(DepositRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final AccountRate pItem) throws JOceanusException {
+    protected void insertSecureItem(final DepositRate pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_ACCOUNT, pItem.getAccountId());
+        writeInteger(COL_DEPOSIT, pItem.getDepositId());
         writeBytes(COL_RATE, pItem.getRateBytes());
         writeBytes(COL_BONUS, pItem.getBonusBytes());
         writeDate(COL_ENDDATE, pItem.getEndDate());
@@ -139,7 +140,7 @@ public class SheetAccountRate
     }
 
     /**
-     * Load the Rates from an archive.
+     * Load the DepositRates from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -150,7 +151,7 @@ public class SheetAccountRate
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of rates */
-        AccountRateList myList = pData.getAccountRates();
+        DepositRateList myList = pData.getDepositRates();
 
         /* Protect against exceptions */
         try {
@@ -180,9 +181,9 @@ public class SheetAccountRate
                 DataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = 0;
 
-                /* Access account */
+                /* Access deposit */
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myAccount = myCell.getStringValue();
+                String myDeposit = myCell.getStringValue();
 
                 /* Handle Rate */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
@@ -203,11 +204,11 @@ public class SheetAccountRate
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountRate.OBJECT_NAME);
-                myValues.addValue(AccountRate.FIELD_ACCOUNT, myAccount);
-                myValues.addValue(AccountRate.FIELD_RATE, myRate);
-                myValues.addValue(AccountRate.FIELD_BONUS, myBonus);
-                myValues.addValue(AccountRate.FIELD_ENDDATE, myExpiry);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositRate.OBJECT_NAME);
+                myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
+                myValues.addValue(DepositRate.FIELD_RATE, myRate);
+                myValues.addValue(DepositRate.FIELD_BONUS, myBonus);
+                myValues.addValue(DepositRate.FIELD_ENDDATE, myExpiry);
 
                 /* Add the value into the list */
                 myList.addValuesItem(myValues);

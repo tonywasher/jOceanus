@@ -83,6 +83,8 @@ public class MoneyWiseDatabase
         addTable(new TablePortfolio(this));
         addTable(new TablePortfolioInfo(this));
         addTable(new TableAccountRate(this));
+        addTable(new TableDepositRate(this));
+        addTable(new TableAccountPrice(this));
         addTable(new TableSecurityPrice(this));
         addTable(new TableAccountInfo(this));
         addTable(new TableEvent(this));

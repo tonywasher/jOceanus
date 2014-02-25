@@ -77,7 +77,7 @@ public class SheetSecurityPrice
         super(pReader, AREA_PRICES);
 
         /* Access the Prices list */
-        theList = pReader.getData().getPrices();
+        theList = pReader.getData().getSecurityPrices();
         setDataList(theList);
     }
 
@@ -90,7 +90,7 @@ public class SheetSecurityPrice
         super(pWriter, AREA_PRICES);
 
         /* Access the Prices list */
-        theList = pWriter.getData().getPrices();
+        theList = pWriter.getData().getSecurityPrices();
         setDataList(theList);
     }
 
@@ -145,7 +145,7 @@ public class SheetSecurityPrice
                                          final MoneyWiseData pData,
                                          final JDateDay pLastEvent) throws JOceanusException {
         /* Access the list of prices */
-        SecurityPriceList myList = pData.getPrices();
+        SecurityPriceList myList = pData.getSecurityPrices();
 
         /* Protect against exceptions */
         try {

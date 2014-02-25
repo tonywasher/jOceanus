@@ -387,7 +387,7 @@ public class Account
      * Obtain Initial Price.
      * @return the price
      */
-    public SecurityPrice getInitPrice() {
+    public AccountPrice getInitPrice() {
         return theStatus.getInitPrice();
     }
 

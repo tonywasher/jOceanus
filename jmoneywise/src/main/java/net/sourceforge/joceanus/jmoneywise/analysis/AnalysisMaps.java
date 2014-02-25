@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
@@ -53,7 +53,7 @@ public class AnalysisMaps {
      * Map of Security prices indexed by Security Id.
      */
     public static class SecurityPriceMap
-            extends NestedHashMap<Integer, PriceList>
+            extends NestedHashMap<Integer, AccountPrices>
             implements JDataFormat {
 
         /**
@@ -72,9 +72,9 @@ public class AnalysisMaps {
          */
         protected SecurityPriceMap(final MoneyWiseData pData) {
             /* Loop through the prices */
-            Iterator<SecurityPrice> myIterator = pData.getPrices().iterator();
+            Iterator<AccountPrice> myIterator = pData.getAccountPrices().iterator();
             while (myIterator.hasNext()) {
-                SecurityPrice myPrice = myIterator.next();
+                AccountPrice myPrice = myIterator.next();
 
                 /* Add to the map */
                 addPriceToMap(myPrice);
@@ -89,15 +89,15 @@ public class AnalysisMaps {
          * Add price to map.
          * @param pPrice the price to add.
          */
-        private void addPriceToMap(final SecurityPrice pPrice) {
+        private void addPriceToMap(final AccountPrice pPrice) {
             /* Access security prices */
             Account mySecurity = pPrice.getSecurity();
-            PriceList myList = get(mySecurity.getId());
+            AccountPrices myList = get(mySecurity.getId());
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
-                myList = new PriceList(mySecurity);
+                myList = new AccountPrices(mySecurity);
                 put(mySecurity.getId(), myList);
             }
 
@@ -117,12 +117,12 @@ public class AnalysisMaps {
             JPrice myPrice = new JPrice();
 
             /* Access list for security */
-            PriceList myList = get(pSecurity.getId());
+            AccountPrices myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<SecurityPrice> myIterator = myList.iterator();
+                Iterator<AccountPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    SecurityPrice myCurr = myIterator.next();
+                    AccountPrice myCurr = myIterator.next();
 
                     /* Break if this is later than the date */
                     if (pDate.compareTo(myCurr.getDate()) > 0) {
@@ -156,12 +156,12 @@ public class AnalysisMaps {
             JPrice myLatest = new JPrice();
 
             /* Access list for security */
-            PriceList myList = get(pSecurity.getId());
+            AccountPrices myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<SecurityPrice> myIterator = myList.iterator();
+                Iterator<AccountPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    SecurityPrice myCurr = myIterator.next();
+                    AccountPrice myCurr = myIterator.next();
 
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());
@@ -195,8 +195,8 @@ public class AnalysisMaps {
     /**
      * Price List class.
      */
-    private static final class PriceList
-            extends ArrayList<SecurityPrice>
+    private static final class AccountPrices
+            extends ArrayList<AccountPrice>
             implements JDataContents {
         /**
          * Serial Id.
@@ -248,7 +248,7 @@ public class AnalysisMaps {
          * Constructor.
          * @param pSecurity the security
          */
-        private PriceList(final Account pSecurity) {
+        private AccountPrices(final Account pSecurity) {
             /* Store the security */
             theSecurity = pSecurity;
         }
@@ -258,7 +258,7 @@ public class AnalysisMaps {
      * Map of Account Rates indexed by Security Id.
      */
     public static class AccountRateMap
-            extends NestedHashMap<Integer, RateList>
+            extends NestedHashMap<Integer, AccountRates>
             implements JDataFormat {
         /**
          * Serial Id.
@@ -276,7 +276,7 @@ public class AnalysisMaps {
          */
         protected AccountRateMap(final MoneyWiseData pData) {
             /* Loop through the rates */
-            Iterator<AccountRate> myIterator = pData.getRates().iterator();
+            Iterator<AccountRate> myIterator = pData.getAccountRates().iterator();
             while (myIterator.hasNext()) {
                 AccountRate myRate = myIterator.next();
 
@@ -296,12 +296,12 @@ public class AnalysisMaps {
         private void addRateToMap(final AccountRate pRate) {
             /* Access security prices */
             Account myAccount = pRate.getAccount();
-            RateList myList = get(myAccount.getId());
+            AccountRates myList = get(myAccount.getId());
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
-                myList = new RateList(myAccount);
+                myList = new AccountRates(myAccount);
                 put(myAccount.getId(), myList);
             }
 
@@ -318,7 +318,7 @@ public class AnalysisMaps {
         public AccountRate getRateForDate(final Account pAccount,
                                           final JDateDay pDate) {
             /* Access list for security */
-            RateList myList = get(pAccount.getId());
+            AccountRates myList = get(pAccount.getId());
             if (myList != null) {
                 /* Loop through the rates */
                 Iterator<AccountRate> myIterator = myList.iterator();
@@ -344,7 +344,7 @@ public class AnalysisMaps {
     /**
      * Rate List class.
      */
-    private static final class RateList
+    private static final class AccountRates
             extends ArrayList<AccountRate>
             implements JDataContents {
         /**
@@ -397,7 +397,7 @@ public class AnalysisMaps {
          * Constructor.
          * @param pAccount the account
          */
-        private RateList(final Account pAccount) {
+        private AccountRates(final Account pAccount) {
             /* Store the account */
             theAccount = pAccount;
         }

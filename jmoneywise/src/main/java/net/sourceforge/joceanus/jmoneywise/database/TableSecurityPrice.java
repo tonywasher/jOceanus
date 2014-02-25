@@ -75,7 +75,7 @@ public class TableSecurityPrice
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getPrices();
+        theList = myData.getSecurityPrices();
         setList(theList);
     }
 

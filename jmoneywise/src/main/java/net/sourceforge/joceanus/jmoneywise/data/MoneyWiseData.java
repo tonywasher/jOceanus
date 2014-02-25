@@ -36,9 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
@@ -353,15 +355,31 @@ public class MoneyWiseData
      * Obtain AccountRates.
      * @return the Account rates
      */
-    public AccountRateList getRates() {
+    public AccountRateList getAccountRates() {
         return getDataList(MoneyWiseDataType.ACCOUNTRATE, AccountRateList.class);
+    }
+
+    /**
+     * Obtain DepositRates.
+     * @return the Deposit rates
+     */
+    public DepositRateList getDepositRates() {
+        return getDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
     }
 
     /**
      * Obtain AccountPrices.
      * @return the Account prices
      */
-    public SecurityPriceList getPrices() {
+    public AccountPriceList getAccountPrices() {
+        return getDataList(MoneyWiseDataType.ACCOUNTPRICE, AccountPriceList.class);
+    }
+
+    /**
+     * Obtain SecurityPrices.
+     * @return the Security prices
+     */
+    public SecurityPriceList getSecurityPrices() {
         return getDataList(MoneyWiseDataType.SECURITYPRICE, SecurityPriceList.class);
     }
 
@@ -496,6 +514,10 @@ public class MoneyWiseData
                 return new PortfolioInfoList(this);
             case ACCOUNTRATE:
                 return new AccountRateList(this);
+            case DEPOSITRATE:
+                return new DepositRateList(this);
+            case ACCOUNTPRICE:
+                return new AccountPriceList(this);
             case SECURITYPRICE:
                 return new SecurityPriceList(this);
             case PATTERN:
@@ -622,6 +644,8 @@ public class MoneyWiseData
                 /* Ignore lists that will be handled during analysis */
                 case EVENT:
                 case ACCOUNTRATE:
+                case DEPOSITRATE:
+                case ACCOUNTPRICE:
                 case SECURITYPRICE:
                     break;
 

@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
@@ -51,7 +51,7 @@ public class QPrice
     /**
      * The Price.
      */
-    private final SecurityPrice thePrice;
+    private final AccountPrice thePrice;
 
     /**
      * Obtain Security Name.
@@ -81,7 +81,7 @@ public class QPrice
      * Obtain Price.
      * @return the price
      */
-    public SecurityPrice getPrice() {
+    public AccountPrice getPrice() {
         return thePrice;
     }
 
@@ -91,7 +91,7 @@ public class QPrice
      * @param pPrice the account price
      */
     protected QPrice(final QAnalysis pAnalysis,
-                     final SecurityPrice pPrice) {
+                     final AccountPrice pPrice) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 

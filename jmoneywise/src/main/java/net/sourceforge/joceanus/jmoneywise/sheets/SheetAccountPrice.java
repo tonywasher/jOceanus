@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate.AccountRateList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
@@ -38,51 +38,46 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
- * SheetDataItem extension for AccountRate.
+ * SheetDataItem extension for AccountPrice.
  * @author Tony Washer
  */
-public class SheetAccountRate
-        extends SheetEncrypted<AccountRate, MoneyWiseDataType> {
+public class SheetAccountPrice
+        extends SheetEncrypted<AccountPrice, MoneyWiseDataType> {
     /**
-     * NamedArea for Rates.
+     * NamedArea for Prices.
      */
-    private static final String AREA_RATES = AccountRate.LIST_NAME;
+    private static final String AREA_PRICES = AccountPrice.LIST_NAME;
 
     /**
-     * Account column.
+     * Security column.
      */
-    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
+    private static final int COL_SECURITY = COL_CONTROLID + 1;
 
     /**
-     * Rate column.
+     * Date column.
      */
-    private static final int COL_RATE = COL_ACCOUNT + 1;
+    private static final int COL_DATE = COL_SECURITY + 1;
 
     /**
-     * Bonus column.
+     * Price column.
      */
-    private static final int COL_BONUS = COL_RATE + 1;
+    private static final int COL_PRICE = COL_DATE + 1;
 
     /**
-     * EndDate column.
+     * Prices data list.
      */
-    private static final int COL_ENDDATE = COL_BONUS + 1;
-
-    /**
-     * Rates data list.
-     */
-    private final AccountRateList theList;
+    private final AccountPriceList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountRate(final MoneyWiseReader pReader) {
+    protected SheetAccountPrice(final MoneyWiseReader pReader) {
         /* Call super constructor */
-        super(pReader, AREA_RATES);
+        super(pReader, AREA_PRICES);
 
-        /* Access the Rates list */
-        theList = pReader.getData().getAccountRates();
+        /* Access the Prices list */
+        theList = pReader.getData().getAccountPrices();
         setDataList(theList);
     }
 
@@ -90,42 +85,40 @@ public class SheetAccountRate
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountRate(final MoneyWiseWriter pWriter) {
+    protected SheetAccountPrice(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, AREA_RATES);
+        super(pWriter, AREA_PRICES);
 
-        /* Access the Rates list */
-        theList = pWriter.getData().getAccountRates();
+        /* Access the Prices list */
+        theList = pWriter.getData().getAccountPrices();
         setDataList(theList);
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
-        myValues.addValue(AccountRate.FIELD_ACCOUNT, loadInteger(COL_ACCOUNT));
-        myValues.addValue(AccountRate.FIELD_RATE, loadBytes(COL_RATE));
-        myValues.addValue(AccountRate.FIELD_BONUS, loadBytes(COL_BONUS));
-        myValues.addValue(AccountRate.FIELD_ENDDATE, loadDate(COL_ENDDATE));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountPrice.OBJECT_NAME);
+        myValues.addValue(AccountPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
+        myValues.addValue(AccountPrice.FIELD_DATE, loadDate(COL_DATE));
+        myValues.addValue(AccountPrice.FIELD_PRICE, loadBytes(COL_PRICE));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final AccountRate pItem) throws JOceanusException {
+    protected void insertSecureItem(final AccountPrice pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_ACCOUNT, pItem.getAccountId());
-        writeBytes(COL_RATE, pItem.getRateBytes());
-        writeBytes(COL_BONUS, pItem.getBonusBytes());
-        writeDate(COL_ENDDATE, pItem.getEndDate());
+        writeInteger(COL_SECURITY, pItem.getSecurityId());
+        writeDate(COL_DATE, pItem.getDate());
+        writeBytes(COL_PRICE, pItem.getPriceBytes());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_ENDDATE;
+        return COL_PRICE;
     }
 
     @Override
@@ -134,40 +127,44 @@ public class SheetAccountRate
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Validate the rates */
+        /* Validate the prices */
         theList.validateOnLoad();
     }
 
     /**
-     * Load the Rates from an archive.
+     * Load the Prices from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of rates */
-        AccountRateList myList = pData.getAccountRates();
+                                         final MoneyWiseData pData,
+                                         final JDateDay pLastEvent) throws JOceanusException {
+        /* Access the list of prices */
+        AccountPriceList myList = pData.getAccountPrices();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_RATES);
+            DataView myView = pWorkBook.getRangeView(AREA_PRICES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_RATES)) {
+            if (!pTask.setNewStage(AREA_PRICES)) {
                 return false;
             }
 
-            /* Count the number of Rates */
-            int myTotal = myView.getRowCount();
+            /* Count the number of Prices */
+            int myRows = myView.getRowCount();
+            int myCols = myView.getColumnCount();
+            int myTotal = (myRows - 1) * (myCols - 1);
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -175,47 +172,51 @@ public class SheetAccountRate
             }
 
             /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
+            DataRow myActRow = myView.getRowByIndex(0);
+            for (int i = 1; i < myRows; i++) {
                 /* Access the cell by reference */
                 DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
 
-                /* Access account */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myAccount = myCell.getStringValue();
+                /* Access date */
+                DataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                JDateDay myDate = myCell.getDateValue();
 
-                /* Handle Rate */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myRate = myCell.getStringValue();
-
-                /* Handle bonus which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myBonus = null;
-                if (myCell != null) {
-                    myBonus = myCell.getStringValue();
+                /* If the price is too late */
+                if (pLastEvent.compareTo(myDate) < 0) {
+                    /* Break the loop */
+                    break;
                 }
 
-                /* Handle expiration which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                JDateDay myExpiry = null;
-                if (myCell != null) {
-                    myExpiry = myCell.getDateValue();
-                }
+                /* Loop through the columns of the table */
+                for (int j = 1; j < myCols; j++) {
+                    /* Access account */
+                    myCell = myView.getRowCellByIndex(myActRow, j);
+                    if (myCell == null) {
+                        continue;
+                    }
+                    String mySecurity = myCell.getStringValue();
 
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountRate.OBJECT_NAME);
-                myValues.addValue(AccountRate.FIELD_ACCOUNT, myAccount);
-                myValues.addValue(AccountRate.FIELD_RATE, myRate);
-                myValues.addValue(AccountRate.FIELD_BONUS, myBonus);
-                myValues.addValue(AccountRate.FIELD_ENDDATE, myExpiry);
+                    /* Handle price which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, j);
+                    if (myCell != null) {
+                        /* Access the formatted cell */
+                        String myPrice = myCell.getStringValue();
 
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
+                        /* Build data values */
+                        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountPrice.OBJECT_NAME);
+                        myValues.addValue(AccountPrice.FIELD_SECURITY, mySecurity);
+                        myValues.addValue(AccountPrice.FIELD_DATE, myDate);
+                        myValues.addValue(AccountPrice.FIELD_PRICE, myPrice);
 
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
+                        /* Add the value into the list */
+                        myList.addValuesItem(myValues);
+                    }
+
+                    /* Report the progress */
+                    myCount++;
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
                 }
             }
 
@@ -223,7 +224,7 @@ public class SheetAccountRate
             myList.resolveDataSetLinks();
             myList.reSort();
 
-            /* Validate the rates */
+            /* Validate the prices */
             myList.validateOnLoad();
 
             /* Handle exceptions */

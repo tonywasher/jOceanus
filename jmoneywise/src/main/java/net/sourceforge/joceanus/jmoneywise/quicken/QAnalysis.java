@@ -35,12 +35,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
@@ -392,7 +392,7 @@ public class QAnalysis
         }
 
         /* Update status bar and analyse prices */
-        SecurityPriceList myPrices = theData.getPrices();
+        AccountPriceList myPrices = theData.getAccountPrices();
         if ((bContinue) && (pStatus.setNewStage("Analysing prices")) && (pStatus.setNumSteps(myPrices.size()))) {
             /* Analyse prices for securities */
             theSecurities.buildPrices(pStatus, myPrices, pLastEvent);

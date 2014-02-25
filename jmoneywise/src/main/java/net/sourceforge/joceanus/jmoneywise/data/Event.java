@@ -534,7 +534,7 @@ public class Event
         /* Check for valid priced credit account */
         if ((myCredit != null) && (myCredit.hasUnits())) {
             /* If the date of this event is prior to the first price */
-            SecurityPrice myPrice = myCredit.getInitPrice();
+            AccountPrice myPrice = myCredit.getInitPrice();
             if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_CREDIT);
             }
@@ -543,7 +543,7 @@ public class Event
         /* Check for valid priced debit account */
         if ((myDebit != null) && (myDebit.hasUnits()) && (!Difference.isEqual(myCredit, myDebit))) {
             /* If the date of this event is prior to the first price */
-            SecurityPrice myPrice = myDebit.getInitPrice();
+            AccountPrice myPrice = myDebit.getInitPrice();
             if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError(ERROR_BADDATE, FIELD_DEBIT);
             }

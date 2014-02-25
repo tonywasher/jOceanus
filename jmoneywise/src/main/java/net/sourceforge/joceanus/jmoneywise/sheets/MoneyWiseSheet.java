@@ -383,6 +383,12 @@ public class MoneyWiseSheet
                 bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                bContinue = SheetDepositRate.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
+            }
+            if (bContinue) {
                 bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
             }
             if (bContinue) {

@@ -41,12 +41,12 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
@@ -345,8 +345,8 @@ public class DataAnalyser
 
                     /* True debit account is the parent */
                     myChild = myDebit.equals(myCredit)
-                            ? null
-                            : myDebit;
+                                                      ? null
+                                                      : myDebit;
                     myDebit = myDebit.getParent();
                     break;
                 case LOANINTERESTEARNED:
@@ -357,8 +357,8 @@ public class DataAnalyser
                 case ROOMRENTALINCOME:
                     /* True debit account is the parent of the loan */
                     myChild = myDebit.equals(myCredit)
-                            ? null
-                            : myDebit;
+                                                      ? null
+                                                      : myDebit;
                     myDebit = myCredit.getParent();
                     break;
                 case WRITEOFF:
@@ -884,7 +884,7 @@ public class DataAnalyser
         /* Stock Right Waived is from the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        SecurityPriceList myPrices = theData.getPrices();
+        AccountPriceList myPrices = theData.getAccountPrices();
         JMoney myAmount = pEvent.getAmount();
         JMoney myReduction;
 
@@ -901,7 +901,7 @@ public class DataAnalyser
         JMoney myCost = myValues.getMoneyValue(SecurityAttribute.COST);
 
         /* Get the appropriate price for the account */
-        SecurityPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
+        AccountPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
         JPrice myPrice = myActPrice.getPrice();
 
         /* Determine value of this stock at the current time */
