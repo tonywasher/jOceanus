@@ -260,7 +260,7 @@ public class CashInfoSet
             switch (myClass) {
                 case AUTOEXPENSE:
                     /* Access data */
-                    EventCategory myExpense = myInfo.getValue(EventCategory.class);
+                    EventCategory myExpense = myInfo.getEventCategory();
                     if (!myExpense.getCategoryTypeClass().isExpense()) {
                         myDeposit.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
                     }
