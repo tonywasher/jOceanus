@@ -78,8 +78,7 @@ public class TableDepositInfo
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve ValueLinks and validate */
-        theList.resolveValueLinks();
+        /* validate */
         theList.validateOnLoad();
 
         /* Validate the deposits */

@@ -25,15 +25,13 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -47,11 +45,6 @@ public class SheetSecurity
      * NamedArea for Securities.
      */
     private static final String AREA_SECURITIES = Security.LIST_NAME;
-
-    /**
-     * NameList for Securities.
-     */
-    protected static final String AREA_SECURITYNAMES = Security.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -162,105 +155,69 @@ public class SheetSecurity
     }
 
     /**
-     * Load the Securities from an archive.
-     * @param pTask the task control
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
+     * Process security row from archive.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of securities */
-        SecurityList myList = pData.getSecurities();
+    protected static void processSecurity(final MoneyWiseData pData,
+                                          final DataView pView,
+                                          final DataRow pRow) throws JOceanusException {
+        /* Access name and type */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_SECURITIES);
-
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
-            /* Declare the new stage */
-            if (!pTask.setNewStage(Security.LIST_NAME)) {
-                return false;
-            }
-
-            /* Count the number of securities */
-            int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
-                return false;
-            }
-
-            /* Access default currency */
-            AccountCurrency myCurrency = pData.getDefaultCurrency();
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myName = myCell.getStringValue();
-
-                /* Access Type */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myType = myCell.getStringValue();
-
-                /* Access Symbol */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String mySymbol = myCell.getStringValue();
-
-                /* Access Parent */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myParent = myCell.getStringValue();
-
-                /* Access Closed Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = myCell.getBooleanValue();
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
-                myValues.addValue(Security.FIELD_NAME, myName);
-                myValues.addValue(Security.FIELD_SECTYPE, myType);
-                myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
-                myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
-                myValues.addValue(Security.FIELD_PARENT, myParent);
-                myValues.addValue(Security.FIELD_CLOSED, isClosed);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
-                }
-            }
-
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
-
-            /* Validate the event categories */
-            myList.validateOnLoad();
-
-            /* Handle exceptions */
-        } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+        /* Look for separator in category */
+        int iIndex = myType.indexOf(EventCategory.STR_SEP);
+        if (iIndex == -1) {
+            throw new JMoneyWiseLogicException("Unexpected Security Class " + myType);
         }
 
-        /* Return to caller */
-        return true;
+        /* Access subCategory as security type */
+        String mySecType = myType.substring(iIndex + 1);
+
+        /* Skip class, taxFree and gross */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle closed which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* Access Parent account */
+        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Ignore the alias account TODO */
+        if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
+            return;
+        }
+
+        /* Skip portfolio,holding,maturity and opening columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Access Symbol */
+        String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
+        myValues.addValue(Security.FIELD_NAME, myName);
+        myValues.addValue(Security.FIELD_SECTYPE, mySecType);
+        myValues.addValue(Security.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Security.FIELD_PARENT, myParent);
+        myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
+        myValues.addValue(Security.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        SecurityList myList = pData.getSecurities();
+        myList.addValuesItem(myValues);
     }
 }

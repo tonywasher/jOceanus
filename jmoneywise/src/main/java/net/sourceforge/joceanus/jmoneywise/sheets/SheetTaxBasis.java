@@ -48,11 +48,6 @@ public class SheetTaxBasis
     private static final String AREA_TAXBASES = TaxBasis.LIST_NAME;
 
     /**
-     * NameList for TaxBases.
-     */
-    protected static final String AREA_TAXBASISNAMES = TaxBasis.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

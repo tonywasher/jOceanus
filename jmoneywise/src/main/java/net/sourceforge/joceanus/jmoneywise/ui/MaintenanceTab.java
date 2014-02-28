@@ -40,12 +40,18 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
@@ -214,6 +220,9 @@ public class MaintenanceTab
 
         /* Add the static elements */
         theStatic.addStatic(AccountCategoryType.LIST_NAME, AccountCategoryTypeList.class, AccountCategoryType.class);
+        theStatic.addStatic(DepositCategoryType.LIST_NAME, DepositCategoryTypeList.class, DepositCategoryType.class);
+        theStatic.addStatic(CashCategoryType.LIST_NAME, CashCategoryTypeList.class, CashCategoryType.class);
+        theStatic.addStatic(LoanCategoryType.LIST_NAME, LoanCategoryTypeList.class, LoanCategoryType.class);
         theStatic.addStatic(EventCategoryType.LIST_NAME, EventCategoryTypeList.class, EventCategoryType.class);
         theStatic.addStatic(AccountCurrency.LIST_NAME, AccountCurrencyList.class, AccountCurrency.class);
         theStatic.addStatic(TaxBasis.LIST_NAME, TaxBasisList.class, TaxBasis.class);

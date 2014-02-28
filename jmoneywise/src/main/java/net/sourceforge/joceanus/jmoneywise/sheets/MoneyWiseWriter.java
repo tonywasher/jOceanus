@@ -48,6 +48,9 @@ public class MoneyWiseWriter
     protected void registerSheets() {
         /* Register the sheets */
         addSheet(new SheetAccountCategoryType(this));
+        addSheet(new SheetDepositCategoryType(this));
+        addSheet(new SheetCashCategoryType(this));
+        addSheet(new SheetLoanCategoryType(this));
         addSheet(new SheetPayeeType(this));
         addSheet(new SheetSecurityType(this));
         addSheet(new SheetEventCategoryType(this));
@@ -61,6 +64,9 @@ public class MoneyWiseWriter
         addSheet(new SheetEventInfoType(this));
         addSheet(new SheetEventTag(this));
         addSheet(new SheetAccountCategory(this));
+        addSheet(new SheetDepositCategory(this));
+        addSheet(new SheetCashCategory(this));
+        addSheet(new SheetLoanCategory(this));
         addSheet(new SheetEventCategory(this));
         addSheet(new SheetTaxYear(this));
         addSheet(new SheetTaxYearInfo(this));
@@ -71,6 +77,10 @@ public class MoneyWiseWriter
         addSheet(new SheetSecurityInfo(this));
         addSheet(new SheetDeposit(this));
         addSheet(new SheetDepositInfo(this));
+        addSheet(new SheetCash(this));
+        addSheet(new SheetCashInfo(this));
+        addSheet(new SheetLoan(this));
+        addSheet(new SheetLoanInfo(this));
         addSheet(new SheetAccount(this));
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetPortfolioInfo(this));

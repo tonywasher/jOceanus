@@ -25,14 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -46,11 +43,6 @@ public class SheetPayee
      * NamedArea for Payees.
      */
     private static final String AREA_PAYEES = Payee.LIST_NAME;
-
-    /**
-     * NameList for Payees.
-     */
-    protected static final String AREA_PAYEENAMES = Payee.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -140,91 +132,40 @@ public class SheetPayee
     }
 
     /**
-     * Load the Payees from an archive.
-     * @param pTask the task control
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
+     * Process payee row from archive.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of payees */
-        PayeeList myList = pData.getPayees();
+    protected static void processPayee(final MoneyWiseData pData,
+                                       final DataView pView,
+                                       final DataRow pRow) throws JOceanusException {
+        /* Access name and type */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_PAYEES);
+        /* Skip class, taxFree and gross */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
 
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
-            /* Declare the new stage */
-            if (!pTask.setNewStage(Payee.LIST_NAME)) {
-                return false;
-            }
-
-            /* Count the number of Payees */
-            int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
-                return false;
-            }
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myName = myCell.getStringValue();
-
-                /* Access Type */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myType = myCell.getStringValue();
-
-                /* Access Closed Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = myCell.getBooleanValue();
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-                myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
-                myValues.addValue(Payee.FIELD_NAME, myName);
-                myValues.addValue(Payee.FIELD_CLOSED, isClosed);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
-                }
-            }
-
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
-
-            /* Validate the event categories */
-            myList.validateOnLoad();
-
-            /* Handle exceptions */
-        } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+        /* Handle closed which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
         }
 
-        /* Return to caller */
-        return true;
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+        myValues.addValue(Payee.FIELD_NAME, myName);
+        myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
+        myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        PayeeList myList = pData.getPayees();
+        myList.addValuesItem(myValues);
     }
 }

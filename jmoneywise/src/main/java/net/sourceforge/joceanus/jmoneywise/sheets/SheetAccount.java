@@ -32,21 +32,18 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
@@ -63,11 +60,6 @@ public class SheetAccount
      * NamedArea for Accounts.
      */
     private static final String AREA_ACCOUNTS = Account.LIST_NAME;
-
-    /**
-     * NameList for Accounts.
-     */
-    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -222,6 +214,9 @@ public class SheetAccount
                 String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myAcType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
+                /* Skip the class column */
+                iAdjust++;
+
                 /* Handle taxFree which may be missing */
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isTaxFree = Boolean.FALSE;
@@ -272,7 +267,8 @@ public class SheetAccount
                 String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 Account myAccount = myList.findItemByName(myName);
 
-                /* Skip four columns */
+                /* Skip five columns */
+                iAdjust++;
                 iAdjust++;
                 iAdjust++;
                 iAdjust++;
@@ -383,167 +379,45 @@ public class SheetAccount
     private static void processAlternate(final MoneyWiseData pData,
                                          final DataView pView,
                                          final DataRow pRow) throws JOceanusException {
-        /* Access lists */
-        PayeeTypeList myPayeeTypeList = pData.getPayeeTypes();
-        SecurityTypeList mySecTypeList = pData.getSecurityTypes();
-        SecurityList mySecurityList = pData.getSecurities();
-        PayeeList myPayeeList = pData.getPayees();
-        DepositList myDepositList = pData.getDeposits();
-        DepositInfoList myDepInfoList = pData.getDepositInfo();
-        PortfolioList myPortfolioList = pData.getPortfolios();
-
-        /* Access name and type */
+        /* Skip name and type column */
         int iAdjust = 0;
-        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        iAdjust++;
+        iAdjust++;
 
-        /* Handle taxFree which may be missing */
-        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        Boolean isTaxFree = Boolean.FALSE;
-        if (myCell != null) {
-            isTaxFree = myCell.getBooleanValue();
-        }
+        /* Access account class */
+        String myClass = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Handle gross which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        Boolean isGross = Boolean.FALSE;
-        if (myCell != null) {
-            isGross = myCell.getBooleanValue();
-        }
+        /* If this is a deposit */
+        if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
+            /* Process as a deposit */
+            SheetDeposit.processDeposit(pData, pView, pRow);
 
-        /* Handle closed which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-        Boolean isClosed = Boolean.FALSE;
-        if (myCell != null) {
-            isClosed = myCell.getBooleanValue();
-        }
+            /* If this is a cash */
+        } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
+            /* Process as a cash */
+            SheetCash.processCash(pData, pView, pRow);
 
-        /* If this is a portfolio */
-        if (myType.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
-            /* Skip three columns */
-            iAdjust++;
-            iAdjust++;
-            iAdjust++;
+            /* If this is a loan */
+        } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
+            /* Process as a loan */
+            SheetLoan.processLoan(pData, pView, pRow);
 
-            /* Access Holding account */
-            String myHolding = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-
-            /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
-            myValues.addValue(Portfolio.FIELD_NAME, myName);
-            myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
-            myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
-            myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
-
-            /* Add the value into the list */
-            myPortfolioList.addValuesItem(myValues);
-
-            /* Build data values */
-            myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-            myValues.addValue(Payee.FIELD_NAME, myName);
-            myValues.addValue(Payee.FIELD_PAYEETYPE, "Institution");
-            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
-
-            /* Add the value into the list */
-            myPayeeList.addValuesItem(myValues);
+            /* If this is a security */
+        } else if (myClass.equals(MoneyWiseDataType.SECURITY.toString())) {
+            /* Process as a security */
+            SheetSecurity.processSecurity(pData, pView, pRow);
 
             /* If this is a payee */
-        } else if (myPayeeTypeList.findItemByName(myType) != null) {
-            /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-            myValues.addValue(Payee.FIELD_NAME, myName);
-            myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
-            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+        } else if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
+            /* Process as a payee */
+            SheetPayee.processPayee(pData, pView, pRow);
 
-            /* Add the value into the list */
-            myPayeeList.addValuesItem(myValues);
+            /* If this is a portfolio */
+        } else if (myClass.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
+            /* Process as a portfolio */
+            SheetPortfolio.processPortfolio(pData, pView, pRow);
         } else {
-            /* Look for separator in category */
-            int iIndex = myType.indexOf(EventCategory.STR_SEP);
-            if (iIndex != -1) {
-                /* Access Parent account */
-                myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-                String myParent = null;
-                if (myCell != null) {
-                    myParent = myCell.getStringValue();
-                }
-                if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
-                    return;
-                }
-
-                /* Access subCategory as security type */
-                String mySecType = myType.substring(iIndex + 1);
-                if (mySecTypeList.findItemByName(mySecType) != null) {
-                    /* Skip portfolio,holding,maturity and opening columns */
-                    iAdjust++;
-                    iAdjust++;
-                    iAdjust++;
-                    iAdjust++;
-
-                    /* Access Symbol */
-                    String mySymbol = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-
-                    /* Build data values */
-                    DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Security.OBJECT_NAME);
-                    myValues.addValue(Security.FIELD_NAME, myName);
-                    myValues.addValue(Security.FIELD_SECTYPE, mySecType);
-                    myValues.addValue(Security.FIELD_CURRENCY, pData.getDefaultCurrency());
-                    myValues.addValue(Security.FIELD_PARENT, myParent);
-                    myValues.addValue(Security.FIELD_SYMBOL, mySymbol);
-                    myValues.addValue(Security.FIELD_CLOSED, isClosed);
-
-                    /* Add the value into the list */
-                    mySecurityList.addValuesItem(myValues);
-                } else {
-                    /* Skip portfolio and holding columns */
-                    iAdjust++;
-                    iAdjust++;
-
-                    /* Handle maturity which may be missing */
-                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-                    JDateDay myMaturity = null;
-                    if (myCell != null) {
-                        myMaturity = myCell.getDateValue();
-                    }
-
-                    /* Handle opening balance which may be missing */
-                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-                    String myBalance = null;
-                    if (myCell != null) {
-                        myBalance = myCell.getStringValue();
-                    }
-
-                    /* Skip symbol */
-                    iAdjust++;
-
-                    /* Handle autoExpense which may be missing */
-                    myCell = pView.getRowCellByIndex(pRow, iAdjust++);
-                    String myAutoExpense = null;
-                    if (myCell != null) {
-                        myAutoExpense = myCell.getStringValue();
-                    }
-
-                    /* Build data values */
-                    DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
-                    myValues.addValue(Deposit.FIELD_NAME, myName);
-                    myValues.addValue(Deposit.FIELD_CATEGORY, myType);
-                    myValues.addValue(Deposit.FIELD_CURRENCY, pData.getDefaultCurrency());
-                    myValues.addValue(Deposit.FIELD_PARENT, myParent);
-                    myValues.addValue(Deposit.FIELD_GROSS, isGross);
-                    myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);
-                    myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
-
-                    /* Add the value into the list */
-                    Deposit myDeposit = myDepositList.addValuesItem(myValues);
-
-                    /* Add information relating to the deposit */
-                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.MATURITY, myMaturity);
-                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.OPENINGBALANCE, myBalance);
-                    myDepInfoList.addInfoItem(null, myDeposit, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
-                }
-            } else {
-                throw new JMoneyWiseLogicException("Unexpected Account");
-            }
+            throw new JMoneyWiseLogicException("Unexpected Account Class " + myClass);
         }
     }
 
@@ -553,30 +427,44 @@ public class SheetAccount
      * @throws JOceanusException on error
      */
     private static void resolveAlternate(final MoneyWiseData pData) throws JOceanusException {
-        /* Access lists */
-        SecurityList mySecurityList = pData.getSecurities();
-        PayeeList myPayeeList = pData.getPayees();
-        DepositList myDepositList = pData.getDeposits();
-        DepositInfoList myDepInfoList = pData.getDepositInfo();
-        PortfolioList myPortfolioList = pData.getPortfolios();
-
         /* Sort the payee list and validate */
+        PayeeList myPayeeList = pData.getPayees();
         myPayeeList.resolveDataSetLinks();
         myPayeeList.reSort();
         myPayeeList.validateOnLoad();
 
         /* Sort the security list and validate */
+        SecurityList mySecurityList = pData.getSecurities();
         mySecurityList.resolveDataSetLinks();
         mySecurityList.reSort();
         mySecurityList.validateOnLoad();
 
         /* Sort the deposit list and validate */
+        DepositList myDepositList = pData.getDeposits();
+        DepositInfoList myDepInfoList = pData.getDepositInfo();
         myDepositList.resolveDataSetLinks();
         myDepositList.reSort();
         myDepInfoList.resolveDataSetLinks();
         myDepositList.validateOnLoad();
 
+        /* Sort the cash list and validate */
+        CashList myCashList = pData.getCash();
+        CashInfoList myCashInfoList = pData.getCashInfo();
+        myCashList.resolveDataSetLinks();
+        myCashList.reSort();
+        myCashInfoList.resolveDataSetLinks();
+        myCashList.validateOnLoad();
+
+        /* Sort the loan list and validate */
+        LoanList myLoanList = pData.getLoans();
+        LoanInfoList myLoanInfoList = pData.getLoanInfo();
+        myLoanList.resolveDataSetLinks();
+        myLoanList.reSort();
+        myLoanInfoList.resolveDataSetLinks();
+        myLoanList.validateOnLoad();
+
         /* Sort the portfolio list and validate */
+        PortfolioList myPortfolioList = pData.getPortfolios();
         myPortfolioList.resolveDataSetLinks();
         myPortfolioList.reSort();
         myPortfolioList.validateOnLoad();

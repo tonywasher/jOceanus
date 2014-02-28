@@ -104,6 +104,11 @@ public class Security
     public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
+     * initialPrice Field Id.
+     */
+    private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInitialPrice"));
+
+    /**
      * Parent Not Market Error Text.
      */
     private static final String ERROR_PARMARKET = NLS_BUNDLE.getString("ErrorParentMarket");
@@ -127,6 +132,11 @@ public class Security
      * Parent Closed Error Text.
      */
     private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
+
+    /**
+     * Initial Price.
+     */
+    private SecurityPrice theInitPrice;
 
     /**
      * Do we have an InfoSet.
@@ -171,6 +181,11 @@ public class Security
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
+        if (FIELD_INITPRC.equals(pField)) {
+            return (theInitPrice != null)
+                                         ? theInitPrice
+                                         : JDataFieldValue.SKIP;
+        }
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                              ? theInfoSet
@@ -193,73 +208,11 @@ public class Security
     }
 
     /**
-     * Obtain WebSite.
-     * @return the webSite
+     * Obtain Initial Price.
+     * @return the price
      */
-    public char[] getWebSite() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain CustNo.
-     * @return the customer #
-     */
-    public char[] getCustNo() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain UserId.
-     * @return the userId
-     */
-    public char[] getUserId() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain Password.
-     * @return the password
-     */
-    public char[] getPassword() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain SortCode.
-     * @return the sort code
-     */
-    public char[] getSortCode() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.SORTCODE, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain Reference.
-     * @return the reference
-     */
-    public char[] getReference() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.REFERENCE, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain Account.
-     * @return the account
-     */
-    public char[] getAccount() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.ACCOUNT, char[].class)
-                         : null;
+    public SecurityPrice getInitialPrice() {
+        return theInitPrice;
     }
 
     /**
@@ -560,6 +513,26 @@ public class Security
     }
 
     @Override
+    public void clearActive() {
+        /* Reset flags */
+        theInitPrice = null;
+
+        /* Pass call onwards */
+        super.clearActive();
+    }
+
+    @Override
+    public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
+        /* Check for initial price */
+        if ((pSource instanceof SecurityPrice) && (theInitPrice == null)) {
+            theInitPrice = (SecurityPrice) pSource;
+        }
+
+        /* Pass call onwards */
+        super.touchItem(pSource);
+    }
+
+    @Override
     public DataState getState() {
         /* Pop history for self */
         DataState myState = super.getState();
@@ -847,69 +820,6 @@ public class Security
      */
     public void setParent(final Payee pParent) throws JOceanusException {
         setValueParent(pParent);
-    }
-
-    /**
-     * Set a new WebSite.
-     * @param pWebSite the new webSite
-     * @throws JOceanusException on error
-     */
-    public void setWebSite(final char[] pWebSite) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
-    }
-
-    /**
-     * Set a new CustNo.
-     * @param pCustNo the new custNo
-     * @throws JOceanusException on error
-     */
-    public void setCustNo(final char[] pCustNo) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
-    }
-
-    /**
-     * Set a new UserId.
-     * @param pUserId the new userId
-     * @throws JOceanusException on error
-     */
-    public void setUserId(final char[] pUserId) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.USERID, pUserId);
-    }
-
-    /**
-     * Set a new Password.
-     * @param pPassword the new password
-     * @throws JOceanusException on error
-     */
-    public void setPassword(final char[] pPassword) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
-    }
-
-    /**
-     * Set a new SortCode.
-     * @param pSortCode the new sort code
-     * @throws JOceanusException on error
-     */
-    public void setSortCode(final char[] pSortCode) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.SORTCODE, pSortCode);
-    }
-
-    /**
-     * Set a new Account.
-     * @param pAccount the new account
-     * @throws JOceanusException on error
-     */
-    public void setAccount(final char[] pAccount) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.ACCOUNT, pAccount);
-    }
-
-    /**
-     * Set a new Reference.
-     * @param pReference the new reference
-     * @throws JOceanusException on error
-     */
-    public void setReference(final char[] pReference) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.REFERENCE, pReference);
     }
 
     /**

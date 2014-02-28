@@ -49,11 +49,6 @@ public class SheetTaxYearInfoType
     private static final String AREA_TAXINFOTYPES = TaxYearInfoType.LIST_NAME;
 
     /**
-     * NameList for TaxYearInfoType.
-     */
-    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

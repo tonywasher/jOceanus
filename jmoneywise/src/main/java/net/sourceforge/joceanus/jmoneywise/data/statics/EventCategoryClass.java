@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.data.statics;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
+import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -485,6 +485,14 @@ public enum EventCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether the CategoryType is an expense.
+     * @return <code>true</code> if the category is expense, <code>false</code> otherwise.
+     */
+    public boolean isExpense() {
+        return !isIncome() && !isTransfer();
     }
 
     /**

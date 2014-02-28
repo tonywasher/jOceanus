@@ -48,11 +48,6 @@ public class SheetEventCategory
     private static final String AREA_EVTCATEGORIES = "EventCategoryInfo";
 
     /**
-     * NameList for EventCategories.
-     */
-    protected static final String AREA_EVTCATNAMES = "EventCategoryNames";
-
-    /**
      * Name column.
      */
     private static final int COL_NAME = COL_CONTROLID + 1;

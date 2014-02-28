@@ -48,11 +48,6 @@ public class SheetTaxCategory
     private static final String AREA_TAXCATEGORIES = TaxCategory.LIST_NAME;
 
     /**
-     * NameList for TaxTypes.
-     */
-    protected static final String AREA_TAXCATEGORYNAMES = TaxCategory.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

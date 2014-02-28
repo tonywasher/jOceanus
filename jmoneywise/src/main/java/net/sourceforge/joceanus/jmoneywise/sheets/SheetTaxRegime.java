@@ -42,16 +42,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public class SheetTaxRegime
         extends SheetStaticData<TaxRegime, MoneyWiseDataType> {
-
     /**
      * NamedArea for Tax Regimes.
      */
     private static final String AREA_TAXREGIMES = TaxRegime.LIST_NAME;
-
-    /**
-     * NameList for Tax Regime Names.
-     */
-    protected static final String AREA_TAXREGIMENAMES = TaxRegime.OBJECT_NAME + "Names";
 
     /**
      * Constructor for loading a spreadsheet.

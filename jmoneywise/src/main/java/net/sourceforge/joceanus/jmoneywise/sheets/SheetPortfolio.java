@@ -25,14 +25,14 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -46,11 +46,6 @@ public class SheetPortfolio
      * NamedArea for Portfolios.
      */
     private static final String AREA_PORTFOLIOS = Portfolio.LIST_NAME;
-
-    /**
-     * NameList for Portfolios.
-     */
-    protected static final String AREA_PORTFOLIONAMES = Portfolio.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -147,97 +142,67 @@ public class SheetPortfolio
     }
 
     /**
-     * Load the Portfolios from an archive.
-     * @param pTask the task control
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
+     * Process portfolio row from archive.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of portfolios */
-        PortfolioList myList = pData.getPortfolios();
+    protected static void processPortfolio(final MoneyWiseData pData,
+                                           final DataView pView,
+                                           final DataRow pRow) throws JOceanusException {
+        /* Access name */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_PORTFOLIOS);
+        /* Skip type and class */
+        iAdjust++;
+        iAdjust++;
 
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
-            /* Declare the new stage */
-            if (!pTask.setNewStage(Portfolio.LIST_NAME)) {
-                return false;
-            }
-
-            /* Count the number of portfolios */
-            int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
-                return false;
-            }
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myName = myCell.getStringValue();
-
-                /* Access holding name */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myHolding = myCell.getStringValue();
-
-                /* Access TaxFree Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isTaxFree = myCell.getBooleanValue();
-
-                /* Access Closed Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = myCell.getBooleanValue();
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
-                myValues.addValue(Portfolio.FIELD_NAME, myName);
-                myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
-                myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
-                myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-                /* Add the value into the finance tables */
-
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
-                }
-            }
-
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
-
-            /* Validate the event categories */
-            myList.validateOnLoad();
-
-            /* Handle exceptions */
-        } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+        /* Handle taxFree which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isTaxFree = Boolean.FALSE;
+        if (myCell != null) {
+            isTaxFree = myCell.getBooleanValue();
         }
 
-        /* Return to caller */
-        return true;
+        /* Skip gross column */
+        iAdjust++;
+
+        /* Handle closed which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* Skip parent, alias and portfolio columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Access Holding account */
+        String myHolding = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Portfolio.OBJECT_NAME);
+        myValues.addValue(Portfolio.FIELD_NAME, myName);
+        myValues.addValue(Portfolio.FIELD_HOLDING, myHolding);
+        myValues.addValue(Portfolio.FIELD_TAXFREE, isTaxFree);
+        myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        PortfolioList myList = pData.getPortfolios();
+        myList.addValuesItem(myValues);
+
+        /* Build data values */
+        myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+        myValues.addValue(Payee.FIELD_NAME, myName);
+        myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.INSTITUTION.toString());
+        myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        PayeeList myPayeeList = pData.getPayees();
+        myPayeeList.addValuesItem(myValues);
     }
 }

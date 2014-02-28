@@ -48,11 +48,6 @@ public class SheetSecurityType
     private static final String AREA_SECURITYTYPES = SecurityType.LIST_NAME;
 
     /**
-     * NameList for SecurityTypes.
-     */
-    protected static final String AREA_SECURITYTYPENAMES = SecurityType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

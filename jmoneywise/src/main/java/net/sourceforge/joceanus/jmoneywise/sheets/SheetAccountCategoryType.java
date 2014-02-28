@@ -48,11 +48,6 @@ public class SheetAccountCategoryType
     private static final String AREA_ACCOUNTCATTYPES = AccountCategoryType.LIST_NAME;
 
     /**
-     * NameList for AccountCategoryTypes.
-     */
-    protected static final String AREA_ACCOUNTCATTYPENAMES = AccountCategoryType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

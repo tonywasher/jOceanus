@@ -160,7 +160,6 @@ public class PortfolioInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
-            case COMMENTS:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
@@ -169,6 +168,7 @@ public class PortfolioInfoSet
 
                 /* Old style */
             case PARENT:
+            case COMMENTS:
             case PORTFOLIO:
             case ALIAS:
             case HOLDING:
@@ -221,17 +221,10 @@ public class PortfolioInfoSet
                 case SORTCODE:
                 case ACCOUNT:
                 case NOTES:
+                case REFERENCE:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
-                        myPortfolio.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case REFERENCE:
-                case COMMENTS:
-                    /* Access data */
-                    String myString = myInfo.getValue(String.class);
-                    if (myString.length() > myClass.getMaximumLength()) {
                         myPortfolio.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;

@@ -48,11 +48,6 @@ public class SheetAccountInfoType
     private static final String AREA_ACCOUNTINFOTYPES = AccountInfoType.LIST_NAME;
 
     /**
-     * NameList for AccountInfoType.
-     */
-    protected static final String AREA_ACCOUNTINFOTYPENAMES = AccountInfoType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

@@ -48,11 +48,6 @@ public class SheetAccountCurrency
     private static final String AREA_ACCOUNTCURRENCIES = AccountCurrency.LIST_NAME;
 
     /**
-     * NameList for AccountCurrencies.
-     */
-    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME + "Names";
-
-    /**
      * Default column.
      */
     private static final int COL_DEFAULT = COL_DESC + 1;

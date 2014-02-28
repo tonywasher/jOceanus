@@ -325,6 +325,15 @@ public class MoneyWiseSheet
                 bContinue = SheetAccountCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
+                bContinue = SheetDepositCategoryType.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetCashCategoryType.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetLoanCategoryType.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
                 bContinue = SheetSecurityType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {

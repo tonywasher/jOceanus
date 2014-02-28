@@ -68,7 +68,7 @@
     <SvnKitVersion>1.8.3</SvnKitVersion>
     <JGitVersion>3.2.0.201312181205-r</JGitVersion>
     <JiraRestVersion>2.0.0-m25</JiraRestVersion>
-    <ApacheMavenVersion>3.1.1</ApacheMavenVersion>
+    <ApacheMavenVersion>3.2.1</ApacheMavenVersion>
     <PostGreSQLVersion>9.2-1003-jdbc4</PostGreSQLVersion>
     <ApachePOIVersion>3.9</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>

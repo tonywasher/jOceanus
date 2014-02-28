@@ -157,6 +157,9 @@ public class SecurityInfoSet
         switch (pClass) {
         /* Allowed set */
             case NOTES:
+                return JDataFieldRequired.CANEXIST;
+
+                /* Old style */
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
@@ -165,9 +168,6 @@ public class SecurityInfoSet
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
-                return JDataFieldRequired.CANEXIST;
-
-                /* Old style */
             case PARENT:
             case PORTFOLIO:
             case ALIAS:
@@ -214,24 +214,10 @@ public class SecurityInfoSet
 
             /* Switch on class */
             switch (myClass) {
-                case WEBSITE:
-                case CUSTOMERNO:
-                case USERID:
-                case PASSWORD:
-                case SORTCODE:
-                case ACCOUNT:
                 case NOTES:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
-                        mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case REFERENCE:
-                case COMMENTS:
-                    /* Access data */
-                    String myString = myInfo.getValue(String.class);
-                    if (myString.length() > myClass.getMaximumLength()) {
                         mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;

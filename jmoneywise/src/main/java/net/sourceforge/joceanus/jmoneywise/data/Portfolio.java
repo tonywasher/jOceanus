@@ -94,11 +94,6 @@ public class Portfolio
     private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
 
     /**
-     * Holding Invalid Error Text.
-     */
-    private static final String ERROR_BADHOLD = NLS_BUNDLE.getString("ErrorBadHolding");
-
-    /**
      * Holding Closed Error Text.
      */
     private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
@@ -672,11 +667,6 @@ public class Portfolio
         if (myHolding == null) {
             addError(ERROR_MISSING, FIELD_HOLDING);
         } else {
-            /* check that holding account is deposit */
-            if (!myHolding.isDeposit()) {
-                addError(ERROR_BADHOLD, FIELD_HOLDING);
-            }
-
             /* If we are open then holding account must be open */
             if (!isClosed() && myHolding.isClosed()) {
                 addError(ERROR_HOLDCLOSED, FIELD_HOLDING);

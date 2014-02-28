@@ -28,15 +28,18 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedString;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Class representing an account that can be part of a transaction.
@@ -70,6 +73,26 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
+    /**
+     * CloseDate Field Id.
+     */
+    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCloseDate"));
+
+    /**
+     * firstEvent Field Id.
+     */
+    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataFirstEvent"));
+
+    /**
+     * lastEvent Field Id.
+     */
+    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLastEvent"));
+
+    /**
+     * isRelevant Field Id.
+     */
+    private static final JDataField FIELD_ISRELEVANT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsRelevant"));
+
     @Override
     public String formatObject() {
         return getName();
@@ -78,6 +101,52 @@ public abstract class AssetBase<T extends AssetBase<T>>
     @Override
     public String toString() {
         return formatObject();
+    }
+
+    /**
+     * Close Date.
+     */
+    private JDateDay theCloseDate;
+
+    /**
+     * Earliest Event.
+     */
+    private Event theEarliest;
+
+    /**
+     * Latest Event.
+     */
+    private Event theLatest;
+
+    /**
+     * Is this relevant?
+     */
+    private boolean isRelevant;
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle flags */
+        if (FIELD_CLOSEDATE.equals(pField)) {
+            return (theCloseDate != null)
+                                         ? theCloseDate
+                                         : JDataFieldValue.SKIP;
+        }
+        if (FIELD_EVTFIRST.equals(pField)) {
+            return (theEarliest != null)
+                                        ? theEarliest
+                                        : JDataFieldValue.SKIP;
+        }
+        if (FIELD_EVTLAST.equals(pField)) {
+            return (theLatest != null)
+                                      ? theLatest
+                                      : JDataFieldValue.SKIP;
+        }
+        if (FIELD_ISRELEVANT.equals(pField)) {
+            return isRelevant;
+        }
+
+        /* Pass onwards */
+        return super.getFieldValue(pField);
     }
 
     @Override
@@ -95,6 +164,38 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
         /* Pass call on */
         return super.includeXmlField(pField);
+    }
+
+    /**
+     * Get the close Date of the account.
+     * @return the closeDate
+     */
+    public JDateDay getCloseDate() {
+        return theCloseDate;
+    }
+
+    /**
+     * Obtain Earliest event.
+     * @return the event
+     */
+    public Event getEarliest() {
+        return theEarliest;
+    }
+
+    /**
+     * Obtain Latest Event.
+     * @return the event
+     */
+    public Event getLatest() {
+        return theLatest;
+    }
+
+    /**
+     * Is the account closeable?
+     * @return true/false
+     */
+    public boolean isRelevant() {
+        return isRelevant;
     }
 
     /**
@@ -289,6 +390,57 @@ public abstract class AssetBase<T extends AssetBase<T>>
     @Override
     public boolean isLocked() {
         return isClosed();
+    }
+
+    /**
+     * Set relevant.
+     */
+    public void setRelevant() {
+        isRelevant = true;
+    }
+
+    /**
+     * Adjust closed date.
+     * @throws JOceanusException on error
+     */
+    protected void adjustClosed() throws JOceanusException {
+        /* Access latest activity date */
+        JDateDay myCloseDate = (theLatest == null)
+                                                  ? null
+                                                  : theLatest.getDate();
+
+        /* Store the close date */
+        theCloseDate = myCloseDate;
+    }
+
+    @Override
+    public void clearActive() {
+        /* Reset flags */
+        theCloseDate = null;
+        theEarliest = null;
+        theLatest = null;
+        isRelevant = false;
+
+        /* Pass call onwards */
+        super.clearActive();
+    }
+
+    @Override
+    public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
+        /* If we are being touched by an event */
+        if (pSource instanceof Event) {
+            /* Access as event */
+            Event myEvent = (Event) pSource;
+
+            /* Record the event */
+            if (theEarliest == null) {
+                theEarliest = myEvent;
+            }
+            theLatest = myEvent;
+        }
+
+        /* Pass call onwards */
+        super.touchItem(pSource);
     }
 
     /**

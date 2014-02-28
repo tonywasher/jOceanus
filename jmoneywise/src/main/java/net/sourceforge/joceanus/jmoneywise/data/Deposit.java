@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -79,7 +79,7 @@ public class Deposit
     /**
      * AccountCategory Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.ACCOUNTCATEGORY.getItemName());
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
 
     /**
      * Parent Field Id.
@@ -102,7 +102,7 @@ public class Deposit
     public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
 
     /**
-     * PayeeInfoSet field Id.
+     * DepositInfoSet field Id.
      */
     private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
 
@@ -199,46 +199,6 @@ public class Deposit
     }
 
     /**
-     * Obtain WebSite.
-     * @return the webSite
-     */
-    public char[] getWebSite() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.WEBSITE, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain CustNo.
-     * @return the customer #
-     */
-    public char[] getCustNo() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.CUSTOMERNO, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain UserId.
-     * @return the userId
-     */
-    public char[] getUserId() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.USERID, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain Password.
-     * @return the password
-     */
-    public char[] getPassword() {
-        return hasInfoSet
-                         ? theInfoSet.getValue(AccountInfoClass.PASSWORD, char[].class)
-                         : null;
-    }
-
-    /**
      * Obtain SortCode.
      * @return the sort code
      */
@@ -275,16 +235,6 @@ public class Deposit
     public char[] getNotes() {
         return hasInfoSet
                          ? theInfoSet.getValue(AccountInfoClass.NOTES, char[].class)
-                         : null;
-    }
-
-    /**
-     * Obtain AutoExpense.
-     * @return the autoExpense category
-     */
-    public EventCategory getAutoExpense() {
-        return hasInfoSet
-                         ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
                          : null;
     }
 
@@ -329,10 +279,10 @@ public class Deposit
     }
 
     /**
-     * Obtain AccountCategory.
+     * Obtain DepositCategory.
      * @return the category
      */
-    public AccountCategory getCategory() {
+    public DepositCategory getCategory() {
         return getCategory(getValueSet());
     }
 
@@ -341,7 +291,7 @@ public class Deposit
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        AccountCategory myCategory = getCategory();
+        DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getId();
@@ -352,18 +302,18 @@ public class Deposit
      * @return the categoryName
      */
     public String getCategoryName() {
-        AccountCategory myCategory = getCategory();
+        DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getName();
     }
 
     /**
-     * Obtain AccountCategoryClass.
-     * @return the actCategoryClass
+     * Obtain DepositCategoryClass.
+     * @return the categoryClass
      */
-    public AccountCategoryClass getCategoryClass() {
-        AccountCategory myCategory = getCategory();
+    public DepositCategoryClass getCategoryClass() {
+        DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getCategoryTypeClass();
@@ -425,12 +375,12 @@ public class Deposit
     }
 
     /**
-     * Obtain SecurityType.
+     * Obtain Deposit Category.
      * @param pValueSet the valueSet
-     * @return the SecurityType
+     * @return the Deposit Category
      */
-    public static AccountCategory getCategory(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CATEGORY, AccountCategory.class);
+    public static DepositCategory getCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, DepositCategory.class);
     }
 
     /**
@@ -485,15 +435,15 @@ public class Deposit
     }
 
     /**
-     * Set account category value.
+     * Set deposit category value.
      * @param pValue the value
      */
-    private void setValueCategory(final AccountCategory pValue) {
+    private void setValueCategory(final DepositCategory pValue) {
         getValueSet().setValue(FIELD_CATEGORY, pValue);
     }
 
     /**
-     * Set account category id.
+     * Set deposit category id.
      * @param pValue the value
      */
     private void setValueCategory(final Integer pValue) {
@@ -501,7 +451,7 @@ public class Deposit
     }
 
     /**
-     * Set account category name.
+     * Set deposit category name.
      * @param pValue the value
      */
     private void setValueCategory(final String pValue) {
@@ -546,16 +496,6 @@ public class Deposit
      */
     private void setValueTaxFree(final Boolean pValue) {
         getValueSet().setValue(FIELD_TAXFREE, pValue);
-    }
-
-    /**
-     * Determines whether an deposit is deposit.
-     * @return savings true/false
-     */
-    public boolean isDeposit() {
-        /* Check for units */
-        AccountCategory myCat = getCategory();
-        return (myCat != null) && (myCat.getCategoryTypeClass().isDeposit());
     }
 
     @Override
@@ -821,7 +761,7 @@ public class Deposit
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         ValueSet myValues = getValueSet();
-        resolveDataLink(FIELD_CATEGORY, myData.getAccountCategories());
+        resolveDataLink(FIELD_CATEGORY, myData.getDepositCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
 
@@ -842,15 +782,15 @@ public class Deposit
      * Set a new account category.
      * @param pCategory the new category
      */
-    public void setAccountCategory(final AccountCategory pCategory) {
+    public void setDepositCategory(final DepositCategory pCategory) {
         setValueCategory(pCategory);
     }
 
     /**
-     * Set a new security currency.
+     * Set a new deposit currency.
      * @param pCurrency the new currency
      */
-    public void setSecurityCurrency(final AccountCurrency pCurrency) {
+    public void setDepositCurrency(final AccountCurrency pCurrency) {
         setValueCurrency(pCurrency);
     }
 
@@ -861,42 +801,6 @@ public class Deposit
      */
     public void setParent(final Payee pParent) throws JOceanusException {
         setValueParent(pParent);
-    }
-
-    /**
-     * Set a new WebSite.
-     * @param pWebSite the new webSite
-     * @throws JOceanusException on error
-     */
-    public void setWebSite(final char[] pWebSite) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.WEBSITE, pWebSite);
-    }
-
-    /**
-     * Set a new CustNo.
-     * @param pCustNo the new custNo
-     * @throws JOceanusException on error
-     */
-    public void setCustNo(final char[] pCustNo) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.CUSTOMERNO, pCustNo);
-    }
-
-    /**
-     * Set a new UserId.
-     * @param pUserId the new userId
-     * @throws JOceanusException on error
-     */
-    public void setUserId(final char[] pUserId) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.USERID, pUserId);
-    }
-
-    /**
-     * Set a new Password.
-     * @param pPassword the new password
-     * @throws JOceanusException on error
-     */
-    public void setPassword(final char[] pPassword) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.PASSWORD, pPassword);
     }
 
     /**
@@ -945,15 +849,6 @@ public class Deposit
     }
 
     /**
-     * Set a new autoExpense.
-     * @param pCategory the new autoExpense
-     * @throws JOceanusException on error
-     */
-    public void setAutoExpense(final EventCategory pCategory) throws JOceanusException {
-        setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
-    }
-
-    /**
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
@@ -986,9 +881,9 @@ public class Deposit
     @Override
     public void validate() {
         Payee myParent = getParent();
-        AccountCategory myCategory = getCategory();
+        DepositCategory myCategory = getCategory();
         AccountCurrency myCurrency = getDepositCurrency();
-        AccountCategoryClass myClass = getCategoryClass();
+        DepositCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
         super.validate();
@@ -1158,7 +1053,7 @@ public class Deposit
         }
 
         /**
-         * Construct an empty CORE Security list.
+         * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
         public DepositList(final MoneyWiseData pData) {

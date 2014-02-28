@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -93,20 +93,8 @@ public class DepositInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
-        Object myValue;
-
-        switch (pInfoClass) {
-            case AUTOEXPENSE:
-                /* Access event category of object */
-                myValue = getEventCategory(pInfoClass);
-                break;
-            default:
-                /* Access value of object */
-                myValue = getField(pInfoClass);
-                break;
-        }
-
         /* Return the value */
+        Object myValue = getField(pInfoClass);
         return (myValue != null)
                                 ? myValue
                                 : JDataFieldValue.SKIP;
@@ -130,24 +118,6 @@ public class DepositInfoSet
     public static JDataField getFieldForClass(final AccountInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
-    }
-
-    /**
-     * Obtain the event category for the infoClass.
-     * @param pInfoClass the Info Class
-     * @return the event category
-     */
-    public EventCategory getEventCategory(final AccountInfoClass pInfoClass) {
-        /* Access existing entry */
-        DepositInfo myValue = getInfo(pInfoClass);
-
-        /* If we have no entry, return null */
-        if (myValue == null) {
-            return null;
-        }
-
-        /* Return the event category */
-        return myValue.getEventCategory();
     }
 
     /**
@@ -192,13 +162,13 @@ public class DepositInfoSet
     protected JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Deposit */
         Deposit myDeposit = getOwner();
-        AccountCategory myCategory = myDeposit.getCategory();
+        DepositCategory myCategory = myDeposit.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
             return JDataFieldRequired.NOTALLOWED;
         }
-        AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
+        DepositCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
         switch (pClass) {
@@ -207,30 +177,14 @@ public class DepositInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
-            case COMMENTS:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
+            case OPENINGBALANCE:
                 return JDataFieldRequired.CANEXIST;
 
                 /* Handle Maturity */
             case MATURITY:
-                return (myClass == AccountCategoryClass.BOND)
+                return (myClass == DepositCategoryClass.BOND)
                                                              ? JDataFieldRequired.MUSTEXIST
                                                              : JDataFieldRequired.NOTALLOWED;
-
-                /* Handle OpeningBalance */
-            case OPENINGBALANCE:
-                return myClass.isDeposit()
-                                          ? JDataFieldRequired.CANEXIST
-                                          : JDataFieldRequired.NOTALLOWED;
-
-                /* Handle AutoExpense */
-            case AUTOEXPENSE:
-                return myClass.isCash()
-                                       ? JDataFieldRequired.CANEXIST
-                                       : JDataFieldRequired.NOTALLOWED;
 
                 /* Old style */
             case PARENT:
@@ -238,6 +192,12 @@ public class DepositInfoSet
             case ALIAS:
             case HOLDING:
             case SYMBOL:
+            case AUTOEXPENSE:
+            case WEBSITE:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case COMMENTS:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -283,24 +243,13 @@ public class DepositInfoSet
                         myDeposit.addError(ERROR_BALANCE, getFieldForClass(myClass));
                     }
                     break;
-                case WEBSITE:
-                case CUSTOMERNO:
-                case USERID:
-                case PASSWORD:
                 case SORTCODE:
                 case ACCOUNT:
                 case NOTES:
+                case REFERENCE:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
-                        myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case REFERENCE:
-                case COMMENTS:
-                    /* Access data */
-                    String myString = myInfo.getValue(String.class);
-                    if (myString.length() > myClass.getMaximumLength()) {
                         myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;

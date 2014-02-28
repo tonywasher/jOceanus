@@ -48,11 +48,6 @@ public class SheetPayeeType
     private static final String AREA_PAYEETYPES = PayeeType.LIST_NAME;
 
     /**
-     * NameList for PayeeTypes.
-     */
-    protected static final String AREA_PAYEETYPENAMES = PayeeType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

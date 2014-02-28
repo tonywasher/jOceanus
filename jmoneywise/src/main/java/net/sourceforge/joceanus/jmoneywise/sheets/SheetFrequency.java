@@ -42,16 +42,10 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public class SheetFrequency
         extends SheetStaticData<Frequency, MoneyWiseDataType> {
-
     /**
      * NamedArea for Frequencies.
      */
     private static final String AREA_FREQUENCIES = Frequency.LIST_NAME;
-
-    /**
-     * NameList for Frequencies.
-     */
-    protected static final String AREA_FREQUENCYNAMES = Frequency.OBJECT_NAME + "Names";
 
     /**
      * Constructor for loading a spreadsheet.

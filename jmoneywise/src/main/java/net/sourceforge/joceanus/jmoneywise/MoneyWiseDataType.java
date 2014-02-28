@@ -36,6 +36,21 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     ACCOUNTTYPE,
 
     /**
+     * DepositType.
+     */
+    DEPOSITTYPE,
+
+    /**
+     * CashType.
+     */
+    CASHTYPE,
+
+    /**
+     * LoanType.
+     */
+    LOANTYPE,
+
+    /**
      * SecurityType.
      */
     SECURITYTYPE,
@@ -111,6 +126,21 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     ACCOUNTCATEGORY,
 
     /**
+     * DepositCategory.
+     */
+    DEPOSITCATEGORY,
+
+    /**
+     * CashCategory.
+     */
+    CASHCATEGORY,
+
+    /**
+     * LoanCategory.
+     */
+    LOANCATEGORY,
+
+    /**
      * EventCategory.
      */
     EVENTCATEGORY,
@@ -149,6 +179,26 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
      * DepositInfo.
      */
     DEPOSITINFO,
+
+    /**
+     * Cash.
+     */
+    CASH,
+
+    /**
+     * CashInfo.
+     */
+    CASHINFO,
+
+    /**
+     * Loan.
+     */
+    LOAN,
+
+    /**
+     * LoanInfo.
+     */
+    LOANINFO,
 
     /**
      * Portfolio.

@@ -160,7 +160,6 @@ public class PayeeInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
-            case COMMENTS:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
@@ -168,6 +167,7 @@ public class PayeeInfoSet
                 return JDataFieldRequired.CANEXIST;
 
                 /* Old style */
+            case COMMENTS:
             case PARENT:
             case PORTFOLIO:
             case ALIAS:
@@ -221,17 +221,10 @@ public class PayeeInfoSet
                 case SORTCODE:
                 case ACCOUNT:
                 case NOTES:
+                case REFERENCE:
                     /* Access data */
                     char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
-                        myPayee.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case REFERENCE:
-                case COMMENTS:
-                    /* Access data */
-                    String myString = myInfo.getValue(String.class);
-                    if (myString.length() > myClass.getMaximumLength()) {
                         myPayee.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;

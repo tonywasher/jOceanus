@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
@@ -79,40 +77,12 @@ public class DepositInfo
     }
 
     /**
-     * Obtain EventCategory.
-     * @return the EventCategory
-     */
-    public EventCategory getEventCategory() {
-        return getEventCategory(getValueSet());
-    }
-
-    /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
      * @return the InfoType
      */
     public static AccountInfoType getInfoType(final ValueSet pValueSet) {
         return getInfoType(pValueSet, AccountInfoType.class);
-    }
-
-    /**
-     * Obtain Linked EventCategory.
-     * @param pValueSet the valueSet
-     * @return the EventCategory
-     */
-    public static EventCategory getEventCategory(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                                     ? null
-                                     : pValueSet.getValue(FIELD_LINK, EventCategory.class);
-    }
-
-    @Override
-    public String getLinkName() {
-        DataItem<?> myItem = getLink(DataItem.class);
-        if (myItem instanceof EventCategory) {
-            return ((EventCategory) myItem).getName();
-        }
-        return null;
     }
 
     @Override
@@ -239,39 +209,9 @@ public class DepositInfo
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
-        /* Resolve any link value */
-        resolveLink();
-
         /* Access the DepositInfoSet and register this data */
         DepositInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
-    }
-
-    /**
-     * Resolve link reference.
-     * @throws JOceanusException on error
-     */
-    private void resolveLink() throws JOceanusException {
-        /* If we have a link */
-        AccountInfoType myType = getInfoType();
-        if (myType.isLink()) {
-            /* Access data */
-            MoneyWiseData myData = getDataSet();
-            ValueSet myValues = getValueSet();
-            Object myLinkId = myValues.getValue(FIELD_VALUE);
-
-            /* Switch on link type */
-            switch (myType.getInfoClass()) {
-                case AUTOEXPENSE:
-                    resolveDataLink(FIELD_LINK, myData.getEventCategories());
-                    if (myLinkId == null) {
-                        setValueValue(getEventCategory().getId());
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     /**
@@ -295,28 +235,10 @@ public class DepositInfo
         /* Update the value if required */
         if (!Difference.isEqual(getField(), myDepInfo.getField())) {
             setValueValue(myDepInfo.getField());
-            if (getInfoType().isLink()) {
-                setValueLink(myDepInfo.getLink(DataItem.class));
-            }
         }
 
         /* Check for changes */
         return checkForHistory();
-    }
-
-    @Override
-    public void touchUnderlyingItems() {
-        /* touch info class */
-        super.touchUnderlyingItems();
-
-        /* Switch on info class */
-        switch (getInfoClass()) {
-            case AUTOEXPENSE:
-                getEventCategory().touchItem(this);
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -470,24 +392,6 @@ public class DepositInfo
 
             /* Return it */
             return myInfo;
-        }
-
-        /**
-         * Resolve ValueLinks.
-         * @throws JOceanusException on error
-         */
-        public void resolveValueLinks() throws JOceanusException {
-            /* Loop through the Info items */
-            Iterator<DepositInfo> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                DepositInfo myCurr = myIterator.next();
-
-                /* If this is an infoItem */
-                if (myCurr.getInfoType().isLink()) {
-                    /* Resolve the link */
-                    myCurr.resolveLink();
-                }
-            }
         }
     }
 }

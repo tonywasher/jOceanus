@@ -25,17 +25,16 @@ package net.sourceforge.joceanus.jmoneywise.sheets;
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
-import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for Deposit.
@@ -47,11 +46,6 @@ public class SheetDeposit
      * NamedArea for Deposits.
      */
     private static final String AREA_DEPOSITS = Deposit.LIST_NAME;
-
-    /**
-     * NameList for Deposit.
-     */
-    protected static final String AREA_DEPOSITNAMES = Deposit.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -169,110 +163,83 @@ public class SheetDeposit
     }
 
     /**
-     * Load the Deposits from an archive.
-     * @param pTask the task control
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @return continue to load <code>true/false</code>
+     * Process deposit row from archive.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
-                                         final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of deposits */
-        DepositList myList = pData.getDeposits();
+    protected static void processDeposit(final MoneyWiseData pData,
+                                         final DataView pView,
+                                         final DataRow pRow) throws JOceanusException {
+        /* Access name and type */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_DEPOSITS);
+        /* Skip class */
+        iAdjust++;
 
-            /* Access the number of reporting steps */
-            int mySteps = pTask.getReportingSteps();
-            int myCount = 0;
-
-            /* Declare the new stage */
-            if (!pTask.setNewStage(Deposit.LIST_NAME)) {
-                return false;
-            }
-
-            /* Count the number of deposits */
-            int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
-                return false;
-            }
-
-            /* Access default currency */
-            AccountCurrency myCurrency = pData.getDefaultCurrency();
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myName = myCell.getStringValue();
-
-                /* Access Category */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myCategory = myCell.getStringValue();
-
-                /* Access Parent */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myParent = myCell.getStringValue();
-
-                /* Access Gross Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isGross = myCell.getBooleanValue();
-
-                /* Access TaxFree Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isTaxFree = myCell.getBooleanValue();
-
-                /* Access Closed Flag */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = myCell.getBooleanValue();
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
-                myValues.addValue(Deposit.FIELD_NAME, myName);
-                myValues.addValue(Deposit.FIELD_CATEGORY, myCategory);
-                myValues.addValue(Deposit.FIELD_CURRENCY, myCurrency);
-                myValues.addValue(Deposit.FIELD_PARENT, myParent);
-                myValues.addValue(Deposit.FIELD_GROSS, isGross);
-                myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);
-                myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
-                }
-            }
-
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Touch underlying items */
-            myList.touchUnderlyingItems();
-
-            /* Validate the event categories */
-            myList.validateOnLoad();
-
-            /* Handle exceptions */
-        } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+        /* Handle taxFree which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isTaxFree = Boolean.FALSE;
+        if (myCell != null) {
+            isTaxFree = myCell.getBooleanValue();
         }
 
-        /* Return to caller */
-        return true;
+        /* Handle gross which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isGross = Boolean.FALSE;
+        if (myCell != null) {
+            isGross = myCell.getBooleanValue();
+        }
+
+        /* Handle closed which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* Access Parent account */
+        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Skip alias, portfolio and holding columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle maturity which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        JDateDay myMaturity = null;
+        if (myCell != null) {
+            myMaturity = myCell.getDateValue();
+        }
+
+        /* Handle opening balance which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myBalance = null;
+        if (myCell != null) {
+            myBalance = myCell.getStringValue();
+        }
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Deposit.OBJECT_NAME);
+        myValues.addValue(Deposit.FIELD_NAME, myName);
+        myValues.addValue(Deposit.FIELD_CATEGORY, myType);
+        myValues.addValue(Deposit.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Deposit.FIELD_PARENT, myParent);
+        myValues.addValue(Deposit.FIELD_GROSS, isGross);
+        myValues.addValue(Deposit.FIELD_TAXFREE, isTaxFree);
+        myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        DepositList myList = pData.getDeposits();
+        Deposit myDeposit = myList.addValuesItem(myValues);
+
+        /* Add information relating to the deposit */
+        DepositInfoList myInfoList = pData.getDepositInfo();
+        myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.MATURITY, myMaturity);
+        myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.OPENINGBALANCE, myBalance);
     }
 }

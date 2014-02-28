@@ -1,0 +1,201 @@
+/*******************************************************************************
+ * jMoneyWise: Finance Application
+ * Copyright 2012,2014 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.joceanus.jmoneywise.sheets;
+
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
+import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+
+/**
+ * SheetDataItem extension for Cash.
+ * @author Tony Washer
+ */
+public class SheetCash
+        extends SheetEncrypted<Cash, MoneyWiseDataType> {
+    /**
+     * NamedArea for Cash.
+     */
+    private static final String AREA_CASH = Cash.LIST_NAME;
+
+    /**
+     * Name column.
+     */
+    private static final int COL_NAME = COL_CONTROLID + 1;
+
+    /**
+     * Category column.
+     */
+    private static final int COL_CATEGORY = COL_NAME + 1;
+
+    /**
+     * Description column.
+     */
+    private static final int COL_DESC = COL_CATEGORY + 1;
+
+    /**
+     * Currency column.
+     */
+    private static final int COL_CURRENCY = COL_DESC + 1;
+
+    /**
+     * Closed column.
+     */
+    private static final int COL_CLOSED = COL_CURRENCY + 1;
+
+    /**
+     * Cash data list.
+     */
+    private final CashList theList;
+
+    /**
+     * Constructor for loading a spreadsheet.
+     * @param pReader the spreadsheet reader
+     */
+    protected SheetCash(final MoneyWiseReader pReader) {
+        /* Call super constructor */
+        super(pReader, AREA_CASH);
+
+        /* Access the Cash list */
+        theList = pReader.getData().getCash();
+        setDataList(theList);
+    }
+
+    /**
+     * Constructor for creating a spreadsheet.
+     * @param pWriter the spreadsheet writer
+     */
+    protected SheetCash(final MoneyWiseWriter pWriter) {
+        /* Call super constructor */
+        super(pWriter, AREA_CASH);
+
+        /* Access the Cash list */
+        theList = pWriter.getData().getCash();
+        setDataList(theList);
+    }
+
+    @Override
+    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
+        myValues.addValue(Cash.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
+        myValues.addValue(Cash.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
+        myValues.addValue(Cash.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(Cash.FIELD_DESC, loadBytes(COL_DESC));
+        myValues.addValue(Cash.FIELD_CLOSED, loadBoolean(COL_CLOSED));
+
+        /* Return the values */
+        return myValues;
+    }
+
+    @Override
+    protected void insertSecureItem(final Cash pItem) throws JOceanusException {
+        /* Set the fields */
+        super.insertSecureItem(pItem);
+        writeInteger(COL_CATEGORY, pItem.getCategoryId());
+        writeInteger(COL_CURRENCY, pItem.getCashCurrencyId());
+        writeBytes(COL_NAME, pItem.getNameBytes());
+        writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_CLOSED;
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JOceanusException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+    }
+
+    /**
+     * Process cash row from archive.
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @throws JOceanusException on error
+     */
+    protected static void processCash(final MoneyWiseData pData,
+                                      final DataView pView,
+                                      final DataRow pRow) throws JOceanusException {
+        /* Access name and type */
+        int iAdjust = 0;
+        String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Skip class, taxFree and gross */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle closed which may be missing */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean isClosed = Boolean.FALSE;
+        if (myCell != null) {
+            isClosed = myCell.getBooleanValue();
+        }
+
+        /* Skip parent, alias, portfolio, holding, maturity, openingBalance and symbol columns */
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+        iAdjust++;
+
+        /* Handle autoExpense which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myAutoExpense = null;
+        if (myCell != null) {
+            myAutoExpense = myCell.getStringValue();
+        }
+
+        /* Build data values */
+        DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Cash.OBJECT_NAME);
+        myValues.addValue(Cash.FIELD_NAME, myName);
+        myValues.addValue(Cash.FIELD_CATEGORY, myType);
+        myValues.addValue(Cash.FIELD_CURRENCY, pData.getDefaultCurrency());
+        myValues.addValue(Cash.FIELD_CLOSED, isClosed);
+
+        /* Add the value into the list */
+        CashList myList = pData.getCash();
+        Cash myCash = myList.addValuesItem(myValues);
+
+        /* Add information relating to the cash */
+        CashInfoList myInfoList = pData.getCashInfo();
+        myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
+    }
+}

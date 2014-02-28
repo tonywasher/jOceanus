@@ -48,11 +48,6 @@ public class SheetEventInfoType
     private static final String AREA_EVENTINFOTYPES = EventInfoType.LIST_NAME;
 
     /**
-     * NameList for EventInfoType.
-     */
-    protected static final String AREA_EVENTINFOTYPENAMES = EventInfoType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */

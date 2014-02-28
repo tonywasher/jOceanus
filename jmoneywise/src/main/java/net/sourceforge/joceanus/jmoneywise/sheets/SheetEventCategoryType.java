@@ -49,11 +49,6 @@ public class SheetEventCategoryType
     private static final String AREA_CATTYPES = EventCategoryType.LIST_NAME;
 
     /**
-     * NameList for Category Types.
-     */
-    protected static final String AREA_CATTYPENAMES = EventCategoryType.OBJECT_NAME + "Names";
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
