@@ -29,8 +29,8 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;

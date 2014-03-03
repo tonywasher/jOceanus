@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitTag.GitTagList;
-import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 

@@ -207,7 +207,7 @@ public class MvnProjectDefinition
             Dependency myDependency = myIterator.next();
 
             /* Build new project Id */
-            MvnProjectId myDep = new MvnProjectId(myDependency);
+            MvnProjectId myDep = new MvnProjectId(myDependency, theDefinition);
             theDependencies.add(myDep);
         }
     }

@@ -26,7 +26,7 @@ package net.sourceforge.joceanus.jthemis.scm.data;
  * Report Subversion events.
  * @author Tony Washer
  */
-public class JSvnReporter {
+public class ScmReporter {
     /**
      * Report status.
      */

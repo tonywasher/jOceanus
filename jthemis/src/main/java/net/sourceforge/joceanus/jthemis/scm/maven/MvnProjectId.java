@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 
 /**
  * Project element of POM.
@@ -167,27 +168,50 @@ public final class MvnProjectId
         theModel = pModel;
         theDependency = null;
 
-        /* Access IDs */
+        /* Access any parent */
+        Parent myParent = theModel.getParent();
+
+        /* Access GroupID */
         theGroupId = theModel.getGroupId();
+        if ((theGroupId == null) && (myParent != null)) {
+            theGroupId = myParent.getGroupId();
+        }
+
+        /* Access artifactID */
         theArtifactId = theModel.getArtifactId();
+
+        /* Access version */
         theVersionText = theModel.getVersion();
+        if ((theVersionText == null) && (myParent != null)) {
+            theVersionText = myParent.getVersion();
+        }
+
+        /* Parse the version */
         theVersion = parseVersion();
     }
 
     /**
      * Constructor.
      * @param pDependency the project dependency
+     * @param pProject the parent project
      * @throws JOceanusException on error
      */
-    protected MvnProjectId(final Dependency pDependency) throws JOceanusException {
+    protected MvnProjectId(final Dependency pDependency,
+                           final MvnProjectId pProject) throws JOceanusException {
         /* Store dependency */
         theModel = null;
         theDependency = pDependency;
 
         /* Access IDs */
         theGroupId = theDependency.getGroupId();
+        if (theGroupId.equals("${project.groupId}")) {
+            theGroupId = pProject.getGroupId();
+        }
         theArtifactId = theDependency.getArtifactId();
         theVersionText = theDependency.getVersion();
+        if (theVersionText.equals("${project.version}")) {
+            theVersionText = pProject.getVersionText();
+        }
         theVersion = parseVersion();
     }
 
