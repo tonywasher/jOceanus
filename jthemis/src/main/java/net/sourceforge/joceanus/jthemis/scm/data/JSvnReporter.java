@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.data;
+package net.sourceforge.joceanus.jthemis.scm.data;
 
 /**
  * Report Subversion events.

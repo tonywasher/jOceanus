@@ -22,22 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Level;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId.ProjectStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistoryMap.RevisionPath;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag.SvnTagList;
 
@@ -68,11 +62,6 @@ public final class SvnBranch
     private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
 
     /**
-     * Dependencies field id.
-     */
-    private static final JDataField FIELD_DEPENDS = FIELD_DEFS.declareLocalField("Dependencies");
-
-    /**
      * RevisionPath.
      */
     private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
@@ -87,11 +76,6 @@ public final class SvnBranch
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
             return theRepository;
-        }
-        if (FIELD_DEPENDS.equals(pField)) {
-            return (theDependencies.isEmpty())
-                                              ? JDataFieldValue.SKIP
-                                              : theDependencies;
         }
         if (FIELD_REVPATH.equals(pField)) {
             return theRevisionPath;
@@ -112,16 +96,6 @@ public final class SvnBranch
     private RevisionPath theRevisionPath;
 
     /**
-     * The dependency map.
-     */
-    private Map<SvnComponent, SvnBranch> theDependencies;
-
-    /**
-     * Project status.
-     */
-    private ProjectStatus theProjectStatus = ProjectStatus.RAW;
-
-    /**
      * Get the repository for this branch.
      * @return the repository
      */
@@ -135,20 +109,12 @@ public final class SvnBranch
     }
 
     /**
-     * Get Dependencies.
-     * @return the dependencies
-     */
-    public Map<SvnComponent, SvnBranch> getDependencies() {
-        return theDependencies;
-    }
-
-    /**
      * Constructor.
      * @param pParent the Parent component
      * @param pVersion the version string
      */
-    private SvnBranch(final SvnComponent pParent,
-                      final String pVersion) {
+    protected SvnBranch(final SvnComponent pParent,
+                        final String pVersion) {
         /* Call super constructor */
         super(pParent, pVersion);
 
@@ -158,9 +124,6 @@ public final class SvnBranch
         /* Create tag list */
         SvnTagList myTags = new SvnTagList(this);
         setTags(myTags);
-
-        /* Create dependency map */
-        theDependencies = new HashMap<SvnComponent, SvnBranch>();
     }
 
     /**
@@ -183,9 +146,6 @@ public final class SvnBranch
         /* Create tag list */
         SvnTagList myTags = new SvnTagList(this);
         setTags(myTags);
-
-        /* Create dependency map */
-        theDependencies = new HashMap<SvnComponent, SvnBranch>();
     }
 
     /**
@@ -277,136 +237,6 @@ public final class SvnBranch
     }
 
     /**
-     * Obtain full branch list including dependencies.
-     * @return the full branch list.
-     */
-    public Map<SvnComponent, SvnBranch> getAllBranches() {
-        /* Create a new list and add self to list */
-        Map<SvnComponent, SvnBranch> myMap = new HashMap<SvnComponent, SvnBranch>(theDependencies);
-        myMap.put(getComponent(), this);
-
-        /* return the map */
-        return myMap;
-    }
-
-    /**
-     * resolveDependencies.
-     * @param pReport the report object
-     * @throws JOceanusException on error
-     */
-    private void resolveDependencies(final ReportStatus pReport) throws JOceanusException {
-        /* Switch on status */
-        switch (theProjectStatus) {
-            case FINAL:
-                return;
-            case MERGING:
-                throw new JThemisDataException(this, "IllegalState for Tag");
-            default:
-                break;
-        }
-
-        /* If we have no dependencies */
-        if (theDependencies.isEmpty()) {
-            /* Set as merged and return */
-            theProjectStatus = ProjectStatus.FINAL;
-            return;
-        }
-
-        /* Set project status to merging to prevent circular dependency */
-        theProjectStatus = ProjectStatus.MERGING;
-
-        /* Allocate a new map */
-        Map<SvnComponent, SvnBranch> myNew = new HashMap<SvnComponent, SvnBranch>(theDependencies);
-
-        /* Loop through our dependencies */
-        for (SvnBranch myDep : theDependencies.values()) {
-            /* Resolve dependencies */
-            myDep.resolveDependencies(pReport);
-
-            /* Loop through underlying dependencies */
-            for (SvnBranch mySub : myDep.getDependencies().values()) {
-                /* Access underlying component */
-                SvnComponent myComp = mySub.getComponent();
-
-                /* Access existing dependency */
-                SvnBranch myExisting = myNew.get(myComp);
-
-                /* If we have an existing dependency */
-                if (myExisting != null) {
-                    /* Check it is identical */
-                    if (!myExisting.equals(mySub)) {
-                        throw new JThemisDataException(this, "Inconsistent dependency for Branch");
-                    }
-                } else {
-                    /* Add dependency */
-                    myNew.put(myComp, mySub);
-                }
-            }
-        }
-
-        /* Check that we are not dependent on a different version of this component */
-        if (myNew.get(getComponent()) != null) {
-            throw new JThemisDataException(this, "Inconsistent dependency for Branch");
-        }
-
-        /* Store new dependencies and mark as resolved */
-        theDependencies = myNew;
-        theProjectStatus = ProjectStatus.FINAL;
-    }
-
-    /**
-     * Obtain merged and validated branch map.
-     * @param pBranches the core branches
-     * @return the branch map
-     * @throws JOceanusException on error
-     */
-    public static Map<SvnComponent, SvnBranch> getBranchMap(final SvnBranch[] pBranches) throws JOceanusException {
-        /* Set default map */
-        Map<SvnComponent, SvnBranch> myResult = null;
-        SvnRepository myRepo = null;
-
-        /* Loop through the branches */
-        for (SvnBranch myBranch : pBranches) {
-            /* Access map */
-            Map<SvnComponent, SvnBranch> myMap = myBranch.getAllBranches();
-
-            /* If this is the first branch */
-            if (myResult == null) {
-                /* Store as result */
-                myResult = myMap;
-                myRepo = myBranch.getRepository();
-                continue;
-            }
-
-            /* Check this is the same repository */
-            if (!myRepo.equals(myBranch.getRepository())) {
-                /* throw exception */
-                throw new JThemisDataException("Different repository for branch");
-            }
-
-            /* Loop through map elements */
-            for (Map.Entry<SvnComponent, SvnBranch> myEntry : myMap.entrySet()) {
-                /* Obtain any existing entry */
-                SvnBranch myExisting = myResult.get(myEntry.getKey());
-
-                /* If this entry doesn't exist */
-                if (myExisting == null) {
-                    /* Add to map */
-                    myResult.put(myEntry.getKey(), myEntry.getValue());
-
-                    /* else if the branch differs */
-                } else if (!myExisting.equals(myEntry.getValue())) {
-                    /* throw exception */
-                    throw new JThemisDataException("Conflicting version for branch");
-                }
-            }
-        }
-
-        /* Return the result */
-        return myResult;
-    }
-
-    /**
      * List of branches.
      */
     public static final class SvnBranchList
@@ -463,7 +293,7 @@ public final class SvnBranch
             /* Protect against exceptions */
             try {
                 /* Parse project file for trunk */
-                MvnProjectDefinition myProject = myRepo.parseProjectURL(theComponent.getTrunkPath());
+                MvnProjectDefinition myProject = theComponent.parseProjectURL(theComponent.getTrunkPath());
 
                 /* If we have a project definition */
                 if (myProject != null) {
@@ -512,7 +342,7 @@ public final class SvnBranch
                 /* If this is a real branch */
                 if (!myBranch.isVirtual()) {
                     /* Parse project file */
-                    MvnProjectDefinition myProject = myRepo.parseProjectURL(myBranch.getURLPath());
+                    MvnProjectDefinition myProject = theComponent.parseProjectURL(myBranch.getURLPath());
                     myBranch.setProjectDefinition(myProject);
 
                     /* Register the branch */
@@ -530,87 +360,14 @@ public final class SvnBranch
         }
 
         /**
-         * registerDependencies.
-         * @param pReport the report object
-         * @throws JOceanusException on error
-         */
-        protected void registerDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Access list iterator */
-            SvnRepository myRepo = theComponent.getRepository();
-            Iterator<SvnBranch> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Branch */
-                SvnBranch myBranch = myIterator.next();
-                MvnProjectDefinition myDef = myBranch.getProjectDefinition();
-                Map<SvnComponent, SvnBranch> myDependencies = myBranch.getDependencies();
-
-                /* If we have a project definition */
-                if (myDef != null) {
-                    /* Loop through the dependencies */
-                    Iterator<MvnProjectId> myProjIterator = myDef.getDependencies().iterator();
-                    while (myProjIterator.hasNext()) {
-                        /* Access project id */
-                        MvnProjectId myId = myProjIterator.next();
-
-                        /* Locate dependency branch */
-                        SvnBranch myDependency = myRepo.locateBranch(myId);
-                        if (myDependency != null) {
-                            /* Access component */
-                            SvnComponent myComponent = myDependency.getComponent();
-
-                            /* Check that the dependency does not already exist */
-                            if (myDependencies.get(myComponent) == null) {
-                                /* Add to the dependency map */
-                                myDependencies.put(myComponent, myDependency);
-                            } else {
-                                /* Throw exception */
-                                throw new JThemisDataException(myBranch, "Duplicate component dependency");
-                            }
-                        }
-                    }
-
-                    /* register dependencies */
-                    SvnTagList myTags = myBranch.getTagList();
-                    myTags.registerDependencies(pReport);
-                }
-            }
-        }
-
-        /**
-         * propagateDependencies.
-         * @param pReport the report object
-         * @throws JOceanusException on error
-         */
-        protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Access list iterator */
-            Iterator<SvnBranch> myIterator = iterator();
-
-            /* While we have entries */
-            while (myIterator.hasNext()) {
-                /* Access the Branch and resolve dependencies */
-                SvnBranch myBranch = myIterator.next();
-                myBranch.resolveDependencies(pReport);
-
-                /* Resolve dependencies for the tags */
-                SvnTagList myTags = myBranch.getTagList();
-                myTags.propagateDependencies(pReport);
-            }
-        }
-
-        /**
          * Locate branch.
          * @param pURL the URL to locate
          * @return the relevant branch or Null
          */
         protected SvnBranch locateBranch(final SVNURL pURL) {
-            /* Access list iterator */
+            /* Loop through the entries */
             Iterator<SvnBranch> myIterator = iterator();
-
-            /* While we have entries */
             while (myIterator.hasNext()) {
-                /* Access the Branch */
                 SvnBranch myBranch = myIterator.next();
 
                 /* Access branch URL */

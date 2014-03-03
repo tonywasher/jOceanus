@@ -20,59 +20,36 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.data;
+package net.sourceforge.joceanus.jthemis.git.data;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent.SvnComponentList;
-
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
 
 /**
  * Represents a repository.
  * @author Tony Washer
  */
-public class SvnRepository
-        extends ScmRepository<SvnRepository> {
-    /**
-     * URL separator character.
-     */
-    public static final char SEP_URL = '/';
-
-    /**
-     * URL prefix.
-     */
-    public static final String PFIX_URL = "svn";
-
-    /**
-     * The buffer length.
-     */
-    private static final int BUFFER_LEN = 100;
-
+public class GitRepository
+        extends ScmRepository<GitRepository> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(SvnRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(GitRepository.class.getSimpleName(), GitRepository.FIELD_DEFS);
 
     /**
      * Base field id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
 
-    /**
-     * HistoryMap field id.
-     */
-    private static final JDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
-
     @Override
     public String formatObject() {
-        return getPath();
+        return getName();
     }
 
     @Override
@@ -86,9 +63,6 @@ public class SvnRepository
         if (FIELD_BASE.equals(pField)) {
             return theBase;
         }
-        if (FIELD_HISTMAP.equals(pField)) {
-            return theRevisionHistory;
-        }
 
         /* pass call on */
         return super.getFieldValue(pField);
@@ -97,22 +71,12 @@ public class SvnRepository
     /**
      * The Preferences.
      */
-    private final SubVersionPreferences thePreferences;
+    private final GitPreferences thePreferences;
 
     /**
      * Repository Base.
      */
     private final String theBase;
-
-    /**
-     * The Client Manager.
-     */
-    private final SvnClientManager theClientMgrPool;
-
-    /**
-     * RevisionHistory Map.
-     */
-    private final RevisionHistoryMap theRevisionHistory;
 
     /**
      * Obtain the repository base.
@@ -126,37 +90,13 @@ public class SvnRepository
      * Obtain the preferences.
      * @return the preferences
      */
-    public SubVersionPreferences getPreferences() {
+    public GitPreferences getPreferences() {
         return thePreferences;
     }
 
-    /**
-     * Obtain a client manager.
-     * @return the manager
-     */
-    public SVNClientManager getClientManager() {
-        return theClientMgrPool.getClientMgr();
-    }
-
-    /**
-     * Release a client manager.
-     * @param pMgr the manager
-     */
-    public void releaseClientManager(final SVNClientManager pMgr) {
-        theClientMgrPool.releaseClientMgr(pMgr);
-    }
-
     @Override
-    public SvnComponentList getComponents() {
-        return (SvnComponentList) super.getComponents();
-    }
-
-    /**
-     * Get the revisionHistoryMap for this repository.
-     * @return the historyMap
-     */
-    public RevisionHistoryMap getHistoryMap() {
-        return theRevisionHistory;
+    public GitComponentList getComponents() {
+        return (GitComponentList) super.getComponents();
     }
 
     /**
@@ -165,27 +105,21 @@ public class SvnRepository
      * @param pReport the report object
      * @throws JOceanusException on error
      */
-    public SvnRepository(final PreferenceManager pPreferenceMgr,
+    public GitRepository(final PreferenceManager pPreferenceMgr,
                          final ReportStatus pReport) throws JOceanusException {
         /* Call super constructor */
         super(pPreferenceMgr);
 
         /* Access the Repository base */
-        thePreferences = pPreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+        thePreferences = pPreferenceMgr.getPreferenceSet(GitPreferences.class);
 
         /* Access the Repository base */
-        theBase = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
-        setName(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME));
-
-        /* Create a client manager pool */
-        theClientMgrPool = new SvnClientManager(thePreferences);
+        theBase = thePreferences.getStringValue(GitPreferences.NAME_GIT_REPO);
+        setName(thePreferences.getStringValue(GitPreferences.NAME_GIT_NAME));
 
         /* Create component list */
-        SvnComponentList myComponents = new SvnComponentList(this);
+        GitComponentList myComponents = new GitComponentList(this);
         setComponents(myComponents);
-
-        /* Create RevisionHistoryMap */
-        theRevisionHistory = new RevisionHistoryMap(this);
 
         /* Report start of analysis */
         pReport.initTask("Analysing components");
@@ -197,39 +131,8 @@ public class SvnRepository
         pReport.initTask("Component Analysis complete");
     }
 
-    /**
-     * Dispose of any client links.
-     */
-    public void dispose() {
-        /* Dispose of any connections */
-        theClientMgrPool.dispose();
-    }
-
-    /**
-     * Build URL.
-     * @return the Repository path
-     */
-    public String getPath() {
-        /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-        /* Build the repository */
-        myBuilder.append(theBase);
-
-        /* Build the prefix directory */
-        myBuilder.append(SEP_URL);
-        myBuilder.append(PFIX_URL);
-
-        /* Build the component directory */
-        myBuilder.append(SEP_URL);
-        myBuilder.append(getName());
-
-        /* Return the path */
-        return myBuilder.toString();
-    }
-
     @Override
-    public int compareTo(final SvnRepository pThat) {
+    public int compareTo(final GitRepository pThat) {
         /* Handle trivial cases */
         if (this == pThat) {
             return 0;
@@ -259,10 +162,10 @@ public class SvnRepository
         }
 
         /* Check that the classes are the same */
-        if (!(pThat instanceof SvnRepository)) {
+        if (!(pThat instanceof GitRepository)) {
             return false;
         }
-        SvnRepository myThat = (SvnRepository) pThat;
+        GitRepository myThat = (GitRepository) pThat;
 
         /* Compare fields */
         if (!theBase.equals(myThat.theBase)) {
@@ -277,45 +180,35 @@ public class SvnRepository
     }
 
     @Override
-    public SvnComponent locateComponent(final String pName) {
+    public GitComponent locateComponent(final String pName) {
         /* Locate component in component list */
-        return (SvnComponent) super.locateComponent(pName);
+        return (GitComponent) super.locateComponent(pName);
     }
 
     @Override
-    public SvnBranch locateBranch(final String pComponent,
+    public GitBranch locateBranch(final String pComponent,
                                   final String pVersion) {
         /* Locate branch in component list */
-        return (SvnBranch) super.locateBranch(pComponent, pVersion);
+        return (GitBranch) super.locateBranch(pComponent, pVersion);
     }
 
     @Override
-    public SvnTag locateTag(final String pComponent,
+    public GitTag locateTag(final String pComponent,
                             final String pVersion,
                             final int pTag) {
         /* Locate Tag in component list */
-        return (SvnTag) super.locateTag(pComponent, pVersion, pTag);
-    }
-
-    /**
-     * Locate branch.
-     * @param pURL the URL to locate
-     * @return the relevant branch or Null
-     */
-    protected SvnBranch locateBranch(final SVNURL pURL) {
-        /* Locate branch in component list */
-        return getComponents().locateBranch(pURL);
+        return (GitTag) super.locateTag(pComponent, pVersion, pTag);
     }
 
     @Override
-    protected SvnBranch locateBranch(final MvnProjectId pId) {
+    protected GitBranch locateBranch(final MvnProjectId pId) {
         /* Lookup mapping */
-        return (SvnBranch) super.locateBranch(pId);
+        return (GitBranch) super.locateBranch(pId);
     }
 
     @Override
-    protected SvnTag locateTag(final MvnProjectId pId) {
+    protected GitTag locateTag(final MvnProjectId pId) {
         /* Lookup mapping */
-        return (SvnTag) super.locateTag(pId);
+        return (GitTag) super.locateTag(pId);
     }
 }

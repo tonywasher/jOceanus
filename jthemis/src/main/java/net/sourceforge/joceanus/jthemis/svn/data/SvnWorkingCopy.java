@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.io.File;
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -34,8 +33,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.UpdateStatus.UpdateStatusList;
 
 import org.tmatesoft.svn.core.SVNDepth;
@@ -232,13 +231,10 @@ public final class SvnWorkingCopy
         theRevision = pRevision.getNumber();
         theUpdates = new UpdateStatusList();
 
-        /* Access the logger */
-        Logger myLogger = pBranch.getRepository().getLogger();
-
         /* Determine the location of the project definition */
         File myPom = MvnProjectDefinition.getProjectDefFile(theLocation);
         if (myPom != null) {
-            theProject = MvnProjectDefinition.parseProjectFile(myLogger, myPom);
+            theProject = MvnProjectDefinition.parseProjectFile(myPom);
         }
     }
 
@@ -459,8 +455,8 @@ public final class SvnWorkingCopy
          * @throws JOceanusException on error
          */
         public SvnWorkingCopySet(final SvnRepository pRepository,
-                              final File pLocation,
-                              final ReportStatus pReport) throws JOceanusException {
+                                 final File pLocation,
+                                 final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
             super(SvnWorkingCopy.class);
 
@@ -479,7 +475,7 @@ public final class SvnWorkingCopy
          * @throws JOceanusException on error
          */
         public SvnWorkingCopySet(final SvnRepository pRepository,
-                              final ReportStatus pReport) throws JOceanusException {
+                                 final ReportStatus pReport) throws JOceanusException {
             /* Call super constructor */
             super(SvnWorkingCopy.class);
 

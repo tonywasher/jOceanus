@@ -65,7 +65,7 @@
     <appLibDir/>
     <JDateButtonVersion>v1.2.0-b2</JDateButtonVersion>
     <BouncyCastleVersion>1.50</BouncyCastleVersion>
-    <SvnKitVersion>1.8.3</SvnKitVersion>
+    <SvnKitVersion>1.8.4</SvnKitVersion>
     <JGitVersion>3.2.0.201312181205-r</JGitVersion>
     <JiraRestVersion>2.0.0-m25</JiraRestVersion>
     <ApacheMavenVersion>3.2.1</ApacheMavenVersion>

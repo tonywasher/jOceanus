@@ -29,9 +29,9 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
@@ -113,7 +113,6 @@ public class CreateWorkingCopy
         theRevision = pRevision;
         theReport = pReport;
         theRepository = pBranches[0].getRepository();
-        Collection<SvnBranch> myBranches = null;
 
         /* protect against exceptions */
         try {
@@ -121,7 +120,7 @@ public class CreateWorkingCopy
             Directory.createDirectory(pLocation);
 
             /* Access branch list for extract */
-            myBranches = SvnBranch.getBranchMap(pBranches).values();
+            // myBranches = SvnBranch.getBranchMap(pBranches).values();
         } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
@@ -129,7 +128,7 @@ public class CreateWorkingCopy
         }
 
         /* Record branches */
-        theBranches = myBranches;
+        theBranches = null;
     }
 
     @Override

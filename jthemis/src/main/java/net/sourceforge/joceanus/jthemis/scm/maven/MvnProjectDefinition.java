@@ -29,10 +29,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -114,12 +113,9 @@ public class MvnProjectDefinition
     private final ProjectList theDependencies;
 
     /**
-     * Get Model.
-     * @return the model
+     * SubModules.
      */
-    private Model getModel() {
-        return theModel;
-    }
+    private final List<MvnSubModule> theSubModules;
 
     /**
      * Get Project Identity.
@@ -138,44 +134,37 @@ public class MvnProjectDefinition
     }
 
     /**
+     * Get SubModules iterator.
+     * @return the iterator
+     */
+    public Iterator<MvnSubModule> subIterator() {
+        return theSubModules.iterator();
+    }
+
+    /**
      * Parse disk POM file.
-     * @param pLogger the logger
      * @param pFile file to load
      * @return project definition.
      * @throws JOceanusException on error
      */
-    public static MvnProjectDefinition parseProjectFile(final Logger pLogger,
-                                                        final File pFile) throws JOceanusException {
-        FileInputStream myInFile;
-        BufferedInputStream myInBuffer = null;
-
+    public static MvnProjectDefinition parseProjectFile(final File pFile) throws JOceanusException {
         /* Protect against exceptions */
-        try {
-            /* Read the file */
-            myInFile = new FileInputStream(pFile);
-            myInBuffer = new BufferedInputStream(myInFile);
+        try (FileInputStream myInFile = new FileInputStream(pFile);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
 
             /* Parse the project definition */
             return new MvnProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
-        } catch (JOceanusException | IOException e) {
+        } catch (JOceanusException
+                | IOException e) {
             /* Throw Exception */
             throw new JThemisIOException("Failed to load Project file for " + pFile.getAbsolutePath(), e);
-
-        } finally {
-            if (myInBuffer != null) {
-                try {
-                    myInBuffer.close();
-                } catch (IOException i) {
-                    pLogger.log(Level.SEVERE, "Close failure", i);
-                }
-            }
         }
     }
 
     /**
-     * Parse project definition file.
+     * Constructor.
      * @param pInput the project definition file as input stream
      * @throws JOceanusException on error
      */
@@ -191,30 +180,17 @@ public class MvnProjectDefinition
 
             /* Create the dependency list */
             theDependencies = new ProjectList();
-
-            /* Parse the dependencies */
             parseDependencies();
+
+            /* Create the submodule list */
+            theSubModules = new ArrayList<MvnSubModule>();
+            parseSubModules();
 
             /* Catch exceptions */
         } catch (IOException | XmlPullParserException e) {
             /* Throw Exception */
             throw new JThemisIOException("Failed to parse Project file", e);
         }
-    }
-
-    /**
-     * Constructor for a duplicate project definition.
-     * @param pDefinition the definition to copy
-     * @throws JOceanusException on error
-     */
-    public MvnProjectDefinition(final MvnProjectDefinition pDefinition) throws JOceanusException {
-        /* Clone the old model */
-        theModel = pDefinition.getModel().clone();
-
-        /* Copy project Id and dependencies */
-        theDefinition = new MvnProjectId(theModel);
-        theDependencies = new ProjectList();
-        parseDependencies();
     }
 
     /**
@@ -233,6 +209,24 @@ public class MvnProjectDefinition
             /* Build new project Id */
             MvnProjectId myDep = new MvnProjectId(myDependency);
             theDependencies.add(myDep);
+        }
+    }
+
+    /**
+     * Parse modules.
+     */
+    private void parseSubModules() {
+        /* Obtain the module list */
+        List<String> myModules = theModel.getModules();
+
+        /* Iterate through the modules */
+        Iterator<String> myIterator = myModules.iterator();
+        while (myIterator.hasNext()) {
+            String myModule = myIterator.next();
+
+            /* Build new SubModule */
+            MvnSubModule mySub = new MvnSubModule(myModule);
+            theSubModules.add(mySub);
         }
     }
 
@@ -309,6 +303,53 @@ public class MvnProjectDefinition
             /* Access dependency and set version */
             MvnProjectId myRef = myIterator.next();
             myRef.setNewVersion(pProjectId);
+        }
+    }
+
+    /**
+     * SubModule.
+     */
+    public static final class MvnSubModule {
+        /**
+         * Module name.
+         */
+        private final String theName;
+
+        /**
+         * Project Definition.
+         */
+        private MvnProjectDefinition theProject;
+
+        /**
+         * Obtain the name.
+         * @return the name
+         */
+        public String getName() {
+            return theName;
+        }
+
+        /**
+         * Obtain the project definition.
+         * @return the definition
+         */
+        public MvnProjectDefinition getProjectDefinition() {
+            return theProject;
+        }
+
+        /**
+         * Set the project definition.
+         * @param pDef the definition
+         */
+        public void setProjectDefinition(final MvnProjectDefinition pDef) {
+            theProject = pDef;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name of the subModule
+         */
+        private MvnSubModule(final String pName) {
+            theName = pName;
         }
     }
 }

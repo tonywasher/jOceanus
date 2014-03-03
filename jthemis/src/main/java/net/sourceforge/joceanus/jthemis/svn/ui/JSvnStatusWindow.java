@@ -35,7 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportTask;
 
 /**
  * Status window for SubVersion operations.

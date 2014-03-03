@@ -29,8 +29,8 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
@@ -89,7 +89,6 @@ public class CreateTagExtract
         theLocation = pLocation;
         theReport = pReport;
         theRepository = pTags[0].getRepository();
-        Collection<SvnTag> myTags = null;
 
         /* protect against exceptions */
         try {
@@ -97,7 +96,7 @@ public class CreateTagExtract
             Directory.createDirectory(pLocation);
 
             /* Access tag list for extract */
-            myTags = SvnTag.getTagMap(pTags).values();
+            // myTags = SvnTag.getTagMap(pTags).values();
         } catch (JOceanusException e) {
             /* Store the error and cancel thread */
             theError = e;
@@ -105,7 +104,7 @@ public class CreateTagExtract
         }
 
         /* Record tags */
-        theTags = myTags;
+        theTags = null;
     }
 
     @Override

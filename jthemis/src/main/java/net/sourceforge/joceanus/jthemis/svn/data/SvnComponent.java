@@ -22,25 +22,33 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 /**
  * Represents a component in the repository.
@@ -67,6 +75,11 @@ public final class SvnComponent
      * The buffer length.
      */
     private static final int BUFFER_LEN = 100;
+
+    /**
+     * The buffer length.
+     */
+    private static final int BUFFER_STREAM = 1000;
 
     /**
      * Report fields.
@@ -193,6 +206,109 @@ public final class SvnComponent
     }
 
     /**
+     * Get FileURL as input stream.
+     * @param pPath the base URL path
+     * @return the stream of null if file does not exists
+     * @throws JOceanusException on error
+     */
+    public MvnProjectDefinition parseProjectURL(final String pPath) throws JOceanusException {
+        InputStream myInput = null;
+        /* Build the URL */
+        try {
+            /* Build the underlying string */
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+            /* Build the initial path */
+            myBuilder.append(pPath);
+            myBuilder.append(SvnRepository.SEP_URL);
+
+            /* Build the POM name */
+            myBuilder.append(MvnProjectDefinition.POM_NAME);
+
+            /* Create the repository path */
+            SVNURL myURL = SVNURL.parseURIEncoded(myBuilder.toString());
+
+            /* Access URL as input stream */
+            myInput = getFileURLasInputStream(myURL);
+            if (myInput == null) {
+                return null;
+            }
+
+            /* Parse the project definition and return it */
+            MvnProjectDefinition myProject = new MvnProjectDefinition(myInput);
+
+            /* Loop through the subModules */
+            Iterator<MvnSubModule> myIterator = myProject.subIterator();
+            while (myIterator.hasNext()) {
+                MvnSubModule myModule = myIterator.next();
+
+                /* Reset the string buffer */
+                myBuilder.setLength(0);
+
+                /* Build the path name */
+                myBuilder.append(pPath);
+                myBuilder.append(SvnRepository.SEP_URL);
+                myBuilder.append(myModule.getName());
+
+                /* Parse the project URL */
+                MvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
+                myModule.setProjectDefinition(mySubDef);
+            }
+
+            /* Return the definition */
+            return myProject;
+
+        } catch (SVNException e) {
+            throw new JThemisIOException("Failed to parse project file for " + pPath, e);
+        } finally {
+            if (myInput != null) {
+                try {
+                    myInput.close();
+                } catch (IOException e) {
+                    getLogger().log(Level.SEVERE, "Close Failure", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get FileURL as input stream.
+     * @param pURL the URL to stream
+     * @return the stream of null if file does not exists
+     * @throws JOceanusException on error
+     */
+    public InputStream getFileURLasInputStream(final SVNURL pURL) throws JOceanusException {
+        /* Access client */
+        SvnRepository myRepo = getRepository();
+        SVNClientManager myMgr = myRepo.getClientManager();
+        SVNWCClient myClient = myMgr.getWCClient();
+
+        /* Create the byte array stream */
+        ByteArrayOutputStream myBaos = new ByteArrayOutputStream(BUFFER_STREAM);
+
+        /* Protect against exceptions */
+        try {
+            /* Read the entry into the outputStream and create an input stream from it */
+            myClient.doGetFileContents(pURL, SVNRevision.HEAD, SVNRevision.HEAD, true, myBaos);
+            return new ByteArrayInputStream(myBaos.toByteArray());
+        } catch (SVNException e) {
+            /* Access the error code */
+            SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
+
+            /* Allow file not existing */
+            if (myCode != SVNErrorCode.FS_NOT_FOUND) {
+                throw new JThemisIOException("Unable to read File URL", e);
+            }
+
+            /* Set stream to null */
+            return null;
+        } finally {
+            /* Release the client manager */
+            myRepo.releaseClientManager(myMgr);
+        }
+    }
+
+    /**
      * List of components.
      */
     public static final class SvnComponentList
@@ -253,10 +369,8 @@ public final class SvnComponent
             /* Report number of stages */
             pReport.setNumStages(size() + 2);
 
-            /* Access list iterator */
+            /* Loop through the components */
             Iterator<SvnComponent> myIterator = iterator();
-
-            /* While we have entries */
             while (myIterator.hasNext()) {
                 /* Access the Component */
                 SvnComponent myComponent = myIterator.next();
@@ -268,18 +382,6 @@ public final class SvnComponent
                 /* Discover branches for the component */
                 myBranches.discover(pReport);
             }
-
-            /* Report stage */
-            pReport.setNewStage("Registering dependencies");
-
-            /* Register dependencies */
-            registerDependencies(pReport);
-
-            /* Report stage */
-            pReport.setNewStage("Propagating dependencies");
-
-            /* Propagate dependencies */
-            propagateDependencies(pReport);
         }
 
         /**
@@ -325,39 +427,6 @@ public final class SvnComponent
                                    final int pTag) {
             /* Pass call on */
             return (SvnTag) super.locateTag(pComponent, pVersion, pTag);
-        }
-
-        /**
-         * registerDependencies.
-         * @param pReport the report object
-         * @throws JOceanusException on error
-         */
-        private void registerDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Loop through the entries */
-            Iterator<SvnComponent> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                SvnComponent myComponent = myIterator.next();
-
-                /* register dependencies */
-                SvnBranchList myBranches = myComponent.getBranches();
-                myBranches.registerDependencies(pReport);
-            }
-        }
-
-        /**
-         * propagateDependencies.
-         * @param pReport the report object
-         * @throws JOceanusException on error
-         */
-        protected void propagateDependencies(final ReportStatus pReport) throws JOceanusException {
-            /* Loop through the entries */
-            Iterator<SvnComponent> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                /* Access the Component and resolve dependencies */
-                SvnComponent myComp = myIterator.next();
-                SvnBranchList myBranches = myComp.getBranches();
-                myBranches.propagateDependencies(pReport);
-            }
         }
 
         /**

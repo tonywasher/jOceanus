@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmTag.ScmTagList;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
@@ -390,17 +389,6 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
         myVers += theMinorVersion;
         myVers *= VERSION_SHIFT;
         return myVers + theDeltaVersion;
-    }
-
-    /**
-     * Clone the definition.
-     * @param pDefinition the definition to clone
-     * @throws JOceanusException on error
-     */
-    public void cloneDefinition(final MvnProjectDefinition pDefinition) throws JOceanusException {
-        /* clone the project definition */
-        theProject = new MvnProjectDefinition(pDefinition);
-        theProject.setSnapshotVersion(getBranchName());
     }
 
     /**

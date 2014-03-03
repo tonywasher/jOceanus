@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jthemis.scm.data;
 
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
@@ -110,6 +111,14 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain logger.
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return theRepository.getLogger();
     }
 
     /**

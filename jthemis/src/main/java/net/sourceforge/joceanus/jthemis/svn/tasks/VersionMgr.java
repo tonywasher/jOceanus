@@ -30,10 +30,10 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.BranchOpType;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.svn.data.JSvnReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
@@ -145,7 +145,7 @@ public class VersionMgr {
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
 
             /* Clone the definition */
-            pTarget.cloneDefinition(pSource.getProjectDefinition());
+            // pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JThemisIOException("Failed to create branch "
                                          + pTarget.getBranchName(), e);
@@ -190,7 +190,7 @@ public class VersionMgr {
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
 
             /* Clone the definition */
-            pTarget.cloneDefinition(pSource.getProjectDefinition());
+            // pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JThemisIOException("Failed to create tag "
                                          + pTarget.getTagName(), e);

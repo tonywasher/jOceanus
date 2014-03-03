@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
@@ -45,7 +44,7 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
     /**
      * The tag prefix.
      */
-    private static final String PREFIX_TAG = "-b";
+    public static final String PREFIX_TAG = "-b";
 
     /**
      * Report fields.
@@ -210,17 +209,6 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
     @Override
     public int hashCode() {
         return (theBranch.hashCode() * SvnRepository.HASH_PRIME) + theTag;
-    }
-
-    /**
-     * Clone the definition.
-     * @param pDefinition the definition to clone
-     * @throws JOceanusException on error
-     */
-    public void cloneDefinition(final MvnProjectDefinition pDefinition) throws JOceanusException {
-        /* clone the project definition */
-        theProject = new MvnProjectDefinition(pDefinition);
-        theProject.setSnapshotVersion(getTagName());
     }
 
     /**
