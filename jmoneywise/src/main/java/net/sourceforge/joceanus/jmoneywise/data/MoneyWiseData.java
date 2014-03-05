@@ -58,11 +58,14 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
@@ -498,6 +501,30 @@ public class MoneyWiseData
     }
 
     /**
+     * Obtain Transactions.
+     * @return the Transactions
+     */
+    public TransactionList getTransactions() {
+        return getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
+    }
+
+    /**
+     * Obtain TransactionInfo.
+     * @return the Transaction Info
+     */
+    public TransactionInfoList getTransactionInfo() {
+        return getDataList(MoneyWiseDataType.TRANSACTIONINFO, TransactionInfoList.class);
+    }
+
+    /**
+     * Obtain Schedules.
+     * @return the Schedules
+     */
+    public ScheduleList getSchedules() {
+        return getDataList(MoneyWiseDataType.SCHEDULE, ScheduleList.class);
+    }
+
+    /**
      * Obtain Date range.
      * @return the Date Range
      */
@@ -638,6 +665,12 @@ public class MoneyWiseData
                 return new EventList(this);
             case EVENTINFO:
                 return new EventInfoList(this);
+            case TRANSACTION:
+                return new TransactionList(this);
+            case TRANSACTIONINFO:
+                return new TransactionInfoList(this);
+            case SCHEDULE:
+                return new ScheduleList(this);
             default:
                 throw new IllegalArgumentException(pListType.toString());
         }
@@ -756,11 +789,13 @@ public class MoneyWiseData
                 /* Touch underlying data for high level data */
                 case EXCHANGERATE:
                 case PATTERN:
+                case SCHEDULE:
                     myList.touchUnderlyingItems();
                     break;
 
                 /* Ignore lists that will be handled during analysis */
                 case EVENT:
+                case TRANSACTION:
                 case ACCOUNTRATE:
                 case DEPOSITRATE:
                 case ACCOUNTPRICE:
@@ -769,6 +804,7 @@ public class MoneyWiseData
 
                 /* Ignore info lists that will be handled by their owner */
                 case EVENTINFO:
+                case TRANSACTIONINFO:
                 case ACCOUNTINFO:
                 case TAXYEARINFO:
                 case PAYEEINFO:

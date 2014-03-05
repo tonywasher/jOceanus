@@ -99,6 +99,9 @@ public class MoneyWiseDatabase
         addTable(new TableAccountInfo(this));
         addTable(new TableEvent(this));
         addTable(new TableEventInfo(this));
+        addTable(new TableTransaction(this));
+        addTable(new TableTransactionInfo(this));
         addTable(new TablePattern(this));
+        addTable(new TableSchedule(this));
     }
 }

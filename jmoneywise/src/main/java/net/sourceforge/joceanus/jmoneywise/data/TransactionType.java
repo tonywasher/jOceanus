@@ -167,12 +167,13 @@ public enum TransactionType {
             case DIVIDEND:
             case UNITTRUSTDIVIDEND:
             case TAXFREEDIVIDEND:
-            case OTHERINCOME:
+            case GIFTEDINCOME:
             case RENTALINCOME:
             case ROOMRENTALINCOME:
             case INHERITED:
             case MARKETGROWTH:
             case CAPITALGAIN:
+            case OTHERINCOME:
                 return INCOME;
             case TRANSFER:
             case STOCKSPLIT:
@@ -196,8 +197,9 @@ public enum TransactionType {
             case DEEMEDBENEFIT:
             case CHARITYDONATION:
             case LOANINTERESTCHARGED:
-            default:
                 return EXPENSE;
+            default:
+                throw new IllegalStateException();
         }
     }
 }

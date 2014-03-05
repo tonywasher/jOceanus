@@ -191,11 +191,66 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
-     * Is the account closeable?
+     * Is the account relevant (i.e. non-closeable)?
      * @return true/false
      */
     public boolean isRelevant() {
         return isRelevant;
+    }
+
+    /**
+     * Is the account autoExpense?
+     * @return true/false
+     */
+    public boolean isAutoExpense() {
+        return false;
+    }
+
+    /**
+     * Is the account shares?
+     * @return true/false
+     */
+    public boolean isShares() {
+        return false;
+    }
+
+    /**
+     * Is the account capital?
+     * @return true/false
+     */
+    public boolean isCapital() {
+        return false;
+    }
+
+    /**
+     * Can this account issue a dividend?
+     * @return true/false
+     */
+    public boolean canDividend() {
+        return false;
+    }
+
+    /**
+     * Obtain assetTypeClass.
+     * @return the Asset type
+     */
+    public AssetType getAssetType() {
+        switch (getItemType()) {
+            case DEPOSIT:
+                return AssetType.DEPOSIT;
+            case CASH:
+                return AssetType.CASH;
+            case LOAN:
+                return AssetType.LOAN;
+            case PORTFOLIO:
+                return AssetType.PORTFOLIO;
+            case SECURITY:
+                return AssetType.SECURITY;
+            case PAYEE:
+                return AssetType.PAYEE;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     /**

@@ -310,6 +310,18 @@ public class Cash
     }
 
     @Override
+    public boolean isAutoExpense() {
+        return getAutoExpense() != null;
+    }
+
+    @Override
+    public AssetType getAssetType() {
+        return isAutoExpense()
+                              ? AssetType.AUTOEXPENSE
+                              : AssetType.CASH;
+    }
+
+    @Override
     public Cash getBase() {
         return (Cash) super.getBase();
     }
@@ -609,6 +621,8 @@ public class Cash
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
+        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
+            addError("Invalid Category", FIELD_CATEGORY);
         }
 
         /* Currency must be non-null and enabled */

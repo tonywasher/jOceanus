@@ -427,6 +427,11 @@ public class Payee
         return getPayeeTypeClass() == pClass;
     }
 
+    @Override
+    public boolean canDividend() {
+        return isPayeeClass(PayeeTypeClass.EMPLOYER);
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

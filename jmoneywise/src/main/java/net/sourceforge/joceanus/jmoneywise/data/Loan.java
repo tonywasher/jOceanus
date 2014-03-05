@@ -749,6 +749,8 @@ public class Loan
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
+        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
+            addError("Invalid Category", FIELD_CATEGORY);
         }
 
         /* Currency must be non-null and enabled */

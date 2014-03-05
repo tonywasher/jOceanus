@@ -99,7 +99,10 @@ public class MoneyWiseReader
         addSheet(new SheetAccountInfo(this));
         addSheet(new SheetEvent(this));
         addSheet(new SheetEventInfo(this));
+        addSheet(new SheetTransaction(this));
+        addSheet(new SheetTransactionInfo(this));
         addSheet(new SheetPattern(this));
+        addSheet(new SheetSchedule(this));
     }
 
     @Override

@@ -651,6 +651,34 @@ public class Security
         return getSecurityTypeClass() == pClass;
     }
 
+    @Override
+    public boolean isShares() {
+        return isSecurityClass(SecurityTypeClass.SHARES);
+    }
+
+    @Override
+    public boolean isCapital() {
+        switch (getSecurityTypeClass()) {
+            case UNITTRUST:
+            case LIFEBOND:
+            case SHARES:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean canDividend() {
+        switch (getSecurityTypeClass()) {
+            case SHARES:
+            case UNITTRUST:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

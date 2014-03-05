@@ -251,9 +251,24 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     EVENTINFO,
 
     /**
+     * Transaction.
+     */
+    TRANSACTION,
+
+    /**
+     * TransactionInfo.
+     */
+    TRANSACTIONINFO,
+
+    /**
      * Pattern.
      */
-    PATTERN;
+    PATTERN,
+
+    /**
+     * Schedule.
+     */
+    SCHEDULE;
 
     /**
      * Resource Bundle.

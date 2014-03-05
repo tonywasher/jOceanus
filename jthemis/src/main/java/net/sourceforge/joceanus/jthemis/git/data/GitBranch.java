@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitTag.GitTagList;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 
 import org.eclipse.jgit.api.Git;
@@ -335,7 +335,6 @@ public final class GitBranch
 
         /**
          * Discover tag lists from repository.
-         * @param pGit git instance
          * @param pReport the report object
          * @throws JOceanusException on error
          */

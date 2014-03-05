@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
@@ -196,6 +197,16 @@ public class Deposit
     @Override
     public DepositInfoSet getInfoSet() {
         return theInfoSet;
+    }
+
+    /**
+     * Obtain Maturity.
+     * @return the maturity date
+     */
+    public JDateDay getMaturity() {
+        return hasInfoSet
+                         ? theInfoSet.getValue(AccountInfoClass.MATURITY, JDateDay.class)
+                         : null;
     }
 
     /**
@@ -618,6 +629,16 @@ public class Deposit
     }
 
     /**
+     * Is this deposit the required class.
+     * @param pClass the required deposit class.
+     * @return true/false
+     */
+    public boolean isDepositClass(final DepositCategoryClass pClass) {
+        /* Check for match */
+        return getCategoryClass() == pClass;
+    }
+
+    /**
      * Copy Constructor.
      * @param pList the list
      * @param pDeposit The Deposit to copy
@@ -804,6 +825,15 @@ public class Deposit
     }
 
     /**
+     * Set a new Maturity.
+     * @param pMaturity the new maturity
+     * @throws JOceanusException on error
+     */
+    public void setMaturity(final JDateDay pMaturity) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.MATURITY, pMaturity);
+    }
+
+    /**
      * Set a new SortCode.
      * @param pSortCode the new sort code
      * @throws JOceanusException on error
@@ -891,6 +921,8 @@ public class Deposit
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
+        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
+            addError("Invalid Category", FIELD_CATEGORY);
         }
 
         /* Currency must be non-null and enabled */
