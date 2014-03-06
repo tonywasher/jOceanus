@@ -87,6 +87,14 @@ public class TransactionInfo
     }
 
     /**
+     * Obtain Portfolio.
+     * @return the Portfolio
+     */
+    public Portfolio getPortfolio() {
+        return getPortfolio(getValueSet());
+    }
+
+    /**
      * Obtain Event Tag.
      * @return the Event Tag
      */
@@ -104,14 +112,25 @@ public class TransactionInfo
     }
 
     /**
-     * Obtain Linked Account.
+     * Obtain Linked Deposit.
      * @param pValueSet the valueSet
-     * @return the Account
+     * @return the Deposit
      */
     public static Deposit getDeposit(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
                                      : pValueSet.getValue(FIELD_LINK, Deposit.class);
+    }
+
+    /**
+     * Obtain Linked Portfolio.
+     * @param pValueSet the valueSet
+     * @return the Portfolio
+     */
+    public static Portfolio getPortfolio(final ValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, Portfolio.class);
     }
 
     /**
@@ -130,6 +149,9 @@ public class TransactionInfo
         DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Deposit) {
             return ((Deposit) myItem).getName();
+        }
+        if (myItem instanceof Portfolio) {
+            return ((Portfolio) myItem).getName();
         }
         if (myItem instanceof EventTag) {
             return ((EventTag) myItem).getName();
@@ -290,6 +312,12 @@ public class TransactionInfo
                         setValueValue(getDeposit().getId());
                     }
                     break;
+                case PORTFOLIO:
+                    resolveDataLink(FIELD_LINK, myData.getPortfolios());
+                    if (myLinkId == null) {
+                        setValueValue(getPortfolio().getId());
+                    }
+                    break;
                 case EVENTTAG:
                     resolveDataLink(FIELD_LINK, myData.getEventClasses());
                     if (myLinkId == null) {
@@ -341,6 +369,9 @@ public class TransactionInfo
         switch (getInfoClass()) {
             case THIRDPARTY:
                 getDeposit().touchItem(getOwner());
+                break;
+            case PORTFOLIO:
+                getPortfolio().touchItem(getOwner());
                 break;
             case EVENTTAG:
                 getEventTag().touchItem(getOwner());

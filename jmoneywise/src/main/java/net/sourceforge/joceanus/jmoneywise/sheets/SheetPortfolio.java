@@ -27,11 +27,8 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.Payee;
-import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -143,12 +140,14 @@ public class SheetPortfolio
 
     /**
      * Process portfolio row from archive.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static void processPortfolio(final MoneyWiseData pData,
+    protected static void processPortfolio(final ArchiveLoader pLoader,
+                                           final MoneyWiseData pData,
                                            final DataView pView,
                                            final DataRow pRow) throws JOceanusException {
         /* Access name */
@@ -193,16 +192,9 @@ public class SheetPortfolio
 
         /* Add the value into the list */
         PortfolioList myList = pData.getPortfolios();
-        myList.addValuesItem(myValues);
+        Portfolio myPortfolio = myList.addValuesItem(myValues);
 
-        /* Build data values */
-        myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
-        myValues.addValue(Payee.FIELD_NAME, myName);
-        myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.INSTITUTION.toString());
-        myValues.addValue(Payee.FIELD_CLOSED, isClosed);
-
-        /* Add the value into the list */
-        PayeeList myPayeeList = pData.getPayees();
-        myPayeeList.addValuesItem(myValues);
+        /* Declare the portfolio */
+        pLoader.declareAsset(myPortfolio);
     }
 }

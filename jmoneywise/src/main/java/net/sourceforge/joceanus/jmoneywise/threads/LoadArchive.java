@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.threads;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
@@ -77,7 +77,8 @@ public class LoadArchive
 
         /* Load workbook */
         PreferenceManager myMgr = theControl.getPreferenceMgr();
-        MoneyWiseData myData = MoneyWiseSheet.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
+        ArchiveLoader myLoader = new ArchiveLoader();
+        MoneyWiseData myData = myLoader.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 
         /* Initialise the status window */
         theStatus.initTask("Analysing Data");

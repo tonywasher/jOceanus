@@ -164,12 +164,14 @@ public class SheetDeposit
 
     /**
      * Process deposit row from archive.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static void processDeposit(final MoneyWiseData pData,
+    protected static void processDeposit(final ArchiveLoader pLoader,
+                                         final MoneyWiseData pData,
                                          final DataView pView,
                                          final DataRow pRow) throws JOceanusException {
         /* Access name and type */
@@ -241,5 +243,8 @@ public class SheetDeposit
         DepositInfoList myInfoList = pData.getDepositInfo();
         myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.MATURITY, myMaturity);
         myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.OPENINGBALANCE, myBalance);
+
+        /* Declare the deposit */
+        pLoader.declareAsset(myDeposit);
     }
 }

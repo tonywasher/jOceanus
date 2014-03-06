@@ -156,12 +156,14 @@ public class SheetSecurity
 
     /**
      * Process security row from archive.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static void processSecurity(final MoneyWiseData pData,
+    protected static void processSecurity(final ArchiveLoader pLoader,
+                                          final MoneyWiseData pData,
                                           final DataView pView,
                                           final DataRow pRow) throws JOceanusException {
         /* Access name and type */
@@ -190,16 +192,35 @@ public class SheetSecurity
             isClosed = myCell.getBooleanValue();
         }
 
+        /* Access the list */
+        SecurityList myList = pData.getSecurities();
+
         /* Access Parent account */
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
-        /* Ignore the alias account TODO */
-        if (pView.getRowCellByIndex(pRow, iAdjust++) != null) {
+        /* Access the alias account */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myAlias = null;
+        if (myCell != null) {
+            myAlias = myCell.getStringValue();
+        }
+
+        /* Access Portfolio */
+        String myPortfolio = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* If we have an alias */
+        if (myAlias != null) {
+            /* Locate the target security */
+            Security myTarget = myList.findItemByName(myAlias);
+
+            /* Declare the security alias */
+            pLoader.declareSecurityHolding(myName, myTarget, myPortfolio);
+
+            /* return */
             return;
         }
 
-        /* Skip portfolio,holding,maturity and opening columns */
-        iAdjust++;
+        /* Skip holding,maturity and opening columns */
         iAdjust++;
         iAdjust++;
         iAdjust++;
@@ -217,7 +238,9 @@ public class SheetSecurity
         myValues.addValue(Security.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        SecurityList myList = pData.getSecurities();
-        myList.addValuesItem(myValues);
+        Security mySecurity = myList.addValuesItem(myValues);
+
+        /* Declare the security holding */
+        pLoader.declareSecurityHolding(mySecurity, myPortfolio);
     }
 }

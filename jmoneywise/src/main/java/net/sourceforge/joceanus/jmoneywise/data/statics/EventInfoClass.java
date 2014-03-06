@@ -122,7 +122,12 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * EventTag.
      */
-    EVENTTAG(18, 17, DataType.LINKSET);
+    EVENTTAG(18, 17, DataType.LINKSET),
+
+    /**
+     * Portfolio.
+     */
+    PORTFOLIO(19, 18, DataType.LINK);
 
     /**
      * Resource Bundle.

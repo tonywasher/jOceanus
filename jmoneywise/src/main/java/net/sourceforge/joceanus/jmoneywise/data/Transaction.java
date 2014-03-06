@@ -286,6 +286,16 @@ public class Transaction
     }
 
     /**
+     * Obtain Portfolio.
+     * @return the Portfolio
+     */
+    public final Portfolio getPortfolio() {
+        return hasInfoSet
+                         ? theInfoSet.getPortfolio(EventInfoClass.PORTFOLIO)
+                         : null;
+    }
+
+    /**
      * Obtain Credit Amount.
      * @return the Credit Amount
      */
@@ -732,6 +742,15 @@ public class Transaction
      */
     public final void setThirdParty(final Deposit pParty) throws JOceanusException {
         setInfoSetValue(EventInfoClass.THIRDPARTY, pParty);
+    }
+
+    /**
+     * Set a new Portfolio.
+     * @param pPortfolio the new portfolio
+     * @throws JOceanusException on error
+     */
+    public final void setPortfolio(final Portfolio pPortfolio) throws JOceanusException {
+        setInfoSetValue(EventInfoClass.PORTFOLIO, pPortfolio);
     }
 
     /**

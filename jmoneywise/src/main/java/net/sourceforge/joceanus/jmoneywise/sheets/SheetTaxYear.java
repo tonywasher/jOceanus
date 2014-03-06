@@ -34,8 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
+import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetDataItem;
@@ -141,14 +140,14 @@ public class SheetTaxYear
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pRange the range of tax years
+     * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final YearRange pRange) throws JOceanusException {
+                                         final ArchiveLoader pLoader) throws JOceanusException {
         /* Access the lists */
         TaxYearList myList = pData.getTaxYears();
         TaxInfoList myInfoList = pData.getTaxInfo();
@@ -176,7 +175,7 @@ public class SheetTaxYear
             }
 
             /* Obtain the range iterator */
-            Iterator<ArchiveYear> myIterator = pRange.getIterator();
+            Iterator<ArchiveYear> myIterator = pLoader.getIterator();
             int iRow = 0;
 
             /* Loop through the required years */

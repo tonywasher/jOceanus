@@ -169,12 +169,14 @@ public class SheetAccount
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pLoader the archive loader
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
      */
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final MoneyWiseData pData) throws JOceanusException {
+                                         final MoneyWiseData pData,
+                                         final ArchiveLoader pLoader) throws JOceanusException {
         /* Access the list of accounts */
         AccountList myList = pData.getAccounts();
         AccountInfoList myInfoList = pData.getAccountInfo();
@@ -341,7 +343,7 @@ public class SheetAccount
                 myInfoList.addInfoItem(null, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
 
                 /* Process alternate view */
-                processAlternate(pData, myView, myRow);
+                processAlternate(pLoader, pData, myView, myRow);
 
                 /* Report the progress */
                 myCount++;
@@ -371,12 +373,14 @@ public class SheetAccount
 
     /**
      * Process row into alternate form.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    private static void processAlternate(final MoneyWiseData pData,
+    private static void processAlternate(final ArchiveLoader pLoader,
+                                         final MoneyWiseData pData,
                                          final DataView pView,
                                          final DataRow pRow) throws JOceanusException {
         /* Skip name and type column */
@@ -390,32 +394,32 @@ public class SheetAccount
         /* If this is a deposit */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
             /* Process as a deposit */
-            SheetDeposit.processDeposit(pData, pView, pRow);
+            SheetDeposit.processDeposit(pLoader, pData, pView, pRow);
 
             /* If this is a cash */
         } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
             /* Process as a cash */
-            SheetCash.processCash(pData, pView, pRow);
+            SheetCash.processCash(pLoader, pData, pView, pRow);
 
             /* If this is a loan */
         } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
             /* Process as a loan */
-            SheetLoan.processLoan(pData, pView, pRow);
+            SheetLoan.processLoan(pLoader, pData, pView, pRow);
 
             /* If this is a security */
         } else if (myClass.equals(MoneyWiseDataType.SECURITY.toString())) {
             /* Process as a security */
-            SheetSecurity.processSecurity(pData, pView, pRow);
+            SheetSecurity.processSecurity(pLoader, pData, pView, pRow);
 
             /* If this is a payee */
         } else if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
             /* Process as a payee */
-            SheetPayee.processPayee(pData, pView, pRow);
+            SheetPayee.processPayee(pLoader, pData, pView, pRow);
 
             /* If this is a portfolio */
         } else if (myClass.equals(MoneyWiseDataType.PORTFOLIO.toString())) {
             /* Process as a portfolio */
-            SheetPortfolio.processPortfolio(pData, pView, pRow);
+            SheetPortfolio.processPortfolio(pLoader, pData, pView, pRow);
         } else {
             throw new JMoneyWiseLogicException("Unexpected Account Class " + myClass);
         }

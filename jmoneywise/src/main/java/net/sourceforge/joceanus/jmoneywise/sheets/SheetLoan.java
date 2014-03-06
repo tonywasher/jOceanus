@@ -147,12 +147,14 @@ public class SheetLoan
 
     /**
      * Process loan row from archive.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static void processLoan(final MoneyWiseData pData,
+    protected static void processLoan(final ArchiveLoader pLoader,
+                                      final MoneyWiseData pData,
                                       final DataView pView,
                                       final DataRow pRow) throws JOceanusException {
         /* Access name and type */
@@ -185,6 +187,9 @@ public class SheetLoan
 
         /* Add the value into the list */
         LoanList myList = pData.getLoans();
-        myList.addValuesItem(myValues);
+        Loan myLoan = myList.addValuesItem(myValues);
+
+        /* Declare the loan */
+        pLoader.declareAsset(myLoan);
     }
 }

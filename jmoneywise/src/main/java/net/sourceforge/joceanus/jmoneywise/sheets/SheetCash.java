@@ -142,12 +142,14 @@ public class SheetCash
 
     /**
      * Process cash row from archive.
+     * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    protected static void processCash(final MoneyWiseData pData,
+    protected static void processCash(final ArchiveLoader pLoader,
+                                      final MoneyWiseData pData,
                                       final DataView pView,
                                       final DataRow pRow) throws JOceanusException {
         /* Access name and type */
@@ -197,5 +199,8 @@ public class SheetCash
         /* Add information relating to the cash */
         CashInfoList myInfoList = pData.getCashInfo();
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
+
+        /* Declare the cash */
+        pLoader.declareAsset(myCash);
     }
 }

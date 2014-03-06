@@ -35,8 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.ArchiveYear;
-import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet.YearRange;
+import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
@@ -176,7 +175,7 @@ public class SheetEvent
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pRange the range of tax years
+     * @param pLoader the archive loader
      * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JOceanusException on error
@@ -184,7 +183,7 @@ public class SheetEvent
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
-                                         final YearRange pRange,
+                                         final ArchiveLoader pLoader,
                                          final JDateDay pLastEvent) throws JOceanusException {
         /* Access the list of events */
         EventList myList = pData.getEvents();
@@ -197,7 +196,7 @@ public class SheetEvent
             int myCount = 0;
 
             /* Obtain the range iterator */
-            ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
+            ListIterator<ArchiveYear> myIterator = pLoader.getReverseIterator();
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {

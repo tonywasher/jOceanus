@@ -132,11 +132,6 @@ public class AccountInfoSet
     private static final String ERROR_PORTCLOSED = NLS_BUNDLE.getString("ErrorPortClosed");
 
     /**
-     * Holding Child Error Text.
-     */
-    private static final String ERROR_HOLDCHILD = NLS_BUNDLE.getString("ErrorHoldChild");
-
-    /**
      * Holding Invalid Error Text.
      */
     private static final String ERROR_BADHOLD = NLS_BUNDLE.getString("ErrorBadHolding");
@@ -521,11 +516,6 @@ public class AccountInfoSet
                     /* If we are open then holding account must be open */
                     if (!myAccount.isClosed() && myHolding.isClosed()) {
                         myAccount.addError(ERROR_HOLDCLOSED, getFieldForClass(myClass));
-                    }
-
-                    /* We must be parent of holding account */
-                    if (!myAccount.equals(myHolding.getParent())) {
-                        myAccount.addError(ERROR_HOLDCHILD, getFieldForClass(myClass));
                     }
                     break;
                 default:

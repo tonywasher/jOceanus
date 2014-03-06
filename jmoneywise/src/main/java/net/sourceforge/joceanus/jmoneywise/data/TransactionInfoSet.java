@@ -181,6 +181,24 @@ public class TransactionInfoSet
     }
 
     /**
+     * Obtain the portfolio for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the portfolio
+     */
+    public Portfolio getPortfolio(final EventInfoClass pInfoClass) {
+        /* Access existing entry */
+        TransactionInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the portfolio */
+        return myValue.getPortfolio();
+    }
+
+    /**
      * Determine if a field is required.
      * @param pField the infoSet field
      * @return the status
@@ -264,6 +282,11 @@ public class TransactionInfoSet
                 /* Handle ThirdParty separately */
             case THIRDPARTY:
                 return isThirdPartyClassRequired(myTransaction, myClass);
+
+            case PORTFOLIO:
+                return ((myDebit instanceof Security) || (myCredit instanceof Security))
+                                                                                        ? JDataFieldRequired.MUSTEXIST
+                                                                                        : JDataFieldRequired.NOTALLOWED;
 
             case PENSION:
             case CREDITAMOUNT:
@@ -492,6 +515,7 @@ public class TransactionInfoSet
                     }
                     break;
                 case THIRDPARTY:
+                case PORTFOLIO:
                 case CREDITAMOUNT:
                 case PENSION:
                 default:

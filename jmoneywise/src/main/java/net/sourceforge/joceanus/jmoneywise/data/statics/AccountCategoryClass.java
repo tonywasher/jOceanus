@@ -522,6 +522,7 @@ public enum AccountCategoryClass implements StaticInterface {
             case SHARES:
             case UNITTRUST:
             case PROPERTY:
+            case PORTFOLIO:
                 return true;
             default:
                 return false;
