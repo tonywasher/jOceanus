@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
@@ -35,7 +36,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * Class representing a debit/credit pair of assets.
  * @author Tony Washer
  */
-public final class AssetPair {
+public final class AssetPair
+        implements JDataFormat {
     /**
      * Id shift.
      */
@@ -55,6 +57,11 @@ public final class AssetPair {
      * Credit type.
      */
     private final AssetType theCredit;
+
+    @Override
+    public String formatObject() {
+        return toString();
+    }
 
     /**
      * Obtain debit class.
@@ -86,8 +93,8 @@ public final class AssetPair {
      * @param pCredit the credit class
      * @return the id
      */
-    private static Integer getEncodedId(final AssetType pDebit,
-                                        final AssetType pCredit) {
+    public static Integer getEncodedId(final AssetType pDebit,
+                                       final AssetType pCredit) {
         return (pDebit.getId() << ID_SHIFT) + pCredit.getId();
     }
 
@@ -245,7 +252,7 @@ public final class AssetPair {
         public AssetPair lookUpName(final String pName) {
             /* Locate the separator in the name */
             int iIndex = pName.indexOf(SEP_NAME);
-            if (iIndex != -1) {
+            if (iIndex == -1) {
                 return null;
             }
 

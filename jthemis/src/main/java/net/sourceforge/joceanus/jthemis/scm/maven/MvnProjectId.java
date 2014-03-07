@@ -46,6 +46,16 @@ public final class MvnProjectId
     public static final String SUFFIX_SNAPSHOT = "-SNAPSHOT";
 
     /**
+     * Parent groupId indication.
+     */
+    private static final String PARENT_GROUP = "${project.groupId}";
+
+    /**
+     * Parent version indication.
+     */
+    private static final String PARENT_VERSION = "${project.version}";
+
+    /**
      * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(MvnProjectId.class.getSimpleName());
@@ -204,12 +214,12 @@ public final class MvnProjectId
 
         /* Access IDs */
         theGroupId = theDependency.getGroupId();
-        if (theGroupId.equals("${project.groupId}")) {
+        if (PARENT_GROUP.equals(theGroupId)) {
             theGroupId = pProject.getGroupId();
         }
         theArtifactId = theDependency.getArtifactId();
         theVersionText = theDependency.getVersion();
-        if (theVersionText.equals("${project.version}")) {
+        if (PARENT_VERSION.equals(theVersionText)) {
             theVersionText = pProject.getVersionText();
         }
         theVersion = parseVersion();

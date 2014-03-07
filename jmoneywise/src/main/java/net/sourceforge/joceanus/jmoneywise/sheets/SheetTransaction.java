@@ -22,13 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
+import net.sourceforge.joceanus.jmetis.sheet.DataCell;
+import net.sourceforge.joceanus.jmetis.sheet.DataRow;
+import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -163,5 +170,155 @@ public class SheetTransaction
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
+    }
+
+    /**
+     * Process transaction row from archive.
+     * @param pLoader the archive loader
+     * @param pData the DataSet
+     * @param pView the spreadsheet view
+     * @param pRow the spreadsheet row
+     * @throws JOceanusException on error
+     */
+    protected static void processTransaction(final ArchiveLoader pLoader,
+                                             final MoneyWiseData pData,
+                                             final DataView pView,
+                                             final DataRow pRow) throws JOceanusException {
+        /* Access parent cache */
+        ParentCache myCache = pLoader.getParentCache();
+        int iAdjust = 0;
+
+        /* Access date */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        JDateDay myDate = (myCell != null)
+                                          ? myCell.getDateValue()
+                                          : null;
+
+        /* Access the values */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myDebit = (myCell != null)
+                                         ? myCell.getStringValue()
+                                         : null;
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myCredit = (myCell != null)
+                                          ? myCell.getStringValue()
+                                          : null;
+        String myAmount = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        String myCategory = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+
+        /* Handle Reconciled which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Boolean myReconciled = Boolean.FALSE;
+        if (myCell != null) {
+            myReconciled = Boolean.TRUE;
+        }
+
+        /* Set defaults */
+        myCache.resolveValues(myDate, myDebit, myCredit);
+
+        /* Build transaction */
+        Transaction myTrans = myCache.buildTransaction(myCategory, myAmount, myReconciled);
+
+        /* Handle Description which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myDesc = null;
+        if (myCell != null) {
+            myDesc = myCell.getStringValue();
+        }
+
+        /* Handle Tax Credit which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myTaxCredit = null;
+        if (myCell != null) {
+            myTaxCredit = myCell.getStringValue();
+        }
+
+        /* Handle NatInsurance which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myNatInsurance = null;
+        if (myCell != null) {
+            myNatInsurance = myCell.getStringValue();
+        }
+
+        /* Handle Benefit which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myBenefit = null;
+        if (myCell != null) {
+            myBenefit = myCell.getStringValue();
+        }
+
+        /* Handle DebitUnits which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myDebitUnits = null;
+        if (myCell != null) {
+            myDebitUnits = myCell.getStringValue();
+        }
+
+        /* Handle CreditUnits which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myCreditUnits = null;
+        if (myCell != null) {
+            myCreditUnits = myCell.getStringValue();
+        }
+
+        /* Handle Dilution which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myDilution = null;
+        if (myCell != null) {
+            myDilution = myCell.getStringValue();
+            if (!myDilution.startsWith("0.")) {
+                myDilution = null;
+            }
+        }
+
+        /* Handle Reference which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myReference = null;
+        if (myCell != null) {
+            myReference = myCell.getStringValue();
+        }
+
+        /* Handle Years which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        Integer myYears = null;
+        if (myCell != null) {
+            myYears = myCell.getIntegerValue();
+        }
+
+        /* Handle Donation which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myDonation = null;
+        if (myCell != null) {
+            myDonation = myCell.getStringValue();
+        }
+
+        /* Handle ThirdParty which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myThirdParty = null;
+        if (myCell != null) {
+            myThirdParty = myCell.getStringValue();
+        }
+
+        /* Handle TagList which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myTagList = null;
+        if (myCell != null) {
+            myTagList = myCell.getStringValue();
+        }
+
+        /* Add information relating to the account */
+        TransactionInfoList myInfoList = pData.getTransactionInfo();
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.COMMENTS, myDesc);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.TAXCREDIT, myTaxCredit);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.NATINSURANCE, myNatInsurance);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DEEMEDBENEFIT, myBenefit);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DEBITUNITS, myDebitUnits);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.CREDITUNITS, myCreditUnits);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DILUTION, myDilution);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.REFERENCE, myReference);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.QUALIFYYEARS, myYears);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.CHARITYDONATION, myDonation);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.THIRDPARTY, myThirdParty);
+        myInfoList.addInfoItem(null, myTrans, EventInfoClass.EVENTTAG, myTagList);
     }
 }

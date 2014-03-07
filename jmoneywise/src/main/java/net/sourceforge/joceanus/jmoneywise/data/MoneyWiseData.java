@@ -727,6 +727,7 @@ public class MoneyWiseData
         theDefaultCurrency = getAccountCurrencies().findDefault();
         theDateRange = getTaxYears().getRange();
         getEvents().setRange(theDateRange);
+        getTransactions().setRange(theDateRange);
     }
 
     /**

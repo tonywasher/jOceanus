@@ -104,6 +104,10 @@ public class TransactionInfoSet
                 /* Access deposit of object */
                 myValue = getDeposit(pInfoClass);
                 break;
+            case PORTFOLIO:
+                /* Access portfolio of object */
+                myValue = getPortfolio(pInfoClass);
+                break;
             case EVENTTAG:
                 /* Access InfoSetList */
                 myValue = getInfoLinkSet(pInfoClass);
@@ -322,7 +326,12 @@ public class TransactionInfoSet
                 if (!(pDebit instanceof Security)) {
                     return JDataFieldRequired.MUSTEXIST;
                 }
-                return JDataFieldRequired.NOTALLOWED; // TODO check portfolio tax status
+
+                /* Check portfolio tax status */
+                Portfolio myPortfolio = getPortfolio(EventInfoClass.PORTFOLIO);
+                return ((myPortfolio != null) && !myPortfolio.isTaxFree())
+                                                                          ? JDataFieldRequired.MUSTEXIST
+                                                                          : JDataFieldRequired.NOTALLOWED;
             case TRANSFER:
                 return (pDebit instanceof Security)
                        && (((Security) pDebit).isSecurityClass(SecurityTypeClass.LIFEBOND))

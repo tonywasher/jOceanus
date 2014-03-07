@@ -162,6 +162,9 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (FIELD_DATE.equals(pField)) {
             return !isChild();
         }
+        if (FIELD_PAIR.equals(pField)) {
+            return true;
+        }
         if (FIELD_CATEGORY.equals(pField)) {
             return true;
         }
@@ -386,7 +389,10 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the split state
      */
     public Boolean isSplit() {
-        return isSplit(getValueSet());
+        Boolean isSplit = isSplit(getValueSet());
+        return isSplit != null
+                              ? isSplit
+                              : Boolean.FALSE;
     }
 
     /**
@@ -902,6 +908,18 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         ValueSet myValues = getValueSet();
         AssetPairManager myManager = getAssetPairManager();
 
+        /* Adjust Split */
+        Object mySplit = myValues.getValue(FIELD_SPLIT);
+        if (mySplit == null) {
+            setValueSplit(Boolean.FALSE);
+        }
+
+        /* Adjust Reconciled */
+        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
+        if (myReconciled == null) {
+            setValueReconciled(Boolean.FALSE);
+        }
+
         /* Resolve AssetPair */
         Object myValue = myValues.getValue(FIELD_PAIR);
         if (myValue instanceof Integer) {
@@ -925,18 +943,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         myPair.resolveDataLink(myData, this, FIELD_DEBIT);
         myPair.resolveDataLink(myData, this, FIELD_CREDIT);
         resolveDataLink(FIELD_CATEGORY, myData.getEventCategories());
-
-        /* Adjust Reconciled */
-        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
-        if (myReconciled == null) {
-            setValueReconciled(Boolean.FALSE);
-        }
-
-        /* Adjust Split */
-        Object mySplit = myValues.getValue(FIELD_SPLIT);
-        if (mySplit == null) {
-            setValueSplit(Boolean.FALSE);
-        }
     }
 
     /**
@@ -1049,7 +1055,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
                 /* Inheritance must be from individual to asset */
                 return (myDebit instanceof Payee)
                        && ((Payee) myDebit).isPayeeClass(PayeeTypeClass.INDIVIDUAL)
-                       && myCreditType.isValued();
+                       && myCreditType.isAsset();
 
             case INTEREST:
                 /* Debit must be able to generate interest */
@@ -1127,7 +1133,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
             case TRANSFER:
                 /* transfer is nonRecursive and from Asset to Asset */
-                return !isRecursive && myDebitType.isValued() && myCreditType.isValued();
+                return !isRecursive && myDebitType.isAsset() && myCreditType.isAsset();
 
             case EXPENSE:
                 /* Recovered expense is from nonAsset to Asset */

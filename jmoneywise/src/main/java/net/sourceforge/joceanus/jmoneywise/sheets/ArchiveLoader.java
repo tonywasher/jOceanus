@@ -39,14 +39,22 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.WorkBookType;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetPair;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -92,6 +100,11 @@ public class ArchiveLoader {
     private final Map<String, Object> theNameMap;
 
     /**
+     * The ParentCache.
+     */
+    private ParentCache theParentCache;
+
+    /**
      * Get the iterator.
      * @return the iterator
      */
@@ -113,6 +126,14 @@ public class ArchiveLoader {
      */
     protected int getNumYears() {
         return theYears.size();
+    }
+
+    /**
+     * Get the parent cache.
+     * @return the parent cache
+     */
+    protected ParentCache getParentCache() {
+        return theParentCache;
     }
 
     /**
@@ -219,6 +240,7 @@ public class ArchiveLoader {
         try {
             /* Create the Data */
             MoneyWiseData myData = pTask.getNewDataSet();
+            theParentCache = new ParentCache(myData);
 
             /* Access the workbook from the stream */
             DataWorkBook myWorkbook = new DataWorkBook(pStream, pType);
@@ -378,7 +400,7 @@ public class ArchiveLoader {
 
     /**
      * Declare security holding.
-     * @param the security holding name
+     * @param pName the security holding name
      * @param pSecurity the security.
      * @param pPortfolio the portfolio
      * @throws JOceanusException on error
@@ -457,7 +479,7 @@ public class ArchiveLoader {
     /**
      * Security Holding.
      */
-    public static class SecurityHolding {
+    public static final class SecurityHolding {
         /**
          * Security.
          */
@@ -485,7 +507,7 @@ public class ArchiveLoader {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pSecurity the security
          * @param pPortfolio the portfolio
          */
@@ -494,6 +516,228 @@ public class ArchiveLoader {
             /* Store parameters */
             theSecurity = pSecurity;
             thePortfolio = pPortfolio;
+        }
+    }
+
+    /**
+     * Parent Cache details.
+     */
+    public class ParentCache {
+        /**
+         * TransactionList.
+         */
+        private final TransactionList theList;
+
+        /**
+         * TransactionInfoList.
+         */
+        private final TransactionInfoList theInfoList;
+
+        /**
+         * Last Parent.
+         */
+        private Transaction theLastParent;
+
+        /**
+         * Last Debit.
+         */
+        private Object theLastDebit;
+
+        /**
+         * Last Credit.
+         */
+        private Object theLastCredit;
+
+        /**
+         * The parent.
+         */
+        private Transaction theParent;
+
+        /**
+         * Split Status.
+         */
+        private boolean isSplit;
+
+        /**
+         * Resolved Date.
+         */
+        private JDateDay theDate;
+
+        /**
+         * AssetPair Id.
+         */
+        private Integer thePairId;
+
+        /**
+         * Resolved Debit.
+         */
+        private AssetBase<?> theDebit;
+
+        /**
+         * Resolved Credit.
+         */
+        private AssetBase<?> theCredit;
+
+        /**
+         * Resolved Portfolio.
+         */
+        private String thePortfolio;
+
+        /**
+         * Constructor.
+         * @param pData the dataSet
+         */
+        protected ParentCache(final MoneyWiseData pData) {
+            /* Store lists */
+            theList = pData.getTransactions();
+            theInfoList = pData.getTransactionInfo();
+        }
+
+        /**
+         * Build transaction.
+         * @param pCategory the category
+         * @param pAmount the amount
+         * @param pReconciled is the transaction reconciled?
+         * @return the new transaction
+         * @throws JOceanusException on error
+         */
+        protected Transaction buildTransaction(final String pCategory,
+                                               final String pAmount,
+                                               final boolean pReconciled) throws JOceanusException {
+            /* Build data values */
+            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Transaction.OBJECT_NAME);
+            myValues.addValue(Transaction.FIELD_DATE, theDate);
+            myValues.addValue(Transaction.FIELD_CATEGORY, pCategory);
+            myValues.addValue(Transaction.FIELD_PAIR, thePairId);
+            myValues.addValue(Transaction.FIELD_DEBIT, theDebit.getName());
+            myValues.addValue(Transaction.FIELD_CREDIT, theCredit.getName());
+            myValues.addValue(Transaction.FIELD_AMOUNT, pAmount);
+            myValues.addValue(Transaction.FIELD_RECONCILED, pReconciled);
+            myValues.addValue(Transaction.FIELD_SPLIT, isSplit);
+            myValues.addValue(Transaction.FIELD_PARENT, theParent);
+
+            /* Add the value into the list */
+            Transaction myTrans = theList.addValuesItem(myValues);
+
+            /* If we were not a child */
+            if (!isSplit) {
+                /* Note the last parent */
+                theLastParent = myTrans;
+            }
+
+            /* If we have a portfolio */
+            if (thePortfolio != null) {
+                /* Add the item */
+                theInfoList.addInfoItem(null, myTrans, EventInfoClass.PORTFOLIO, thePortfolio);
+            }
+
+            /* return the new transaction */
+            return myTrans;
+        }
+
+        /**
+         * Resolve Values.
+         * @param pDate the date of the transaction
+         * @param pDebit the name of the debit object
+         * @param pCredit the name of the credit object
+         * @throws JOceanusException on error
+         */
+        protected void resolveValues(final JDateDay pDate,
+                                     final String pDebit,
+                                     final String pCredit) throws JOceanusException {
+            /* If the Date is null */
+            if (pDate == null) {
+                /* Resolve child values */
+                resolveChildValues(pDebit, pCredit);
+                return;
+            }
+
+            /* Note that there is no split */
+            isSplit = Boolean.FALSE;
+            theParent = null;
+
+            /* Store the Date */
+            theDate = pDate;
+
+            /* Resolve the debit and credit */
+            Object myDebit = theNameMap.get(pDebit);
+            Object myCredit = theNameMap.get(pCredit);
+
+            /* Store last credit and debit */
+            theLastDebit = myDebit;
+            theLastCredit = myCredit;
+
+            /* Resolve assets */
+            resolveAssets();
+        }
+
+        /**
+         * Resolve Child Values.
+         * @param pDebit the name of the debit object
+         * @param pCredit the name of the credit object
+         * @throws JOceanusException on error
+         */
+        private void resolveChildValues(final String pDebit,
+                                        final String pCredit) throws JOceanusException {
+            /* Handle no LastParent */
+            if (theLastParent == null) {
+                throw new JMoneyWiseDataException(theDate, "Missing parent transaction");
+            }
+
+            /* Note that there is a split */
+            isSplit = Boolean.TRUE;
+            theParent = theLastParent;
+            theLastParent.setSplit(Boolean.TRUE);
+
+            /* Resolve the debit and credit */
+            Object myDebit = (pDebit == null)
+                                             ? theLastDebit
+                                             : theNameMap.get(pDebit);
+            Object myCredit = (pCredit == null)
+                                               ? theLastCredit
+                                               : theNameMap.get(pCredit);
+
+            /* Store last credit and debit */
+            theLastDebit = myDebit;
+            theLastCredit = myCredit;
+
+            /* Resolve assets */
+            resolveAssets();
+        }
+
+        /**
+         * Resolve assets.
+         * @throws JOceanusException on error
+         */
+        private void resolveAssets() throws JOceanusException {
+            boolean isDebitHolding = theLastDebit instanceof SecurityHolding;
+            boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
+
+            /* Resolve debit */
+            theDebit = isDebitHolding
+                                     ? ((SecurityHolding) theLastDebit).getSecurity()
+                                     : AssetBase.class.cast(theLastDebit);
+            /* Resolve credit */
+            theCredit = isCreditHolding
+                                       ? ((SecurityHolding) theLastCredit).getSecurity()
+                                       : AssetBase.class.cast(theLastCredit);
+
+            /* Resolve the pair */
+            thePairId = AssetPair.getEncodedId(theDebit.getAssetType(), theCredit.getAssetType());
+
+            /* Resolve portfolio */
+            thePortfolio = null;
+            if (isDebitHolding) {
+                thePortfolio = ((SecurityHolding) theLastDebit).getPortfolio();
+                if (isCreditHolding) {
+                    String myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
+                    if (!thePortfolio.equals(myPortfolio)) {
+                        throw new JMoneyWiseDataException(theDate, "Inconsistent portfolios");
+                    }
+                }
+            } else if (isCreditHolding) {
+                thePortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
+            }
         }
     }
 }

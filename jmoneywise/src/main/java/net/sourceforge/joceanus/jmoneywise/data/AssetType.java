@@ -147,14 +147,14 @@ public enum AssetType {
      * Determine whether this is an asset.
      * @return true/false
      */
-    private boolean isAsset() {
+    public boolean isAsset() {
         switch (this) {
             case DEPOSIT:
+            case AUTOEXPENSE:
             case SECURITY:
             case CASH:
             case LOAN:
                 return true;
-            case AUTOEXPENSE:
             case PORTFOLIO:
             case PAYEE:
             default:

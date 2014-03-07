@@ -80,7 +80,7 @@ public class Transaction
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EventBase.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, TransactionBase.FIELD_DEFS);
 
     /**
      * EventInfoSet field Id.
@@ -552,6 +552,13 @@ public class Transaction
 
         /* Perform underlying checks */
         super.validate();
+
+        /* If the event has a parent TODO */
+        Transaction myParent = getParent();
+        if (myParent != null) {
+            /* Register child against parent */
+            getList().registerChild(this);
+        }
 
         /* Check for valid credit security */
         if ((myCredit != null) && (myCredit instanceof Security)) {

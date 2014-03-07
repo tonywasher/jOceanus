@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
 import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -409,6 +411,9 @@ public class SheetEvent
                     myInfoList.addInfoItem(null, myEvent, EventInfoClass.THIRDPARTY, myThirdParty);
                     myInfoList.addInfoItem(null, myEvent, EventInfoClass.EVENTTAG, myTagList);
 
+                    /* Process alternate view */
+                    SheetTransaction.processTransaction(pLoader, pData, myView, myRow);
+
                     /* Report the progress */
                     myCount++;
                     if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
@@ -433,6 +438,9 @@ public class SheetEvent
             /* Validate the list */
             myList.validateOnLoad();
 
+            /* Resolve Alternate lists */
+            resolveAlternate(pData);
+
             /* Handle Exceptions */
         } catch (JOceanusException e) {
             throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
@@ -440,5 +448,20 @@ public class SheetEvent
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * Resolve alternate lists.
+     * @param pData the DataSet
+     * @throws JOceanusException on error
+     */
+    private static void resolveAlternate(final MoneyWiseData pData) throws JOceanusException {
+        /* Sort the transaction list and validate */
+        TransactionList myTransList = pData.getTransactions();
+        TransactionInfoList myInfoList = pData.getTransactionInfo();
+        myTransList.resolveDataSetLinks();
+        myTransList.reSort();
+        myInfoList.resolveDataSetLinks();
+        myTransList.validateOnLoad();
     }
 }
