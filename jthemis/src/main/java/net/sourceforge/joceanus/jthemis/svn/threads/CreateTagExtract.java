@@ -31,10 +31,10 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
-import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 
 /**
  * Thread to handle creation of working copy.

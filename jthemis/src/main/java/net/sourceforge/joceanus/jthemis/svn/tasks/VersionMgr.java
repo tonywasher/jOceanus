@@ -31,7 +31,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
@@ -243,7 +243,7 @@ public class VersionMgr {
      * @throws JOceanusException on error
      */
     public List<SvnBranch> createBranches(final Collection<SvnTag> pTags,
-                                          final BranchOpType pBranchType) throws JOceanusException {
+                                          final ScmBranchOpType pBranchType) throws JOceanusException {
         /* Create the list of branches */
         List<SvnBranch> myList = new ArrayList<SvnBranch>();
 

@@ -31,11 +31,11 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
-import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 

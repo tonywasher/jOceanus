@@ -32,11 +32,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistory.CopyDir;
-import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistory.RevisionKey;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnRevisionKey;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnSourceDir;
 
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
+import org.tmatesoft.svn.core.SVNErrorCode;
+import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNURL;
@@ -48,8 +50,8 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Map of RevisionHistory.
  * @author Tony Washer
  */
-public class RevisionHistoryMap
-        extends LinkedHashMap<RevisionKey, RevisionHistory>
+public class SvnRevisionHistoryMap
+        extends LinkedHashMap<SvnRevisionKey, SvnRevisionHistory>
         implements JDataFormat {
     /**
      * Serial Id.
@@ -60,6 +62,11 @@ public class RevisionHistoryMap
      * The repository.
      */
     private final transient SvnRepository theRepository;
+
+    /**
+     * The current owner.
+     */
+    private transient Object theOwner;
 
     @Override
     public String formatObject() {
@@ -75,10 +82,18 @@ public class RevisionHistoryMap
     }
 
     /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    private Object getOwner() {
+        return theOwner;
+    }
+
+    /**
      * Constructor.
      * @param pRepository the repository
      */
-    protected RevisionHistoryMap(final SvnRepository pRepository) {
+    protected SvnRevisionHistoryMap(final SvnRepository pRepository) {
         /* Access repository and log client */
         theRepository = pRepository;
     }
@@ -89,12 +104,15 @@ public class RevisionHistoryMap
      * @return the revisionPath
      * @throws JOceanusException on error
      */
-    protected RevisionPath discoverBranch(final SvnBranch pBranch) throws JOceanusException {
-        /* Discover the path */
-        RevisionPath myPath = new RevisionPath(this, pBranch.getURLPath());
+    protected SvnRevisionPath discoverBranch(final SvnBranch pBranch) throws JOceanusException {
+        /* Set current owner */
+        theOwner = pBranch;
 
-        /* Expand CopyDirectories */
-        myPath.expandCopyDirs();
+        /* Discover the path */
+        SvnRevisionPath myPath = new SvnRevisionPath(this, pBranch.getURLPath());
+
+        /* Expand SourceDirectories */
+        myPath.expandSourceDirs();
 
         /* Return the path */
         return myPath;
@@ -106,19 +124,29 @@ public class RevisionHistoryMap
      * @return the revisionPath
      * @throws JOceanusException on error
      */
-    protected RevisionPath discoverTag(final SvnTag pTag) throws JOceanusException {
-        return new RevisionPath(this, pTag.getURLPath());
+    protected SvnRevisionPath discoverTag(final SvnTag pTag) throws JOceanusException {
+        /* Set current owner */
+        theOwner = pTag;
+
+        /* Discover the path */
+        SvnRevisionPath myPath = new SvnRevisionPath(this, pTag.getURLPath());
+
+        /* Expand SourceDirectories */
+        myPath.expandSourceDirs();
+
+        /* Return the path */
+        return myPath;
     }
 
     /**
      * Details of a revision path for a directory in a SubVersion repository.
      */
-    public static class RevisionPath
+    public static class SvnRevisionPath
             implements JDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(RevisionPath.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnRevisionPath.class.getSimpleName());
 
         /**
          * Path field.
@@ -138,7 +166,12 @@ public class RevisionHistoryMap
         /**
          * The HistoryMap.
          */
-        private final RevisionHistoryMap theHistoryMap;
+        private final SvnRevisionHistoryMap theHistoryMap;
+
+        /**
+         * The owner.
+         */
+        private final Object theOwner;
 
         /**
          * The path for the revision.
@@ -153,22 +186,22 @@ public class RevisionHistoryMap
         /**
          * The first history.
          */
-        private RevisionHistory theFirstHistory;
+        private SvnRevisionHistory theFirstHistory;
 
         /**
          * The last history.
          */
-        private RevisionHistory theLastHistory;
+        private SvnRevisionHistory theLastHistory;
 
         /**
          * The origin.
          */
-        private RevisionKey theOrigin;
+        private SvnRevisionKey theOrigin;
 
         /**
          * The sourcePath.
          */
-        private RevisionPath theSourcePath;
+        private SvnRevisionPath theSourcePath;
 
         @Override
         public String formatObject() {
@@ -198,8 +231,16 @@ public class RevisionHistoryMap
          * Obtain the basedOn link.
          * @return the log entry
          */
-        public RevisionHistory getBasedOn() {
+        public SvnRevisionHistory getBasedOn() {
             return theFirstHistory;
+        }
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public Object getOwner() {
+            return theOwner;
         }
 
         /**
@@ -208,8 +249,8 @@ public class RevisionHistoryMap
          * @param pPath the path to document
          * @throws JOceanusException on error
          */
-        public RevisionPath(final RevisionHistoryMap pHistoryMap,
-                            final String pPath) throws JOceanusException {
+        public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
+                               final String pPath) throws JOceanusException {
             /* Default to HEAD revision */
             this(pHistoryMap, pPath, SVNRevision.HEAD);
         }
@@ -220,8 +261,8 @@ public class RevisionHistoryMap
          * @param pKey the revisionPath
          * @throws JOceanusException on error
          */
-        public RevisionPath(final RevisionHistoryMap pHistoryMap,
-                            final RevisionKey pKey) throws JOceanusException {
+        public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
+                               final SvnRevisionKey pKey) throws JOceanusException {
             /* Extract the details from the revisionKey */
             this(pHistoryMap, pKey.getPath(), pKey.getRevision());
         }
@@ -233,14 +274,15 @@ public class RevisionHistoryMap
          * @param pRevision the base revision
          * @throws JOceanusException on error
          */
-        public RevisionPath(final RevisionHistoryMap pHistoryMap,
-                            final String pPath,
-                            final SVNRevision pRevision) throws JOceanusException {
+        public SvnRevisionPath(final SvnRevisionHistoryMap pHistoryMap,
+                               final String pPath,
+                               final SVNRevision pRevision) throws JOceanusException {
             /* Determine the prefix */
             SvnRepository myRepo = pHistoryMap.getRepository();
             String myPrefix = myRepo.getPath();
 
             /* Store the path */
+            theOwner = pHistoryMap.getOwner();
             theHistoryMap = pHistoryMap;
             thePath = pPath.startsWith(myPrefix)
                                                 ? pPath.substring(myPrefix.length())
@@ -253,7 +295,7 @@ public class RevisionHistoryMap
             /* If we have a source for the directory */
             if (theOrigin != null) {
                 /* Obtain the source path */
-                theSourcePath = new RevisionPath(theHistoryMap, theOrigin);
+                theSourcePath = new SvnRevisionPath(theHistoryMap, theOrigin);
                 theLastHistory.setBasedOn(theSourcePath.getBasedOn());
             }
         }
@@ -288,33 +330,33 @@ public class RevisionHistoryMap
         }
 
         /**
-         * Expand CopyDirectories.
+         * Expand SourceDirectories.
          * @throws JOceanusException on error
          */
-        private void expandCopyDirs() throws JOceanusException {
+        private void expandSourceDirs() throws JOceanusException {
             /* loop through the revisions */
-            for (RevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
-                /* Ignore if no copyDirs */
-                if (!myRevision.hasCopyDirs()) {
+            for (SvnRevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
+                /* Ignore if no sourceDirs */
+                if (!myRevision.hasSourceDirs()) {
                     continue;
                 }
 
-                /* Loop through any CopyDirectories */
-                Iterator<CopyDir> myIterator = myRevision.copyDirIterator();
+                /* Loop through any SourceDirectories */
+                Iterator<SvnSourceDir> myIterator = myRevision.sourceDirIterator();
                 while (myIterator.hasNext()) {
-                    CopyDir myCopyDir = myIterator.next();
+                    SvnSourceDir mySourceDir = myIterator.next();
 
                     /* If the directory has not been expanded */
-                    if (myCopyDir.getBasedOn() == null) {
+                    if (mySourceDir.getBasedOn() == null) {
                         /* Analyse the source */
-                        RevisionKey mySource = myCopyDir.getSource();
-                        RevisionPath myPath = new RevisionPath(theHistoryMap, mySource);
+                        SvnRevisionKey mySource = mySourceDir.getSource();
+                        SvnRevisionPath myPath = new SvnRevisionPath(theHistoryMap, mySource);
 
                         /* Store the details */
-                        myCopyDir.setBasedOn(myPath.getBasedOn());
+                        mySourceDir.setBasedOn(myPath.getBasedOn());
 
-                        /* Expand the copy path */
-                        myPath.expandCopyDirs();
+                        /* Expand the source path */
+                        myPath.expandSourceDirs();
                     }
                 }
             }
@@ -332,7 +374,7 @@ public class RevisionHistoryMap
             myBuilder.append(thePath);
 
             /* loop through the revisions */
-            for (RevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
+            for (SvnRevisionHistory myRevision = theFirstHistory; myRevision != null; myRevision = myRevision.getBasedOn()) {
                 /* Add revision Details */
                 myBuilder.append(myRevision.toString());
             }
@@ -349,10 +391,10 @@ public class RevisionHistoryMap
             @Override
             public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {
                 /* Create the revisionKey */
-                RevisionKey myKey = new RevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
+                SvnRevisionKey myKey = new SvnRevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
 
                 /* Check whether we have analysed this already */
-                RevisionHistory myHistory = theHistoryMap.get(myKey);
+                SvnRevisionHistory myHistory = theHistoryMap.get(myKey);
                 if (myHistory != null) {
                     /* Link in and halt the search */
                     linkHistory(myHistory);
@@ -360,7 +402,12 @@ public class RevisionHistoryMap
                 }
 
                 /* Analyse the entry */
-                myHistory = new RevisionHistory(thePath, pEntry);
+                try {
+                    myHistory = new SvnRevisionHistory(theOwner, thePath, pEntry);
+                } catch (JOceanusException e) {
+                    SVNErrorMessage myMessage = SVNErrorMessage.create(SVNErrorCode.EXTERNAL_PROGRAM, e);
+                    throw new SVNException(myMessage);
+                }
 
                 /* If it is relevant */
                 if (myHistory.isRelevant()) {
@@ -381,7 +428,7 @@ public class RevisionHistoryMap
              * Link history.
              * @param pHistory the new history
              */
-            private void linkHistory(final RevisionHistory pHistory) {
+            private void linkHistory(final SvnRevisionHistory pHistory) {
                 if (theLastHistory != null) {
                     theLastHistory.setBasedOn(pHistory);
                 } else {

@@ -22,14 +22,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
 
@@ -61,6 +70,11 @@ public class DiscoverData
     private SvnWorkingCopySet theWorkingCopySet;
 
     /**
+     * The extract plan map.
+     */
+    private final Map<String, SvnExtract> theExtractPlanMap;
+
+    /**
      * The Error.
      */
     private JOceanusException theError = null;
@@ -82,6 +96,38 @@ public class DiscoverData
     }
 
     /**
+     * Derive the extract plan for component.
+     * @throws JOceanusException on error
+     */
+    private void deriveExtractPlans() throws JOceanusException {
+        /* Loop through the components */
+        Iterator<SvnComponent> myIterator = theRepository.getComponents().iterator();
+        while (myIterator.hasNext()) {
+            /* Create an extract plan for the component */
+            SvnComponent myComp = myIterator.next();
+            SvnExtract myPlan = new SvnExtract(myComp);
+            theExtractPlanMap.put(myComp.getName(), myPlan);
+        }
+    }
+
+    /**
+     * Declare extract plan.
+     * @param pDataMgr the data manager
+     */
+    public void declareExtractPlans(final JDataManager pDataMgr) {
+        /* Loop through the plans */
+        Iterator<SvnExtract> myIterator = theExtractPlanMap.values().iterator();
+        while (myIterator.hasNext()) {
+            SvnExtract myPlan = myIterator.next();
+
+            /* Create the data entry */
+            JDataEntry myEntry = pDataMgr.new JDataEntry(myPlan.getName());
+            myEntry.addAsRootChild();
+            myEntry.setObject(myPlan);
+        }
+    }
+
+    /**
      * Obtain the error.
      * @return the error
      */
@@ -98,10 +144,11 @@ public class DiscoverData
                         final ReportTask pReport) {
         thePreferenceMgr = pPreferenceMgr;
         theReport = pReport;
+        theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
     }
 
     @Override
-    protected Void doInBackground() {
+    protected Void doInBackground() throws JOceanusException {
         /* Protect against exceptions */
         try {
             /* Discover repository details */
@@ -109,22 +156,34 @@ public class DiscoverData
 
             /* Discover workingSet details */
             theWorkingCopySet = new SvnWorkingCopySet(theRepository, this);
-        } catch (JOceanusException e) {
-            /* Store the error */
-            theError = e;
+
+            /* Build the Extract Plans */
+            deriveExtractPlans();
+
+            /* Return null */
+            return null;
+
         } finally {
             /* Dispose of any connections */
             if (theRepository != null) {
                 theRepository.dispose();
             }
         }
-
-        /* Return null */
-        return null;
     }
 
     @Override
     public void done() {
+        /* Protect against exceptions */
+        try {
+            /* Force out any exceptions that occurred in the thread */
+            get();
+
+            /* Catch exceptions */
+        } catch (InterruptedException
+                | ExecutionException e) {
+            theError = new JThemisIOException("Failed to perform background task", e);
+        }
+
         /* Report task complete */
         theReport.completeTask(this);
     }

@@ -258,11 +258,6 @@ public class Backup {
             throw new JThemisIOException("Failed to analyse existing backup", e);
         }
 
-        /* Declare the single stage */
-        if ((!theTask.setNumStages(1)) || (!theTask.setNewStage(myName))) {
-            return;
-        }
-
         /* Declare the number of revisions */
         int myNumRevisions = (int) revLast;
         if (!theTask.setNumSteps(myNumRevisions)) {

@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.RevisionHistoryMap.RevisionPath;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag.SvnTagList;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -93,7 +93,7 @@ public final class SvnBranch
     /**
      * RevisionPath.
      */
-    private RevisionPath theRevisionPath;
+    private SvnRevisionPath theRevisionPath;
 
     /**
      * Get the repository for this branch.
@@ -101,6 +101,22 @@ public final class SvnBranch
      */
     public SvnRepository getRepository() {
         return theRepository;
+    }
+
+    /**
+     * Get the revision path for this branch.
+     * @return the revision path
+     */
+    public SvnRevisionPath getRevisionPath() {
+        return theRevisionPath;
+    }
+
+    /**
+     * Get the tag iterator for this branch.
+     * @return the iterator
+     */
+    public Iterator<SvnTag> tagIterator() {
+        return getTagList().iterator();
     }
 
     @Override
@@ -230,7 +246,7 @@ public final class SvnBranch
      */
     private void discoverHistory() throws JOceanusException {
         /* Access history map */
-        RevisionHistoryMap myHistMap = theRepository.getHistoryMap();
+        SvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
 
         /* Determine the next major branch */
         theRevisionPath = myHistMap.discoverBranch(this);
@@ -290,6 +306,9 @@ public final class SvnBranch
             SVNClientManager myMgr = myRepo.getClientManager();
             SVNLogClient myClient = myMgr.getLogClient();
 
+            /* Trunk branch */
+            SvnBranch myTrunk = null;
+
             /* Protect against exceptions */
             try {
                 /* Parse project file for trunk */
@@ -304,9 +323,13 @@ public final class SvnBranch
                         myName = myName.substring(BRANCH_PREFIX.length());
 
                         /* Create the branch and add to the list */
-                        SvnBranch myBranch = new SvnBranch(theComponent, myName);
-                        myBranch.setTrunk();
-                        add(myBranch);
+                        myTrunk = new SvnBranch(theComponent, myName);
+                        myTrunk.setTrunk();
+                        add(myTrunk);
+
+                        /* Register the branch */
+                        myTrunk.setProjectDefinition(myProject);
+                        myRepo.registerBranch(myProject.getDefinition(), myTrunk);
                     }
                 }
 
@@ -330,16 +353,30 @@ public final class SvnBranch
                 myRepo.releaseClientManager(myMgr);
             }
 
+            /* Report stage */
+            pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+
+            /* Analyse history map */
+            myTrunk.discoverHistory();
+
+            /* Discover trunk tags */
+            myTrunk.getTagList().discover(pReport);
+
             /* Loop to the last entry */
             Iterator<SvnBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
                 SvnBranch myBranch = myIterator.next();
 
+                /* Skip trunk branch */
+                if (myBranch.isTrunk()) {
+                    continue;
+                }
+
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
-                /* If this is a real branch */
+                /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {
                     /* Parse project file */
                     MvnProjectDefinition myProject = theComponent.parseProjectURL(myBranch.getURLPath());
@@ -357,6 +394,27 @@ public final class SvnBranch
                 /* Discover tags */
                 myBranch.getTagList().discover(pReport);
             }
+        }
+
+        /**
+         * Obtain trunk branch.
+         * @return the trunk branch or Null
+         */
+        protected SvnBranch getTrunk() {
+            /* Loop through the entries */
+            Iterator<SvnBranch> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                SvnBranch myBranch = myIterator.next();
+
+                /* If this is the trunk */
+                if (myBranch.isTrunk()) {
+                    /* This is the correct branch */
+                    return myBranch;
+                }
+            }
+
+            /* Not found */
+            return null;
         }
 
         /**

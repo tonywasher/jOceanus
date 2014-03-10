@@ -32,8 +32,8 @@ import java.util.logging.Level;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch.SvnBranchList;
@@ -59,17 +59,17 @@ public final class SvnComponent
     /**
      * The trunk directory.
      */
-    private static final String DIR_TRUNK = "trunk";
+    public static final String DIR_TRUNK = "trunk";
 
     /**
      * The branches directory.
      */
-    private static final String DIR_BRANCHES = "branches";
+    public static final String DIR_BRANCHES = "branches";
 
     /**
      * The tags directory.
      */
-    private static final String DIR_TAGS = "tags";
+    public static final String DIR_TAGS = "tags";
 
     /**
      * The buffer length.
@@ -91,13 +91,25 @@ public final class SvnComponent
         return FIELD_DEFS;
     }
 
-    /**
-     * Get the branch list for this branch.
-     * @return the branch list
-     */
     @Override
     public SvnBranchList getBranches() {
         return (SvnBranchList) super.getBranches();
+    }
+
+    /**
+     * Get the branch iterator for this component.
+     * @return the iterator
+     */
+    public Iterator<SvnBranch> branchIterator() {
+        return getBranches().iterator();
+    }
+
+    /**
+     * Get the trunk branch list for this component.
+     * @return the trunk branch
+     */
+    public SvnBranch getTrunk() {
+        return getBranches().getTrunk();
     }
 
     /**

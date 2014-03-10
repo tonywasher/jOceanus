@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -69,6 +70,11 @@ public final class SvnTag
      */
     private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
 
+    /**
+     * RevisionPath.
+     */
+    private static final JDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField("RevisionPath");
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -82,6 +88,9 @@ public final class SvnTag
         }
         if (FIELD_COMP.equals(pField)) {
             return theComponent;
+        }
+        if (FIELD_REVPATH.equals(pField)) {
+            return theRevisionPath;
         }
 
         /* pass onwards */
@@ -97,6 +106,11 @@ public final class SvnTag
      * Parent Component.
      */
     private final SvnComponent theComponent;
+
+    /**
+     * RevisionPath.
+     */
+    private SvnRevisionPath theRevisionPath;
 
     /**
      * Constructor.
@@ -130,6 +144,14 @@ public final class SvnTag
     }
 
     /**
+     * Get the revision path for this branch.
+     * @return the revision path
+     */
+    public SvnRevisionPath getRevisionPath() {
+        return theRevisionPath;
+    }
+
+    /**
      * Obtain repository path for the tag.
      * @return the Repository path for this tag
      */
@@ -160,6 +182,18 @@ public final class SvnTag
             theRepository.getLogger().log(Level.SEVERE, "Parse Failure", e);
             return null;
         }
+    }
+
+    /**
+     * Discover HistoryPath.
+     * @throws JOceanusException on error
+     */
+    private void discoverHistory() throws JOceanusException {
+        /* Access history map */
+        SvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
+
+        /* Determine the next major branch */
+        theRevisionPath = myHistMap.discoverTag(this);
     }
 
     /**
@@ -246,6 +280,9 @@ public final class SvnTag
                 if (myProject != null) {
                     myRepo.registerTag(myProject.getDefinition(), myTag);
                 }
+
+                /* Analyse history map */
+                myTag.discoverHistory();
             }
         }
 

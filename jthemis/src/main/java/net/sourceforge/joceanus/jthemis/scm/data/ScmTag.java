@@ -72,6 +72,11 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_BRAN.equals(pField)) {

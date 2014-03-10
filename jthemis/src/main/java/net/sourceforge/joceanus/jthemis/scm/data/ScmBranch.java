@@ -98,6 +98,11 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_NAME.equals(pField)) {
@@ -563,7 +568,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
          * @return the next branch
          */
         public B nextBranch(final B pBase,
-                            final BranchOpType pBranchType) {
+                            final ScmBranchOpType pBranchType) {
             /* Switch on branch type */
             switch (pBranchType) {
                 case MAJOR:
@@ -696,7 +701,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
     /**
      * Branch operation.
      */
-    public enum BranchOpType {
+    public enum ScmBranchOpType {
         /**
          * Major branch. Increment major version
          */

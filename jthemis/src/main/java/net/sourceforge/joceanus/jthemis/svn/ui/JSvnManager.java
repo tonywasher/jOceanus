@@ -39,7 +39,8 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.BranchOpType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
@@ -249,6 +250,18 @@ public final class JSvnManager {
         /* Build the WorkingCopySet */
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
+
+        /* Declare the Extract Plans */
+        pData.declareExtractPlans(theDataMgr);
+
+        /* If we have an error */
+        JOceanusException myError = pData.getError();
+        if (myError != null) {
+            JDataEntry myErrorEntry = theDataMgr.new JDataEntry("Error");
+            myErrorEntry.addAsRootChild();
+            myErrorEntry.setObject(myError);
+            myErrorEntry.setFocus();
+        }
     }
 
     /**
@@ -261,11 +274,8 @@ public final class JSvnManager {
             /* Access correctly */
             DiscoverData myThread = (DiscoverData) pTask;
 
-            /* If there was no error */
-            if (myThread.getError() == null) {
-                /* Report data to manager */
-                setData(myThread);
-            }
+            /* Report data to manager */
+            setData(myThread);
         }
 
         /* Enable other tasks */
@@ -351,7 +361,7 @@ public final class JSvnManager {
         SvnTag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
         SvnTag[] myList = new SvnTag[]
         { myTag };
-        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(myPath + "TestNB"), theStatusPanel);
+        CreateNewBranch myThread = new CreateNewBranch(myList, ScmBranchOpType.MAJOR, new File(myPath + "TestNB"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }

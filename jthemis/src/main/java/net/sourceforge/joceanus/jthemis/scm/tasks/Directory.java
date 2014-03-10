@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.tasks;
+package net.sourceforge.joceanus.jthemis.scm.tasks;
 
 import java.io.File;
 

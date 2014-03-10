@@ -26,11 +26,13 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent.SvnComponentList;
 
+import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
@@ -112,7 +114,7 @@ public class SvnRepository
     /**
      * RevisionHistory Map.
      */
-    private final RevisionHistoryMap theRevisionHistory;
+    private final SvnRevisionHistoryMap theRevisionHistory;
 
     /**
      * Obtain the repository base.
@@ -155,7 +157,7 @@ public class SvnRepository
      * Get the revisionHistoryMap for this repository.
      * @return the historyMap
      */
-    public RevisionHistoryMap getHistoryMap() {
+    public SvnRevisionHistoryMap getHistoryMap() {
         return theRevisionHistory;
     }
 
@@ -185,7 +187,7 @@ public class SvnRepository
         setComponents(myComponents);
 
         /* Create RevisionHistoryMap */
-        theRevisionHistory = new RevisionHistoryMap(this);
+        theRevisionHistory = new SvnRevisionHistoryMap(this);
 
         /* Report start of analysis */
         pReport.initTask("Analysing components");
@@ -226,6 +228,32 @@ public class SvnRepository
 
         /* Return the path */
         return myBuilder.toString();
+    }
+
+    /**
+     * Build URL.
+     * @param pPath the path
+     * @return the Repository path
+     * @throws JOceanusException on error
+     */
+    public SVNURL getURL(final String pPath) throws JOceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Build the underlying string */
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+            /* Build the repository */
+            myBuilder.append(getPath());
+
+            /* Build the prefix directory */
+            myBuilder.append(SEP_URL);
+            myBuilder.append(pPath);
+
+            /* Return the path */
+            return SVNURL.parseURIEncoded(myBuilder.toString());
+        } catch (SVNException e) {
+            throw new JThemisIOException("Failed to parse path " + pPath, e);
+        }
     }
 
     @Override

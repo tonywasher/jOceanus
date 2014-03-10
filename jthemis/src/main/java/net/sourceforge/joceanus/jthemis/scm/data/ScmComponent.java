@@ -66,6 +66,11 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
     }
 
     @Override
+    public String toString() {
+        return formatObject();
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_REPO.equals(pField)) {
@@ -122,7 +127,7 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
     }
 
     /**
-     * Get the branch list for this branch.
+     * Get the branch list for this component.
      * @return the branch list
      */
     public ScmBranchList<?, C, R> getBranches() {

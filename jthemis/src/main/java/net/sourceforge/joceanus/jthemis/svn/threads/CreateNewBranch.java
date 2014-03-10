@@ -33,11 +33,11 @@ import javax.swing.SwingWorker;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.BranchOpType;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
-import net.sourceforge.joceanus.jthemis.svn.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.tasks.VersionMgr;
 
 /**
@@ -55,7 +55,7 @@ public class CreateNewBranch
     /**
      * Tags.
      */
-    private final BranchOpType theBranchType;
+    private final ScmBranchOpType theBranchType;
 
     /**
      * Location.
@@ -106,7 +106,7 @@ public class CreateNewBranch
      * @param pReport the report object
      */
     public CreateNewBranch(final SvnTag[] pTags,
-                           final BranchOpType pBranchType,
+                           final ScmBranchOpType pBranchType,
                            final File pLocation,
                            final ReportTask pReport) {
         /* Store parameters */
