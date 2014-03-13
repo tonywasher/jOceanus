@@ -233,8 +233,8 @@ public final class TaxBasisBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForTrans(final Transaction pTrans,
-                                     final TaxBasisAttribute pAttr) {
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final TaxBasisAttribute pAttr) {
         /* Obtain delta for event */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }

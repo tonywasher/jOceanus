@@ -253,8 +253,8 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Transaction pTrans,
-                                     final EventAttribute pAttr) {
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final EventAttribute pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
