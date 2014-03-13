@@ -36,9 +36,11 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -654,6 +656,20 @@ public class Portfolio
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
+    }
+
+    @Override
+    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+        /* Switch on category type */
+        switch (pCategory.getCategoryTypeClass()) {
+            case DIVIDEND:
+                EventCategoryList myCategories = getDataSet().getEventCategories();
+                return isTaxFree()
+                                  ? myCategories.getSingularClass(EventCategoryClass.TAXFREEDIVIDEND)
+                                  : pCategory;
+            default:
+                return pCategory;
+        }
     }
 
     @Override

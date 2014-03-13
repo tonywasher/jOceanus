@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventL
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
@@ -58,7 +59,7 @@ public class View
     private JDateDayRange theRange = null;
 
     /**
-     * The alternate analysis.
+     * The analysis.
      */
     private DataAnalyser theAnalyser = null;
 
@@ -166,6 +167,10 @@ public class View
 
         /* If it exists */
         myAnalyser.markActiveAccounts();
+
+        /* Create the alternative analysis */
+        TransactionAnalyser myNewAnalyser = new TransactionAnalyser(pData, getPreferenceMgr());
+        myNewAnalyser.markActiveAccounts();
 
         /* Complete the analysis */
         pData.completeAnalysis();

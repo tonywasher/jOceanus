@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+o * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,10 +37,12 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -162,7 +164,7 @@ public class Deposit
             return true;
         }
         if (FIELD_PARENT.equals(pField)) {
-            return getParent() != null;
+            return true;
         }
         if (FIELD_GROSS.equals(pField)) {
             return isGross();
@@ -259,10 +261,7 @@ public class Deposit
                          : null;
     }
 
-    /**
-     * Obtain Parent.
-     * @return the parent
-     */
+    @Override
     public Payee getParent() {
         return getParent(getValueSet());
     }
@@ -896,16 +895,47 @@ public class Deposit
     }
 
     @Override
+    public void adjustClosed() throws JOceanusException {
+        /* Adjust closed date */
+        super.adjustClosed();
+
+        /* If the maturity is null for a bond set it to close date */
+        if (isDepositClass(DepositCategoryClass.BOND) && getMaturity() == null) {
+            /* Record a date for maturity */
+            setMaturity(getCloseDate());
+        }
+    }
+
+    /**
+     * Obtain detailed category.
+     * @param pCategory current category
+     * @return detailed category
+     */
+    @Override
+    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+        /* Switch on category type */
+        switch (pCategory.getCategoryTypeClass()) {
+            case INTEREST:
+                EventCategoryList myCategories = getDataSet().getEventCategories();
+                if (isTaxFree()) {
+                    return myCategories.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
+                }
+                return myCategories.getSingularClass((isGross())
+                                                                ? EventCategoryClass.GROSSINTEREST
+                                                                : EventCategoryClass.TAXEDINTEREST);
+            default:
+                return pCategory;
+        }
+    }
+
+    @Override
     public void touchUnderlyingItems() {
         /* touch the category and currency */
         getCategory().touchItem(this);
         getDepositCurrency().touchItem(this);
 
-        /* Touch parent if it exists */
-        Payee myParent = getParent();
-        if (myParent != null) {
-            getParent().touchItem(this);
-        }
+        /* Touch parent */
+        getParent().touchItem(this);
     }
 
     @Override
@@ -932,14 +962,13 @@ public class Deposit
             addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
 
-        /* Parent must be non-null */
-        if (myParent == null) {
-            if (myClass.isChild()) {
-                addError(ERROR_MISSING, FIELD_PARENT);
-            }
-
-        } else if (!myClass.isChild()) {
+        /* Deposit must be a child */
+        if (!myClass.isChild()) {
             addError(ERROR_EXIST, FIELD_PARENT);
+
+            /* Must have parent */
+        } else if (myParent == null) {
+            addError(ERROR_MISSING, FIELD_PARENT);
 
             /* If we are open then parent must be open */
         } else if (!isClosed() && myParent.isClosed()) {

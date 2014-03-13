@@ -94,6 +94,10 @@ public class CashInfoSet
         Object myValue;
 
         switch (pInfoClass) {
+            case AUTOPAYEE:
+                /* Access payee of object */
+                myValue = getPayee(pInfoClass);
+                break;
             case AUTOEXPENSE:
                 /* Access event category of object */
                 myValue = getEventCategory(pInfoClass);
@@ -128,6 +132,24 @@ public class CashInfoSet
     public static JDataField getFieldForClass(final AccountInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
+    }
+
+    /**
+     * Obtain the payee for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the payee
+     */
+    public Payee getPayee(final AccountInfoClass pInfoClass) {
+        /* Access existing entry */
+        CashInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the payee */
+        return myValue.getPayee();
     }
 
     /**
@@ -203,6 +225,11 @@ public class CashInfoSet
             case NOTES:
             case AUTOEXPENSE:
                 return JDataFieldRequired.CANEXIST;
+
+            case AUTOPAYEE:
+                return myCash.isAutoExpense()
+                                             ? JDataFieldRequired.MUSTEXIST
+                                             : JDataFieldRequired.NOTALLOWED;
 
                 /* Disallowed Set */
             case SORTCODE:

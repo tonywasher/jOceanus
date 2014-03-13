@@ -115,9 +115,14 @@ public enum AccountInfoClass implements DataInfoClass {
     REFERENCE(16, 15, DataType.CHARARRAY),
 
     /**
+     * AutoExpense Payee.
+     */
+    AUTOPAYEE(17, 16, DataType.LINK),
+
+    /**
      * Notes.
      */
-    NOTES(17, 16, DataType.CHARARRAY);
+    NOTES(18, 17, DataType.CHARARRAY);
 
     /**
      * Resource Bundle.

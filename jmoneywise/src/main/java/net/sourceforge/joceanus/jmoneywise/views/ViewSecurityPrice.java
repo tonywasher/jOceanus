@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -143,29 +143,29 @@ public class ViewSecurityPrice
      */
     protected final void calculateDiluted() {
         /* Access the list for the item */
-        // ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
+        ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
 
         /* Set null default dilution */
         setValueDilution(null);
         setValueDilutedPrice(null);
 
         /* Access Price and date */
-        // JDateDay myDate = getDate();
-        // JPrice myPrice = getPrice();
-        // Security mySecurity = getSecurity();
+        JDateDay myDate = getDate();
+        JPrice myPrice = getPrice();
+        Security mySecurity = getSecurity();
 
         /* If we have can look at dilutions */
-        // if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
-        /* Determine the dilution factor for the date */
-        // JDilution myDilution = null; // myList.getDilutions().getDilutionFactor(mySecurity, myDate);
+        if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
+            /* Determine the dilution factor for the date */
+            JDilution myDilution = myList.getDilutions().getDilutionFactor(mySecurity, myDate);
 
-        /* If we have a dilution factor */
-        // if (myDilution != null) {
-        /* Store dilution details */
-        // setValueDilution(myDilution);
-        // setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
-        // }
-        // }
+            /* If we have a dilution factor */
+            if (myDilution != null) {
+                /* Store dilution details */
+                setValueDilution(myDilution);
+                setValueDilutedPrice(myPrice.getDilutedPrice(myDilution));
+            }
+        }
     }
 
     /**
@@ -325,8 +325,8 @@ public class ViewSecurityPrice
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
-            theDilutions = pView.getDilutions();
-            hasDilutions = false; // theDilutions.hasDilution(theSecurity);
+            theDilutions = null;
+            hasDilutions = theDilutions.hasDilution(theSecurity);
 
             /* Access the list iterator */
             Iterator<SecurityPrice> myIterator = myPrices.listIterator();

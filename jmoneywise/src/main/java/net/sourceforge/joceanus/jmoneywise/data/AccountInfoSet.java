@@ -363,6 +363,10 @@ public class AccountInfoSet
                                        ? JDataFieldRequired.CANEXIST
                                        : JDataFieldRequired.NOTALLOWED;
 
+                /* Handle AutoPayee */
+            case AUTOPAYEE:
+                return JDataFieldRequired.NOTALLOWED;
+
                 /* Handle all other fields */
             default:
                 return JDataFieldRequired.MUSTEXIST;

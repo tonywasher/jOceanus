@@ -37,10 +37,12 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -225,10 +227,7 @@ public class Security
                          : null;
     }
 
-    /**
-     * Obtain Parent.
-     * @return the parent
-     */
+    @Override
     public Payee getParent() {
         return getParent(getValueSet());
     }
@@ -874,6 +873,20 @@ public class Security
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
+    }
+
+    @Override
+    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+        /* Switch on category type */
+        switch (pCategory.getCategoryTypeClass()) {
+            case DIVIDEND:
+                EventCategoryList myCategories = getDataSet().getEventCategories();
+                return myCategories.getSingularClass(isSecurityClass(SecurityTypeClass.UNITTRUST)
+                                                                                                 ? EventCategoryClass.UNITTRUSTDIVIDEND
+                                                                                                 : EventCategoryClass.SHAREDIVIDEND);
+            default:
+                return pCategory;
+        }
     }
 
     @Override

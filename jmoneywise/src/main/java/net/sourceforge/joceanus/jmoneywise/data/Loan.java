@@ -134,7 +134,7 @@ public class Loan
             return true;
         }
         if (FIELD_PARENT.equals(pField)) {
-            return getParent() != null;
+            return true;
         }
 
         /* Pass call on */
@@ -205,10 +205,7 @@ public class Loan
                          : null;
     }
 
-    /**
-     * Obtain Parent.
-     * @return the parent
-     */
+    @Override
     public Payee getParent() {
         return getParent(getValueSet());
     }
@@ -729,11 +726,8 @@ public class Loan
         getCategory().touchItem(this);
         getLoanCurrency().touchItem(this);
 
-        /* Touch parent if it exists */
-        Payee myParent = getParent();
-        if (myParent != null) {
-            getParent().touchItem(this);
-        }
+        /* Touch parent */
+        getParent().touchItem(this);
     }
 
     @Override
@@ -760,14 +754,13 @@ public class Loan
             addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
 
-        /* Parent must be non-null */
-        if (myParent == null) {
-            if (myClass.isChild()) {
-                addError(ERROR_MISSING, FIELD_PARENT);
-            }
-
-        } else if (!myClass.isChild()) {
+        /* Loan must be a child */
+        if (!myClass.isChild()) {
             addError(ERROR_EXIST, FIELD_PARENT);
+
+            /* Must have parent */
+        } else if (myParent == null) {
+            addError(ERROR_MISSING, FIELD_PARENT);
 
             /* If we are open then parent must be open */
         } else if (!isClosed() && myParent.isClosed()) {

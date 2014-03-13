@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.threads;
 
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -131,6 +132,7 @@ public abstract class WorkerThread<T>
 
             /* Catch exceptions */
         } catch (InterruptedException
+                | CancellationException
                 | ExecutionException e) {
             addError(new JPrometheusIOException("Failed to perform background task", e));
         }

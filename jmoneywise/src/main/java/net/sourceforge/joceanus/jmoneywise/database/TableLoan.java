@@ -26,7 +26,6 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -65,8 +64,8 @@ public class TableLoan
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Loan.FIELD_CATEGORY, TableLoanCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Loan.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Loan.FIELD_PARENT, TablePayee.TABLE_NAME);
-        myTableDef.addEncryptedColumn(Loan.FIELD_NAME, Deposit.NAMELEN);
-        myTableDef.addNullEncryptedColumn(Loan.FIELD_DESC, Deposit.DESCLEN);
+        myTableDef.addEncryptedColumn(Loan.FIELD_NAME, Loan.NAMELEN);
+        myTableDef.addNullEncryptedColumn(Loan.FIELD_DESC, Loan.DESCLEN);
         myTableDef.addBooleanColumn(Loan.FIELD_CLOSED);
 
         /* Declare Sort Columns */

@@ -30,7 +30,10 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -181,8 +184,10 @@ public class SheetCash
         /* Handle autoExpense which may be missing */
         myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         String myAutoExpense = null;
+        String myAutoPayee = null;
         if (myCell != null) {
             myAutoExpense = myCell.getStringValue();
+            myAutoPayee = myName + "Expense";
         }
 
         /* Build data values */
@@ -199,8 +204,22 @@ public class SheetCash
         /* Add information relating to the cash */
         CashInfoList myInfoList = pData.getCashInfo();
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
+        myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOPAYEE, myAutoPayee);
 
         /* Declare the cash */
         pLoader.declareAsset(myCash);
+
+        /* If we have an autoPayee */
+        if (myAutoPayee != null) {
+            /* Build values */
+            myValues = new DataValues<MoneyWiseDataType>(Payee.OBJECT_NAME);
+            myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
+            myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
+            myValues.addValue(Payee.FIELD_CLOSED, isClosed);
+
+            /* Add the value into the list */
+            PayeeList myPayeeList = pData.getPayees();
+            myPayeeList.addValuesItem(myValues);
+        }
     }
 }

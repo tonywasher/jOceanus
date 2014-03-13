@@ -173,6 +173,16 @@ public class Cash
     }
 
     /**
+     * Obtain AutoPayee.
+     * @return the autoExpense category
+     */
+    public Payee getAutoPayee() {
+        return hasInfoSet
+                         ? theInfoSet.getPayee(AccountInfoClass.AUTOPAYEE)
+                         : null;
+    }
+
+    /**
      * Obtain CashCategory.
      * @return the category
      */
@@ -584,6 +594,15 @@ public class Cash
      */
     public void setAutoExpense(final EventCategory pCategory) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
+    }
+
+    /**
+     * Set a new autoPayee.
+     * @param pPayee the new autoPayee
+     * @throws JOceanusException on error
+     */
+    public void setAutoPayee(final Payee pPayee) throws JOceanusException {
+        setInfoSetValue(AccountInfoClass.AUTOPAYEE, pPayee);
     }
 
     /**

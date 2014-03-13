@@ -167,6 +167,14 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Obtain the parent.
+     * @return the parent
+     */
+    public AssetBase<?> getParent() {
+        return null;
+    }
+
+    /**
      * Get the close Date of the account.
      * @return the closeDate
      */
@@ -455,10 +463,20 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Obtain detailed category.
+     * @param pCategory current category
+     * @return detailed category
+     */
+    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+        /* return the unchanged category */
+        return pCategory;
+    }
+
+    /**
      * Adjust closed date.
      * @throws JOceanusException on error
      */
-    protected void adjustClosed() throws JOceanusException {
+    public void adjustClosed() throws JOceanusException {
         /* Access latest activity date */
         JDateDay myCloseDate = (theLatest == null)
                                                   ? null

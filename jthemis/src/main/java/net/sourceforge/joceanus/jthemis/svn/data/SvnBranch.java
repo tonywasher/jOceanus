@@ -353,14 +353,17 @@ public final class SvnBranch
                 myRepo.releaseClientManager(myMgr);
             }
 
-            /* Report stage */
-            pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+            /* If we have a trunk */
+            if (myTrunk != null) {
+                /* Report stage */
+                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
 
-            /* Analyse history map */
-            myTrunk.discoverHistory();
+                /* Analyse history map */
+                myTrunk.discoverHistory();
 
-            /* Discover trunk tags */
-            myTrunk.getTagList().discover(pReport);
+                /* Discover trunk tags */
+                myTrunk.getTagList().discover(pReport);
+            }
 
             /* Loop to the last entry */
             Iterator<SvnBranch> myIterator = iterator();

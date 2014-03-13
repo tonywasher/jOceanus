@@ -665,14 +665,8 @@ public class SecurityPrice
          * @param pDate the date from which a price is required
          * @return The relevant Price record
          */
-        public SecurityPrice getLatestPrice(final Account pSecurity,
+        public SecurityPrice getLatestPrice(final Security pSecurity,
                                             final JDateDay pDate) {
-            /* Skip to alias if required */
-            Account mySecurity = pSecurity;
-            if (mySecurity.getAlias() != null) {
-                mySecurity = pSecurity.getAlias();
-            }
-
             /* Access the list iterator */
             Iterator<SecurityPrice> myIterator = iterator();
             SecurityPrice myPrice = null;
@@ -682,7 +676,7 @@ public class SecurityPrice
                 SecurityPrice myCurr = myIterator.next();
 
                 /* Skip records that do not belong to this security */
-                if (!Difference.isEqual(myCurr.getSecurity(), mySecurity)) {
+                if (!Difference.isEqual(myCurr.getSecurity(), pSecurity)) {
                     continue;
                 }
 

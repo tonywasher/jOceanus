@@ -79,6 +79,14 @@ public class CashInfo
     }
 
     /**
+     * Obtain Payee.
+     * @return the Payee
+     */
+    public Payee getPayee() {
+        return getPayee(getValueSet());
+    }
+
+    /**
      * Obtain EventCategory.
      * @return the EventCategory
      */
@@ -96,6 +104,17 @@ public class CashInfo
     }
 
     /**
+     * Obtain Linked Payee.
+     * @param pValueSet the valueSet
+     * @return the Payee
+     */
+    public static Payee getPayee(final ValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                                     ? null
+                                     : pValueSet.getValue(FIELD_LINK, Payee.class);
+    }
+
+    /**
      * Obtain Linked EventCategory.
      * @param pValueSet the valueSet
      * @return the EventCategory
@@ -109,6 +128,9 @@ public class CashInfo
     @Override
     public String getLinkName() {
         DataItem<?> myItem = getLink(DataItem.class);
+        if (myItem instanceof Payee) {
+            return ((Payee) myItem).getName();
+        }
         if (myItem instanceof EventCategory) {
             return ((EventCategory) myItem).getName();
         }
@@ -262,6 +284,12 @@ public class CashInfo
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
+                case AUTOPAYEE:
+                    resolveDataLink(FIELD_LINK, myData.getPayees());
+                    if (myLinkId == null) {
+                        setValueValue(getPayee().getId());
+                    }
+                    break;
                 case AUTOEXPENSE:
                     resolveDataLink(FIELD_LINK, myData.getEventCategories());
                     if (myLinkId == null) {
@@ -311,6 +339,9 @@ public class CashInfo
 
         /* Switch on info class */
         switch (getInfoClass()) {
+            case AUTOPAYEE:
+                getPayee().touchItem(this);
+                break;
             case AUTOEXPENSE:
                 getEventCategory().touchItem(this);
                 break;
