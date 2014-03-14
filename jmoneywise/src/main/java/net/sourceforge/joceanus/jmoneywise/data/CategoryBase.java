@@ -642,6 +642,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
          */
         protected CategoryBaseList(final MoneyWiseData pData,
                                    final Class<T> pClass,

@@ -49,10 +49,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -69,24 +70,24 @@ import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
- * Account Category Maintenance.
+ * Loan Category Maintenance.
  */
-public class AccountCategoryTable
-        extends JDataTable<AccountCategory, MoneyWiseDataType> {
+public class LoanCategoryTable
+        extends JDataTable<LoanCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 4419927779522960812L;
+    private static final long serialVersionUID = 238331669002141160L;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategoryTable.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(LoanCategoryTable.class.getName());
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = AccountCategory.FIELD_NAME.getName();
+    private static final String TITLE_NAME = LoanCategory.FIELD_NAME.getName();
 
     /**
      * FullName Column Title.
@@ -96,7 +97,7 @@ public class AccountCategoryTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = AccountCategory.FIELD_CATTYPE.getName();
+    private static final String TITLE_CAT = LoanCategory.FIELD_CATTYPE.getName();
 
     /**
      * Description Column Title.
@@ -114,9 +115,9 @@ public class AccountCategoryTable
     private static final String TITLE_FILTER = NLS_BUNDLE.getString("PromptFilter");
 
     /**
-     * Filter All Title.
+     * Filter Parents Title.
      */
-    private static final String FILTER_ALL = NLS_BUNDLE.getString("PromptFilterAll");
+    private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
 
     /**
      * The data view.
@@ -136,7 +137,7 @@ public class AccountCategoryTable
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<AccountCategory, MoneyWiseDataType> theCategoryEntry;
+    private final transient UpdateEntry<LoanCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -179,14 +180,14 @@ public class AccountCategoryTable
     private final JButton theSelectButton;
 
     /**
-     * Account Categories.
+     * Loan Categories.
      */
-    private transient AccountCategoryList theCategories = null;
+    private transient LoanCategoryList theCategories = null;
 
     /**
      * Active parent.
      */
-    private transient AccountCategory theParent = null;
+    private transient LoanCategory theParent = null;
 
     /**
      * Obtain the panel.
@@ -208,7 +209,7 @@ public class AccountCategoryTable
      * Constructor.
      * @param pView the data view
      */
-    public AccountCategoryTable(final View pView) {
+    public LoanCategoryTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -216,13 +217,13 @@ public class AccountCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theCategoryEntry = theUpdateSet.registerClass(AccountCategory.class);
+        theCategoryEntry = theUpdateSet.registerClass(LoanCategory.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCategories = myDataMgr.new JDataEntry(AccountCategoryTable.class.getSimpleName());
+        theDataCategories = myDataMgr.new JDataEntry(LoanCategoryTable.class.getSimpleName());
         theDataCategories.addAsChildOf(mySection);
         theDataCategories.setObject(theUpdateSet);
 
@@ -245,7 +246,7 @@ public class AccountCategoryTable
         theSelectButton = new JButton(ArrowIcon.DOWN);
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theSelectButton.setText(FILTER_ALL);
+        theSelectButton.setText(FILTER_PARENTS);
 
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
@@ -286,7 +287,7 @@ public class AccountCategoryTable
     public void refreshData() {
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
-        AccountCategoryList myCategories = myData.getAccountCategories();
+        LoanCategoryList myCategories = myData.getLoanCategories();
         theCategories = myCategories.deriveEditList();
         setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
@@ -316,17 +317,17 @@ public class AccountCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<AccountCategory, MoneyWiseDataType> {
+            extends JDataTableModel<LoanCategory, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = 2654650162773869736L;
+        private static final long serialVersionUID = 9092928242872012322L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private CategoryTableModel(final AccountCategoryTable pTable) {
+        private CategoryTableModel(final LoanCategoryTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -346,25 +347,25 @@ public class AccountCategoryTable
         }
 
         @Override
-        public JDataField getFieldForCell(final AccountCategory pItem,
+        public JDataField getFieldForCell(final LoanCategory pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final AccountCategory pCategory,
+        public boolean isCellEditable(final LoanCategory pCategory,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public AccountCategory getItemAtIndex(final int pRowIndex) {
+        public LoanCategory getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return theCategories.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final AccountCategory pCategory,
+        public Object getItemValue(final LoanCategory pCategory,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pCategory, pColIndex);
@@ -377,7 +378,7 @@ public class AccountCategoryTable
         }
 
         @Override
-        public boolean includeRow(final AccountCategory pRow) {
+        public boolean includeRow(final LoanCategory pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
@@ -385,7 +386,7 @@ public class AccountCategoryTable
 
             /* Handle filter */
             return (theParent == null)
-                                      ? true
+                                      ? pRow.isCategoryClass(LoanCategoryClass.PARENT)
                                       : theParent.equals(pRow.getParentCategory());
         }
     }
@@ -411,7 +412,9 @@ public class AccountCategoryTable
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* Show the select menu */
-            showSelectMenu();
+            if (theCategories != null) {
+                showSelectMenu();
+            }
         }
 
         /**
@@ -425,7 +428,7 @@ public class AccountCategoryTable
             JMenuItem myActive = null;
 
             /* Create the no filter JMenuItem and add it to the popUp */
-            CategoryAction myAction = new CategoryAction(null, FILTER_ALL);
+            CategoryAction myAction = new CategoryAction(null, FILTER_PARENTS);
             JMenuItem myItem = new JMenuItem(myAction);
             myPopUp.addMenuItem(myItem);
 
@@ -435,26 +438,14 @@ public class AccountCategoryTable
                 myActive = myItem;
             }
 
-            /* Create the totals JMenuItem and add it to the popUp */
-            AccountCategory myTotals = theCategories.getSingularClass(AccountCategoryClass.TOTALS);
-            myAction = new CategoryAction(myTotals, myTotals.getName());
-            myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active parent */
-            if (myTotals.equals(theParent)) {
-                /* Record it */
-                myActive = myItem;
-            }
-
             /* Loop through the available category values */
-            Iterator<AccountCategory> myIterator = theCategories.iterator();
+            Iterator<LoanCategory> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                AccountCategory myCurr = myIterator.next();
+                LoanCategory myCurr = myIterator.next();
 
                 /* Ignore category if it is not a subTotal */
-                AccountCategoryClass myClass = myCurr.getCategoryTypeClass();
-                if (!myClass.isSubTotal()) {
+                LoanCategoryClass myClass = myCurr.getCategoryTypeClass();
+                if (!myClass.isParentCategory()) {
                     continue;
                 }
 
@@ -487,12 +478,12 @@ public class AccountCategoryTable
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -6385504155578943539L;
+        private static final long serialVersionUID = 8329779340136316097L;
 
         /**
          * Category.
          */
-        private final AccountCategory theCategory;
+        private final LoanCategory theCategory;
 
         /**
          * Label.
@@ -501,9 +492,9 @@ public class AccountCategoryTable
 
         /**
          * Constructor.
-         * @param pCategory the account category bucket
+         * @param pCategory the category bucket
          */
-        private CategoryAction(final AccountCategory pCategory) {
+        private CategoryAction(final LoanCategory pCategory) {
             super(pCategory.getName());
             theCategory = pCategory;
             theLabel = pCategory.getName();
@@ -511,10 +502,10 @@ public class AccountCategoryTable
 
         /**
          * Constructor.
-         * @param pCategory the account category bucket
+         * @param pCategory the category bucket
          * @param pName the name
          */
-        private CategoryAction(final AccountCategory pCategory,
+        private CategoryAction(final LoanCategory pCategory,
                                final String pName) {
             super(pName);
             theCategory = pCategory;
@@ -541,7 +532,7 @@ public class AccountCategoryTable
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 6374822452498064568L;
+        private static final long serialVersionUID = 9146044145854186894L;
 
         /**
          * Name column id.
@@ -582,7 +573,7 @@ public class AccountCategoryTable
          * Constructor.
          * @param pTable the table
          */
-        private CategoryColumnModel(final AccountCategoryTable pTable) {
+        private CategoryColumnModel(final LoanCategoryTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -626,7 +617,7 @@ public class AccountCategoryTable
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final AccountCategory pCategory,
+        protected Object getItemValue(final LoanCategory pCategory,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {

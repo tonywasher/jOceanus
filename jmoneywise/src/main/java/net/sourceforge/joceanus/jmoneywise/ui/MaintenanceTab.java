@@ -34,8 +34,6 @@ import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -73,6 +71,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
 import net.sourceforge.joceanus.jthemis.jira.data.JiraPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 
@@ -219,10 +218,11 @@ public class MaintenanceTab
         theView.addChangeListener(myListener);
 
         /* Add the static elements */
-        theStatic.addStatic(AccountCategoryType.LIST_NAME, AccountCategoryTypeList.class, AccountCategoryType.class);
         theStatic.addStatic(DepositCategoryType.LIST_NAME, DepositCategoryTypeList.class, DepositCategoryType.class);
         theStatic.addStatic(CashCategoryType.LIST_NAME, CashCategoryTypeList.class, CashCategoryType.class);
         theStatic.addStatic(LoanCategoryType.LIST_NAME, LoanCategoryTypeList.class, LoanCategoryType.class);
+        theStatic.addStatic(PayeeType.LIST_NAME, PayeeTypeList.class, PayeeType.class);
+        theStatic.addStatic(SecurityType.LIST_NAME, SecurityTypeList.class, SecurityType.class);
         theStatic.addStatic(EventCategoryType.LIST_NAME, EventCategoryTypeList.class, EventCategoryType.class);
         theStatic.addStatic(AccountCurrency.LIST_NAME, AccountCurrencyList.class, AccountCurrency.class);
         theStatic.addStatic(TaxBasis.LIST_NAME, TaxBasisList.class, TaxBasis.class);
@@ -232,8 +232,6 @@ public class MaintenanceTab
         theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
         theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
         theStatic.addStatic(EventInfoType.LIST_NAME, EventInfoTypeList.class, EventInfoType.class);
-        theStatic.addStatic(PayeeType.LIST_NAME, PayeeTypeList.class, PayeeType.class);
-        theStatic.addStatic(SecurityType.LIST_NAME, SecurityTypeList.class, SecurityType.class);
 
         /* Create the Preferences Tab */
         PreferenceManager myPrefs = theView.getPreferenceMgr();
@@ -246,6 +244,7 @@ public class MaintenanceTab
         myPrefs.getPreferenceSet(BackupPreferences.class);
         myPrefs.getPreferenceSet(JiraPreferences.class);
         myPrefs.getPreferenceSet(SubVersionPreferences.class);
+        myPrefs.getPreferenceSet(GitPreferences.class);
         myPrefs.getPreferenceSet(QIFPreference.class);
 
         /* Create the layout for the panel */

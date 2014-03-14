@@ -48,10 +48,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -68,24 +69,24 @@ import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
- * Event Category Maintenance.
+ * Deposit Category Maintenance.
  */
-public class EventCategoryTable
-        extends JDataTable<EventCategory, MoneyWiseDataType> {
+public class DepositCategoryTable
+        extends JDataTable<DepositCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 3913303076200887840L;
+    private static final long serialVersionUID = 733879777015598066L;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategoryTable.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositCategoryTable.class.getName());
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = EventCategory.FIELD_NAME.getName();
+    private static final String TITLE_NAME = DepositCategory.FIELD_NAME.getName();
 
     /**
      * FullName Column Title.
@@ -95,12 +96,12 @@ public class EventCategoryTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = EventCategory.FIELD_CATTYPE.getName();
+    private static final String TITLE_CAT = DepositCategory.FIELD_CATTYPE.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = EventCategory.FIELD_DESC.getName();
+    private static final String TITLE_DESC = DepositCategory.FIELD_DESC.getName();
 
     /**
      * Active Column Title.
@@ -113,9 +114,9 @@ public class EventCategoryTable
     private static final String TITLE_FILTER = NLS_BUNDLE.getString("PromptFilter");
 
     /**
-     * Filter All Title.
+     * Filter Parents Title.
      */
-    private static final String FILTER_ALL = NLS_BUNDLE.getString("PromptFilterAll");
+    private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
 
     /**
      * The data view.
@@ -135,7 +136,7 @@ public class EventCategoryTable
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<EventCategory, MoneyWiseDataType> theCategoryEntry;
+    private final transient UpdateEntry<DepositCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -178,14 +179,14 @@ public class EventCategoryTable
     private final JButton theSelectButton;
 
     /**
-     * Event Categories.
+     * Deposit Categories.
      */
-    private transient EventCategoryList theCategories = null;
+    private transient DepositCategoryList theCategories = null;
 
     /**
      * Active parent.
      */
-    private transient EventCategory theParent = null;
+    private transient DepositCategory theParent = null;
 
     /**
      * Obtain the panel.
@@ -207,7 +208,7 @@ public class EventCategoryTable
      * Constructor.
      * @param pView the data view
      */
-    public EventCategoryTable(final View pView) {
+    public DepositCategoryTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -215,13 +216,13 @@ public class EventCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theCategoryEntry = theUpdateSet.registerClass(EventCategory.class);
+        theCategoryEntry = theUpdateSet.registerClass(DepositCategory.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCategories = myDataMgr.new JDataEntry(EventCategoryTable.class.getSimpleName());
+        theDataCategories = myDataMgr.new JDataEntry(DepositCategoryTable.class.getSimpleName());
         theDataCategories.addAsChildOf(mySection);
         theDataCategories.setObject(theUpdateSet);
 
@@ -244,7 +245,7 @@ public class EventCategoryTable
         theSelectButton = new JButton(ArrowIcon.DOWN);
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theSelectButton.setText(FILTER_ALL);
+        theSelectButton.setText(FILTER_PARENTS);
 
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
@@ -285,7 +286,7 @@ public class EventCategoryTable
     public void refreshData() {
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
-        EventCategoryList myCategories = myData.getEventCategories();
+        DepositCategoryList myCategories = myData.getDepositCategories();
         theCategories = myCategories.deriveEditList();
         setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
@@ -315,17 +316,17 @@ public class EventCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<EventCategory, MoneyWiseDataType> {
+            extends JDataTableModel<DepositCategory, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = -3367619290052755129L;
+        private static final long serialVersionUID = -5385379974935354260L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private CategoryTableModel(final EventCategoryTable pTable) {
+        private CategoryTableModel(final DepositCategoryTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -345,25 +346,25 @@ public class EventCategoryTable
         }
 
         @Override
-        public JDataField getFieldForCell(final EventCategory pItem,
+        public JDataField getFieldForCell(final DepositCategory pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final EventCategory pCategory,
+        public boolean isCellEditable(final DepositCategory pCategory,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public EventCategory getItemAtIndex(final int pRowIndex) {
+        public DepositCategory getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return theCategories.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final EventCategory pCategory,
+        public Object getItemValue(final DepositCategory pCategory,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pCategory, pColIndex);
@@ -376,7 +377,7 @@ public class EventCategoryTable
         }
 
         @Override
-        public boolean includeRow(final EventCategory pRow) {
+        public boolean includeRow(final DepositCategory pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
@@ -384,7 +385,7 @@ public class EventCategoryTable
 
             /* Handle filter */
             return (theParent == null)
-                                      ? true
+                                      ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
                                       : theParent.equals(pRow.getParentCategory());
         }
     }
@@ -426,7 +427,7 @@ public class EventCategoryTable
             JMenuItem myActive = null;
 
             /* Create the no filter JMenuItem and add it to the popUp */
-            CategoryAction myAction = new CategoryAction(null, FILTER_ALL);
+            CategoryAction myAction = new CategoryAction(null, FILTER_PARENTS);
             JMenuItem myItem = new JMenuItem(myAction);
             myPopUp.addMenuItem(myItem);
 
@@ -436,26 +437,14 @@ public class EventCategoryTable
                 myActive = myItem;
             }
 
-            /* Create the totals JMenuItem and add it to the popUp */
-            EventCategory myTotals = theCategories.getSingularClass(EventCategoryClass.TOTALS);
-            myAction = new CategoryAction(myTotals, myTotals.getName());
-            myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active parent */
-            if (myTotals.equals(theParent)) {
-                /* Record it */
-                myActive = myItem;
-            }
-
             /* Loop through the available category values */
-            Iterator<EventCategory> myIterator = theCategories.iterator();
+            Iterator<DepositCategory> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                EventCategory myCurr = myIterator.next();
+                DepositCategory myCurr = myIterator.next();
 
                 /* Ignore category if it is not a subTotal */
-                EventCategoryClass myClass = myCurr.getCategoryTypeClass();
-                if (!myClass.isSubTotal()) {
+                DepositCategoryClass myClass = myCurr.getCategoryTypeClass();
+                if (!myClass.isParentCategory()) {
                     continue;
                 }
 
@@ -488,12 +477,12 @@ public class EventCategoryTable
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -2773610987097456452L;
+        private static final long serialVersionUID = 3157988261193706811L;
 
         /**
          * Category.
          */
-        private final EventCategory theCategory;
+        private final DepositCategory theCategory;
 
         /**
          * Label.
@@ -502,9 +491,9 @@ public class EventCategoryTable
 
         /**
          * Constructor.
-         * @param pCategory the account category bucket
+         * @param pCategory the deposit category bucket
          */
-        private CategoryAction(final EventCategory pCategory) {
+        private CategoryAction(final DepositCategory pCategory) {
             super(pCategory.getName());
             theCategory = pCategory;
             theLabel = pCategory.getName();
@@ -515,7 +504,7 @@ public class EventCategoryTable
          * @param pCategory the account category bucket
          * @param pName the name
          */
-        private CategoryAction(final EventCategory pCategory,
+        private CategoryAction(final DepositCategory pCategory,
                                final String pName) {
             super(pName);
             theCategory = pCategory;
@@ -542,7 +531,7 @@ public class EventCategoryTable
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -5129198935581030200L;
+        private static final long serialVersionUID = 6374822452498064568L;
 
         /**
          * Name column id.
@@ -583,7 +572,7 @@ public class EventCategoryTable
          * Constructor.
          * @param pTable the table
          */
-        private CategoryColumnModel(final EventCategoryTable pTable) {
+        private CategoryColumnModel(final DepositCategoryTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -627,7 +616,7 @@ public class EventCategoryTable
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final EventCategory pCategory,
+        protected Object getItemValue(final DepositCategory pCategory,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {

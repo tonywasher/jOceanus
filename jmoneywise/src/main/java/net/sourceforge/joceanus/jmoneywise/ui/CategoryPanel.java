@@ -108,9 +108,19 @@ public class CategoryPanel
     private PanelName theActive;
 
     /**
-     * Account Categories Table.
+     * Deposit Categories Table.
      */
-    private final AccountCategoryTable theAccountTable;
+    private final DepositCategoryTable theDepositTable;
+
+    /**
+     * Cash Categories Table.
+     */
+    private final CashCategoryTable theCashTable;
+
+    /**
+     * Loan Categories Table.
+     */
+    private final LoanCategoryTable theLoanTable;
 
     /**
      * Event Categories Table.
@@ -123,7 +133,9 @@ public class CategoryPanel
      */
     public CategoryPanel(final View pView) {
         /* Create the table panels */
-        theAccountTable = new AccountCategoryTable(pView);
+        theDepositTable = new DepositCategoryTable(pView);
+        theCashTable = new CashCategoryTable(pView);
+        theLoanTable = new LoanCategoryTable(pView);
         theEventTable = new EventCategoryTable(pView);
 
         /* Create selection button and label */
@@ -138,9 +150,11 @@ public class CategoryPanel
         theCardPanel.setLayout(theLayout);
 
         /* Add to the card panels */
-        theCardPanel.add(theAccountTable.getPanel(), PanelName.ACCOUNTS.toString());
+        theCardPanel.add(theDepositTable.getPanel(), PanelName.DEPOSITS.toString());
+        theCardPanel.add(theCashTable.getPanel(), PanelName.CASH.toString());
+        theCardPanel.add(theLoanTable.getPanel(), PanelName.LOANS.toString());
         theCardPanel.add(theEventTable.getPanel(), PanelName.EVENTS.toString());
-        theActive = PanelName.ACCOUNTS;
+        theActive = PanelName.DEPOSITS;
         theSelectButton.setText(theActive.toString());
 
         /* Create the card panel */
@@ -149,7 +163,9 @@ public class CategoryPanel
         theFilterCardPanel.setLayout(theFilterLayout);
 
         /* Add to the card panels */
-        theFilterCardPanel.add(theAccountTable.getFilterPanel(), PanelName.ACCOUNTS.toString());
+        theFilterCardPanel.add(theDepositTable.getFilterPanel(), PanelName.DEPOSITS.toString());
+        theFilterCardPanel.add(theCashTable.getFilterPanel(), PanelName.CASH.toString());
+        theFilterCardPanel.add(theLoanTable.getFilterPanel(), PanelName.LOANS.toString());
         theFilterCardPanel.add(theEventTable.getFilterPanel(), PanelName.EVENTS.toString());
 
         /* Create the selection panel */
@@ -172,7 +188,9 @@ public class CategoryPanel
         /* Create the listener */
         CategoryListener myListener = new CategoryListener();
         theSelectButton.addActionListener(myListener);
-        theAccountTable.addChangeListener(myListener);
+        theDepositTable.addChangeListener(myListener);
+        theCashTable.addChangeListener(myListener);
+        theLoanTable.addChangeListener(myListener);
         theEventTable.addChangeListener(myListener);
     }
 
@@ -180,7 +198,9 @@ public class CategoryPanel
      * Refresh data.
      */
     protected void refreshData() {
-        theAccountTable.refreshData();
+        theDepositTable.refreshData();
+        theCashTable.refreshData();
+        theLoanTable.refreshData();
         theEventTable.refreshData();
     }
 
@@ -190,8 +210,14 @@ public class CategoryPanel
     protected void determineFocus() {
         /* Switch on active component */
         switch (theActive) {
-            case ACCOUNTS:
-                theAccountTable.determineFocus();
+            case DEPOSITS:
+                theDepositTable.determineFocus();
+                break;
+            case CASH:
+                theCashTable.determineFocus();
+                break;
+            case LOANS:
+                theLoanTable.determineFocus();
                 break;
             case EVENTS:
                 theEventTable.determineFocus();
@@ -207,7 +233,13 @@ public class CategoryPanel
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        boolean hasUpdates = theAccountTable.hasUpdates();
+        boolean hasUpdates = theDepositTable.hasUpdates();
+        if (!hasUpdates) {
+            hasUpdates = theCashTable.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = theLoanTable.hasUpdates();
+        }
         if (!hasUpdates) {
             hasUpdates = theEventTable.hasUpdates();
         }
@@ -222,7 +254,13 @@ public class CategoryPanel
      */
     public boolean hasErrors() {
         /* Determine whether we have errors */
-        boolean hasErrors = theAccountTable.hasErrors();
+        boolean hasErrors = theDepositTable.hasErrors();
+        if (!hasErrors) {
+            hasErrors = theCashTable.hasErrors();
+        }
+        if (!hasErrors) {
+            hasErrors = theLoanTable.hasErrors();
+        }
         if (!hasErrors) {
             hasErrors = theEventTable.hasErrors();
         }
@@ -315,9 +353,19 @@ public class CategoryPanel
      */
     private enum PanelName {
         /**
-         * Accounts.
+         * Deposits.
          */
-        ACCOUNTS,
+        DEPOSITS,
+
+        /**
+         * Cash.
+         */
+        CASH,
+
+        /**
+         * Loans.
+         */
+        LOANS,
 
         /**
          * Events.
