@@ -32,12 +32,17 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitBranch.GitBranchList;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
@@ -83,8 +88,17 @@ public final class GitComponent
      * Obtain GitRepository access.
      * @return the access object
      */
-    protected Repository getGitRepo() {
+    public Repository getGitRepo() {
         return theGitRepo;
+    }
+
+    /**
+     * Obtain Working directory.
+     * @return the working directory
+     */
+    public File getWorkingDir() {
+        File myBase = new File(getRepository().getBase());
+        return new File(myBase, getName());
     }
 
     @Override
@@ -237,6 +251,23 @@ public final class GitComponent
     }
 
     /**
+     * Obtain status for component.
+     * @return the status
+     * @throws JOceanusException on error
+     */
+    public Status getStatus() throws JOceanusException {
+        /* Protect against exceptions */
+        try {
+            Git myGit = new Git(theGitRepo);
+            StatusCommand myCmd = myGit.status();
+            return myCmd.call();
+        } catch (NoWorkTreeException
+                | GitAPIException e) {
+            throw new JThemisIOException("Failed to get status", e);
+        }
+    }
+
+    /**
      * List of components.
      */
     public static final class GitComponentList
@@ -289,7 +320,7 @@ public final class GitComponent
                 File myGitDir = new File(mySubDir, NAME_GITDIR);
                 if (myGitDir.isDirectory()) {
                     /* Create the component and add to the list */
-                    GitComponent myComp = new GitComponent(theRepository, myGitDir.getName());
+                    GitComponent myComp = new GitComponent(theRepository, mySubDir.getName());
                     add(myComp);
                 }
             }

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.internal.util.SVNDate;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
@@ -105,7 +105,7 @@ public class SvnRevisionHistory
     /**
      * The date.
      */
-    private final String theDate;
+    private final Date theDate;
 
     /**
      * The revision.
@@ -172,8 +172,10 @@ public class SvnRevisionHistory
      * Obtain the date.
      * @return the date
      */
-    public String getDate() {
-        return theDate;
+    public Date getDate() {
+        Date myDate = new Date();
+        myDate.setTime(theDate.getTime());
+        return myDate;
     }
 
     /**
@@ -286,7 +288,7 @@ public class SvnRevisionHistory
         theOwner = pOwner;
         theRevision = SVNRevision.create(pEntry.getRevision());
         theLogMessage = pEntry.getMessage();
-        theDate = SVNDate.formatDate(pEntry.getDate());
+        theDate = pEntry.getDate();
         theUnderlying = pEntry;
 
         /* Allocate the sourceDir list */
@@ -401,7 +403,7 @@ public class SvnRevisionHistory
             return theOwner;
         }
         if (FIELD_DATE.equals(pField)) {
-            return theDate;
+            return getDate();
         }
         if (FIELD_REVISION.equals(pField)) {
             return theRevisionKey;

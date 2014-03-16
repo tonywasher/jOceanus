@@ -49,9 +49,14 @@ import org.eclipse.jgit.lib.Ref;
 public final class GitBranch
         extends ScmBranch<GitBranch, GitComponent, GitRepository> {
     /**
+     * Branch references Prefix.
+     */
+    private static final String REF_BRANCHES = "refs/heads/";
+
+    /**
      * Master branch.
      */
-    private static final String BRN_MASTER = "master";
+    public static final String BRN_MASTER = "master";
 
     /**
      * Report fields.
@@ -246,36 +251,40 @@ public final class GitBranch
                     /* Access branch details */
                     String myName = myRef.getName();
                     ObjectId myCommitId = myRef.getObjectId();
-                    boolean isMaster = false;
+                    if (myName.startsWith(REF_BRANCHES)) {
+                        myName = myName.substring(REF_BRANCHES.length());
+                    }
 
                     /* If this is the master branch */
                     if (BRN_MASTER.equals(myName)) {
-                        /* Note master */
-                        isMaster = true;
-
                         /* Parse project file */
                         MvnProjectDefinition myProject = theComponent.parseProjectObject(myCommitId, "");
 
                         /* If we have a project definition */
                         if (myProject != null) {
-                            /* Access the name and ignore if it does not start with branch prefix */
-                            myName = myProject.getDefinition().getVersion();
-                        }
-                    }
+                            /* Access the version */
+                            String myVers = myProject.getDefinition().getVersion();
 
-                    /* If this looks like a valid branch */
-                    if (myName.startsWith(BRANCH_PREFIX)) {
+                            /* If we have a valid prefix */
+                            if (myVers.startsWith(BRANCH_PREFIX)) {
+                                /* Determine true name of branch */
+                                myName = myVers.substring(BRANCH_PREFIX.length());
+
+                                /* Create the new branch and add it */
+                                GitBranch myBranch = new GitBranch(theComponent, myName, myCommitId);
+                                add(myBranch);
+                                myBranch.setTrunk();
+                            }
+                        }
+
+                        /* If this looks like a valid branch */
+                    } else if (myName.startsWith(BRANCH_PREFIX)) {
                         /* Strip prefix */
                         myName = myName.substring(BRANCH_PREFIX.length());
 
                         /* Create the new branch and add it */
                         GitBranch myBranch = new GitBranch(theComponent, myName, myCommitId);
                         add(myBranch);
-
-                        /* Set trunk flag if required */
-                        if (isMaster) {
-                            myBranch.setTrunk();
-                        }
                     }
                 }
             } catch (GitAPIException e) {
@@ -295,6 +304,9 @@ public final class GitBranch
                 ListTagCommand myCommand = pGit.tagList();
                 List<Ref> myTags = myCommand.call();
 
+                /* Determine prefix */
+                String myPrefix = GitTag.REF_TAGS + BRANCH_PREFIX;
+
                 /* Loop through the tags */
                 Iterator<Ref> myIterator = myTags.iterator();
                 while (myIterator.hasNext()) {
@@ -304,9 +316,9 @@ public final class GitBranch
                     String myName = myRef.getName();
 
                     /* If this looks like a valid branch */
-                    if (myName.startsWith(BRANCH_PREFIX)) {
+                    if (myName.startsWith(myPrefix)) {
                         /* Strip prefix */
-                        myName = myName.substring(BRANCH_PREFIX.length());
+                        myName = myName.substring(myPrefix.length());
 
                         /* Locate the tag separator */
                         int iIndex = myName.indexOf(GitTag.PREFIX_TAG);
@@ -328,6 +340,7 @@ public final class GitBranch
                         }
                     }
                 }
+
             } catch (GitAPIException e) {
                 throw new JThemisIOException("Failed to list tags", e);
             }

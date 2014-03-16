@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -134,6 +135,30 @@ public class SvnExtract
      * List of tag Extracts.
      */
     private final SvnTagExtractPlanList theTags;
+
+    /**
+     * Obtain the trunk extract plan.
+     * @return the trunk plan
+     */
+    public SvnBranchExtractPlan getTrunkPlan() {
+        return theTrunk;
+    }
+
+    /**
+     * Obtain the branch extract plan iterator.
+     * @return the trunk plan
+     */
+    public Iterator<SvnBranchExtractPlan> branchIterator() {
+        return theBranches.iterator();
+    }
+
+    /**
+     * Obtain the tag extract plan iterator.
+     * @return the trunk plan
+     */
+    public Iterator<SvnTagExtractPlan> tagIterator() {
+        return theTags.iterator();
+    }
 
     /**
      * Constructor.
@@ -257,8 +282,8 @@ public class SvnExtract
          * @param pOwner the Owner
          * @param pRevision the revision
          */
-        private SvnExtractAnchor(final Object pOwner,
-                                 final SVNRevision pRevision) {
+        public SvnExtractAnchor(final Object pOwner,
+                                final SVNRevision pRevision) {
             /* store parameters */
             theOwner = pOwner;
             theRevision = pRevision;
@@ -492,6 +517,14 @@ public class SvnExtract
         }
 
         /**
+         * Obtain the anchor.
+         * @return the anchor
+         */
+        public SvnExtractAnchor getAnchor() {
+            return theAnchor;
+        }
+
+        /**
          * Obtain the element iterator.
          * @return the iterator
          */
@@ -572,7 +605,7 @@ public class SvnExtract
 
                 /* Declare the view */
                 SvnRevisionKey myKey = myEntry.getRevisionKey();
-                SvnExtractView myView = new SvnExtractView(theRepo, myKey.getRevision());
+                SvnExtractView myView = new SvnExtractView(theRepo, myKey.getRevision(), myEntry);
                 String myBase = myKey.getPath();
                 myView.setBaseDir(theRepo.getURL(myBase));
                 theViews.add(0, myView);
@@ -607,7 +640,7 @@ public class SvnExtract
                     SvnSourceDir myDir = myIterator.next();
 
                     /* Process the source directory */
-                    processSourceDir(myRev, myDir);
+                    processSourceDir(myRev, myDir, myHist);
                 }
             }
         }
@@ -616,14 +649,16 @@ public class SvnExtract
          * Process source directory.
          * @param pStartRev the starting revision
          * @param pDir the sourceDirectory.
+         * @param pEntry the history details
          * @throws JOceanusException on error
          */
         private void processSourceDir(final SVNRevision pStartRev,
-                                      final SvnSourceDir pDir) throws JOceanusException {
+                                      final SvnSourceDir pDir,
+                                      final SvnRevisionHistory pEntry) throws JOceanusException {
             /* Access the required view */
             SvnRevisionKey mySource = pDir.getSource();
             String myComp = pDir.getComponent();
-            adjustView(pStartRev, myComp, mySource);
+            adjustView(pStartRev, myComp, mySource, pEntry);
 
             /* Create a sourceDirs list */
             List<SvnRevisionHistory> mySourceDirs = new ArrayList<SvnRevisionHistory>();
@@ -664,7 +699,7 @@ public class SvnExtract
 
                 /* Access the view */
                 SvnRevisionKey myKey = myEntry.getRevisionKey();
-                adjustView(mySource.getRevision(), myComp, myKey);
+                adjustView(mySource.getRevision(), myComp, myKey, pEntry);
 
                 /* If we have an origin */
                 if (myEntry.isOrigin()) {
@@ -688,11 +723,13 @@ public class SvnExtract
          * @param pStartRev the starting revision
          * @param pComp the component.
          * @param pKey the revisionKey
+         * @param pEntry the history details
          * @throws JOceanusException on error
          */
         private void adjustView(final SVNRevision pStartRev,
                                 final String pComp,
-                                final SvnRevisionKey pKey) throws JOceanusException {
+                                final SvnRevisionKey pKey,
+                                final SvnRevisionHistory pEntry) throws JOceanusException {
             /* Determine the required revision */
             long myStart = pStartRev.getNumber();
             SVNRevision myRevision = pKey.getRevision();
@@ -721,7 +758,7 @@ public class SvnExtract
                 /* If this is beyond the desired revision */
                 if (myCurr < myRev) {
                     /* Need an intermediate view, so allocate new view */
-                    myView = new SvnExtractView(myView, myRevision);
+                    myView = new SvnExtractView(myView, myRevision, pEntry);
                     myIterator.next();
                     myIterator.add(myView);
                 }
@@ -732,7 +769,7 @@ public class SvnExtract
             }
 
             /* None found before end of list, so allocate new view */
-            SvnExtractView myView = new SvnExtractView(theRepo, myRevision);
+            SvnExtractView myView = new SvnExtractView(theRepo, myRevision, pEntry);
             theViews.add(0, myView);
             myView.addDirectory(pComp, theRepo.getURL(myBase));
         }
@@ -794,6 +831,16 @@ public class SvnExtract
         private static final JDataField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
 
         /**
+         * Date field.
+         */
+        private static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+
+        /**
+         * Message field.
+         */
+        private static final JDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
+
+        /**
          * Items field.
          */
         private static final JDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
@@ -813,6 +860,12 @@ public class SvnExtract
             if (FIELD_REV.equals(pField)) {
                 return theRevision.toString();
             }
+            if (FIELD_DATE.equals(pField)) {
+                return getDate();
+            }
+            if (FIELD_MESSAGE.equals(pField)) {
+                return theLogMessage;
+            }
             if (FIELD_ITEMS.equals(pField)) {
                 return theItems;
             }
@@ -830,6 +883,16 @@ public class SvnExtract
         private final SVNRevision theRevision;
 
         /**
+         * Log Message.
+         */
+        private final String theLogMessage;
+
+        /**
+         * Date.
+         */
+        private final Date theDate;
+
+        /**
          * Extract item list.
          */
         private final SvnExtractItemList theItems;
@@ -840,6 +903,24 @@ public class SvnExtract
          */
         public SVNRevision getRevision() {
             return theRevision;
+        }
+
+        /**
+         * Obtain the log message.
+         * @return the log message
+         */
+        public String getLogMessage() {
+            return theLogMessage;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        public Date getDate() {
+            Date myDate = new Date();
+            myDate.setTime(theDate.getTime());
+            return myDate;
         }
 
         /**
@@ -854,12 +935,18 @@ public class SvnExtract
          * Constructor.
          * @param pRepo the repository
          * @param pRevision the revision
+         * @param pEntry the history details
          */
         private SvnExtractView(final SvnRepository pRepo,
-                               final SVNRevision pRevision) {
+                               final SVNRevision pRevision,
+                               final SvnRevisionHistory pEntry) {
             /* Store parameters */
             theRepo = pRepo;
             theRevision = pRevision;
+
+            /* Obtain details from the entry */
+            theDate = pEntry.getDate();
+            theLogMessage = pEntry.getLogMessage();
 
             /* Create the list */
             theItems = new SvnExtractItemList();
@@ -869,12 +956,14 @@ public class SvnExtract
          * Constructor.
          * @param pView the view to copy from
          * @param pRevision the revision
+         * @param pEntry the history details
          * @throws JOceanusException on error
          */
         private SvnExtractView(final SvnExtractView pView,
-                               final SVNRevision pRevision) throws JOceanusException {
+                               final SVNRevision pRevision,
+                               final SvnRevisionHistory pEntry) throws JOceanusException {
             /* Initialise item */
-            this(pView.theRepo, pRevision);
+            this(pView.theRepo, pRevision, pEntry);
 
             /* Loop through the underlying items */
             Iterator<SvnExtractItem> myIterator = pView.elementIterator();

@@ -22,14 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.File;
+import java.io.IOException;
+
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
  * Represents a repository.
@@ -40,7 +47,7 @@ public class GitRepository
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(GitRepository.class.getSimpleName(), GitRepository.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(GitRepository.class.getSimpleName(), ScmRepository.FIELD_DEFS);
 
     /**
      * Base field id.
@@ -210,5 +217,35 @@ public class GitRepository
     protected GitTag locateTag(final MvnProjectId pId) {
         /* Lookup mapping */
         return (GitTag) super.locateTag(pId);
+    }
+
+    /**
+     * Create repository.
+     * @param pName the name of the component
+     * @return the new component
+     * @throws JOceanusException on error
+     */
+    public GitComponent createComponent(final String pName) throws JOceanusException {
+        try {
+            /* StringBuilder */
+            StringBuilder myPathBuilder = new StringBuilder();
+            myPathBuilder.append(theBase);
+            myPathBuilder.append(File.separatorChar);
+            myPathBuilder.append(pName);
+            String myRepoPath = myPathBuilder.toString();
+
+            /* Create repository */
+            FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
+            myBuilder.setGitDir(new File(myRepoPath, ".git"));
+            Repository myRepo = myBuilder.build();
+            myRepo.create();
+            myRepo.close();
+
+            /* Create the base component */
+            return new GitComponent(this, pName);
+
+        } catch (IOException e) {
+            throw new JThemisIOException("Failed to create", e);
+        }
     }
 }

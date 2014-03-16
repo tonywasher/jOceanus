@@ -119,11 +119,16 @@ public class JSvnStatusWindow
         theCancelButton.addActionListener(myListener);
         theCancelButton.setVisible(false);
 
+        /* Create a new subPanel for the buttons */
+        JPanel myButtonPanel = new JPanel();
+        myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.X_AXIS));
+        myButtonPanel.add(theClearButton);
+        myButtonPanel.add(theCancelButton);
+
         /* Add the components */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(myScroll);
-        add(theClearButton);
-        add(theCancelButton);
+        add(myButtonPanel);
     }
 
     /**

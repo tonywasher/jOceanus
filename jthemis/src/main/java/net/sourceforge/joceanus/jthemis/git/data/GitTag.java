@@ -46,6 +46,11 @@ import org.eclipse.jgit.lib.Ref;
 public final class GitTag
         extends ScmTag<GitTag, GitBranch, GitComponent, GitRepository> {
     /**
+     * Tag References Prefix.
+     */
+    protected static final String REF_TAGS = "refs/tags/";
+
+    /**
      * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(GitTag.class.getSimpleName(), ScmTag.FIELD_DEFS);
@@ -233,14 +238,20 @@ public final class GitTag
                     /* Access tag details */
                     String myName = myRef.getName();
                     ObjectId myCommitId = myRef.getObjectId();
+                    if (myName.startsWith(REF_TAGS)) {
+                        myName = myName.substring(REF_TAGS.length());
+                    }
 
                     /* If this looks like a valid branch */
                     if (myName.startsWith(myBranch)) {
                         /* Strip prefix */
                         myName = myName.substring(myBranch.length());
 
+                        /* Determine tag */
+                        int myTagNo = Integer.parseInt(myName);
+
                         /* Create the new tag and add it */
-                        GitTag myTag = new GitTag(getBranch(), 0, myCommitId);
+                        GitTag myTag = new GitTag(getBranch(), myTagNo, myCommitId);
                         add(myTag);
                     }
                 }

@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmetis.viewer.JDataWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.svn.data.SubVersionPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
@@ -237,10 +238,12 @@ public final class JSvnManager {
      */
     protected void setData(final DiscoverData pData) {
         /* Create Data Entries */
-        JDataEntry myRepEntry = theDataMgr.new JDataEntry("Repository");
+        JDataEntry myRepEntry = theDataMgr.new JDataEntry("SvnRepository");
         myRepEntry.addAsRootChild();
         JDataEntry mySetEntry = theDataMgr.new JDataEntry("WorkingSet");
         mySetEntry.addAsRootChild();
+        JDataEntry myGitEntry = theDataMgr.new JDataEntry("GitRepository");
+        myGitEntry.addAsRootChild();
 
         /* Access the repository and declare to data manager */
         theRepository = pData.getRepository();
@@ -253,6 +256,10 @@ public final class JSvnManager {
 
         /* Declare the Extract Plans */
         pData.declareExtractPlans(theDataMgr);
+
+        /* Build the GitRepo */
+        GitRepository myGitRepo = pData.getGitRepo();
+        myGitEntry.setObject(myGitRepo);
 
         /* If we have an error */
         JOceanusException myError = pData.getError();
