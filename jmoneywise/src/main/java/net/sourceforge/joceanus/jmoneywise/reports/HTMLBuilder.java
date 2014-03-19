@@ -317,7 +317,7 @@ public class HTMLBuilder {
 
         /* Define tables */
         myBuilder.append(ELEMENT_TABLE);
-        myBuilder.append(" { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; }");
+        myBuilder.append(" { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-bottom: solid; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 

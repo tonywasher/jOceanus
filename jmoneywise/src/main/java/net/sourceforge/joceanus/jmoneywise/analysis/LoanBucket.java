@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.newanalysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 

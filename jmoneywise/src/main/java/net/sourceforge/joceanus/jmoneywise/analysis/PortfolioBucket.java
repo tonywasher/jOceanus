@@ -35,7 +35,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -61,6 +65,11 @@ public final class PortfolioBucket
     private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
+     * Securities Field Id.
+     */
+    private static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurities"));
+
+    /**
      * Base Field Id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
@@ -78,7 +87,12 @@ public final class PortfolioBucket
     /**
      * The portfolio.
      */
-    private final Account thePortfolio;
+    private final Portfolio thePortfolio;
+
+    /**
+     * The security bucket list.
+     */
+    private final SecurityBucketList theSecurities;
 
     /**
      * Values.
@@ -99,6 +113,9 @@ public final class PortfolioBucket
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
+        }
+        if (FIELD_SECURITIES.equals(pField)) {
+            return theSecurities;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
@@ -148,8 +165,24 @@ public final class PortfolioBucket
      * Obtain the portfolio.
      * @return the portfolio
      */
-    public Account getPortfolio() {
+    public Portfolio getPortfolio() {
         return thePortfolio;
+    }
+
+    /**
+     * Obtain the security buckets.
+     * @return the buckets
+     */
+    public SecurityBucketList getSecurities() {
+        return theSecurities;
+    }
+
+    /**
+     * Obtain the security bucket iterator.
+     * @return the iterator
+     */
+    public Iterator<SecurityBucket> securityIterator() {
+        return theSecurities.iterator();
     }
 
     /**
@@ -216,16 +249,75 @@ public final class PortfolioBucket
 
     /**
      * Constructor.
+     * @param pAnalysis the analysis
      * @param pPortfolio the portfolio account
      */
-    private PortfolioBucket(final Account pPortfolio) {
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final Portfolio pPortfolio) {
         /* Store the category */
         thePortfolio = pPortfolio;
 
-        /* Create the value maps */
+        /* Create the securities list */
+        theSecurities = (pPortfolio != null)
+                                            ? new SecurityBucketList(pAnalysis)
+                                            : null;
+
+        /* Create the value maps and initialise them */
         theValues = new SecurityValues();
         theBaseValues = new SecurityValues();
+        initValues();
+    }
 
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final PortfolioBucket pBase,
+                            final JDateDay pDate) {
+        /* Copy details from base */
+        thePortfolio = pBase.getPortfolio();
+
+        /* Create the securities list */
+        theSecurities = (thePortfolio != null)
+                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)
+                                              : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the date range for the bucket
+     */
+    private PortfolioBucket(final Analysis pAnalysis,
+                            final PortfolioBucket pBase,
+                            final JDateDayRange pRange) {
+        /* Copy details from base */
+        thePortfolio = pBase.getPortfolio();
+
+        /* Create the securities list */
+        theSecurities = (thePortfolio != null)
+                                              ? new SecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)
+                                              : null;
+
+        /* Create the value maps and initialise them */
+        theValues = new SecurityValues();
+        theBaseValues = new SecurityValues();
+        initValues();
+    }
+
+    /**
+     * InitialiseValues.
+     */
+    private void initValues() {
         /* Create valuation fields for the portfolio */
         theValues.setValue(SecurityAttribute.VALUATION, new JMoney());
         theBaseValues.setValue(SecurityAttribute.VALUATION, new JMoney());
@@ -236,6 +328,26 @@ public final class PortfolioBucket
 
         /* Create market fields for the portfolio */
         theValues.setValue(SecurityAttribute.MARKET, new JMoney());
+    }
+
+    /**
+     * Obtain the SecurityBucket from this portfolio for a security.
+     * @param pSecurity the security
+     * @return the bucket
+     */
+    protected SecurityBucket getSecurityBucket(final Security pSecurity) {
+        /* Return the security bucket for the portfolio's list */
+        return theSecurities.getBucket(pSecurity, thePortfolio);
+    }
+
+    /**
+     * Obtain the SecurityBucket from this portfolio for a security.
+     * @param pSecurity the security
+     * @return the bucket
+     */
+    public SecurityBucket findSecurityBucket(final Security pSecurity) {
+        /* Return the security bucket for the portfolio's list */
+        return theSecurities.findItemById(pSecurity.getOrderedId());
     }
 
     @Override
@@ -265,7 +377,7 @@ public final class PortfolioBucket
             return false;
         }
 
-        /* Compare the Account Categories */
+        /* Compare the Portfolios */
         PortfolioBucket myThat = (PortfolioBucket) pThat;
         return getPortfolio().equals(myThat.getPortfolio());
     }
@@ -356,7 +468,6 @@ public final class PortfolioBucket
     public static final class PortfolioBucketList
             extends OrderedIdList<Integer, PortfolioBucket>
             implements JDataContents {
-
         /**
          * Local Report fields.
          */
@@ -431,18 +542,75 @@ public final class PortfolioBucket
         }
 
         /**
+         * Construct a dated List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pDate the Date
+         */
+        public PortfolioBucketList(final Analysis pAnalysis,
+                                   final PortfolioBucketList pBase,
+                                   final JDateDay pDate) {
+            /* Initialise class */
+            super(PortfolioBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+
+            /* Loop through the buckets */
+            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            while (myIterator.hasNext()) {
+                PortfolioBucket myCurr = myIterator.next();
+
+                /* Access the bucket for this date */
+                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
+
+                /* Add to the list */
+                append(myBucket);
+            }
+        }
+
+        /**
+         * Construct a ranged List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pRange the Date Range
+         */
+        public PortfolioBucketList(final Analysis pAnalysis,
+                                   final PortfolioBucketList pBase,
+                                   final JDateDayRange pRange) {
+            /* Initialise class */
+            super(PortfolioBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+
+            /* Loop through the buckets */
+            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            while (myIterator.hasNext()) {
+                PortfolioBucket myCurr = myIterator.next();
+
+                /* Access the bucket for this range */
+                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pRange);
+
+                /* If the portfolio is relevant */
+                if (!myBucket.getSecurities().isEmpty()) {
+                    /* Add to the list */
+                    append(myBucket);
+                }
+            }
+        }
+
+        /**
          * Obtain the PortfolioBucket for a given portfolio.
          * @param pPortfolio the portfolio
          * @return the bucket
          */
-        protected PortfolioBucket getBucket(final Account pPortfolio) {
+        protected PortfolioBucket getBucket(final Portfolio pPortfolio) {
             /* Locate the bucket in the list */
             PortfolioBucket myItem = findItemById(pPortfolio.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new PortfolioBucket(pPortfolio);
+                myItem = new PortfolioBucket(theAnalysis, pPortfolio);
 
                 /* Add to the list */
                 add(myItem);
@@ -453,44 +621,87 @@ public final class PortfolioBucket
         }
 
         /**
+         * Obtain the SecurityBucket for a given portfolio and security.
+         * @param pPortfolio the portfolio
+         * @param pSecurity the security
+         * @return the bucket
+         */
+        public SecurityBucket getBucket(final Portfolio pPortfolio,
+                                        final AssetBase<?> pSecurity) {
+            /* Access as security */
+            Security mySecurity = Security.class.cast(pSecurity);
+
+            /* Locate the portfolio bucket in the list */
+            PortfolioBucket myBucket = getBucket(pPortfolio);
+
+            /* Return the security bucket for the portfolio's list */
+            return myBucket.getSecurityBucket(mySecurity);
+        }
+
+        /**
          * Allocate the Totals PortfolioBucket.
          * @return the bucket
          */
         private PortfolioBucket allocateTotalsBucket() {
             /* Obtain the totals portfolio */
-            return new PortfolioBucket(null);
+            return new PortfolioBucket(theAnalysis, null);
         }
 
         /**
          * Analyse securities.
-         * @param pSecurities the security buckets
          */
-        protected void analyseSecurities(final SecurityBucketList pSecurities) {
+        protected void analyseSecurities() {
             /* Market Analysis */
             MarketAnalysis myMarket = new MarketAnalysis();
             JDateDayRange myRange = theAnalysis.getDateRange();
 
-            /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pSecurities.listIterator();
+            /* Loop through the portfolio buckets */
+            Iterator<PortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                /* Access bucket and category */
-                SecurityBucket myCurr = myIterator.next();
-                Account myPortfolio = myCurr.getPortfolio();
+                PortfolioBucket myPortfolio = myIterator.next();
 
-                /* Analyse the security bucket */
-                myCurr.analyseBucket(myRange);
+                /* Loop through the buckets */
+                Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
+                while (mySecIterator.hasNext()) {
+                    /* Access bucket and category */
+                    SecurityBucket myCurr = mySecIterator.next();
 
-                /* Process market movements */
-                myMarket.processSecurity(myCurr);
+                    /* Analyse the security bucket */
+                    myCurr.analyseBucket(myRange);
 
-                /* Access security bucket and add values */
-                PortfolioBucket myBucket = getBucket(myPortfolio);
-                myBucket.addValues(myCurr);
-                theTotals.addValues(myCurr);
+                    /* Process market movements */
+                    myMarket.processSecurity(myCurr);
+
+                    /* Add to the portfolio bucket and add values */
+                    myPortfolio.addValues(myCurr);
+                    theTotals.addValues(myCurr);
+                }
+
+                /* Calculate delta for the portfolio */
+                myPortfolio.calculateDelta();
             }
+
+            /* Calculate delta for the totals */
+            theTotals.calculateDelta();
 
             /* Propagate totals */
             myMarket.propagateTotals(theAnalysis);
+        }
+
+        /**
+         * Mark active securities.
+         * @throws JOceanusException on error
+         */
+        protected void markActiveSecurities() throws JOceanusException {
+            /* Loop through the portfolio buckets */
+            Iterator<PortfolioBucket> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                PortfolioBucket myPortfolio = myIterator.next();
+
+                /* Mark active securities */
+                SecurityBucketList mySecurities = myPortfolio.getSecurities();
+                mySecurities.markActiveSecurities();
+            }
         }
     }
 }

@@ -40,15 +40,15 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanCategoryBucket.LoanCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -227,7 +227,7 @@ public class LoanAnalysisSelect
     }
 
     @Override
-    public void setFilter(final NewAnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof LoanFilter) {
             /* Access filter */

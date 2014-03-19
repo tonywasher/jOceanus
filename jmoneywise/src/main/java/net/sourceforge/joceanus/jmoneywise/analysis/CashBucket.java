@@ -20,30 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.newanalysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisMaps.DepositRateMap;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
- * The Deposit Bucket class.
+ * The Cash Bucket class.
  */
-public final class DepositBucket
-        extends AccountBucket<Deposit> {
+public final class CashBucket
+        extends AccountBucket<Cash> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositBucket.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CashBucket.class.getName());
 
     /**
      * Local Report fields.
@@ -51,14 +48,9 @@ public final class DepositBucket
     private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), AccountBucket.FIELD_DEFS);
 
     /**
-     * Deposit Category Field Id.
+     * Cash Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
-
-    /**
-     * The deposit category.
-     */
-    private final DepositCategory theCategory;
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
 
     @Override
     public JDataFields getDataFields() {
@@ -74,25 +66,30 @@ public final class DepositBucket
     }
 
     /**
-     * Obtain the deposit category.
-     * @return the deposit category
+     * The cash category.
      */
-    public DepositCategory getCategory() {
+    private final CashCategory theCategory;
+
+    /**
+     * Obtain the cash category.
+     * @return the cash category
+     */
+    public CashCategory getCategory() {
         return theCategory;
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pDeposit the deposit
+     * @param pCash the cash account
      */
-    protected DepositBucket(final Analysis pAnalysis,
-                            final Deposit pDeposit) {
+    protected CashBucket(final Analysis pAnalysis,
+                         final Cash pCash) {
         /* Call super-constructor */
-        super(pAnalysis, pDeposit);
+        super(pAnalysis, pCash);
 
         /* Obtain category */
-        theCategory = pDeposit.getCategory();
+        theCategory = pCash.getCategory();
     }
 
     /**
@@ -101,13 +98,13 @@ public final class DepositBucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
-    private DepositBucket(final Analysis pAnalysis,
-                          final DepositBucket pBase,
-                          final JDateDay pDate) {
+    private CashBucket(final Analysis pAnalysis,
+                       final CashBucket pBase,
+                       final JDateDay pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
-        /* Obtain category */
+        /* Copy details from base */
         theCategory = pBase.getCategory();
     }
 
@@ -117,9 +114,9 @@ public final class DepositBucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
-    private DepositBucket(final Analysis pAnalysis,
-                          final DepositBucket pBase,
-                          final JDateDayRange pRange) {
+    private CashBucket(final Analysis pAnalysis,
+                       final CashBucket pBase,
+                       final JDateDayRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -128,45 +125,10 @@ public final class DepositBucket
     }
 
     /**
-     * Set opening balance.
-     * @param pBalance the opening balance
+     * CashBucket list class.
      */
-    protected void setOpeningBalance(final JMoney pBalance) {
-        JMoney myValue = getNewValuation();
-        JMoney myBaseValue = getBaseValues().getMoneyValue(AccountAttribute.VALUATION);
-        myValue.addAmount(pBalance);
-        myBaseValue.addAmount(pBalance);
-        setValue(AccountAttribute.VALUATION, myValue);
-    }
-
-    @Override
-    protected void recordRate(final JDateDay pDate) {
-        /* Obtain the appropriate rate record */
-        DepositRateMap myRates = getAnalysis().getRates();
-        Deposit myDeposit = getAccount();
-        DepositRate myRate = myRates.getRateForDate(myDeposit, pDate);
-        JDateDay myDate = myDeposit.getMaturity();
-
-        /* If we have a rate */
-        if (myRate != null) {
-            /* Use Rate date instead */
-            if (myDate == null) {
-                myDate = myRate.getDate();
-            }
-
-            /* Store the rate */
-            setValue(AccountAttribute.RATE, myRate.getRate());
-        }
-
-        /* Store the maturity */
-        setValue(AccountAttribute.MATURITY, myDate);
-    }
-
-    /**
-     * DepositBucket list class.
-     */
-    public static class DepositBucketList
-            extends AccountBucketList<DepositBucket, Deposit> {
+    public static class CashBucketList
+            extends AccountBucketList<CashBucket, Cash> {
         /**
          * Local Report fields.
          */
@@ -181,9 +143,9 @@ public final class DepositBucket
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
-        public DepositBucketList(final Analysis pAnalysis) {
+        public CashBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(DepositBucket.class, pAnalysis);
+            super(CashBucket.class, pAnalysis);
         }
 
         /**
@@ -192,9 +154,9 @@ public final class DepositBucket
          * @param pBase the base list
          * @param pDate the Date
          */
-        public DepositBucketList(final Analysis pAnalysis,
-                                 final DepositBucketList pBase,
-                                 final JDateDay pDate) {
+        public CashBucketList(final Analysis pAnalysis,
+                              final CashBucketList pBase,
+                              final JDateDay pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -208,9 +170,9 @@ public final class DepositBucket
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public DepositBucketList(final Analysis pAnalysis,
-                                 final DepositBucketList pBase,
-                                 final JDateDayRange pRange) {
+        public CashBucketList(final Analysis pAnalysis,
+                              final CashBucketList pBase,
+                              final JDateDayRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -219,20 +181,20 @@ public final class DepositBucket
         }
 
         @Override
-        protected DepositBucket newBucket(final Deposit pDeposit) {
-            return new DepositBucket(getAnalysis(), pDeposit);
+        protected CashBucket newBucket(final Cash pCash) {
+            return new CashBucket(getAnalysis(), pCash);
         }
 
         @Override
-        protected DepositBucket newBucket(final DepositBucket pBase,
-                                          final JDateDay pDate) {
-            return new DepositBucket(getAnalysis(), pBase, pDate);
+        protected CashBucket newBucket(final CashBucket pBase,
+                                       final JDateDay pDate) {
+            return new CashBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
-        protected DepositBucket newBucket(final DepositBucket pBase,
-                                          final JDateDayRange pRange) {
-            return new DepositBucket(getAnalysis(), pBase, pRange);
+        protected CashBucket newBucket(final CashBucket pBase,
+                                       final JDateDayRange pRange) {
+            return new CashBucket(getAnalysis(), pBase, pRange);
         }
     }
 }

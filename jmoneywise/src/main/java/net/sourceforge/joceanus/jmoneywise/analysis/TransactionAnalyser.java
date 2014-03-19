@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.newanalysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -31,6 +31,16 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -48,16 +58,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisMaps.SecurityPriceMap;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.CashBucket.CashBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DilutionEvent.DilutionEventList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDilution;

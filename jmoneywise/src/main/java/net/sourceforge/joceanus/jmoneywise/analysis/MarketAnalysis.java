@@ -22,14 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Market analysis.
@@ -61,7 +62,7 @@ public class MarketAnalysis {
      */
     protected void processSecurity(final SecurityBucket pBucket) {
         /* Access the security */
-        Account mySecurity = pBucket.getSecurity();
+        Security mySecurity = pBucket.getSecurity();
 
         /* Access market and gains */
         SecurityValues myValues = pBucket.getValues();
@@ -70,7 +71,7 @@ public class MarketAnalysis {
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {
-            if (mySecurity.getAccountCategoryClass().isCapitalGains()) {
+            if (mySecurity.getSecurityTypeClass().isCapitalGains()) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGains);
 
@@ -82,7 +83,7 @@ public class MarketAnalysis {
                     /* Adjust market account */
                     theMarketExpense.subtractAmount(myGains);
                 }
-            } else if (mySecurity.isCategoryClass(AccountCategoryClass.LIFEBOND)) {
+            } else if (mySecurity.isSecurityClass(SecurityTypeClass.LIFEBOND)) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGains);
 
@@ -121,7 +122,7 @@ public class MarketAnalysis {
         if ((theMarketIncome.isNonZero())
             || (theMarketExpense.isNonZero())) {
             /* Access market payee */
-            PayeeBucket myMarket = myPayees.getBucket(AccountCategoryClass.MARKET);
+            PayeeBucket myMarket = myPayees.getBucket(PayeeTypeClass.MARKET);
 
             /* Adjust totals */
             myMarket.addIncome(theMarketIncome);

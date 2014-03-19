@@ -22,27 +22,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
-import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 
 /**
  * Dilution Events relating to stock dilution.
@@ -76,9 +71,9 @@ public final class DilutionEvent
     private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
 
     /**
-     * Account Field Id.
+     * Security Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAccount"));
+    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSecurity"));
 
     /**
      * Date Field Id.
@@ -91,27 +86,17 @@ public final class DilutionEvent
     private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilution"));
 
     /**
-     * Event Field Id.
+     * Transaction Field Id.
      */
-    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
-
-    /**
-     * Bad Security error string.
-     */
-    private static final String ERROR_SECURITY = NLS_BUNDLE.getString("ErrorSecurity");
-
-    /**
-     * Bad Dilution error string.
-     */
-    private static final String ERROR_DILUTION = NLS_BUNDLE.getString("ErrorDilution");
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ID.equals(pField)) {
             return theId;
         }
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return theAccount;
+        if (FIELD_SECURITY.equals(pField)) {
+            return theSecurity;
         }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
@@ -119,8 +104,8 @@ public final class DilutionEvent
         if (FIELD_DILUTION.equals(pField)) {
             return theDilution;
         }
-        if (FIELD_EVENT.equals(pField)) {
-            return theEvent;
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransaction;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -131,9 +116,9 @@ public final class DilutionEvent
     private final int theId;
 
     /**
-     * The Account.
+     * The Security.
      */
-    private final Account theAccount;
+    private final Security theSecurity;
 
     /**
      * The Date.
@@ -146,16 +131,16 @@ public final class DilutionEvent
     private final JDilution theDilution;
 
     /**
-     * The Event.
+     * The Transaction.
      */
-    private Event theEvent = null;
+    private Transaction theTransaction = null;
 
     /**
-     * Obtain the Account.
-     * @return the account
+     * Obtain the Security.
+     * @return the security
      */
-    public Account getAccount() {
-        return theAccount;
+    public Security getSecurity() {
+        return theSecurity;
     }
 
     /**
@@ -175,11 +160,11 @@ public final class DilutionEvent
     }
 
     /**
-     * Obtain the Event.
-     * @return the event
+     * Obtain the Transaction.
+     * @return the transaction
      */
-    public Event getEvent() {
-        return theEvent;
+    public Transaction getTransaction() {
+        return theTransaction;
     }
 
     @Override
@@ -189,8 +174,6 @@ public final class DilutionEvent
 
     @Override
     public int compareTo(final DilutionEvent pThat) {
-        int iDiff;
-
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -200,13 +183,13 @@ public final class DilutionEvent
         }
 
         /* If the dates differ */
-        iDiff = Difference.compareObject(getDate(), pThat.getDate());
+        int iDiff = Difference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
-        /* Compare the account */
-        return getAccount().compareTo(pThat.getAccount());
+        /* Compare the security */
+        return getSecurity().compareTo(pThat.getSecurity());
     }
 
     @Override
@@ -229,70 +212,52 @@ public final class DilutionEvent
 
         /* Check equality */
         return Difference.isEqual(getDate(), myThat.getDate())
-               && Difference.isEqual(getAccount(), myThat.getAccount())
-               && Difference.isEqual(getEvent(), myThat.getEvent());
+               && Difference.isEqual(getSecurity(), myThat.getSecurity())
+               && Difference.isEqual(getTransaction(), myThat.getTransaction());
     }
 
     @Override
     public int hashCode() {
         int hash = getDate().hashCode();
-        hash ^= getAccount().hashCode();
-        if (getEvent() != null) {
-            hash ^= getEvent().hashCode();
+        hash ^= getSecurity().hashCode();
+        if (getTransaction() != null) {
+            hash ^= getTransaction().hashCode();
         }
         return hash;
     }
 
     /**
-     * Create a dilution event from an event.
+     * Create a dilution event from a transaction.
      * @param pId the id for the dilution
-     * @param pEvent the underlying event
+     * @param pTrans the underlying transaction
      */
     protected DilutionEvent(final int pId,
-                            final Event pEvent) {
+                            final Transaction pTrans) {
         /* Local variables */
-        Account myAccount;
+        AssetBase<?> myAsset;
 
         /* Access the category */
-        EventCategory myCategory = pEvent.getCategory();
+        EventCategory myCategory = pTrans.getCategory();
 
         /* Switch on the category type */
         switch (myCategory.getCategoryTypeClass()) {
             case STOCKRIGHTSTAKEN:
-                myAccount = pEvent.getCredit();
+                myAsset = pTrans.getCredit();
                 break;
             case STOCKSPLIT:
             case STOCKRIGHTSWAIVED:
             case STOCKDEMERGER:
             default:
-                myAccount = pEvent.getDebit();
+                myAsset = pTrans.getDebit();
                 break;
         }
 
         /* Store the values */
         theId = pId;
-        theAccount = myAccount;
-        theDate = pEvent.getDate();
-        theDilution = pEvent.getDilution();
-        theEvent = pEvent;
-    }
-
-    /**
-     * Create a dilution event from details.
-     * @param pId the id for the dilution
-     * @param pAccount the account
-     * @param pDate the Date
-     * @param pDilution the dilution
-     */
-    private DilutionEvent(final int pId,
-                          final Account pAccount,
-                          final JDateDay pDate,
-                          final JDilution pDilution) {
-        /* Store the values */
-        theId = pId;
-        theAccount = pAccount;
-        theDate = pDate;
-        theDilution = pDilution;
+        theSecurity = Security.class.cast(myAsset);
+        theDate = pTrans.getDate();
+        theDilution = pTrans.getDilution();
+        theTransaction = pTrans;
     }
 
     /**
@@ -333,95 +298,42 @@ public final class DilutionEvent
         }
 
         /**
-         * The DataSet.
-         */
-        private final MoneyWiseData theData;
-
-        /**
-         * The Decimal parser.
-         */
-        private final JDecimalParser theParser;
-
-        /**
          * The next Id.
          */
         private int theNextId = 1;
 
         /**
          * Constructor.
-         * @param pData the DataSet
          */
-        public DilutionEventList(final MoneyWiseData pData) {
+        public DilutionEventList() {
             super(DilutionEvent.class);
-            theData = pData;
-            theParser = theData.getDataFormatter().getDecimalParser();
         }
 
         /**
          * Add Dilution Event to List.
-         * @param pEvent the base event
+         * @param pTrans the base transaction
          */
-        public void addDilution(final Event pEvent) {
+        public void addDilution(final Transaction pTrans) {
             /* Create the dilution event */
-            DilutionEvent myDilution = new DilutionEvent(theNextId++, pEvent);
+            DilutionEvent myDilution = new DilutionEvent(theNextId++, pTrans);
 
             /* Add it to the list */
             add(myDilution);
         }
 
         /**
-         * Add Dilution Event to List.
-         * @param pAccount the account to dilute
-         * @param pDate the date of the price
-         * @param pDilution the (possibly) diluted price
-         * @throws JOceanusException on error
+         * Does this security have diluted prices?
+         * @param pSecurity the security to test
+         * @return <code>true</code> if the security has diluted prices, <code>false</code> otherwise
          */
-        public void addDilution(final String pAccount,
-                                final Date pDate,
-                                final String pDilution) throws JOceanusException {
-            /* Access account list */
-            AccountList myAccounts = theData.getAccounts();
-
-            /* Search for the account */
-            Account myAccount = myAccounts.findItemByName(pAccount);
-            if (myAccount == null) {
-                throw new JMoneyWiseDataException(ERROR_SECURITY
-                                                  + " ["
-                                                  + pAccount
-                                                  + "]");
-            }
-
-            /* Create the date */
-            JDateDay myDate = new JDateDay(pDate);
-
-            /* Record the dilution */
-            JDilution myDilution = theParser.parseDilutionValue(pDilution);
-            if (myDilution == null) {
-                throw new JMoneyWiseDataException(ERROR_DILUTION
-                                                  + " "
-                                                  + pDilution);
-            }
-
-            /* Create the dilution event */
-            DilutionEvent myEvent = new DilutionEvent(theNextId++, myAccount, myDate, myDilution);
-
-            /* Add it to the list */
-            add(myEvent);
-        }
-
-        /**
-         * Does this account have diluted prices?
-         * @param pAccount the account to test
-         * @return <code>true</code> if the account has diluted prices, <code>false</code> otherwise
-         */
-        public boolean hasDilution(final Account pAccount) {
+        public boolean hasDilution(final Security pSecurity) {
             /* Loop through the items */
             Iterator<DilutionEvent> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 DilutionEvent myEvent = myIterator.next();
 
-                /* If the event is for this account */
-                if (!Difference.isEqual(pAccount, myEvent.getAccount())) {
+                /* If the event is for this security */
+                if (!Difference.isEqual(pSecurity, myEvent.getSecurity())) {
                     /* Set result and break loop */
                     return true;
                 }
@@ -432,15 +344,15 @@ public final class DilutionEvent
         }
 
         /**
-         * Obtain the dilution factor for the account and date.
-         * @param pAccount the account to dilute
+         * Obtain the dilution factor for the security and date.
+         * @param pSecurity the security to dilute
          * @param pDate the date of the price
          * @return the dilution factor
          */
-        public JDilution getDilutionFactor(final Account pAccount,
+        public JDilution getDilutionFactor(final Security pSecurity,
                                            final JDateDay pDate) {
-            /* No factor if the account has no dilutions */
-            if (!hasDilution(pAccount)) {
+            /* No factor if the security has no dilutions */
+            if (!hasDilution(pSecurity)) {
                 return null;
             }
 
@@ -449,8 +361,8 @@ public final class DilutionEvent
             JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
             while (myIterator.hasNext()) {
                 DilutionEvent myEvent = myIterator.next();
-                /* If the event is for this account, and if the dilution date is later */
-                if ((Difference.isEqual(pAccount, myEvent.getAccount()))
+                /* If the event is for this security, and if the dilution date is later */
+                if ((Difference.isEqual(pSecurity, myEvent.getSecurity()))
                     && (pDate.compareTo(myEvent.getDate()) < 0)) {
                     /* add in the dilution factor */
                     myDilution = myDilution.getFurtherDilution(myEvent.getDilution());

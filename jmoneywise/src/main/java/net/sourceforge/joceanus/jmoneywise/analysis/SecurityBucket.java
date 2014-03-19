@@ -28,16 +28,19 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
 import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -66,7 +69,7 @@ public final class SecurityBucket
     private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
-     * Account (Security) Field Id.
+     * Security Field Id.
      */
     private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
 
@@ -76,7 +79,7 @@ public final class SecurityBucket
     private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
-     * Security Category Field Id.
+     * Security Type Field Id.
      */
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
@@ -103,17 +106,17 @@ public final class SecurityBucket
     /**
      * The security.
      */
-    private final Account theSecurity;
+    private final Security theSecurity;
 
     /**
      * The portfolio.
      */
-    private final Account thePortfolio;
+    private final Portfolio thePortfolio;
 
     /**
-     * The security category.
+     * The security type.
      */
-    private final AccountCategory theCategory;
+    private final SecurityType theCategory;
 
     /**
      * The dataSet.
@@ -204,9 +207,9 @@ public final class SecurityBucket
 
     /**
      * Obtain the security.
-     * @return the account
+     * @return the security
      */
-    public Account getSecurity() {
+    public Security getSecurity() {
         return theSecurity;
     }
 
@@ -214,7 +217,7 @@ public final class SecurityBucket
      * Obtain the portfolio.
      * @return the portfolio
      */
-    public Account getPortfolio() {
+    public Portfolio getPortfolio() {
         return thePortfolio;
     }
 
@@ -224,10 +227,10 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain the security category.
-     * @return the security category
+     * Obtain the security type.
+     * @return the security type
      */
-    public AccountCategory getAccountCategory() {
+    public SecurityType getSecurityType() {
         return theCategory;
     }
 
@@ -280,49 +283,49 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values (or null)
      */
-    public SecurityValues getValuesForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getValuesForEvent(pEvent);
+    public SecurityValues getValuesForTransaction(final Transaction pTrans) {
+        /* Obtain values for transaction */
+        return theHistory.getValuesForTransaction(pTrans);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Event pEvent,
-                                     final SecurityAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaValue(pEvent, pAttr);
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final SecurityAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaValue(pTrans, pAttr);
     }
 
     /**
-     * Obtain money delta for event.
-     * @param pEvent the event
+     * Obtain money delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JMoney getMoneyDeltaForEvent(final Event pEvent,
-                                        final SecurityAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaMoneyValue(pEvent, pAttr);
+    public JMoney getMoneyDeltaForTransaction(final Transaction pTrans,
+                                              final SecurityAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaMoneyValue(pTrans, pAttr);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain units delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JUnits getUnitsDeltaForEvent(final Event pEvent,
-                                        final SecurityAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaUnitsValue(pEvent, pAttr);
+    public JUnits getUnitsDeltaForTransaction(final Transaction pTrans,
+                                              final SecurityAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaUnitsValue(pTrans, pAttr);
     }
 
     /**
@@ -383,17 +386,19 @@ public final class SecurityBucket
      * Constructor.
      * @param pAnalysis the analysis
      * @param pSecurity the security
+     * @param pPortfolio the portfolio
      */
     private SecurityBucket(final Analysis pAnalysis,
-                           final Account pSecurity) {
+                           final Security pSecurity,
+                           final Portfolio pPortfolio) {
         /* Store the details */
         theSecurity = pSecurity;
-        thePortfolio = pSecurity.getPortfolio();
+        thePortfolio = pPortfolio;
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
-        /* Obtain category, allowing for autoExpense */
-        theCategory = theSecurity.getAccountCategory();
+        /* Obtain category */
+        theCategory = theSecurity.getSecurityType();
 
         /* Create the history map */
         theHistory = new BucketHistory<SecurityValues, SecurityAttribute>(new SecurityValues());
@@ -415,7 +420,7 @@ public final class SecurityBucket
         /* Copy details from base */
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
-        theCategory = pBase.getAccountCategory();
+        theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -439,7 +444,7 @@ public final class SecurityBucket
         /* Copy details from base */
         theSecurity = pBase.getSecurity();
         thePortfolio = pBase.getPortfolio();
-        theCategory = pBase.getAccountCategory();
+        theCategory = pBase.getSecurityType();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -461,6 +466,12 @@ public final class SecurityBucket
             return -1;
         }
 
+        /* Check the portfolio */
+        int iDiff = Difference.compareObject(getPortfolio(), pThat.getPortfolio());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
         /* Compare the Securities */
         return getSecurity().compareTo(pThat.getSecurity());
     }
@@ -478,8 +489,13 @@ public final class SecurityBucket
             return false;
         }
 
-        /* Compare the Securities */
+        /* Compare the Portfolios */
         SecurityBucket myThat = (SecurityBucket) pThat;
+        if (!getPortfolio().equals(myThat.getPortfolio())) {
+            return false;
+        }
+
+        /* Compare the Securities */
         if (!getSecurity().equals(myThat.getSecurity())) {
             return false;
         }
@@ -549,13 +565,13 @@ public final class SecurityBucket
     }
 
     /**
-     * Register the event.
-     * @param pEvent the event
+     * Register the transaction.
+     * @param pTrans the transaction
      * @return the registered values
      */
-    protected SecurityValues registerEvent(final Event pEvent) {
+    protected SecurityValues registerTransaction(final Transaction pTrans) {
         /* Register the event in the history */
-        return theHistory.registerEvent(pEvent, theValues);
+        return theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -664,7 +680,7 @@ public final class SecurityBucket
         /**
          * SerialId.
          */
-        private static final long serialVersionUID = -7405283325286707968L;
+        private static final long serialVersionUID = 661272708599335410L;
 
         /**
          * Constructor.
@@ -792,7 +808,7 @@ public final class SecurityBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pBase.listIterator();
+            Iterator<SecurityBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 SecurityBucket myCurr = myIterator.next();
 
@@ -818,7 +834,7 @@ public final class SecurityBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pBase.listIterator();
+            Iterator<SecurityBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 SecurityBucket myCurr = myIterator.next();
 
@@ -835,18 +851,20 @@ public final class SecurityBucket
         }
 
         /**
-         * Obtain the AccountBucket for a given account.
-         * @param pAccount the account
+         * Obtain the SecurityBucket for a given security and portfolio.
+         * @param pSecurity the security
+         * @param pPortfolio the portfolio
          * @return the bucket
          */
-        public SecurityBucket getBucket(final Account pAccount) {
+        public SecurityBucket getBucket(final Security pSecurity,
+                                        final Portfolio pPortfolio) {
             /* Locate the bucket in the list */
-            SecurityBucket myItem = findItemById(pAccount.getId());
+            SecurityBucket myItem = findItemById(pSecurity.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new SecurityBucket(theAnalysis, pAccount);
+                myItem = new SecurityBucket(theAnalysis, pSecurity, pPortfolio);
 
                 /* Add to the list */
                 add(myItem);
@@ -854,6 +872,31 @@ public final class SecurityBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Mark active securities.
+         * @throws JOceanusException on error
+         */
+        protected void markActiveSecurities() throws JOceanusException {
+            /* Loop through the buckets */
+            Iterator<SecurityBucket> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                SecurityBucket myCurr = myIterator.next();
+                Security mySecurity = myCurr.getSecurity();
+
+                /* If we are closed */
+                if (mySecurity.isClosed()) {
+                    /* Ensure that we have correct closed dates */
+                    mySecurity.adjustClosed();
+                }
+
+                /* If we are active */
+                if (myCurr.isActive()) {
+                    /* Set the security as relevant */
+                    mySecurity.setRelevant();
+                }
+            }
         }
     }
 }

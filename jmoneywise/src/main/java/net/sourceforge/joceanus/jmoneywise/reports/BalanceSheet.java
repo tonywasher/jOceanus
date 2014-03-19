@@ -28,39 +28,39 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AccountAttribute;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AccountBucket.AccountValues;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.CashBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.CashBucket.CashBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.CashCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.CashCategoryBucket.CashCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanBucket.LoanBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.LoanCategoryBucket.LoanCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -671,7 +671,7 @@ public class BalanceSheet
     }
 
     @Override
-    protected NewAnalysisFilter<?> processFilter(final Object pSource) {
+    protected AnalysisFilter<?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
         if (pSource instanceof DepositBucket) {
             /* Create the new filter */

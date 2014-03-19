@@ -48,18 +48,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisType;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.BucketAttribute;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.CashFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.DepositFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.EventCategoryFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.LoanFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.PayeeFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.SecurityFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.TaxBasisFilter;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
+import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
@@ -234,7 +234,7 @@ public class AnalysisSelect
      * Obtain the Filter.
      * @return the filter.
      */
-    public NewAnalysisFilter<?> getFilter() {
+    public AnalysisFilter<?> getFilter() {
         return theState.getFilter();
     }
 
@@ -441,7 +441,7 @@ public class AnalysisSelect
         setAnalysis(mySelect.getRange());
 
         /* Access the filter and the selection panel */
-        NewAnalysisFilter<?> myFilter = pSelect.getFilter();
+        AnalysisFilter<?> myFilter = pSelect.getFilter();
         AnalysisType myType = myFilter.getAnalysisType();
         AnalysisFilterSelection myPanel = theMap.get(myType);
 
@@ -580,7 +580,7 @@ public class AnalysisSelect
             AnalysisFilterSelection myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
-                NewAnalysisFilter<?> myFilter = myPanel.getFilter();
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
                 theState.setFilter(myFilter);
                 return;
             }
@@ -601,7 +601,7 @@ public class AnalysisSelect
                 theLayout.show(theCardPanel, myType.name());
 
                 /* Obtain the relevant filter */
-                NewAnalysisFilter<?> myFilter = myPanel.getFilter();
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
                 myFilter.setCurrentAttribute(myType.getDefaultValue());
 
                 /* Set new bucket type and apply state */
@@ -855,7 +855,7 @@ public class AnalysisSelect
 
                 /* Obtain the relevant filter */
                 AnalysisFilterSelection myPanel = theMap.get(theType);
-                NewAnalysisFilter<?> myFilter = myPanel.getFilter();
+                AnalysisFilter<?> myFilter = myPanel.getFilter();
                 myFilter.setCurrentAttribute(theType.getDefaultValue());
 
                 /* Set new bucket type and apply state */
@@ -895,7 +895,7 @@ public class AnalysisSelect
         public void actionPerformed(final ActionEvent e) {
             /* Record the bucket */
             if (theState.setBucket(theBucket)) {
-                NewAnalysisFilter<?> myFilter = theState.getFilter();
+                AnalysisFilter<?> myFilter = theState.getFilter();
                 myFilter.setCurrentAttribute(theBucket);
                 theState.applyState();
                 fireStateChanged();
@@ -925,7 +925,7 @@ public class AnalysisSelect
         /**
          * The filter.
          */
-        private NewAnalysisFilter<?> theFilter;
+        private AnalysisFilter<?> theFilter;
 
         /**
          * Obtain the DateDayRange.
@@ -955,7 +955,7 @@ public class AnalysisSelect
          * Obtain the Filter.
          * @return the filter.
          */
-        private NewAnalysisFilter<?> getFilter() {
+        private AnalysisFilter<?> getFilter() {
             return theFilter;
         }
 
@@ -1038,7 +1038,7 @@ public class AnalysisSelect
          * Set filter.
          * @param pFilter the filter
          */
-        private void setFilter(final NewAnalysisFilter<?> pFilter) {
+        private void setFilter(final AnalysisFilter<?> pFilter) {
             theFilter = pFilter;
         }
 
@@ -1073,7 +1073,7 @@ public class AnalysisSelect
         /**
          * The AnalysisFilter.
          */
-        private final NewAnalysisFilter<?> theFilter;
+        private final AnalysisFilter<?> theFilter;
 
         /**
          * Obtain the RangeSelection.
@@ -1087,7 +1087,7 @@ public class AnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        public NewAnalysisFilter<?> getFilter() {
+        public AnalysisFilter<?> getFilter() {
             return theFilter;
         }
 
@@ -1097,7 +1097,7 @@ public class AnalysisSelect
          * @param pFilter the analysis filter
          */
         public StatementSelect(final JDateDayRangeSelect pRangeSelect,
-                               final NewAnalysisFilter<?> pFilter) {
+                               final AnalysisFilter<?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
             theFilter = pFilter;

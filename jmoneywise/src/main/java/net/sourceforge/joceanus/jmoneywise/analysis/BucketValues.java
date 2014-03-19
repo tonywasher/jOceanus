@@ -43,7 +43,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = -6888558421308626670L;
+    private static final long serialVersionUID = 9160258241035845846L;
 
     @Override
     public String formatObject() {

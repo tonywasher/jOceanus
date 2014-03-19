@@ -45,10 +45,9 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
@@ -139,9 +138,9 @@ public class SpotSelect
     private final JButton thePortButton;
 
     /**
-     * The Account list.
+     * The Portfolio list.
      */
-    private transient AccountList theAccounts = null;
+    private transient PortfolioList thePortfolios = null;
 
     /**
      * The current state.
@@ -175,7 +174,7 @@ public class SpotSelect
      * Get the selected portfolio.
      * @return the portfolio
      */
-    public final Account getPortfolio() {
+    public final Portfolio getPortfolio() {
         return theState.getPortfolio();
     }
 
@@ -271,23 +270,23 @@ public class SpotSelect
         /* Access the data */
         MoneyWiseData myData = theView.getData();
 
-        /* Access account list */
-        theAccounts = myData.getAccounts();
+        /* Access portfolio list */
+        thePortfolios = myData.getPortfolios();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
-        /* Obtain the current account */
-        Account myPortfolio = theState.getPortfolio();
+        /* Obtain the current portfolio */
+        Portfolio myPortfolio = theState.getPortfolio();
 
         /* If we have a selected Portfolio */
         if (myPortfolio != null) {
             /* Look for the equivalent bucket */
-            myPortfolio = theAccounts.findItemById(myPortfolio.getOrderedId());
+            myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());
         }
 
         /* If we do not have an active portfolio and the list is non-empty */
-        if ((myPortfolio == null) && (!theAccounts.isEmpty())) {
+        if ((myPortfolio == null) && (!thePortfolios.isEmpty())) {
             /* Access the first portfolio */
             myPortfolio = getFirstPortfolio();
         }
@@ -304,16 +303,11 @@ public class SpotSelect
      * Obtain first portfolio.
      * @return the first portfolio
      */
-    private Account getFirstPortfolio() {
+    private Portfolio getFirstPortfolio() {
         /* Loop through the available account values */
-        Iterator<Account> myIterator = theAccounts.iterator();
+        Iterator<Portfolio> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            Account myPortfolio = myIterator.next();
-
-            /* Ignore if it is not a portfolio */
-            if (!myPortfolio.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
-                continue;
-            }
+            Portfolio myPortfolio = myIterator.next();
 
             /* Return the bucket */
             return myPortfolio;
@@ -437,29 +431,24 @@ public class SpotSelect
             /* Create a new popUp menu */
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
-            /* Access current portfolio and security */
-            Account myPortfolio = theState.getPortfolio();
+            /* Access current portfolio */
+            Portfolio myPortfolio = theState.getPortfolio();
 
             /* Record active item */
             JMenuItem myActive = null;
 
             /* Loop through the available portfolio values */
-            Iterator<Account> myIterator = theAccounts.iterator();
+            Iterator<Portfolio> myIterator = thePortfolios.iterator();
             while (myIterator.hasNext()) {
-                Account myAccount = myIterator.next();
-
-                /* Ignore if it is not a portfolio */
-                if (!myAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO)) {
-                    continue;
-                }
+                Portfolio myCurr = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myAccount);
+                PortfolioAction myAction = new PortfolioAction(myCurr);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.addMenuItem(myItem);
 
                 /* If this is the active portfolio */
-                if (myPortfolio.equals(myAccount)) {
+                if (myCurr.equals(myPortfolio)) {
                     /* Record it */
                     myActive = myItem;
                 }
@@ -487,13 +476,13 @@ public class SpotSelect
         /**
          * Portfolio.
          */
-        private final Account thePortfolio;
+        private final Portfolio thePortfolio;
 
         /**
          * Constructor.
          * @param pPortfolio the portfolio
          */
-        private PortfolioAction(final Account pPortfolio) {
+        private PortfolioAction(final Portfolio pPortfolio) {
             super(pPortfolio.getName());
             thePortfolio = pPortfolio;
         }
@@ -515,7 +504,7 @@ public class SpotSelect
         /**
          * Portfolio.
          */
-        private Account thePortfolio = null;
+        private Portfolio thePortfolio = null;
 
         /**
          * Selected date.
@@ -536,7 +525,7 @@ public class SpotSelect
          * Get the portfolio.
          * @return the portfolio
          */
-        private Account getPortfolio() {
+        private Portfolio getPortfolio() {
             return thePortfolio;
         }
 
@@ -591,7 +580,7 @@ public class SpotSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final Account pPortfolio) {
+        private boolean setPortfolio(final Portfolio pPortfolio) {
             /* Adjust the selected portfolio */
             if (!Difference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;

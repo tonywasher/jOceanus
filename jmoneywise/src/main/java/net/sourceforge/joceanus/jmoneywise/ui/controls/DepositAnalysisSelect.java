@@ -40,15 +40,15 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket.DepositBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.DepositFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -227,7 +227,7 @@ public class DepositAnalysisSelect
     }
 
     @Override
-    public void setFilter(final NewAnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof DepositFilter) {
             /* Access filter */

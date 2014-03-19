@@ -44,15 +44,15 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportManager;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.ReportSelect;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
@@ -437,7 +437,7 @@ public class ReportTab
                 if (myEvent.getSubId() == ReportManager.ACTION_VIEWFILTER) {
                     /* Create the details of the report */
                     JDateDayRangeSelect mySelect = theSelect.getDateRangeSelect();
-                    NewAnalysisFilter<?> myFilter = myEvent.getDetails(NewAnalysisFilter.class);
+                    AnalysisFilter<?> myFilter = myEvent.getDetails(AnalysisFilter.class);
                     StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 
                     /* Request the action */

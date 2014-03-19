@@ -29,30 +29,37 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
-import net.sourceforge.joceanus.jmoneywise.data.EventGroup;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionGroup;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Analysis Filter Classes.
@@ -140,50 +147,50 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     }
 
     /**
-     * Should we filter this event out?
-     * @param pEvent the event to check
+     * Should we filter this transaction out?
+     * @param pTrans the transaction to check
      * @return true/false
      */
-    public boolean filterEvent(final Event pEvent) {
+    public boolean filterTransaction(final Transaction pTrans) {
         /* If this is a split event */
-        if (pEvent.isSplit()) {
+        if (pTrans.isSplit()) {
             /* Filter out children */
-            if (pEvent.isChild()) {
+            if (pTrans.isChild()) {
                 return true;
             }
 
             /* Access the group */
-            EventList myList = (EventList) pEvent.getList();
-            EventGroup<Event> myGroup = myList.getGroup(pEvent);
+            TransactionList myList = pTrans.getList();
+            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
             /* Loop through the elements */
-            Iterator<Event> myIterator = myGroup.iterator();
+            Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
-                Event myEvent = myIterator.next();
+                Transaction myTrans = myIterator.next();
 
-                /* Check event */
-                if (!filterSingleEvent(myEvent)) {
+                /* Check transaction */
+                if (!filterSingleTransaction(myTrans)) {
                     return false;
                 }
             }
 
-            /* Ignore Event Group */
+            /* Ignore Transaction Group */
             return true;
         }
 
-        /* Check as a single event */
-        return filterSingleEvent(pEvent);
+        /* Check as a single transaction */
+        return filterSingleTransaction(pTrans);
     }
 
     /**
-     * Should we filter this event out?
-     * @param pEvent the event to check
+     * Should we filter this transaction out?
+     * @param pTrans the transaction to check
      * @return true/false
      */
-    private boolean filterSingleEvent(final Event pEvent) {
-        /* Check whether this event is registered */
-        return !pEvent.isHeader()
-               && getValuesForEvent(pEvent) == null;
+    private boolean filterSingleTransaction(final Transaction pTrans) {
+        /* Check whether this transaction is registered */
+        return !pTrans.isHeader()
+               && getValuesForTransaction(pTrans) == null;
     }
 
     /**
@@ -193,18 +200,18 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     protected abstract BucketValues<?, T> getBaseValues();
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values
      */
-    public abstract BucketValues<?, T> getValuesForEvent(final Event pEvent);
+    public abstract BucketValues<?, T> getValuesForTransaction(final Transaction pTrans);
 
     /**
-     * Obtain delta value for event.
-     * @param pEvent the event
+     * Obtain delta value for transaction.
+     * @param pTrans the transaction
      * @return the delta value
      */
-    public abstract JDecimal getDeltaForEvent(final Event pEvent);
+    public abstract JDecimal getDeltaForTransaction(final Transaction pTrans);
 
     /**
      * Obtain starting value for attribute.
@@ -217,26 +224,26 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
 
     /**
      * Obtain total money value for attribute.
-     * @param pEvent the event to check
+     * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getBalanceForEvent(final Event pEvent) {
-        /* If this is a split event */
-        if (pEvent.isSplit()) {
+    public JDecimal getBalanceForTransaction(final Transaction pTrans) {
+        /* If this is a split transaction */
+        if (pTrans.isSplit()) {
             /* Access the group */
-            EventList myList = (EventList) pEvent.getList();
-            EventGroup<Event> myGroup = myList.getGroup(pEvent);
+            TransactionList myList = pTrans.getList();
+            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
             /* Initialise return value */
             JDecimal myBalance = null;
 
             /* Loop through the elements */
-            Iterator<Event> myIterator = myGroup.iterator();
+            Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
-                Event myEvent = myIterator.next();
+                Transaction myTrans = myIterator.next();
 
-                /* Access Balance for event */
-                JDecimal myValue = getSingleBalanceForEvent(myEvent);
+                /* Access Balance for transaction */
+                JDecimal myValue = getSingleBalanceForTransaction(myTrans);
                 if (myValue != null) {
                     /* Record as value */
                     myBalance = myValue;
@@ -247,17 +254,17 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             return myBalance;
         }
 
-        /* Obtain single event value */
-        return getSingleBalanceForEvent(pEvent);
+        /* Obtain single transaction value */
+        return getSingleBalanceForTransaction(pTrans);
     }
 
     /**
      * Obtain delta debit value for attribute.
-     * @param pEvent the event to check
+     * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getDebitForEvent(final Event pEvent) {
-        JDecimal myValue = getDeltaValueForEvent(pEvent);
+    public JDecimal getDebitForTransaction(final Transaction pTrans) {
+        JDecimal myValue = getDeltaValueForTransaction(pTrans);
         if (myValue != null) {
             if (myValue.isPositive()
                 || myValue.isZero()) {
@@ -267,45 +274,45 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             }
         }
         return (myValue != null)
-                ? myValue
-                : null;
+                                ? myValue
+                                : null;
     }
 
     /**
      * Obtain delta credit value for attribute.
-     * @param pEvent the event to check
+     * @param pTrans the transaction to check
      * @return the value
      */
-    public JDecimal getCreditForEvent(final Event pEvent) {
-        JDecimal myValue = getDeltaValueForEvent(pEvent);
+    public JDecimal getCreditForTransaction(final Transaction pTrans) {
+        JDecimal myValue = getDeltaValueForTransaction(pTrans);
         return ((myValue != null)
                 && myValue.isPositive() && myValue.isNonZero())
-                ? myValue
-                : null;
+                                                               ? myValue
+                                                               : null;
     }
 
     /**
-     * Obtain delta debit value for attribute.
-     * @param pEvent the event to check
+     * Obtain delta value for attribute.
+     * @param pTrans the transaction to check
      * @return the value
      */
-    private JDecimal getDeltaValueForEvent(final Event pEvent) {
-        /* If this is a split event */
-        if (pEvent.isSplit()) {
+    private JDecimal getDeltaValueForTransaction(final Transaction pTrans) {
+        /* If this is a split transaction */
+        if (pTrans.isSplit()) {
             /* Access the group */
-            EventList myList = (EventList) pEvent.getList();
-            EventGroup<Event> myGroup = myList.getGroup(pEvent);
+            TransactionList myList = pTrans.getList();
+            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
             /* Initialise return value */
             JDecimal myTotal = null;
 
             /* Loop through the elements */
-            Iterator<Event> myIterator = myGroup.iterator();
+            Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
-                Event myEvent = myIterator.next();
+                Transaction myTrans = myIterator.next();
 
-                /* Access Delta for event */
-                JDecimal myDelta = getDeltaForEvent(myEvent);
+                /* Access Delta for transaction */
+                JDecimal myDelta = getDeltaForTransaction(myTrans);
                 if (myDelta != null) {
                     /* If this is the first value */
                     if (myTotal == null) {
@@ -324,8 +331,8 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             return myTotal;
         }
 
-        /* Obtain single event value */
-        return getDeltaForEvent(pEvent);
+        /* Obtain single transaction value */
+        return getDeltaForTransaction(pTrans);
     }
 
     /**
@@ -350,14 +357,14 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
 
     /**
      * Obtain total money value for attribute.
-     * @param pEvent the event to check
+     * @param pTrans the transaction to check
      * @return the value
      */
-    private JDecimal getSingleBalanceForEvent(final Event pEvent) {
-        BucketValues<?, T> myValues = getValuesForEvent(pEvent);
+    private JDecimal getSingleBalanceForTransaction(final Transaction pTrans) {
+        BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
         return (myValues == null)
-                ? null
-                : myValues.getDecimalValue(getCurrentAttribute());
+                                 ? null
+                                 : myValues.getDecimalValue(getCurrentAttribute());
     }
 
     /**
@@ -367,14 +374,15 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
     public abstract String getName();
 
     /**
-     * Account Bucket filter class.
+     * Loan Bucket filter class.
+     * @param <T> the account data type
      */
-    public static class AccountFilter
+    public abstract static class AccountFilter<T extends AssetBase<T>>
             extends AnalysisFilter<AccountAttribute> {
         /**
-         * The account bucket.
+         * The Account bucket.
          */
-        private final AccountBucket theAccount;
+        private final AccountBucket<T> theAccount;
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -389,7 +397,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
          * Obtain bucket.
          * @return theBucket
          */
-        public AccountBucket getBucket() {
+        public AccountBucket<T> getBucket() {
             return theAccount;
         }
 
@@ -398,16 +406,11 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             return theAccount.getName();
         }
 
-        @Override
-        public AnalysisType getAnalysisType() {
-            return AnalysisType.ACCOUNT;
-        }
-
         /**
          * Constructor.
          * @param pAccount the account bucket
          */
-        public AccountFilter(final AccountBucket pAccount) {
+        public AccountFilter(final AccountBucket<T> pAccount) {
             /* Store parameter */
             super(AccountAttribute.class);
             theAccount = pAccount;
@@ -420,13 +423,97 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public AccountValues getValuesForEvent(final Event pEvent) {
-            return theAccount.getValuesForEvent(pEvent);
+        public AccountValues getValuesForTransaction(final Transaction pTrans) {
+            return theAccount.getValuesForTransaction(pTrans);
         }
 
         @Override
-        public JDecimal getDeltaForEvent(final Event pEvent) {
-            return theAccount.getDeltaForEvent(pEvent, getCurrentAttribute());
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return theAccount.getDeltaForTransaction(pTrans, getCurrentAttribute());
+        }
+    }
+
+    /**
+     * Deposit Bucket filter class.
+     */
+    public static class DepositFilter
+            extends AccountFilter<Deposit> {
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public DepositBucket getBucket() {
+            return (DepositBucket) super.getBucket();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.DEPOSIT;
+        }
+
+        /**
+         * Constructor.
+         * @param pDeposit the deposit bucket
+         */
+        public DepositFilter(final DepositBucket pDeposit) {
+            /* Call super-constructor */
+            super(pDeposit);
+        }
+    }
+
+    /**
+     * Cash Bucket filter class.
+     */
+    public static class CashFilter
+            extends AccountFilter<Cash> {
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public CashBucket getBucket() {
+            return (CashBucket) super.getBucket();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.CASH;
+        }
+
+        /**
+         * Constructor.
+         * @param pCash the cash bucket
+         */
+        public CashFilter(final CashBucket pCash) {
+            /* Call super-constructor */
+            super(pCash);
+        }
+    }
+
+    /**
+     * Loan Bucket filter class.
+     */
+    public static class LoanFilter
+            extends AccountFilter<Loan> {
+        /**
+         * Obtain bucket.
+         * @return theBucket
+         */
+        public LoanBucket getBucket() {
+            return (LoanBucket) super.getBucket();
+        }
+
+        @Override
+        public AnalysisType getAnalysisType() {
+            return AnalysisType.LOAN;
+        }
+
+        /**
+         * Constructor.
+         * @param pLoan the loan bucket
+         */
+        public LoanFilter(final LoanBucket pLoan) {
+            /* Call super-constructor */
+            super(pLoan);
         }
     }
 
@@ -484,13 +571,13 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public SecurityValues getValuesForEvent(final Event pEvent) {
-            return theSecurity.getValuesForEvent(pEvent);
+        public SecurityValues getValuesForTransaction(final Transaction pTrans) {
+            return theSecurity.getValuesForTransaction(pTrans);
         }
 
         @Override
-        public JDecimal getDeltaForEvent(final Event pEvent) {
-            return theSecurity.getDeltaForEvent(pEvent, getCurrentAttribute());
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return theSecurity.getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -548,13 +635,13 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public PayeeValues getValuesForEvent(final Event pEvent) {
-            return thePayee.getValuesForEvent(pEvent);
+        public PayeeValues getValuesForTransaction(final Transaction pTrans) {
+            return thePayee.getValuesForTransaction(pTrans);
         }
 
         @Override
-        public JDecimal getDeltaForEvent(final Event pEvent) {
-            return thePayee.getDeltaForEvent(pEvent, getCurrentAttribute());
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return thePayee.getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -612,13 +699,13 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public CategoryValues getValuesForEvent(final Event pEvent) {
-            return theCategory.getValuesForEvent(pEvent);
+        public CategoryValues getValuesForTransaction(final Transaction pTrans) {
+            return theCategory.getValuesForTransaction(pTrans);
         }
 
         @Override
-        public JDecimal getDeltaForEvent(final Event pEvent) {
-            return theCategory.getDeltaForEvent(pEvent, getCurrentAttribute());
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return theCategory.getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 
@@ -676,13 +763,13 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         }
 
         @Override
-        public TaxBasisValues getValuesForEvent(final Event pEvent) {
-            return theTaxBasis.getValuesForEvent(pEvent);
+        public TaxBasisValues getValuesForTransaction(final Transaction pTrans) {
+            return theTaxBasis.getValuesForTransaction(pTrans);
         }
 
         @Override
-        public JDecimal getDeltaForEvent(final Event pEvent) {
-            return theTaxBasis.getDeltaForEvent(pEvent, getCurrentAttribute());
+        public JDecimal getDeltaForTransaction(final Transaction pTrans) {
+            return theTaxBasis.getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
     }
 }

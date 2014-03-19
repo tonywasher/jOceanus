@@ -27,12 +27,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**
  * History for a bucket.
@@ -45,7 +45,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 1327128217723296123L;
+    private static final long serialVersionUID = 6976602929502517385L;
 
     /**
      * values.
@@ -114,27 +114,27 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         theBaseValues = pHistory.getBaseValues().getSnapShot();
         theLastValues = theBaseValues;
 
-        /* Record latest event */
+        /* Record latest transaction */
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
         Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myEvent = myEntry.getValue();
+            BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we have passed the Date, break the loop */
-            if (pDate.compareTo(myEvent.getDate()) < 0) {
+            if (pDate.compareTo(myTrans.getDate()) < 0) {
                 break;
             }
 
             /* Add to the map */
-            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myEvent, theBaseValues, theLastValues);
-            theLastValues = myNewEvent.getSnapShot();
-            put(myEntry.getKey(), myNewEvent);
+            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<T, E>(myTrans, theBaseValues, theLastValues);
+            theLastValues = myNewTrans.getSnapShot();
+            put(myEntry.getKey(), myNewTrans);
 
             /* Store latest value */
-            myLatest = myEvent;
+            myLatest = myTrans;
         }
 
         /* If we have no entries */
@@ -162,15 +162,15 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entrySet().iterator();
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myEvent = myEntry.getValue();
+            BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the initial Date */
-            int iRange = pRange.compareTo(myEvent.getDate());
+            int iRange = pRange.compareTo(myTrans.getDate());
             if (iRange <= 0) {
                 /* If we are within the range */
                 if (iRange == 0) {
                     /* Note that this counts as latest */
-                    myLatest = myEvent;
+                    myLatest = myTrans;
                 }
 
                 /* Break the loop */
@@ -178,120 +178,120 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             }
 
             /* Store first value */
-            myFirst = myEvent;
+            myFirst = myTrans;
         }
 
         /* Determine the base values */
         theBaseValues = (myFirst == null)
-                ? pHistory.getBaseValues().getSnapShot()
-                : myFirst.getNewSnapShot();
+                                         ? pHistory.getBaseValues().getSnapShot()
+                                         : myFirst.getNewSnapShot();
         theLastValues = theBaseValues;
 
         /* If we broke the loop because we found an event */
         if (myLatest != null) {
             /* Add to the map */
-            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myLatest, theBaseValues, theLastValues);
-            put(myLatest.getId(), myNewEvent);
-            theLastValues = myNewEvent.getSnapShot();
+            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<T, E>(myLatest, theBaseValues, theLastValues);
+            put(myLatest.getId(), myNewTrans);
+            theLastValues = myNewTrans.getSnapShot();
         }
 
         /* Continue the loop */
         while (myIterator.hasNext()) {
             Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myEvent = myEntry.getValue();
+            BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the range, break the loop */
-            if (pRange.compareTo(myEvent.getDate()) < 0) {
+            if (pRange.compareTo(myTrans.getDate()) < 0) {
                 break;
             }
 
             /* Add to the map */
-            BucketSnapShot<T, E> myNewEvent = new BucketSnapShot<T, E>(myEvent, theBaseValues, theLastValues);
-            put(myEntry.getKey(), myNewEvent);
-            theLastValues = myNewEvent.getNewSnapShot();
+            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<T, E>(myTrans, theBaseValues, theLastValues);
+            put(myEntry.getKey(), myNewTrans);
+            theLastValues = myNewTrans.getNewSnapShot();
 
             /* Store latest value */
-            myLatest = myEvent;
+            myLatest = myTrans;
         }
 
         /* Store the values */
         theValues = (myLatest != null)
-                ? myLatest.getNewSnapShot()
-                : theBaseValues.getSnapShot();
+                                      ? myLatest.getNewSnapShot()
+                                      : theBaseValues.getSnapShot();
     }
 
     /**
-     * Register the event.
-     * @param pEvent the event to register.
+     * Register the transaction.
+     * @param pTrans the transaction to register.
      * @param pValues the values
      * @return the snapShot values
      */
-    protected T registerEvent(final Event pEvent,
-                              final T pValues) {
-        /* Allocate the event and add to map */
-        BucketSnapShot<T, E> myEvent = new BucketSnapShot<T, E>(pEvent, pValues, theLastValues);
-        put(pEvent.getId(), myEvent);
-        theLastValues = myEvent.getSnapShot();
+    protected T registerTransaction(final Transaction pTrans,
+                                    final T pValues) {
+        /* Allocate the transaction and add to map */
+        BucketSnapShot<T, E> myTrans = new BucketSnapShot<T, E>(pTrans, pValues, theLastValues);
+        put(pTrans.getId(), myTrans);
+        theLastValues = myTrans.getSnapShot();
 
         /* Return the values */
         return theLastValues;
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values (or null)
      */
-    public T getValuesForEvent(final Event pEvent) {
-        /* Locate the event in the map */
-        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
-        return (myEvent == null)
-                ? null
-                : myEvent.getSnapShot();
+    public T getValuesForTransaction(final Transaction pTrans) {
+        /* Locate the transaction in the map */
+        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        return (myTrans == null)
+                                ? null
+                                : myTrans.getSnapShot();
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaValue(final Event pEvent,
+    public JDecimal getDeltaValue(final Transaction pTrans,
                                   final E pAttr) {
-        /* Locate the event in the map */
-        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
-        return (myEvent == null)
-                ? null
-                : myEvent.getDeltaValue(pAttr);
+        /* Locate the transaction in the map */
+        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        return (myTrans == null)
+                                ? null
+                                : myTrans.getDeltaValue(pAttr);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain money delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JMoney getDeltaMoneyValue(final Event pEvent,
+    public JMoney getDeltaMoneyValue(final Transaction pTrans,
                                      final E pAttr) {
-        /* Locate the event in the map */
-        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
-        return (myEvent == null)
-                ? null
-                : myEvent.getDeltaMoneyValue(pAttr);
+        /* Locate the transaction in the map */
+        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        return (myTrans == null)
+                                ? null
+                                : myTrans.getDeltaMoneyValue(pAttr);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain units delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JUnits getDeltaUnitsValue(final Event pEvent,
+    public JUnits getDeltaUnitsValue(final Transaction pTrans,
                                      final E pAttr) {
-        /* Locate the event in the map */
-        BucketSnapShot<T, E> myEvent = get(pEvent.getId());
-        return (myEvent == null)
-                ? null
-                : myEvent.getDeltaUnitsValue(pAttr);
+        /* Locate the transaction in the map */
+        BucketSnapShot<T, E> myTrans = get(pTrans.getId());
+        return (myTrans == null)
+                                ? null
+                                : myTrans.getDeltaUnitsValue(pAttr);
     }
 }

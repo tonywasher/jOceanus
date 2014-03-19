@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 
 /**
  * Analysis Filter Selection.
@@ -38,11 +38,11 @@ public interface AnalysisFilterSelection {
      * Obtain analysis filter.
      * @return the filter
      */
-    NewAnalysisFilter<?> getFilter();
+    AnalysisFilter<?> getFilter();
 
     /**
      * Set analysis filter.
      * @param pFilter the filter
      */
-    void setFilter(final NewAnalysisFilter<?> pFilter);
+    void setFilter(final AnalysisFilter<?> pFilter);
 }

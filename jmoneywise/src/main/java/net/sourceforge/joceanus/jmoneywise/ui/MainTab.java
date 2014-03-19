@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -163,11 +162,6 @@ public class MainTab
     private MaintenanceTab theMaint = null;
 
     /**
-     * The comboList.
-     */
-    private final ComboSelect theComboList;
-
-    /**
      * The Load Sheet menus.
      */
     private JMenuItem theLoadSheet = null;
@@ -190,14 +184,6 @@ public class MainTab
     @Override
     public View getView() {
         return theView;
-    }
-
-    /**
-     * Obtain the comboList.
-     * @return the comboList
-     */
-    protected ComboSelect getComboList() {
-        return theComboList;
     }
 
     /**
@@ -230,9 +216,6 @@ public class MainTab
         /* Create the view */
         theView = new View(theLogger);
 
-        /* Create the combo list */
-        theComboList = new ComboSelect(theView);
-
         /* Build the main window */
         buildMainWindow(theView);
     }
@@ -251,7 +234,7 @@ public class MainTab
         theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
 
         /* Create the register table and add to tabbed pane */
-        theRegister = new Register(theView, theComboList);
+        theRegister = new Register(theView);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the SpotView Tab */
@@ -547,9 +530,8 @@ public class MainTab
 
                 /* If this is the data view */
             } else if (theView.equals(o)) {
-                /* Set Visibility and refresh the combo list */
+                /* Set Visibility */
                 setVisibility();
-                theComboList.refreshData();
 
                 /* else if it is one of the sub-panels */
             } else if (theRegister.equals(o) || theMaint.equals(o) || theSpotView.equals(o)) {

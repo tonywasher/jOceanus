@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Calendar;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Class to analyse tax liability.
@@ -154,8 +154,8 @@ public class TaxAnalysis {
         /* Determine tax details */
         TaxCalcBucketList myTax = theAnalysis.getTaxCalculations();
         theYear = (myTax != null)
-                ? myTax.getTaxYear()
-                : null;
+                                 ? myTax.getTaxYear()
+                                 : null;
     }
 
     /**
@@ -1267,8 +1267,8 @@ public class TaxAnalysis {
             /* Access the BasicGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CAPITALBASICRATE);
             myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
-                    ? theYear.getBasicTaxRate()
-                    : theYear.getCapTaxRate());
+                                                                  ? theYear.getBasicTaxRate()
+                                                                  : theYear.getCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Determine whether we need to use basic tax band */
@@ -1303,8 +1303,8 @@ public class TaxAnalysis {
             /* Access the HiGainsBucket */
             myTaxBucket = myList.getBucket(TaxCategoryClass.CAPITALHIRATE);
             myTaxBucket.setRate(myRegime.hasCapitalGainsAsIncome()
-                    ? theYear.getHiTaxRate()
-                    : theYear.getHiCapTaxRate());
+                                                                  ? theYear.getHiTaxRate()
+                                                                  : theYear.getHiCapTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
             /* Set the tax bucket and add the tax */

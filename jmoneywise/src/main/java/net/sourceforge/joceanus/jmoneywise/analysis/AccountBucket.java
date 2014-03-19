@@ -33,13 +33,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.AccountRateMap;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -47,9 +44,10 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * The Account Bucket class.
+ * @param <T> the account data type
  */
-public final class AccountBucket
-        implements JDataContents, Comparable<AccountBucket>, OrderedIdItem<Integer> {
+public abstract class AccountBucket<T extends AssetBase<T>>
+        implements JDataContents, Comparable<AccountBucket<T>>, OrderedIdItem<Integer> {
     /**
      * Resource Bundle.
      */
@@ -58,7 +56,7 @@ public final class AccountBucket
     /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
 
     /**
      * Analysis Field Id.
@@ -69,16 +67,6 @@ public final class AccountBucket
      * Account Field Id.
      */
     private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.ACCOUNT.getItemName());
-
-    /**
-     * Account Category Field Id.
-     */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.ACCOUNTCATEGORY.getItemName());
-
-    /**
-     * IsCreditCard Field Id.
-     */
-    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCredit"));
 
     /**
      * Base Field Id.
@@ -103,17 +91,7 @@ public final class AccountBucket
     /**
      * The account.
      */
-    private final Account theAccount;
-
-    /**
-     * The account category.
-     */
-    private final AccountCategory theCategory;
-
-    /**
-     * Is this a creditCard.
-     */
-    private final Boolean isCreditCard;
+    private final T theAccount;
 
     /**
      * The dataSet.
@@ -136,23 +114,12 @@ public final class AccountBucket
     private final BucketHistory<AccountValues, AccountAttribute> theHistory;
 
     @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
-        }
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        if (FIELD_ISCREDIT.equals(pField)) {
-            return isCreditCard;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return theHistory;
@@ -198,29 +165,13 @@ public final class AccountBucket
      * Obtain the account.
      * @return the account
      */
-    public Account getAccount() {
+    public T getAccount() {
         return theAccount;
     }
 
     @Override
     public Integer getOrderedId() {
         return theAccount.getId();
-    }
-
-    /**
-     * Obtain the account category.
-     * @return the account category
-     */
-    public AccountCategory getAccountCategory() {
-        return theCategory;
-    }
-
-    /**
-     * Is this a creditCard.
-     * @return true/false
-     */
-    public Boolean isCreditCard() {
-        return isCreditCard;
     }
 
     /**
@@ -272,25 +223,25 @@ public final class AccountBucket
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values (or null)
      */
-    public AccountValues getValuesForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getValuesForEvent(pEvent);
+    public AccountValues getValuesForTransaction(final Transaction pTrans) {
+        /* Obtain values for transaction */
+        return theHistory.getValuesForTransaction(pTrans);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Event pEvent,
-                                     final AccountAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaValue(pEvent, pAttr);
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final AccountAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaValue(pTrans, pAttr);
     }
 
     /**
@@ -352,18 +303,12 @@ public final class AccountBucket
      * @param pAnalysis the analysis
      * @param pAccount the account
      */
-    private AccountBucket(final Analysis pAnalysis,
-                          final Account pAccount) {
+    protected AccountBucket(final Analysis pAnalysis,
+                            final T pAccount) {
         /* Store the details */
         theAccount = pAccount;
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
-
-        /* Obtain category */
-        theCategory = theAccount.getAccountCategory();
-
-        /* Determine whether this is a credit card */
-        isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CREDITCARD);
 
         /* Create the history map */
         theHistory = new BucketHistory<AccountValues, AccountAttribute>(new AccountValues());
@@ -379,13 +324,11 @@ public final class AccountBucket
      * @param pBase the underlying bucket
      * @param pDate the date for the bucket
      */
-    private AccountBucket(final Analysis pAnalysis,
-                          final AccountBucket pBase,
-                          final JDateDay pDate) {
+    protected AccountBucket(final Analysis pAnalysis,
+                            final AccountBucket<T> pBase,
+                            final JDateDay pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
-        theCategory = pBase.getAccountCategory();
-        isCreditCard = pBase.isCreditCard();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -403,13 +346,11 @@ public final class AccountBucket
      * @param pBase the underlying bucket
      * @param pRange the range for the bucket
      */
-    private AccountBucket(final Analysis pAnalysis,
-                          final AccountBucket pBase,
-                          final JDateDayRange pRange) {
+    protected AccountBucket(final Analysis pAnalysis,
+                            final AccountBucket<T> pBase,
+                            final JDateDayRange pRange) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
-        theCategory = pBase.getAccountCategory();
-        isCreditCard = pBase.isCreditCard();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
 
@@ -422,7 +363,7 @@ public final class AccountBucket
     }
 
     @Override
-    public int compareTo(final AccountBucket pThat) {
+    public int compareTo(final AccountBucket<T> pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -449,7 +390,7 @@ public final class AccountBucket
         }
 
         /* Compare the Accounts */
-        AccountBucket myThat = (AccountBucket) pThat;
+        AccountBucket<?> myThat = (AccountBucket<?>) pThat;
         if (!getAccount().equals(myThat.getAccount())) {
             return false;
         }
@@ -464,42 +405,21 @@ public final class AccountBucket
     }
 
     /**
-     * Set opening balance.
-     * @param pBalance the opening balance
-     */
-    protected void setOpeningBalance(final JMoney pBalance) {
-        JMoney myValue = getNewValuation();
-        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
-        myValue.addAmount(pBalance);
-        myBaseValue.addAmount(pBalance);
-        setValue(AccountAttribute.VALUATION, myValue);
-    }
-
-    /**
      * Obtain new Valuation value.
      * @return the new valuation value
      */
-    private JMoney getNewValuation() {
+    protected JMoney getNewValuation() {
         JMoney myValue = theValues.getMoneyValue(AccountAttribute.VALUATION);
         return new JMoney(myValue);
     }
 
     /**
-     * Obtain new Spend value.
-     * @return the new spend value
-     */
-    private JMoney getNewSpend() {
-        JMoney mySpend = theValues.getMoneyValue(AccountAttribute.SPEND);
-        return new JMoney(mySpend);
-    }
-
-    /**
      * Adjust account for debit.
-     * @param pEvent the event causing the debit
+     * @param pTrans the transaction causing the debit
      */
-    protected void adjustForDebit(final Event pEvent) {
+    protected void adjustForDebit(final Transaction pTrans) {
         /* Access event amount */
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
@@ -507,72 +427,39 @@ public final class AccountBucket
             JMoney myValuation = getNewValuation();
             myValuation.subtractAmount(myAmount);
             setValue(AccountAttribute.VALUATION, myValuation);
-
-            /* If this is a credit card */
-            if (isCreditCard) {
-                /* Adjust spend */
-                JMoney mySpend = getNewSpend();
-                mySpend.addAmount(myAmount);
-                setValue(AccountAttribute.SPEND, mySpend);
-            }
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
      * Adjust account for credit.
-     * @param pEvent the event causing the credit
+     * @param pTrans the transaction causing the credit
      */
-    protected void adjustForCredit(final Event pEvent) {
+    protected void adjustForCredit(final Transaction pTrans) {
         /* Access event amount */
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* Adjust valuation */
             JMoney myValuation = getNewValuation();
-            myValuation.addAmount(pEvent.getAmount());
+            myValuation.addAmount(pTrans.getAmount());
             setValue(AccountAttribute.VALUATION, myValuation);
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
-     * Register the event.
-     * @param pEvent the event
+     * Register the transaction.
+     * @param pTrans the transaction
      */
-    protected void registerEvent(final Event pEvent) {
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
-    }
-
-    /**
-     * record the rate of the account at a given date.
-     * @param pDate the date of valuation
-     */
-    private void recordRate(final JDateDay pDate) {
-        /* Obtain the appropriate rate record */
-        AccountRateMap myRates = theAnalysis.getRates();
-        AccountRate myRate = myRates.getRateForDate(theAccount, pDate);
-        JDateDay myDate = theAccount.getMaturity();
-
-        /* If we have a rate */
-        if (myRate != null) {
-            /* Use Rate date instead */
-            if (myDate == null) {
-                myDate = myRate.getDate();
-            }
-
-            /* Store the rate */
-            setValue(AccountAttribute.RATE, myRate.getRate());
-        }
-
-        /* Store the maturity */
-        setValue(AccountAttribute.MATURITY, myDate);
+    protected void registerTransaction(final Transaction pTrans) {
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -604,6 +491,13 @@ public final class AccountBucket
     }
 
     /**
+     * record the rate of the account at a given date.
+     * @param pDate the date of valuation
+     */
+    protected void recordRate(final JDateDay pDate) {
+    }
+
+    /**
      * AccountValues class.
      */
     public static class AccountValues
@@ -611,7 +505,7 @@ public final class AccountBucket
         /**
          * SerialId.
          */
-        private static final long serialVersionUID = -6075471778802035084L;
+        private static final long serialVersionUID = -5253865468417987410L;
 
         /**
          * Constructor.
@@ -663,19 +557,16 @@ public final class AccountBucket
 
     /**
      * AccountBucket list class.
+     * @param <B> the account bucket data type
+     * @param <T> the account data type
      */
-    public static class AccountBucketList
-            extends OrderedIdList<Integer, AccountBucket>
+    public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
+            extends OrderedIdList<Integer, B>
             implements JDataContents {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucketList.class.getSimpleName());
 
         @Override
         public String formatObject() {
@@ -714,6 +605,14 @@ public final class AccountBucket
         private final JMoney theHiddenBaseTotal;
 
         /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
+        }
+
+        /**
          * Obtain the hidden base totals.
          * <p>
          * These base totals are missing because we discarded them for a dated analysis. However they are needed to ensure that totals balance.
@@ -725,40 +624,35 @@ public final class AccountBucket
 
         /**
          * Construct a top-level List.
+         * @param pClass the bucket class
          * @param pAnalysis the analysis
          */
-        public AccountBucketList(final Analysis pAnalysis) {
+        public AccountBucketList(final Class<B> pClass,
+                                 final Analysis pAnalysis) {
             /* Initialise class */
-            super(AccountBucket.class);
+            super(pClass);
             theAnalysis = pAnalysis;
-            theHiddenBaseTotal = null;
+            theHiddenBaseTotal = new JMoney();
         }
 
         /**
          * Construct a dated List.
-         * @param pAnalysis the analysis
          * @param pBase the base list
          * @param pDate the Date
          */
-        public AccountBucketList(final Analysis pAnalysis,
-                                 final AccountBucketList pBase,
-                                 final JDateDay pDate) {
-            /* Initialise class */
-            super(AccountBucket.class);
-            theAnalysis = pAnalysis;
-            theHiddenBaseTotal = new JMoney();
-
+        public void constructFromBase(final AccountBucketList<B, T> pBase,
+                                      final JDateDay pDate) {
             /* Loop through the buckets */
-            Iterator<AccountBucket> myIterator = pBase.listIterator();
+            Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                AccountBucket myCurr = myIterator.next();
+                B myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr, pDate);
+                B myBucket = newBucket(myCurr, pDate);
 
                 /* If the bucket is active */
                 if (myBucket.isActive()) {
-                    /* Record the rate and add to list */
+                    /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
                     append(myBucket);
 
@@ -773,26 +667,28 @@ public final class AccountBucket
         }
 
         /**
+         * Construct a dated bucket.
+         * @param pBase the base bucket
+         * @param pDate the Date
+         * @return the new bucket
+         */
+        protected abstract B newBucket(final B pBase,
+                                       final JDateDay pDate);
+
+        /**
          * Construct a ranged List.
-         * @param pAnalysis the analysis
          * @param pBase the base list
          * @param pRange the Date Range
          */
-        public AccountBucketList(final Analysis pAnalysis,
-                                 final AccountBucketList pBase,
-                                 final JDateDayRange pRange) {
-            /* Initialise class */
-            super(AccountBucket.class);
-            theAnalysis = pAnalysis;
-            theHiddenBaseTotal = null;
-
+        public void constructFromBase(final AccountBucketList<B, T> pBase,
+                                      final JDateDayRange pRange) {
             /* Loop through the buckets */
-            Iterator<AccountBucket> myIterator = pBase.listIterator();
+            Iterator<B> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                AccountBucket myCurr = myIterator.next();
+                B myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr, pRange);
+                B myBucket = newBucket(myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -803,18 +699,27 @@ public final class AccountBucket
         }
 
         /**
+         * Construct a ranged bucket.
+         * @param pBase the base bucket
+         * @param pRange the Range
+         * @return the new bucket
+         */
+        protected abstract B newBucket(final B pBase,
+                                       final JDateDayRange pRange);
+
+        /**
          * Obtain the AccountBucket for a given account.
          * @param pAccount the account
          * @return the bucket
          */
-        protected AccountBucket getBucket(final Account pAccount) {
+        protected B getBucket(final T pAccount) {
             /* Locate the bucket in the list */
-            AccountBucket myItem = findItemById(pAccount.getId());
+            B myItem = findItemById(pAccount.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new AccountBucket(theAnalysis, pAccount);
+                myItem = newBucket(pAccount);
 
                 /* Add to the list */
                 add(myItem);
@@ -822,6 +727,38 @@ public final class AccountBucket
 
             /* Return the bucket */
             return myItem;
+        }
+
+        /**
+         * Construct a standard bucket.
+         * @param pAccount the Account
+         * @return the new bucket
+         */
+        protected abstract B newBucket(final T pAccount);
+
+        /**
+         * Mark active accounts.
+         * @throws JOceanusException on error
+         */
+        protected void markActiveAccounts() throws JOceanusException {
+            /* Loop through the buckets */
+            Iterator<B> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                B myCurr = myIterator.next();
+                T myAccount = myCurr.getAccount();
+
+                /* If we are closed */
+                if (myAccount.isClosed()) {
+                    /* Ensure that we have correct closed/maturity dates */
+                    myAccount.adjustClosed();
+                }
+
+                /* If we are active */
+                if (myCurr.isActive()) {
+                    /* Set the account as relevant */
+                    myAccount.setRelevant();
+                }
+            }
         }
     }
 }

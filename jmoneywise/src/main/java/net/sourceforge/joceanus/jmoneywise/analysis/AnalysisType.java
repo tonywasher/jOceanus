@@ -29,9 +29,19 @@ import java.util.ResourceBundle;
  */
 public enum AnalysisType {
     /**
-     * Account.
+     * Deposit.
      */
-    ACCOUNT,
+    DEPOSIT,
+
+    /**
+     * Cash.
+     */
+    CASH,
+
+    /**
+     * Loan.
+     */
+    LOAN,
 
     /**
      * Security.
@@ -92,7 +102,9 @@ public enum AnalysisType {
      */
     public BucketAttribute[] getValues() {
         switch (this) {
-            case ACCOUNT:
+            case DEPOSIT:
+            case CASH:
+            case LOAN:
                 return AccountAttribute.values();
             case SECURITY:
                 return SecurityAttribute.values();

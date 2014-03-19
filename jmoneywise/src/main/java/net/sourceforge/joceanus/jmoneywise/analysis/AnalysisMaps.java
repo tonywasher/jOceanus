@@ -31,10 +31,12 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
@@ -53,13 +55,12 @@ public class AnalysisMaps {
      * Map of Security prices indexed by Security Id.
      */
     public static class SecurityPriceMap
-            extends NestedHashMap<Integer, AccountPrices>
+            extends NestedHashMap<Integer, SecurityPrices>
             implements JDataFormat {
-
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -4423424113521596997L;
+        private static final long serialVersionUID = -218979425405385527L;
 
         @Override
         public String formatObject() {
@@ -72,9 +73,9 @@ public class AnalysisMaps {
          */
         protected SecurityPriceMap(final MoneyWiseData pData) {
             /* Loop through the prices */
-            Iterator<AccountPrice> myIterator = pData.getAccountPrices().iterator();
+            Iterator<SecurityPrice> myIterator = pData.getSecurityPrices().iterator();
             while (myIterator.hasNext()) {
-                AccountPrice myPrice = myIterator.next();
+                SecurityPrice myPrice = myIterator.next();
 
                 /* Add to the map */
                 addPriceToMap(myPrice);
@@ -89,15 +90,15 @@ public class AnalysisMaps {
          * Add price to map.
          * @param pPrice the price to add.
          */
-        private void addPriceToMap(final AccountPrice pPrice) {
+        private void addPriceToMap(final SecurityPrice pPrice) {
             /* Access security prices */
-            Account mySecurity = pPrice.getSecurity();
-            AccountPrices myList = get(mySecurity.getId());
+            Security mySecurity = pPrice.getSecurity();
+            SecurityPrices myList = get(mySecurity.getId());
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
-                myList = new AccountPrices(mySecurity);
+                myList = new SecurityPrices(mySecurity);
                 put(mySecurity.getId(), myList);
             }
 
@@ -111,18 +112,21 @@ public class AnalysisMaps {
          * @param pDate the date
          * @return the latest price for the date.
          */
-        public JPrice getPriceForDate(final Account pSecurity,
+        public JPrice getPriceForDate(final AssetBase<?> pSecurity,
                                       final JDateDay pDate) {
+            /* Access as security */
+            Security mySecurity = Security.class.cast(pSecurity);
+
             /* Initialise price */
             JPrice myPrice = new JPrice();
 
             /* Access list for security */
-            AccountPrices myList = get(pSecurity.getId());
+            SecurityPrices myList = get(mySecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<AccountPrice> myIterator = myList.iterator();
+                Iterator<SecurityPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    AccountPrice myCurr = myIterator.next();
+                    SecurityPrice myCurr = myIterator.next();
 
                     /* Break if this is later than the date */
                     if (pDate.compareTo(myCurr.getDate()) > 0) {
@@ -132,11 +136,6 @@ public class AnalysisMaps {
                     /* Record as best price */
                     myPrice = myCurr.getPrice();
                 }
-
-                /* else if we have an alias */
-            } else if (pSecurity.getAlias() != null) {
-                /* Return price for alias */
-                return getPriceForDate(pSecurity.getAlias(), pDate);
             }
 
             /* return price */
@@ -149,19 +148,19 @@ public class AnalysisMaps {
          * @param pRange the date range
          * @return the two deep array of prices for the range.
          */
-        public JPrice[] getPricesForRange(final Account pSecurity,
+        public JPrice[] getPricesForRange(final Security pSecurity,
                                           final JDateDayRange pRange) {
             /* Set price */
             JPrice myFirst = new JPrice();
             JPrice myLatest = new JPrice();
 
             /* Access list for security */
-            AccountPrices myList = get(pSecurity.getId());
+            SecurityPrices myList = get(pSecurity.getId());
             if (myList != null) {
                 /* Loop through the prices */
-                Iterator<AccountPrice> myIterator = myList.iterator();
+                Iterator<SecurityPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    AccountPrice myCurr = myIterator.next();
+                    SecurityPrice myCurr = myIterator.next();
 
                     /* Check for the range of the date */
                     int iComp = pRange.compareTo(myCurr.getDate());
@@ -179,11 +178,6 @@ public class AnalysisMaps {
                         myFirst = myLatest;
                     }
                 }
-
-                /* else if we have an alias */
-            } else if (pSecurity.getAlias() != null) {
-                /* Return prices for alias */
-                return getPricesForRange(pSecurity.getAlias(), pRange);
             }
 
             /* Return the prices */
@@ -195,18 +189,18 @@ public class AnalysisMaps {
     /**
      * Price List class.
      */
-    private static final class AccountPrices
-            extends ArrayList<AccountPrice>
+    private static final class SecurityPrices
+            extends ArrayList<SecurityPrice>
             implements JDataContents {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -2152201611765871295L;
+        private static final long serialVersionUID = 5771676514199191344L;
 
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields("SecurityPriceList");
+        private static final JDataFields FIELD_DEFS = new JDataFields(SecurityPrices.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
@@ -229,7 +223,7 @@ public class AnalysisMaps {
         /**
          * The security.
          */
-        private final transient Account theSecurity;
+        private final transient Security theSecurity;
 
         @Override
         public String formatObject() {
@@ -248,22 +242,22 @@ public class AnalysisMaps {
          * Constructor.
          * @param pSecurity the security
          */
-        private AccountPrices(final Account pSecurity) {
+        private SecurityPrices(final Security pSecurity) {
             /* Store the security */
             theSecurity = pSecurity;
         }
     }
 
     /**
-     * Map of Account Rates indexed by Security Id.
+     * Map of Deposit Rates indexed by Deposit Id.
      */
-    public static class AccountRateMap
-            extends NestedHashMap<Integer, AccountRates>
+    public static class DepositRateMap
+            extends NestedHashMap<Integer, DepositRates>
             implements JDataFormat {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 7840526844888764877L;
+        private static final long serialVersionUID = -152121432889421521L;
 
         @Override
         public String formatObject() {
@@ -274,11 +268,11 @@ public class AnalysisMaps {
          * Constructor.
          * @param pData the dataSet
          */
-        protected AccountRateMap(final MoneyWiseData pData) {
+        protected DepositRateMap(final MoneyWiseData pData) {
             /* Loop through the rates */
-            Iterator<AccountRate> myIterator = pData.getAccountRates().iterator();
+            Iterator<DepositRate> myIterator = pData.getDepositRates().iterator();
             while (myIterator.hasNext()) {
-                AccountRate myRate = myIterator.next();
+                DepositRate myRate = myIterator.next();
 
                 /* Add to the map */
                 addRateToMap(myRate);
@@ -293,16 +287,16 @@ public class AnalysisMaps {
          * Add rate to map.
          * @param pRate the rate to add.
          */
-        private void addRateToMap(final AccountRate pRate) {
-            /* Access security prices */
-            Account myAccount = pRate.getAccount();
-            AccountRates myList = get(myAccount.getId());
+        private void addRateToMap(final DepositRate pRate) {
+            /* Access deposit rates */
+            Deposit myDeposit = pRate.getDeposit();
+            DepositRates myList = get(myDeposit.getId());
 
             /* If the list is new */
             if (myList == null) {
                 /* Allocate list and add to map */
-                myList = new AccountRates(myAccount);
-                put(myAccount.getId(), myList);
+                myList = new DepositRates(myDeposit);
+                put(myDeposit.getId(), myList);
             }
 
             /* Add the rate to the list */
@@ -311,19 +305,19 @@ public class AnalysisMaps {
 
         /**
          * Obtain rate for date.
-         * @param pAccount the account
+         * @param pDeposit the deposit
          * @param pDate the date
          * @return the latest rate for the date.
          */
-        public AccountRate getRateForDate(final Account pAccount,
+        public DepositRate getRateForDate(final Deposit pDeposit,
                                           final JDateDay pDate) {
             /* Access list for security */
-            AccountRates myList = get(pAccount.getId());
+            DepositRates myList = get(pDeposit.getId());
             if (myList != null) {
                 /* Loop through the rates */
-                Iterator<AccountRate> myIterator = myList.iterator();
+                Iterator<DepositRate> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
-                    AccountRate myCurr = myIterator.next();
+                    DepositRate myCurr = myIterator.next();
 
                     /* Access the date */
                     JDateDay myDate = myCurr.getDate();
@@ -344,18 +338,18 @@ public class AnalysisMaps {
     /**
      * Rate List class.
      */
-    private static final class AccountRates
-            extends ArrayList<AccountRate>
+    private static final class DepositRates
+            extends ArrayList<DepositRate>
             implements JDataContents {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = -5497123207341099896L;
+        private static final long serialVersionUID = 3547312488948000352L;
 
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields("AccountRateList");
+        private static final JDataFields FIELD_DEFS = new JDataFields(DepositRates.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
@@ -376,13 +370,13 @@ public class AnalysisMaps {
         }
 
         /**
-         * The account.
+         * The deposit.
          */
-        private final transient Account theAccount;
+        private final transient Deposit theDeposit;
 
         @Override
         public String formatObject() {
-            return theAccount.formatObject()
+            return theDeposit.formatObject()
                    + "("
                    + size()
                    + ")";
@@ -395,11 +389,11 @@ public class AnalysisMaps {
 
         /**
          * Constructor.
-         * @param pAccount the account
+         * @param pDeposit the deposit
          */
-        private AccountRates(final Account pAccount) {
-            /* Store the account */
-            theAccount = pAccount;
+        private DepositRates(final Deposit pDeposit) {
+            /* Store the deposit */
+            theDeposit = pDeposit;
         }
     }
 }

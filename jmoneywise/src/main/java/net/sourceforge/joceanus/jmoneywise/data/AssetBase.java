@@ -109,14 +109,14 @@ public abstract class AssetBase<T extends AssetBase<T>>
     private JDateDay theCloseDate;
 
     /**
-     * Earliest Event.
+     * Earliest Transaction.
      */
-    private Event theEarliest;
+    private Transaction theEarliest;
 
     /**
-     * Latest Event.
+     * Latest Transaction.
      */
-    private Event theLatest;
+    private Transaction theLatest;
 
     /**
      * Is this relevant?
@@ -183,18 +183,18 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
-     * Obtain Earliest event.
+     * Obtain Earliest transaction.
      * @return the event
      */
-    public Event getEarliest() {
+    public Transaction getEarliest() {
         return theEarliest;
     }
 
     /**
-     * Obtain Latest Event.
+     * Obtain Latest Transaction.
      * @return the event
      */
-    public Event getLatest() {
+    public Transaction getLatest() {
         return theLatest;
     }
 
@@ -500,16 +500,16 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
     @Override
     public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
-        /* If we are being touched by an event */
-        if (pSource instanceof Event) {
+        /* If we are being touched by a transaction */
+        if (pSource instanceof Transaction) {
             /* Access as event */
-            Event myEvent = (Event) pSource;
+            Transaction myTrans = (Transaction) pSource;
 
             /* Record the event */
             if (theEarliest == null) {
-                theEarliest = myEvent;
+                theEarliest = myTrans;
             }
-            theLatest = myEvent;
+            theLatest = myTrans;
         }
 
         /* Pass call onwards */

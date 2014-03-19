@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.newanalysis;
+package net.sourceforge.joceanus.jmoneywise.analysis;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket.DepositBucketList;
 
 /**
  * Deposit Category Bucket.

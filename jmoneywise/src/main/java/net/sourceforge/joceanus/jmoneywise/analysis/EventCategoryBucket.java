@@ -26,29 +26,31 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountType;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Event Category Bucket.
@@ -236,25 +238,25 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values (or null)
      */
-    public CategoryValues getValuesForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getValuesForEvent(pEvent);
+    public CategoryValues getValuesForTransaction(final Transaction pTrans) {
+        /* Obtain values for transaction */
+        return theHistory.getValuesForTransaction(pTrans);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Event pEvent,
-                                     final EventAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaValue(pEvent, pAttr);
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final EventAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaValue(pTrans, pAttr);
     }
 
     /**
@@ -455,16 +457,16 @@ public final class EventCategoryBucket
 
     /**
      * Add income value.
-     * @param pEvent the event causing the expense
+     * @param pTrans the transaction causing the expense
      * @param pValue the value to add
      */
-    protected void addIncome(final Event pEvent,
+    protected void addIncome(final Transaction pTrans,
                              final JMoney pValue) {
         /* Add the expense */
         addIncome(pValue);
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -495,16 +497,16 @@ public final class EventCategoryBucket
 
     /**
      * Add expense value.
-     * @param pEvent the event causing the expense
+     * @param pTrans the transaction causing the expense
      * @param pValue the value to add
      */
-    protected void addExpense(final Event pEvent,
+    protected void addExpense(final Transaction pTrans,
                               final JMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -522,16 +524,16 @@ public final class EventCategoryBucket
 
     /**
      * Subtract expense value.
-     * @param pEvent the event causing the expense
+     * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final Event pEvent,
+    protected void subtractExpense(final Transaction pTrans,
                                    final JMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
         /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -548,17 +550,19 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Add event to totals.
-     * @param pEvent the event
+     * Add transaction to totals.
+     * @param pTrans the transaction
      * @return isIncome true/false
      */
-    private boolean adjustValues(final Event pEvent) {
+    private boolean adjustValues(final Transaction pTrans) {
         /* Analyse the event */
-        AccountType myDebitType = AccountType.deriveType(pEvent.getDebit());
-        AccountType myCreditType = AccountType.deriveType(pEvent.getCredit());
-        TransactionType myCatTran = TransactionType.deriveType(pEvent.getCategory());
+        AssetBase<?> myDebit = pTrans.getDebit();
+        AssetBase<?> myCredit = pTrans.getCredit();
+        AssetType myDebitType = myDebit.getAssetType();
+        AssetType myCreditType = myCredit.getAssetType();
+        TransactionType myCatTran = TransactionType.deriveType(pTrans.getCategory());
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
         boolean isIncome = true;
 
         /* If this is an expense */
@@ -593,25 +597,25 @@ public final class EventCategoryBucket
                     myIncome.addAmount(myAmount);
 
                     /* Adjust for TaxCredit */
-                    JMoney myTaxCredit = pEvent.getTaxCredit();
+                    JMoney myTaxCredit = pTrans.getTaxCredit();
                     if (myTaxCredit != null) {
                         myIncome.addAmount(myTaxCredit);
                     }
 
                     /* Adjust for NatInsurance */
-                    JMoney myNatIns = pEvent.getNatInsurance();
+                    JMoney myNatIns = pTrans.getNatInsurance();
                     if (myNatIns != null) {
                         myIncome.addAmount(myNatIns);
                     }
 
                     /* Adjust for DeemedBenefit */
-                    JMoney myBenefit = pEvent.getDeemedBenefit();
+                    JMoney myBenefit = pTrans.getDeemedBenefit();
                     if (myBenefit != null) {
                         myIncome.addAmount(myBenefit);
                     }
 
                     /* Adjust for CharityDonation */
-                    JMoney myDonation = pEvent.getCharityDonation();
+                    JMoney myDonation = pTrans.getCharityDonation();
                     if (myDonation != null) {
                         myIncome.addAmount(myDonation);
                     }
@@ -622,8 +626,8 @@ public final class EventCategoryBucket
             }
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
 
         /* Return the income flag */
         return isIncome;
@@ -1017,78 +1021,79 @@ public final class EventCategoryBucket
 
         /**
          * Adjust category buckets.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param pCategory primary category
          */
-        protected void adjustCategories(final Event pEvent,
+        protected void adjustCategories(final Transaction pTrans,
                                         final EventCategory pCategory) {
             /* Adjust the primary category bucket */
             EventCategoryBucket myCatBucket = getBucket(pCategory);
-            myCatBucket.adjustValues(pEvent);
+            myCatBucket.adjustValues(pTrans);
 
             /* Adjust tax basis */
-            theTaxBasis.adjustBasis(pEvent, pCategory);
+            theTaxBasis.adjustBasis(pTrans, pCategory);
 
             /* Adjust for Tax Credit */
-            JMoney myTaxCredit = pEvent.getTaxCredit();
+            JMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
-                theTaxCredit.addExpense(pEvent, myTaxCredit);
-                theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXPAID, myTaxCredit);
+                theTaxCredit.addExpense(pTrans, myTaxCredit);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
             }
 
             /* Adjust for NatInsurance */
-            JMoney myNatIns = pEvent.getNatInsurance();
+            JMoney myNatIns = pTrans.getNatInsurance();
             if (myNatIns != null) {
-                theNatInsurance.addExpense(pEvent, myNatIns);
-                theTaxBasis.adjustValue(pEvent, TaxBasisClass.VIRTUAL, myNatIns);
+                theNatInsurance.addExpense(pTrans, myNatIns);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
-            JMoney myBenefit = pEvent.getDeemedBenefit();
+            JMoney myBenefit = pTrans.getDeemedBenefit();
             if (myBenefit != null) {
-                theDeemedBenefit.addExpense(pEvent, myBenefit);
-                theTaxBasis.adjustValue(pEvent, TaxBasisClass.VIRTUAL, myBenefit);
+                theDeemedBenefit.addExpense(pTrans, myBenefit);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myBenefit);
             }
 
             /* Adjust for Charity Donation */
-            JMoney myDonation = pEvent.getCharityDonation();
+            JMoney myDonation = pTrans.getCharityDonation();
             if (myDonation != null) {
-                theCharityDonation.addExpense(pEvent, myDonation);
-                theTaxBasis.adjustValue(pEvent, TaxBasisClass.EXPENSE, myDonation);
+                theCharityDonation.addExpense(pTrans, myDonation);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.EXPENSE, myDonation);
             }
         }
 
         /**
          * Adjust for Standard Gains.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param pGains the gains
          */
-        protected void adjustStandardGain(final Event pEvent,
+        protected void adjustStandardGain(final Transaction pTrans,
                                           final JMoney pGains) {
-
             /* Access debit account */
-            Account mySecurity = pEvent.getDebit();
+            AssetBase<?> myDebit = pTrans.getDebit();
+            Security mySecurity = Security.class.cast(myDebit);
+            Portfolio myPortfolio = pTrans.getPortfolio();
 
             /* If this is subject to capital gains */
-            if (mySecurity.getAccountCategoryClass().isCapitalGains()) {
+            if (mySecurity.getSecurityTypeClass().isCapitalGains()) {
                 /* Add to Capital Gains income/expense */
                 if (pGains.isPositive()) {
                     /* Adjust category */
-                    if (mySecurity.isTaxFree()) {
-                        theTaxFreeGains.addIncome(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, pGains);
+                    if (myPortfolio.isTaxFree()) {
+                        theTaxFreeGains.addIncome(pTrans, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
                     } else {
-                        theCapitalGains.addIncome(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, pGains);
+                        theCapitalGains.addIncome(pTrans, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSCAPITALGAINS, pGains);
                     }
                 } else {
                     /* Adjust category */
-                    if (mySecurity.isTaxFree()) {
-                        theTaxFreeGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXFREE, pGains);
+                    if (myPortfolio.isTaxFree()) {
+                        theTaxFreeGains.subtractExpense(pTrans, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, pGains);
                     } else {
-                        theCapitalGains.subtractExpense(pEvent, pGains);
-                        theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSCAPITALGAINS, pGains);
+                        theCapitalGains.subtractExpense(pTrans, pGains);
+                        theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSCAPITALGAINS, pGains);
                     }
                 }
             }
@@ -1096,31 +1101,31 @@ public final class EventCategoryBucket
 
         /**
          * Adjust for Taxable Gains.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param pReduction the income reduction
          */
-        protected void adjustTaxableGain(final Event pEvent,
+        protected void adjustTaxableGain(final Transaction pTrans,
                                          final JMoney pReduction) {
             /* Adjust Taxable Gains */
             theTaxableGains.subtractIncome(pReduction);
-            theTaxableGains.adjustValues(pEvent);
+            theTaxableGains.adjustValues(pTrans);
 
             /* Obtain normalised value */
-            JMoney myGains = new JMoney(pEvent.getAmount());
+            JMoney myGains = new JMoney(pTrans.getAmount());
             myGains.subtractAmount(pReduction);
 
             /* Adjust for Tax Credit */
-            JMoney myTaxCredit = pEvent.getTaxCredit();
+            JMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
-                theTaxCredit.addExpense(pEvent, myTaxCredit);
+                theTaxCredit.addExpense(pTrans, myTaxCredit);
                 myGains.addAmount(myTaxCredit);
 
                 /* Adjust tax basis */
-                theTaxBasis.adjustValue(pEvent, TaxBasisClass.TAXPAID, myTaxCredit);
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
             }
 
             /* Adjust tax basis */
-            theTaxBasis.adjustValue(pEvent, TaxBasisClass.GROSSTAXABLEGAINS, myGains);
+            theTaxBasis.adjustValue(pTrans, TaxBasisClass.GROSSTAXABLEGAINS, myGains);
         }
 
         /**

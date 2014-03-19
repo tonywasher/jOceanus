@@ -33,11 +33,12 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -96,7 +97,7 @@ public final class PayeeBucket
     /**
      * The payee.
      */
-    private final Account thePayee;
+    private final Payee thePayee;
 
     /**
      * The dataSet.
@@ -177,7 +178,7 @@ public final class PayeeBucket
      * Obtain the payee.
      * @return the payee account
      */
-    public Account getPayee() {
+    public Payee getPayee() {
         return thePayee;
     }
 
@@ -235,25 +236,25 @@ public final class PayeeBucket
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the transaction
      * @return the values (or null)
      */
-    public PayeeValues getValuesForEvent(final Event pEvent) {
-        /* Obtain values for event */
-        return theHistory.getValuesForEvent(pEvent);
+    public PayeeValues getValuesForTransaction(final Transaction pTrans) {
+        /* Obtain values for transaction */
+        return theHistory.getValuesForTransaction(pTrans);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Event pEvent,
-                                     final PayeeAttribute pAttr) {
-        /* Obtain delta for event */
-        return theHistory.getDeltaValue(pEvent, pAttr);
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final PayeeAttribute pAttr) {
+        /* Obtain delta for transaction */
+        return theHistory.getDeltaValue(pTrans, pAttr);
     }
 
     /**
@@ -316,7 +317,7 @@ public final class PayeeBucket
      * @param pPayee the payee
      */
     private PayeeBucket(final Analysis pAnalysis,
-                        final Account pPayee) {
+                        final Payee pPayee) {
         /* Store the details */
         thePayee = pPayee;
         theAnalysis = pAnalysis;
@@ -436,33 +437,33 @@ public final class PayeeBucket
 
     /**
      * Adjust account for debit.
-     * @param pEvent the event causing the debit
+     * @param pTrans the transaction causing the debit
      */
-    protected void adjustForDebit(final Event pEvent) {
+    protected void adjustForDebit(final Transaction pTrans) {
         /* Analyse the event */
-        TransactionType myCatTran = TransactionType.deriveType(pEvent.getCategory());
+        TransactionType myCatTran = TransactionType.deriveType(pTrans.getCategory());
         JMoney myIncome = null;
         JMoney myExpense = null;
 
         /* Access amount */
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
         if (myAmount.isNonZero()) {
             /* If this is a refunded expense */
             if (myCatTran.isExpense()) {
                 /* Update the expense */
                 myExpense = getNewExpense();
-                myExpense.subtractAmount(pEvent.getAmount());
+                myExpense.subtractAmount(myAmount);
 
                 /* else this is an income */
             } else {
                 /* Update the income */
                 myIncome = getNewIncome();
-                myIncome.addAmount(pEvent.getAmount());
+                myIncome.addAmount(myAmount);
             }
         }
 
         /* If there is a non-zero TaxCredit */
-        JMoney myTaxCred = pEvent.getTaxCredit();
+        JMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (myIncome == null) {
@@ -472,7 +473,7 @@ public final class PayeeBucket
         }
 
         /* If there is National Insurance */
-        JMoney myNatIns = pEvent.getNatInsurance();
+        JMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
             if (myIncome == null) {
@@ -482,7 +483,7 @@ public final class PayeeBucket
         }
 
         /* If there is Charity Donation */
-        JMoney myDonation = pEvent.getCharityDonation();
+        JMoney myDonation = pTrans.getCharityDonation();
         if (myDonation != null) {
             /* Adjust for Charity Donation */
             if (myIncome == null) {
@@ -503,17 +504,17 @@ public final class PayeeBucket
             setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
      * Adjust account for credit.
-     * @param pEvent the event causing the credit
+     * @param pTrans the transaction causing the credit
      */
-    protected void adjustForCredit(final Event pEvent) {
+    protected void adjustForCredit(final Transaction pTrans) {
         /* Access amount */
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
         if (myAmount.isNonZero()) {
             /* Update the expense */
             JMoney myExpense = getNewExpense();
@@ -521,17 +522,17 @@ public final class PayeeBucket
             setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
-     * Adjust account for credit.
-     * @param pEvent the event causing the credit
+     * Adjust account for tax credit.
+     * @param pTrans the transaction causing the credit
      */
-    protected void adjustForTaxCredit(final Event pEvent) {
+    protected void adjustForTaxCredit(final Transaction pTrans) {
         /* Access amount */
-        JMoney myAmount = pEvent.getTaxCredit();
+        JMoney myAmount = pTrans.getTaxCredit();
         if (myAmount.isNonZero()) {
             /* Update the expense */
             JMoney myIncome = getNewIncome();
@@ -539,26 +540,26 @@ public final class PayeeBucket
             setValue(PayeeAttribute.INCOME, myIncome);
         }
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
      * Adjust account for tax payments.
-     * @param pEvent the event causing the payments
+     * @param pTrans the transaction causing the payments
      */
-    protected void adjustForTaxPayments(final Event pEvent) {
+    protected void adjustForTaxPayments(final Transaction pTrans) {
         JMoney myExpense = null;
 
         /* Adjust for Tax credit */
-        JMoney myTaxCred = pEvent.getTaxCredit();
+        JMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             myExpense = getNewExpense();
             myExpense.addAmount(myTaxCred);
         }
 
         /* Adjust for national insurance */
-        JMoney myNatIns = pEvent.getNatInsurance();
+        JMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             if (myExpense == null) {
                 myExpense = getNewExpense();
@@ -571,10 +572,9 @@ public final class PayeeBucket
             /* Set value */
             setValue(PayeeAttribute.EXPENSE, myExpense);
 
-            /* Register the event in the history */
-            theHistory.registerEvent(pEvent, theValues);
+            /* Register the transaction in the history */
+            theHistory.registerTransaction(pTrans, theValues);
         }
-
     }
 
     /**
@@ -605,16 +605,16 @@ public final class PayeeBucket
 
     /**
      * Add expense value.
-     * @param pEvent the event causing the expense
+     * @param pTrans the transaction causing the expense
      * @param pValue the value to add
      */
-    protected void addExpense(final Event pEvent,
+    protected void addExpense(final Transaction pTrans,
                               final JMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -632,16 +632,16 @@ public final class PayeeBucket
 
     /**
      * Subtract expense value.
-     * @param pEvent the event causing the expense
+     * @param pTrans the transaction causing the expense
      * @param pValue the value to subtract
      */
-    protected void subtractExpense(final Event pEvent,
+    protected void subtractExpense(final Transaction pTrans,
                                    final JMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
-        /* Register the event in the history */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction in the history */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -701,7 +701,7 @@ public final class PayeeBucket
         /**
          * SerialId.
          */
-        private static final long serialVersionUID = -8908601440676932099L;
+        private static final long serialVersionUID = 3967662185816045682L;
 
         /**
          * Constructor.
@@ -931,23 +931,26 @@ public final class PayeeBucket
         }
 
         /**
-         * Obtain the PayeeBucket for a given account.
-         * @param pAccount the account
+         * Obtain the PayeeBucket for a given payee.
+         * @param pPayee the payee
          * @return the bucket
          */
-        protected PayeeBucket getBucket(final Account pAccount) {
+        protected PayeeBucket getBucket(final AssetBase<?> pPayee) {
             /* Handle null payee */
-            if (pAccount == null) {
+            if (pPayee == null) {
                 return null;
             }
 
+            /* Access as payee */
+            Payee myPayee = Payee.class.cast(pPayee);
+
             /* Locate the bucket in the list */
-            PayeeBucket myItem = findItemById(pAccount.getId());
+            PayeeBucket myItem = findItemById(myPayee.getId());
 
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new PayeeBucket(theAnalysis, pAccount);
+                myItem = new PayeeBucket(theAnalysis, myPayee);
 
                 /* Add to the list */
                 add(myItem);
@@ -958,16 +961,16 @@ public final class PayeeBucket
         }
 
         /**
-         * Obtain the PayeeBucket for a given accountCategory class.
+         * Obtain the PayeeBucket for a given payee class.
          * @param pClass the account category class
          * @return the bucket
          */
-        protected PayeeBucket getBucket(final AccountCategoryClass pClass) {
-            /* Determine required category */
-            Account myAccount = theData.getAccounts().getSingularClass(pClass);
+        protected PayeeBucket getBucket(final PayeeTypeClass pClass) {
+            /* Determine required payee */
+            Payee myPayee = theData.getPayees().getSingularClass(pClass);
 
             /* Return the bucket */
-            return getBucket(myAccount);
+            return getBucket(myPayee);
         }
 
         /**

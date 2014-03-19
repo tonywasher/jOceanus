@@ -38,11 +38,11 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
@@ -175,7 +175,7 @@ public class PayeeAnalysisSelect
     }
 
     @Override
-    public void setFilter(final NewAnalysisFilter<?> pFilter) {
+    public void setFilter(final AnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof PayeeFilter) {
             /* Access filter */

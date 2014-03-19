@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -194,7 +194,7 @@ public class AnalysisStatement
     /**
      * The analysis filter.
      */
-    private transient NewAnalysisFilter<?> theFilter;
+    private transient AnalysisFilter<?> theFilter;
 
     /**
      * Transactions.
@@ -236,7 +236,7 @@ public class AnalysisStatement
         theDataAnalysis = myDataMgr.new JDataEntry(AnalysisStatement.class.getSimpleName());
         theDataAnalysis.addAsChildOf(mySection);
         theDataAnalysis.setObject(theUpdateSet);
-        theDataFilter = myDataMgr.new JDataEntry(NewAnalysisFilter.class.getSimpleName());
+        theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
         theDataFilter.addAsChildOf(mySection);
 
         /* Create the Analysis Selection */
@@ -593,7 +593,7 @@ public class AnalysisStatement
         }
 
         /**
-         * Obtain the value for the event column.
+         * Obtain the value for the column.
          * @param pTrans transaction
          * @param pColIndex column index
          * @return the value

@@ -26,19 +26,19 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxAttribute;
+import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategorySection;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.ChargeableEvent;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisAttribute;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxCalcBucket;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxCalcBucket.TaxAttribute;
-import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxCalcBucket.TaxCalcBucketList;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 
 import org.w3c.dom.Document;

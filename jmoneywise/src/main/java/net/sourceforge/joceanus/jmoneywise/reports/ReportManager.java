@@ -38,7 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
-import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
@@ -188,7 +188,7 @@ public class ReportManager
                 /* else if this is a filter reference */
             } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
                 /* Process the filter reference */
-                NewAnalysisFilter<?> myFilter = theReport.processFilterReference(pId);
+                AnalysisFilter<?> myFilter = theReport.processFilterReference(pId);
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {

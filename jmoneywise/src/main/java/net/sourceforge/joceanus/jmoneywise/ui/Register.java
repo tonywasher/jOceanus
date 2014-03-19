@@ -30,23 +30,14 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -54,16 +45,15 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.ui.controls.ComboSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -77,12 +67,9 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
-import net.sourceforge.joceanus.jtethys.decimal.JDilution;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -90,7 +77,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class Register
-        extends JDataTable<Event, MoneyWiseDataType> {
+        extends JDataTable<Transaction, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -104,7 +91,7 @@ public class Register
     /**
      * Date column title.
      */
-    protected static final String TITLE_DATE = Event.FIELD_DATE.getName();
+    protected static final String TITLE_DATE = Transaction.FIELD_DATE.getName();
 
     /**
      * Description column title.
@@ -114,47 +101,22 @@ public class Register
     /**
      * CategoryType column title.
      */
-    protected static final String TITLE_CATEGORY = Event.FIELD_CATEGORY.getName();
+    protected static final String TITLE_CATEGORY = Transaction.FIELD_CATEGORY.getName();
 
     /**
      * Amount column title.
      */
-    protected static final String TITLE_AMOUNT = Event.FIELD_AMOUNT.getName();
+    protected static final String TITLE_AMOUNT = Transaction.FIELD_AMOUNT.getName();
 
     /**
      * Debit column title.
      */
-    protected static final String TITLE_DEBIT = Event.FIELD_DEBIT.getName();
+    protected static final String TITLE_DEBIT = Transaction.FIELD_DEBIT.getName();
 
     /**
      * Credit column title.
      */
-    protected static final String TITLE_CREDIT = Event.FIELD_CREDIT.getName();
-
-    /**
-     * DebitUnits column title.
-     */
-    protected static final String TITLE_DEBUNITS = NLS_BUNDLE.getString("TitleDebitUnits");
-
-    /**
-     * CreditUnits column title.
-     */
-    protected static final String TITLE_CREDUNITS = NLS_BUNDLE.getString("TitleCreditUnits");
-
-    /**
-     * Dilution column title.
-     */
-    protected static final String TITLE_DILUTE = NLS_BUNDLE.getString("TitleDilution");
-
-    /**
-     * TaxCredit column title.
-     */
-    protected static final String TITLE_TAXCRED = NLS_BUNDLE.getString("TitleTax");
-
-    /**
-     * Years column title.
-     */
-    protected static final String TITLE_YEARS = NLS_BUNDLE.getString("TitleYears");
+    protected static final String TITLE_CREDIT = Transaction.FIELD_CREDIT.getName();
 
     /**
      * PopUp viewAccount.
@@ -212,14 +174,14 @@ public class Register
     private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
-     * Event Update Entry.
+     * Transaction Update Entry.
      */
-    private final transient UpdateEntry<Event, MoneyWiseDataType> theEventEntry;
+    private final transient UpdateEntry<Transaction, MoneyWiseDataType> theEventEntry;
 
     /**
-     * EventInfo Update Entry.
+     * TransactionInfo Update Entry.
      */
-    private final transient UpdateEntry<EventInfo, MoneyWiseDataType> theInfoEntry;
+    private final transient UpdateEntry<TransactionInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * Table Model.
@@ -227,9 +189,9 @@ public class Register
     private final RegisterModel theModel;
 
     /**
-     * Events.
+     * Transactions.
      */
-    private transient EventList theEvents = null;
+    private transient TransactionList theTransactions = null;
 
     /**
      * The panel.
@@ -265,11 +227,6 @@ public class Register
      * Error Panel.
      */
     private final ErrorPanel theError;
-
-    /**
-     * ComboList.
-     */
-    private final transient ComboSelect theComboList;
 
     /**
      * Obtain the panel.
@@ -315,71 +272,6 @@ public class Register
     private static final int COLUMN_CREDIT = 5;
 
     /**
-     * DebitUnits column id.
-     */
-    private static final int COLUMN_DEBUNITS = 6;
-
-    /**
-     * CreditUnits column id.
-     */
-    private static final int COLUMN_CREDUNITS = 7;
-
-    /**
-     * Dilution column id.
-     */
-    private static final int COLUMN_DILUTE = 8;
-
-    /**
-     * Tax Credit column id.
-     */
-    private static final int COLUMN_TAXCRED = 9;
-
-    /**
-     * Years column id.
-     */
-    private static final int COLUMN_YEARS = 10;
-
-    /**
-     * Category column width.
-     */
-    private static final int WIDTH_CATEGORY = 110;
-
-    /**
-     * Amount column width.
-     */
-    private static final int WIDTH_AMOUNT = 90;
-
-    /**
-     * Debit column width.
-     */
-    private static final int WIDTH_DEBIT = 130;
-
-    /**
-     * Credit column width.
-     */
-    private static final int WIDTH_CREDIT = 130;
-
-    /**
-     * Units column width.
-     */
-    private static final int WIDTH_UNITS = 80;
-
-    /**
-     * Dilution column width.
-     */
-    private static final int WIDTH_DILUTE = 70;
-
-    /**
-     * Tax Credit column width.
-     */
-    private static final int WIDTH_TAXCRED = 90;
-
-    /**
-     * Years column width.
-     */
-    private static final int WIDTH_YEARS = 30;
-
-    /**
      * Panel width.
      */
     private static final int PANEL_WIDTH = 980;
@@ -392,20 +284,17 @@ public class Register
     /**
      * Constructor for Register Window.
      * @param pView the data view
-     * @param pCombo the combo manager
      */
-    public Register(final View pView,
-                    final ComboSelect pCombo) {
+    public Register(final View pView) {
         /* Record the passed details */
         theView = pView;
-        theComboList = pCombo;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theEventEntry = theUpdateSet.registerClass(Event.class);
-        theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
+        theEventEntry = theUpdateSet.registerClass(Transaction.class);
+        theInfoEntry = theUpdateSet.registerClass(TransactionInfo.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
@@ -502,8 +391,8 @@ public class Register
     @Override
     public void notifyChanges() {
         /* Find the edit state */
-        if (theEvents != null) {
-            theEvents.findEditState();
+        if (theTransactions != null) {
+            theTransactions.findEditState();
         }
 
         /* Update the table buttons */
@@ -521,19 +410,17 @@ public class Register
      */
     public void setSelection(final JDateDayRange pRange) throws JOceanusException {
         theRange = pRange;
-        theEvents = null;
-        EventInfoList myInfo = null;
+        theTransactions = null;
+        TransactionInfoList myInfo = null;
         if (theRange != null) {
             /* Get the Rates edit list */
             MoneyWiseData myData = theView.getData();
-            EventList myEvents = myData.getEvents();
-            theEvents = myEvents.deriveEditList(pRange);
-            myInfo = theEvents.getEventInfo();
-
-            theColumns.setDateEditorRange(theRange);
+            TransactionList myTrans = myData.getTransactions();
+            theTransactions = myTrans.deriveEditList(pRange);
+            myInfo = theTransactions.getTransactionInfo();
         }
-        setList(theEvents);
-        theEventEntry.setDataList(theEvents);
+        setList(theTransactions);
+        theEventEntry.setDataList(theTransactions);
         theInfoEntry.setDataList(myInfo);
         theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
@@ -566,31 +453,6 @@ public class Register
 
             /* Restore the original selection */
             theSelect.restoreSavePoint();
-        }
-    }
-
-    /**
-     * Obtain the correct ComboBox for the given row/column.
-     * @param row the row
-     * @param column the column
-     * @return the comboBox
-     */
-    @Override
-    public JComboBox<?> getComboBox(final int row,
-                                    final int column) {
-        /* Access the event */
-        Event myEvent = theEvents.get(row);
-
-        /* Switch on column */
-        switch (column) {
-            case COLUMN_CATEGORY:
-                return theComboList.getAllCategories();
-            case COLUMN_CREDIT:
-                return theComboList.getCreditAccounts(myEvent.getCategory(), myEvent.getDebit());
-            case COLUMN_DEBIT:
-                return theComboList.getDebitAccounts(myEvent.getCategory());
-            default:
-                return null;
         }
     }
 
@@ -678,7 +540,7 @@ public class Register
      * Register table model.
      */
     public final class RegisterModel
-            extends JDataTableModel<Event, MoneyWiseDataType> {
+            extends JDataTableModel<Transaction, MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -709,191 +571,40 @@ public class Register
          */
         @Override
         public int getRowCount() {
-            return (theEvents == null)
-                                      ? 0
-                                      : theEvents.size();
+            return (theTransactions == null)
+                                            ? 0
+                                            : theTransactions.size();
         }
 
         @Override
         public String getColumnName(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_DATE:
-                    return TITLE_DATE;
-                case COLUMN_DESC:
-                    return TITLE_DESC;
-                case COLUMN_CATEGORY:
-                    return TITLE_CATEGORY;
-                case COLUMN_AMOUNT:
-                    return TITLE_AMOUNT;
-                case COLUMN_CREDIT:
-                    return TITLE_CREDIT;
-                case COLUMN_DEBIT:
-                    return TITLE_DEBIT;
-                case COLUMN_DEBUNITS:
-                    return TITLE_DEBUNITS;
-                case COLUMN_CREDUNITS:
-                    return TITLE_CREDUNITS;
-                case COLUMN_DILUTE:
-                    return TITLE_DILUTE;
-                case COLUMN_TAXCRED:
-                    return TITLE_TAXCRED;
-                case COLUMN_YEARS:
-                    return TITLE_YEARS;
-                default:
-                    return null;
-            }
+            /* Obtain the column name */
+            return theColumns.getColumnName(pColIndex);
         }
 
         @Override
-        public Class<?> getColumnClass(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_DESC:
-                    return String.class;
-                case COLUMN_CATEGORY:
-                    return String.class;
-                case COLUMN_CREDIT:
-                    return String.class;
-                case COLUMN_DEBIT:
-                    return String.class;
-                default:
-                    return Object.class;
-            }
-        }
-
-        @Override
-        public Event getItemAtIndex(final int pRowIndex) {
+        public Transaction getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theEvents.get(pRowIndex);
+            return theTransactions.get(pRowIndex);
         }
 
         @Override
-        public JDataField getFieldForCell(final Event pEvent,
+        public JDataField getFieldForCell(final Transaction pTrans,
                                           final int pColIndex) {
-            /* Switch on column */
-            switch (pColIndex) {
-                case COLUMN_DATE:
-                    return Event.FIELD_DATE;
-                case COLUMN_DESC:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
-                case COLUMN_CATEGORY:
-                    return Event.FIELD_CATEGORY;
-                case COLUMN_AMOUNT:
-                    return Event.FIELD_AMOUNT;
-                case COLUMN_CREDIT:
-                    return Event.FIELD_CREDIT;
-                case COLUMN_DEBIT:
-                    return Event.FIELD_DEBIT;
-                case COLUMN_DEBUNITS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.DEBITUNITS);
-                case COLUMN_CREDUNITS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS);
-                case COLUMN_DILUTE:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.DILUTION);
-                case COLUMN_TAXCRED:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.TAXCREDIT);
-                case COLUMN_YEARS:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.QUALIFYYEARS);
-                default:
-                    return null;
-            }
+            return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final Event pEvent,
+        public boolean isCellEditable(final Transaction pTrans,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public Object getItemValue(final Event pEvent,
+        public Object getItemValue(final Transaction pTrans,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_DATE:
-                    return pEvent.getDate();
-                case COLUMN_CATEGORY:
-                    return pEvent.getCategory();
-                case COLUMN_CREDIT:
-                    return pEvent.getCredit();
-                case COLUMN_DEBIT:
-                    return pEvent.getDebit();
-                case COLUMN_AMOUNT:
-                    return pEvent.getAmount();
-                case COLUMN_DILUTE:
-                    return pEvent.getDilution();
-                case COLUMN_TAXCRED:
-                    return pEvent.getTaxCredit();
-                case COLUMN_DEBUNITS:
-                    return pEvent.getDebitUnits();
-                case COLUMN_CREDUNITS:
-                    return pEvent.getCreditUnits();
-                case COLUMN_YEARS:
-                    return pEvent.getYears();
-                case COLUMN_DESC:
-                    return pEvent.getComments();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public void setItemValue(final Event pEvent,
-                                 final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
-            /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(pEvent.getCategory(), pEvent.getDebit());
-
-            /* Store the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_DATE:
-                    pEvent.setDate((JDateDay) pValue);
-                    break;
-                case COLUMN_DESC:
-                    pEvent.setComments((String) pValue);
-                    break;
-                case COLUMN_CATEGORY:
-                    pEvent.setCategory((EventCategory) pValue);
-                    /* If the need for a tax credit has changed */
-                    if (needsTaxCredit != Event.needsTaxCredit(pEvent.getCategory(), pEvent.getDebit())) {
-                        /* Determine new Tax Credit */
-                        if (needsTaxCredit) {
-                            pEvent.setTaxCredit(null);
-                        } else {
-                            pEvent.setTaxCredit(pEvent.calculateTaxCredit());
-                        }
-                    }
-                    break;
-                case COLUMN_AMOUNT:
-                    pEvent.setAmount((JMoney) pValue);
-                    /* Determine new Tax Credit if required */
-                    if (needsTaxCredit) {
-                        pEvent.setTaxCredit(pEvent.calculateTaxCredit());
-                    }
-                    break;
-                case COLUMN_DILUTE:
-                    pEvent.setDilution((JDilution) pValue);
-                    break;
-                case COLUMN_TAXCRED:
-                    pEvent.setTaxCredit((JMoney) pValue);
-                    break;
-                case COLUMN_YEARS:
-                    pEvent.setYears((Integer) pValue);
-                    break;
-                case COLUMN_DEBUNITS:
-                    pEvent.setDebitUnits((JUnits) pValue);
-                    break;
-                case COLUMN_CREDUNITS:
-                    pEvent.setCreditUnits((JUnits) pValue);
-                    break;
-                case COLUMN_CREDIT:
-                    pEvent.setCredit((Account) pValue);
-                    break;
-                case COLUMN_DEBIT:
-                    pEvent.setDebit((Account) pValue);
-                    break;
-                default:
-                    break;
-            }
+            return theColumns.getItemValue(pTrans, pColIndex);
         }
     }
 
@@ -901,7 +612,7 @@ public class Register
      * Register mouse listener.
      */
     private final class RegisterMouse
-            extends JDataTableMouse<Event, MoneyWiseDataType> {
+            extends JDataTableMouse<Transaction, MoneyWiseDataType> {
         /**
          * Constructor.
          */
@@ -936,31 +647,31 @@ public class Register
                     continue;
                 }
 
-                /* Access as event */
-                Event myEvent = (Event) myRow;
+                /* Access as transaction */
+                Transaction myTrans = (Transaction) myRow;
 
                 /* Enable null Units if we have units */
-                if (myEvent.getDebitUnits() != null) {
+                if (myTrans.getDebitUnits() != null) {
                     enableNullDebUnits = true;
                 }
 
                 /* Enable null CreditUnits if we have units */
-                if (myEvent.getCreditUnits() != null) {
+                if (myTrans.getCreditUnits() != null) {
                     enableNullCredUnits = true;
                 }
 
                 /* Enable null Tax if we have tax */
-                if (myEvent.getTaxCredit() != null) {
+                if (myTrans.getTaxCredit() != null) {
                     enableNullTax = true;
                 }
 
                 /* Enable null Years if we have years */
-                if (myEvent.getYears() != null) {
+                if (myTrans.getYears() != null) {
                     enableNullYears = true;
                 }
 
                 /* Enable null Dilution if we have dilution */
-                if (myEvent.getDilution() != null) {
+                if (myTrans.getDilution() != null) {
                     enableNullDilution = true;
                 }
             }
@@ -1041,12 +752,12 @@ public class Register
                 }
 
                 /* Access as event */
-                Event myEvent = (Event) myRow;
-                JMoney myTax = myEvent.getTaxCredit();
-                EventCategory myCat = myEvent.getCategory();
+                Transaction myTrans = (Transaction) myRow;
+                JMoney myTax = myTrans.getTaxCredit();
+                EventCategory myCat = myTrans.getCategory();
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = (myCat != null) && (myEvent.isInterest() || myEvent.isDividend());
+                boolean isTaxable = (myCat != null) && (myTrans.isInterest() || myTrans.isDividend());
                 if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
@@ -1086,15 +797,15 @@ public class Register
                 return;
             }
 
-            /* Access the event */
-            Event myEvent = theModel.getItemAtIndex(myRow);
+            /* Access the transaction */
+            Transaction myTrans = theModel.getItemAtIndex(myRow);
 
             /* If the column is Credit */
-            Account myAccount;
+            AssetBase<?> myAccount;
             if (myCol == COLUMN_CREDIT) {
-                myAccount = myEvent.getCredit();
+                myAccount = myTrans.getCredit();
             } else if (myCol == COLUMN_DEBIT) {
-                myAccount = myEvent.getDebit();
+                myAccount = myTrans.getDebit();
             } else {
                 myAccount = null;
             }
@@ -1128,10 +839,6 @@ public class Register
             }
         }
 
-        /**
-         * Perform actions for controls/pop-ups on this table.
-         * @param evt the event
-         */
         @Override
         public void actionPerformed(final ActionEvent evt) {
             String myCmd = evt.getActionCommand();
@@ -1139,33 +846,8 @@ public class Register
             /* Cancel any editing */
             Register.this.cancelEditing();
 
-            /* If this is a set null debit units command */
-            if (myCmd.equals(POPUP_NULLDEBUNITS)) {
-                /* Set Units column to null */
-                setColumnToNull(COLUMN_DEBUNITS);
-
-                /* If this is a set null credit units command */
-            } else if (myCmd.equals(POPUP_NULLCREDUNITS)) {
-                /* Set Credit Units column to null */
-                setColumnToNull(COLUMN_CREDUNITS);
-
-                /* else if this is a set null tax command */
-            } else if (myCmd.equals(POPUP_NULLTAX)) {
-                /* Set Tax column to null */
-                setColumnToNull(COLUMN_TAXCRED);
-
-                /* If this is a set null years command */
-            } else if (myCmd.equals(POPUP_NULLYEARS)) {
-                /* Set Years column to null */
-                setColumnToNull(COLUMN_YEARS);
-
-                /* If this is a set null dilute command */
-            } else if (myCmd.equals(POPUP_NULLDILUTE)) {
-                /* Set Dilution column to null */
-                setColumnToNull(COLUMN_DILUTE);
-
-                /* If this is a calculate Tax Credits command */
-            } else if (myCmd.equals(POPUP_CALCTAX)) {
+            /* If this is a calculate Tax Credits command */
+            if (myCmd.equals(POPUP_CALCTAX)) {
                 /* Calculate the tax credits */
                 calculateTaxCredits();
 
@@ -1199,19 +881,13 @@ public class Register
                     continue;
                 }
 
-                /* Determine row */
-                int row = myRow.indexOf();
-                if (mySelf.hasHeader()) {
-                    row--;
-                }
-
                 /* Access the event */
-                Event myEvent = (Event) myRow;
-                EventCategory myCat = myEvent.getCategory();
-                JMoney myTax = myEvent.getTaxCredit();
+                Transaction myTrans = (Transaction) myRow;
+                EventCategory myCat = myTrans.getCategory();
+                JMoney myTax = myTrans.getTaxCredit();
 
                 /* Ignore rows with invalid category type */
-                if ((myCat == null) || ((!myEvent.isInterest()) && (!myEvent.isDividend()))) {
+                if ((myCat == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
                     continue;
                 }
 
@@ -1221,10 +897,7 @@ public class Register
                 }
 
                 /* Calculate the tax credit */
-                myTax = myEvent.calculateTaxCredit();
-
-                /* set the tax credit value */
-                theModel.setValueAt(myTax, row, COLUMN_TAXCRED);
+                myTax = myTrans.calculateTaxCredit();
             }
 
             /* Increment version */
@@ -1276,54 +949,14 @@ public class Register
         private final CalendarCellRenderer theDateRenderer;
 
         /**
-         * Date Editor.
-         */
-        private final CalendarCellEditor theDateEditor;
-
-        /**
          * Decimal Renderer.
          */
         private final DecimalCellRenderer theDecimalRenderer;
 
         /**
-         * Money Editor.
-         */
-        private final MoneyCellEditor theMoneyEditor;
-
-        /**
-         * Units Editor.
-         */
-        private final UnitsCellEditor theUnitsEditor;
-
-        /**
-         * Integer Renderer.
-         */
-        private final IntegerCellRenderer theIntegerRenderer;
-
-        /**
-         * Integer Editor.
-         */
-        private final IntegerCellEditor theIntegerEditor;
-
-        /**
          * String Renderer.
          */
         private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String Editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Dilution Editor.
-         */
-        private final DilutionCellEditor theDiluteEditor;
-
-        /**
-         * comboBox Editor.
-         */
-        private final ComboBoxCellEditor theComboEditor;
 
         /**
          * Constructor.
@@ -1334,38 +967,92 @@ public class Register
 
             /* Create the relevant formatters/editors */
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
-            theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
-            theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
-            theIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theDiluteEditor = theFieldMgr.allocateDilutionCellEditor();
-            theComboEditor = theFieldMgr.allocateComboBoxCellEditor();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_CATEGORY, theStringRenderer, theComboEditor));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
-            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));
-            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, theComboEditor));
-            addColumn(new JDataTableColumn(COLUMN_DEBUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
-            addColumn(new JDataTableColumn(COLUMN_CREDUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
-            addColumn(new JDataTableColumn(COLUMN_DILUTE, WIDTH_DILUTE, theDecimalRenderer, theDiluteEditor));
-            addColumn(new JDataTableColumn(COLUMN_TAXCRED, WIDTH_TAXCRED, theDecimalRenderer, theMoneyEditor));
-            addColumn(new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor));
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
         }
 
         /**
-         * Set the date editor range.
-         * @param pRange the range
+         * Obtain column name.
+         * @param pColIndex the column index
+         * @return the column name
          */
-        private void setDateEditorRange(final JDateDayRange pRange) {
-            /* Set the range */
-            theDateEditor.setRange(pRange);
+        private String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return TITLE_DATE;
+                case COLUMN_DESC:
+                    return TITLE_DESC;
+                case COLUMN_CATEGORY:
+                    return TITLE_CATEGORY;
+                case COLUMN_AMOUNT:
+                    return TITLE_AMOUNT;
+                case COLUMN_CREDIT:
+                    return TITLE_CREDIT;
+                case COLUMN_DEBIT:
+                    return TITLE_DEBIT;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the value for the column.
+         * @param pTrans transaction
+         * @param pColIndex column index
+         * @return the value
+         */
+        private Object getItemValue(final Transaction pTrans,
+                                    final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return pTrans.getDate();
+                case COLUMN_CATEGORY:
+                    return pTrans.getCategory();
+                case COLUMN_CREDIT:
+                    return pTrans.getCredit();
+                case COLUMN_DEBIT:
+                    return pTrans.getDebit();
+                case COLUMN_AMOUNT:
+                    return pTrans.getAmount();
+                case COLUMN_DESC:
+                    return pTrans.getComments();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the field for the column index.
+         * @param pColIndex column index
+         * @return the field
+         */
+        private JDataField getFieldForCell(final int pColIndex) {
+            /* Switch on column */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return Transaction.FIELD_DATE;
+                case COLUMN_DESC:
+                    return TransactionInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
+                case COLUMN_AMOUNT:
+                    return Transaction.FIELD_AMOUNT;
+                case COLUMN_CATEGORY:
+                    return Transaction.FIELD_CATEGORY;
+                case COLUMN_CREDIT:
+                    return Transaction.FIELD_CREDIT;
+                case COLUMN_DEBIT:
+                    return Transaction.FIELD_DEBIT;
+                default:
+                    return null;
+            }
         }
     }
 }

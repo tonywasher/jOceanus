@@ -25,30 +25,33 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.AccountRateMap;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.DepositRateMap;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxCalcBucket.TaxCalcBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
-import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Data Analysis.
@@ -77,14 +80,19 @@ public class Analysis
     private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
 
     /**
-     * AccountBuckets Field Id.
+     * DepositBuckets Field Id.
      */
-    private static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccounts"));
+    private static final JDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDeposits"));
 
     /**
-     * SecurityBuckets Field Id.
+     * CashBuckets Field Id.
      */
-    private static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurities"));
+    private static final JDataField FIELD_CASH = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCash"));
+
+    /**
+     * LoanBuckets Field Id.
+     */
+    private static final JDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLoans"));
 
     /**
      * PayeeBuckets Field Id.
@@ -97,9 +105,19 @@ public class Analysis
     private static final JDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolios"));
 
     /**
-     * AccountCategoryBuckets Field Id.
+     * DepositCategoryBuckets Field Id.
      */
-    private static final JDataField FIELD_ACTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccountCat"));
+    private static final JDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDepositCat"));
+
+    /**
+     * CashCategoryBuckets Field Id.
+     */
+    private static final JDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCashCat"));
+
+    /**
+     * LoanCategoryBuckets Field Id.
+     */
+    private static final JDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLoanCat"));
 
     /**
      * EventCategoryBuckets Field Id.
@@ -141,65 +159,80 @@ public class Analysis
         if (FIELD_RANGE.equals(pField)) {
             return theDateRange;
         }
-        if (FIELD_ACCOUNTS.equals(pField)) {
-            return (theAccounts.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theAccounts;
+        if (FIELD_DEPOSITS.equals(pField)) {
+            return (theDeposits.isEmpty())
+                                          ? JDataFieldValue.SKIP
+                                          : theDeposits;
         }
-        if (FIELD_SECURITIES.equals(pField)) {
-            return (theSecurities.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theSecurities;
+        if (FIELD_CASH.equals(pField)) {
+            return (theCash.isEmpty())
+                                      ? JDataFieldValue.SKIP
+                                      : theCash;
         }
-        if (FIELD_PAYEES.equals(pField)) {
-            return (thePayees.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : thePayees;
+        if (FIELD_LOANS.equals(pField)) {
+            return (theLoans.isEmpty())
+                                       ? JDataFieldValue.SKIP
+                                       : theLoans;
         }
         if (FIELD_PORTFOLIOS.equals(pField)) {
             return (thePortfolios.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : thePortfolios;
+                                            ? JDataFieldValue.SKIP
+                                            : thePortfolios;
         }
-        if (FIELD_ACTCATS.equals(pField)) {
-            return (theAccountCategories.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theAccountCategories;
+        if (FIELD_PAYEES.equals(pField)) {
+            return (thePayees.isEmpty())
+                                        ? JDataFieldValue.SKIP
+                                        : thePayees;
+        }
+        if (FIELD_DEPCATS.equals(pField)) {
+            return (theDepositCategories.isEmpty())
+                                                   ? JDataFieldValue.SKIP
+                                                   : theDepositCategories;
+        }
+        if (FIELD_CASHCATS.equals(pField)) {
+            return (theCashCategories.isEmpty())
+                                                ? JDataFieldValue.SKIP
+                                                : theCashCategories;
+        }
+        if (FIELD_LOANCATS.equals(pField)) {
+            return (theLoanCategories.isEmpty())
+                                                ? JDataFieldValue.SKIP
+                                                : theLoanCategories;
         }
         if (FIELD_EVTCATS.equals(pField)) {
             return (theEventCategories.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theEventCategories;
+                                                 ? JDataFieldValue.SKIP
+                                                 : theEventCategories;
         }
         if (FIELD_TAXBASIS.equals(pField)) {
             return (theTaxBasis.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theTaxBasis;
+                                          ? JDataFieldValue.SKIP
+                                          : theTaxBasis;
         }
         if (FIELD_TAXCALC.equals(pField)) {
             return ((theTaxCalculations != null) && (!theTaxCalculations.isEmpty()))
-                    ? theTaxCalculations
-                    : JDataFieldValue.SKIP;
+                                                                                    ? theTaxCalculations
+                                                                                    : JDataFieldValue.SKIP;
         }
         if (FIELD_PRICES.equals(pField)) {
             return (thePrices.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : thePrices;
+                                        ? JDataFieldValue.SKIP
+                                        : thePrices;
         }
         if (FIELD_RATES.equals(pField)) {
             return (theRates.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theRates;
+                                       ? JDataFieldValue.SKIP
+                                       : theRates;
         }
         if (FIELD_CHARGES.equals(pField)) {
             return (theCharges.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theCharges;
+                                         ? JDataFieldValue.SKIP
+                                         : theCharges;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
             return (theDilutions.isEmpty())
-                    ? JDataFieldValue.SKIP
-                    : theDilutions;
+                                           ? JDataFieldValue.SKIP
+                                           : theDilutions;
         }
 
         /* Unknown */
@@ -227,14 +260,19 @@ public class Analysis
     private final JDateDayRange theDateRange;
 
     /**
-     * The account buckets.
+     * The deposit buckets.
      */
-    private final AccountBucketList theAccounts;
+    private final DepositBucketList theDeposits;
 
     /**
-     * The security buckets.
+     * The cash buckets.
      */
-    private final SecurityBucketList theSecurities;
+    private final CashBucketList theCash;
+
+    /**
+     * The loan buckets.
+     */
+    private final LoanBucketList theLoans;
 
     /**
      * The payee buckets.
@@ -247,9 +285,19 @@ public class Analysis
     private final PortfolioBucketList thePortfolios;
 
     /**
-     * The account category buckets.
+     * The deposit category buckets.
      */
-    private final AccountCategoryBucketList theAccountCategories;
+    private final DepositCategoryBucketList theDepositCategories;
+
+    /**
+     * The cash category buckets.
+     */
+    private final CashCategoryBucketList theCashCategories;
+
+    /**
+     * The loan category buckets.
+     */
+    private final LoanCategoryBucketList theLoanCategories;
 
     /**
      * The event category buckets.
@@ -274,7 +322,7 @@ public class Analysis
     /**
      * The rates.
      */
-    private final AccountRateMap theRates;
+    private final DepositRateMap theRates;
 
     /**
      * The charges.
@@ -319,27 +367,27 @@ public class Analysis
     }
 
     /**
-     * Obtain the account buckets list.
+     * Obtain the deposit buckets list.
      * @return the list
      */
-    public AccountBucketList getAccounts() {
-        return theAccounts;
+    public DepositBucketList getDeposits() {
+        return theDeposits;
     }
 
     /**
-     * Obtain the security buckets list.
+     * Obtain the cash buckets list.
      * @return the list
      */
-    public SecurityBucketList getSecurities() {
-        return theSecurities;
+    public CashBucketList getCash() {
+        return theCash;
     }
 
     /**
-     * Obtain the payee buckets list.
+     * Obtain the loan buckets list.
      * @return the list
      */
-    public PayeeBucketList getPayees() {
-        return thePayees;
+    public LoanBucketList getLoans() {
+        return theLoans;
     }
 
     /**
@@ -351,11 +399,35 @@ public class Analysis
     }
 
     /**
-     * Obtain the account categories list.
+     * Obtain the payee buckets list.
      * @return the list
      */
-    public AccountCategoryBucketList getAccountCategories() {
-        return theAccountCategories;
+    public PayeeBucketList getPayees() {
+        return thePayees;
+    }
+
+    /**
+     * Obtain the deposit categories list.
+     * @return the list
+     */
+    public DepositCategoryBucketList getDepositCategories() {
+        return theDepositCategories;
+    }
+
+    /**
+     * Obtain the cash categories list.
+     * @return the list
+     */
+    public CashCategoryBucketList getCashCategories() {
+        return theCashCategories;
+    }
+
+    /**
+     * Obtain the loan categories list.
+     * @return the list
+     */
+    public LoanCategoryBucketList getLoanCategories() {
+        return theLoanCategories;
     }
 
     /**
@@ -394,7 +466,7 @@ public class Analysis
      * Obtain the rates.
      * @return the rates
      */
-    public AccountRateMap getRates() {
+    public DepositRateMap getRates() {
         return theRates;
     }
 
@@ -427,26 +499,29 @@ public class Analysis
         theDateRange = theData.getDateRange();
 
         /* Create a new set of buckets */
-        theAccounts = new AccountBucketList(this);
-        theSecurities = new SecurityBucketList(this);
+        theDeposits = new DepositBucketList(this);
+        theCash = new CashBucketList(this);
+        theLoans = new LoanBucketList(this);
+        thePortfolios = new PortfolioBucketList(this);
         thePayees = new PayeeBucketList(this);
         theTaxBasis = new TaxBasisBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
 
         /* Create totalling buckets */
-        thePortfolios = new PortfolioBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
 
         /* Create the Dilution/Chargeable Event List */
         theCharges = new ChargeableEventList();
-        theDilutions = new DilutionEventList(theData);
+        theDilutions = new DilutionEventList();
 
         /* Create the security price map */
         thePrices = new SecurityPriceMap(theData);
 
         /* Create the account rate map */
-        theRates = new AccountRateMap(theData);
+        theRates = new DepositRateMap(theData);
 
         /* Add opening balances */
         addOpeningBalances();
@@ -471,15 +546,18 @@ public class Analysis
         theDilutions = pSource.getDilutions();
 
         /* Create a new set of buckets */
-        theAccounts = new AccountBucketList(this, pSource.getAccounts(), pDate);
-        theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pDate);
+        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pDate);
+        theCash = new CashBucketList(this, pSource.getCash(), pDate);
+        theLoans = new LoanBucketList(this, pSource.getLoans(), pDate);
+        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pDate);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pDate);
 
         /* Create totalling buckets */
-        thePortfolios = new PortfolioBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
         theTaxCalculations = null;
     }
 
@@ -502,15 +580,18 @@ public class Analysis
         theDilutions = pSource.getDilutions();
 
         /* Create a new set of buckets */
-        theAccounts = new AccountBucketList(this, pSource.getAccounts(), pRange);
-        theSecurities = new SecurityBucketList(this, pSource.getSecurities(), pRange);
+        theDeposits = new DepositBucketList(this, pSource.getDeposits(), pRange);
+        theCash = new CashBucketList(this, pSource.getCash(), pRange);
+        theLoans = new LoanBucketList(this, pSource.getLoans(), pRange);
+        thePortfolios = new PortfolioBucketList(this, pSource.getPortfolios(), pRange);
         thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
         theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
         theTaxBasis = new TaxBasisBucketList(this, pSource.getTaxBasis(), pRange);
 
         /* Create totalling buckets */
-        thePortfolios = new PortfolioBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
+        theDepositCategories = new DepositCategoryBucketList(this);
+        theCashCategories = new CashCategoryBucketList(this);
+        theLoanCategories = new LoanCategoryBucketList(this);
 
         /* Check to see whether this range matches a tax year */
         TaxYearList myTaxYears = theData.getTaxYears();
@@ -518,24 +599,24 @@ public class Analysis
 
         /* Allocate tax calculations if required */
         theTaxCalculations = (myTaxYear != null)
-                ? new TaxCalcBucketList(this, myTaxYear)
-                : null;
+                                                ? new TaxCalcBucketList(this, myTaxYear)
+                                                : null;
     }
 
     /**
      * Add opening balances for accounts.
      */
     private void addOpeningBalances() {
-        /* Iterate through the accounts */
-        Iterator<Account> myIterator = theData.getAccounts().iterator();
+        /* Iterate through the deposits */
+        Iterator<Deposit> myIterator = theData.getDeposits().iterator();
         while (myIterator.hasNext()) {
-            Account myAccount = myIterator.next();
+            Deposit myDeposit = myIterator.next();
 
-            /* If the account has an opening balance */
-            JMoney myBalance = myAccount.getOpeningBalance();
+            /* If the deposit has an opening balance */
+            JMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
-                /* Obtain the actual account bucket */
-                AccountBucket myBucket = theAccounts.getBucket(myAccount);
+                /* Obtain the actual deposit bucket */
+                DepositBucket myBucket = theDeposits.getBucket(myDeposit);
                 myBucket.setOpeningBalance(myBalance);
             }
         }

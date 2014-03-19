@@ -33,10 +33,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountType;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
@@ -217,25 +218,25 @@ public final class TaxBasisBucket
     }
 
     /**
-     * Obtain values for event.
-     * @param pEvent the event
+     * Obtain values for transaction.
+     * @param pTrans the event
      * @return the values (or null)
      */
-    public TaxBasisValues getValuesForEvent(final Event pEvent) {
+    public TaxBasisValues getValuesForTransaction(final Transaction pTrans) {
         /* Obtain values for event */
-        return theHistory.getValuesForEvent(pEvent);
+        return theHistory.getValuesForTransaction(pTrans);
     }
 
     /**
-     * Obtain delta for event.
-     * @param pEvent the event
+     * Obtain delta for transaction.
+     * @param pTrans the transaction
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public JDecimal getDeltaForEvent(final Event pEvent,
-                                     final TaxBasisAttribute pAttr) {
+    public JDecimal getDeltaForTransaction(final Transaction pTrans,
+                                           final TaxBasisAttribute pAttr) {
         /* Obtain delta for event */
-        return theHistory.getDeltaValue(pEvent, pAttr);
+        return theHistory.getDeltaValue(pTrans, pAttr);
     }
 
     /**
@@ -412,20 +413,22 @@ public final class TaxBasisBucket
     }
 
     /**
-     * Add income event.
-     * @param pEvent the event
+     * Add income transaction.
+     * @param pTrans the transaction
      */
-    private void addIncomeEvent(final Event pEvent) {
+    private void addIncomeTransaction(final Transaction pTrans) {
         /* Access details */
-        JMoney myAmount = pEvent.getAmount();
-        JMoney myTaxCredit = pEvent.getTaxCredit();
-        JMoney myNatIns = pEvent.getNatInsurance();
-        JMoney myBenefit = pEvent.getDeemedBenefit();
-        JMoney myDonation = pEvent.getCharityDonation();
+        JMoney myAmount = pTrans.getAmount();
+        JMoney myTaxCredit = pTrans.getTaxCredit();
+        JMoney myNatIns = pTrans.getNatInsurance();
+        JMoney myBenefit = pTrans.getDeemedBenefit();
+        JMoney myDonation = pTrans.getCharityDonation();
 
-        /* Determine style of event */
-        AccountType myDebitType = AccountType.deriveType(pEvent.getDebit());
-        AccountType myCreditType = AccountType.deriveType(pEvent.getCredit());
+        /* Determine style of transaction */
+        AssetBase<?> myDebit = pTrans.getDebit();
+        AssetBase<?> myCredit = pTrans.getCredit();
+        AssetType myDebitType = myDebit.getAssetType();
+        AssetType myCreditType = myCredit.getAssetType();
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
         /* Access the counters */
@@ -479,21 +482,23 @@ public final class TaxBasisBucket
         setValue(TaxBasisAttribute.GROSS, myGross);
         setValue(TaxBasisAttribute.NET, myNet);
 
-        /* Register the event */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
-     * Add expense event.
-     * @param pEvent the event
+     * Add expense transaction.
+     * @param pTrans the transaction
      */
-    private void addExpenseEvent(final Event pEvent) {
+    private void addExpenseTransaction(final Transaction pTrans) {
         /* Access details */
-        JMoney myAmount = pEvent.getAmount();
+        JMoney myAmount = pTrans.getAmount();
 
         /* Determine style of event */
-        AccountType myDebitType = AccountType.deriveType(pEvent.getDebit());
-        AccountType myCreditType = AccountType.deriveType(pEvent.getCredit());
+        AssetBase<?> myDebit = pTrans.getDebit();
+        AssetBase<?> myCredit = pTrans.getCredit();
+        AssetType myDebitType = myDebit.getAssetType();
+        AssetType myCreditType = myCredit.getAssetType();
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
         /* Access the counters */
@@ -517,22 +522,22 @@ public final class TaxBasisBucket
         setValue(TaxBasisAttribute.GROSS, myGross);
         setValue(TaxBasisAttribute.NET, myNet);
 
-        /* Register the event */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
-     * Adjust event value.
-     * @param pEvent the event
+     * Adjust transaction value.
+     * @param pTrans the transaction
      * @param pValue the value
      */
-    private void adjustValue(final Event pEvent,
+    private void adjustValue(final Transaction pTrans,
                              final JMoney pValue) {
         /* Adjust the value */
         adjustValue(pValue);
 
-        /* Register the event */
-        theHistory.registerEvent(pEvent, theValues);
+        /* Register the transaction */
+        theHistory.registerTransaction(pTrans, theValues);
     }
 
     /**
@@ -600,7 +605,7 @@ public final class TaxBasisBucket
         /**
          * SerialId.
          */
-        private static final long serialVersionUID = -2321116436055439979L;
+        private static final long serialVersionUID = 4649078250661638369L;
 
         /**
          * Constructor.
@@ -839,10 +844,10 @@ public final class TaxBasisBucket
 
         /**
          * Adjust basis buckets.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param pCategory primary category
          */
-        protected void adjustBasis(final Event pEvent,
+        protected void adjustBasis(final Transaction pTrans,
                                    final EventCategory pCategory) {
             /* Switch on the category type */
             TaxBasisBucket myBucket;
@@ -852,35 +857,35 @@ public final class TaxBasisBucket
                 case RENTALINCOME:
                     /* Adjust the Gross salary bucket */
                     myBucket = getBucket(TaxBasisClass.GROSSSALARY);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case INTEREST:
                 case TAXEDINTEREST:
                 case GROSSINTEREST:
                     /* Adjust the Gross interest bucket */
                     myBucket = getBucket(TaxBasisClass.GROSSINTEREST);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case DIVIDEND:
                 case SHAREDIVIDEND:
                     /* Adjust the Gross dividend bucket */
                     myBucket = getBucket(TaxBasisClass.GROSSDIVIDEND);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case UNITTRUSTDIVIDEND:
                     /* Adjust the Gross UT dividend bucket */
                     myBucket = getBucket(TaxBasisClass.GROSSUTDIVIDEND);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case ROOMRENTALINCOME:
                     /* Adjust the Gross rental bucket */
                     myBucket = getBucket(TaxBasisClass.GROSSRENTAL);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case TAXSETTLEMENT:
                     /* Adjust the Tax Paid bucket */
                     myBucket = getBucket(TaxBasisClass.TAXPAID);
-                    myBucket.addExpenseEvent(pEvent);
+                    myBucket.addExpenseTransaction(pTrans);
                     break;
                 case TAXFREEINTEREST:
                 case TAXFREEDIVIDEND:
@@ -890,7 +895,7 @@ public final class TaxBasisBucket
                 case GIFTEDINCOME:
                     /* Adjust the Tax Free bucket */
                     myBucket = getBucket(TaxBasisClass.TAXFREE);
-                    myBucket.addIncomeEvent(pEvent);
+                    myBucket.addIncomeTransaction(pTrans);
                     break;
                 case EXPENSE:
                 case LOCALTAXES:
@@ -901,7 +906,7 @@ public final class TaxBasisBucket
                 case OTHERINCOME:
                     /* Adjust the Expense bucket */
                     myBucket = getBucket(TaxBasisClass.EXPENSE);
-                    myBucket.addExpenseEvent(pEvent);
+                    myBucket.addExpenseTransaction(pTrans);
                     break;
                 case STOCKTAKEOVER:
                 case STOCKSPLIT:
@@ -916,27 +921,27 @@ public final class TaxBasisBucket
 
         /**
          * Adjust basis buckets.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param pClass the class
          * @param pIncome the income
          */
-        protected void adjustValue(final Event pEvent,
+        protected void adjustValue(final Transaction pTrans,
                                    final TaxBasisClass pClass,
                                    final JMoney pIncome) {
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(pClass);
-            myBucket.adjustValue(pEvent, pIncome);
+            myBucket.adjustValue(pTrans, pIncome);
         }
 
         /**
          * Adjust autoExpense.
-         * @param pEvent the event
+         * @param pTrans the transaction
          * @param isExpense true/false
          */
-        protected void adjustAutoExpense(final Event pEvent,
+        protected void adjustAutoExpense(final Transaction pTrans,
                                          final boolean isExpense) {
             /* Determine value */
-            JMoney myAmount = pEvent.getAmount();
+            JMoney myAmount = pTrans.getAmount();
             if (!isExpense) {
                 myAmount = new JMoney(myAmount);
                 myAmount.negate();
@@ -944,7 +949,7 @@ public final class TaxBasisBucket
 
             /* Access the bucket and adjust it */
             TaxBasisBucket myBucket = getBucket(TaxBasisClass.EXPENSE);
-            myBucket.adjustValue(pEvent, myAmount);
+            myBucket.adjustValue(pTrans, myAmount);
         }
 
         /**

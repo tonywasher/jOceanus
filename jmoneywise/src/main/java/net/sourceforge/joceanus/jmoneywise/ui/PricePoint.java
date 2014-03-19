@@ -42,12 +42,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
+import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
+import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
+import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -70,7 +71,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * @author Tony Washer
  */
 public class PricePoint
-        extends JDataTable<SpotPrice, MoneyWiseDataType> {
+        extends JDataTable<SpotSecurityPrice, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -94,17 +95,17 @@ public class PricePoint
     /**
      * The update entry.
      */
-    private final transient UpdateEntry<SpotPrice, MoneyWiseDataType> theUpdateEntry;
+    private final transient UpdateEntry<SpotSecurityPrice, MoneyWiseDataType> theUpdateEntry;
 
     /**
      * The Spot prices.
      */
-    private transient SpotPrices theSnapshot = null;
+    private transient SpotSecurityPrices theSnapshot = null;
 
     /**
      * The account price list.
      */
-    private transient SpotList thePrices = null;
+    private transient SpotSecurityList thePrices = null;
 
     /**
      * Table Model.
@@ -129,7 +130,7 @@ public class PricePoint
     /**
      * The Portfolio.
      */
-    private transient Account thePortfolio = null;
+    private transient Portfolio thePortfolio = null;
 
     /**
      * The Spot selection panel.
@@ -231,13 +232,13 @@ public class PricePoint
 
         /* Build the Update set and entry */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theUpdateEntry = theUpdateSet.registerClass(SpotPrice.class);
+        theUpdateEntry = theUpdateSet.registerClass(SpotSecurityPrice.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataPrice = myDataMgr.new JDataEntry(SpotPrices.class.getSimpleName());
+        theDataPrice = myDataMgr.new JDataEntry(SpotSecurityPrices.class.getSimpleName());
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
 
@@ -339,7 +340,7 @@ public class PricePoint
      * @param pDate the Date for the extract
      * @throws JOceanusException on error
      */
-    public void setSelection(final Account pPortfolio,
+    public void setSelection(final Portfolio pPortfolio,
                              final JDateDay pDate) throws JOceanusException {
         /* Record selection */
         theDate = pDate;
@@ -348,7 +349,7 @@ public class PricePoint
         /* If selection is valid */
         if ((theDate != null) && (thePortfolio != null)) {
             /* Create the new list */
-            theSnapshot = new SpotPrices(theView, pPortfolio, pDate);
+            theSnapshot = new SpotSecurityPrices(theView, pPortfolio, pDate);
             thePrices = theSnapshot.getPrices();
 
             /* Update Next/Previous values */
@@ -385,7 +386,7 @@ public class PricePoint
      * @return is the row deletable
      */
     @Override
-    protected boolean isRowDeletable(final SpotPrice pRow) {
+    protected boolean isRowDeletable(final SpotSecurityPrice pRow) {
         /* Switch on the Data State */
         switch (pRow.getState()) {
             case CLEAN:
@@ -409,7 +410,7 @@ public class PricePoint
      * @return is the row recoverable
      */
     @Override
-    protected boolean isRowRecoverable(final SpotPrice pRow) {
+    protected boolean isRowRecoverable(final SpotSecurityPrice pRow) {
         /* Switch on the Data State */
         switch (pRow.getState()) {
         /* Recoverable if there are changes */
@@ -432,7 +433,7 @@ public class PricePoint
      * @return false
      */
     @Override
-    protected boolean isRowDuplicatable(final SpotPrice pRow) {
+    protected boolean isRowDuplicatable(final SpotSecurityPrice pRow) {
         return false;
     }
 
@@ -442,7 +443,7 @@ public class PricePoint
      * @return true
      */
     @Override
-    protected boolean disableShowAll(final SpotPrice pRow) {
+    protected boolean disableShowAll(final SpotSecurityPrice pRow) {
         return true;
     }
 
@@ -462,7 +463,7 @@ public class PricePoint
                 setShowAll(theSelect.getShowClosed());
 
                 /* Access selection */
-                Account myPortfolio = theSelect.getPortfolio();
+                Portfolio myPortfolio = theSelect.getPortfolio();
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
@@ -536,7 +537,7 @@ public class PricePoint
      * SpotView table model.
      */
     public final class SpotViewModel
-            extends JDataTableModel<SpotPrice, MoneyWiseDataType> {
+            extends JDataTableModel<SpotSecurityPrice, MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -551,13 +552,13 @@ public class PricePoint
         }
 
         @Override
-        public SpotPrice getItemAtIndex(final int pRowIndex) {
+        public SpotSecurityPrice getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return thePrices.get(pRowIndex);
         }
 
         @Override
-        public boolean includeRow(final SpotPrice pRow) {
+        public boolean includeRow(final SpotSecurityPrice pRow) {
             /* Return visibility of row */
             return showAll() || !pRow.getSecurity().isClosed();
         }
@@ -611,7 +612,7 @@ public class PricePoint
         }
 
         @Override
-        public JDataField getFieldForCell(final SpotPrice pSpot,
+        public JDataField getFieldForCell(final SpotSecurityPrice pSpot,
                                           final int pColIndex) {
             /* Switch on column */
             switch (pColIndex) {
@@ -629,7 +630,7 @@ public class PricePoint
         }
 
         @Override
-        public boolean isCellEditable(final SpotPrice pSpot,
+        public boolean isCellEditable(final SpotSecurityPrice pSpot,
                                       final int pColIndex) {
             /* switch on column */
             switch (pColIndex) {
@@ -644,7 +645,7 @@ public class PricePoint
         }
 
         @Override
-        public Object getItemValue(final SpotPrice pSpot,
+        public Object getItemValue(final SpotSecurityPrice pSpot,
                                    final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
@@ -662,7 +663,7 @@ public class PricePoint
         }
 
         @Override
-        public void setItemValue(final SpotPrice pSpot,
+        public void setItemValue(final SpotSecurityPrice pSpot,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
             /* Store the appropriate value */
@@ -680,7 +681,7 @@ public class PricePoint
      * SpotView mouse listener.
      */
     private static final class SpotViewMouse
-            extends JDataTableMouse<SpotPrice, MoneyWiseDataType> {
+            extends JDataTableMouse<SpotSecurityPrice, MoneyWiseDataType> {
         /**
          * Constructor.
          * @param pTable the table

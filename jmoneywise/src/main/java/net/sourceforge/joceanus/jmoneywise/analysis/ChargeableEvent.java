@@ -25,17 +25,17 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdItem;
-import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
 
 /**
  * Chargeable event for LifeBonds.
@@ -78,9 +78,9 @@ public final class ChargeableEvent
     private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTax"));
 
     /**
-     * The Event field id.
+     * The Transaction field id.
      */
-    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -93,8 +93,8 @@ public final class ChargeableEvent
         if (FIELD_TAXATION.equals(pField)) {
             return theTaxation;
         }
-        if (FIELD_EVENT.equals(pField)) {
-            return theEvent;
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransaction;
         }
         return JDataFieldValue.UNKNOWN;
     }
@@ -115,9 +115,9 @@ public final class ChargeableEvent
     private JMoney theTaxation = null;
 
     /**
-     * The Event.
+     * The Transaction.
      */
-    private final Event theEvent;
+    private final Transaction theTransaction;
 
     /**
      * Obtain the amount.
@@ -147,13 +147,13 @@ public final class ChargeableEvent
      * Obtain the event.
      * @return the event
      */
-    public Event getEvent() {
-        return theEvent;
+    public Transaction getTransaction() {
+        return theTransaction;
     }
 
     @Override
     public Integer getOrderedId() {
-        return getEvent().getId();
+        return getTransaction().getId();
     }
 
     /**
@@ -161,7 +161,7 @@ public final class ChargeableEvent
      * @return the date
      */
     public JDateDay getDate() {
-        return getEvent().getDate();
+        return getTransaction().getDate();
     }
 
     /**
@@ -169,7 +169,7 @@ public final class ChargeableEvent
      * @return the comments
      */
     public String getComments() {
-        return getEvent().getComments();
+        return getTransaction().getComments();
     }
 
     /**
@@ -177,7 +177,7 @@ public final class ChargeableEvent
      * @return the tax credit
      */
     public JMoney getTaxCredit() {
-        return getEvent().getTaxCredit();
+        return getTransaction().getTaxCredit();
     }
 
     /**
@@ -185,23 +185,23 @@ public final class ChargeableEvent
      * @return the years
      */
     public Integer getYears() {
-        return getEvent().getYears();
+        return getTransaction().getYears();
     }
 
     /**
      * Constructor.
-     * @param pEvent the Event
+     * @param pTrans the Transaction
      * @param pGains the Gains
      */
-    protected ChargeableEvent(final Event pEvent,
+    protected ChargeableEvent(final Transaction pTrans,
                               final JMoney pGains) {
         /* Calculate slice */
         theSlice = new JMoney(pGains);
-        theSlice.divide(pEvent.getYears());
+        theSlice.divide(pTrans.getYears());
 
         /* Store the values */
         theGains = pGains;
-        theEvent = pEvent;
+        theTransaction = pTrans;
     }
 
     @Override
@@ -222,8 +222,8 @@ public final class ChargeableEvent
         /* Access the object as a Chargeable Event */
         ChargeableEvent myThat = (ChargeableEvent) pThat;
 
-        /* Compare the underlying events */
-        return getEvent().compareTo(myThat.getEvent());
+        /* Compare the underlying transactions */
+        return getTransaction().compareTo(myThat.getTransaction());
     }
 
     @Override
@@ -245,12 +245,12 @@ public final class ChargeableEvent
         ChargeableEvent myThat = (ChargeableEvent) pThat;
 
         /* Check equality */
-        return Difference.isEqual(getEvent(), myThat.getEvent());
+        return Difference.isEqual(getTransaction(), myThat.getTransaction());
     }
 
     @Override
     public int hashCode() {
-        return getEvent().hashCode();
+        return getTransaction().hashCode();
     }
 
     /**
@@ -342,14 +342,14 @@ public final class ChargeableEvent
         }
 
         /**
-         * Add Chargeable Event to List.
-         * @param pEvent the base event
+         * Add Chargeable Transaction to List.
+         * @param pTrans the base transaction
          * @param pGains the gains
          */
-        public void addEvent(final Event pEvent,
-                             final JMoney pGains) {
+        public void addTransaction(final Transaction pTrans,
+                                   final JMoney pGains) {
             /* Create the chargeable event */
-            ChargeableEvent myEvent = new ChargeableEvent(pEvent, pGains);
+            ChargeableEvent myEvent = new ChargeableEvent(pTrans, pGains);
 
             /* Add it to the list */
             append(myEvent);

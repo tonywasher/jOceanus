@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
 
 /**
  * History snapShot for a bucket.
@@ -57,9 +57,9 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
 
     /**
-     * Event Id.
+     * Transaction Id.
      */
-    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
+    private static final JDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTrans"));
 
     /**
      * Date Id.
@@ -91,8 +91,8 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         if (FIELD_ID.equals(pField)) {
             return theId;
         }
-        if (FIELD_EVENT.equals(pField)) {
-            return theEvent;
+        if (FIELD_TRANS.equals(pField)) {
+            return theTransaction;
         }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
@@ -107,14 +107,14 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     }
 
     /**
-     * The id of the event.
+     * The id of the transaction.
      */
     private final Integer theId;
 
     /**
-     * The event.
+     * The transaction.
      */
-    private final Event theEvent;
+    private final Transaction theTransaction;
 
     /**
      * The date.
@@ -140,11 +140,11 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     }
 
     /**
-     * Obtain event.
-     * @return the event
+     * Obtain transaction.
+     * @return the transaction
      */
-    protected Event getEvent() {
-        return theEvent;
+    protected Transaction getTransaction() {
+        return theTransaction;
     }
 
     /**
@@ -181,17 +181,17 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
 
     /**
      * Constructor.
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param pValues the values
      * @param pPrevious the previous snapShot
      */
-    protected BucketSnapShot(final Event pEvent,
+    protected BucketSnapShot(final Transaction pTrans,
                              final T pValues,
                              final T pPrevious) {
-        /* Store event details */
-        theId = pEvent.getId();
-        theEvent = pEvent;
-        theDate = pEvent.getDate();
+        /* Store transaction details */
+        theId = pTrans.getId();
+        theTransaction = pTrans;
+        theDate = pTrans.getDate();
 
         /* Store the snapshot map */
         theSnapShot = pValues.getSnapShot();
@@ -209,7 +209,7 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
                              final T pPrevious) {
         /* Store event details */
         theId = pSnapShot.getId();
-        theEvent = pSnapShot.getEvent();
+        theTransaction = pSnapShot.getTransaction();
         theDate = pSnapShot.getDate();
 
         /* Store the snapshot map */

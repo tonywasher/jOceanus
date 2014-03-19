@@ -25,18 +25,22 @@ package net.sourceforge.joceanus.jmoneywise.analysis;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Analysis manager.
@@ -166,29 +170,38 @@ public class AnalysisManager
      * @param pAnalysis the analysis.
      */
     private void produceTotals(final Analysis pAnalysis) {
-        /* Access the lists */
-        AccountBucketList myAccounts = pAnalysis.getAccounts();
-        PayeeBucketList myPayees = pAnalysis.getPayees();
-        EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
-        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
+        /* Analyse the deposits */
+        DepositBucketList myDeposits = pAnalysis.getDeposits();
+        DepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();
+        myDepositCategories.analyseDeposits(myDeposits);
+        myDepositCategories.produceTotals();
 
-        /* Analyse the accounts */
-        AccountCategoryBucketList myAccountCategories = pAnalysis.getAccountCategories();
-        myAccountCategories.analyseAccounts(myAccounts);
-        myAccountCategories.produceTotals();
+        /* Analyse the cash */
+        CashBucketList myCash = pAnalysis.getCash();
+        CashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();
+        myCashCategories.analyseCash(myCash);
+        myCashCategories.produceTotals();
+
+        /* Analyse the loans */
+        LoanBucketList myLoans = pAnalysis.getLoans();
+        LoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();
+        myLoanCategories.analyseLoans(myLoans);
+        myLoanCategories.produceTotals();
 
         /* Analyse the securities */
         PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
-        myPortfolios.analyseSecurities(pAnalysis.getSecurities());
-        myAccountCategories.analysePortfolios(pAnalysis.getPortfolios());
+        myPortfolios.analyseSecurities();
 
         /* Analyse the Payees */
+        PayeeBucketList myPayees = pAnalysis.getPayees();
         myPayees.produceTotals();
 
         /* Analyse the EventCategories */
+        EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
         myEventCategories.produceTotals();
 
         /* Analyse the TaxBasis */
+        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
         myTaxBasis.produceTotals();
     }
 
@@ -198,38 +211,52 @@ public class AnalysisManager
      */
     private void checkTotals(final Analysis pAnalysis) {
         /* Obtain Totals bucket */
-        AccountBucketList myAccount = pAnalysis.getAccounts();
-        AccountCategoryBucket myActCat = pAnalysis.getAccountCategories().getTotals();
+        DepositBucketList myDeposit = pAnalysis.getDeposits();
+        DepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();
+        CashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();
+        LoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();
+        PortfolioBucket myPort = pAnalysis.getPortfolios().getTotals();
         PayeeBucket myPayee = pAnalysis.getPayees().getTotals();
         EventCategoryBucket myEvent = pAnalysis.getEventCategories().getTotals();
         TaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();
 
         /* Handle null data */
-        if (myActCat == null) {
+        if (myDepCat == null) {
             return;
         }
 
         /* Access totals */
-        JMoney myActTotal = myActCat.getValues().getMoneyValue(AccountAttribute.DELTA);
+        JMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.DELTA);
+        JMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.DELTA);
+        JMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.DELTA);
+        JMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.DELTA);
         JMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.DELTA);
         JMoney myEvtTotal = myEvent.getValues().getMoneyValue(EventAttribute.DELTA);
         JMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
+        /* Create a copy */
+        myDepTotal = new JMoney(myDepTotal);
+
         /* Adjust for Hidden Base Totals */
-        JMoney myHiddenBase = myAccount.getHiddenBaseTotal();
+        JMoney myHiddenBase = myDeposit.getHiddenBaseTotal();
         if (myHiddenBase != null) {
-            myActTotal = new JMoney(myActTotal);
-            myActTotal.subtractAmount(myHiddenBase);
+            myDepTotal = new JMoney(myDepTotal);
+            myDepTotal.subtractAmount(myHiddenBase);
         }
 
+        /* Add sub-accounts */
+        myDepTotal.addAmount(myCashTotal);
+        myDepTotal.addAmount(myLoanTotal);
+        myDepTotal.addAmount(myPortTotal);
+
         /* Check identities */
-        if (!myActTotal.equals(myPayTotal)) {
+        if (!myDepTotal.equals(myPayTotal)) {
             theLogger.log(Level.SEVERE, "Payee total mismatch");
         }
-        if (!myActTotal.equals(myEvtTotal)) {
+        if (!myDepTotal.equals(myEvtTotal)) {
             theLogger.log(Level.SEVERE, "EventCategory total mismatch");
         }
-        if (!myActTotal.equals(myTaxTotal)) {
+        if (!myDepTotal.equals(myTaxTotal)) {
             theLogger.log(Level.SEVERE, "TaxBasis total mismatch");
         }
     }
