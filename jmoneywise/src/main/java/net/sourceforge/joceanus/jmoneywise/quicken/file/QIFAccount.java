@@ -22,18 +22,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QAccountLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Class representing a QIF Account record.
@@ -48,7 +55,7 @@ public class QIFAccount
     /**
      * Category Map.
      */
-    protected static final Map<AccountCategoryClass, String> QIF_ACTCATMAP = createClassMap();
+    protected static final Map<Enum<?>, String> QIF_ACTCATMAP = createClassMap();
 
     /**
      * The Account Name.
@@ -63,7 +70,7 @@ public class QIFAccount
     /**
      * The Account CategoryClass.
      */
-    private final AccountCategoryClass theClass;
+    private final Enum<?> theClass;
 
     /**
      * Obtain the Name.
@@ -85,18 +92,19 @@ public class QIFAccount
      * Create the CategoryClass to type map.
      * @return the map
      */
-    private static Map<AccountCategoryClass, String> createClassMap() {
+    private static Map<Enum<?>, String> createClassMap() {
         /* Create the map */
-        Map<AccountCategoryClass, String> myMap = new EnumMap<AccountCategoryClass, String>(AccountCategoryClass.class);
+        Map<Enum<?>, String> myMap = new HashMap<Enum<?>, String>();
 
         /* Add the entries */
-        myMap.put(AccountCategoryClass.SAVINGS, "Bank");
-        myMap.put(AccountCategoryClass.BOND, "Bank");
-        myMap.put(AccountCategoryClass.CASH, "Cash");
-        myMap.put(AccountCategoryClass.CREDITCARD, "CCard");
+        myMap.put(DepositCategoryClass.CHECKING, "Bank");
+        myMap.put(DepositCategoryClass.SAVINGS, "Bank");
+        myMap.put(DepositCategoryClass.BOND, "Bank");
+        myMap.put(CashCategoryClass.CASH, "Cash");
+        myMap.put(LoanCategoryClass.CREDITCARD, "CCard");
         myMap.put(AccountCategoryClass.PORTFOLIO, "Invst");
-        myMap.put(AccountCategoryClass.PRIVATELOAN, "Oth A");
-        myMap.put(AccountCategoryClass.LOAN, "Oth L");
+        myMap.put(LoanCategoryClass.PRIVATELOAN, "Oth A");
+        myMap.put(LoanCategoryClass.LOAN, "Oth L");
 
         /* Return the map */
         return myMap;
@@ -108,14 +116,39 @@ public class QIFAccount
      * @param pAccount the Account
      */
     public QIFAccount(final QIFFile pFile,
-                      final Account pAccount) {
+                      final AssetBase<?> pAccount) {
         /* Call super-constructor */
         super(pFile, QAccountLineType.class);
 
         /* Store data */
         theName = pAccount.getName();
-        theDesc = pAccount.getComments();
-        theClass = pAccount.getAccountCategoryClass();
+
+        /* Handle deposit */
+        if (pAccount instanceof Deposit) {
+            Deposit myDeposit = (Deposit) pAccount;
+            theClass = myDeposit.getCategoryClass();
+            theDesc = myDeposit.getDesc();
+
+            /* Handle cash */
+        } else if (pAccount instanceof Cash) {
+            Cash myCash = (Cash) pAccount;
+            theClass = myCash.getCategoryClass();
+            theDesc = myCash.getDesc();
+
+            /* Handle loan */
+        } else if (pAccount instanceof Loan) {
+            Loan myLoan = (Loan) pAccount;
+            theClass = myLoan.getCategoryClass();
+            theDesc = myLoan.getDesc();
+
+            /* Handle portfolio */
+        } else if (pAccount instanceof Portfolio) {
+            Portfolio myPortfolio = (Portfolio) pAccount;
+            theClass = null;
+            theDesc = myPortfolio.getDesc();
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         /* Build lines */
         addLine(new QIFAccountNameLine(theName));
@@ -140,7 +173,7 @@ public class QIFAccount
         /* Determine details */
         String myName = null;
         String myDesc = null;
-        AccountCategoryClass myClass = null;
+        Enum<?> myClass = null;
 
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
@@ -253,13 +286,13 @@ public class QIFAccount
         /**
          * The Account Category Class.
          */
-        private final AccountCategoryClass theClass;
+        private final Enum<?> theClass;
 
         /**
          * Obtain account class.
          * @return the account class
          */
-        public AccountCategoryClass getAccountClass() {
+        public Enum<?> getAccountClass() {
             return theClass;
         }
 
@@ -267,7 +300,7 @@ public class QIFAccount
          * Constructor.
          * @param pClass the Account Class
          */
-        protected QIFAccountTypeLine(final AccountCategoryClass pClass) {
+        protected QIFAccountTypeLine(final Enum<?> pClass) {
             /* Call super-constructor */
             super(QIF_ACTCATMAP.get(pClass));
 
@@ -284,10 +317,10 @@ public class QIFAccount
             super(pType);
 
             /* Loop through the map entries */
-            AccountCategoryClass myClass = null;
-            Iterator<Map.Entry<AccountCategoryClass, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
+            Enum<?> myClass = null;
+            Iterator<Map.Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Map.Entry<AccountCategoryClass, String> myEntry = myIterator.next();
+                Map.Entry<Enum<?>, String> myEntry = myIterator.next();
 
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {

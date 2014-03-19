@@ -23,12 +23,15 @@
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
@@ -47,14 +50,14 @@ public class QPortfolioEvent
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param pCredit is this the credit item?
      */
     protected QPortfolioEvent(final QAnalysis pAnalysis,
-                              final Event pEvent,
+                              final Transaction pTrans,
                               final boolean pCredit) {
         /* Call super-constructor */
-        super(pAnalysis, pEvent, pCredit);
+        super(pAnalysis, pTrans, pCredit);
     }
 
     /**
@@ -68,24 +71,26 @@ public class QPortfolioEvent
             return false;
         }
 
-        /* Access the event */
-        Event myEvent = getEvent();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        AssetBase<?> myDebit = myTrans.getDebit();
 
         /* Switch on transaction type */
-        switch (myEvent.getCategoryClass()) {
+        switch (myTrans.getCategoryClass()) {
             case OTHERINCOME:
             case INHERITED:
                 return true;
             case DIVIDEND:
-                if (!myEvent.getDebit().isTaxFree()) {
+                if ((!(myDebit instanceof Security))
+                    || (!myTrans.getPortfolio().isTaxFree())) {
                     return true;
                 }
-                if (Difference.isEqual(myEvent.getDebit(), myEvent.getCredit())) {
+                if (Difference.isEqual(myDebit, myTrans.getCredit())) {
                     return false;
                 }
                 return !(myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect());
             case STOCKTAKEOVER:
-                if (myEvent.getThirdParty() == null) {
+                if (myTrans.getThirdParty() == null) {
                     return false;
                 }
                 return !myType.canXferPortfolioDirect();
@@ -96,12 +101,12 @@ public class QPortfolioEvent
 
     @Override
     protected String buildQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
         boolean isCredit = isCredit();
 
         /* Switch on transaction type */
-        switch (myEvent.getCategoryClass()) {
+        switch (myTrans.getCategoryClass()) {
             case OTHERINCOME:
             case INHERITED:
                 return buildIncomeQIF();
@@ -136,12 +141,12 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildIncomeQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        JMoney myAmount = myEvent.getAmount();
-        Account mySecurity = myEvent.getCredit();
-        JUnits myUnits = myEvent.getCreditUnits();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> mySecurity = myTrans.getCredit();
+        JUnits myUnits = myTrans.getCreditUnits();
         boolean useBuyX = !getQIFType().useInvestmentHolding4Category();
 
         /* Determine reconciled flag */
@@ -173,13 +178,13 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        AccountPriceList myPrices = getAnalysis().getDataSet().getAccountPrices();
-        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        SecurityPriceList myPrices = getAnalysis().getDataSet().getSecurityPrices();
+        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortfolioLineType.COMMENT, myDesc);
@@ -188,7 +193,7 @@ public class QPortfolioEvent
         /* If we are using BuyX */
         if (useBuyX) {
             /* Add Transfer Category */
-            addCategoryLine(QPortfolioLineType.XFERACCOUNT, myEvent.getCategory());
+            addCategoryLine(QPortfolioLineType.XFERACCOUNT, myTrans.getCategory());
 
             /* Add Transfer Amount */
             addDecimalLine(QPortfolioLineType.XFERAMOUNT, myValue);
@@ -203,27 +208,24 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildXferInQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        JMoney myAmount = myEvent.getAmount();
-        Account myDebit = myEvent.getDebit();
-        Account mySecurity = myEvent.getCredit();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> myDebit = myTrans.getDebit();
+        AssetBase<?> mySecurity = myTrans.getCredit();
         boolean autoCorrectZeroUnits = false;
-        JUnits myUnits = myEvent.getCreditUnits();
+        JUnits myUnits = myTrans.getCreditUnits();
         if (myUnits == null) {
             myUnits = new JUnits();
             autoCorrectZeroUnits = !getQIFType().canInvestCapital();
-        }
-        if (mySecurity.getAlias() != null) {
-            mySecurity = mySecurity.getAlias();
         }
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
 
         /* Determine additional features */
-        boolean useBuyX4Event = myDebit.hasValue()
+        boolean useBuyX4Event = (!(myDebit instanceof Payee))
                                 && getQIFType().canXferPortfolioLinked();
 
         /* Reset the builder */
@@ -254,13 +256,13 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myUnitValue);
 
         /* Add the price */
-        AccountPriceList myPrices = getAnalysis().getDataSet().getAccountPrices();
-        AccountPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
+        SecurityPriceList myPrices = getAnalysis().getDataSet().getSecurityPrices();
+        SecurityPrice myPrice = myPrices.getLatestPrice(mySecurity, myDate);
         JDecimal myPriceValue = new JDecimal(myPrice.getPrice());
         addDecimalLine(QPortfolioLineType.PRICE, myPriceValue);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortfolioLineType.COMMENT, myDesc);
@@ -312,13 +314,13 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildXferOutQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        JMoney myAmount = myEvent.getAmount();
-        Account mySecurity = myEvent.getDebit();
-        Account myCredit = myEvent.getCredit();
-        JUnits myUnits = myEvent.getDebitUnits();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> mySecurity = myTrans.getDebit();
+        AssetBase<?> myCredit = myTrans.getCredit();
+        JUnits myUnits = myTrans.getDebitUnits();
         boolean autoCorrectZeroUnits = false;
         boolean zeroUnits = false;
         if (myUnits == null) {
@@ -330,7 +332,7 @@ public class QPortfolioEvent
         String myReconciled = getReconciledFlag();
 
         /* Determine additional flags */
-        boolean useSellX4Event = myCredit.hasValue()
+        boolean useSellX4Event = (!(myCredit instanceof Payee))
                                  && getQIFType().canXferPortfolioLinked();
 
         /* Reset the builder */
@@ -368,7 +370,7 @@ public class QPortfolioEvent
         }
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortfolioLineType.COMMENT, myDesc);
@@ -420,10 +422,10 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildStockSplitQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDilution myDilution = myEvent.getDilution();
-        JUnits myUnits = myEvent.getCreditUnits();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDilution myDilution = myTrans.getDilution();
+        JUnits myUnits = myTrans.getCreditUnits();
         boolean useSplits = getQIFType().useStockSplit();
 
         /* Determine reconciled flag */
@@ -433,7 +435,7 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.DATE, myEvent.getDate());
+        addDateLine(QPortfolioLineType.DATE, myTrans.getDate());
 
         /* Add the action */
         if (useSplits) {
@@ -442,11 +444,11 @@ public class QPortfolioEvent
             addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSIN);
         } else {
             addActionLine(QPortfolioLineType.ACTION, QActionType.SHRSOUT);
-            myUnits = myEvent.getDebitUnits();
+            myUnits = myTrans.getDebitUnits();
         }
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getDebit());
+        addAccountLine(QPortfolioLineType.SECURITY, myTrans.getDebit());
 
         /* Add the Cleared status */
         addStringLine(QPortfolioLineType.CLEARED, myReconciled);
@@ -462,7 +464,7 @@ public class QPortfolioEvent
         }
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortfolioLineType.COMMENT, myDesc);
@@ -477,13 +479,13 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildStockAdjustQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
         boolean isDebit = true;
-        JUnits myUnits = myEvent.getDebitUnits();
+        JUnits myUnits = myTrans.getDebitUnits();
         if (myUnits == null) {
             isDebit = false;
-            myUnits = myEvent.getCreditUnits();
+            myUnits = myTrans.getCreditUnits();
         }
 
         /* Determine reconciled flag */
@@ -493,7 +495,7 @@ public class QPortfolioEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QPortfolioLineType.DATE, myEvent.getDate());
+        addDateLine(QPortfolioLineType.DATE, myTrans.getDate());
 
         /* Add the action */
         addActionLine(QPortfolioLineType.ACTION, (isDebit)
@@ -501,7 +503,7 @@ public class QPortfolioEvent
                                                           : QActionType.SHRSIN);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getDebit());
+        addAccountLine(QPortfolioLineType.SECURITY, myTrans.getDebit());
 
         /* Add the Cleared status */
         addStringLine(QPortfolioLineType.CLEARED, myReconciled);
@@ -511,7 +513,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortfolioLineType.COMMENT, myDesc);
@@ -526,20 +528,20 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildDividendQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        Account mySecurity = myEvent.getDebit();
-        Account myCredit = myEvent.getCredit();
-        JMoney myAmount = myEvent.getAmount();
-        JMoney myTaxCredit = myEvent.getTaxCredit();
-        String myDesc = myEvent.getComments();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        AssetBase<?> mySecurity = myTrans.getDebit();
+        AssetBase<?> myCredit = myTrans.getCredit();
+        JMoney myAmount = myTrans.getAmount();
+        JMoney myTaxCredit = myTrans.getTaxCredit();
+        String myDesc = myTrans.getComments();
         QIFType myQIFType = getQIFType();
         boolean isReinvested = Difference.isEqual(mySecurity, myCredit);
 
         /* Check for auto-correction of zero units */
         boolean autoCorrectZeroUnits = false;
-        JUnits myUnits = myEvent.getCreditUnits();
+        JUnits myUnits = myTrans.getCreditUnits();
         if (myUnits == null) {
             myUnits = new JUnits();
             autoCorrectZeroUnits = !myQIFType.canInvestCapital();
@@ -699,13 +701,13 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildDeMergerQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        Account myDebit = myEvent.getDebit();
-        JUnits myDebitUnits = myEvent.getDebitUnits();
-        JUnits myCreditUnits = myEvent.getCreditUnits();
-        String myDesc = myEvent.getComments();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        AssetBase<?> myDebit = myTrans.getDebit();
+        JUnits myDebitUnits = myTrans.getDebitUnits();
+        JUnits myCreditUnits = myTrans.getCreditUnits();
+        String myDesc = myTrans.getComments();
         boolean autoCorrectZeroUnits = false;
         boolean zeroUnits = false;
         if (myDebitUnits == null) {
@@ -723,7 +725,7 @@ public class QPortfolioEvent
         SecurityBucket myBucket = getSecurityBucket(myDebit);
 
         /* Obtain the delta cost */
-        JMoney myDeltaCost = myBucket.getMoneyDeltaForEvent(myEvent, SecurityAttribute.COST);
+        JMoney myDeltaCost = myBucket.getMoneyDeltaForTransaction(myTrans, SecurityAttribute.COST);
         myDeltaCost = new JMoney(myDeltaCost);
         myDeltaCost.negate();
 
@@ -797,7 +799,7 @@ public class QPortfolioEvent
         addActionLine(QPortfolioLineType.ACTION, QActionType.BUY);
 
         /* Add the Security */
-        addAccountLine(QPortfolioLineType.SECURITY, myEvent.getCredit());
+        addAccountLine(QPortfolioLineType.SECURITY, myTrans.getCredit());
 
         /* Add the Amount (as a simple decimal) */
         addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
@@ -824,15 +826,15 @@ public class QPortfolioEvent
      * @return the QIF entry
      */
     private String buildTakeOverQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JDateDay myDate = myEvent.getDate();
-        JMoney myAmount = myEvent.getAmount();
-        Account myDebit = myEvent.getDebit();
-        Account myCredit = myEvent.getCredit();
-        String myDesc = myEvent.getComments();
-        Account myThirdParty = myEvent.getThirdParty();
-        JUnits myCreditUnits = myEvent.getCreditUnits();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JDateDay myDate = myTrans.getDate();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> myDebit = myTrans.getDebit();
+        AssetBase<?> myCredit = myTrans.getCredit();
+        String myDesc = myTrans.getComments();
+        Deposit myThirdParty = myTrans.getThirdParty();
+        JUnits myCreditUnits = myTrans.getCreditUnits();
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -854,7 +856,7 @@ public class QPortfolioEvent
         SecurityBucket myCreditBucket = getSecurityBucket(myCredit);
 
         /* Obtain total payment value for sale stock */
-        JMoney myStockValue = myCreditBucket.getMoneyDeltaForEvent(myEvent, SecurityAttribute.COST);
+        JMoney myStockValue = myCreditBucket.getMoneyDeltaForTransaction(myTrans, SecurityAttribute.COST);
         JMoney mySaleValue = new JMoney(myStockValue);
         mySaleValue.addAmount(myAmount);
 
@@ -866,7 +868,7 @@ public class QPortfolioEvent
         addStringLine(QPortfolioLineType.CLEARED, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
-        myValue = new JDecimal(myDebitBucket.getUnitsDeltaForEvent(myEvent, SecurityAttribute.UNITS));
+        myValue = new JDecimal(myDebitBucket.getUnitsDeltaForTransaction(myTrans, SecurityAttribute.UNITS));
         myValue.negate();
         addDecimalLine(QPortfolioLineType.QUANTITY, myValue);
 
@@ -957,24 +959,20 @@ public class QPortfolioEvent
             super(pAnalysis, pAccount);
         }
 
-        /**
-         * Register event.
-         * @param pEvent the event
-         * @param isCredit is this the credit item?
-         */
-        protected void registerEvent(final Event pEvent,
-                                     final boolean isCredit) {
+        @Override
+        protected void registerTransaction(final Transaction pTrans,
+                                           final boolean isCredit) {
             /* Allocate the event */
-            QPortfolioEvent myEvent = new QPortfolioEvent(getAnalysis(), pEvent, isCredit);
+            QPortfolioEvent myEvent = new QPortfolioEvent(getAnalysis(), pTrans, isCredit);
             addEvent(myEvent);
 
             /* If we need a holding event */
             if (myEvent.needsHoldingEvent()) {
                 /* Access holding account */
-                QAccount myHolding = getAnalysis().getAccount(getAccount().getHolding());
+                QAccount myHolding = getAnalysis().getAccount(getAccount().getHolding(), null);
 
-                /* Allocate the event */
-                myHolding.processHoldingEvent(pEvent, isCredit);
+                /* Allocate the transaction */
+                myHolding.processHoldingTransaction(pTrans, isCredit);
             }
         }
     }

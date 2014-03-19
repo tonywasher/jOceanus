@@ -39,11 +39,11 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 
@@ -175,7 +175,7 @@ public class TaxBasisAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final NewAnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof TaxBasisFilter) {
             /* Access filter */

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.views;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -49,14 +50,19 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 public class ViewSecurityPrice
         extends SecurityPrice {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ViewSecurityPrice.class.getName());
+
+    /**
      * Object name.
      */
-    public static final String OBJECT_NAME = ViewPrice.class.getSimpleName();
+    public static final String OBJECT_NAME = NLS_BUNDLE.getString("DataName");
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = NLS_BUNDLE.getString("DataListName");
 
     /**
      * Report fields.
@@ -71,12 +77,12 @@ public class ViewSecurityPrice
     /**
      * Dilution Field Id.
      */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField("Dilution");
+    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDilution"));
 
     /**
      * Diluted Price Field Id.
      */
-    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField("DilutedPrice");
+    public static final JDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDilutedPrice"));
 
     /**
      * Is the account subject to dilutions?
@@ -217,7 +223,7 @@ public class ViewSecurityPrice
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ViewSecurityPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -226,12 +232,12 @@ public class ViewSecurityPrice
 
         @Override
         public String listName() {
-            return ViewSecurityPriceList.class.getSimpleName();
+            return LIST_NAME;
         }
 
         @Override
         public JDataFields getItemFields() {
-            return ViewPrice.FIELD_DEFS;
+            return ViewSecurityPrice.FIELD_DEFS;
         }
 
         @Override
@@ -242,12 +248,12 @@ public class ViewSecurityPrice
         /**
          * The Security field id.
          */
-        public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField("Security");
+        public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
 
         /**
          * The Dilutions field id.
          */
-        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField("Dilutions");
+        public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilutions"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -325,7 +331,7 @@ public class ViewSecurityPrice
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
-            theDilutions = null;
+            theDilutions = pView.getDilutions();
             hasDilutions = theDilutions.hasDilution(theSecurity);
 
             /* Access the list iterator */

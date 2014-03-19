@@ -23,13 +23,13 @@
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 
 /**
  * Quicken item.
@@ -241,7 +241,7 @@ public abstract class QElement {
      * Add Account.
      * @param pAccount the account
      */
-    protected void addAccount(final Account pAccount) {
+    protected void addAccount(final AssetBase<?> pAccount) {
         append(pAccount.getName());
     }
 
@@ -251,7 +251,7 @@ public abstract class QElement {
      * @param pAccount the account
      */
     protected void addAccountLine(final QLineType pType,
-                                  final Account pAccount) {
+                                  final AssetBase<?> pAccount) {
         addLineType(pType);
         addAccount(pAccount);
         endLine();
@@ -263,7 +263,7 @@ public abstract class QElement {
      * @param pAccount the account
      */
     protected void addAutoAccountLine(final QLineType pType,
-                                      final Account pAccount) {
+                                      final AssetBase<?> pAccount) {
         addLineType(pType);
         addAccount(pAccount);
         append(QIF_AUTOEXPSFX);
@@ -276,7 +276,7 @@ public abstract class QElement {
      * @param pAccount the account
      */
     protected void addXferAccountLine(final QLineType pType,
-                                      final Account pAccount) {
+                                      final AssetBase<?> pAccount) {
         addLineType(pType);
         append(QIF_XFERSTART);
         addAccount(pAccount);

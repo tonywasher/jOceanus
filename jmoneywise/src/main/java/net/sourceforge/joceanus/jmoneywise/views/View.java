@@ -27,12 +27,11 @@ import java.util.logging.Logger;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.DataAnalyser;
-import net.sourceforge.joceanus.jmoneywise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.database.MoneyWiseDatabase;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.joceanus.jmoneywise.newanalysis.TransactionAnalyser;
 import net.sourceforge.joceanus.jmoneywise.sheets.MoneyWiseSheet;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -61,7 +60,7 @@ public class View
     /**
      * The analysis.
      */
-    private DataAnalyser theAnalyser = null;
+    private TransactionAnalyser theAnalyser = null;
 
     /**
      * The dilution event list.
@@ -80,7 +79,7 @@ public class View
      * Obtain the analyser.
      * @return the analyser.
      */
-    public DataAnalyser getAnalyser() {
+    public TransactionAnalyser getAnalyser() {
         return theAnalyser;
     }
 
@@ -154,23 +153,19 @@ public class View
      * @return the analysis
      * @throws JOceanusException on error
      */
-    public final DataAnalyser analyseData(final MoneyWiseData pData) throws JOceanusException {
+    public final TransactionAnalyser analyseData(final MoneyWiseData pData) throws JOceanusException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 
-        /* Create the alternative analysis */
-        DataAnalyser myAnalyser = new DataAnalyser(pData, getPreferenceMgr());
+        /* Create the analysis */
+        TransactionAnalyser myAnalyser = new TransactionAnalyser(pData, getPreferenceMgr());
 
         /* Access the top level debug entry for this analysis */
         JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS);
         mySection.setObject(myAnalyser);
 
-        /* If it exists */
+        /* Mark active accounts */
         myAnalyser.markActiveAccounts();
-
-        /* Create the alternative analysis */
-        TransactionAnalyser myNewAnalyser = new TransactionAnalyser(pData, getPreferenceMgr());
-        myNewAnalyser.markActiveAccounts();
 
         /* Complete the analysis */
         pData.completeAnalysis();

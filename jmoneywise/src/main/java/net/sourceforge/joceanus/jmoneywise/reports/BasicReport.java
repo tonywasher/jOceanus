@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmetis.list.NestedHashMap;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
 
 import org.w3c.dom.Document;
 
@@ -66,7 +66,7 @@ public abstract class BasicReport {
      * @param pSource the filter source
      * @return the AnalysisFilter or null
      */
-    protected AnalysisFilter<?> processFilter(final Object pSource) {
+    protected NewAnalysisFilter<?> processFilter(final Object pSource) {
         return null;
     }
 
@@ -75,12 +75,12 @@ public abstract class BasicReport {
      * @param pReference the reference
      * @return the filter (or null)
      */
-    protected AnalysisFilter<?> processFilterReference(final String pReference) {
+    protected NewAnalysisFilter<?> processFilterReference(final String pReference) {
         /* Lookup the filter */
         Object mySource = theFilterMap.get(pReference);
         return (mySource != null)
-                ? processFilter(mySource)
-                : null;
+                                 ? processFilter(mySource)
+                                 : null;
     }
 
     /**

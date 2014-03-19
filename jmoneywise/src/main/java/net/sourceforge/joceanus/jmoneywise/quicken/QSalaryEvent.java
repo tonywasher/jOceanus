@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Quicken Salary Event.
@@ -37,36 +37,36 @@ public class QSalaryEvent
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param pCredit is this the credit item?
      */
     protected QSalaryEvent(final QAnalysis pAnalysis,
-                           final Event pEvent,
+                           final Transaction pTrans,
                            final boolean pCredit) {
         /* Call super constructor */
-        super(pAnalysis, pEvent, pCredit);
+        super(pAnalysis, pTrans, pCredit);
 
         /* Make sure that the additional categories are registered */
-        if (pEvent.getTaxCredit() != null) {
+        if (pTrans.getTaxCredit() != null) {
             getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
         }
-        if (pEvent.getNatInsurance() != null) {
+        if (pTrans.getNatInsurance() != null) {
             getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
         }
-        if (pEvent.getDeemedBenefit() != null) {
+        if (pTrans.getDeemedBenefit() != null) {
             getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
         }
     }
 
     @Override
     protected String buildQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JMoney myAmount = myEvent.getAmount();
-        JMoney myTaxCredit = myEvent.getTaxCredit();
-        JMoney myNatIns = myEvent.getNatInsurance();
-        JMoney myBenefit = myEvent.getDeemedBenefit();
-        EventCategory myCategory = myEvent.getCategory();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JMoney myAmount = myTrans.getAmount();
+        JMoney myTaxCredit = myTrans.getTaxCredit();
+        JMoney myNatIns = myTrans.getNatInsurance();
+        JMoney myBenefit = myTrans.getDeemedBenefit();
+        EventCategory myCategory = myTrans.getCategory();
         boolean isTaxCredit = myTaxCredit != null;
         boolean isNatIns = myNatIns != null;
         boolean isBenefit = myBenefit != null;
@@ -78,7 +78,7 @@ public class QSalaryEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myTrans.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
@@ -88,17 +88,17 @@ public class QSalaryEvent
         addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
-        String myRef = myEvent.getReference();
+        String myRef = myTrans.getReference();
         if (myRef != null) {
             /* Add the reference */
             addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Payee is the debit account */
-        addAccountLine(QEventLineType.PAYEE, myEvent.getDebit());
+        addAccountLine(QEventLineType.PAYEE, myTrans.getDebit());
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);

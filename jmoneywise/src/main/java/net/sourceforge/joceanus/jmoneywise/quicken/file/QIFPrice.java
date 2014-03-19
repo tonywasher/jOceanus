@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
@@ -67,7 +67,7 @@ public class QIFPrice {
      * @param pPrice the price
      */
     protected QIFPrice(final QIFFile pFile,
-                       final AccountPrice pPrice) {
+                       final SecurityPrice pPrice) {
         /* Store data */
         theSecurity = pFile.getSecurity(pPrice.getSecurityName());
         theDate = pPrice.getDate();

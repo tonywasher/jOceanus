@@ -25,9 +25,14 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventBaseList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QEvent.QEventList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QPortfolioEvent.QPortfolioEventList;
@@ -53,7 +58,12 @@ public final class QAccount
     /**
      * The account.
      */
-    private final Account theAccount;
+    private final AssetBase<?> theAccount;
+
+    /**
+     * The opening balance.
+     */
+    private final JMoney theOpeningBalance;
 
     /**
      * The events.
@@ -78,39 +88,50 @@ public final class QAccount
      * @return the account name
      */
     public String getDesc() {
-        return theAccount.getComments();
-    }
-
-    /**
-     * Obtain the account class.
-     * @return the account name
-     */
-    public AccountCategoryClass getAccountClass() {
-        return theAccount.getAccountCategoryClass();
+        return theAccount.getDesc();
     }
 
     /**
      * Obtain the account.
      * @return the account
      */
-    protected Account getAccount() {
+    protected AssetBase<?> getAccount() {
         return theAccount;
     }
 
     /**
-     * Obtain the portfolio account.
-     * @return the portfolio account
+     * Obtain the account parent.
+     * @return the parent
      */
-    protected Account getPortfolio() {
-        return theAccount.getPortfolio();
+    protected Payee getParent() {
+        if (theAccount instanceof Deposit) {
+            return ((Deposit) theAccount).getParent();
+        }
+        if (theAccount instanceof Loan) {
+            return ((Loan) theAccount).getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Obtain the autoExpense category.
+     * @return the parent
+     */
+    protected EventCategory getAutoExpense() {
+        if (theAccount instanceof Cash) {
+            return ((Cash) theAccount).getAutoExpense();
+        }
+        return null;
     }
 
     /**
      * Obtain the holding account.
      * @return the holding account
      */
-    protected Account getHolding() {
-        return theAccount.getHolding();
+    protected Deposit getHolding() {
+        return (theAccount instanceof Portfolio)
+                                                ? ((Portfolio) theAccount).getHolding()
+                                                : null;
     }
 
     /**
@@ -127,16 +148,25 @@ public final class QAccount
      * @param pAccount the account
      */
     protected QAccount(final QAnalysis pAnalysis,
-                       final Account pAccount) {
+                       final AssetBase<?> pAccount) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
         /* Store the parameters */
         theAnalysis = pAnalysis;
         theAccount = pAccount;
-        isAutoExpense = (pAccount.getAutoExpense() != null);
-        boolean isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.PORTFOLIO);
 
+        /* Determine flags */
+        isAutoExpense = (pAccount instanceof Cash)
+                        && (((Cash) pAccount).getAutoExpense() != null);
+        boolean isPortfolio = pAccount instanceof Portfolio;
+
+        /* Determine opening balance */
+        theOpeningBalance = (pAccount instanceof Deposit)
+                                                         ? ((Deposit) pAccount).getOpeningBalance()
+                                                         : null;
+
+        /* Allocate event list */
         theEvents = (isPortfolio)
                                  ? new QPortfolioEventList(pAnalysis, this)
                                  : new QEventList(pAnalysis, this);
@@ -157,7 +187,7 @@ public final class QAccount
         addStringLine(QAccountLineType.TYPE, getAccountType());
 
         /* If we have a description */
-        String myDesc = theAccount.getComments();
+        String myDesc = theAccount.getDesc();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QAccountLineType.DESCRIPTION, myDesc);
@@ -192,7 +222,7 @@ public final class QAccount
         addAccountLine(QAccountLineType.NAME, theAccount);
 
         /* If we have a description */
-        String myDesc = theAccount.getComments();
+        String myDesc = theAccount.getDesc();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QAccountLineType.DESCRIPTION, myDesc);
@@ -210,11 +240,10 @@ public final class QAccount
         endLine();
 
         /* If the account has an opening balance */
-        JMoney myOpeningBal = theAccount.getOpeningBalance();
-        if (myOpeningBal != null) {
+        if (theOpeningBalance != null) {
             /* Create the opening balance event */
             QEvent myEvent = new QEvent(theAnalysis);
-            append(myEvent.buildOpeningQIF(theAccount, pStartDate, myOpeningBal));
+            append(myEvent.buildOpeningQIF(theAccount, pStartDate, theOpeningBalance));
         }
 
         /* Return the builder */
@@ -226,45 +255,51 @@ public final class QAccount
      * @return the account type
      */
     protected String getAccountType() {
-        switch (theAccount.getAccountCategoryClass()) {
-            case SAVINGS:
-            case BOND:
-                return "Bank";
-            case CASH:
-                return "Cash";
-            case CREDITCARD:
-                return "CCard";
-            case PORTFOLIO:
-                return "Invst";
-            case PRIVATELOAN:
-                return "Oth A";
-            case LOAN:
-                return "Oth L";
-            default:
-                return null;
+        if (theAccount instanceof Deposit) {
+            return "Bank";
         }
+        if (theAccount instanceof Cash) {
+            return "Cash";
+        }
+        if (theAccount instanceof Portfolio) {
+            return "Invst";
+        }
+        if (theAccount instanceof Loan) {
+            Loan myLoan = (Loan) theAccount;
+            switch (myLoan.getCategoryClass()) {
+                case CREDITCARD:
+                    return "CCard";
+                case PRIVATELOAN:
+                    return "Oth A";
+                case LOAN:
+                    return "Oth L";
+                default:
+                    return null;
+            }
+        }
+        return null;
     }
 
     /**
-     * Process the event.
-     * @param pEvent the event
+     * Process the transaction.
+     * @param pTrans the transaction
      * @param isCredit is this the credit item?
      */
-    protected void processEvent(final Event pEvent,
-                                final boolean isCredit) {
-        /* register the event and add to the list */
-        theEvents.registerEvent(pEvent, isCredit);
+    protected void processTransaction(final Transaction pTrans,
+                                      final boolean isCredit) {
+        /* register the transaction and add to the list */
+        theEvents.registerTransaction(pTrans, isCredit);
     }
 
     /**
-     * Process the holding event.
-     * @param pEvent the event
+     * Process the holding transaction.
+     * @param pTrans the transaction
      * @param isCredit is this the credit item?
      */
-    protected void processHoldingEvent(final Event pEvent,
-                                       final boolean isCredit) {
+    protected void processHoldingTransaction(final Transaction pTrans,
+                                             final boolean isCredit) {
         /* register the event and add to the list */
-        theEvents.registerHoldingEvent(pEvent, isCredit);
+        theEvents.registerHoldingTransaction(pTrans, isCredit);
     }
 
     /**
@@ -273,7 +308,7 @@ public final class QAccount
      */
     protected boolean isActive() {
         /* Check size of list */
-        return (!theEvents.isEmpty()) || (theAccount.getOpeningBalance() != null);
+        return (!theEvents.isEmpty()) || (theOpeningBalance != null);
     }
 
     /**

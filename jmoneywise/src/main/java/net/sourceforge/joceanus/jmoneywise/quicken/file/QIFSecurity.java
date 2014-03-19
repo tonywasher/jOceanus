@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QSecurityLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 
@@ -45,7 +45,7 @@ public class QIFSecurity
     /**
      * Category Map.
      */
-    protected static final Map<AccountCategoryClass, String> QIF_ACTCATMAP = createClassMap();
+    protected static final Map<SecurityTypeClass, String> QIF_ACTCATMAP = createClassMap();
 
     /**
      * The Security.
@@ -58,9 +58,9 @@ public class QIFSecurity
     private final String theSymbol;
 
     /**
-     * The Account CategoryClass.
+     * The SecurityTypeClass.
      */
-    private final AccountCategoryClass theClass;
+    private final SecurityTypeClass theClass;
 
     /**
      * Obtain the Name.
@@ -82,16 +82,16 @@ public class QIFSecurity
      * Create the CategoryClass to type map.
      * @return the map
      */
-    private static Map<AccountCategoryClass, String> createClassMap() {
+    private static Map<SecurityTypeClass, String> createClassMap() {
         /* Create the map */
-        Map<AccountCategoryClass, String> myMap = new EnumMap<AccountCategoryClass, String>(AccountCategoryClass.class);
+        Map<SecurityTypeClass, String> myMap = new EnumMap<SecurityTypeClass, String>(SecurityTypeClass.class);
 
         /* Add the entries */
-        myMap.put(AccountCategoryClass.SHARES, "Share");
-        myMap.put(AccountCategoryClass.UNITTRUST, "Unit/Inv. Trust");
-        myMap.put(AccountCategoryClass.LIFEBOND, "Bond");
-        myMap.put(AccountCategoryClass.ASSET, "Real Estate");
-        myMap.put(AccountCategoryClass.ENDOWMENT, "Trust");
+        myMap.put(SecurityTypeClass.SHARES, "Share");
+        myMap.put(SecurityTypeClass.UNITTRUST, "Unit/Inv. Trust");
+        myMap.put(SecurityTypeClass.LIFEBOND, "Bond");
+        myMap.put(SecurityTypeClass.ASSET, "Real Estate");
+        myMap.put(SecurityTypeClass.ENDOWMENT, "Trust");
 
         /* Return the map */
         return myMap;
@@ -103,14 +103,14 @@ public class QIFSecurity
      * @param pSecurity the Security
      */
     public QIFSecurity(final QIFFile pFile,
-                       final Account pSecurity) {
+                       final Security pSecurity) {
         /* Call super-constructor */
         super(pFile, QSecurityLineType.class);
 
         /* Store data */
         theName = pSecurity.getName();
         theSymbol = pSecurity.getSymbol();
-        theClass = pSecurity.getAccountCategoryClass();
+        theClass = pSecurity.getSecurityTypeClass();
 
         /* Build lines */
         addLine(new QIFSecurityNameLine(theName));
@@ -131,7 +131,7 @@ public class QIFSecurity
         /* Determine details */
         String myName = null;
         String mySymbol = null;
-        AccountCategoryClass myClass = null;
+        SecurityTypeClass myClass = null;
 
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
@@ -157,7 +157,7 @@ public class QIFSecurity
                     case SECTYPE:
                         QIFSecurityTypeLine myQLine = new QIFSecurityTypeLine(myData);
                         addLine(myQLine);
-                        myClass = myQLine.getAccountClass();
+                        myClass = myQLine.getSecurityClass();
                         break;
                     default:
                         break;
@@ -238,15 +238,15 @@ public class QIFSecurity
         }
 
         /**
-         * The Account Category Class.
+         * The Security Type Class.
          */
-        private final AccountCategoryClass theClass;
+        private final SecurityTypeClass theClass;
 
         /**
-         * Obtain account class.
-         * @return the account class
+         * Obtain security class.
+         * @return the security class
          */
-        public AccountCategoryClass getAccountClass() {
+        public SecurityTypeClass getSecurityClass() {
             return theClass;
         }
 
@@ -254,7 +254,7 @@ public class QIFSecurity
          * Constructor.
          * @param pClass the Security Class
          */
-        protected QIFSecurityTypeLine(final AccountCategoryClass pClass) {
+        protected QIFSecurityTypeLine(final SecurityTypeClass pClass) {
             /* Call super-constructor */
             super(QIF_ACTCATMAP.get(pClass));
 
@@ -271,10 +271,10 @@ public class QIFSecurity
             super(pType);
 
             /* Loop through the map entries */
-            AccountCategoryClass myClass = null;
-            Iterator<Map.Entry<AccountCategoryClass, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
+            SecurityTypeClass myClass = null;
+            Iterator<Map.Entry<SecurityTypeClass, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Map.Entry<AccountCategoryClass, String> myEntry = myIterator.next();
+                Map.Entry<SecurityTypeClass, String> myEntry = myIterator.next();
 
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {

@@ -25,19 +25,17 @@ package net.sourceforge.joceanus.jmoneywise.reports;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityAttribute;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket.SecurityBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,11 +86,6 @@ public class MarketGrowth
     private final JDataFormatter theFormatter;
 
     /**
-     * Data Analysis.
-     */
-    private Analysis theAnalysis;
-
-    /**
      * Constructor.
      * @param pManager the Report Manager
      */
@@ -105,12 +98,11 @@ public class MarketGrowth
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        theAnalysis = pAnalysis;
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
 
         /* Access the totals */
         PortfolioBucket myTotals = myPortfolios.getTotals();
-        JDateDayRange myRange = theAnalysis.getDateRange();
+        JDateDayRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
@@ -186,9 +178,8 @@ public class MarketGrowth
      */
     private HTMLTable createDelayedPortfolio(final HTMLTable pParent,
                                              final PortfolioBucket pSource) {
-        /* Access the securities and portfolio */
-        SecurityBucketList mySecurities = theAnalysis.getSecurities();
-        Account myPortfolio = pSource.getPortfolio();
+        /* Access the securities */
+        SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -197,11 +188,6 @@ public class MarketGrowth
         Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
             SecurityBucket myBucket = myIterator.next();
-
-            /* Skip record if incorrect category */
-            if (!Difference.isEqual(myBucket.getPortfolio(), myPortfolio)) {
-                continue;
-            }
 
             /* Access bucket name */
             String myName = myBucket.getName();

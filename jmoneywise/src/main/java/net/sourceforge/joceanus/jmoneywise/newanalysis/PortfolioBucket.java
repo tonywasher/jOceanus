@@ -340,6 +340,16 @@ public final class PortfolioBucket
         return theSecurities.getBucket(pSecurity, thePortfolio);
     }
 
+    /**
+     * Obtain the SecurityBucket from this portfolio for a security.
+     * @param pSecurity the security
+     * @return the bucket
+     */
+    public SecurityBucket findSecurityBucket(final Security pSecurity) {
+        /* Return the security bucket for the portfolio's list */
+        return theSecurities.findItemById(pSecurity.getOrderedId());
+    }
+
     @Override
     public int compareTo(final PortfolioBucket pThat) {
         /* Handle the trivial cases */
@@ -616,8 +626,8 @@ public final class PortfolioBucket
          * @param pSecurity the security
          * @return the bucket
          */
-        protected SecurityBucket getBucket(final Portfolio pPortfolio,
-                                           final AssetBase<?> pSecurity) {
+        public SecurityBucket getBucket(final Portfolio pPortfolio,
+                                        final AssetBase<?> pSecurity) {
             /* Access as security */
             Security mySecurity = Security.class.cast(pSecurity);
 
@@ -666,7 +676,13 @@ public final class PortfolioBucket
                     myPortfolio.addValues(myCurr);
                     theTotals.addValues(myCurr);
                 }
+
+                /* Calculate delta for the portfolio */
+                myPortfolio.calculateDelta();
             }
+
+            /* Calculate delta for the totals */
+            theTotals.calculateDelta();
 
             /* Propagate totals */
             myMarket.propagateTotals(theAnalysis);

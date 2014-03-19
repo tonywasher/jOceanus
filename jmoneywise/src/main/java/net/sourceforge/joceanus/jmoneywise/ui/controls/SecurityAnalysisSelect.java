@@ -38,14 +38,13 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
@@ -77,11 +76,6 @@ public class SecurityAnalysisSelect
     private PortfolioBucketList thePortfolios;
 
     /**
-     * The active security bucket list.
-     */
-    private SecurityBucketList theSecurities;
-
-    /**
      * The state.
      */
     private SecurityState theState;
@@ -108,7 +102,7 @@ public class SecurityAnalysisSelect
 
     @Override
     public boolean isAvailable() {
-        return (theSecurities != null) && !theSecurities.isEmpty();
+        return (thePortfolios != null) && !thePortfolios.isEmpty();
     }
 
     /**
@@ -187,34 +181,38 @@ public class SecurityAnalysisSelect
     public void setAnalysis(final Analysis pAnalysis) {
         /* Access buckets */
         thePortfolios = pAnalysis.getPortfolios();
-        theSecurities = pAnalysis.getSecurities();
 
         /* Obtain the current security */
         SecurityBucket mySecurity = theState.getSecurity();
 
         /* If we have a selected Security */
         if (mySecurity != null) {
+            /* Access the portfolio */
+            Portfolio myPortfolio = mySecurity.getPortfolio();
+
             /* Look for the equivalent bucket */
-            mySecurity = theSecurities.findItemById(mySecurity.getOrderedId());
+            PortfolioBucket myPortBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
+            mySecurity = (myPortBucket == null)
+                                               ? null
+                                               : myPortBucket.findSecurityBucket(mySecurity.getSecurity());
         }
 
-        /* If we do not have an active bucket and the list is non-empty */
-        if ((mySecurity == null) && (!theSecurities.isEmpty())) {
+        /* If we do not have an active bucket */
+        if (mySecurity == null) {
             /* Check for a security in the same portfolio */
-            Account myPortfolio = theState.getPortfolio();
-            PortfolioBucket myPortBucket = (myPortfolio == null)
-                                                                ? null
-                                                                : thePortfolios.findItemById(myPortfolio.getId());
+            PortfolioBucket myPortBucket = theState.getPortfolio();
+            myPortBucket = (myPortBucket == null)
+                                                 ? null
+                                                 : thePortfolios.findItemById(myPortBucket.getOrderedId());
 
             /* If the portfolio no longer exists */
             if (myPortBucket == null) {
                 /* Access the first portfolio */
                 myPortBucket = thePortfolios.peekFirst();
-                myPortfolio = myPortBucket.getPortfolio();
             }
 
             /* Use the first security for portfolio */
-            mySecurity = getFirstSecurity(myPortfolio);
+            mySecurity = getFirstSecurity(myPortBucket);
         }
 
         /* Set the security */
@@ -223,7 +221,7 @@ public class SecurityAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final NewAnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof SecurityFilter) {
             /* Access filter */
@@ -232,8 +230,14 @@ public class SecurityAnalysisSelect
             /* Obtain the filter bucket */
             SecurityBucket mySecurity = myFilter.getBucket();
 
-            /* Obtain equivalent bucket */
-            mySecurity = theSecurities.findItemById(mySecurity.getOrderedId());
+            /* Access the portfolio */
+            Portfolio myPortfolio = mySecurity.getPortfolio();
+
+            /* Look for the equivalent bucket */
+            PortfolioBucket myPortBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
+            mySecurity = (myPortBucket == null)
+                                               ? null
+                                               : myPortBucket.findSecurityBucket(mySecurity.getSecurity());
 
             /* Set the security */
             theState.setSecurity(mySecurity);
@@ -246,16 +250,11 @@ public class SecurityAnalysisSelect
      * @param pPortfolio the portfolio
      * @return the first security
      */
-    private SecurityBucket getFirstSecurity(final Account pPortfolio) {
+    private SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
         /* Loop through the available security values */
-        Iterator<SecurityBucket> myIterator = theSecurities.iterator();
+        Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
         while (myIterator.hasNext()) {
             SecurityBucket myBucket = myIterator.next();
-
-            /* Ignore if not the correct portfolio */
-            if (!Difference.isEqual(pPortfolio, myBucket.getPortfolio())) {
-                continue;
-            }
 
             /* Return the bucket */
             return myBucket;
@@ -291,7 +290,7 @@ public class SecurityAnalysisSelect
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Access current portfolio */
-            Account myPortfolio = theState.getPortfolio();
+            PortfolioBucket myPortfolio = theState.getPortfolio();
 
             /* Record active item */
             JMenuItem myActive = null;
@@ -300,15 +299,14 @@ public class SecurityAnalysisSelect
             Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
             while (myIterator.hasNext()) {
                 PortfolioBucket myBucket = myIterator.next();
-                Account myPort = myBucket.getPortfolio();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myPort);
+                PortfolioAction myAction = new PortfolioAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.addMenuItem(myItem);
 
                 /* If this is the active portfolio */
-                if (myPortfolio.equals(myPort)) {
+                if (myPortfolio.equals(myBucket)) {
                     /* Record it */
                     myActive = myItem;
                 }
@@ -330,14 +328,14 @@ public class SecurityAnalysisSelect
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Access current portfolio and security */
-            Account myPortfolio = theState.getPortfolio();
+            PortfolioBucket myPortfolio = theState.getPortfolio();
             SecurityBucket mySecurity = theState.getSecurity();
 
             /* Record active item */
             JMenuItem myActive = null;
 
             /* Loop through the available security values */
-            Iterator<SecurityBucket> myIterator = theSecurities.iterator();
+            Iterator<SecurityBucket> myIterator = myPortfolio.securityIterator();
             while (myIterator.hasNext()) {
                 SecurityBucket myBucket = myIterator.next();
 
@@ -380,13 +378,13 @@ public class SecurityAnalysisSelect
         /**
          * Portfolio.
          */
-        private final Account thePortfolio;
+        private final PortfolioBucket thePortfolio;
 
         /**
          * Constructor.
          * @param pPortfolio the portfolio
          */
-        private PortfolioAction(final Account pPortfolio) {
+        private PortfolioAction(final PortfolioBucket pPortfolio) {
             super(pPortfolio.getName());
             thePortfolio = pPortfolio;
         }
@@ -442,7 +440,7 @@ public class SecurityAnalysisSelect
         /**
          * The active Portfolio.
          */
-        private Account thePortfolio;
+        private PortfolioBucket thePortfolio;
 
         /**
          * The active SecurityBucket.
@@ -461,7 +459,7 @@ public class SecurityAnalysisSelect
          * Obtain the Portfolio.
          * @return the portfolio
          */
-        private Account getPortfolio() {
+        private PortfolioBucket getPortfolio() {
             return thePortfolio;
         }
 
@@ -496,9 +494,11 @@ public class SecurityAnalysisSelect
                 theSecurity = pSecurity;
 
                 /* Access portfolio for security */
-                thePortfolio = (theSecurity == null)
-                                                    ? null
-                                                    : theSecurity.getPortfolio();
+                thePortfolio = null;
+                if (theSecurity != null) {
+                    Portfolio myPortfolio = theSecurity.getPortfolio();
+                    thePortfolio = thePortfolios.findItemById(myPortfolio.getId());
+                }
 
                 /* We have changed */
                 return true;
@@ -511,7 +511,7 @@ public class SecurityAnalysisSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final Account pPortfolio) {
+        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!Difference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;

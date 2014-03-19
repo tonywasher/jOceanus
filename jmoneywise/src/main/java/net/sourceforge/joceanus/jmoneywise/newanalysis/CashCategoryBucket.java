@@ -297,6 +297,9 @@ public final class CashCategoryBucket
                 /* Add it to the list */
                 add(myCurr);
             }
+
+            /* Calculate delta for the totals */
+            theTotals.calculateDelta();
         }
     }
 }

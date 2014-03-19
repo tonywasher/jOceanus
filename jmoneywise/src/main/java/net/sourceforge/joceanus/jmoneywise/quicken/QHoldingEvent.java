@@ -23,13 +23,15 @@
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * Quicken Interest Event.
@@ -39,22 +41,22 @@ public class QHoldingEvent
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param pCredit is this the credit item?
      */
     protected QHoldingEvent(final QAnalysis pAnalysis,
-                            final Event pEvent,
+                            final Transaction pTrans,
                             final boolean pCredit) {
         /* Call super constructor */
-        super(pAnalysis, pEvent, pCredit);
+        super(pAnalysis, pTrans, pCredit);
     }
 
     @Override
     protected String buildQIF() {
-        Event myEvent = getEvent();
+        Transaction myTrans = getTransaction();
 
         /* Switch on transaction type */
-        switch (myEvent.getCategoryClass()) {
+        switch (myTrans.getCategoryClass()) {
             case INHERITED:
             case OTHERINCOME:
                 return buildIncomeQIF();
@@ -75,10 +77,10 @@ public class QHoldingEvent
      * @return the QIF entry
      */
     protected String buildIncomeQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JMoney myAmount = myEvent.getAmount();
-        Account myPortfolio = myEvent.getCredit().getPortfolio();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JMoney myAmount = myTrans.getAmount();
+        Portfolio myPortfolio = myTrans.getPortfolio();
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -87,7 +89,7 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myTrans.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
@@ -98,17 +100,17 @@ public class QHoldingEvent
         addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);
         }
 
         /* Add the Payee */
-        addAccountLine(QEventLineType.PAYEE, myEvent.getDebit());
+        addAccountLine(QEventLineType.PAYEE, myTrans.getDebit());
 
         /* Add the category */
-        addCategoryLine(QEventLineType.SPLITCATEGORY, myEvent.getCategory());
+        addCategoryLine(QEventLineType.SPLITCATEGORY, myTrans.getCategory());
 
         /* Access the Amount again */
         myValue = new JDecimal(myAmount);
@@ -132,13 +134,13 @@ public class QHoldingEvent
      * @return the QIF entry
      */
     protected String buildDividendQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JMoney myAmount = myEvent.getAmount();
-        Account mySecurity = myEvent.getDebit();
-        Account myXferAccount = myEvent.getCredit();
-        Account myPortfolio = mySecurity.getPortfolio();
-        JMoney myTaxCredit = myEvent.getTaxCredit();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> mySecurity = myTrans.getDebit();
+        AssetBase<?> myXferAccount = myTrans.getCredit();
+        Portfolio myPortfolio = myTrans.getPortfolio();
+        JMoney myTaxCredit = myTrans.getTaxCredit();
         EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
         boolean isReinvested = Difference.isEqual(mySecurity, myXferAccount);
         boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
@@ -150,7 +152,7 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myTrans.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
@@ -163,7 +165,7 @@ public class QHoldingEvent
         addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);
@@ -215,12 +217,12 @@ public class QHoldingEvent
      * @return the QIF entry
      */
     protected String buildTakeOverQIF() {
-        /* Access the event */
-        Event myEvent = getEvent();
-        JMoney myAmount = myEvent.getAmount();
-        Account mySecurity = myEvent.getDebit();
-        Account myXferAccount = myEvent.getThirdParty();
-        Account myPortfolio = mySecurity.getPortfolio();
+        /* Access the transaction */
+        Transaction myTrans = getTransaction();
+        JMoney myAmount = myTrans.getAmount();
+        AssetBase<?> mySecurity = myTrans.getDebit();
+        Deposit myXferAccount = myTrans.getThirdParty();
+        Portfolio myPortfolio = myTrans.getPortfolio();
         boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
 
         /* Determine reconciled flag */
@@ -230,7 +232,7 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, myEvent.getDate());
+        addDateLine(QEventLineType.DATE, myTrans.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
@@ -243,7 +245,7 @@ public class QHoldingEvent
         addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a description */
-        String myDesc = myEvent.getComments();
+        String myDesc = myTrans.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);

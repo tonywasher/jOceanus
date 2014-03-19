@@ -665,7 +665,7 @@ public class SecurityPrice
          * @param pDate the date from which a price is required
          * @return The relevant Price record
          */
-        public SecurityPrice getLatestPrice(final Security pSecurity,
+        public SecurityPrice getLatestPrice(final AssetBase<?> pSecurity,
                                             final JDateDay pDate) {
             /* Access the list iterator */
             Iterator<SecurityPrice> myIterator = iterator();

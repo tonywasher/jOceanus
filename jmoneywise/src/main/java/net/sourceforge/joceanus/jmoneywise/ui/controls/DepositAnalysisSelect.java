@@ -40,65 +40,65 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.AccountFilter;
+import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.DepositCategoryBucket.DepositCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
- * Security Analysis Selection.
+ * Deposit Analysis Selection.
  */
-public class AccountAnalysisSelect
+public class DepositAnalysisSelect
         extends JEventPanel
         implements AnalysisFilterSelection {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 2264147825388154486L;
+    private static final long serialVersionUID = 4447175135483840139L;
 
     /**
      * Text for Category Label.
      */
-    private static final String NLS_CATEGORY = MoneyWiseDataType.ACCOUNTCATEGORY.getItemName();
+    private static final String NLS_CATEGORY = MoneyWiseDataType.DEPOSITCATEGORY.getItemName();
 
     /**
-     * Text for Account Label.
+     * Text for Deposit Label.
      */
-    private static final String NLS_ACCOUNT = MoneyWiseDataType.ACCOUNT.getItemName();
+    private static final String NLS_DEPOSIT = MoneyWiseDataType.DEPOSIT.getItemName();
 
     /**
      * The active category bucket list.
      */
-    private AccountCategoryBucketList theCategories;
+    private DepositCategoryBucketList theCategories;
 
     /**
-     * The active account bucket list.
+     * The active deposit bucket list.
      */
-    private AccountBucketList theAccounts;
+    private DepositBucketList theDeposits;
 
     /**
      * The state.
      */
-    private AccountState theState;
+    private DepositState theState;
 
     /**
      * The savePoint.
      */
-    private AccountState theSavePoint;
+    private DepositState theSavePoint;
 
     /**
-     * The account button.
+     * The deposit button.
      */
-    private final JButton theAccountButton;
+    private final JButton theDepositButton;
 
     /**
      * The category button.
@@ -106,23 +106,23 @@ public class AccountAnalysisSelect
     private final JButton theCatButton;
 
     @Override
-    public AccountFilter getFilter() {
-        return new AccountFilter(theState.getAccount());
+    public DepositFilter getFilter() {
+        return new DepositFilter(theState.getDeposit());
     }
 
     @Override
     public boolean isAvailable() {
-        return (theAccounts != null) && !theAccounts.isEmpty();
+        return (theDeposits != null) && !theDeposits.isEmpty();
     }
 
     /**
      * Constructor.
      */
-    public AccountAnalysisSelect() {
-        /* Create the account button */
-        theAccountButton = new JButton(ArrowIcon.DOWN);
-        theAccountButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theAccountButton.setHorizontalTextPosition(AbstractButton.LEFT);
+    public DepositAnalysisSelect() {
+        /* Create the deposit button */
+        theDepositButton = new JButton(ArrowIcon.DOWN);
+        theDepositButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theDepositButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the category button */
         theCatButton = new JButton(ArrowIcon.DOWN);
@@ -131,7 +131,7 @@ public class AccountAnalysisSelect
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY);
-        JLabel myActLabel = new JLabel(NLS_ACCOUNT);
+        JLabel myDepLabel = new JLabel(NLS_DEPOSIT);
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -140,18 +140,18 @@ public class AccountAnalysisSelect
         add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
         add(theCatButton);
         add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE << 2, 0)));
-        add(myActLabel);
+        add(myDepLabel);
         add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
-        add(theAccountButton);
+        add(theDepositButton);
         add(Box.createRigidArea(new Dimension(AnalysisSelect.STRUT_SIZE, 0)));
 
         /* Create initial state */
-        theState = new AccountState();
+        theState = new DepositState();
         theState.applyState();
 
         /* Create the listener */
-        AccountListener myListener = new AccountListener();
-        theAccountButton.addActionListener(myListener);
+        DepositListener myListener = new DepositListener();
+        theDepositButton.addActionListener(myListener);
         theCatButton.addActionListener(myListener);
     }
 
@@ -160,7 +160,7 @@ public class AccountAnalysisSelect
      */
     protected void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new AccountState(theState);
+        theSavePoint = new DepositState(theState);
     }
 
     /**
@@ -168,7 +168,7 @@ public class AccountAnalysisSelect
      */
     protected void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new AccountState(theSavePoint);
+        theState = new DepositState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -176,12 +176,12 @@ public class AccountAnalysisSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        /* Determine whether there are any Accounts to select */
-        boolean acAvailable = bEnabled && isAvailable();
+        /* Determine whether there are any Deposits to select */
+        boolean dpAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
-        theAccountButton.setEnabled(acAvailable);
-        theCatButton.setEnabled(acAvailable);
+        theDepositButton.setEnabled(dpAvailable);
+        theCatButton.setEnabled(dpAvailable);
     }
 
     /**
@@ -190,23 +190,23 @@ public class AccountAnalysisSelect
      */
     public void setAnalysis(final Analysis pAnalysis) {
         /* Access buckets */
-        theCategories = pAnalysis.getAccountCategories();
-        theAccounts = pAnalysis.getAccounts();
+        theCategories = pAnalysis.getDepositCategories();
+        theDeposits = pAnalysis.getDeposits();
 
-        /* Obtain the current account */
-        AccountBucket myAccount = theState.getAccount();
+        /* Obtain the current deposit */
+        DepositBucket myDeposit = theState.getDeposit();
 
-        /* If we have a selected Account */
-        if (myAccount != null) {
+        /* If we have a selected Deposit */
+        if (myDeposit != null) {
             /* Look for the equivalent bucket */
-            myAccount = theAccounts.findItemById(myAccount.getOrderedId());
+            myDeposit = theDeposits.findItemById(myDeposit.getOrderedId());
         }
 
         /* If we do not have an active bucket and the list is non-empty */
-        if ((myAccount == null) && (!theAccounts.isEmpty())) {
+        if ((myDeposit == null) && (!theDeposits.isEmpty())) {
             /* Check for an account in the same category */
-            AccountCategory myCategory = theState.getCategory();
-            AccountCategoryBucket myCatBucket = (myCategory == null)
+            DepositCategory myCategory = theState.getCategory();
+            DepositCategoryBucket myCatBucket = (myCategory == null)
                                                                     ? null
                                                                     : theCategories.findItemById(myCategory.getId());
 
@@ -217,30 +217,30 @@ public class AccountAnalysisSelect
                 myCategory = myCatBucket.getAccountCategory();
             }
 
-            /* Use the first account for category */
-            myAccount = getFirstAccount(myCategory);
+            /* Use the first deposit for category */
+            myDeposit = getFirstDeposit(myCategory);
         }
 
         /* Set the account */
-        theState.setAccount(myAccount);
+        theState.setDeposit(myDeposit);
         theState.applyState();
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final NewAnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof AccountFilter) {
+        if (pFilter instanceof DepositFilter) {
             /* Access filter */
-            AccountFilter myFilter = (AccountFilter) pFilter;
+            DepositFilter myFilter = (DepositFilter) pFilter;
 
             /* Obtain the filter bucket */
-            AccountBucket myAccount = myFilter.getBucket();
+            DepositBucket myDeposit = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myAccount = theAccounts.findItemById(myAccount.getOrderedId());
+            myDeposit = theDeposits.findItemById(myDeposit.getOrderedId());
 
-            /* Set the account */
-            theState.setAccount(myAccount);
+            /* Set the deposit */
+            theState.setDeposit(myDeposit);
             theState.applyState();
         }
     }
@@ -250,14 +250,14 @@ public class AccountAnalysisSelect
      * @param pCategory the category
      * @return the first account
      */
-    private AccountBucket getFirstAccount(final AccountCategory pCategory) {
+    private DepositBucket getFirstDeposit(final DepositCategory pCategory) {
         /* Loop through the available account values */
-        Iterator<AccountBucket> myIterator = theAccounts.iterator();
+        Iterator<DepositBucket> myIterator = theDeposits.iterator();
         while (myIterator.hasNext()) {
-            AccountBucket myBucket = myIterator.next();
+            DepositBucket myBucket = myIterator.next();
 
-            /* Ignore if not the correct portfolio */
-            if (!Difference.isEqual(pCategory, myBucket.getAccountCategory())) {
+            /* Ignore if not the correct category */
+            if (!Difference.isEqual(pCategory, myBucket.getCategory())) {
                 continue;
             }
 
@@ -272,7 +272,7 @@ public class AccountAnalysisSelect
     /**
      * Listener class.
      */
-    private final class AccountListener
+    private final class DepositListener
             implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
@@ -282,7 +282,7 @@ public class AccountAnalysisSelect
             /* Handle buttons */
             if (theCatButton.equals(o)) {
                 showCategoryMenu();
-            } else if (theAccountButton.equals(o)) {
+            } else if (theDepositButton.equals(o)) {
                 showAccountMenu();
             }
         }
@@ -298,13 +298,12 @@ public class AccountAnalysisSelect
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
             /* Loop through the available category values */
-            Iterator<AccountCategoryBucket> myIterator = theCategories.iterator();
+            Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                AccountCategoryBucket myBucket = myIterator.next();
+                DepositCategoryBucket myBucket = myIterator.next();
 
-                /* Only process subTotal items */
-                AccountCategoryClass myClass = myBucket.getAccountCategory().getCategoryTypeClass();
-                if (!myClass.isSubTotal()) {
+                /* Only process parent items */
+                if (!myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
                     continue;
                 }
 
@@ -318,16 +317,15 @@ public class AccountAnalysisSelect
             /* Re-Loop through the available category values */
             myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                AccountCategoryBucket myBucket = myIterator.next();
+                DepositCategoryBucket myBucket = myIterator.next();
 
                 /* Only process low-level items */
-                AccountCategoryClass myClass = myBucket.getAccountCategory().getCategoryTypeClass();
-                if (myClass.canParentAccount() || myClass.isParentCategory()) {
+                if (myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
                     continue;
                 }
 
                 /* Determine menu to add to */
-                AccountCategory myParent = myBucket.getAccountCategory().getParentCategory();
+                DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
@@ -348,30 +346,30 @@ public class AccountAnalysisSelect
             /* Create a new popUp menu */
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
-            /* Access current category and Account */
-            AccountCategory myCategory = theState.getCategory();
-            AccountBucket myAccount = theState.getAccount();
+            /* Access current category and Deposit */
+            DepositCategory myCategory = theState.getCategory();
+            DepositBucket myDeposit = theState.getDeposit();
 
             /* Record active item */
             JMenuItem myActive = null;
 
             /* Loop through the available account values */
-            Iterator<AccountBucket> myIterator = theAccounts.iterator();
+            Iterator<DepositBucket> myIterator = theDeposits.iterator();
             while (myIterator.hasNext()) {
-                AccountBucket myBucket = myIterator.next();
+                DepositBucket myBucket = myIterator.next();
 
                 /* Ignore if not the correct category */
-                if (!Difference.isEqual(myCategory, myBucket.getAccountCategory())) {
+                if (!Difference.isEqual(myCategory, myBucket.getCategory())) {
                     continue;
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                AccountAction myAction = new AccountAction(myBucket);
+                DepositAction myAction = new DepositAction(myBucket);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.addMenuItem(myItem);
 
-                /* If this is the active account */
-                if (myAccount.equals(myBucket)) {
+                /* If this is the active deposit */
+                if (myDeposit.equals(myBucket)) {
                     /* Record it */
                     myActive = myItem;
                 }
@@ -380,9 +378,9 @@ public class AccountAnalysisSelect
             /* Ensure active item is visible */
             myPopUp.showItem(myActive);
 
-            /* Show the Account menu in the correct place */
-            Rectangle myLoc = theAccountButton.getBounds();
-            myPopUp.show(theAccountButton, 0, myLoc.height);
+            /* Show the Deposit menu in the correct place */
+            Rectangle myLoc = theDepositButton.getBounds();
+            myPopUp.show(theDepositButton, 0, myLoc.height);
         }
     }
 
@@ -394,18 +392,18 @@ public class AccountAnalysisSelect
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 6923527853434260226L;
+        private static final long serialVersionUID = 4648108947359234200L;
 
         /**
          * Category.
          */
-        private final AccountCategory theCategory;
+        private final DepositCategory theCategory;
 
         /**
          * Constructor.
          * @param pCategory the category
          */
-        private CategoryAction(final AccountCategory pCategory) {
+        private CategoryAction(final DepositCategory pCategory) {
             super(pCategory.getSubCategory());
             theCategory = pCategory;
         }
@@ -421,33 +419,33 @@ public class AccountAnalysisSelect
     }
 
     /**
-     * Account action class.
+     * Deposit action class.
      */
-    private final class AccountAction
+    private final class DepositAction
             extends AbstractAction {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 3957463218996802055L;
+        private static final long serialVersionUID = -1615409703735943243L;
 
         /**
-         * Account.
+         * Deposit.
          */
-        private final AccountBucket theAccount;
+        private final DepositBucket theDeposit;
 
         /**
          * Constructor.
-         * @param pAccount the account bucket
+         * @param pDeposit the deposit bucket
          */
-        private AccountAction(final AccountBucket pAccount) {
-            super(pAccount.getName());
-            theAccount = pAccount;
+        private DepositAction(final DepositBucket pDeposit) {
+            super(pDeposit.getName());
+            theDeposit = pDeposit;
         }
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            /* Select the new account */
-            if (theState.setAccount(theAccount)) {
+            /* Select the new deposit */
+            if (theState.setDeposit(theDeposit)) {
                 theState.applyState();
                 fireStateChanged();
             }
@@ -457,39 +455,39 @@ public class AccountAnalysisSelect
     /**
      * SavePoint values.
      */
-    private final class AccountState {
+    private final class DepositState {
         /**
          * The active Category.
          */
-        private AccountCategory theCategory;
+        private DepositCategory theCategory;
 
         /**
-         * The active AccountBucket.
+         * The active DepositBucket.
          */
-        private AccountBucket theAccount;
+        private DepositBucket theDeposit;
 
         /**
-         * Obtain the Account Bucket.
-         * @return the Account
+         * Obtain the Deposit Bucket.
+         * @return the Deposit
          */
-        private AccountBucket getAccount() {
-            return theAccount;
+        private DepositBucket getDeposit() {
+            return theDeposit;
         }
 
         /**
          * Obtain the Category.
          * @return the category
          */
-        private AccountCategory getCategory() {
+        private DepositCategory getCategory() {
             return theCategory;
         }
 
         /**
          * Constructor.
          */
-        private AccountState() {
-            /* Initialise the account */
-            theAccount = null;
+        private DepositState() {
+            /* Initialise the deposit */
+            theDeposit = null;
             theCategory = null;
         }
 
@@ -497,27 +495,27 @@ public class AccountAnalysisSelect
          * Constructor.
          * @param pState state to copy from
          */
-        private AccountState(final AccountState pState) {
+        private DepositState(final DepositState pState) {
             /* Initialise state */
-            theAccount = pState.getAccount();
+            theDeposit = pState.getDeposit();
             theCategory = pState.getCategory();
         }
 
         /**
-         * Set new Account.
-         * @param pAccount the Account
+         * Set new Deposit.
+         * @param pDeposit the Deposit
          * @return true/false did a change occur
          */
-        private boolean setAccount(final AccountBucket pAccount) {
-            /* Adjust the selected account */
-            if (!Difference.isEqual(pAccount, theAccount)) {
-                /* Store the account */
-                theAccount = pAccount;
+        private boolean setDeposit(final DepositBucket pDeposit) {
+            /* Adjust the selected deposit */
+            if (!Difference.isEqual(pDeposit, theDeposit)) {
+                /* Store the deposit */
+                theDeposit = pDeposit;
 
                 /* Access category for account */
-                theCategory = (theAccount == null)
+                theCategory = (theDeposit == null)
                                                   ? null
-                                                  : theAccount.getAccountCategory();
+                                                  : theDeposit.getCategory();
 
                 /* We have changed */
                 return true;
@@ -530,11 +528,11 @@ public class AccountAnalysisSelect
          * @param pCategory the Category
          * @return true/false did a change occur
          */
-        private boolean setCategory(final AccountCategory pCategory) {
+        private boolean setCategory(final DepositCategory pCategory) {
             /* Adjust the selected category */
             if (!Difference.isEqual(pCategory, theCategory)) {
                 theCategory = pCategory;
-                theAccount = getFirstAccount(theCategory);
+                theDeposit = getFirstDeposit(theCategory);
                 return true;
             }
             return false;
@@ -546,9 +544,9 @@ public class AccountAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theAccountButton.setText((theAccount == null)
+            theDepositButton.setText((theDeposit == null)
                                                          ? null
-                                                         : theAccount.getName());
+                                                         : theDeposit.getName());
             theCatButton.setText((theCategory == null)
                                                       ? null
                                                       : theCategory.getName());

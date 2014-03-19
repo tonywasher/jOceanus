@@ -26,13 +26,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeAttribute;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket.PayeeBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 import org.w3c.dom.Document;

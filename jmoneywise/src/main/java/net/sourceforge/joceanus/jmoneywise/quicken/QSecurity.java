@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QSecurityLineType;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -56,9 +56,9 @@ public final class QSecurity
     private final QAnalysis theAnalysis;
 
     /**
-     * The account for this security.
+     * The security.
      */
-    private final Account theSecurity;
+    private final Security theSecurity;
 
     /**
      * The prices for this security.
@@ -69,7 +69,7 @@ public final class QSecurity
      * Obtain the security.
      * @return the security
      */
-    public Account getSecurity() {
+    public Security getSecurity() {
         return theSecurity;
     }
 
@@ -93,23 +93,23 @@ public final class QSecurity
      * Obtain the security class.
      * @return the security class
      */
-    public AccountCategoryClass getAccountClass() {
-        return theSecurity.getAccountCategoryClass();
+    public SecurityTypeClass getSecurityClass() {
+        return theSecurity.getSecurityTypeClass();
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pAccount the security account
+     * @param pSecurity the security
      */
     protected QSecurity(final QAnalysis pAnalysis,
-                        final Account pAccount) {
+                        final Security pSecurity) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
         /* Store the parameters */
         theAnalysis = pAnalysis;
-        theSecurity = pAccount;
+        theSecurity = pSecurity;
 
         /* Create the price list */
         thePrices = new ArrayList<QPrice>();
@@ -154,7 +154,7 @@ public final class QSecurity
      * Add Price.
      * @param pPrice the price to add
      */
-    protected void addPrice(final AccountPrice pPrice) {
+    protected void addPrice(final SecurityPrice pPrice) {
         /* Add the price */
         QPrice myQIF = new QPrice(theAnalysis, pPrice);
         thePrices.add(myQIF);
@@ -186,7 +186,7 @@ public final class QSecurity
      * @return the security type
      */
     private String getSecurityType() {
-        switch (theSecurity.getAccountCategoryClass()) {
+        switch (theSecurity.getSecurityTypeClass()) {
             case SHARES:
                 return "Share";
             case UNITTRUST:
@@ -210,7 +210,7 @@ public final class QSecurity
         /**
          * Security Map.
          */
-        private final Map<Account, QSecurity> theSecurities;
+        private final Map<Security, QSecurity> theSecurities;
 
         /**
          * The analysis.
@@ -234,22 +234,22 @@ public final class QSecurity
             theAnalysis = pAnalysis;
 
             /* Create the map */
-            theSecurities = new LinkedHashMap<Account, QSecurity>();
+            theSecurities = new LinkedHashMap<Security, QSecurity>();
         }
 
         /**
          * Register security.
-         * @param pAccount the security account
+         * @param pSecurity the security
          */
-        protected void registerSecurity(final Account pAccount) {
+        protected void registerSecurity(final Security pSecurity) {
             /* Look up the security in the map */
-            QSecurity mySecurity = theSecurities.get(pAccount);
+            QSecurity mySecurity = theSecurities.get(pSecurity);
 
             /* If this is a new security */
             if (mySecurity == null) {
                 /* Allocate the security and add to the map */
-                mySecurity = new QSecurity(theAnalysis, pAccount);
-                theSecurities.put(pAccount, mySecurity);
+                mySecurity = new QSecurity(theAnalysis, pSecurity);
+                theSecurities.put(pSecurity, mySecurity);
             }
         }
 
@@ -260,16 +260,16 @@ public final class QSecurity
          * @param pDate the latest date for prices
          */
         protected void buildPrices(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                   final AccountPriceList pPrices,
+                                   final SecurityPriceList pPrices,
                                    final JDateDay pDate) {
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();
             int myCount = 0;
 
             /* Loop through the security prices */
-            Iterator<AccountPrice> myIterator = pPrices.iterator();
+            Iterator<SecurityPrice> myIterator = pPrices.iterator();
             while (myIterator.hasNext()) {
-                AccountPrice myPrice = myIterator.next();
+                SecurityPrice myPrice = myIterator.next();
 
                 /* If the price is too late */
                 if (pDate.compareTo(myPrice.getDate()) < 0) {

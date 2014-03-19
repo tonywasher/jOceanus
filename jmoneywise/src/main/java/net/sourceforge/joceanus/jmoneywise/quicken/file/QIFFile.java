@@ -32,11 +32,12 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventTag;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
 /**
@@ -123,7 +124,7 @@ public class QIFFile {
      * Register account.
      * @param pAccount the account
      */
-    public void registerAccount(final Account pAccount) {
+    public void registerAccount(final AssetBase<?> pAccount) {
         /* Create the new Account and add to the map */
         QIFAccount myAct = new QIFAccount(this, pAccount);
         theAccounts.put(myAct.getName(), myAct);
@@ -133,7 +134,7 @@ public class QIFFile {
      * Register security.
      * @param pSecurity the security
      */
-    public void registerSecurity(final Account pSecurity) {
+    public void registerSecurity(final Security pSecurity) {
         /* Create the new Security and add to the map */
         QIFSecurity mySec = new QIFSecurity(this, pSecurity);
         theSecurities.put(mySec.getName(), mySec);
@@ -143,7 +144,7 @@ public class QIFFile {
      * Register price.
      * @param pPrice the price
      */
-    public void registerPrice(final AccountPrice pPrice) {
+    public void registerPrice(final SecurityPrice pPrice) {
         /* Allocate price and add to list */
         QIFPrice myPrice = new QIFPrice(this, pPrice);
         thePrices.add(myPrice);

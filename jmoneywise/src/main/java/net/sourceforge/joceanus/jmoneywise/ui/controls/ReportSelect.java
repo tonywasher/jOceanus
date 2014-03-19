@@ -41,10 +41,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
-import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 
@@ -388,8 +388,8 @@ public class ReportSelect
                 if (theType.isPointInTime() != isPointInTime) {
                     /* Switch it appropriately */
                     theRangeSelect.setPeriod(isPointInTime
-                            ? JDatePeriod.FISCALYEAR
-                            : JDatePeriod.DATESUPTO);
+                                                          ? JDatePeriod.FISCALYEAR
+                                                          : JDatePeriod.DATESUPTO);
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
@@ -412,8 +412,8 @@ public class ReportSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theReportButton.setText((theType == null)
-                    ? null
-                    : theType.toString());
+                                                     ? null
+                                                     : theType.toString());
         }
     }
 }

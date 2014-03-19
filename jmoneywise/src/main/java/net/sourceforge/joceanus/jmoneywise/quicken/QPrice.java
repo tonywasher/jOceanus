@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
@@ -51,7 +51,7 @@ public class QPrice
     /**
      * The Price.
      */
-    private final AccountPrice thePrice;
+    private final SecurityPrice thePrice;
 
     /**
      * Obtain Security Name.
@@ -81,17 +81,17 @@ public class QPrice
      * Obtain Price.
      * @return the price
      */
-    public AccountPrice getPrice() {
+    public SecurityPrice getPrice() {
         return thePrice;
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pPrice the account price
+     * @param pPrice the security price
      */
     protected QPrice(final QAnalysis pAnalysis,
-                     final AccountPrice pPrice) {
+                     final SecurityPrice pPrice) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -105,7 +105,7 @@ public class QPrice
      */
     protected String buildQIF() {
         /* Access the security */
-        Account mySecurity = thePrice.getSecurity();
+        Security mySecurity = thePrice.getSecurity();
 
         /* Reset the builder */
         reset();

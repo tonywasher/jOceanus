@@ -40,13 +40,13 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -180,7 +180,7 @@ public class EventCategoryAnalysisSelect
     }
 
     @Override
-    public void setFilter(final AnalysisFilter<?> pFilter) {
+    public void setFilter(final NewAnalysisFilter<?> pFilter) {
         /* If this is the correct filter type */
         if (pFilter instanceof EventCategoryFilter) {
             /* Access filter */

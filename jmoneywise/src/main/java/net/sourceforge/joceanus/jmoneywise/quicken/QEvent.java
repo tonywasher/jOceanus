@@ -27,14 +27,17 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 
 /**
  * Quicken Standard event.
@@ -72,9 +75,9 @@ public class QEvent
     private final QAnalysis theAnalysis;
 
     /**
-     * The event.
+     * The transaction.
      */
-    private final Event theEvent;
+    private final Transaction theTransaction;
 
     /**
      * Is this a transfer?
@@ -103,8 +106,8 @@ public class QEvent
      * Obtain the event.
      * @return the event
      */
-    protected Event getEvent() {
-        return theEvent;
+    protected Transaction getTransaction() {
+        return theTransaction;
     }
 
     /**
@@ -118,26 +121,27 @@ public class QEvent
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param pCredit is this the credit item?
      */
     protected QEvent(final QAnalysis pAnalysis,
-                     final Event pEvent,
+                     final Transaction pTrans,
                      final boolean pCredit) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
         /* Store details */
         theAnalysis = pAnalysis;
-        theEvent = pEvent;
+        theTransaction = pTrans;
         isCredit = pCredit;
-        isTransfer = pEvent.getCategory().isTransfer();
+        isTransfer = pTrans.getCategory().isTransfer();
 
         /* Access the account */
-        Account myAccount = (isCredit)
-                ? pEvent.getCredit()
-                : pEvent.getDebit();
-        isAutoExpense = (myAccount.getAutoExpense() != null);
+        AssetBase<?> myAccount = (isCredit)
+                                           ? pTrans.getCredit()
+                                           : pTrans.getDebit();
+        isAutoExpense = ((myAccount instanceof Cash)
+                && ((Cash) myAccount).isAutoExpense());
     }
 
     /**
@@ -150,7 +154,7 @@ public class QEvent
 
         /* Store details */
         theAnalysis = pAnalysis;
-        theEvent = null;
+        theTransaction = null;
         isCredit = true;
         isTransfer = true;
         isAutoExpense = false;
@@ -168,10 +172,10 @@ public class QEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, theEvent.getDate());
+        addDateLine(QEventLineType.DATE, theTransaction.getDate());
 
         /* Add the Amount (as a simple decimal) */
-        JDecimal myValue = new JDecimal(theEvent.getAmount());
+        JDecimal myValue = new JDecimal(theTransaction.getAmount());
         if (!isCredit) {
             myValue.negate();
         }
@@ -181,24 +185,26 @@ public class QEvent
         addStringLine(QEventLineType.CLEARED, myReconciled);
 
         /* If we have a reference */
-        String myRef = theEvent.getReference();
+        String myRef = theTransaction.getReference();
         if (myRef != null) {
             /* Add the reference */
             addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Determine partner account */
-        Account myPayee = (isCredit)
-                ? theEvent.getDebit()
-                : theEvent.getCredit();
+        AssetBase<?> myPayee = (isCredit)
+                                         ? theTransaction.getDebit()
+                                         : theTransaction.getCredit();
 
         /* Handle portfolio accounts */
-        if (myPayee.hasUnits()) {
-            myPayee = myPayee.getPortfolio();
+        if (myPayee instanceof Security) {
+            myPayee = theTransaction.getPortfolio();
         }
 
         /* If the payee is autoExpense */
-        EventCategory myAutoExpense = myPayee.getAutoExpense();
+        EventCategory myAutoExpense = (myPayee instanceof Cash)
+                                                               ? ((Cash) myPayee).getAutoExpense()
+                                                               : null;
         if (myAutoExpense != null) {
             /* Add the autoExpense payee */
             addAutoAccountLine(QEventLineType.PAYEE, myPayee);
@@ -215,8 +221,8 @@ public class QEvent
                 if (!getQIFType().useSimpleTransfer()) {
                     /* Add extra detail */
                     append((isCredit)
-                            ? QIF_XFERFROM
-                            : QIF_XFERTO);
+                                     ? QIF_XFERFROM
+                                     : QIF_XFERTO);
                     addAccount(myPayee);
                 }
                 /* else just add payee */
@@ -229,7 +235,7 @@ public class QEvent
         }
 
         /* If we have a description */
-        String myDesc = theEvent.getComments();
+        String myDesc = theTransaction.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);
@@ -244,7 +250,7 @@ public class QEvent
             addXferAccountLine(QEventLineType.CATEGORY, myPayee);
             /* else standard category */
         } else {
-            addCategoryLine(QEventLineType.CATEGORY, theEvent.getCategory());
+            addCategoryLine(QEventLineType.CATEGORY, theTransaction.getCategory());
         }
 
         /* Return the result */
@@ -269,7 +275,7 @@ public class QEvent
      * @param pBalance the opening balance
      * @return the QIF format
      */
-    protected String buildOpeningQIF(final Account pAccount,
+    protected String buildOpeningQIF(final AssetBase<?> pAccount,
                                      final JDateDay pStartDate,
                                      final JMoney pBalance) {
         /* Reset the builder */
@@ -305,10 +311,10 @@ public class QEvent
      */
     protected void buildAutoExpenseCorrectionQIF(final boolean doCredit) {
         /* Add the Date */
-        addDateLine(QEventLineType.DATE, theEvent.getDate());
+        addDateLine(QEventLineType.DATE, theTransaction.getDate());
 
         /* Add the Amount */
-        JDecimal myValue = new JDecimal(theEvent.getAmount());
+        JDecimal myValue = new JDecimal(theTransaction.getAmount());
         if (!doCredit) {
             myValue.negate();
         }
@@ -318,22 +324,24 @@ public class QEvent
         addStringLine(QEventLineType.CLEARED, QIF_RECONCILED);
 
         /* If we have a reference */
-        String myRef = theEvent.getReference();
+        String myRef = theTransaction.getReference();
         if (myRef != null) {
             /* Add the reference */
             addStringLine(QEventLineType.REFERENCE, myRef);
         }
 
         /* Determine this account and partner account */
-        Account myPayee = (isCredit)
-                ? theEvent.getDebit()
-                : theEvent.getCredit();
-        Account myAccount = (isCredit)
-                ? theEvent.getCredit()
-                : theEvent.getDebit();
+        AssetBase<?> myPayee = (isCredit)
+                                         ? theTransaction.getDebit()
+                                         : theTransaction.getCredit();
+        AssetBase<?> myAccount = (isCredit)
+                                           ? theTransaction.getCredit()
+                                           : theTransaction.getDebit();
 
         /* Access autoExpense */
-        EventCategory myAutoExpense = myAccount.getAutoExpense();
+        EventCategory myAutoExpense = (myAccount instanceof Cash)
+                                                                 ? ((Cash) myAccount).getAutoExpense()
+                                                                 : null;
 
         /* Add the payee */
         if (isCredit == doCredit) {
@@ -343,7 +351,7 @@ public class QEvent
         }
 
         /* If we have a description */
-        String myDesc = theEvent.getComments();
+        String myDesc = theTransaction.getComments();
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QEventLineType.COMMENT, myDesc);
@@ -351,8 +359,8 @@ public class QEvent
 
         /* Set the category */
         addCategoryLine(QEventLineType.CATEGORY, (isCredit == doCredit)
-                ? theEvent.getCategory()
-                : myAutoExpense);
+                                                                       ? theTransaction.getCategory()
+                                                                       : myAutoExpense);
 
         /* Complete the item */
         endItem();
@@ -363,9 +371,10 @@ public class QEvent
      * @param pSecurity the security
      * @return the bucket
      */
-    protected SecurityBucket getSecurityBucket(final Account pSecurity) {
+    protected SecurityBucket getSecurityBucket(final AssetBase<?> pSecurity) {
         /* Locate the security bucket */
-        return theAnalysis.getSecurityBucket(pSecurity);
+        Portfolio myPortfolio = theTransaction.getPortfolio();
+        return theAnalysis.getSecurityBucket(myPortfolio, pSecurity);
     }
 
     /**
@@ -374,9 +383,9 @@ public class QEvent
      */
     protected String getReconciledFlag() {
         /* Return the correct flag */
-        return theEvent.isReconciled()
-                ? QIF_RECONCILED
-                : QIF_OPEN;
+        return theTransaction.isReconciled()
+                                            ? QIF_RECONCILED
+                                            : QIF_OPEN;
     }
 
     /**
@@ -456,20 +465,20 @@ public class QEvent
         }
 
         /**
-         * Register event.
-         * @param pEvent the event
+         * Register transaction.
+         * @param pTrans the transaction
          * @param isCredit is this the credit item?
          */
-        protected abstract void registerEvent(final Event pEvent,
-                                              final boolean isCredit);
+        protected abstract void registerTransaction(final Transaction pTrans,
+                                                    final boolean isCredit);
 
         /**
-         * Register holding event.
-         * @param pEvent the event
+         * Register holding transaction.
+         * @param pTrans the transaction
          * @param isCredit is this the credit item?
          */
-        protected void registerHoldingEvent(final Event pEvent,
-                                            final boolean isCredit) {
+        protected void registerHoldingTransaction(final Transaction pTrans,
+                                                  final boolean isCredit) {
         }
 
         /**
@@ -528,39 +537,31 @@ public class QEvent
             super(pAnalysis, pAccount);
         }
 
-        /**
-         * Register event.
-         * @param pEvent the event
-         * @param isCredit is this the credit item?
-         */
-        protected void registerEvent(final Event pEvent,
-                                     final boolean isCredit) {
+        @Override
+        protected void registerTransaction(final Transaction pTrans,
+                                           final boolean isCredit) {
             QEvent myEvent;
-            switch (pEvent.getCategoryClass()) {
+            switch (pTrans.getCategoryClass()) {
                 case TAXEDINCOME:
                 case BENEFITINCOME:
-                    myEvent = new QSalaryEvent(getAnalysis(), pEvent, isCredit);
+                    myEvent = new QSalaryEvent(getAnalysis(), pTrans, isCredit);
                     break;
                 case INTEREST:
-                    myEvent = new QInterestEvent(getAnalysis(), pEvent, isCredit);
+                    myEvent = new QInterestEvent(getAnalysis(), pTrans, isCredit);
                     break;
                 default:
-                    myEvent = new QEvent(getAnalysis(), pEvent, isCredit);
+                    myEvent = new QEvent(getAnalysis(), pTrans, isCredit);
                     break;
             }
             addEvent(myEvent);
         }
 
-        /**
-         * Register holding event.
-         * @param pEvent the event
-         * @param isCredit is this the credit item?
-         */
-        protected void registerHoldingEvent(final Event pEvent,
-                                            final boolean isCredit) {
+        @Override
+        protected void registerHoldingTransaction(final Transaction pTrans,
+                                                  final boolean isCredit) {
 
             /* Allocate the event */
-            QHoldingEvent myEvent = new QHoldingEvent(getAnalysis(), pEvent, isCredit);
+            QHoldingEvent myEvent = new QHoldingEvent(getAnalysis(), pTrans, isCredit);
             addEvent(myEvent);
         }
     }

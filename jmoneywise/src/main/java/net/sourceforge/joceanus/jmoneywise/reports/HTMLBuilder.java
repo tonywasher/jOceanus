@@ -29,10 +29,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jtethys.DataConverter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -842,8 +842,8 @@ public class HTMLBuilder {
 
         /* Cast result to element */
         return (myParent instanceof Element)
-                ? (Element) myParent
-                : null;
+                                            ? (Element) myParent
+                                            : null;
     }
 
     /**
@@ -987,8 +987,8 @@ public class HTMLBuilder {
 
             /* Return the class name */
             return wasOdd
-                    ? theClass.getOddClass()
-                    : theClass.getEvenClass();
+                         ? theClass.getOddClass()
+                         : theClass.getEvenClass();
         }
 
         /**
@@ -1023,15 +1023,15 @@ public class HTMLBuilder {
         private void createNewRow(final boolean bHdr) {
             /* Determine the parent */
             Element myParent = (bHdr)
-                    ? getTableHeader()
-                    : getTableBody();
+                                     ? getTableHeader()
+                                     : getTableBody();
 
             /* Create the row */
             theRow = theDocument.createElement(ELEMENT_ROW);
             myParent.appendChild(theRow);
             theRow.setAttribute(ATTR_CLASS, (bHdr)
-                    ? CLASS_TOTROW
-                    : getNextRowClass());
+                                                  ? CLASS_TOTROW
+                                                  : getNextRowClass());
 
             /* Adjust # of columns */
             numCols = 0;
@@ -1045,8 +1045,8 @@ public class HTMLBuilder {
         private Element createNewCell(final boolean bTotal) {
             /* Determine the cell type */
             String myCellType = (bTotal)
-                    ? ELEMENT_TOTAL
-                    : ELEMENT_CELL;
+                                        ? ELEMENT_TOTAL
+                                        : ELEMENT_CELL;
 
             /* Adjust column # */
             numCols++;

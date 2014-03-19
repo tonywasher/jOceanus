@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>v1.2.1-SNAPSHOT</version>
+  <version>v1.2.2-SNAPSHOT</version>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
@@ -57,7 +57,7 @@
     <svnRepository>Finance</svnRepository>
     <svnParent>jOceanus</svnParent>
     <svnComponent>${svnParent}</svnComponent>
-    <svnBranch>v1.2.1</svnBranch>
+    <svnBranch>v1.2.2</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnBase>${svnParent}/trunk</svnBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
@@ -95,7 +95,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.16</version>
+        <version>2.17</version>
         <configuration>
           <skipTests>true</skipTests>
         </configuration>
@@ -209,7 +209,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.11</version>
+        <version>2.12</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
         </configuration>
@@ -217,13 +217,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.1</version>
         <configuration>
            <linkXref>true</linkXref>
            <aggregate>true</aggregate>
            <targetJdk>1.7</targetJdk>
            <excludes>
-               <exclude>**/jira/soap/*.java</exclude>
                <exclude>**/SevenZip/**/*.java</exclude>
            </excludes>
         </configuration>
@@ -236,8 +235,7 @@
             <linkJavadoc>true</linkJavadoc>
             <aggregate>true</aggregate>
             <excludes>
-               <exclude>**/jira/soap/*.java</exclude>
-               <exclude>**/SevenZip/**/*.java</exclude>
+              <exclude>**/SevenZip/**/*.java</exclude>
             </excludes>
         </configuration>
       </plugin>
@@ -249,7 +247,7 @@
           <show>public</show>
           <aggregate>true</aggregate>
           <nohelp>true</nohelp>
-          <excludePackageNames>*.jira.soap.*:SevenZip*</excludePackageNames>
+          <excludePackageNames>SevenZip*</excludePackageNames>
         </configuration>
       </plugin>
     </plugins>

@@ -26,13 +26,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisAttribute;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket.TaxBasisBucketList;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 

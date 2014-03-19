@@ -27,16 +27,16 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventAttribute;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket.CategoryValues;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter.EventCategoryFilter;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

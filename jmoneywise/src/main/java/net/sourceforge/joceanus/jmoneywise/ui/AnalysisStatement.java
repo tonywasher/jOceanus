@@ -37,16 +37,16 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfo;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfo.EventInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.EventInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.views.NewAnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
  * Analysis Statement.
  */
 public class AnalysisStatement
-        extends JDataTable<Event, MoneyWiseDataType> {
+        extends JDataTable<Transaction, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -79,12 +79,12 @@ public class AnalysisStatement
     /**
      * Date Column Title.
      */
-    private static final String TITLE_DATE = Event.FIELD_DATE.getName();
+    private static final String TITLE_DATE = Transaction.FIELD_DATE.getName();
 
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = Event.FIELD_CATEGORY.getName();
+    private static final String TITLE_CAT = Transaction.FIELD_CATEGORY.getName();
 
     /**
      * Description Column Title.
@@ -94,12 +94,12 @@ public class AnalysisStatement
     /**
      * Debit Column Title.
      */
-    private static final String TITLE_DEBIT = Event.FIELD_DEBIT.getName();
+    private static final String TITLE_DEBIT = Transaction.FIELD_DEBIT.getName();
 
     /**
      * Credit Column Title.
      */
-    private static final String TITLE_CREDIT = Event.FIELD_CREDIT.getName();
+    private static final String TITLE_CREDIT = Transaction.FIELD_CREDIT.getName();
 
     /**
      * Debited Column Title.
@@ -139,12 +139,12 @@ public class AnalysisStatement
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<Event, MoneyWiseDataType> theEventEntry;
+    private final transient UpdateEntry<Transaction, MoneyWiseDataType> theTransEntry;
 
     /**
      * The info entry.
      */
-    private final transient UpdateEntry<EventInfo, MoneyWiseDataType> theInfoEntry;
+    private final transient UpdateEntry<TransactionInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
      * The analysis data entry.
@@ -194,17 +194,17 @@ public class AnalysisStatement
     /**
      * The analysis filter.
      */
-    private transient AnalysisFilter<?> theFilter;
+    private transient NewAnalysisFilter<?> theFilter;
 
     /**
-     * Events.
+     * Transactions.
      */
-    private transient EventList theEvents = null;
+    private transient TransactionList theTransactions = null;
 
     /**
      * Statement Header.
      */
-    private transient Event theHeader;
+    private transient Transaction theHeader;
 
     /**
      * Obtain the panel.
@@ -226,8 +226,8 @@ public class AnalysisStatement
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theEventEntry = theUpdateSet.registerClass(Event.class);
-        theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
+        theTransEntry = theUpdateSet.registerClass(Transaction.class);
+        theInfoEntry = theUpdateSet.registerClass(TransactionInfo.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
@@ -236,7 +236,7 @@ public class AnalysisStatement
         theDataAnalysis = myDataMgr.new JDataEntry(AnalysisStatement.class.getSimpleName());
         theDataAnalysis.addAsChildOf(mySection);
         theDataAnalysis.setObject(theUpdateSet);
-        theDataFilter = myDataMgr.new JDataEntry(AnalysisFilter.class.getSimpleName());
+        theDataFilter = myDataMgr.new JDataEntry(NewAnalysisFilter.class.getSimpleName());
         theDataFilter.addAsChildOf(mySection);
 
         /* Create the Analysis Selection */
@@ -323,19 +323,19 @@ public class AnalysisStatement
      */
     public void setSelection(final JDateDayRange pRange) {
         theRange = pRange;
-        theEvents = null;
+        theTransactions = null;
         theHeader = null;
-        EventInfoList myInfo = null;
+        TransactionInfoList myInfo = null;
         if (theRange != null) {
             /* Get the Events edit list */
             MoneyWiseData myData = theView.getData();
-            EventList myEvents = myData.getEvents();
-            theEvents = myEvents.deriveEditList(pRange);
-            theHeader = new AnalysisHeader(theEvents);
-            myInfo = theEvents.getEventInfo();
+            TransactionList myTransactions = myData.getTransactions();
+            theTransactions = myTransactions.deriveEditList(pRange);
+            theHeader = new AnalysisHeader(theTransactions);
+            myInfo = theTransactions.getTransactionInfo();
         }
-        setList(theEvents);
-        theEventEntry.setDataList(theEvents);
+        setList(theTransactions);
+        theTransEntry.setDataList(theTransactions);
         theInfoEntry.setDataList(myInfo);
         theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
@@ -366,7 +366,7 @@ public class AnalysisStatement
      * JTable Data Model.
      */
     private final class AnalysisTableModel
-            extends JDataTableModel<Event, MoneyWiseDataType> {
+            extends JDataTableModel<Transaction, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -390,38 +390,38 @@ public class AnalysisStatement
 
         @Override
         public int getRowCount() {
-            return (theEvents == null)
-                                      ? 0
-                                      : 1 + theEvents.size();
+            return (theTransactions == null)
+                                            ? 0
+                                            : 1 + theTransactions.size();
         }
 
         @Override
-        public JDataField getFieldForCell(final Event pItem,
+        public JDataField getFieldForCell(final Transaction pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final Event pEvent,
+        public boolean isCellEditable(final Transaction pTrans,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public Event getItemAtIndex(final int pRowIndex) {
+        public Transaction getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return pRowIndex == 0
                                  ? theHeader
-                                 : theEvents.get(pRowIndex - 1);
+                                 : theTransactions.get(pRowIndex - 1);
         }
 
         @Override
-        public Object getItemValue(final Event pEvent,
+        public Object getItemValue(final Transaction pTrans,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return pEvent.isHeader()
+            return pTrans.isHeader()
                                     ? theColumns.getHeaderValue(pColIndex)
-                                    : theColumns.getItemValue(pEvent, pColIndex);
+                                    : theColumns.getItemValue(pTrans, pColIndex);
         }
 
         @Override
@@ -431,14 +431,14 @@ public class AnalysisStatement
         }
 
         @Override
-        public boolean includeRow(final Event pRow) {
+        public boolean includeRow(final Transaction pRow) {
             /* Handle no filter */
             if (theFilter == null) {
                 return false;
             }
 
             /* Return visibility of row */
-            return !pRow.isDeleted() && !theFilter.filterEvent(pRow);
+            return !pRow.isDeleted() && !theFilter.filterTransaction(pRow);
         }
     }
 
@@ -594,30 +594,30 @@ public class AnalysisStatement
 
         /**
          * Obtain the value for the event column.
-         * @param pEvent event
+         * @param pTrans transaction
          * @param pColIndex column index
          * @return the value
          */
-        private Object getItemValue(final Event pEvent,
+        private Object getItemValue(final Transaction pTrans,
                                     final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    return pEvent.getDate();
+                    return pTrans.getDate();
                 case COLUMN_CATEGORY:
-                    return pEvent.getCategory();
+                    return pTrans.getCategory();
                 case COLUMN_CREDIT:
-                    return pEvent.getCredit();
+                    return pTrans.getCredit();
                 case COLUMN_DEBIT:
-                    return pEvent.getDebit();
+                    return pTrans.getDebit();
                 case COLUMN_DESC:
-                    return pEvent.getComments();
+                    return pTrans.getComments();
                 case COLUMN_DEBITED:
-                    return theFilter.getDebitForEvent(pEvent);
+                    return theFilter.getDebitForTransaction(pTrans);
                 case COLUMN_CREDITED:
-                    return theFilter.getCreditForEvent(pEvent);
+                    return theFilter.getCreditForTransaction(pTrans);
                 case COLUMN_BALANCE:
-                    return theFilter.getBalanceForEvent(pEvent);
+                    return theFilter.getBalanceForTransaction(pTrans);
                 default:
                     return null;
             }
@@ -651,15 +651,15 @@ public class AnalysisStatement
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    return Event.FIELD_DATE;
+                    return Transaction.FIELD_DATE;
                 case COLUMN_DESC:
-                    return EventInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
+                    return TransactionInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
                 case COLUMN_CATEGORY:
-                    return Event.FIELD_CATEGORY;
+                    return Transaction.FIELD_CATEGORY;
                 case COLUMN_CREDIT:
-                    return Event.FIELD_CREDIT;
+                    return Transaction.FIELD_CREDIT;
                 case COLUMN_DEBIT:
-                    return Event.FIELD_DEBIT;
+                    return Transaction.FIELD_DEBIT;
                 default:
                     return null;
             }
@@ -670,12 +670,12 @@ public class AnalysisStatement
      * Analysis Header class.
      */
     private static class AnalysisHeader
-            extends Event {
+            extends Transaction {
         /**
          * Constructor.
-         * @param pList the Event list
+         * @param pList the Transaction list
          */
-        protected AnalysisHeader(final EventList pList) {
+        protected AnalysisHeader(final TransactionList pList) {
             super(pList);
             setHeader(true);
             setSplit(Boolean.FALSE);

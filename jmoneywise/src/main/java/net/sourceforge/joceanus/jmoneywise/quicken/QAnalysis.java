@@ -30,21 +30,25 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
-import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountPrice.AccountPriceList;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
-import net.sourceforge.joceanus.jmoneywise.data.Event.EventList;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.newanalysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.quicken.QCategory.QCategoryList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QClass.QClassList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QSecurity.QSecurityList;
@@ -93,7 +97,7 @@ public class QAnalysis
     /**
      * Account Map.
      */
-    private final Map<Account, QAccount> theAccounts;
+    private final Map<AssetBase<?>, QAccount> theAccounts;
 
     /**
      * Category List.
@@ -193,20 +197,20 @@ public class QAnalysis
 
         /* Create the maps */
         theClasses = new QClassList(this);
-        theAccounts = new LinkedHashMap<Account, QAccount>();
+        theAccounts = new LinkedHashMap<AssetBase<?>, QAccount>();
         theCategories = new QCategoryList(this);
         theSecurities = new QSecurityList(this);
     }
 
     /**
      * Access interest category.
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @return the category
      */
-    protected EventCategory getInterestCategory(final Event pEvent) {
+    protected EventCategory getInterestCategory(final Transaction pTrans) {
         /* No change needed if there is a tax credit */
-        if (pEvent.getTaxCredit() != null) {
-            return pEvent.getCategory();
+        if (pTrans.getTaxCredit() != null) {
+            return pTrans.getCategory();
         }
 
         /* Access category */
@@ -251,22 +255,24 @@ public class QAnalysis
     /**
      * Access account.
      * @param pAccount the account
+     * @param pPortfolio the portfolio
      * @return the QIF account
      */
-    protected QAccount getAccount(final Account pAccount) {
+    protected QAccount getAccount(final AssetBase<?> pAccount,
+                                  final Portfolio pPortfolio) {
         /* Note which account we are using */
-        Account myLookup = pAccount;
+        AssetBase<?> myLookup = pAccount;
 
-        /* If the account has Units */
-        if (pAccount.hasUnits()) {
+        /* If the account is a security */
+        if (pAccount instanceof Security) {
             /* Register the security */
-            theSecurities.registerSecurity(pAccount);
+            theSecurities.registerSecurity((Security) pAccount);
 
-            /* We need to use its portfolio */
-            myLookup = pAccount.getPortfolio();
+            /* We need to use the portfolio */
+            myLookup = pPortfolio;
 
             /* else ignore if the account is a non-Asset */
-        } else if (!pAccount.hasValue()) {
+        } else if (pAccount instanceof Payee) {
             return null;
         }
 
@@ -280,7 +286,7 @@ public class QAnalysis
             theAccounts.put(myLookup, myAccount);
 
             /* If the account is an autoExpense */
-            EventCategory myCategory = pAccount.getAutoExpense();
+            EventCategory myCategory = myAccount.getAutoExpense();
             if (myCategory != null) {
                 /* Make sure that it is registered */
                 theCategories.registerCategory(myCategory);
@@ -306,8 +312,8 @@ public class QAnalysis
         theAnalysis = myManager.getAnalysis(pLastEvent);
 
         /* Access lists */
-        EventList myEvents = theData.getEvents();
-        AccountList myAccounts = theData.getAccounts();
+        TransactionList myTransactions = theData.getTransactions();
+        DepositList myDeposits = theData.getDeposits();
         TaxYearList myTaxYears = theData.getTaxYears();
 
         /* Access the number of reporting steps */
@@ -319,23 +325,25 @@ public class QAnalysis
         theStartDate = myTaxYear.getDateRange().getStart();
 
         /* Update status bar */
-        boolean bContinue = pStatus.setNumStages(QIF_NUMLISTS) && pStatus.setNewStage("Analysing accounts") && pStatus.setNumSteps(myAccounts.size());
+        boolean bContinue = pStatus.setNumStages(QIF_NUMLISTS)
+                            && pStatus.setNewStage("Analysing deposits")
+                            && pStatus.setNumSteps(myDeposits.size());
 
-        /* Loop through the accounts */
-        Iterator<Account> myActIterator = myAccounts.iterator();
-        while ((bContinue) && (myActIterator.hasNext())) {
-            Account myAccount = myActIterator.next();
+        /* Loop through the deposits */
+        Iterator<Deposit> myDepIterator = myDeposits.iterator();
+        while ((bContinue) && (myDepIterator.hasNext())) {
+            Deposit myDeposit = myDepIterator.next();
 
-            /* Ignore deleted accounts */
-            if (myAccount.isDeleted()) {
+            /* Ignore deleted deposits */
+            if (myDeposit.isDeleted()) {
                 continue;
             }
 
             /* If we have an opening balance */
-            JMoney myBalance = myAccount.getOpeningBalance();
+            JMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
                 /* Make sure that it is registered */
-                getAccount(myAccount);
+                getAccount(myDeposit, null);
             }
 
             /* Report the progress */
@@ -347,30 +355,31 @@ public class QAnalysis
 
         /* Update status bar */
         if (bContinue) {
-            bContinue = ((pStatus.setNewStage("Analysing events")) && (pStatus.setNumSteps(myEvents.size())));
+            bContinue = ((pStatus.setNewStage("Analysing transactions"))
+                    && (pStatus.setNumSteps(myTransactions.size())));
         }
 
-        /* Loop through the events */
+        /* Loop through the transactions */
         myCount = 0;
-        Iterator<Event> myIterator = myEvents.iterator();
+        Iterator<Transaction> myIterator = myTransactions.iterator();
         while ((bContinue) && (myIterator.hasNext())) {
-            Event myEvent = myIterator.next();
+            Transaction myTrans = myIterator.next();
 
-            /* If the price is too late */
-            if (pLastEvent.compareTo(myEvent.getDate()) < 0) {
+            /* If the transaction is too late */
+            if (pLastEvent.compareTo(myTrans.getDate()) < 0) {
                 /* Break the loop */
                 break;
             }
 
-            /* Ignore deleted events */
-            if (myEvent.isDeleted()) {
+            /* Ignore deleted transactions */
+            if (myTrans.isDeleted()) {
                 continue;
             }
 
             /* Access key details */
-            Account myDebit = myEvent.getDebit();
-            Account myCredit = myEvent.getCredit();
-            EventCategory myCategory = myEvent.getCategory();
+            AssetBase<?> myDebit = myTrans.getDebit();
+            AssetBase<?> myCredit = myTrans.getCredit();
+            EventCategory myCategory = myTrans.getCategory();
 
             /* If the category is not a transfer */
             if (!myCategory.isTransfer()) {
@@ -379,9 +388,9 @@ public class QAnalysis
             }
 
             /* Process event for debit and credit (avoiding case where debit == credit) */
-            processEvent(myEvent, myDebit, false);
+            processTransaction(myTrans, myDebit, false);
             if (!myDebit.equals(myCredit)) {
-                processEvent(myEvent, myCredit, true);
+                processTransaction(myTrans, myCredit, true);
             }
 
             /* Report the progress */
@@ -392,7 +401,7 @@ public class QAnalysis
         }
 
         /* Update status bar and analyse prices */
-        AccountPriceList myPrices = theData.getAccountPrices();
+        SecurityPriceList myPrices = theData.getSecurityPrices();
         if ((bContinue) && (pStatus.setNewStage("Analysing prices")) && (pStatus.setNumSteps(myPrices.size()))) {
             /* Analyse prices for securities */
             theSecurities.buildPrices(pStatus, myPrices, pLastEvent);
@@ -400,32 +409,33 @@ public class QAnalysis
     }
 
     /**
-     * Process the event.
-     * @param pEvent the event
+     * Process the transaction.
+     * @param pTrans the transaction
      * @param pAccount the account
      * @param isCredit is this the credit item?
      */
-    private void processEvent(final Event pEvent,
-                              final Account pAccount,
-                              final boolean isCredit) {
+    private void processTransaction(final Transaction pTrans,
+                                    final AssetBase<?> pAccount,
+                                    final boolean isCredit) {
         /* Access account */
-        QAccount myAccount = getAccount(pAccount);
+        Portfolio myPortfolio = pTrans.getPortfolio();
+        QAccount myAccount = getAccount(pAccount, myPortfolio);
 
         /* If we should process the account */
         if (myAccount != null) {
             /* If the account is autoExpense */
             if (myAccount.isAutoExpense()) {
                 /* Handle non transfer specially, otherwise ignore */
-                if (!pEvent.getCategory().isTransfer()) {
-                    /* Process the event */
-                    myAccount.processEvent(pEvent, isCredit);
+                if (!pTrans.getCategory().isTransfer()) {
+                    /* Process the transaction */
+                    myAccount.processTransaction(pTrans, isCredit);
                     theNumEvents += 2;
                 }
 
-                /* If we should not ignore this event */
-            } else if (!ignoreEvent(pEvent, isCredit)) {
+                /* If we should not ignore this transaction */
+            } else if (!ignoreTransaction(pTrans, isCredit)) {
                 /* Process the event */
-                myAccount.processEvent(pEvent, isCredit);
+                myAccount.processTransaction(pTrans, isCredit);
                 theNumEvents++;
             }
         }
@@ -433,23 +443,24 @@ public class QAnalysis
 
     /**
      * Determine whether we should ignore the event.
-     * @param pEvent the event
+     * @param pTrans the transaction
      * @param isCredit is this the credit item?
      * @return true/false
      */
-    private boolean ignoreEvent(final Event pEvent,
-                                final boolean isCredit) {
+    private boolean ignoreTransaction(final Transaction pTrans,
+                                      final boolean isCredit) {
         /* Switch on category */
         QIFType myType = getQIFType();
-        Account mySource = pEvent.getDebit();
-        Account myTarget = pEvent.getCredit();
+        AssetBase<?> mySource = pTrans.getDebit();
+        AssetBase<?> myTarget = pTrans.getCredit();
 
         /* If this is a debit event */
         if (!isCredit) {
-            switch (pEvent.getCategoryClass()) {
+            switch (pTrans.getCategoryClass()) {
                 case TRANSFER:
                     /* Transfer from Money to Units */
-                    if ((!mySource.hasUnits()) && (myTarget.hasUnits())) {
+                    if ((!(mySource instanceof Security))
+                        && (myTarget instanceof Security)) {
                         /* Needs a debit line if we cannot use BuyX */
                         return myType.canXferPortfolioLinked();
                     }
@@ -461,16 +472,17 @@ public class QAnalysis
             }
         }
 
-        switch (pEvent.getCategoryClass()) {
+        switch (pTrans.getCategoryClass()) {
             case INTEREST:
             case STOCKDEMERGER:
             case STOCKTAKEOVER:
                 return true;
             case DIVIDEND:
-                return mySource.hasUnits();
+                return mySource instanceof Security;
             case TRANSFER:
                 /* Transfer from Units to Money */
-                if (mySource.hasUnits() && !myTarget.hasUnits()) {
+                if ((mySource instanceof Security)
+                    && !(myTarget instanceof Security)) {
                     /* Needs a credit line if we cannot use SellX */
                     return myType.canXferPortfolioLinked();
                 }
@@ -589,12 +601,14 @@ public class QAnalysis
 
     /**
      * Obtain SecurityBucket for Security.
+     * @param pPortfolio the portfolio
      * @param pSecurity the security
      * @return the bucket
      */
-    protected SecurityBucket getSecurityBucket(final Account pSecurity) {
+    protected SecurityBucket getSecurityBucket(final Portfolio pPortfolio,
+                                               final AssetBase<?> pSecurity) {
         /* Locate the security bucket */
-        return theAnalysis.getSecurities().getBucket(pSecurity);
+        return theAnalysis.getPortfolios().getBucket(pPortfolio, pSecurity);
     }
 
     /**
