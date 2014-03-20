@@ -395,7 +395,7 @@ public class Payee
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)

@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -102,7 +101,7 @@ public class LoanCategoryTable
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = AccountCategory.FIELD_DESC.getName();
+    private static final String TITLE_DESC = LoanCategory.FIELD_DESC.getName();
 
     /**
      * Active Column Title.

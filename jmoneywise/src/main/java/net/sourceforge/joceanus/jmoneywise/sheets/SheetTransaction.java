@@ -22,17 +22,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
+import java.util.ListIterator;
+
 import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
+import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -170,6 +176,96 @@ public class SheetTransaction
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
+    }
+
+    /**
+     * Load the Events from an archive.
+     * @param pTask the task control
+     * @param pWorkBook the workbook
+     * @param pData the data set to load into
+     * @param pLoader the archive loader
+     * @param pLastEvent the last date to load
+     * @return continue to load <code>true/false</code>
+     * @throws JOceanusException on error
+     */
+    protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
+                                         final DataWorkBook pWorkBook,
+                                         final MoneyWiseData pData,
+                                         final ArchiveLoader pLoader,
+                                         final JDateDay pLastEvent) throws JOceanusException {
+        /* Access the list of transactions */
+        TransactionList myList = pData.getTransactions();
+        TransactionInfoList myInfoList = pData.getTransactionInfo();
+
+        /* Protect against exceptions */
+        try {
+            /* Access the number of reporting steps */
+            int mySteps = pTask.getReportingSteps();
+            int myCount = 0;
+
+            /* Obtain the range iterator */
+            ListIterator<ArchiveYear> myIterator = pLoader.getReverseIterator();
+
+            /* Loop through the individual year ranges */
+            while (myIterator.hasPrevious()) {
+                /* Access year */
+                ArchiveYear myYear = myIterator.previous();
+
+                /* Find the range of cells */
+                DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
+
+                /* Declare the new stage */
+                if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
+                    return false;
+                }
+
+                /* Count the number of Transactions */
+                int myTotal = myView.getRowCount();
+
+                /* Declare the number of steps */
+                if (!pTask.setNumSteps(myTotal)) {
+                    return false;
+                }
+
+                /* Loop through the rows of the table */
+                for (int i = 0; i < myTotal; i++) {
+                    /* Access the row */
+                    DataRow myRow = myView.getRowByIndex(i);
+
+                    /* Process transaction */
+                    processTransaction(pLoader, pData, myView, myRow);
+
+                    /* Report the progress */
+                    myCount++;
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
+                }
+
+                /* If the year is too late */
+                if (pLastEvent.compareTo(myYear.getDate()) < 0) {
+                    /* Break the loop */
+                    break;
+                }
+            }
+
+            /* Resolve ValueLinks */
+            myInfoList.resolveValueLinks();
+
+            /* Sort the list */
+            myList.resolveDataSetLinks();
+            myList.reSort();
+
+            /* Validate the list */
+            myList.validateOnLoad();
+
+            /* Handle Exceptions */
+        } catch (JOceanusException e) {
+            throw new JMoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
+        }
+
+        /* Return to caller */
+        return true;
     }
 
     /**

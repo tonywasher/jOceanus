@@ -173,8 +173,8 @@ public class Schedule
     }
 
     @Override
-    public Pattern getBase() {
-        return (Pattern) super.getBase();
+    public Schedule getBase() {
+        return (Schedule) super.getBase();
     }
 
     @Override

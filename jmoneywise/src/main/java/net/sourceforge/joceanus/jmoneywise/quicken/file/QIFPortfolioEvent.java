@@ -26,14 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JPrice;
-import net.sourceforge.joceanus.jtethys.decimal.JRatio;
-import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryAccountLine;
@@ -48,6 +41,13 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFSecurityLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFUnitsLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JPrice;
+import net.sourceforge.joceanus.jtethys.decimal.JRatio;
+import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 
 /**
  * Class representing a QIF Portfolio Event record.
@@ -267,7 +267,7 @@ public class QIFPortfolioEvent
      * record security.
      * @param pSecurity the security
      */
-    protected void recordSecurity(final Account pSecurity) {
+    protected void recordSecurity(final AssetBase<?> pSecurity) {
         /* Add security line */
         addLine(new QIFPortfolioSecurityLine(getFile().getSecurity(pSecurity.getName())));
     }
@@ -286,7 +286,7 @@ public class QIFPortfolioEvent
      * @param pAccount the transfer account
      * @param pAmount the transfer amount
      */
-    protected void recordXfer(final Account pAccount,
+    protected void recordXfer(final AssetBase<?> pAccount,
                               final JMoney pAmount) {
         /* Add transfer lines */
         addLine(new QIFPortfolioAccountLine(getFile().getAccount(pAccount.getName())));

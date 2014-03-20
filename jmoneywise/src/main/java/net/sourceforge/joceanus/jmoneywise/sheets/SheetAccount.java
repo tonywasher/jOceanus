@@ -22,16 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.DataCell;
 import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Account.AccountList;
-import net.sourceforge.joceanus.jmoneywise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -42,126 +38,23 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
-import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
- * SheetDataItem extension for Account.
+ * ArchiveLoader extension for Accounts.
  * @author Tony Washer
  */
-public class SheetAccount
-        extends SheetEncrypted<Account, MoneyWiseDataType> {
+public class SheetAccount {
     /**
-     * NamedArea for Accounts.
+     * Sheet Area name.
      */
-    private static final String AREA_ACCOUNTS = Account.LIST_NAME;
-
-    /**
-     * Name column.
-     */
-    private static final int COL_NAME = COL_CONTROLID + 1;
+    private static final String SHEET_AREA = "AccountInfo";
 
     /**
-     * AccountCategory column.
+     * Private constructor.
      */
-    private static final int COL_ACCOUNTCAT = COL_NAME + 1;
-
-    /**
-     * Closed column.
-     */
-    private static final int COL_CLOSED = COL_ACCOUNTCAT + 1;
-
-    /**
-     * TaxFree column.
-     */
-    private static final int COL_TAXFREE = COL_CLOSED + 1;
-
-    /**
-     * Gross Interest column.
-     */
-    private static final int COL_GROSS = COL_TAXFREE + 1;
-
-    /**
-     * Currency column.
-     */
-    private static final int COL_CURRENCY = COL_GROSS + 1;
-
-    /**
-     * Account data list.
-     */
-    private final AccountList theList;
-
-    /**
-     * Constructor for loading a spreadsheet.
-     * @param pReader the input spreadsheet
-     */
-    protected SheetAccount(final MoneyWiseReader pReader) {
-        /* Call super constructor */
-        super(pReader, AREA_ACCOUNTS);
-
-        /* Access the Lists */
-        MoneyWiseData myData = pReader.getData();
-        theList = myData.getAccounts();
-        setDataList(theList);
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     * @param pWriter the spreadsheet writer
-     */
-    protected SheetAccount(final MoneyWiseWriter pWriter) {
-        /* Call super constructor */
-        super(pWriter, AREA_ACCOUNTS);
-
-        /* Access the Accounts list */
-        MoneyWiseData myData = pWriter.getData();
-        theList = myData.getAccounts();
-        setDataList(theList);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Account.OBJECT_NAME);
-        myValues.addValue(Account.FIELD_CATEGORY, loadInteger(COL_ACCOUNTCAT));
-        myValues.addValue(Account.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
-        myValues.addValue(Account.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(Account.FIELD_GROSS, loadBoolean(COL_GROSS));
-        myValues.addValue(Account.FIELD_TAXFREE, loadBoolean(COL_TAXFREE));
-        myValues.addValue(Account.FIELD_CLOSED, loadBoolean(COL_CLOSED));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected void insertSecureItem(final Account pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertSecureItem(pItem);
-        writeInteger(COL_ACCOUNTCAT, pItem.getAccountCategoryId());
-        writeBoolean(COL_CLOSED, pItem.isClosed());
-        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
-        writeBoolean(COL_GROSS, pItem.isGrossInterest());
-        writeBytes(COL_NAME, pItem.getNameBytes());
-        writeInteger(COL_CURRENCY, pItem.getAccountCurrencyId());
-    }
-
-    @Override
-    protected int getLastColumn() {
-        /* Return the last column */
-        return COL_CURRENCY;
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
+    private SheetAccount() {
     }
 
     /**
@@ -177,21 +70,17 @@ public class SheetAccount
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData,
                                          final ArchiveLoader pLoader) throws JOceanusException {
-        /* Access the list of accounts */
-        AccountList myList = pData.getAccounts();
-        AccountInfoList myInfoList = pData.getAccountInfo();
-
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView("AccountInfo");
+            DataView myView = pWorkBook.getRangeView(SHEET_AREA);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_ACCOUNTS)) {
+            if (!pTask.setNewStage(SHEET_AREA)) {
                 return false;
             }
 
@@ -203,54 +92,13 @@ public class SheetAccount
                 return false;
             }
 
-            /* Access default currency */
-            AccountCurrency myCurrency = pData.getDefaultCurrency();
-
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
                 DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
 
-                /* Access account and account type */
-                String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                String myAcType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-
-                /* Skip the class column */
-                iAdjust++;
-
-                /* Handle taxFree which may be missing */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isTaxFree = Boolean.FALSE;
-                if (myCell != null) {
-                    isTaxFree = myCell.getBooleanValue();
-                }
-
-                /* Handle gross which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isGross = Boolean.FALSE;
-                if (myCell != null) {
-                    isGross = myCell.getBooleanValue();
-                }
-
-                /* Handle closed which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = Boolean.FALSE;
-                if (myCell != null) {
-                    isClosed = myCell.getBooleanValue();
-                }
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(Account.OBJECT_NAME);
-                myValues.addValue(Account.FIELD_NAME, myName);
-                myValues.addValue(Account.FIELD_CATEGORY, myAcType);
-                myValues.addValue(Account.FIELD_CURRENCY, myCurrency);
-                myValues.addValue(Account.FIELD_GROSS, isGross);
-                myValues.addValue(Account.FIELD_TAXFREE, isTaxFree);
-                myValues.addValue(Account.FIELD_CLOSED, isClosed);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
+                /* Process account */
+                processAccount(pLoader, pData, myView, myRow);
 
                 /* Report the progress */
                 myCount++;
@@ -259,112 +107,12 @@ public class SheetAccount
                 }
             }
 
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the row by reference */
-                DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
-
-                /* Access account name */
-                String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                Account myAccount = myList.findItemByName(myName);
-
-                /* Skip five columns */
-                iAdjust++;
-                iAdjust++;
-                iAdjust++;
-                iAdjust++;
-                iAdjust++;
-
-                /* Handle parent which may be missing */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myParent = null;
-                if (myCell != null) {
-                    myParent = myCell.getStringValue();
-                }
-
-                /* Handle alias which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myAlias = null;
-                if (myCell != null) {
-                    myAlias = myCell.getStringValue();
-                }
-
-                /* Handle portfolio account which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myPortfolio = null;
-                if (myCell != null) {
-                    myPortfolio = myCell.getStringValue();
-                }
-
-                /* Handle holding account which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myHolding = null;
-                if (myCell != null) {
-                    myHolding = myCell.getStringValue();
-                }
-
-                /* Handle maturity which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                JDateDay myMaturity = null;
-                if (myCell != null) {
-                    myMaturity = myCell.getDateValue();
-                }
-
-                /* Handle opening balance which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myBalance = null;
-                if (myCell != null) {
-                    myBalance = myCell.getStringValue();
-                }
-
-                /* Handle symbol which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String mySymbol = null;
-                if (myCell != null) {
-                    mySymbol = myCell.getStringValue();
-                }
-
-                /* Handle autoExpense which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myAutoExpense = null;
-                if (myCell != null) {
-                    myAutoExpense = myCell.getStringValue();
-                }
-
-                /* Add information relating to the account */
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.MATURITY, myMaturity);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.PARENT, myParent);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.ALIAS, myAlias);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.PORTFOLIO, myPortfolio);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.HOLDING, myHolding);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.SYMBOL, mySymbol);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.OPENINGBALANCE, myBalance);
-                myInfoList.addInfoItem(null, myAccount, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
-
-                /* Process alternate view */
-                processAlternate(pLoader, pData, myView, myRow);
-
-                /* Report the progress */
-                myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                    return false;
-                }
-            }
-
-            /* Sort the lists */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Resolve ValueLinks */
-            myInfoList.resolveValueLinks();
-
-            /* Resolve Alternate lists */
-            resolveAlternate(pData);
+            /* Resolve Account lists */
+            resolveAccountLists(pData);
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+            throw new JMoneyWiseIOException("Failed to Load " + SHEET_AREA, e);
         }
 
         /* Return to caller */
@@ -372,17 +120,17 @@ public class SheetAccount
     }
 
     /**
-     * Process row into alternate form.
+     * Process account row.
      * @param pLoader the archive loader
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws JOceanusException on error
      */
-    private static void processAlternate(final ArchiveLoader pLoader,
-                                         final MoneyWiseData pData,
-                                         final DataView pView,
-                                         final DataRow pRow) throws JOceanusException {
+    private static void processAccount(final ArchiveLoader pLoader,
+                                       final MoneyWiseData pData,
+                                       final DataView pView,
+                                       final DataRow pRow) throws JOceanusException {
         /* Skip name and type column */
         int iAdjust = 0;
         iAdjust++;
@@ -426,11 +174,11 @@ public class SheetAccount
     }
 
     /**
-     * Resolve alternate lists.
+     * Resolve account lists.
      * @param pData the DataSet
      * @throws JOceanusException on error
      */
-    private static void resolveAlternate(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolveAccountLists(final MoneyWiseData pData) throws JOceanusException {
         /* Sort the payee list and validate */
         PayeeList myPayeeList = pData.getPayees();
         myPayeeList.resolveDataSetLinks();

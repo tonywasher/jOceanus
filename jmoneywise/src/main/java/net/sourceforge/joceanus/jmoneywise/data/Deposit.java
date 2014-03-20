@@ -605,7 +605,7 @@ public class Deposit
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)

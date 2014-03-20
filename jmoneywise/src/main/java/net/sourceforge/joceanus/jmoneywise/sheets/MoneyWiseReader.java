@@ -55,7 +55,6 @@ public class MoneyWiseReader
     @Override
     protected void registerSheets() {
         /* Register the sheets */
-        addSheet(new SheetAccountCategoryType(this));
         addSheet(new SheetDepositCategoryType(this));
         addSheet(new SheetCashCategoryType(this));
         addSheet(new SheetLoanCategoryType(this));
@@ -71,7 +70,6 @@ public class MoneyWiseReader
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
         addSheet(new SheetEventTag(this));
-        addSheet(new SheetAccountCategory(this));
         addSheet(new SheetDepositCategory(this));
         addSheet(new SheetCashCategory(this));
         addSheet(new SheetLoanCategory(this));
@@ -82,26 +80,19 @@ public class MoneyWiseReader
         addSheet(new SheetPayee(this));
         addSheet(new SheetPayeeInfo(this));
         addSheet(new SheetSecurity(this));
+        addSheet(new SheetSecurityPrice(this));
         addSheet(new SheetSecurityInfo(this));
         addSheet(new SheetDeposit(this));
+        addSheet(new SheetDepositRate(this));
         addSheet(new SheetDepositInfo(this));
         addSheet(new SheetCash(this));
         addSheet(new SheetCashInfo(this));
         addSheet(new SheetLoan(this));
         addSheet(new SheetLoanInfo(this));
-        addSheet(new SheetAccount(this));
         addSheet(new SheetPortfolio(this));
         addSheet(new SheetPortfolioInfo(this));
-        addSheet(new SheetAccountRate(this));
-        addSheet(new SheetDepositRate(this));
-        addSheet(new SheetAccountPrice(this));
-        addSheet(new SheetSecurityPrice(this));
-        addSheet(new SheetAccountInfo(this));
-        addSheet(new SheetEvent(this));
-        addSheet(new SheetEventInfo(this));
         addSheet(new SheetTransaction(this));
         addSheet(new SheetTransactionInfo(this));
-        addSheet(new SheetPattern(this));
         addSheet(new SheetSchedule(this));
     }
 

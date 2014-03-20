@@ -29,8 +29,6 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory;
-import net.sourceforge.joceanus.jmoneywise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
@@ -40,108 +38,22 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
-import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * SheetDataItem extension for AccountCategory.
  * @author Tony Washer
  */
-public class SheetAccountCategory
-        extends SheetEncrypted<AccountCategory, MoneyWiseDataType> {
+public class SheetAccountCategory {
     /**
      * NamedArea for Categories.
      */
     protected static final String AREA_ACTCATEGORIES = "AccountCategoryInfo";
 
     /**
-     * Name column.
+     * Private constructor.
      */
-    private static final int COL_NAME = COL_CONTROLID + 1;
-
-    /**
-     * Type column.
-     */
-    private static final int COL_TYPE = COL_NAME + 1;
-
-    /**
-     * Parent column.
-     */
-    private static final int COL_PARENT = COL_TYPE + 1;
-
-    /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_PARENT + 1;
-
-    /**
-     * Category data list.
-     */
-    private final AccountCategoryList theList;
-
-    /**
-     * Constructor for loading a spreadsheet.
-     * @param pReader the spreadsheet reader
-     */
-    protected SheetAccountCategory(final MoneyWiseReader pReader) {
-        /* Call super constructor */
-        super(pReader, AREA_ACTCATEGORIES);
-
-        /* Access the Categories list */
-        theList = pReader.getData().getAccountCategories();
-        setDataList(theList);
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     * @param pWriter the spreadsheet writer
-     */
-    protected SheetAccountCategory(final MoneyWiseWriter pWriter) {
-        /* Call super constructor */
-        super(pWriter, AREA_ACTCATEGORIES);
-
-        /* Access the Categories list */
-        theList = pWriter.getData().getAccountCategories();
-        setDataList(theList);
-    }
-
-    @Override
-    protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
-        /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountCategory.OBJECT_NAME);
-        myValues.addValue(AccountCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
-        myValues.addValue(AccountCategory.FIELD_PARENT, loadInteger(COL_PARENT));
-        myValues.addValue(AccountCategory.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(AccountCategory.FIELD_DESC, loadBytes(COL_DESC));
-
-        /* Return the values */
-        return myValues;
-    }
-
-    @Override
-    protected void insertSecureItem(final AccountCategory pItem) throws JOceanusException {
-        /* Set the fields */
-        super.insertSecureItem(pItem);
-        writeInteger(COL_TYPE, pItem.getCategoryTypeId());
-        writeInteger(COL_PARENT, pItem.getParentCategoryId());
-        writeBytes(COL_NAME, pItem.getNameBytes());
-        writeBytes(COL_DESC, pItem.getDescBytes());
-    }
-
-    @Override
-    protected int getLastColumn() {
-        /* Return the last column */
-        return COL_DESC;
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JOceanusException {
-        /* Resolve links and reSort */
-        theList.resolveDataSetLinks();
-        theList.reSort();
-
-        /* Validate the account categories */
-        theList.validateOnLoad();
+    private SheetAccountCategory() {
     }
 
     /**
@@ -155,9 +67,6 @@ public class SheetAccountCategory
     protected static boolean loadArchive(final TaskControl<MoneyWiseData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
-        /* Access the list of categories */
-        AccountCategoryList myList = pData.getAccountCategories();
-
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -168,7 +77,7 @@ public class SheetAccountCategory
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AccountCategory.LIST_NAME)) {
+            if (!pTask.setNewStage(AREA_ACTCATEGORIES)) {
                 return false;
             }
 
@@ -184,38 +93,9 @@ public class SheetAccountCategory
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 DataRow myRow = myView.getRowByIndex(i);
-                int iAdjust = 0;
 
-                /* Access name */
-                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myName = myCell.getStringValue();
-
-                /* Access Type */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myType = myCell.getStringValue();
-
-                /* Access Parent */
-                String myParent = null;
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                if (myCell != null) {
-                    myParent = myCell.getStringValue();
-                }
-
-                /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(AccountCategory.OBJECT_NAME);
-                myValues.addValue(AccountCategory.FIELD_CATTYPE, myType);
-                myValues.addValue(AccountCategory.FIELD_PARENT, myParent);
-                myValues.addValue(AccountCategory.FIELD_NAME, myName);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Access Alternate Type */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                if (myCell != null) {
-                    /* Process alternate if it exists */
-                    processAlternate(pData, myView, myRow, myCell);
-                }
+                /* Process category */
+                processCategory(pData, myView, myRow);
 
                 /* Report the progress */
                 myCount++;
@@ -224,19 +104,12 @@ public class SheetAccountCategory
                 }
             }
 
-            /* Resolve links and reSort */
-            myList.resolveDataSetLinks();
-            myList.reSort();
-
-            /* Validate the account categories */
-            myList.validateOnLoad();
-
-            /* Resolve Alternate lists */
-            resolveAlternate(pData);
+            /* Resolve Category lists */
+            resolveCategoryLists(pData);
 
             /* Handle exceptions */
         } catch (JOceanusException e) {
-            throw new JMoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
+            throw new JMoneyWiseIOException("Failed to Load " + AREA_ACTCATEGORIES, e);
         }
 
         /* Return to caller */
@@ -248,13 +121,11 @@ public class SheetAccountCategory
      * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
-     * @param pCell the spreadsheet cell
      * @throws JOceanusException on error
      */
-    private static void processAlternate(final MoneyWiseData pData,
-                                         final DataView pView,
-                                         final DataRow pRow,
-                                         final DataCell pCell) throws JOceanusException {
+    private static void processCategory(final MoneyWiseData pData,
+                                        final DataView pView,
+                                        final DataRow pRow) throws JOceanusException {
         /* Access name */
         int iAdjust = 0;
         String myName = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
@@ -262,10 +133,15 @@ public class SheetAccountCategory
 
         /* Access parent */
         String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
-        iAdjust++;
+
+        /* Access category class and ignore if doesn't exist */
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        if (myCell == null) {
+            return;
+        }
 
         /* Access class and category */
-        String myClass = pCell.getStringValue();
+        String myClass = myCell.getStringValue();
         String myCat = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
         /* If the category is parent then null the parent reference */
@@ -315,11 +191,11 @@ public class SheetAccountCategory
     }
 
     /**
-     * Resolve alternate lists.
+     * Resolve category lists.
      * @param pData the DataSet
      * @throws JOceanusException on error
      */
-    private static void resolveAlternate(final MoneyWiseData pData) throws JOceanusException {
+    private static void resolveCategoryLists(final MoneyWiseData pData) throws JOceanusException {
         /* Access lists */
         DepositCategoryList myDepositList = pData.getDepositCategories();
         CashCategoryList myCashList = pData.getCashCategories();

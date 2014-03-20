@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -66,7 +65,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     /**
      * Account Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.ACCOUNT.getItemName());
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAccount"));
 
     /**
      * Base Field Id.

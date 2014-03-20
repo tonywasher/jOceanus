@@ -392,7 +392,7 @@ public class Transaction
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        EventInfoClass myClass = EventInfoSet.getClassForField(pField);
+        EventInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)
@@ -553,7 +553,7 @@ public class Transaction
         /* Perform underlying checks */
         super.validate();
 
-        /* If the event has a parent TODO */
+        /* If the event has a parent */
         Transaction myParent = getParent();
         if (myParent != null) {
             /* Register child against parent */
@@ -580,7 +580,7 @@ public class Transaction
 
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myCredit, myDebit))) {
-            addError(ERROR_CIRCULAR, EventInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS));
+            addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS));
         }
 
         /* If we have a category and an infoSet */

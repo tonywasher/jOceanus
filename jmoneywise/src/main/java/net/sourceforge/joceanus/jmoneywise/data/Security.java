@@ -618,7 +618,7 @@ public class Security
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)

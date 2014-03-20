@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.SpotSelect;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
@@ -168,22 +167,22 @@ public class PricePoint
     /**
      * The Asset column name.
      */
-    private static final String TITLE_ASSET = SpotPrice.FIELD_SECURITY.getName();
+    private static final String TITLE_ASSET = SpotSecurityPrice.FIELD_SECURITY.getName();
 
     /**
      * The Price column name.
      */
-    private static final String TITLE_PRICE = SpotPrice.FIELD_PRICE.getName();
+    private static final String TITLE_PRICE = SpotSecurityPrice.FIELD_PRICE.getName();
 
     /**
      * The previous price column name.
      */
-    private static final String TITLE_PREVPRICE = SpotPrice.FIELD_PREVPRICE.getName();
+    private static final String TITLE_PREVPRICE = SpotSecurityPrice.FIELD_PREVPRICE.getName();
 
     /**
      * The previous date column name.
      */
-    private static final String TITLE_PREVDATE = SpotPrice.FIELD_PREVDATE.getName();
+    private static final String TITLE_PREVDATE = SpotSecurityPrice.FIELD_PREVDATE.getName();
 
     /**
      * The Asset column id.
@@ -621,9 +620,9 @@ public class PricePoint
                 case COLUMN_PRICE:
                     return SecurityPrice.FIELD_PRICE;
                 case COLUMN_PREVPRICE:
-                    return SpotPrice.FIELD_PREVPRICE;
+                    return SpotSecurityPrice.FIELD_PREVPRICE;
                 case COLUMN_PREVDATE:
-                    return SpotPrice.FIELD_PREVDATE;
+                    return SpotSecurityPrice.FIELD_PREVDATE;
                 default:
                     return null;
             }

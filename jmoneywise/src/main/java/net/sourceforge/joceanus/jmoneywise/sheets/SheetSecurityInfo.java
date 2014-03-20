@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.sheets;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountInfo;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
@@ -85,7 +84,7 @@ public class SheetSecurityInfo
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        return getRowValues(AccountInfo.OBJECT_NAME);
+        return getRowValues(SecurityInfo.OBJECT_NAME);
     }
 
     @Override

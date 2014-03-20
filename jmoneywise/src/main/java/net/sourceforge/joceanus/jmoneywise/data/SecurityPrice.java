@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.views.SpotPrices.SpotPrice;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
@@ -489,8 +488,8 @@ public class SecurityPrice
      */
     @Override
     public boolean applyChanges(final DataItem<?> pItem) {
-        if (pItem instanceof SpotPrice) {
-            SpotPrice mySpot = (SpotPrice) pItem;
+        if (pItem instanceof SpotSecurityPrice) {
+            SpotSecurityPrice mySpot = (SpotSecurityPrice) pItem;
             return applyChanges(mySpot);
         } else if (pItem instanceof SecurityPrice) {
             SecurityPrice myPrice = (SecurityPrice) pItem;
@@ -527,7 +526,7 @@ public class SecurityPrice
      * @param pPrice the price extract
      * @return whether changes have been made
      */
-    private boolean applyChanges(final SpotPrice pPrice) {
+    private boolean applyChanges(final SpotSecurityPrice pPrice) {
         /* If we are setting a null price */
         if (pPrice.getPrice() == null) {
             /* We are actually deleting the price */

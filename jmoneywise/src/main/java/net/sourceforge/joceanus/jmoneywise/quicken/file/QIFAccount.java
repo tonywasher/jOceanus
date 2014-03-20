@@ -28,12 +28,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
@@ -102,7 +102,7 @@ public class QIFAccount
         myMap.put(DepositCategoryClass.BOND, "Bank");
         myMap.put(CashCategoryClass.CASH, "Cash");
         myMap.put(LoanCategoryClass.CREDITCARD, "CCard");
-        myMap.put(AccountCategoryClass.PORTFOLIO, "Invst");
+        myMap.put(MoneyWiseDataType.PORTFOLIO, "Invst");
         myMap.put(LoanCategoryClass.PRIVATELOAN, "Oth A");
         myMap.put(LoanCategoryClass.LOAN, "Oth L");
 
@@ -144,7 +144,7 @@ public class QIFAccount
             /* Handle portfolio */
         } else if (pAccount instanceof Portfolio) {
             Portfolio myPortfolio = (Portfolio) pAccount;
-            theClass = null;
+            theClass = MoneyWiseDataType.PORTFOLIO;
             theDesc = myPortfolio.getDesc();
         } else {
             throw new IllegalArgumentException();

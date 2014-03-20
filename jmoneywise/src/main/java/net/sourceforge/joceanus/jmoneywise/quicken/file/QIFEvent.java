@@ -26,12 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
-import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
-import net.sourceforge.joceanus.jtethys.decimal.JRate;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
@@ -41,6 +36,11 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFPayeeLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFXferAccountLine;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jtethys.decimal.JRate;
 
 /**
  * Class representing a QIF Event record.
@@ -283,7 +283,7 @@ public class QIFEvent
      * record transfer account.
      * @param pAccount the account
      */
-    protected void recordAccount(final Account pAccount) {
+    protected void recordAccount(final AssetBase<?> pAccount) {
         /* Add account line */
         QIFFile myFile = getFile();
         addLine(new QIFEventAccountLine(myFile.getAccount(pAccount.getName())));
@@ -305,7 +305,7 @@ public class QIFEvent
      * @param pAmount the amount
      * @param pComment the comment
      */
-    protected void recordSplitRecord(final Account pAccount,
+    protected void recordSplitRecord(final AssetBase<?> pAccount,
                                      final JMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */

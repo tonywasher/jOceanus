@@ -53,7 +53,7 @@ public class SpotSecurityPrices
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotPrices.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotSecurityPrices.class.getName());
 
     /**
      * Local Report fields.

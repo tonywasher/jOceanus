@@ -423,7 +423,7 @@ public class Portfolio
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)

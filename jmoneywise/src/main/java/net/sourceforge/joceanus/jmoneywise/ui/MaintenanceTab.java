@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -92,11 +91,6 @@ public class MaintenanceTab
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintenanceTab.class.getName());
 
     /**
-     * Accounts tab title.
-     */
-    private static final String TITLE_ACCOUNTS = NLS_BUNDLE.getString("TabAccount");
-
-    /**
      * TaxYears tab title.
      */
     private static final String TITLE_TAXYEARS = NLS_BUNDLE.getString("TabTaxYear");
@@ -130,11 +124,6 @@ public class MaintenanceTab
      * The Tabs.
      */
     private final JEnableTabbed theTabs;
-
-    /**
-     * The Account Panel.
-     */
-    private final MaintAccount theAccountTab;
 
     /**
      * The TaxYear Panel.
@@ -195,11 +184,6 @@ public class MaintenanceTab
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
         theTabs.addChangeListener(myListener);
-
-        /* Create the account Tab and add it */
-        theAccountTab = new MaintAccount(theView);
-        theTabs.addTab(TITLE_ACCOUNTS, theAccountTab);
-        theAccountTab.addChangeListener(myListener);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
@@ -268,7 +252,6 @@ public class MaintenanceTab
     private void refreshData() {
         try {
             /* Refresh sub-panels */
-            theAccountTab.refreshData();
             theCategoryTab.refreshData();
             theTaxYearTab.refreshData();
             theStatic.refreshData();
@@ -287,10 +270,7 @@ public class MaintenanceTab
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        boolean hasUpdates = theAccountTab.hasUpdates();
-        if (!hasUpdates) {
-            hasUpdates = theCategoryTab.hasUpdates();
-        }
+        boolean hasUpdates = theCategoryTab.hasUpdates();
         if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
         }
@@ -309,13 +289,13 @@ public class MaintenanceTab
      * Select an explicit account for maintenance.
      * @param pAccount the account
      */
-    public void selectAccount(final Account pAccount) {
-        /* Pass through to the Account control */
-        theAccountTab.selectAccount(pAccount);
+    // public void selectAccount(final AssetBase<?> pAccount) {
+    /* Pass through to the Account control */
+    // theAccountTab.selectAccount(pAccount);
 
-        /* Goto the Accounts tab */
-        gotoNamedTab(TITLE_ACCOUNTS);
-    }
+    /* Goto the Accounts tab */
+    // gotoNamedTab(TITLE_ACCOUNTS);
+    // }
 
     /**
      * Goto the specific tab.
@@ -336,16 +316,8 @@ public class MaintenanceTab
         /* Determine whether we have any updates */
         boolean hasUpdates = hasUpdates();
 
-        /* Access the Accounts index */
-        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNTS);
-
-        /* Enable/Disable the Accounts tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
-        }
-
         /* Access the Category index */
-        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
+        int iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
 
         /* Enable/Disable the Category tab */
         if (iIndex != -1) {
@@ -387,13 +359,8 @@ public class MaintenanceTab
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
-        /* If the selected component is Accounts */
-        if (myComponent.equals(theAccountTab)) {
-            /* Set the debug focus */
-            theAccountTab.determineFocus();
-
-            /* If the selected component is AccountCategory */
-        } else if (myComponent.equals(theCategoryTab)) {
+        /* If the selected component is Category */
+        if (myComponent.equals(theCategoryTab)) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
 

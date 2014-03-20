@@ -250,9 +250,6 @@ public class ArchiveLoader {
 
             /* Load Tables */
             if (bContinue) {
-                bContinue = SheetAccountCategoryType.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
                 bContinue = SheetDepositCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
@@ -317,27 +314,15 @@ public class ArchiveLoader {
                 bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData, this);
             }
             if (bContinue) {
-                bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
                 bContinue = SheetDepositRate.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
-                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
             }
             if (bContinue) {
                 bContinue = SheetSecurityPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
             }
-            if (bContinue) {
-                myData.getAccounts().validateOnLoad();
-            }
 
             if (bContinue) {
-                bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, this, pLastEvent);
+                bContinue = SheetTransaction.loadArchive(pTask, myWorkbook, myData, this, pLastEvent);
             }
-            // if (bContinue) {
-            // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
-            // }
 
             /* Close the stream */
             pStream.close();

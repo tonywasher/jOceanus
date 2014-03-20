@@ -499,7 +499,7 @@ public class Loan
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)

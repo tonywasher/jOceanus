@@ -61,7 +61,7 @@ public class TableDeposit
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Deposit.FIELD_CATEGORY, TableAccountCategory.TABLE_NAME);
+        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(Deposit.FIELD_CATEGORY, TableDepositCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Deposit.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Deposit.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Deposit.FIELD_NAME, Deposit.NAMELEN);

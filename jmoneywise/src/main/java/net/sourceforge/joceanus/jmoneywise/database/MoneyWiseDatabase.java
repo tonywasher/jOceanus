@@ -55,7 +55,6 @@ public class MoneyWiseDatabase
      */
     private void declareTables() {
         /* Add additional tables */
-        addTable(new TableAccountCategoryType(this));
         addTable(new TableDepositCategoryType(this));
         addTable(new TableCashCategoryType(this));
         addTable(new TableLoanCategoryType(this));
@@ -71,7 +70,6 @@ public class MoneyWiseDatabase
         addTable(new TableAccountInfoType(this));
         addTable(new TableEventInfoType(this));
         addTable(new TableEventTag(this));
-        addTable(new TableAccountCategory(this));
         addTable(new TableDepositCategory(this));
         addTable(new TableCashCategory(this));
         addTable(new TableLoanCategory(this));
@@ -82,26 +80,19 @@ public class MoneyWiseDatabase
         addTable(new TablePayee(this));
         addTable(new TablePayeeInfo(this));
         addTable(new TableSecurity(this));
+        addTable(new TableSecurityPrice(this));
         addTable(new TableSecurityInfo(this));
         addTable(new TableDeposit(this));
+        addTable(new TableDepositRate(this));
         addTable(new TableDepositInfo(this));
         addTable(new TableCash(this));
         addTable(new TableCashInfo(this));
         addTable(new TableLoan(this));
         addTable(new TableLoanInfo(this));
-        addTable(new TableAccount(this));
         addTable(new TablePortfolio(this));
         addTable(new TablePortfolioInfo(this));
-        addTable(new TableAccountRate(this));
-        addTable(new TableDepositRate(this));
-        addTable(new TableAccountPrice(this));
-        addTable(new TableSecurityPrice(this));
-        addTable(new TableAccountInfo(this));
-        addTable(new TableEvent(this));
-        addTable(new TableEventInfo(this));
         addTable(new TableTransaction(this));
         addTable(new TableTransactionInfo(this));
-        addTable(new TablePattern(this));
         addTable(new TableSchedule(this));
     }
 }

@@ -36,9 +36,9 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.Account;
-import net.sourceforge.joceanus.jmoneywise.data.Event;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
@@ -572,7 +572,7 @@ public class MainTab
         /**
          * The account.
          */
-        private final Account theAccount;
+        private final AssetBase<?> theAccount;
 
         /**
          * The selected range.
@@ -582,13 +582,13 @@ public class MainTab
         /**
          * The base Event.
          */
-        private final Event theEvent;
+        private final Transaction theTransaction;
 
         /**
          * Obtain the selected account.
          * @return the account
          */
-        protected Account getAccount() {
+        protected AssetBase<?> getAccount() {
             return theAccount;
         }
 
@@ -601,21 +601,21 @@ public class MainTab
         }
 
         /**
-         * Obtain the selected event.
+         * Obtain the selected transaction.
          * @return the event
          */
-        protected Event getEvent() {
-            return theEvent;
+        protected Transaction getTransaction() {
+            return theTransaction;
         }
 
         /**
          * Constructor.
          * @param pAccount the requested account
          */
-        protected ActionRequest(final Account pAccount) {
+        protected ActionRequest(final AssetBase<?> pAccount) {
             theAccount = pAccount;
             theRange = null;
-            theEvent = null;
+            theTransaction = null;
         }
 
         /**
@@ -625,7 +625,7 @@ public class MainTab
         protected ActionRequest(final JDateDayRangeSelect pRange) {
             theAccount = null;
             theRange = pRange;
-            theEvent = null;
+            theTransaction = null;
         }
 
         /**
@@ -633,11 +633,11 @@ public class MainTab
          * @param pAccount the requested account
          * @param pRange the requested range
          */
-        protected ActionRequest(final Account pAccount,
+        protected ActionRequest(final AssetBase<?> pAccount,
                                 final JDateDayRangeSelect pRange) {
             theAccount = pAccount;
             theRange = pRange;
-            theEvent = null;
+            theTransaction = null;
         }
 
         /**
@@ -645,11 +645,11 @@ public class MainTab
          * @param pAccount the requested account
          * @param pEvent the base event
          */
-        protected ActionRequest(final Account pAccount,
-                                final Event pEvent) {
+        protected ActionRequest(final AssetBase<?> pAccount,
+                                final Transaction pTrans) {
             theAccount = pAccount;
             theRange = null;
-            theEvent = pEvent;
+            theTransaction = pTrans;
         }
     }
 }

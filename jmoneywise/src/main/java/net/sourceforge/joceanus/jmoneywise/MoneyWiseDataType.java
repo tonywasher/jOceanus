@@ -31,11 +31,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
  */
 public enum MoneyWiseDataType implements JDataFieldEnum {
     /**
-     * AccountType.
-     */
-    ACCOUNTTYPE,
-
-    /**
      * DepositType.
      */
     DEPOSITTYPE,
@@ -121,11 +116,6 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     EVENTTAG,
 
     /**
-     * AccountCategory.
-     */
-    ACCOUNTCATEGORY,
-
-    /**
      * DepositCategory.
      */
     DEPOSITCATEGORY,
@@ -166,6 +156,11 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     SECURITY,
 
     /**
+     * SecurityPrice.
+     */
+    SECURITYPRICE,
+
+    /**
      * SecurityInfo.
      */
     SECURITYINFO,
@@ -174,6 +169,11 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
      * Deposit.
      */
     DEPOSIT,
+
+    /**
+     * DepositRate.
+     */
+    DEPOSITRATE,
 
     /**
      * DepositInfo.
@@ -211,46 +211,6 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     PORTFOLIOINFO,
 
     /**
-     * Account.
-     */
-    ACCOUNT,
-
-    /**
-     * AccountInfo.
-     */
-    ACCOUNTINFO,
-
-    /**
-     * AccountRate.
-     */
-    ACCOUNTRATE,
-
-    /**
-     * DepositRate.
-     */
-    DEPOSITRATE,
-
-    /**
-     * AccountPrice.
-     */
-    ACCOUNTPRICE,
-
-    /**
-     * SecurityPrice.
-     */
-    SECURITYPRICE,
-
-    /**
-     * Event.
-     */
-    EVENT,
-
-    /**
-     * EventInfo.
-     */
-    EVENTINFO,
-
-    /**
      * Transaction.
      */
     TRANSACTION,
@@ -259,11 +219,6 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
      * TransactionInfo.
      */
     TRANSACTIONINFO,
-
-    /**
-     * Pattern.
-     */
-    PATTERN,
 
     /**
      * Schedule.

@@ -63,7 +63,7 @@ public class TableSecurityPrice
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableAccount.TABLE_NAME);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(SecurityPrice.FIELD_SECURITY, TableSecurity.TABLE_NAME);
         ColumnDefinition myDateCol = myTableDef.addDateColumn(SecurityPrice.FIELD_DATE);
         myTableDef.addEncryptedColumn(SecurityPrice.FIELD_PRICE, EncryptedData.PRICELEN);
 

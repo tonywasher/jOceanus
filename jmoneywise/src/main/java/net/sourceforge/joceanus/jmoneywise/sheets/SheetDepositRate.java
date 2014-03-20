@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.AccountRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -103,7 +102,7 @@ public class SheetDepositRate
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AccountRate.OBJECT_NAME);
+        DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
         myValues.addValue(DepositRate.FIELD_DEPOSIT, loadInteger(COL_DEPOSIT));
         myValues.addValue(DepositRate.FIELD_RATE, loadBytes(COL_RATE));
         myValues.addValue(DepositRate.FIELD_BONUS, loadBytes(COL_BONUS));

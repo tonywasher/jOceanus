@@ -41,7 +41,7 @@ public class TransactionGroup<T extends TransactionBase<T>>
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventGroup.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionGroup.class.getName());
 
     /**
      * Split Indication.
@@ -51,7 +51,7 @@ public class TransactionGroup<T extends TransactionBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventGroup.class.getSimpleName(), DataGroup.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(TransactionGroup.class.getSimpleName(), DataGroup.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {

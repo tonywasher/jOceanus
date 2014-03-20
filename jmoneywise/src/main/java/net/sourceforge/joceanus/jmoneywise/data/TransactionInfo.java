@@ -331,28 +331,28 @@ public class TransactionInfo
     }
 
     /**
-     * Update eventInfo from an eventInfo extract.
-     * @param pEventInfo the changed eventInfo
+     * Update transactionInfo from a transactionInfo extract.
+     * @param pTransInfo the changed transInfo
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pEventInfo) {
-        /* Can only update from EventInfo */
-        if (!(pEventInfo instanceof EventInfo)) {
+    public boolean applyChanges(final DataItem<?> pTransInfo) {
+        /* Can only update from TransactionInfo */
+        if (!(pTransInfo instanceof TransactionInfo)) {
             return false;
         }
 
-        /* Access as EventInfo */
-        EventInfo myEventInfo = (EventInfo) pEventInfo;
+        /* Access as TransactionInfo */
+        TransactionInfo myTransInfo = (TransactionInfo) pTransInfo;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the value if required */
-        if (!Difference.isEqual(getField(), myEventInfo.getField())) {
-            setValueValue(myEventInfo.getField());
+        if (!Difference.isEqual(getField(), myTransInfo.getField())) {
+            setValueValue(myTransInfo.getField());
             if (getInfoType().isLink()) {
-                setValueLink(myEventInfo.getLink(DataItem.class));
+                setValueLink(myTransInfo.getLink(DataItem.class));
             }
         }
 

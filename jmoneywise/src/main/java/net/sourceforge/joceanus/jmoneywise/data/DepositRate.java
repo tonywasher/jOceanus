@@ -65,7 +65,7 @@ public class DepositRate
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountRate.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositRate.class.getName());
 
     /**
      * Local Report fields.
