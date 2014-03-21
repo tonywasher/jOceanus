@@ -27,7 +27,7 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFClearedLine;
@@ -293,7 +293,7 @@ public class QIFEvent
      * record category.
      * @param pCategory the category
      */
-    protected void recordCategory(final EventCategory pCategory) {
+    protected void recordCategory(final TransactionCategory pCategory) {
         /* Add category line */
         QIFFile myFile = getFile();
         addLine(new QIFEventCategoryLine(myFile.getCategory(pCategory.getName())));
@@ -324,7 +324,7 @@ public class QIFEvent
      * @param pAmount the amount
      * @param pComment the comment
      */
-    protected void recordSplitRecord(final EventCategory pCategory,
+    protected void recordSplitRecord(final TransactionCategory pCategory,
                                      final JMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */

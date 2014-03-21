@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ArchiveYear;
 import net.sourceforge.joceanus.jmoneywise.sheets.ArchiveLoader.ParentCache;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
@@ -404,17 +404,17 @@ public class SheetTransaction
 
         /* Add information relating to the account */
         TransactionInfoList myInfoList = pData.getTransactionInfo();
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.COMMENTS, myDesc);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.TAXCREDIT, myTaxCredit);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.NATINSURANCE, myNatInsurance);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DEEMEDBENEFIT, myBenefit);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DEBITUNITS, myDebitUnits);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.CREDITUNITS, myCreditUnits);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.DILUTION, myDilution);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.REFERENCE, myReference);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.QUALIFYYEARS, myYears);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.CHARITYDONATION, myDonation);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.THIRDPARTY, myThirdParty);
-        myInfoList.addInfoItem(null, myTrans, EventInfoClass.EVENTTAG, myTagList);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.NATINSURANCE, myNatInsurance);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEBITUNITS, myDebitUnits);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CREDITUNITS, myCreditUnits);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DILUTION, myDilution);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.REFERENCE, myReference);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.QUALIFYYEARS, myYears);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.CHARITYDONATION, myDonation);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.THIRDPARTY, myThirdParty);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
     }
 }

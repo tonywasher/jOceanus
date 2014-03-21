@@ -30,7 +30,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -202,7 +202,7 @@ public class QEvent
         }
 
         /* If the payee is autoExpense */
-        EventCategory myAutoExpense = (myPayee instanceof Cash)
+        TransactionCategory myAutoExpense = (myPayee instanceof Cash)
                                                                ? ((Cash) myPayee).getAutoExpense()
                                                                : null;
         if (myAutoExpense != null) {
@@ -339,7 +339,7 @@ public class QEvent
                                            : theTransaction.getDebit();
 
         /* Access autoExpense */
-        EventCategory myAutoExpense = (myAccount instanceof Cash)
+        TransactionCategory myAutoExpense = (myAccount instanceof Cash)
                                                                  ? ((Cash) myAccount).getAutoExpense()
                                                                  : null;
 

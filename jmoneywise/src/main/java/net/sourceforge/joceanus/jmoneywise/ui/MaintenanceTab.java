@@ -41,10 +41,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
@@ -207,7 +207,7 @@ public class MaintenanceTab
         theStatic.addStatic(LoanCategoryType.LIST_NAME, LoanCategoryTypeList.class, LoanCategoryType.class);
         theStatic.addStatic(PayeeType.LIST_NAME, PayeeTypeList.class, PayeeType.class);
         theStatic.addStatic(SecurityType.LIST_NAME, SecurityTypeList.class, SecurityType.class);
-        theStatic.addStatic(EventCategoryType.LIST_NAME, EventCategoryTypeList.class, EventCategoryType.class);
+        theStatic.addStatic(TransactionCategoryType.LIST_NAME, TransactionCategoryTypeList.class, TransactionCategoryType.class);
         theStatic.addStatic(AccountCurrency.LIST_NAME, AccountCurrencyList.class, AccountCurrency.class);
         theStatic.addStatic(TaxBasis.LIST_NAME, TaxBasisList.class, TaxBasis.class);
         theStatic.addStatic(TaxCategory.LIST_NAME, TaxCategoryList.class, TaxCategory.class);
@@ -215,7 +215,7 @@ public class MaintenanceTab
         theStatic.addStatic(Frequency.LIST_NAME, FrequencyList.class, Frequency.class);
         theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
         theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
-        theStatic.addStatic(EventInfoType.LIST_NAME, EventInfoTypeList.class, EventInfoType.class);
+        theStatic.addStatic(TransactionInfoType.LIST_NAME, TransactionInfoTypeList.class, TransactionInfoType.class);
 
         /* Create the Preferences Tab */
         PreferenceManager myPrefs = theView.getPreferenceMgr();

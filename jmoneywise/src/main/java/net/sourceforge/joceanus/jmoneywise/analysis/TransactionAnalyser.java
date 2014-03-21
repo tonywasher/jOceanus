@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -321,7 +321,7 @@ public class TransactionAnalyser
 
             /* Else handle the event normally */
         } else {
-            EventCategory myCat = pTrans.getCategory();
+            TransactionCategory myCat = pTrans.getCategory();
 
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
@@ -360,7 +360,7 @@ public class TransactionAnalyser
             if ((myDebit instanceof Cash) && (myDebit.getAssetType() == AssetType.AUTOEXPENSE)) {
                 /* Access debit as cash */
                 Cash myCash = (Cash) myDebit;
-                EventCategory myAuto = myCash.getAutoExpense();
+                TransactionCategory myAuto = myCash.getAutoExpense();
                 myDebit = myCash.getAutoPayee();
 
                 /* Subtract expense from Payee bucket */
@@ -391,7 +391,7 @@ public class TransactionAnalyser
             if ((myCredit instanceof Cash) && (myCredit.getAssetType() == AssetType.AUTOEXPENSE)) {
                 /* Access credit as cash */
                 Cash myCash = (Cash) myCredit;
-                EventCategory myAuto = myCash.getAutoExpense();
+                TransactionCategory myAuto = myCash.getAutoExpense();
                 myCredit = myCash.getAutoPayee();
 
                 /* Add expense to Payee bucket */
@@ -443,7 +443,7 @@ public class TransactionAnalyser
      */
     private void processSecurityTransaction(final Transaction pTrans) throws JOceanusException {
         /* Switch on the category */
-        EventCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = pTrans.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
             case STOCKSPLIT:
@@ -530,7 +530,7 @@ public class TransactionAnalyser
     private void processTransferIn(final Transaction pTrans) {
         /* Access debit account and category */
         AssetBase<?> myDebit = pTrans.getDebit();
-        EventCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = pTrans.getCategory();
 
         /* Adjust the credit transfer details */
         processCreditXferIn(pTrans);
@@ -602,7 +602,7 @@ public class TransactionAnalyser
         JUnits myDeltaUnits = pTrans.getCreditUnits();
 
         /* Obtain detailed category */
-        EventCategory myCat = myPortfolio.getDetailedCategory(pTrans.getCategory());
+        TransactionCategory myCat = myPortfolio.getDetailedCategory(pTrans.getCategory());
         myCat = mySecurity.getDetailedCategory(myCat);
 
         /* True debit account is the parent */
@@ -672,7 +672,7 @@ public class TransactionAnalyser
     private void processTransferOut(final Transaction pTrans) {
         /* Access credit account and category */
         AssetBase<?> myCredit = pTrans.getCredit();
-        EventCategory myCat = pTrans.getCategory();
+        TransactionCategory myCat = pTrans.getCategory();
 
         /* Adjust the debit transfer details */
         processDebitXferOut(pTrans);

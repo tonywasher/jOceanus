@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
@@ -48,7 +48,7 @@ public final class QCategory
     /**
      * The event category.
      */
-    private final EventCategory theCategory;
+    private final TransactionCategory theCategory;
 
     /**
      * The transaction type.
@@ -59,7 +59,7 @@ public final class QCategory
      * Obtain the category.
      * @return the name
      */
-    public EventCategory getCategory() {
+    public TransactionCategory getCategory() {
         return theCategory;
     }
 
@@ -93,7 +93,7 @@ public final class QCategory
      * @param pCategory the category
      */
     protected QCategory(final QAnalysis pAnalysis,
-                        final EventCategory pCategory) {
+                        final TransactionCategory pCategory) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -142,12 +142,12 @@ public final class QCategory
         /**
          * Parent Category Map.
          */
-        private final Map<EventCategory, QCategory> theParents;
+        private final Map<TransactionCategory, QCategory> theParents;
 
         /**
          * Security Map.
          */
-        private final Map<EventCategory, QCategory> theCategories;
+        private final Map<TransactionCategory, QCategory> theCategories;
 
         /**
          * The analysis.
@@ -174,15 +174,15 @@ public final class QCategory
             theAnalysis = pAnalysis;
 
             /* Create the map */
-            theParents = new LinkedHashMap<EventCategory, QCategory>();
-            theCategories = new LinkedHashMap<EventCategory, QCategory>();
+            theParents = new LinkedHashMap<TransactionCategory, QCategory>();
+            theCategories = new LinkedHashMap<TransactionCategory, QCategory>();
         }
 
         /**
          * Register category.
          * @param pCategory the category
          */
-        protected void registerCategory(final EventCategory pCategory) {
+        protected void registerCategory(final TransactionCategory pCategory) {
             /* Look up the category in the map */
             QCategory myCategory = theCategories.get(pCategory);
 
@@ -193,7 +193,7 @@ public final class QCategory
                 theCategories.put(pCategory, myCategory);
 
                 /* Access the parent category */
-                EventCategory myParent = pCategory.getParentCategory();
+                TransactionCategory myParent = pCategory.getParentCategory();
 
                 /* If the parent is unknown */
                 myCategory = theParents.get(myParent);

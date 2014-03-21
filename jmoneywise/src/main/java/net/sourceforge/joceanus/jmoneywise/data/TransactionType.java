@@ -155,7 +155,7 @@ public enum TransactionType {
      * @param pCategory the event category
      * @return the transaction type
      */
-    public static TransactionType deriveType(final EventCategory pCategory) {
+    public static TransactionType deriveType(final TransactionCategory pCategory) {
         /* Switch on event category class */
         switch (pCategory.getCategoryTypeClass()) {
             case TAXEDINCOME:

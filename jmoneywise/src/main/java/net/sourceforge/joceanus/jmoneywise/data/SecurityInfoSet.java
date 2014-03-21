@@ -163,17 +163,11 @@ public class SecurityInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
-            case COMMENTS:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
-            case PARENT:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
             case MATURITY:
-            case SYMBOL:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
             default:

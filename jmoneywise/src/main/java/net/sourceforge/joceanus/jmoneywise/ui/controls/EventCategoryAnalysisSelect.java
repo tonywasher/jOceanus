@@ -43,8 +43,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
@@ -66,7 +66,7 @@ public class EventCategoryAnalysisSelect
     /**
      * Text for EventCategory Label.
      */
-    private static final String NLS_CATEGORY = MoneyWiseDataType.EVENTCATEGORY.getItemName();
+    private static final String NLS_CATEGORY = MoneyWiseDataType.TRANSCATEGORY.getItemName();
 
     /**
      * The active event categories bucket list.
@@ -230,7 +230,7 @@ public class EventCategoryAnalysisSelect
                 EventCategoryBucket myBucket = myIterator.next();
 
                 /* Only process subTotal items */
-                EventCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+                TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
                 if (!myClass.isSubTotal()) {
                     continue;
                 }
@@ -248,13 +248,13 @@ public class EventCategoryAnalysisSelect
                 EventCategoryBucket myBucket = myIterator.next();
 
                 /* Only process low-level items */
-                EventCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+                TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
                 if (myClass.canParentCategory()) {
                     continue;
                 }
 
                 /* Determine menu to add to */
-                EventCategory myParent = myBucket.getEventCategory().getParentCategory();
+                TransactionCategory myParent = myBucket.getEventCategory().getParentCategory();
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the menu */

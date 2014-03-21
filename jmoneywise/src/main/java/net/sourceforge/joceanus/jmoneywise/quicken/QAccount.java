@@ -28,7 +28,7 @@ import java.io.OutputStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -117,7 +117,7 @@ public final class QAccount
      * Obtain the autoExpense category.
      * @return the parent
      */
-    protected EventCategory getAutoExpense() {
+    protected TransactionCategory getAutoExpense() {
         if (theAccount instanceof Cash) {
             return ((Cash) theAccount).getAutoExpense();
         }

@@ -31,33 +31,33 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Event Category class.
+ * Transaction Category class.
  */
-public final class EventCategory
-        extends CategoryBase<EventCategory, EventCategoryType, EventCategoryClass> {
+public final class TransactionCategory
+        extends CategoryBase<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTCATEGORY.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.TRANSCATEGORY.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTCATEGORY.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.TRANSCATEGORY.getListName();
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategory.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionCategory.class.getName());
 
     /**
      * Local Report fields.
@@ -67,7 +67,7 @@ public final class EventCategory
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.EVENTTYPE.getItemName());
+    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
     /**
      * Different Parent Error.
@@ -96,46 +96,46 @@ public final class EventCategory
     }
 
     @Override
-    public EventCategoryType getCategoryType() {
-        return getEventCategoryType(getValueSet());
+    public TransactionCategoryType getCategoryType() {
+        return getTransCategoryType(getValueSet());
     }
 
     @Override
-    public EventCategoryClass getCategoryTypeClass() {
-        EventCategoryType myType = getCategoryType();
+    public TransactionCategoryClass getCategoryTypeClass() {
+        TransactionCategoryType myType = getCategoryType();
         return (myType == null)
                                ? null
                                : myType.getCategoryClass();
     }
 
     @Override
-    public EventCategory getParentCategory() {
+    public TransactionCategory getParentCategory() {
         return getParentCategory(getValueSet());
     }
 
     /**
-     * Obtain EventCategoryType.
+     * Obtain CategoryType.
      * @param pValueSet the valueSet
-     * @return the EventCategoryType
+     * @return the CategoryType
      */
-    public static EventCategoryType getEventCategoryType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CATTYPE, EventCategoryType.class);
+    public static TransactionCategoryType getTransCategoryType(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATTYPE, TransactionCategoryType.class);
     }
 
     /**
-     * Obtain Parent EventCategory.
+     * Obtain Parent Category.
      * @param pValueSet the valueSet
-     * @return the Parent AccountCategory
+     * @return the Parent Category
      */
-    public static EventCategory getParentCategory(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PARENT, EventCategory.class);
+    public static TransactionCategory getParentCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARENT, TransactionCategory.class);
     }
 
     /**
      * Set category type value.
      * @param pValue the value
      */
-    private void setValueType(final EventCategoryType pValue) {
+    private void setValueType(final TransactionCategoryType pValue) {
         getValueSet().setValue(FIELD_CATTYPE, pValue);
     }
 
@@ -156,13 +156,13 @@ public final class EventCategory
     }
 
     @Override
-    public EventCategory getBase() {
-        return (EventCategory) super.getBase();
+    public TransactionCategory getBase() {
+        return (TransactionCategory) super.getBase();
     }
 
     @Override
-    public EventCategoryList getList() {
-        return (EventCategoryList) super.getList();
+    public TransactionCategoryList getList() {
+        return (TransactionCategoryList) super.getList();
     }
 
     /**
@@ -170,7 +170,7 @@ public final class EventCategory
      * @param pClass the required category class.
      * @return true/false
      */
-    public boolean isCategoryClass(final EventCategoryClass pClass) {
+    public boolean isCategoryClass(final TransactionCategoryClass pClass) {
         /* Check for match */
         return getCategoryTypeClass() == pClass;
     }
@@ -181,7 +181,7 @@ public final class EventCategory
      */
     public boolean isTransfer() {
         /* Check for match */
-        EventCategoryClass myClass = getCategoryTypeClass();
+        TransactionCategoryClass myClass = getCategoryTypeClass();
         return (myClass == null)
                                 ? false
                                 : myClass.isTransfer();
@@ -192,8 +192,8 @@ public final class EventCategory
      * @param pList the list
      * @param pCategory The Category to copy
      */
-    protected EventCategory(final EventCategoryList pList,
-                            final EventCategory pCategory) {
+    protected TransactionCategory(final TransactionCategoryList pList,
+                                  final TransactionCategory pCategory) {
         /* Set standard values */
         super(pList, pCategory);
     }
@@ -204,8 +204,8 @@ public final class EventCategory
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private EventCategory(final EventCategoryList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private TransactionCategory(final TransactionCategoryList pList,
+                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -222,12 +222,12 @@ public final class EventCategory
      * Edit Constructor.
      * @param pList the list
      */
-    public EventCategory(final EventCategoryList pList) {
+    public TransactionCategory(final TransactionCategoryList pList) {
         super(pList);
     }
 
     @Override
-    public int compareTo(final EventCategory pThat) {
+    public int compareTo(final TransactionCategory pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -255,11 +255,11 @@ public final class EventCategory
 
         /* Resolve category type and parent */
         MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_CATTYPE, myData.getEventCategoryTypes());
+        resolveDataLink(FIELD_CATTYPE, myData.getTransCategoryTypes());
     }
 
     @Override
-    public void setCategoryType(final EventCategoryType pType) {
+    public void setCategoryType(final TransactionCategoryType pType) {
         setValueType(pType);
     }
 
@@ -269,9 +269,9 @@ public final class EventCategory
         super.validate();
 
         /* Access details */
-        EventCategoryList myList = getList();
-        EventCategoryType myCatType = getCategoryType();
-        EventCategory myParent = getParentCategory();
+        TransactionCategoryList myList = getList();
+        TransactionCategoryType myCatType = getCategoryType();
+        TransactionCategory myParent = getParentCategory();
         String myName = getName();
 
         /* EventCategoryType must be non-null */
@@ -279,7 +279,7 @@ public final class EventCategory
             addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
-            EventCategoryClass myClass = myCatType.getCategoryClass();
+            TransactionCategoryClass myClass = myCatType.getCategoryClass();
 
             /* EventCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
@@ -309,13 +309,13 @@ public final class EventCategory
                     /* Check parent */
                     if (myParent == null) {
                         addError(ERROR_MISSING, FIELD_PARENT);
-                    } else if (!myParent.isCategoryClass(EventCategoryClass.TOTALS)) {
+                    } else if (!myParent.isCategoryClass(TransactionCategoryClass.TOTALS)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;
                 default:
                     /* Check parent requirement */
-                    boolean isTransfer = myClass == EventCategoryClass.TRANSFER;
+                    boolean isTransfer = myClass == TransactionCategoryClass.TRANSFER;
                     boolean hasParent = myParent != null;
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
@@ -325,7 +325,7 @@ public final class EventCategory
                         }
                     } else if (hasParent) {
                         /* Check validity of parent */
-                        EventCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        TransactionCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
@@ -355,11 +355,11 @@ public final class EventCategory
      */
     @Override
     public boolean applyChanges(final DataItem<?> pCategory) {
-        /* Can only update from an event category */
-        if (!(pCategory instanceof EventCategory)) {
+        /* Can only update from a transaction category */
+        if (!(pCategory instanceof TransactionCategory)) {
             return false;
         }
-        EventCategory myCategory = (EventCategory) pCategory;
+        TransactionCategory myCategory = (TransactionCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();
@@ -381,17 +381,17 @@ public final class EventCategory
      * @return true/false
      */
     public boolean isHidden() {
-        EventCategoryClass myClass = this.getCategoryTypeClass();
+        TransactionCategoryClass myClass = this.getCategoryTypeClass();
         return (myClass == null)
                                 ? false
                                 : myClass.isHiddenType();
     }
 
     /**
-     * The Event Category List class.
+     * The Transaction Category List class.
      */
-    public static class EventCategoryList
-            extends CategoryBaseList<EventCategory, EventCategoryType, EventCategoryClass> {
+    public static class TransactionCategoryList
+            extends CategoryBaseList<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
         /**
          * Local Report fields.
          */
@@ -409,34 +409,34 @@ public final class EventCategory
 
         @Override
         public JDataFields getItemFields() {
-            return EventCategory.FIELD_DEFS;
+            return TransactionCategory.FIELD_DEFS;
         }
 
         /**
          * Construct an empty CORE Category list.
          * @param pData the DataSet for the list
          */
-        public EventCategoryList(final MoneyWiseData pData) {
-            super(pData, EventCategory.class, MoneyWiseDataType.EVENTCATEGORY);
+        public TransactionCategoryList(final MoneyWiseData pData) {
+            super(pData, TransactionCategory.class, MoneyWiseDataType.TRANSCATEGORY);
         }
 
         @Override
-        protected EventCategoryList getEmptyList(final ListStyle pStyle) {
-            EventCategoryList myList = new EventCategoryList(this);
+        protected TransactionCategoryList getEmptyList(final ListStyle pStyle) {
+            TransactionCategoryList myList = new TransactionCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventCategoryList) super.cloneList(pDataSet);
+        public TransactionCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (TransactionCategoryList) super.cloneList(pDataSet);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EventCategoryList(final EventCategoryList pSource) {
+        protected TransactionCategoryList(final TransactionCategoryList pSource) {
             super(pSource);
         }
 
@@ -444,22 +444,22 @@ public final class EventCategory
          * Derive Edit list.
          * @return the edit list
          */
-        public EventCategoryList deriveEditList() {
+        public TransactionCategoryList deriveEditList() {
             /* Build an empty List */
-            EventCategoryList myList = getEmptyList(ListStyle.EDIT);
+            TransactionCategoryList myList = getEmptyList(ListStyle.EDIT);
 
             /* Loop through the categories */
-            Iterator<EventCategory> myIterator = iterator();
+            Iterator<TransactionCategory> myIterator = iterator();
             while (myIterator.hasNext()) {
-                EventCategory myCurr = myIterator.next();
+                TransactionCategory myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
                     continue;
                 }
 
-                /* Build the new linked event category and add it to the list */
-                EventCategory myCategory = new EventCategory(myList, myCurr);
+                /* Build the new linked category and add it to the list */
+                TransactionCategory myCategory = new TransactionCategory(myList, myCurr);
                 myList.append(myCategory);
             }
 
@@ -473,13 +473,13 @@ public final class EventCategory
          * @return the newly added item
          */
         @Override
-        public EventCategory addCopyItem(final DataItem<?> pCategory) {
-            /* Can only clone an EventCategory */
-            if (!(pCategory instanceof EventCategory)) {
+        public TransactionCategory addCopyItem(final DataItem<?> pCategory) {
+            /* Can only clone a TransactionCategory */
+            if (!(pCategory instanceof TransactionCategory)) {
                 throw new UnsupportedOperationException();
             }
 
-            EventCategory myCategory = new EventCategory(this, (EventCategory) pCategory);
+            TransactionCategory myCategory = new TransactionCategory(this, (TransactionCategory) pCategory);
             add(myCategory);
             return myCategory;
         }
@@ -489,8 +489,8 @@ public final class EventCategory
          * @return the new item
          */
         @Override
-        public EventCategory addNewItem() {
-            EventCategory myCategory = new EventCategory(this);
+        public TransactionCategory addNewItem() {
+            TransactionCategory myCategory = new TransactionCategory(this);
             add(myCategory);
             return myCategory;
         }
@@ -500,14 +500,14 @@ public final class EventCategory
          * @param pClass the event category class
          * @return The # of instances of the class
          */
-        protected int countInstances(final EventCategoryClass pClass) {
+        protected int countInstances(final TransactionCategoryClass pClass) {
             /* Access the iterator */
-            Iterator<EventCategory> myIterator = iterator();
+            Iterator<TransactionCategory> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventCategory myCurr = myIterator.next();
+                TransactionCategory myCurr = myIterator.next();
                 if (pClass == myCurr.getCategoryTypeClass()) {
                     iCount++;
                 }
@@ -518,17 +518,17 @@ public final class EventCategory
         }
 
         /**
-         * Obtain the first event category for the specified class.
-         * @param pClass the event category class
+         * Obtain the first category for the specified class.
+         * @param pClass the category class
          * @return the category
          */
-        public EventCategory getSingularClass(final EventCategoryClass pClass) {
+        public TransactionCategory getSingularClass(final TransactionCategoryClass pClass) {
             /* Access the iterator */
-            Iterator<EventCategory> myIterator = iterator();
+            Iterator<TransactionCategory> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventCategory myCurr = myIterator.next();
+                TransactionCategory myCurr = myIterator.next();
                 if (myCurr.getCategoryTypeClass() == pClass) {
                     return myCurr;
                 }
@@ -543,26 +543,26 @@ public final class EventCategory
          * @param pInfoClass the Event info class
          * @return the corresponding category.
          */
-        public EventCategory getEventInfoCategory(final EventInfoClass pInfoClass) {
+        public TransactionCategory getEventInfoCategory(final TransactionInfoClass pInfoClass) {
             /* Switch on info class */
             switch (pInfoClass) {
                 case TAXCREDIT:
-                    return getSingularClass(EventCategoryClass.TAXCREDIT);
+                    return getSingularClass(TransactionCategoryClass.TAXCREDIT);
                 case NATINSURANCE:
-                    return getSingularClass(EventCategoryClass.NATINSURANCE);
+                    return getSingularClass(TransactionCategoryClass.NATINSURANCE);
                 case DEEMEDBENEFIT:
-                    return getSingularClass(EventCategoryClass.DEEMEDBENEFIT);
+                    return getSingularClass(TransactionCategoryClass.DEEMEDBENEFIT);
                 case CHARITYDONATION:
-                    return getSingularClass(EventCategoryClass.CHARITYDONATION);
+                    return getSingularClass(TransactionCategoryClass.CHARITYDONATION);
                 default:
                     return null;
             }
         }
 
         @Override
-        public EventCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the category */
-            EventCategory myCategory = new EventCategory(this, pValues);
+            TransactionCategory myCategory = new TransactionCategory(this, pValues);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {

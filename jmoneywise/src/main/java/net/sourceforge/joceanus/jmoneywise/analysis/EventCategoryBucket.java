@@ -36,16 +36,16 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -75,12 +75,12 @@ public final class EventCategoryBucket
     /**
      * Event Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.EVENTCATEGORY.getItemName());
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
      * Event Type Field Id.
      */
-    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.EVENTTYPE.getItemName());
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
     /**
      * Base Field Id.
@@ -110,12 +110,12 @@ public final class EventCategoryBucket
     /**
      * The event category.
      */
-    private final EventCategory theCategory;
+    private final TransactionCategory theCategory;
 
     /**
      * The event category type.
      */
-    private final EventCategoryType theType;
+    private final TransactionCategoryType theType;
 
     /**
      * Values.
@@ -201,7 +201,7 @@ public final class EventCategoryBucket
      * Obtain the event category.
      * @return the event category
      */
-    public EventCategory getEventCategory() {
+    public TransactionCategory getEventCategory() {
         return theCategory;
     }
 
@@ -209,7 +209,7 @@ public final class EventCategoryBucket
      * Obtain the event category type.
      * @return the event category type
      */
-    public EventCategoryType getEventCategoryType() {
+    public TransactionCategoryType getEventCategoryType() {
         return theType;
     }
 
@@ -335,7 +335,7 @@ public final class EventCategoryBucket
      * @param pCategory the event category
      */
     private EventCategoryBucket(final Analysis pAnalysis,
-                                final EventCategory pCategory) {
+                                final TransactionCategory pCategory) {
         /* Store the parameters */
         theAnalysis = pAnalysis;
         theCategory = pCategory;
@@ -877,14 +877,14 @@ public final class EventCategoryBucket
             theTaxBasis = theAnalysis.getTaxBasis();
 
             /* Obtain the implied buckets */
-            EventCategoryList myList = theData.getEventCategories();
-            theTaxCredit = getBucket(myList.getEventInfoCategory(EventInfoClass.TAXCREDIT));
-            theNatInsurance = getBucket(myList.getEventInfoCategory(EventInfoClass.NATINSURANCE));
-            theDeemedBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.DEEMEDBENEFIT));
-            theCharityDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CHARITYDONATION));
-            theTaxableGains = getBucket(myList.getSingularClass(EventCategoryClass.TAXABLEGAIN));
-            theTaxFreeGains = getBucket(myList.getSingularClass(EventCategoryClass.TAXFREEGAIN));
-            theCapitalGains = getBucket(myList.getSingularClass(EventCategoryClass.CAPITALGAIN));
+            TransactionCategoryList myList = theData.getTransCategories();
+            theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
+            theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.NATINSURANCE));
+            theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
+            theCharityDonation = getBucket(myList.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION));
+            theTaxableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXABLEGAIN));
+            theTaxFreeGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXFREEGAIN));
+            theCapitalGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CAPITALGAIN));
         }
 
         /**
@@ -984,7 +984,7 @@ public final class EventCategoryBucket
          * @param pCategory the event category
          * @return the bucket
          */
-        protected EventCategoryBucket getBucket(final EventCategory pCategory) {
+        protected EventCategoryBucket getBucket(final TransactionCategory pCategory) {
             /* Handle null category */
             if (pCategory == null) {
                 return null;
@@ -1011,9 +1011,9 @@ public final class EventCategoryBucket
          * @param pClass the event category class
          * @return the bucket
          */
-        protected EventCategoryBucket getBucket(final EventCategoryClass pClass) {
+        protected EventCategoryBucket getBucket(final TransactionCategoryClass pClass) {
             /* Determine required category */
-            EventCategory myCategory = theData.getEventCategories().getSingularClass(pClass);
+            TransactionCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
 
             /* Return the bucket */
             return getBucket(myCategory);
@@ -1025,7 +1025,7 @@ public final class EventCategoryBucket
          * @param pCategory primary category
          */
         protected void adjustCategories(final Transaction pTrans,
-                                        final EventCategory pCategory) {
+                                        final TransactionCategory pCategory) {
             /* Adjust the primary category bucket */
             EventCategoryBucket myCatBucket = getBucket(pCategory);
             myCatBucket.adjustValues(pTrans);
@@ -1141,8 +1141,8 @@ public final class EventCategoryBucket
                 EventCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                EventCategory myCategory = myCurr.getEventCategory();
-                EventCategory myParent = myCategory.getParentCategory();
+                TransactionCategory myCategory = myCurr.getEventCategory();
+                TransactionCategory myParent = myCategory.getParentCategory();
 
                 /* Access parent bucket */
                 EventCategoryBucket myTotal = findItemById(myParent.getId());

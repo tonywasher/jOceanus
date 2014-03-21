@@ -25,10 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -53,10 +52,10 @@ public class QInterestEvent
         /* Make sure that the additional categories are registered */
         getAnalysis().getInterestCategory(pTrans);
         if (pTrans.getTaxCredit() != null) {
-            getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
+            getAnalysis().getCategory(TransactionInfoClass.TAXCREDIT);
         }
         if (pTrans.getCharityDonation() != null) {
-            getAnalysis().getCategory(EventInfoClass.CHARITYDONATION);
+            getAnalysis().getCategory(TransactionInfoClass.CHARITYDONATION);
         }
     }
 
@@ -77,7 +76,7 @@ public class QInterestEvent
         JMoney myAmount = myTrans.getAmount();
         JMoney myTaxCredit = myTrans.getTaxCredit();
         JMoney myDonation = myTrans.getCharityDonation();
-        EventCategory myCategory = getAnalysis().getInterestCategory(myTrans);
+        TransactionCategory myCategory = getAnalysis().getInterestCategory(myTrans);
 
         /* Determine type of event */
         boolean isTaxFree = myTaxCredit == null;
@@ -117,9 +116,9 @@ public class QInterestEvent
 
         /* Payee is the parent of the account */
         AssetBase<?> myDebit = myTrans.getDebit();
-        Payee myParent = (myDebit instanceof Deposit)
-                                                     ? ((Deposit) myDebit).getParent()
-                                                     : null;
+        AssetBase<?> myParent = (myDebit instanceof Deposit)
+                                                            ? ((Deposit) myDebit).getParent()
+                                                            : myDebit;
         addAccountLine(QEventLineType.PAYEE, myParent);
 
         /* If we have a description */
@@ -147,14 +146,14 @@ public class QInterestEvent
             if (!isTaxFree) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
+                myCategory = getAnalysis().getCategory(TransactionInfoClass.TAXCREDIT);
                 addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
                 addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isDonation) {
                 myValue = new JDecimal(myDonation);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.CHARITYDONATION);
+                myCategory = getAnalysis().getCategory(TransactionInfoClass.CHARITYDONATION);
                 addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
                 addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }

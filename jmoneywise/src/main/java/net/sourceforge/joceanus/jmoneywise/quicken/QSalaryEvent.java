@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken;
 
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -48,13 +48,13 @@ public class QSalaryEvent
 
         /* Make sure that the additional categories are registered */
         if (pTrans.getTaxCredit() != null) {
-            getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
+            getAnalysis().getCategory(TransactionInfoClass.TAXCREDIT);
         }
         if (pTrans.getNatInsurance() != null) {
-            getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
+            getAnalysis().getCategory(TransactionInfoClass.NATINSURANCE);
         }
         if (pTrans.getDeemedBenefit() != null) {
-            getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
+            getAnalysis().getCategory(TransactionInfoClass.DEEMEDBENEFIT);
         }
     }
 
@@ -66,7 +66,7 @@ public class QSalaryEvent
         JMoney myTaxCredit = myTrans.getTaxCredit();
         JMoney myNatIns = myTrans.getNatInsurance();
         JMoney myBenefit = myTrans.getDeemedBenefit();
-        EventCategory myCategory = myTrans.getCategory();
+        TransactionCategory myCategory = myTrans.getCategory();
         boolean isTaxCredit = myTaxCredit != null;
         boolean isNatIns = myNatIns != null;
         boolean isBenefit = myBenefit != null;
@@ -127,21 +127,21 @@ public class QSalaryEvent
             if (isTaxCredit) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
+                myCategory = getAnalysis().getCategory(TransactionInfoClass.TAXCREDIT);
                 addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
                 addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isNatIns) {
                 myValue = new JDecimal(myNatIns);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.NATINSURANCE);
+                myCategory = getAnalysis().getCategory(TransactionInfoClass.NATINSURANCE);
                 addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
                 addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }
             if (isBenefit) {
                 myValue = new JDecimal(myBenefit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.DEEMEDBENEFIT);
+                myCategory = getAnalysis().getCategory(TransactionInfoClass.DEEMEDBENEFIT);
                 addCategoryLine(QEventLineType.SPLITCATEGORY, myCategory);
                 addDecimalLine(QEventLineType.SPLITAMOUNT, myValue);
             }

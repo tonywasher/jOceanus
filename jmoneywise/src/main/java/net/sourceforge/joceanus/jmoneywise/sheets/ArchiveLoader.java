@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -65,9 +65,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public class ArchiveLoader {
     /**
-     * Number of base archive load areas. 11xStatic,EventClasses,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
+     * Number of base archive load areas. 14xStatic,TransactionTags,2*Category,Schedule,Rate,Price,Account,TaxYear,Range+Transaction.
      */
-    private static final int NUM_ARCHIVE_AREAS = 22;
+    private static final int NUM_ARCHIVE_AREAS = 24;
 
     /**
      * Year boundary.
@@ -265,7 +265,7 @@ public class ArchiveLoader {
                 bContinue = SheetPayeeType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetEventCategoryType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 bContinue = SheetTaxBasis.loadArchive(pTask, myWorkbook, myData);
@@ -289,18 +289,18 @@ public class ArchiveLoader {
                 bContinue = SheetAccountInfoType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetEventInfoType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransInfoType.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
-                bContinue = SheetEventTag.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransTag.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
                 bContinue = SheetAccountCategory.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetEventCategory.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTransCategory.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {
@@ -613,7 +613,7 @@ public class ArchiveLoader {
             /* If we have a portfolio */
             if (thePortfolio != null) {
                 /* Add the item */
-                theInfoList.addInfoItem(null, myTrans, EventInfoClass.PORTFOLIO, thePortfolio);
+                theInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PORTFOLIO, thePortfolio);
             }
 
             /* return the new transaction */

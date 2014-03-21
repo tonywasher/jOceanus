@@ -41,25 +41,25 @@ import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Tag for an event.
+ * Tag for a transaction.
  */
-public class EventTag
+public class TransactionTag
         extends EncryptedItem<MoneyWiseDataType>
-        implements Comparable<EventTag> {
+        implements Comparable<TransactionTag> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTTAG.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.TRANSTAG.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTTAG.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.TRANSTAG.getListName();
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventTag.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionTag.class.getName());
 
     /**
      * Local Report fields.
@@ -265,13 +265,13 @@ public class EventTag
     }
 
     @Override
-    public EventTag getBase() {
-        return (EventTag) super.getBase();
+    public TransactionTag getBase() {
+        return (TransactionTag) super.getBase();
     }
 
     @Override
-    public EventTagList getList() {
-        return (EventTagList) super.getList();
+    public TransactionTagList getList() {
+        return (TransactionTagList) super.getList();
     }
 
     /**
@@ -279,8 +279,8 @@ public class EventTag
      * @param pList the list
      * @param pClass The Class to copy
      */
-    protected EventTag(final EventTagList pList,
-                       final EventTag pClass) {
+    protected TransactionTag(final TransactionTagList pList,
+                             final TransactionTag pClass) {
         /* Set standard values */
         super(pList, pClass);
     }
@@ -291,8 +291,8 @@ public class EventTag
      * @param pValues the values constructor
      * @throws JOceanusException on error
      */
-    private EventTag(final EventTagList pList,
-                     final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private TransactionTag(final TransactionTagList pList,
+                           final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -325,13 +325,13 @@ public class EventTag
      * Edit Constructor.
      * @param pList the list
      */
-    public EventTag(final EventTagList pList) {
+    public TransactionTag(final TransactionTagList pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
     }
 
     @Override
-    public int compareTo(final EventTag pThat) {
+    public int compareTo(final TransactionTag pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -370,7 +370,7 @@ public class EventTag
 
     @Override
     public void validate() {
-        EventTagList myList = getList();
+        TransactionTagList myList = getList();
         String myName = getName();
         String myDesc = getDesc();
 
@@ -404,28 +404,28 @@ public class EventTag
 
     /**
      * Update base tag from an edited tag.
-     * @param pClass the edited class
+     * @param pTag the edited tag
      * @return whether changes have been made
      */
     @Override
-    public boolean applyChanges(final DataItem<?> pClass) {
-        /* Can only update from an event class */
-        if (!(pClass instanceof EventTag)) {
+    public boolean applyChanges(final DataItem<?> pTag) {
+        /* Can only update from a transaction tag */
+        if (!(pTag instanceof TransactionTag)) {
             return false;
         }
-        EventTag myClass = (EventTag) pClass;
+        TransactionTag myTag = (TransactionTag) pTag;
 
         /* Store the current detail into history */
         pushHistory();
 
         /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myClass.getName())) {
-            setValueName(myClass.getNameField());
+        if (!Difference.isEqual(getName(), myTag.getName())) {
+            setValueName(myTag.getNameField());
         }
 
         /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myClass.getDesc())) {
-            setValueDesc(myClass.getDescField());
+        if (!Difference.isEqual(getDesc(), myTag.getDesc())) {
+            setValueDesc(myTag.getDescField());
         }
 
         /* Check for changes */
@@ -433,10 +433,10 @@ public class EventTag
     }
 
     /**
-     * The Event Tag List class.
+     * The Transaction Tag List class.
      */
-    public static class EventTagList
-            extends EncryptedList<EventTag, MoneyWiseDataType> {
+    public static class TransactionTagList
+            extends EncryptedList<TransactionTag, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -454,7 +454,7 @@ public class EventTag
 
         @Override
         public JDataFields getItemFields() {
-            return EventTag.FIELD_DEFS;
+            return TransactionTag.FIELD_DEFS;
         }
 
         @Override
@@ -463,48 +463,48 @@ public class EventTag
         }
 
         /**
-         * Construct an empty CORE EventClass list.
+         * Construct an empty CORE Tag list.
          * @param pData the DataSet for the list
          */
-        protected EventTagList(final MoneyWiseData pData) {
-            super(EventTag.class, pData, MoneyWiseDataType.EVENTTAG, ListStyle.CORE);
+        protected TransactionTagList(final MoneyWiseData pData) {
+            super(TransactionTag.class, pData, MoneyWiseDataType.TRANSTAG, ListStyle.CORE);
         }
 
         @Override
-        protected EventTagList getEmptyList(final ListStyle pStyle) {
-            EventTagList myList = new EventTagList(this);
+        protected TransactionTagList getEmptyList(final ListStyle pStyle) {
+            TransactionTagList myList = new TransactionTagList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventTagList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventTagList) super.cloneList(pDataSet);
+        public TransactionTagList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (TransactionTagList) super.cloneList(pDataSet);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EventTagList(final EventTagList pSource) {
+        protected TransactionTagList(final TransactionTagList pSource) {
             super(pSource);
         }
 
         /**
          * Add a new item to the core list.
-         * @param pClass item
+         * @param pTag item
          * @return the newly added item
          */
         @Override
-        public EventTag addCopyItem(final DataItem<?> pClass) {
-            /* Can only clone an EventClass */
-            if (!(pClass instanceof EventTag)) {
+        public TransactionTag addCopyItem(final DataItem<?> pTag) {
+            /* Can only clone a TransactionTag */
+            if (!(pTag instanceof TransactionTag)) {
                 throw new UnsupportedOperationException();
             }
 
-            EventTag myClass = new EventTag(this, (EventTag) pClass);
-            add(myClass);
-            return myClass;
+            TransactionTag myTag = new TransactionTag(this, (TransactionTag) pTag);
+            add(myTag);
+            return myTag;
         }
 
         /**
@@ -512,10 +512,10 @@ public class EventTag
          * @return the new item
          */
         @Override
-        public EventTag addNewItem() {
-            EventTag myClass = new EventTag(this);
-            add(myClass);
-            return myClass;
+        public TransactionTag addNewItem() {
+            TransactionTag myTag = new TransactionTag(this);
+            add(myTag);
+            return myTag;
         }
 
         /**
@@ -525,12 +525,12 @@ public class EventTag
          */
         protected int countInstances(final String pName) {
             /* Access the iterator */
-            Iterator<EventTag> myIterator = iterator();
+            Iterator<TransactionTag> myIterator = iterator();
             int iCount = 0;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventTag myCurr = myIterator.next();
+                TransactionTag myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     iCount++;
                 }
@@ -545,13 +545,13 @@ public class EventTag
          * @param pName Name of item
          * @return The Item if present (or null)
          */
-        public EventTag findItemByName(final String pName) {
+        public TransactionTag findItemByName(final String pName) {
             /* Access the iterator */
-            Iterator<EventTag> myIterator = iterator();
+            Iterator<TransactionTag> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                EventTag myCurr = myIterator.next();
+                TransactionTag myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
                     return myCurr;
                 }
@@ -562,21 +562,21 @@ public class EventTag
         }
 
         @Override
-        public EventTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
-            /* Create the class */
-            EventTag myClass = new EventTag(this, pValues);
+        public TransactionTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+            /* Create the tag */
+            TransactionTag myTag = new TransactionTag(this, pValues);
 
-            /* Check that this ClassId has not been previously added */
-            if (!isIdUnique(myClass.getId())) {
-                myClass.addError(ERROR_DUPLICATE, FIELD_ID);
-                throw new JMoneyWiseDataException(myClass, ERROR_VALIDATION);
+            /* Check that this TagId has not been previously added */
+            if (!isIdUnique(myTag.getId())) {
+                myTag.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myTag, ERROR_VALIDATION);
             }
 
             /* Add to the list */
-            append(myClass);
+            append(myTag);
 
             /* Return it */
-            return myClass;
+            return myTag;
         }
     }
 }

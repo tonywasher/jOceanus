@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Schedule.ScheduleList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -161,7 +161,7 @@ public class Transaction
      */
     public final JUnits getDebitUnits() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.DEBITUNITS, JUnits.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.DEBITUNITS, JUnits.class)
                          : null;
     }
 
@@ -171,7 +171,7 @@ public class Transaction
      */
     public final JUnits getCreditUnits() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.CREDITUNITS, JUnits.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.CREDITUNITS, JUnits.class)
                          : null;
     }
 
@@ -181,7 +181,7 @@ public class Transaction
      */
     public final JMoney getTaxCredit() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.TAXCREDIT, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.TAXCREDIT, JMoney.class)
                          : null;
     }
 
@@ -191,7 +191,7 @@ public class Transaction
      */
     public final JDilution getDilution() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.DILUTION, JDilution.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.DILUTION, JDilution.class)
                          : null;
     }
 
@@ -201,7 +201,7 @@ public class Transaction
      */
     public final Integer getYears() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.QUALIFYYEARS, Integer.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.QUALIFYYEARS, Integer.class)
                          : null;
     }
 
@@ -211,7 +211,7 @@ public class Transaction
      */
     public final JDateDay getCreditDate() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.CREDITDATE, JDateDay.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.CREDITDATE, JDateDay.class)
                          : null;
     }
 
@@ -221,7 +221,7 @@ public class Transaction
      */
     public final JMoney getNatInsurance() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.NATINSURANCE, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, JMoney.class)
                          : null;
     }
 
@@ -231,7 +231,7 @@ public class Transaction
      */
     public final JMoney getDeemedBenefit() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.DEEMEDBENEFIT, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.DEEMEDBENEFIT, JMoney.class)
                          : null;
     }
 
@@ -241,7 +241,7 @@ public class Transaction
      */
     public final JMoney getPension() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.PENSION, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.PENSION, JMoney.class)
                          : null;
     }
 
@@ -251,7 +251,7 @@ public class Transaction
      */
     public final JMoney getCharityDonation() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.CHARITYDONATION, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.CHARITYDONATION, JMoney.class)
                          : null;
     }
 
@@ -261,7 +261,7 @@ public class Transaction
      */
     public final String getReference() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.REFERENCE, String.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.REFERENCE, String.class)
                          : null;
     }
 
@@ -271,7 +271,7 @@ public class Transaction
      */
     public final String getComments() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.COMMENTS, String.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.COMMENTS, String.class)
                          : null;
     }
 
@@ -281,7 +281,7 @@ public class Transaction
      */
     public final Deposit getThirdParty() {
         return hasInfoSet
-                         ? theInfoSet.getDeposit(EventInfoClass.THIRDPARTY)
+                         ? theInfoSet.getDeposit(TransactionInfoClass.THIRDPARTY)
                          : null;
     }
 
@@ -291,7 +291,7 @@ public class Transaction
      */
     public final Portfolio getPortfolio() {
         return hasInfoSet
-                         ? theInfoSet.getPortfolio(EventInfoClass.PORTFOLIO)
+                         ? theInfoSet.getPortfolio(TransactionInfoClass.PORTFOLIO)
                          : null;
     }
 
@@ -301,7 +301,7 @@ public class Transaction
      */
     public final JMoney getCreditAmount() {
         return hasInfoSet
-                         ? theInfoSet.getValue(EventInfoClass.CREDITAMOUNT, JMoney.class)
+                         ? theInfoSet.getValue(TransactionInfoClass.CREDITAMOUNT, JMoney.class)
                          : null;
     }
 
@@ -392,7 +392,7 @@ public class Transaction
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        EventInfoClass myClass = TransactionInfoSet.getClassForField(pField);
+        TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                                ? theInfoSet.fieldChanged(myClass)
@@ -540,7 +540,7 @@ public class Transaction
     public void validate() {
         AssetBase<?> myDebit = getDebit();
         AssetBase<?> myCredit = getCredit();
-        EventCategory myCategory = getCategory();
+        TransactionCategory myCategory = getCategory();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
 
@@ -580,7 +580,7 @@ public class Transaction
 
         /* Cannot have Credit and Debit if securities are identical */
         if ((myCreditUnits != null) && (myDebitUnits != null) && (Difference.isEqual(myCredit, myDebit))) {
-            addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(EventInfoClass.CREDITUNITS));
+            addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.CREDITUNITS));
         }
 
         /* If we have a category and an infoSet */
@@ -631,7 +631,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setDebitUnits(final JUnits pUnits) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.DEBITUNITS, pUnits);
+        setInfoSetValue(TransactionInfoClass.DEBITUNITS, pUnits);
     }
 
     /**
@@ -640,7 +640,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setCreditUnits(final JUnits pUnits) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.CREDITUNITS, pUnits);
+        setInfoSetValue(TransactionInfoClass.CREDITUNITS, pUnits);
     }
 
     /**
@@ -649,7 +649,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setTaxCredit(final JMoney pCredit) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.TAXCREDIT, pCredit);
+        setInfoSetValue(TransactionInfoClass.TAXCREDIT, pCredit);
     }
 
     /**
@@ -658,7 +658,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setDilution(final JDilution pDilution) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.DILUTION, pDilution);
+        setInfoSetValue(TransactionInfoClass.DILUTION, pDilution);
     }
 
     /**
@@ -667,7 +667,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setYears(final Integer pYears) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.QUALIFYYEARS, pYears);
+        setInfoSetValue(TransactionInfoClass.QUALIFYYEARS, pYears);
     }
 
     /**
@@ -676,7 +676,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setCreditDate(final JDateDay pCreditDate) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.CREDITDATE, pCreditDate);
+        setInfoSetValue(TransactionInfoClass.CREDITDATE, pCreditDate);
     }
 
     /**
@@ -685,7 +685,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setNatInsurance(final JMoney pNatIns) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.NATINSURANCE, pNatIns);
+        setInfoSetValue(TransactionInfoClass.NATINSURANCE, pNatIns);
     }
 
     /**
@@ -694,7 +694,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setBenefit(final JMoney pBenefit) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.DEEMEDBENEFIT, pBenefit);
+        setInfoSetValue(TransactionInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
     /**
@@ -703,7 +703,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setPension(final JMoney pPension) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.PENSION, pPension);
+        setInfoSetValue(TransactionInfoClass.PENSION, pPension);
     }
 
     /**
@@ -712,7 +712,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setDonation(final JMoney pDonation) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.CHARITYDONATION, pDonation);
+        setInfoSetValue(TransactionInfoClass.CHARITYDONATION, pDonation);
     }
 
     /**
@@ -721,7 +721,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setCreditAmount(final JMoney pValue) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.CREDITAMOUNT, pValue);
+        setInfoSetValue(TransactionInfoClass.CREDITAMOUNT, pValue);
     }
 
     /**
@@ -730,7 +730,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setReference(final String pReference) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.REFERENCE, pReference);
+        setInfoSetValue(TransactionInfoClass.REFERENCE, pReference);
     }
 
     /**
@@ -739,7 +739,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setComments(final String pComments) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.COMMENTS, pComments);
+        setInfoSetValue(TransactionInfoClass.COMMENTS, pComments);
     }
 
     /**
@@ -748,7 +748,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setThirdParty(final Deposit pParty) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.THIRDPARTY, pParty);
+        setInfoSetValue(TransactionInfoClass.THIRDPARTY, pParty);
     }
 
     /**
@@ -757,7 +757,7 @@ public class Transaction
      * @throws JOceanusException on error
      */
     public final void setPortfolio(final Portfolio pPortfolio) throws JOceanusException {
-        setInfoSetValue(EventInfoClass.PORTFOLIO, pPortfolio);
+        setInfoSetValue(TransactionInfoClass.PORTFOLIO, pPortfolio);
     }
 
     /**
@@ -766,7 +766,7 @@ public class Transaction
      * @param pValue the value to set
      * @throws JOceanusException on error
      */
-    private void setInfoSetValue(final EventInfoClass pInfoClass,
+    private void setInfoSetValue(final TransactionInfoClass pInfoClass,
                                  final Object pValue) throws JOceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
@@ -866,7 +866,7 @@ public class Transaction
         /**
          * The EventInfoType list.
          */
-        private EventInfoTypeList theInfoTypeList = null;
+        private TransactionInfoTypeList theInfoTypeList = null;
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -896,9 +896,9 @@ public class Transaction
          * Obtain the eventInfoTypeList.
          * @return the event info type list
          */
-        public EventInfoTypeList getEventInfoTypes() {
+        public TransactionInfoTypeList getEventInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = getDataSet().getEventInfoTypes();
+                theInfoTypeList = getDataSet().getTransInfoTypes();
             }
             return theInfoTypeList;
         }

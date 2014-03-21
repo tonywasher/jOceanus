@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmetis.sheet.DataRow;
 import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
@@ -172,7 +172,7 @@ public class SheetSecurity
         String myType = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
 
         /* Look for separator in category */
-        int iIndex = myType.indexOf(EventCategory.STR_SEP);
+        int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
         if (iIndex == -1) {
             throw new JMoneyWiseLogicException("Unexpected Security Class " + myType);
         }

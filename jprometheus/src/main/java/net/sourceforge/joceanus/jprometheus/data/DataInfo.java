@@ -123,11 +123,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
     @Override
     public String toString() {
-        /* Access InfoType */
-        I myInfoType = getInfoType();
-        if (myInfoType == null) {
+        /* Access Info Type Value */
+        EncryptedValueSet myValues = getValueSet();
+        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        if (!(myType instanceof StaticData)) {
             return super.formatObject();
         }
+
+        /* Access InfoType */
+        I myInfoType = (I) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + formatObject();
@@ -135,11 +139,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
 
     @Override
     public String formatObject() {
-        /* Access InfoType */
-        I myInfoType = getInfoType();
-        if (myInfoType == null) {
+        /* Access Info Type Value */
+        EncryptedValueSet myValues = getValueSet();
+        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        if (!(myType instanceof StaticData)) {
             return super.formatObject();
         }
+
+        /* Access InfoType */
+        I myInfoType = (I) myType;
 
         /* Access formatter */
         JDataFormatter myFormatter = getDataSet().getDataFormatter();

@@ -30,9 +30,9 @@ import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Enumeration of EventCategory Classes.
+ * Enumeration of TransactionCategory Classes.
  */
-public enum EventCategoryClass implements StaticInterface {
+public enum TransactionCategoryClass implements StaticInterface {
     /**
      * Taxed Salary Income.
      */
@@ -287,7 +287,7 @@ public enum EventCategoryClass implements StaticInterface {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategoryClass.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionCategoryClass.class.getName());
 
     /**
      * The String name.
@@ -319,8 +319,8 @@ public enum EventCategoryClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the default order.
      */
-    private EventCategoryClass(final int uId,
-                               final int uOrder) {
+    private TransactionCategoryClass(final int uId,
+                                     final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -343,13 +343,13 @@ public enum EventCategoryClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JOceanusException on error
      */
-    public static EventCategoryClass fromId(final int id) throws JOceanusException {
-        for (EventCategoryClass myClass : values()) {
+    public static TransactionCategoryClass fromId(final int id) throws JOceanusException {
+        for (TransactionCategoryClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.EVENTTYPE.toString() + ":" + id);
+        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.TRANSTYPE.toString() + ":" + id);
     }
 
     /**

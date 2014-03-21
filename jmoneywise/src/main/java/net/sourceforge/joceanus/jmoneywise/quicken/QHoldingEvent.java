@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QEventLineType;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -141,7 +141,7 @@ public class QHoldingEvent
         AssetBase<?> myXferAccount = myTrans.getCredit();
         Portfolio myPortfolio = myTrans.getPortfolio();
         JMoney myTaxCredit = myTrans.getTaxCredit();
-        EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TAXCREDIT);
+        TransactionCategory myCategory = getAnalysis().getCategory(TransactionInfoClass.TAXCREDIT);
         boolean isReinvested = Difference.isEqual(mySecurity, myXferAccount);
         boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
 

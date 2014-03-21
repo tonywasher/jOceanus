@@ -125,7 +125,7 @@ public class CategoryPanel
     /**
      * Event Categories Table.
      */
-    private final EventCategoryTable theEventTable;
+    private final TransactionCategoryTable theEventTable;
 
     /**
      * Constructor.
@@ -136,7 +136,7 @@ public class CategoryPanel
         theDepositTable = new DepositCategoryTable(pView);
         theCashTable = new CashCategoryTable(pView);
         theLoanTable = new LoanCategoryTable(pView);
-        theEventTable = new EventCategoryTable(pView);
+        theEventTable = new TransactionCategoryTable(pView);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);

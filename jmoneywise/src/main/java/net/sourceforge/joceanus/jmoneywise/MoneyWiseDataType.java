@@ -56,9 +56,9 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     PAYEETYPE,
 
     /**
-     * EventType.
+     * TransactionType.
      */
-    EVENTTYPE,
+    TRANSTYPE,
 
     /**
      * TaxBasis.
@@ -96,9 +96,9 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     ACCOUNTINFOTYPE,
 
     /**
-     * EventInfoType.
+     * TransactionInfoType.
      */
-    EVENTINFOTYPE,
+    TRANSINFOTYPE,
 
     /**
      * TaxYear.
@@ -111,9 +111,9 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     TAXYEARINFO,
 
     /**
-     * EventTag.
+     * TransactionTag.
      */
-    EVENTTAG,
+    TRANSTAG,
 
     /**
      * DepositCategory.
@@ -131,9 +131,9 @@ public enum MoneyWiseDataType implements JDataFieldEnum {
     LOANCATEGORY,
 
     /**
-     * EventCategory.
+     * TransactionCategory.
      */
-    EVENTCATEGORY,
+    TRANSCATEGORY,
 
     /**
      * ExchangeRate.

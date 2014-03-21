@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -237,7 +237,7 @@ public final class DilutionEvent
         AssetBase<?> myAsset;
 
         /* Access the category */
-        EventCategory myCategory = pTrans.getCategory();
+        TransactionCategory myCategory = pTrans.getCategory();
 
         /* Switch on the category type */
         switch (myCategory.getCategoryTypeClass()) {

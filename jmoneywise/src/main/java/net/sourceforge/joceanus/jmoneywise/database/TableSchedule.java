@@ -68,7 +68,7 @@ public class TableSchedule
         myTableDef.addIntegerColumn(Schedule.FIELD_DEBIT);
         myTableDef.addIntegerColumn(Schedule.FIELD_CREDIT);
         myTableDef.addEncryptedColumn(Schedule.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        myTableDef.addReferenceColumn(Schedule.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
+        myTableDef.addReferenceColumn(Schedule.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Schedule.FIELD_FREQ, TableFrequency.TABLE_NAME);
         myTableDef.addBooleanColumn(Schedule.FIELD_SPLIT);
         myTableDef.addNullReferenceColumn(Schedule.FIELD_PARENT, TABLE_NAME);

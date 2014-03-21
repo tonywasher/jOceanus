@@ -68,7 +68,7 @@ public class TableTransaction
         myTableDef.addIntegerColumn(Transaction.FIELD_DEBIT);
         myTableDef.addIntegerColumn(Transaction.FIELD_CREDIT);
         myTableDef.addEncryptedColumn(Transaction.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
+        myTableDef.addReferenceColumn(Transaction.FIELD_CATEGORY, TableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(Transaction.FIELD_RECONCILED);
         myTableDef.addBooleanColumn(Transaction.FIELD_SPLIT);
         myTableDef.addNullReferenceColumn(Transaction.FIELD_PARENT, TABLE_NAME);

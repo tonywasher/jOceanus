@@ -33,8 +33,8 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
@@ -104,7 +104,7 @@ public class QIFFile {
      * Register class.
      * @param pClass the class
      */
-    public void registerClass(final EventTag pClass) {
+    public void registerClass(final TransactionTag pClass) {
         /* Create the new Category and add to the map */
         QIFClass myClass = new QIFClass(this, pClass);
         theClasses.put(myClass.getName(), myClass);
@@ -114,7 +114,7 @@ public class QIFFile {
      * Register category.
      * @param pCategory the category
      */
-    public void registerCategory(final EventCategory pCategory) {
+    public void registerCategory(final TransactionCategory pCategory) {
         /* Create the new Category and add to the map */
         QIFEventCategory myCat = new QIFEventCategory(this, pCategory);
         theCategories.put(myCat.getName(), myCat);

@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * SheetDataItem extension for AccountCategory.
  * @author Tony Washer
  */
-public class SheetAccountCategory {
+public final class SheetAccountCategory {
     /**
      * NamedArea for Categories.
      */
@@ -132,10 +132,13 @@ public class SheetAccountCategory {
         iAdjust++;
 
         /* Access parent */
-        String myParent = pView.getRowCellByIndex(pRow, iAdjust++).getStringValue();
+        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        String myParent = (myCell == null)
+                                          ? null
+                                          : myCell.getStringValue();
 
         /* Access category class and ignore if doesn't exist */
-        DataCell myCell = pView.getRowCellByIndex(pRow, iAdjust++);
+        myCell = pView.getRowCellByIndex(pRow, iAdjust++);
         if (myCell == null) {
             return;
         }

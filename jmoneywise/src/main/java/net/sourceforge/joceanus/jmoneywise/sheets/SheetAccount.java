@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * ArchiveLoader extension for Accounts.
  * @author Tony Washer
  */
-public class SheetAccount {
+public final class SheetAccount {
     /**
      * Sheet Area name.
      */

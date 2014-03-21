@@ -59,7 +59,7 @@ public class TableTransactionInfo
      * @param pDatabase the database control
      */
     protected TableTransactionInfo(final Database<?> pDatabase) {
-        super(pDatabase, TABLE_NAME, TableEventInfoType.TABLE_NAME, TableTransaction.TABLE_NAME);
+        super(pDatabase, TABLE_NAME, TableTransInfoType.TABLE_NAME, TableTransaction.TABLE_NAME);
     }
 
     @Override

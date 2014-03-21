@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
@@ -848,7 +848,7 @@ public final class TaxBasisBucket
          * @param pCategory primary category
          */
         protected void adjustBasis(final Transaction pTrans,
-                                   final EventCategory pCategory) {
+                                   final TransactionCategory pCategory) {
             /* Switch on the category type */
             TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {

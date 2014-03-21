@@ -37,12 +37,12 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
@@ -876,14 +876,14 @@ public class Security
     }
 
     @Override
-    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* Switch on category type */
         switch (pCategory.getCategoryTypeClass()) {
             case DIVIDEND:
-                EventCategoryList myCategories = getDataSet().getEventCategories();
+                TransactionCategoryList myCategories = getDataSet().getTransCategories();
                 return myCategories.getSingularClass(isSecurityClass(SecurityTypeClass.UNITTRUST)
-                                                                                                 ? EventCategoryClass.UNITTRUSTDIVIDEND
-                                                                                                 : EventCategoryClass.SHAREDIVIDEND);
+                                                                                                 ? TransactionCategoryClass.UNITTRUSTDIVIDEND
+                                                                                                 : TransactionCategoryClass.SHAREDIVIDEND);
             default:
                 return pCategory;
         }

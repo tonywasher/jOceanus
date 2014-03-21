@@ -166,7 +166,7 @@ public class Cash
      * Obtain AutoExpense.
      * @return the autoExpense category
      */
-    public EventCategory getAutoExpense() {
+    public TransactionCategory getAutoExpense() {
         return hasInfoSet
                          ? theInfoSet.getEventCategory(AccountInfoClass.AUTOEXPENSE)
                          : null;
@@ -592,7 +592,7 @@ public class Cash
      * @param pCategory the new autoExpense
      * @throws JOceanusException on error
      */
-    public void setAutoExpense(final EventCategory pCategory) throws JOceanusException {
+    public void setAutoExpense(final TransactionCategory pCategory) throws JOceanusException {
         setInfoSetValue(AccountInfoClass.AUTOEXPENSE, pCategory);
     }
 

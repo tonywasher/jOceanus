@@ -52,7 +52,7 @@ public class MoneyWiseWriter
         addSheet(new SheetLoanCategoryType(this));
         addSheet(new SheetPayeeType(this));
         addSheet(new SheetSecurityType(this));
-        addSheet(new SheetEventCategoryType(this));
+        addSheet(new SheetTransCategoryType(this));
         addSheet(new SheetTaxBasis(this));
         addSheet(new SheetTaxCategory(this));
         addSheet(new SheetAccountCurrency(this));
@@ -60,12 +60,12 @@ public class MoneyWiseWriter
         addSheet(new SheetFrequency(this));
         addSheet(new SheetTaxYearInfoType(this));
         addSheet(new SheetAccountInfoType(this));
-        addSheet(new SheetEventInfoType(this));
-        addSheet(new SheetEventTag(this));
+        addSheet(new SheetTransInfoType(this));
+        addSheet(new SheetTransTag(this));
         addSheet(new SheetDepositCategory(this));
         addSheet(new SheetCashCategory(this));
         addSheet(new SheetLoanCategory(this));
-        addSheet(new SheetEventCategory(this));
+        addSheet(new SheetTransCategory(this));
         addSheet(new SheetTaxYear(this));
         addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetExchangeRate(this));

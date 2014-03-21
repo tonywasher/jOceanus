@@ -48,10 +48,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -68,10 +68,10 @@ import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
- * Event Category Maintenance.
+ * Transaction Category Maintenance.
  */
-public class EventCategoryTable
-        extends JDataTable<EventCategory, MoneyWiseDataType> {
+public class TransactionCategoryTable
+        extends JDataTable<TransactionCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -80,12 +80,12 @@ public class EventCategoryTable
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategoryTable.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionCategoryTable.class.getName());
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = EventCategory.FIELD_NAME.getName();
+    private static final String TITLE_NAME = TransactionCategory.FIELD_NAME.getName();
 
     /**
      * FullName Column Title.
@@ -95,12 +95,12 @@ public class EventCategoryTable
     /**
      * Category Column Title.
      */
-    private static final String TITLE_CAT = EventCategory.FIELD_CATTYPE.getName();
+    private static final String TITLE_CAT = TransactionCategory.FIELD_CATTYPE.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = EventCategory.FIELD_DESC.getName();
+    private static final String TITLE_DESC = TransactionCategory.FIELD_DESC.getName();
 
     /**
      * Active Column Title.
@@ -135,7 +135,7 @@ public class EventCategoryTable
     /**
      * The event entry.
      */
-    private final transient UpdateEntry<EventCategory, MoneyWiseDataType> theCategoryEntry;
+    private final transient UpdateEntry<TransactionCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
      * The analysis data entry.
@@ -180,12 +180,12 @@ public class EventCategoryTable
     /**
      * Event Categories.
      */
-    private transient EventCategoryList theCategories = null;
+    private transient TransactionCategoryList theCategories = null;
 
     /**
      * Active parent.
      */
-    private transient EventCategory theParent = null;
+    private transient TransactionCategory theParent = null;
 
     /**
      * Obtain the panel.
@@ -207,7 +207,7 @@ public class EventCategoryTable
      * Constructor.
      * @param pView the data view
      */
-    public EventCategoryTable(final View pView) {
+    public TransactionCategoryTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -215,13 +215,13 @@ public class EventCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theCategoryEntry = theUpdateSet.registerClass(EventCategory.class);
+        theCategoryEntry = theUpdateSet.registerClass(TransactionCategory.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCategories = myDataMgr.new JDataEntry(EventCategoryTable.class.getSimpleName());
+        theDataCategories = myDataMgr.new JDataEntry(TransactionCategoryTable.class.getSimpleName());
         theDataCategories.addAsChildOf(mySection);
         theDataCategories.setObject(theUpdateSet);
 
@@ -285,7 +285,7 @@ public class EventCategoryTable
     public void refreshData() {
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
-        EventCategoryList myCategories = myData.getEventCategories();
+        TransactionCategoryList myCategories = myData.getTransCategories();
         theCategories = myCategories.deriveEditList();
         setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
@@ -315,7 +315,7 @@ public class EventCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<EventCategory, MoneyWiseDataType> {
+            extends JDataTableModel<TransactionCategory, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -325,7 +325,7 @@ public class EventCategoryTable
          * Constructor.
          * @param pTable the table
          */
-        private CategoryTableModel(final EventCategoryTable pTable) {
+        private CategoryTableModel(final TransactionCategoryTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -345,25 +345,25 @@ public class EventCategoryTable
         }
 
         @Override
-        public JDataField getFieldForCell(final EventCategory pItem,
+        public JDataField getFieldForCell(final TransactionCategory pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final EventCategory pCategory,
+        public boolean isCellEditable(final TransactionCategory pCategory,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public EventCategory getItemAtIndex(final int pRowIndex) {
+        public TransactionCategory getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
             return theCategories.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final EventCategory pCategory,
+        public Object getItemValue(final TransactionCategory pCategory,
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pCategory, pColIndex);
@@ -376,7 +376,7 @@ public class EventCategoryTable
         }
 
         @Override
-        public boolean includeRow(final EventCategory pRow) {
+        public boolean includeRow(final TransactionCategory pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
@@ -437,7 +437,7 @@ public class EventCategoryTable
             }
 
             /* Create the totals JMenuItem and add it to the popUp */
-            EventCategory myTotals = theCategories.getSingularClass(EventCategoryClass.TOTALS);
+            TransactionCategory myTotals = theCategories.getSingularClass(TransactionCategoryClass.TOTALS);
             myAction = new CategoryAction(myTotals, myTotals.getName());
             myItem = new JMenuItem(myAction);
             myPopUp.addMenuItem(myItem);
@@ -449,12 +449,12 @@ public class EventCategoryTable
             }
 
             /* Loop through the available category values */
-            Iterator<EventCategory> myIterator = theCategories.iterator();
+            Iterator<TransactionCategory> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
-                EventCategory myCurr = myIterator.next();
+                TransactionCategory myCurr = myIterator.next();
 
                 /* Ignore category if it is not a subTotal */
-                EventCategoryClass myClass = myCurr.getCategoryTypeClass();
+                TransactionCategoryClass myClass = myCurr.getCategoryTypeClass();
                 if (!myClass.isSubTotal()) {
                     continue;
                 }
@@ -493,7 +493,7 @@ public class EventCategoryTable
         /**
          * Category.
          */
-        private final EventCategory theCategory;
+        private final TransactionCategory theCategory;
 
         /**
          * Label.
@@ -504,7 +504,7 @@ public class EventCategoryTable
          * Constructor.
          * @param pCategory the account category bucket
          */
-        private CategoryAction(final EventCategory pCategory) {
+        private CategoryAction(final TransactionCategory pCategory) {
             super(pCategory.getName());
             theCategory = pCategory;
             theLabel = pCategory.getName();
@@ -515,7 +515,7 @@ public class EventCategoryTable
          * @param pCategory the account category bucket
          * @param pName the name
          */
-        private CategoryAction(final EventCategory pCategory,
+        private CategoryAction(final TransactionCategory pCategory,
                                final String pName) {
             super(pName);
             theCategory = pCategory;
@@ -583,7 +583,7 @@ public class EventCategoryTable
          * Constructor.
          * @param pTable the table
          */
-        private CategoryColumnModel(final EventCategoryTable pTable) {
+        private CategoryColumnModel(final TransactionCategoryTable pTable) {
             /* call constructor */
             super(pTable);
 
@@ -627,7 +627,7 @@ public class EventCategoryTable
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final EventCategory pCategory,
+        protected Object getItemValue(final TransactionCategory pCategory,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
@@ -655,15 +655,15 @@ public class EventCategoryTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return EventCategory.FIELD_SUBCAT;
+                    return TransactionCategory.FIELD_SUBCAT;
                 case COLUMN_DESC:
-                    return EventCategory.FIELD_DESC;
+                    return TransactionCategory.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return EventCategory.FIELD_CATTYPE;
+                    return TransactionCategory.FIELD_CATTYPE;
                 case COLUMN_FULLNAME:
-                    return EventCategory.FIELD_NAME;
+                    return TransactionCategory.FIELD_NAME;
                 case COLUMN_ACTIVE:
-                    return EventCategory.FIELD_TOUCH;
+                    return TransactionCategory.FIELD_TOUCH;
                 default:
                     return null;
             }

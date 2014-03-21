@@ -34,20 +34,20 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * EventInfoType data type.
+ * TransactionInfoType data type.
  * @author Tony Washer
  */
-public class EventInfoType
-        extends StaticData<EventInfoType, EventInfoClass, MoneyWiseDataType> {
+public class TransactionInfoType
+        extends StaticData<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTINFOTYPE.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.TRANSINFOTYPE.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTINFOTYPE.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.TRANSINFOTYPE.getListName();
 
     /**
      * Report fields.
@@ -70,10 +70,10 @@ public class EventInfoType
     protected static final int COMMENT_LEN = 50;
 
     /**
-     * Return the EventInfo class of the EventInfoType.
+     * Return the Info class of the InfoType.
      * @return the class
      */
-    public EventInfoClass getInfoClass() {
+    public TransactionInfoClass getInfoClass() {
         return super.getStaticClass();
     }
 
@@ -94,22 +94,22 @@ public class EventInfoType
     }
 
     @Override
-    public EventInfoType getBase() {
-        return (EventInfoType) super.getBase();
+    public TransactionInfoType getBase() {
+        return (TransactionInfoType) super.getBase();
     }
 
     @Override
-    public EventInfoTypeList getList() {
-        return (EventInfoTypeList) super.getList();
+    public TransactionInfoTypeList getList() {
+        return (TransactionInfoTypeList) super.getList();
     }
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the EventInfoType with
+     * @param pList The list to associate the InfoType with
      * @param pType The InfoType to copy
      */
-    protected EventInfoType(final EventInfoTypeList pList,
-                            final EventInfoType pType) {
+    protected TransactionInfoType(final TransactionInfoTypeList pList,
+                                  final TransactionInfoType pType) {
         super(pList, pType);
     }
 
@@ -119,19 +119,19 @@ public class EventInfoType
      * @param pName Name of InfoType
      * @throws JOceanusException on error
      */
-    private EventInfoType(final EventInfoTypeList pList,
-                          final String pName) throws JOceanusException {
+    private TransactionInfoType(final TransactionInfoTypeList pList,
+                                final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
     /**
      * Basic Constructor.
-     * @param pList The list to associate the Event Info Type with
-     * @param pClass Class of Event Info Type
+     * @param pList The list to associate the Info Type with
+     * @param pClass Class of Info Type
      * @throws JOceanusException on error
      */
-    private EventInfoType(final EventInfoTypeList pList,
-                          final EventInfoClass pClass) throws JOceanusException {
+    private TransactionInfoType(final TransactionInfoTypeList pList,
+                                final TransactionInfoClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -141,16 +141,16 @@ public class EventInfoType
      * @param pValues the values
      * @throws JOceanusException on error
      */
-    private EventInfoType(final EventInfoTypeList pList,
-                          final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private TransactionInfoType(final TransactionInfoTypeList pList,
+                                final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         super(pList, pValues);
     }
 
     /**
-     * Represents a list of {@link EventInfoType} objects.
+     * Represents a list of {@link TransactionInfoType} objects.
      */
-    public static class EventInfoTypeList
-            extends StaticList<EventInfoType, EventInfoClass, MoneyWiseDataType> {
+    public static class TransactionInfoTypeList
+            extends StaticList<TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -168,56 +168,56 @@ public class EventInfoType
 
         @Override
         public JDataFields getItemFields() {
-            return EventInfoType.FIELD_DEFS;
+            return TransactionInfoType.FIELD_DEFS;
         }
 
         @Override
-        protected Class<EventInfoClass> getEnumClass() {
-            return EventInfoClass.class;
+        protected Class<TransactionInfoClass> getEnumClass() {
+            return TransactionInfoClass.class;
         }
 
         /**
-         * Construct an empty CORE eventInfo list.
+         * Construct an empty CORE Info list.
          * @param pData the DataSet for the list
          */
-        public EventInfoTypeList(final DataSet<?, ?> pData) {
-            super(EventInfoType.class, pData, MoneyWiseDataType.EVENTINFOTYPE, ListStyle.CORE);
+        public TransactionInfoTypeList(final DataSet<?, ?> pData) {
+            super(TransactionInfoType.class, pData, MoneyWiseDataType.TRANSINFOTYPE, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventInfoTypeList(final EventInfoTypeList pSource) {
+        private TransactionInfoTypeList(final TransactionInfoTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected EventInfoTypeList getEmptyList(final ListStyle pStyle) {
-            EventInfoTypeList myList = new EventInfoTypeList(this);
+        protected TransactionInfoTypeList getEmptyList(final ListStyle pStyle) {
+            TransactionInfoTypeList myList = new TransactionInfoTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventInfoTypeList) super.cloneList(pDataSet);
+        public TransactionInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (TransactionInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventInfoType addCopyItem(final DataItem<?> pItem) {
-            /* Can only clone an EventInfoType */
-            if (!(pItem instanceof EventInfoType)) {
+        public TransactionInfoType addCopyItem(final DataItem<?> pItem) {
+            /* Can only clone a TransactioonInfoType */
+            if (!(pItem instanceof TransactionInfoType)) {
                 throw new UnsupportedOperationException();
             }
 
-            EventInfoType myType = new EventInfoType(this, (EventInfoType) pItem);
+            TransactionInfoType myType = new TransactionInfoType(this, (TransactionInfoType) pItem);
             add(myType);
             return myType;
         }
 
         @Override
-        public EventInfoType addNewItem() {
+        public TransactionInfoType addNewItem() {
             throw new UnsupportedOperationException();
         }
 
@@ -236,7 +236,7 @@ public class EventInfoType
          */
         public void addBasicItem(final String pType) throws JOceanusException {
             /* Create a new InfoType */
-            EventInfoType myType = new EventInfoType(this, pType);
+            TransactionInfoType myType = new TransactionInfoType(this, pType);
 
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pType) != null) {
@@ -253,7 +253,7 @@ public class EventInfoType
             /* Add the Type to the list */
             append(myType);
 
-            /* Validate the EventInfoType */
+            /* Validate the InfoType */
             myType.validate();
 
             /* Handle validation failure */
@@ -263,9 +263,9 @@ public class EventInfoType
         }
 
         @Override
-        public EventInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the type */
-            EventInfoType myType = new EventInfoType(this, pValues);
+            TransactionInfoType myType = new TransactionInfoType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -286,14 +286,14 @@ public class EventInfoType
          */
         public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
-            for (EventInfoClass myClass : EventInfoClass.values()) {
+            for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
                 /* Create new element */
-                EventInfoType myType = new EventInfoType(this, myClass);
+                TransactionInfoType myType = new TransactionInfoType(this, myClass);
 
-                /* Add the EventInfoType to the list */
+                /* Add the InfoType to the list */
                 append(myType);
 
-                /* Validate the EventInfoType */
+                /* Validate the InfoType */
                 myType.validate();
 
                 /* Handle validation failure */

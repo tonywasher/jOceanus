@@ -167,13 +167,7 @@ public class PortfolioInfoSet
                 return JDataFieldRequired.CANEXIST;
 
                 /* Old style */
-            case PARENT:
-            case COMMENTS:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
             case MATURITY:
-            case SYMBOL:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
             default:

@@ -163,7 +163,7 @@ public class TransactionGroup<T extends TransactionBase<T>>
      */
     public String getCategory() {
         /* Access parent category */
-        EventCategory myCategory = getParent().getCategory();
+        TransactionCategory myCategory = getParent().getCategory();
 
         /* Access iterator and skip first transaction */
         Iterator<T> myIterator = iterator();

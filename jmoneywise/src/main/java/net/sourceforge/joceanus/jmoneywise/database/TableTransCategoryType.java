@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -32,33 +32,33 @@ import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * TableStaticData extension for EventCategoryType.
+ * TableStaticData extension for TransactionCategoryType.
  * @author Tony Washer
  */
-public class TableEventCategoryType
-        extends TableStaticData<EventCategoryType, MoneyWiseDataType> {
+public class TableTransCategoryType
+        extends TableStaticData<TransactionCategoryType, MoneyWiseDataType> {
     /**
      * The name of the CategoryType table.
      */
-    protected static final String TABLE_NAME = EventCategoryType.LIST_NAME;
+    protected static final String TABLE_NAME = TransactionCategoryType.LIST_NAME;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventCategoryType(final Database<?> pDatabase) {
+    protected TableTransCategoryType(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        setList(myData.getEventCategoryTypes());
+        setList(myData.getTransCategoryTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
-        return getRowValues(EventCategoryType.OBJECT_NAME);
+        return getRowValues(TransactionCategoryType.OBJECT_NAME);
     }
 }

@@ -36,11 +36,11 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -659,13 +659,13 @@ public class Portfolio
     }
 
     @Override
-    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* Switch on category type */
         switch (pCategory.getCategoryTypeClass()) {
             case DIVIDEND:
-                EventCategoryList myCategories = getDataSet().getEventCategories();
+                TransactionCategoryList myCategories = getDataSet().getTransCategories();
                 return isTaxFree()
-                                  ? myCategories.getSingularClass(EventCategoryClass.TAXFREEDIVIDEND)
+                                  ? myCategories.getSingularClass(TransactionCategoryClass.TAXFREEDIVIDEND)
                                   : pCategory;
             default:
                 return pCategory;

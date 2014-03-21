@@ -22,50 +22,61 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.database;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
+import net.sourceforge.joceanus.jprometheus.data.StaticData;
+import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.database.TableDefinition;
 import net.sourceforge.joceanus.jprometheus.database.TableEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * TableEncrypted extension EventClass.
+ * TableEncrypted extension for Transaction Category.
  * @author Tony Washer
  */
-public class TableEventTag extends TableEncrypted<EventTag, MoneyWiseDataType> {
+public class TableTransCategory
+        extends TableEncrypted<TransactionCategory, MoneyWiseDataType> {
     /**
-     * The name of the EventClass table.
+     * The name of the Category table.
      */
-    protected static final String TABLE_NAME = EventTag.LIST_NAME;
+    protected static final String TABLE_NAME = TransactionCategory.LIST_NAME;
 
     /**
-     * The tag list.
+     * The category list.
      */
-    private EventTagList theList = null;
+    private TransactionCategoryList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventTag(final Database<?> pDatabase) {
+    protected TableTransCategory(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        myTableDef.addEncryptedColumn(EventTag.FIELD_NAME, EventTag.NAMELEN);
-        myTableDef.addNullEncryptedColumn(EventTag.FIELD_DESC, EventTag.DESCLEN);
+        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(TransactionCategory.FIELD_CATTYPE, TableTransCategoryType.TABLE_NAME);
+        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(TransactionCategory.FIELD_PARENT);
+        myTableDef.addEncryptedColumn(TransactionCategory.FIELD_NAME, StaticData.NAMELEN);
+        myTableDef.addNullEncryptedColumn(TransactionCategory.FIELD_DESC, StaticData.DESCLEN);
+
+        /* Declare Sort Columns */
+        myParentCol.setSortOrder(SortOrder.DESCENDING);
+        myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        theList = myData.getEventClasses();
+        theList = myData.getTransCategories();
         setList(theList);
     }
 
@@ -75,22 +86,28 @@ public class TableEventTag extends TableEncrypted<EventTag, MoneyWiseDataType> {
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
-        myValues.addValue(EventTag.FIELD_NAME, myTableDef.getBinaryValue(EventTag.FIELD_NAME));
-        myValues.addValue(EventTag.FIELD_DESC, myTableDef.getBinaryValue(EventTag.FIELD_DESC));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
+        myValues.addValue(TransactionCategory.FIELD_CATTYPE, myTableDef.getIntegerValue(TransactionCategory.FIELD_CATTYPE));
+        myValues.addValue(TransactionCategory.FIELD_PARENT, myTableDef.getIntegerValue(TransactionCategory.FIELD_PARENT));
+        myValues.addValue(TransactionCategory.FIELD_NAME, myTableDef.getBinaryValue(TransactionCategory.FIELD_NAME));
+        myValues.addValue(TransactionCategory.FIELD_DESC, myTableDef.getBinaryValue(TransactionCategory.FIELD_DESC));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void setFieldValue(final EventTag pItem,
+    protected void setFieldValue(final TransactionCategory pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (EventTag.FIELD_NAME.equals(iField)) {
+        if (TransactionCategory.FIELD_CATTYPE.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
+        } else if (TransactionCategory.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentCategoryId());
+        } else if (TransactionCategory.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (EventTag.FIELD_DESC.equals(iField)) {
+        } else if (TransactionCategory.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
@@ -99,10 +116,11 @@ public class TableEventTag extends TableEncrypted<EventTag, MoneyWiseDataType> {
 
     @Override
     protected void postProcessOnLoad() throws JOceanusException {
-        /* Sort the data */
+        /* Resolve links and sort the data */
+        theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Validate the event tags */
+        /* Validate the categories */
         theList.validateOnLoad();
     }
 }

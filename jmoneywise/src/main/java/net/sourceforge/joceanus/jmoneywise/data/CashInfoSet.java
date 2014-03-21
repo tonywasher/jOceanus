@@ -157,7 +157,7 @@ public class CashInfoSet
      * @param pInfoClass the Info Class
      * @return the event category
      */
-    public EventCategory getEventCategory(final AccountInfoClass pInfoClass) {
+    public TransactionCategory getEventCategory(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
         CashInfo myValue = getInfo(pInfoClass);
 
@@ -235,18 +235,12 @@ public class CashInfoSet
             case SORTCODE:
             case ACCOUNT:
             case REFERENCE:
-            case COMMENTS:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
             case MATURITY:
             case OPENINGBALANCE:
-            case PARENT:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
-            case SYMBOL:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }
@@ -287,7 +281,7 @@ public class CashInfoSet
             switch (myClass) {
                 case AUTOEXPENSE:
                     /* Access data */
-                    EventCategory myExpense = myInfo.getEventCategory();
+                    TransactionCategory myExpense = myInfo.getEventCategory();
                     if (!myExpense.getCategoryTypeClass().isExpense()) {
                         myDeposit.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
                     }

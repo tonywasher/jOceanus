@@ -29,54 +29,54 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetStaticData extension for EventInfoType.
+ * SheetStaticData extension for TransactionInfoType.
  * @author Tony Washer
  */
-public class SheetEventInfoType
-        extends SheetStaticData<EventInfoType, MoneyWiseDataType> {
+public class SheetTransInfoType
+        extends SheetStaticData<TransactionInfoType, MoneyWiseDataType> {
     /**
-     * NamedArea for EventInfoType.
+     * NamedArea for InfoType.
      */
-    private static final String AREA_EVENTINFOTYPES = EventInfoType.LIST_NAME;
+    private static final String AREA_TRANSINFOTYPES = TransactionInfoType.LIST_NAME;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventInfoType(final MoneyWiseReader pReader) {
+    protected SheetTransInfoType(final MoneyWiseReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_EVENTINFOTYPES);
+        super(pReader, AREA_TRANSINFOTYPES);
 
         /* Access the InfoType list */
         MoneyWiseData myData = pReader.getData();
-        setDataList(myData.getEventInfoTypes());
+        setDataList(myData.getTransInfoTypes());
     }
 
     /**
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventInfoType(final MoneyWiseWriter pWriter) {
+    protected SheetTransInfoType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_EVENTINFOTYPES);
+        super(pWriter, AREA_TRANSINFOTYPES);
 
         /* Access the InfoType list */
         MoneyWiseData myData = pWriter.getData();
-        setDataList(myData.getEventInfoTypes());
+        setDataList(myData.getTransInfoTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        return getRowValues(EventInfoType.OBJECT_NAME);
+        return getRowValues(TransactionInfoType.OBJECT_NAME);
     }
 
     /**
@@ -91,15 +91,15 @@ public class SheetEventInfoType
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of InfoTypes */
-        EventInfoTypeList myList = pData.getEventInfoTypes();
+        TransactionInfoTypeList myList = pData.getTransInfoTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_EVENTINFOTYPES);
+            DataView myView = pWorkBook.getRangeView(AREA_TRANSINFOTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_EVENTINFOTYPES)) {
+            if (!pTask.setNewStage(AREA_TRANSINFOTYPES)) {
                 return false;
             }
 

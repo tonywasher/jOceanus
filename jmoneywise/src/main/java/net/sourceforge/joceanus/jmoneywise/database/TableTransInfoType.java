@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.database;
 
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.database.Database;
@@ -32,33 +32,33 @@ import net.sourceforge.joceanus.jprometheus.database.TableStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * TableStaticData extension for EventInfoType.
+ * TableStaticData extension for TransactionInfoType.
  * @author Tony Washer
  */
-public class TableEventInfoType
-        extends TableStaticData<EventInfoType, MoneyWiseDataType> {
+public class TableTransInfoType
+        extends TableStaticData<TransactionInfoType, MoneyWiseDataType> {
     /**
      * The name of the table.
      */
-    protected static final String TABLE_NAME = EventInfoType.LIST_NAME;
+    protected static final String TABLE_NAME = TransactionInfoType.LIST_NAME;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventInfoType(final Database<?> pDatabase) {
+    protected TableTransInfoType(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
         MoneyWiseData myData = (MoneyWiseData) pData;
-        setList(myData.getEventInfoTypes());
+        setList(myData.getTransInfoTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws JOceanusException {
         /* Build data values */
-        return getRowValues(EventInfoType.OBJECT_NAME);
+        return getRowValues(TransactionInfoType.OBJECT_NAME);
     }
 }

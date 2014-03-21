@@ -643,7 +643,7 @@ public class MainTab
         /**
          * Constructor.
          * @param pAccount the requested account
-         * @param pEvent the base event
+         * @param pTrans the base transaction
          */
         protected ActionRequest(final AssetBase<?> pAccount,
                                 final Transaction pTrans) {

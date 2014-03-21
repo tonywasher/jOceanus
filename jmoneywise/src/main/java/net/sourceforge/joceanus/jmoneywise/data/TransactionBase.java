@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
@@ -103,7 +103,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     /**
      * Category Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.EVENTCATEGORY.getItemName());
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
      * Reconciled Field Id.
@@ -255,7 +255,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain category.
      * @return the category
      */
-    public final EventCategory getCategory() {
+    public final TransactionCategory getCategory() {
         return getCategory(getValueSet());
     }
 
@@ -264,7 +264,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        EventCategory myCategory = getCategory();
+        TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getId();
@@ -275,7 +275,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the categoryName
      */
     public String getCategoryName() {
-        EventCategory myCategory = getCategory();
+        TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getName();
@@ -285,8 +285,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Obtain EventCategoryClass.
      * @return the eventCategoryClass
      */
-    public EventCategoryClass getCategoryClass() {
-        EventCategory myCategory = getCategory();
+    public TransactionCategoryClass getCategoryClass() {
+        TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                    ? null
                                    : myCategory.getCategoryTypeClass();
@@ -460,8 +460,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValueSet the valueSet
      * @return the category
      */
-    public static EventCategory getCategory(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CATEGORY, EventCategory.class);
+    public static TransactionCategory getCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, TransactionCategory.class);
     }
 
     /**
@@ -571,7 +571,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set category value.
      * @param pValue the value
      */
-    private void setValueCategory(final EventCategory pValue) {
+    private void setValueCategory(final TransactionCategory pValue) {
         getValueSet().setValue(FIELD_CATEGORY, pValue);
     }
 
@@ -942,7 +942,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         /* Resolve data links */
         myPair.resolveDataLink(myData, this, FIELD_DEBIT);
         myPair.resolveDataLink(myData, this, FIELD_CREDIT);
-        resolveDataLink(FIELD_CATEGORY, myData.getEventCategories());
+        resolveDataLink(FIELD_CATEGORY, myData.getTransCategories());
     }
 
     /**
@@ -952,7 +952,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pCredit the credit account
      * @return true/false
      */
-    public static boolean isValidEvent(final EventCategory pCategory,
+    public static boolean isValidEvent(final TransactionCategory pCategory,
                                        final AssetBase<?> pDebit,
                                        final AssetBase<?> pCredit) {
         /* Analyse the components */
@@ -970,7 +970,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         /* Access account category classes */
-        EventCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
         /* If the transaction involves autoExpense */
         if (myActTran.isAutoExpense()) {
@@ -1181,7 +1181,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pClass the required category class.
      * @return true/false
      */
-    public boolean isCategoryClass(final EventCategoryClass pClass) {
+    public boolean isCategoryClass(final TransactionCategoryClass pClass) {
         /* Check for match */
         return getCategoryClass() == pClass;
     }
@@ -1222,7 +1222,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pDebit the debit account
      * @return needs tax credit true/false
      */
-    public static boolean needsTaxCredit(final EventCategory pCategory,
+    public static boolean needsTaxCredit(final TransactionCategory pCategory,
                                          final AssetBase<?> pDebit) {
         /* Handle null category */
         if (pCategory == null) {
@@ -1254,7 +1254,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pCategory the category
      * @return needs dilution factor true/false
      */
-    public static boolean needsDilution(final EventCategory pCategory) {
+    public static boolean needsDilution(final TransactionCategory pCategory) {
         /* Handle null category */
         if (pCategory == null) {
             return false;
@@ -1313,7 +1313,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * Set a new category.
      * @param pCategory the category
      */
-    public void setCategory(final EventCategory pCategory) {
+    public void setCategory(final TransactionCategory pCategory) {
         setValueCategory(pCategory);
     }
 
@@ -1378,7 +1378,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         AssetBase<?> myCredit = getCredit();
         JMoney myAmount = getAmount();
         T myParent = getParent();
-        EventCategory myCategory = getCategory();
+        TransactionCategory myCategory = getCategory();
         boolean doCheckCombo = true;
 
         /* Determine date range to check for */

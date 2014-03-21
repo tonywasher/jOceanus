@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmoneywise.data.EventTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QClassLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 
@@ -71,7 +71,7 @@ public class QIFClass
      * @param pTag the Event Tag
      */
     public QIFClass(final QIFFile pFile,
-                    final EventTag pTag) {
+                    final TransactionTag pTag) {
         /* Call super-constructor */
         super(pFile, QClassLineType.class);
 

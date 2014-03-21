@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @author Tony Washer
  */
 public class TransactionInfo
-        extends DataInfo<TransactionInfo, Transaction, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+        extends DataInfo<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
@@ -64,12 +64,12 @@ public class TransactionInfo
     }
 
     @Override
-    public EventInfoType getInfoType() {
-        return getInfoType(getValueSet(), EventInfoType.class);
+    public TransactionInfoType getInfoType() {
+        return getInfoType(getValueSet(), TransactionInfoType.class);
     }
 
     @Override
-    public EventInfoClass getInfoClass() {
+    public TransactionInfoClass getInfoClass() {
         return getInfoType().getInfoClass();
     }
 
@@ -95,11 +95,11 @@ public class TransactionInfo
     }
 
     /**
-     * Obtain Event Tag.
-     * @return the Event Tag
+     * Obtain Transaction Tag.
+     * @return the Transaction Tag
      */
-    public EventTag getEventTag() {
-        return getEventTag(getValueSet());
+    public TransactionTag getTransactionTag() {
+        return getTransactionTag(getValueSet());
     }
 
     /**
@@ -107,8 +107,8 @@ public class TransactionInfo
      * @param pValueSet the valueSet
      * @return the Money
      */
-    public static EventInfoType getInfoType(final ValueSet pValueSet) {
-        return getInfoType(pValueSet, EventInfoType.class);
+    public static TransactionInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, TransactionInfoType.class);
     }
 
     /**
@@ -134,14 +134,14 @@ public class TransactionInfo
     }
 
     /**
-     * Obtain Linked EventTag.
+     * Obtain Linked TransactionTag.
      * @param pValueSet the valueSet
-     * @return the EventTag
+     * @return the TransactionTag
      */
-    public static EventTag getEventTag(final ValueSet pValueSet) {
+    public static TransactionTag getTransactionTag(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
-                                     : pValueSet.getValue(FIELD_LINK, EventTag.class);
+                                     : pValueSet.getValue(FIELD_LINK, TransactionTag.class);
     }
 
     @Override
@@ -153,8 +153,8 @@ public class TransactionInfo
         if (myItem instanceof Portfolio) {
             return ((Portfolio) myItem).getName();
         }
-        if (myItem instanceof EventTag) {
-            return ((EventTag) myItem).getName();
+        if (myItem instanceof TransactionTag) {
+            return ((TransactionTag) myItem).getName();
         }
         return null;
     }
@@ -194,7 +194,7 @@ public class TransactionInfo
      */
     private TransactionInfo(final TransactionInfoList pList,
                             final Transaction pTransaction,
-                            final EventInfoType pType) {
+                            final TransactionInfoType pType) {
         /* Initialise the item */
         super(pList);
         setControlKey(pList.getControlKey());
@@ -219,7 +219,7 @@ public class TransactionInfo
         try {
             /* Resolve links */
             MoneyWiseData myData = getDataSet();
-            resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
+            resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getTransactions());
 
             /* Set the value */
@@ -280,7 +280,7 @@ public class TransactionInfo
 
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
-        resolveDataLink(FIELD_INFOTYPE, myData.getEventInfoTypes());
+        resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getTransactions());
 
         /* Resolve any link value */
@@ -297,7 +297,7 @@ public class TransactionInfo
      */
     private void resolveLink() throws JOceanusException {
         /* If we have a link */
-        EventInfoType myType = getInfoType();
+        TransactionInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
             MoneyWiseData myData = getDataSet();
@@ -318,10 +318,10 @@ public class TransactionInfo
                         setValueValue(getPortfolio().getId());
                     }
                     break;
-                case EVENTTAG:
-                    resolveDataLink(FIELD_LINK, myData.getEventClasses());
+                case TRANSTAG:
+                    resolveDataLink(FIELD_LINK, myData.getTransactionTags());
                     if (myLinkId == null) {
-                        setValueValue(getEventTag().getId());
+                        setValueValue(getTransactionTag().getId());
                     }
                     break;
                 default:
@@ -373,8 +373,8 @@ public class TransactionInfo
             case PORTFOLIO:
                 getPortfolio().touchItem(getOwner());
                 break;
-            case EVENTTAG:
-                getEventTag().touchItem(getOwner());
+            case TRANSTAG:
+                getTransactionTag().touchItem(getOwner());
                 break;
             default:
                 break;
@@ -385,7 +385,7 @@ public class TransactionInfo
      * TransactionInfoList.
      */
     public static class TransactionInfoList
-            extends DataInfoList<TransactionInfo, Transaction, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+            extends DataInfoList<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -422,7 +422,7 @@ public class TransactionInfo
         }
 
         /**
-         * Construct an empty CORE account list.
+         * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
         protected TransactionInfoList(final MoneyWiseData pData) {
@@ -468,7 +468,7 @@ public class TransactionInfo
 
         @Override
         protected TransactionInfo addNewItem(final Transaction pOwner,
-                                             final EventInfoType pInfoType) {
+                                             final TransactionInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
             append(myInfo);
@@ -480,7 +480,7 @@ public class TransactionInfo
         @Override
         public void addInfoItem(final Integer pId,
                                 final Transaction pTransaction,
-                                final EventInfoClass pInfoClass,
+                                final TransactionInfoClass pInfoClass,
                                 final Object pValue) throws JOceanusException {
             /* Ignore item if it is null */
             if (pValue == null) {
@@ -491,7 +491,7 @@ public class TransactionInfo
             MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
+            TransactionInfoType myInfoType = myData.getTransInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new JMoneyWiseDataException(pTransaction, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }

@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
@@ -94,7 +94,7 @@ public class QIFEventCategory
      * @param pCategory the Event Category
      */
     public QIFEventCategory(final QIFFile pFile,
-                            final EventCategory pCategory) {
+                            final TransactionCategory pCategory) {
         /* Call super-constructor */
         super(pFile, QCategoryLineType.class);
 

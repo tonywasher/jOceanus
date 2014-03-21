@@ -40,89 +40,59 @@ public enum AccountInfoClass implements DataInfoClass {
     MATURITY(1, 0, DataType.DATEDAY),
 
     /**
-     * Parent Id.
-     */
-    PARENT(2, 1, DataType.LINK),
-
-    /**
-     * Alias Id.
-     */
-    ALIAS(3, 2, DataType.LINK),
-
-    /**
-     * Portfolio Account.
-     */
-    PORTFOLIO(4, 3, DataType.LINK),
-
-    /**
-     * Holding Account.
-     */
-    HOLDING(5, 4, DataType.LINK),
-
-    /**
-     * Comments.
-     */
-    COMMENTS(6, 5, DataType.STRING),
-
-    /**
-     * Symbol.
-     */
-    SYMBOL(7, 6, DataType.STRING),
-
-    /**
      * Opening Balance.
      */
-    OPENINGBALANCE(8, 7, DataType.MONEY),
+    OPENINGBALANCE(2, 1, DataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AUTOEXPENSE(9, 8, DataType.LINK),
-
-    /**
-     * WebSite.
-     */
-    WEBSITE(10, 9, DataType.CHARARRAY),
-
-    /**
-     * Customer #.
-     */
-    CUSTOMERNO(11, 10, DataType.CHARARRAY),
-
-    /**
-     * User Id.
-     */
-    USERID(12, 11, DataType.CHARARRAY),
-
-    /**
-     * Password.
-     */
-    PASSWORD(13, 12, DataType.CHARARRAY),
-
-    /**
-     * SortCode.
-     */
-    SORTCODE(14, 13, DataType.CHARARRAY),
-
-    /**
-     * Account.
-     */
-    ACCOUNT(15, 14, DataType.CHARARRAY),
-
-    /**
-     * Reference.
-     */
-    REFERENCE(16, 15, DataType.CHARARRAY),
+    AUTOEXPENSE(3, 2, DataType.LINK),
 
     /**
      * AutoExpense Payee.
      */
-    AUTOPAYEE(17, 16, DataType.LINK),
+    AUTOPAYEE(4, 3, DataType.LINK),
+
+    /**
+     * WebSite.
+     */
+    WEBSITE(5, 4, DataType.CHARARRAY),
+
+    /**
+     * Customer #.
+     */
+    CUSTOMERNO(6, 5, DataType.CHARARRAY),
+
+    /**
+     * User Id.
+     */
+    USERID(7, 6, DataType.CHARARRAY),
+
+    /**
+     * Password.
+     */
+    PASSWORD(8, 7, DataType.CHARARRAY),
+
+    /**
+     * SortCode.
+     */
+    SORTCODE(9, 8, DataType.CHARARRAY),
+
+    /**
+     * Account.
+     */
+    ACCOUNT(10, 9, DataType.CHARARRAY),
+
+    /**
+     * Reference.
+     */
+    REFERENCE(11, 10, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    NOTES(18, 17, DataType.CHARARRAY);
+    NOTES(12, 11, DataType.CHARARRAY);
 
     /**
      * Resource Bundle.
@@ -232,8 +202,6 @@ public enum AccountInfoClass implements DataInfoClass {
                 return AccountInfoType.DATA_LEN;
             case NOTES:
                 return AccountInfoType.NOTES_LEN;
-            case COMMENTS:
-                return AccountInfoType.COMMENT_LEN;
             default:
                 return 0;
         }

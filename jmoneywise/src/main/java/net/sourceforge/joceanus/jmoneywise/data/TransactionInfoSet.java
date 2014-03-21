@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * @author Tony Washer
  */
 public class TransactionInfoSet
-        extends DataInfoSet<TransactionInfo, Transaction, EventInfoType, EventInfoClass, MoneyWiseDataType> {
+        extends DataInfoSet<TransactionInfo, Transaction, TransactionInfoType, TransactionInfoClass, MoneyWiseDataType> {
     /**
      * Resource Bundle.
      */
@@ -62,12 +62,12 @@ public class TransactionInfoSet
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, EventInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventInfoClass.class);
+    private static final Map<JDataField, TransactionInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TransactionInfoClass.class);
 
     /**
      * Reverse FieldSet map.
      */
-    private static final Map<EventInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, EventInfoClass.class);
+    private static final Map<TransactionInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TransactionInfoClass.class);
 
     /**
      * Bad Credit Date Error Text.
@@ -82,7 +82,7 @@ public class TransactionInfoSet
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle InfoSet fields */
-        EventInfoClass myClass = getClassForField(pField);
+        TransactionInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -96,7 +96,7 @@ public class TransactionInfoSet
      * @param pInfoClass the class of info to get
      * @return the value to set
      */
-    private Object getInfoSetValue(final EventInfoClass pInfoClass) {
+    private Object getInfoSetValue(final TransactionInfoClass pInfoClass) {
         Object myValue;
 
         switch (pInfoClass) {
@@ -108,7 +108,7 @@ public class TransactionInfoSet
                 /* Access portfolio of object */
                 myValue = getPortfolio(pInfoClass);
                 break;
-            case EVENTTAG:
+            case TRANSTAG:
                 /* Access InfoSetList */
                 myValue = getInfoLinkSet(pInfoClass);
                 break;
@@ -129,7 +129,7 @@ public class TransactionInfoSet
      * @param pField the field
      * @return the class
      */
-    public static EventInfoClass getClassForField(final JDataField pField) {
+    public static TransactionInfoClass getClassForField(final JDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -139,7 +139,7 @@ public class TransactionInfoSet
      * @param pClass the class
      * @return the field
      */
-    public static JDataField getFieldForClass(final EventInfoClass pClass) {
+    public static JDataField getFieldForClass(final TransactionInfoClass pClass) {
         /* Look up field in map */
         return REVERSE_FIELDMAP.get(pClass);
     }
@@ -151,7 +151,7 @@ public class TransactionInfoSet
      * @param pInfoList source InfoSet
      */
     protected TransactionInfoSet(final Transaction pOwner,
-                                 final EventInfoTypeList pTypeList,
+                                 final TransactionInfoTypeList pTypeList,
                                  final TransactionInfoList pInfoList) {
         /* Store the Owner and Info List */
         super(pOwner, pTypeList, pInfoList);
@@ -171,7 +171,7 @@ public class TransactionInfoSet
      * @param pInfoClass the Info Class
      * @return the deposit
      */
-    public Deposit getDeposit(final EventInfoClass pInfoClass) {
+    public Deposit getDeposit(final TransactionInfoClass pInfoClass) {
         /* Access existing entry */
         TransactionInfo myValue = getInfo(pInfoClass);
 
@@ -189,7 +189,7 @@ public class TransactionInfoSet
      * @param pInfoClass the Info Class
      * @return the portfolio
      */
-    public Portfolio getPortfolio(final EventInfoClass pInfoClass) {
+    public Portfolio getPortfolio(final TransactionInfoClass pInfoClass) {
         /* Access existing entry */
         TransactionInfo myValue = getInfo(pInfoClass);
 
@@ -208,7 +208,7 @@ public class TransactionInfoSet
      * @return the status
      */
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
-        EventInfoClass myClass = getClassForField(pField);
+        TransactionInfoClass myClass = getClassForField(pField);
         return myClass == null
                               ? JDataFieldRequired.NOTALLOWED
                               : isClassRequired(myClass);
@@ -219,43 +219,43 @@ public class TransactionInfoSet
      * @param pClass the infoSet class
      * @return the status
      */
-    protected JDataFieldRequired isClassRequired(final EventInfoClass pClass) {
+    protected JDataFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         Transaction myTransaction = getOwner();
         AssetBase<?> myDebit = myTransaction.getDebit();
         AssetBase<?> myCredit = myTransaction.getCredit();
-        EventCategory myCategory = myTransaction.getCategory();
+        TransactionCategory myCategory = myTransaction.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
             return JDataFieldRequired.NOTALLOWED;
         }
-        EventCategoryClass myClass = myCategory.getCategoryTypeClass();
+        TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
         switch (pClass) {
         /* Reference and comments are always available */
             case REFERENCE:
             case COMMENTS:
-            case EVENTTAG:
+            case TRANSTAG:
                 return JDataFieldRequired.CANEXIST;
 
                 /* NatInsurance and benefit can only occur on salary */
             case NATINSURANCE:
             case DEEMEDBENEFIT:
-                return (myClass == EventCategoryClass.TAXEDINCOME)
+                return (myClass == TransactionCategoryClass.TAXEDINCOME)
                                                                   ? JDataFieldRequired.CANEXIST
                                                                   : JDataFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
             case CREDITDATE:
-                return (myClass == EventCategoryClass.TRANSFER)
+                return (myClass == TransactionCategoryClass.TRANSFER)
                                                                ? JDataFieldRequired.CANEXIST
                                                                : JDataFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
             case CHARITYDONATION:
-                return (myClass == EventCategoryClass.INTEREST)
+                return (myClass == TransactionCategoryClass.INTEREST)
                                                                ? JDataFieldRequired.CANEXIST
                                                                : JDataFieldRequired.NOTALLOWED;
 
@@ -277,7 +277,7 @@ public class TransactionInfoSet
 
                 /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
-                return ((myClass == EventCategoryClass.TRANSFER)
+                return ((myClass == TransactionCategoryClass.TRANSFER)
                         && (myDebit instanceof Security)
                         && (((Security) myDebit).isSecurityClass(SecurityTypeClass.LIFEBOND)))
                                                                                               ? JDataFieldRequired.MUSTEXIST
@@ -306,7 +306,7 @@ public class TransactionInfoSet
      * @return the status
      */
     private JDataFieldRequired isTaxCreditClassRequired(final AssetBase<?> pDebit,
-                                                        final EventCategoryClass pClass) {
+                                                        final TransactionCategoryClass pClass) {
         /* Switch on class */
         switch (pClass) {
             case TAXEDINCOME:
@@ -328,7 +328,7 @@ public class TransactionInfoSet
                 }
 
                 /* Check portfolio tax status */
-                Portfolio myPortfolio = getPortfolio(EventInfoClass.PORTFOLIO);
+                Portfolio myPortfolio = getPortfolio(TransactionInfoClass.PORTFOLIO);
                 return ((myPortfolio != null) && !myPortfolio.isTaxFree())
                                                                           ? JDataFieldRequired.MUSTEXIST
                                                                           : JDataFieldRequired.NOTALLOWED;
@@ -349,7 +349,7 @@ public class TransactionInfoSet
      * @return the status
      */
     private JDataFieldRequired isDebitUnitsClassRequired(final AssetBase<?> pDebit,
-                                                         final EventCategoryClass pClass) {
+                                                         final TransactionCategoryClass pClass) {
         /* Debit Asset must be security */
         if (!(pDebit instanceof Security)) {
             return JDataFieldRequired.NOTALLOWED;
@@ -371,7 +371,7 @@ public class TransactionInfoSet
      * @return the status
      */
     private JDataFieldRequired isCreditUnitsClassRequired(final AssetBase<?> pCredit,
-                                                          final EventCategoryClass pClass) {
+                                                          final TransactionCategoryClass pClass) {
         /* Credit Asset must be security */
         if (!(pCredit instanceof Security)) {
             return JDataFieldRequired.NOTALLOWED;
@@ -397,7 +397,7 @@ public class TransactionInfoSet
      * @param pClass the category class
      * @return the status
      */
-    private JDataFieldRequired isDilutionClassRequired(final EventCategoryClass pClass) {
+    private JDataFieldRequired isDilutionClassRequired(final TransactionCategoryClass pClass) {
         /* Dilution is only required for stock split/rights/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
@@ -417,7 +417,7 @@ public class TransactionInfoSet
      * @return the status
      */
     private JDataFieldRequired isThirdPartyClassRequired(final Transaction pTransaction,
-                                                         final EventCategoryClass pClass) {
+                                                         final TransactionCategoryClass pClass) {
         /* ThirdParty is possible only for StockTakeOver */
         switch (pClass) {
             case STOCKTAKEOVER:
@@ -437,7 +437,7 @@ public class TransactionInfoSet
         Transaction myTransaction = getOwner();
 
         /* Loop through the classes */
-        for (EventInfoClass myClass : EventInfoClass.values()) {
+        for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
             /* Access info for class */
             boolean isExisting = isExisting(myClass);
             TransactionInfo myInfo = myClass.isLinkSet()

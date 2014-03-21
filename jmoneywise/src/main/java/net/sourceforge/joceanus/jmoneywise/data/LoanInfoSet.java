@@ -172,7 +172,6 @@ public class LoanInfoSet
                 return JDataFieldRequired.CANEXIST;
 
                 /* Old style */
-            case COMMENTS:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
@@ -180,11 +179,6 @@ public class LoanInfoSet
             case MATURITY:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
-            case PARENT:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
-            case SYMBOL:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

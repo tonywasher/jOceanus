@@ -28,24 +28,24 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetDataItem extension for EventCategory.
+ * SheetDataItem extension for TransactionCategory.
  * @author Tony Washer
  */
-public class SheetEventCategory
-        extends SheetEncrypted<EventCategory, MoneyWiseDataType> {
+public class SheetTransCategory
+        extends SheetEncrypted<TransactionCategory, MoneyWiseDataType> {
     /**
-     * NamedArea for EventCategories.
+     * NamedArea for TransactionCategories.
      */
-    private static final String AREA_EVTCATEGORIES = "EventCategoryInfo";
+    private static final String AREA_TRANSCATEGORIES = "TransCategoryInfo";
 
     /**
      * Name column.
@@ -70,18 +70,18 @@ public class SheetEventCategory
     /**
      * Category data list.
      */
-    private final EventCategoryList theList;
+    private final TransactionCategoryList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventCategory(final MoneyWiseReader pReader) {
+    protected SheetTransCategory(final MoneyWiseReader pReader) {
         /* Call super constructor */
-        super(pReader, AREA_EVTCATEGORIES);
+        super(pReader, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        theList = pReader.getData().getEventCategories();
+        theList = pReader.getData().getTransCategories();
         setDataList(theList);
     }
 
@@ -89,30 +89,30 @@ public class SheetEventCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventCategory(final MoneyWiseWriter pWriter) {
+    protected SheetTransCategory(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, AREA_EVTCATEGORIES);
+        super(pWriter, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        theList = pWriter.getData().getEventCategories();
+        theList = pWriter.getData().getTransCategories();
         setDataList(theList);
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventCategory.OBJECT_NAME);
-        myValues.addValue(EventCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
-        myValues.addValue(EventCategory.FIELD_PARENT, loadInteger(COL_PARENT));
-        myValues.addValue(EventCategory.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(EventCategory.FIELD_DESC, loadBytes(COL_DESC));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
+        myValues.addValue(TransactionCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
+        myValues.addValue(TransactionCategory.FIELD_PARENT, loadInteger(COL_PARENT));
+        myValues.addValue(TransactionCategory.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(TransactionCategory.FIELD_DESC, loadBytes(COL_DESC));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final EventCategory pItem) throws JOceanusException {
+    protected void insertSecureItem(final TransactionCategory pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
@@ -149,19 +149,19 @@ public class SheetEventCategory
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of categories */
-        EventCategoryList myList = pData.getEventCategories();
+        TransactionCategoryList myList = pData.getTransCategories();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_EVTCATEGORIES);
+            DataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(EventCategory.LIST_NAME)) {
+            if (!pTask.setNewStage(TransactionCategory.LIST_NAME)) {
                 return false;
             }
 
@@ -195,10 +195,10 @@ public class SheetEventCategory
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(EventCategory.OBJECT_NAME);
-                myValues.addValue(EventCategory.FIELD_CATTYPE, myType);
-                myValues.addValue(EventCategory.FIELD_PARENT, myParent);
-                myValues.addValue(EventCategory.FIELD_NAME, myName);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TransactionCategory.OBJECT_NAME);
+                myValues.addValue(TransactionCategory.FIELD_CATTYPE, myType);
+                myValues.addValue(TransactionCategory.FIELD_PARENT, myParent);
+                myValues.addValue(TransactionCategory.FIELD_NAME, myName);
 
                 /* Add the value into the list */
                 myList.addValuesItem(myValues);
@@ -214,7 +214,7 @@ public class SheetEventCategory
             myList.resolveDataSetLinks();
             myList.reSort();
 
-            /* Validate the event categories */
+            /* Validate the categories */
             myList.validateOnLoad();
 
             /* Handle exceptions */

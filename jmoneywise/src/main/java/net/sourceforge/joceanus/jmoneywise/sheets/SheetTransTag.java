@@ -28,24 +28,24 @@ import net.sourceforge.joceanus.jmetis.sheet.DataView;
 import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetEncrypted;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetDataItem extension for EventClass.
+ * SheetDataItem extension for TransactionTag.
  * @author Tony Washer
  */
-public class SheetEventTag
-        extends SheetEncrypted<EventTag, MoneyWiseDataType> {
+public class SheetTransTag
+        extends SheetEncrypted<TransactionTag, MoneyWiseDataType> {
     /**
-     * NamedArea for Event Classes.
+     * NamedArea for TransactionTags.
      */
-    private static final String AREA_EVENTCLASSES = EventTag.LIST_NAME;
+    private static final String AREA_TRANSTAGS = TransactionTag.LIST_NAME;
 
     /**
      * Name column.
@@ -60,18 +60,18 @@ public class SheetEventTag
     /**
      * Class data list.
      */
-    private final EventTagList theList;
+    private final TransactionTagList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventTag(final MoneyWiseReader pReader) {
+    protected SheetTransTag(final MoneyWiseReader pReader) {
         /* Call super constructor */
-        super(pReader, AREA_EVENTCLASSES);
+        super(pReader, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        theList = pReader.getData().getEventClasses();
+        theList = pReader.getData().getTransactionTags();
         setDataList(theList);
     }
 
@@ -79,28 +79,28 @@ public class SheetEventTag
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventTag(final MoneyWiseWriter pWriter) {
+    protected SheetTransTag(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
-        super(pWriter, AREA_EVENTCLASSES);
+        super(pWriter, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        theList = pWriter.getData().getEventClasses();
+        theList = pWriter.getData().getTransactionTags();
         setDataList(theList);
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(EventTag.OBJECT_NAME);
-        myValues.addValue(EventTag.FIELD_NAME, loadBytes(COL_NAME));
-        myValues.addValue(EventTag.FIELD_DESC, loadBytes(COL_DESC));
+        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
+        myValues.addValue(TransactionTag.FIELD_NAME, loadBytes(COL_NAME));
+        myValues.addValue(TransactionTag.FIELD_DESC, loadBytes(COL_DESC));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final EventTag pItem) throws JOceanusException {
+    protected void insertSecureItem(final TransactionTag pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeBytes(COL_NAME, pItem.getNameBytes());
@@ -118,12 +118,12 @@ public class SheetEventTag
         /* reSort */
         theList.reSort();
 
-        /* Validate the event tags */
+        /* Validate the tags */
         theList.validateOnLoad();
     }
 
     /**
-     * Load the EventClasses from an archive.
+     * Load the TransactionTags from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -134,23 +134,23 @@ public class SheetEventTag
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of tags */
-        EventTagList myList = pData.getEventClasses();
+        TransactionTagList myList = pData.getTransactionTags();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_EVENTCLASSES);
+            DataView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(EventTag.LIST_NAME)) {
+            if (!pTask.setNewStage(TransactionTag.LIST_NAME)) {
                 return false;
             }
 
-            /* Count the number of Categories */
+            /* Count the number of tags */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
@@ -169,8 +169,8 @@ public class SheetEventTag
                 String myName = myCell.getStringValue();
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(EventTag.OBJECT_NAME);
-                myValues.addValue(EventTag.FIELD_NAME, myName);
+                DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(TransactionTag.OBJECT_NAME);
+                myValues.addValue(TransactionTag.FIELD_NAME, myName);
 
                 /* Add the value into the list */
                 myList.addValuesItem(myValues);
@@ -185,7 +185,7 @@ public class SheetEventTag
             /* reSort */
             myList.reSort();
 
-            /* Validate the event tags */
+            /* Validate the tags */
             myList.validateOnLoad();
 
             /* Handle exceptions */

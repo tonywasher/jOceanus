@@ -37,12 +37,12 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -912,17 +912,17 @@ public class Deposit
      * @return detailed category
      */
     @Override
-    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* Switch on category type */
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
-                EventCategoryList myCategories = getDataSet().getEventCategories();
+                TransactionCategoryList myCategories = getDataSet().getTransCategories();
                 if (isTaxFree()) {
-                    return myCategories.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
+                    return myCategories.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
                 }
                 return myCategories.getSingularClass((isGross())
-                                                                ? EventCategoryClass.GROSSINTEREST
-                                                                : EventCategoryClass.TAXEDINTEREST);
+                                                                ? TransactionCategoryClass.GROSSINTEREST
+                                                                : TransactionCategoryClass.TAXEDINTEREST);
             default:
                 return pCategory;
         }

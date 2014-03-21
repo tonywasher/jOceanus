@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
@@ -644,15 +644,15 @@ public class CashCategoryTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return EventCategory.FIELD_SUBCAT;
+                    return TransactionCategory.FIELD_SUBCAT;
                 case COLUMN_DESC:
-                    return EventCategory.FIELD_DESC;
+                    return TransactionCategory.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return EventCategory.FIELD_CATTYPE;
+                    return TransactionCategory.FIELD_CATTYPE;
                 case COLUMN_FULLNAME:
-                    return EventCategory.FIELD_NAME;
+                    return TransactionCategory.FIELD_NAME;
                 case COLUMN_ACTIVE:
-                    return EventCategory.FIELD_TOUCH;
+                    return TransactionCategory.FIELD_TOUCH;
                 default:
                     return null;
             }

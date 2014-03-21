@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
@@ -89,7 +89,7 @@ public class AnalysisStatement
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = EventInfoClass.COMMENTS.toString();
+    private static final String TITLE_DESC = TransactionInfoClass.COMMENTS.toString();
 
     /**
      * Debit Column Title.
@@ -653,7 +653,7 @@ public class AnalysisStatement
                 case COLUMN_DATE:
                     return Transaction.FIELD_DATE;
                 case COLUMN_DESC:
-                    return TransactionInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS);
                 case COLUMN_CATEGORY:
                     return Transaction.FIELD_CATEGORY;
                 case COLUMN_CREDIT:

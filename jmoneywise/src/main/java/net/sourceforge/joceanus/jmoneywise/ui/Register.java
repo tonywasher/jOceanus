@@ -46,14 +46,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -96,7 +96,7 @@ public class Register
     /**
      * Description column title.
      */
-    protected static final String TITLE_DESC = EventInfoClass.COMMENTS.toString();
+    protected static final String TITLE_DESC = TransactionInfoClass.COMMENTS.toString();
 
     /**
      * CategoryType column title.
@@ -754,7 +754,7 @@ public class Register
                 /* Access as event */
                 Transaction myTrans = (Transaction) myRow;
                 JMoney myTax = myTrans.getTaxCredit();
-                EventCategory myCat = myTrans.getCategory();
+                TransactionCategory myCat = myTrans.getCategory();
 
                 /* If we have a calculable tax credit that is null/zero */
                 boolean isTaxable = (myCat != null) && (myTrans.isInterest() || myTrans.isDividend());
@@ -883,7 +883,7 @@ public class Register
 
                 /* Access the event */
                 Transaction myTrans = (Transaction) myRow;
-                EventCategory myCat = myTrans.getCategory();
+                TransactionCategory myCat = myTrans.getCategory();
                 JMoney myTax = myTrans.getTaxCredit();
 
                 /* Ignore rows with invalid category type */
@@ -1041,7 +1041,7 @@ public class Register
                 case COLUMN_DATE:
                     return Transaction.FIELD_DATE;
                 case COLUMN_DESC:
-                    return TransactionInfoSet.getFieldForClass(EventInfoClass.COMMENTS);
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS);
                 case COLUMN_AMOUNT:
                     return Transaction.FIELD_AMOUNT;
                 case COLUMN_CATEGORY:

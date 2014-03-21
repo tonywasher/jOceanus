@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.quicken;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
@@ -288,7 +288,7 @@ public abstract class QElement {
      * Add Category.
      * @param pCategory the category
      */
-    protected void addCategory(final EventCategory pCategory) {
+    protected void addCategory(final TransactionCategory pCategory) {
         append(pCategory.getName());
     }
 
@@ -298,7 +298,7 @@ public abstract class QElement {
      * @param pCategory the category
      */
     protected void addCategoryLine(final QLineType pType,
-                                   final EventCategory pCategory) {
+                                   final TransactionCategory pCategory) {
         addLineType(pType);
         addCategory(pCategory);
         endLine();

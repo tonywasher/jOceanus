@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -133,7 +133,7 @@ public class MarketAnalysis {
         if ((theGrowthIncome.isNonZero())
             || (theGrowthExpense.isNonZero())) {
             /* Access marketGrowth category */
-            EventCategoryBucket myGrowth = myCategories.getBucket(EventCategoryClass.MARKETGROWTH);
+            EventCategoryBucket myGrowth = myCategories.getBucket(TransactionCategoryClass.MARKETGROWTH);
 
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);

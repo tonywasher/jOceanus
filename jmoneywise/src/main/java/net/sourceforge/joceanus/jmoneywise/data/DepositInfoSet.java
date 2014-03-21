@@ -187,17 +187,11 @@ public class DepositInfoSet
                                                              : JDataFieldRequired.NOTALLOWED;
 
                 /* Old style */
-            case PARENT:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
-            case SYMBOL:
             case AUTOEXPENSE:
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
             case PASSWORD:
-            case COMMENTS:
             default:
                 return JDataFieldRequired.NOTALLOWED;
         }

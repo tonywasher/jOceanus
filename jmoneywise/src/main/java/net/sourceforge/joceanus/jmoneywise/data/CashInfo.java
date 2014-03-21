@@ -90,7 +90,7 @@ public class CashInfo
      * Obtain EventCategory.
      * @return the EventCategory
      */
-    public EventCategory getEventCategory() {
+    public TransactionCategory getEventCategory() {
         return getEventCategory(getValueSet());
     }
 
@@ -119,10 +119,10 @@ public class CashInfo
      * @param pValueSet the valueSet
      * @return the EventCategory
      */
-    public static EventCategory getEventCategory(final ValueSet pValueSet) {
+    public static TransactionCategory getEventCategory(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
                                      ? null
-                                     : pValueSet.getValue(FIELD_LINK, EventCategory.class);
+                                     : pValueSet.getValue(FIELD_LINK, TransactionCategory.class);
     }
 
     @Override
@@ -131,8 +131,8 @@ public class CashInfo
         if (myItem instanceof Payee) {
             return ((Payee) myItem).getName();
         }
-        if (myItem instanceof EventCategory) {
-            return ((EventCategory) myItem).getName();
+        if (myItem instanceof TransactionCategory) {
+            return ((TransactionCategory) myItem).getName();
         }
         return null;
     }
@@ -291,7 +291,7 @@ public class CashInfo
                     }
                     break;
                 case AUTOEXPENSE:
-                    resolveDataLink(FIELD_LINK, myData.getEventCategories());
+                    resolveDataLink(FIELD_LINK, myData.getTransCategories());
                     if (myLinkId == null) {
                         setValueValue(getEventCategory().getId());
                     }

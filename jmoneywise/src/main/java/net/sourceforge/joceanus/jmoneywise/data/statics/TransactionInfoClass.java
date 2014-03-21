@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jprometheus.data.DataInfoClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Enumeration of EventInfo Classes..
+ * Enumeration of TransactionInfo Classes..
  */
-public enum EventInfoClass implements DataInfoClass {
+public enum TransactionInfoClass implements DataInfoClass {
     /**
      * Tax Credit.
      */
@@ -120,9 +120,9 @@ public enum EventInfoClass implements DataInfoClass {
     OPTIONSGRANT(17, 16, DataType.LINK),
 
     /**
-     * EventTag.
+     * TransactionTag.
      */
-    EVENTTAG(18, 17, DataType.LINKSET),
+    TRANSTAG(18, 17, DataType.LINKSET),
 
     /**
      * Portfolio.
@@ -132,7 +132,7 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventInfoClass.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionInfoClass.class.getName());
 
     /**
      * The String name.
@@ -203,9 +203,9 @@ public enum EventInfoClass implements DataInfoClass {
      * @param uOrder the default order
      * @param pDataType the data type
      */
-    private EventInfoClass(final int uId,
-                           final int uOrder,
-                           final DataType pDataType) {
+    private TransactionInfoClass(final int uId,
+                                 final int uOrder,
+                                 final DataType pDataType) {
         theId = uId;
         theOrder = uOrder;
         theDataType = pDataType;
@@ -217,13 +217,13 @@ public enum EventInfoClass implements DataInfoClass {
      * @return the corresponding enum object
      * @throws JOceanusException on error
      */
-    public static EventInfoClass fromId(final int id) throws JOceanusException {
-        for (EventInfoClass myClass : values()) {
+    public static TransactionInfoClass fromId(final int id) throws JOceanusException {
+        for (TransactionInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.EVENTINFOTYPE.toString() + ":" + id);
+        throw new JMoneyWiseDataException("Invalid ClassId for " + MoneyWiseDataType.TRANSINFOTYPE.toString() + ":" + id);
     }
 
     /**
@@ -233,9 +233,9 @@ public enum EventInfoClass implements DataInfoClass {
     public int getMaximumLength() {
         switch (this) {
             case REFERENCE:
-                return EventInfoType.DATA_LEN;
+                return TransactionInfoType.DATA_LEN;
             case COMMENTS:
-                return EventInfoType.COMMENT_LEN;
+                return TransactionInfoType.COMMENT_LEN;
             default:
                 return 0;
         }

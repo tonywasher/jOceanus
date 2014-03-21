@@ -33,20 +33,20 @@ import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * EventCategoryType data type.
+ * TransactionCategoryType data type.
  * @author Tony Washer
  */
-public class EventCategoryType
-        extends StaticData<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
+public class TransactionCategoryType
+        extends StaticData<TransactionCategoryType, TransactionCategoryClass, MoneyWiseDataType> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = MoneyWiseDataType.EVENTTYPE.getItemName();
+    public static final String OBJECT_NAME = MoneyWiseDataType.TRANSTYPE.getItemName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = MoneyWiseDataType.EVENTTYPE.getListName();
+    public static final String LIST_NAME = MoneyWiseDataType.TRANSTYPE.getListName();
 
     /**
      * Report fields.
@@ -62,7 +62,7 @@ public class EventCategoryType
      * Return the Category class of the Category Type.
      * @return the class
      */
-    public EventCategoryClass getCategoryClass() {
+    public TransactionCategoryClass getCategoryClass() {
         return super.getStaticClass();
     }
 
@@ -72,13 +72,13 @@ public class EventCategoryType
     }
 
     @Override
-    public EventCategoryType getBase() {
-        return (EventCategoryType) super.getBase();
+    public TransactionCategoryType getBase() {
+        return (TransactionCategoryType) super.getBase();
     }
 
     @Override
-    public EventCategoryTypeList getList() {
-        return (EventCategoryTypeList) super.getList();
+    public TransactionCategoryTypeList getList() {
+        return (TransactionCategoryTypeList) super.getList();
     }
 
     /**
@@ -86,8 +86,8 @@ public class EventCategoryType
      * @param pList The list to associate the Category Type with
      * @param pCatType The Category Type to copy
      */
-    protected EventCategoryType(final EventCategoryTypeList pList,
-                                final EventCategoryType pCatType) {
+    protected TransactionCategoryType(final TransactionCategoryTypeList pList,
+                                      final TransactionCategoryType pCatType) {
         super(pList, pCatType);
     }
 
@@ -97,19 +97,19 @@ public class EventCategoryType
      * @param pName Name of Category Type
      * @throws JOceanusException on error
      */
-    private EventCategoryType(final EventCategoryTypeList pList,
-                              final String pName) throws JOceanusException {
+    private TransactionCategoryType(final TransactionCategoryTypeList pList,
+                                    final String pName) throws JOceanusException {
         super(pList, pName);
     }
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Event Category Type with
-     * @param pClass Class of Event Category Type
+     * @param pList The list to associate the Category Type with
+     * @param pClass Class of Category Type
      * @throws JOceanusException on error
      */
-    private EventCategoryType(final EventCategoryTypeList pList,
-                              final EventCategoryClass pClass) throws JOceanusException {
+    private TransactionCategoryType(final TransactionCategoryTypeList pList,
+                                    final TransactionCategoryClass pClass) throws JOceanusException {
         super(pList, pClass);
     }
 
@@ -119,16 +119,16 @@ public class EventCategoryType
      * @param pValues the values
      * @throws JOceanusException on error
      */
-    private EventCategoryType(final EventCategoryTypeList pList,
-                              final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+    private TransactionCategoryType(final TransactionCategoryTypeList pList,
+                                    final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
         super(pList, pValues);
     }
 
     /**
-     * Represents a list of {@link EventCategoryType} objects.
+     * Represents a list of {@link TransactionCategoryType} objects.
      */
-    public static class EventCategoryTypeList
-            extends StaticList<EventCategoryType, EventCategoryClass, MoneyWiseDataType> {
+    public static class TransactionCategoryTypeList
+            extends StaticList<TransactionCategoryType, TransactionCategoryClass, MoneyWiseDataType> {
         /**
          * Local Report fields.
          */
@@ -146,40 +146,40 @@ public class EventCategoryType
 
         @Override
         public JDataFields getItemFields() {
-            return EventCategoryType.FIELD_DEFS;
+            return TransactionCategoryType.FIELD_DEFS;
         }
 
         @Override
-        protected Class<EventCategoryClass> getEnumClass() {
-            return EventCategoryClass.class;
+        protected Class<TransactionCategoryClass> getEnumClass() {
+            return TransactionCategoryClass.class;
         }
 
         /**
          * Construct an empty CORE category type list.
          * @param pData the DataSet for the list
          */
-        public EventCategoryTypeList(final DataSet<?, ?> pData) {
-            super(EventCategoryType.class, pData, MoneyWiseDataType.EVENTTYPE, ListStyle.CORE);
+        public TransactionCategoryTypeList(final DataSet<?, ?> pData) {
+            super(TransactionCategoryType.class, pData, MoneyWiseDataType.TRANSTYPE, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventCategoryTypeList(final EventCategoryTypeList pSource) {
+        private TransactionCategoryTypeList(final TransactionCategoryTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected EventCategoryTypeList getEmptyList(final ListStyle pStyle) {
-            EventCategoryTypeList myList = new EventCategoryTypeList(this);
+        protected TransactionCategoryTypeList getEmptyList(final ListStyle pStyle) {
+            TransactionCategoryTypeList myList = new TransactionCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public EventCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (EventCategoryTypeList) super.cloneList(pDataSet);
+        public TransactionCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
+            return (TransactionCategoryTypeList) super.cloneList(pDataSet);
         }
 
         /**
@@ -188,13 +188,13 @@ public class EventCategoryType
          * @return the newly added item
          */
         @Override
-        public EventCategoryType addCopyItem(final DataItem<?> pItem) {
-            /* Can only clone a EventCategoryType */
-            if (!(pItem instanceof EventCategoryType)) {
+        public TransactionCategoryType addCopyItem(final DataItem<?> pItem) {
+            /* Can only clone a TransactionCategoryType */
+            if (!(pItem instanceof TransactionCategoryType)) {
                 throw new UnsupportedOperationException();
             }
 
-            EventCategoryType myType = new EventCategoryType(this, (EventCategoryType) pItem);
+            TransactionCategoryType myType = new TransactionCategoryType(this, (TransactionCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -204,7 +204,7 @@ public class EventCategoryType
          * @return the newly added item
          */
         @Override
-        public EventCategoryType addNewItem() {
+        public TransactionCategoryType addNewItem() {
             throw new UnsupportedOperationException();
         }
 
@@ -217,21 +217,21 @@ public class EventCategoryType
         }
 
         /**
-         * Add a EventCategoryType.
-         * @param pEventCategoryType the Name of the category type
+         * Add a TransactionCategoryType.
+         * @param pCategoryType the Name of the category type
          * @throws JOceanusException on error
          */
-        public void addBasicItem(final String pEventCategoryType) throws JOceanusException {
+        public void addBasicItem(final String pCategoryType) throws JOceanusException {
             /* Create a new Category Type */
-            EventCategoryType myCatType = new EventCategoryType(this, pEventCategoryType);
+            TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
 
-            /* Check that this EventCategoryType has not been previously added */
-            if (findItemByName(pEventCategoryType) != null) {
+            /* Check that this CategoryType has not been previously added */
+            if (findItemByName(pCategoryType) != null) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
                 throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
             }
 
-            /* Check that this EventCategoryTypeId has not been previously added */
+            /* Check that this CategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
                 myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
                 throw new JMoneyWiseDataException(myCatType, ERROR_VALIDATION);
@@ -240,7 +240,7 @@ public class EventCategoryType
             /* Add the Category Type to the list */
             append(myCatType);
 
-            /* Validate the EventCategoryType */
+            /* Validate the CategoryType */
             myCatType.validate();
 
             /* Handle validation failure */
@@ -250,9 +250,9 @@ public class EventCategoryType
         }
 
         @Override
-        public EventCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
+        public TransactionCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws JOceanusException {
             /* Create the type */
-            EventCategoryType myType = new EventCategoryType(this, pValues);
+            TransactionCategoryType myType = new TransactionCategoryType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -273,14 +273,14 @@ public class EventCategoryType
          */
         public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
-            for (EventCategoryClass myClass : EventCategoryClass.values()) {
+            for (TransactionCategoryClass myClass : TransactionCategoryClass.values()) {
                 /* Create new element */
-                EventCategoryType myType = new EventCategoryType(this, myClass);
+                TransactionCategoryType myType = new TransactionCategoryType(this, myClass);
 
-                /* Add the EventCategory to the list */
+                /* Add the Category to the list */
                 append(myType);
 
-                /* Validate the EventCategoryType */
+                /* Validate the CategoryType */
                 myType.validate();
 
                 /* Handle validation failure */

@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.QCategory.QCategoryList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QClass.QClassList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QSecurity.QSecurityList;
@@ -207,15 +207,15 @@ public class QAnalysis
      * @param pTrans the transaction
      * @return the category
      */
-    protected EventCategory getInterestCategory(final Transaction pTrans) {
+    protected TransactionCategory getInterestCategory(final Transaction pTrans) {
         /* No change needed if there is a tax credit */
         if (pTrans.getTaxCredit() != null) {
             return pTrans.getCategory();
         }
 
         /* Access category */
-        EventCategoryList myList = theData.getEventCategories();
-        EventCategory myCategory = myList.getSingularClass(EventCategoryClass.TAXFREEINTEREST);
+        TransactionCategoryList myList = theData.getTransCategories();
+        TransactionCategory myCategory = myList.getSingularClass(TransactionCategoryClass.TAXFREEINTEREST);
 
         /* Register category and return */
         theCategories.registerCategory(myCategory);
@@ -227,10 +227,10 @@ public class QAnalysis
      * @param pInfoClass the info class
      * @return the category
      */
-    protected EventCategory getCategory(final EventInfoClass pInfoClass) {
+    protected TransactionCategory getCategory(final TransactionInfoClass pInfoClass) {
         /* Access category */
-        EventCategoryList myList = theData.getEventCategories();
-        EventCategory myCategory = myList.getEventInfoCategory(pInfoClass);
+        TransactionCategoryList myList = theData.getTransCategories();
+        TransactionCategory myCategory = myList.getEventInfoCategory(pInfoClass);
 
         /* Register category and return */
         theCategories.registerCategory(myCategory);
@@ -242,10 +242,10 @@ public class QAnalysis
      * @param pEventClass the event class
      * @return the category
      */
-    protected EventCategory getCategory(final EventCategoryClass pEventClass) {
+    protected TransactionCategory getCategory(final TransactionCategoryClass pEventClass) {
         /* Access category */
-        EventCategoryList myList = theData.getEventCategories();
-        EventCategory myCategory = myList.getSingularClass(pEventClass);
+        TransactionCategoryList myList = theData.getTransCategories();
+        TransactionCategory myCategory = myList.getSingularClass(pEventClass);
 
         /* Register category and return */
         theCategories.registerCategory(myCategory);
@@ -286,7 +286,7 @@ public class QAnalysis
             theAccounts.put(myLookup, myAccount);
 
             /* If the account is an autoExpense */
-            EventCategory myCategory = myAccount.getAutoExpense();
+            TransactionCategory myCategory = myAccount.getAutoExpense();
             if (myCategory != null) {
                 /* Make sure that it is registered */
                 theCategories.registerCategory(myCategory);
@@ -379,7 +379,7 @@ public class QAnalysis
             /* Access key details */
             AssetBase<?> myDebit = myTrans.getDebit();
             AssetBase<?> myCredit = myTrans.getCredit();
-            EventCategory myCategory = myTrans.getCategory();
+            TransactionCategory myCategory = myTrans.getCategory();
 
             /* If the category is not a transfer */
             if (!myCategory.isTransfer()) {

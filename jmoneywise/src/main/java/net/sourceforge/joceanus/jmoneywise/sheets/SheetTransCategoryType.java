@@ -29,59 +29,59 @@ import net.sourceforge.joceanus.jmetis.sheet.DataWorkBook;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.sheets.SheetStaticData;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetStaticData extension for EventCategoryType.
+ * SheetStaticData extension for TransactionCategoryType.
  * @author Tony Washer
  */
-public class SheetEventCategoryType
-        extends SheetStaticData<EventCategoryType, MoneyWiseDataType> {
+public class SheetTransCategoryType
+        extends SheetStaticData<TransactionCategoryType, MoneyWiseDataType> {
 
     /**
      * NamedArea for Category Types.
      */
-    private static final String AREA_CATTYPES = EventCategoryType.LIST_NAME;
+    private static final String AREA_CATTYPES = TransactionCategoryType.LIST_NAME;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventCategoryType(final MoneyWiseReader pReader) {
+    protected SheetTransCategoryType(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_CATTYPES);
 
         /* Access the Category Type list */
         MoneyWiseData myData = pReader.getData();
-        setDataList(myData.getEventCategoryTypes());
+        setDataList(myData.getTransCategoryTypes());
     }
 
     /**
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventCategoryType(final MoneyWiseWriter pWriter) {
+    protected SheetTransCategoryType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_CATTYPES);
 
         /* Access the Category Type list */
         MoneyWiseData myData = pWriter.getData();
-        setDataList(myData.getEventCategoryTypes());
+        setDataList(myData.getTransCategoryTypes());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        return getRowValues(EventCategoryType.OBJECT_NAME);
+        return getRowValues(TransactionCategoryType.OBJECT_NAME);
     }
 
     /**
-     * Load the Transaction Types from an archive.
+     * Load the Category Types from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -92,7 +92,7 @@ public class SheetEventCategoryType
                                          final DataWorkBook pWorkBook,
                                          final MoneyWiseData pData) throws JOceanusException {
         /* Access the list of category types */
-        EventCategoryTypeList myList = pData.getEventCategoryTypes();
+        TransactionCategoryTypeList myList = pData.getTransCategoryTypes();
 
         /* Protect against exceptions */
         try {
@@ -108,7 +108,7 @@ public class SheetEventCategoryType
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of EventCategoryTypes */
+            /* Count the number of TransCategoryTypes */
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

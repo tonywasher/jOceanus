@@ -60,7 +60,7 @@ public class MoneyWiseDatabase
         addTable(new TableLoanCategoryType(this));
         addTable(new TablePayeeType(this));
         addTable(new TableSecurityType(this));
-        addTable(new TableEventCategoryType(this));
+        addTable(new TableTransCategoryType(this));
         addTable(new TableTaxBasis(this));
         addTable(new TableTaxCategory(this));
         addTable(new TableAccountCurrency(this));
@@ -68,12 +68,12 @@ public class MoneyWiseDatabase
         addTable(new TableFrequency(this));
         addTable(new TableTaxYearInfoType(this));
         addTable(new TableAccountInfoType(this));
-        addTable(new TableEventInfoType(this));
-        addTable(new TableEventTag(this));
+        addTable(new TableTransInfoType(this));
+        addTable(new TableTransTag(this));
         addTable(new TableDepositCategory(this));
         addTable(new TableCashCategory(this));
         addTable(new TableLoanCategory(this));
-        addTable(new TableEventCategory(this));
+        addTable(new TableTransCategory(this));
         addTable(new TableTaxYear(this));
         addTable(new TableTaxYearInfo(this));
         addTable(new TableExchangeRate(this));

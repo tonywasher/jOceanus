@@ -167,13 +167,7 @@ public class PayeeInfoSet
                 return JDataFieldRequired.CANEXIST;
 
                 /* Old style */
-            case COMMENTS:
-            case PARENT:
-            case PORTFOLIO:
-            case ALIAS:
-            case HOLDING:
             case MATURITY:
-            case SYMBOL:
             case OPENINGBALANCE:
             case AUTOEXPENSE:
             default:

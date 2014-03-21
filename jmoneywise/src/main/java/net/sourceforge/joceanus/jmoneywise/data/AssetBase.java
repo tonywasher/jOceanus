@@ -467,7 +467,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @param pCategory current category
      * @return detailed category
      */
-    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+    public TransactionCategory getDetailedCategory(final TransactionCategory pCategory) {
         /* return the unchanged category */
         return pCategory;
     }

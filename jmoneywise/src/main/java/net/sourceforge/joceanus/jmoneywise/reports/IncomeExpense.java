@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.EventCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
@@ -109,7 +109,7 @@ public class IncomeExpense
             EventCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
-            EventCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+            TransactionCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
             if (!myClass.isSubTotal()) {
                 continue;
             }
@@ -168,7 +168,7 @@ public class IncomeExpense
                                               final EventCategoryBucket pSource) {
         /* Access the category */
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
-        EventCategory myCategory = pSource.getEventCategory();
+        TransactionCategory myCategory = pSource.getEventCategory();
 
         /* Create an embedded table */
         HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
@@ -179,7 +179,7 @@ public class IncomeExpense
             EventCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            EventCategory myCurr = myBucket.getEventCategory();
+            TransactionCategory myCurr = myBucket.getEventCategory();
             if (!Difference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }

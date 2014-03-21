@@ -40,8 +40,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
-import net.sourceforge.joceanus.jmoneywise.data.EventCategory.EventCategoryList;
-import net.sourceforge.joceanus.jmoneywise.data.EventTag.EventTagList;
 import net.sourceforge.joceanus.jmoneywise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -57,14 +55,14 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventCategoryType.EventCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
@@ -73,6 +71,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis.TaxBasisList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -172,11 +172,11 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain EventCategoryTypes.
-     * @return the Event Category types
+     * Obtain TransactionCategoryTypes.
+     * @return the Transaction Category types
      */
-    public EventCategoryTypeList getEventCategoryTypes() {
-        return getDataList(MoneyWiseDataType.EVENTTYPE, EventCategoryTypeList.class);
+    public TransactionCategoryTypeList getTransCategoryTypes() {
+        return getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
     }
 
     /**
@@ -236,19 +236,19 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain EventInfoTypes.
-     * @return the Event Info types
+     * Obtain TransactionInfoTypes.
+     * @return the Transaction Info types
      */
-    public EventInfoTypeList getEventInfoTypes() {
-        return getDataList(MoneyWiseDataType.EVENTINFOTYPE, EventInfoTypeList.class);
+    public TransactionInfoTypeList getTransInfoTypes() {
+        return getDataList(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
     }
 
     /**
-     * Obtain EventClasses.
-     * @return the EventClasses
+     * Obtain Transaction Tags.
+     * @return the Transaction Tags
      */
-    public EventTagList getEventClasses() {
-        return getDataList(MoneyWiseDataType.EVENTTAG, EventTagList.class);
+    public TransactionTagList getTransactionTags() {
+        return getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
     }
 
     /**
@@ -276,11 +276,11 @@ public class MoneyWiseData
     }
 
     /**
-     * Obtain EventCategories.
-     * @return the Event categories
+     * Obtain TransactionCategories.
+     * @return the Transaction categories
      */
-    public EventCategoryList getEventCategories() {
-        return getDataList(MoneyWiseDataType.EVENTCATEGORY, EventCategoryList.class);
+    public TransactionCategoryList getTransCategories() {
+        return getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
     }
 
     /**
@@ -504,8 +504,8 @@ public class MoneyWiseData
                 return new PayeeTypeList(this);
             case SECURITYTYPE:
                 return new SecurityTypeList(this);
-            case EVENTTYPE:
-                return new EventCategoryTypeList(this);
+            case TRANSTYPE:
+                return new TransactionCategoryTypeList(this);
             case TAXBASIS:
                 return new TaxBasisList(this);
             case TAXTYPE:
@@ -520,18 +520,18 @@ public class MoneyWiseData
                 return new TaxYearInfoTypeList(this);
             case ACCOUNTINFOTYPE:
                 return new AccountInfoTypeList(this);
-            case EVENTINFOTYPE:
-                return new EventInfoTypeList(this);
-            case EVENTTAG:
-                return new EventTagList(this);
+            case TRANSINFOTYPE:
+                return new TransactionInfoTypeList(this);
+            case TRANSTAG:
+                return new TransactionTagList(this);
             case DEPOSITCATEGORY:
                 return new DepositCategoryList(this);
             case CASHCATEGORY:
                 return new CashCategoryList(this);
             case LOANCATEGORY:
                 return new LoanCategoryList(this);
-            case EVENTCATEGORY:
-                return new EventCategoryList(this);
+            case TRANSCATEGORY:
+                return new TransactionCategoryList(this);
             case TAXYEAR:
                 return new TaxYearList(this);
             case TAXYEARINFO:
@@ -657,14 +657,14 @@ public class MoneyWiseData
                 case LOANTYPE:
                 case PAYEETYPE:
                 case SECURITYTYPE:
-                case EVENTTYPE:
+                case TRANSTYPE:
                 case CURRENCY:
                 case TAXREGIME:
                 case FREQUENCY:
                 case TAXINFOTYPE:
                 case ACCOUNTINFOTYPE:
-                case EVENTINFOTYPE:
-                case EVENTTAG:
+                case TRANSINFOTYPE:
+                case TRANSTAG:
                     myList.clearActive();
                     break;
 
@@ -672,7 +672,7 @@ public class MoneyWiseData
                 case DEPOSITCATEGORY:
                 case CASHCATEGORY:
                 case LOANCATEGORY:
-                case EVENTCATEGORY:
+                case TRANSCATEGORY:
                 case TAXYEAR:
                 case PAYEE:
                 case SECURITY:
