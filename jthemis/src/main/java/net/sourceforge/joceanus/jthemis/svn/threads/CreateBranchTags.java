@@ -24,12 +24,8 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
-
-import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnBranch;
@@ -42,8 +38,7 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.VersionMgr;
  * @author Tony Washer
  */
 public class CreateBranchTags
-        extends SwingWorker<Void, String>
-        implements ReportStatus {
+        extends ScmThread {
     /**
      * Branches.
      */
@@ -99,6 +94,9 @@ public class CreateBranchTags
     public CreateBranchTags(final SvnBranch[] pBranches,
                             final File pLocation,
                             final ReportTask pReport) {
+        /* Call super-constructor */
+        super(pReport);
+
         /* Store parameters */
         theLocation = pLocation;
         theReport = pReport;
@@ -126,7 +124,7 @@ public class CreateBranchTags
         /* Protect against exceptions */
         try {
             /* Create the tags */
-            VersionMgr myVersionMgr = new VersionMgr(theRepository, theLocation, theReport);
+            VersionMgr myVersionMgr = new VersionMgr(theRepository, theLocation, this);
             myVersionMgr.createTags(theBranches);
 
             /* Discover workingSet details */
@@ -149,29 +147,5 @@ public class CreateBranchTags
     public void done() {
         /* Report task complete */
         theReport.completeTask(this);
-    }
-
-    @Override
-    public boolean initTask(final String pTask) {
-        publish(pTask);
-        return true;
-    }
-
-    @Override
-    public boolean setNewStage(final String pStage) {
-        publish(pStage);
-        return true;
-    }
-
-    @Override
-    public boolean setNumStages(final int pNumStages) {
-        return true;
-    }
-
-    @Override
-    public void process(final List<String> pStatus) {
-        for (String myStatus : pStatus) {
-            theReport.setNewStage(myStatus);
-        }
     }
 }

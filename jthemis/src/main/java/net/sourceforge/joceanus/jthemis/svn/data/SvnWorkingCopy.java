@@ -361,10 +361,12 @@ public final class SvnWorkingCopy
 
             /* Set status to null */
             myStatus = null;
+        } finally {
+            /* Release the client manager */
+            pRepo.releaseClientManager(myMgr);
         }
 
-        /* Release the client manager */
-        pRepo.releaseClientManager(myMgr);
+        /* Return the status */
         return myStatus;
     }
 
@@ -501,10 +503,12 @@ public final class SvnWorkingCopy
             pReport.initTask("Analysing Working Copies");
 
             /* Locate working directories */
-            locateWorkingDirectories(theLocation, pReport);
+            locateWorkingDirectories(theLocation);
 
             /* Report number of stages */
-            pReport.setNumStages(size() + 2);
+            if (!pReport.setNumStages(size() + 2)) {
+                return;
+            }
 
             /* Access list iterator */
             Iterator<SvnWorkingCopy> myIterator = iterator();
@@ -515,7 +519,9 @@ public final class SvnWorkingCopy
                 SvnWorkingCopy myCopy = myIterator.next();
 
                 /* Report stage of analysis */
-                pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
+                if (!pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName())) {
+                    return;
+                }
 
                 /* Discover updates */
                 myCopy.discoverUpdates(pReport);
@@ -528,44 +534,58 @@ public final class SvnWorkingCopy
         /**
          * Locate working copies.
          * @param pLocation location
-         * @param pReport the report object
          * @throws JOceanusException on error
          */
-        private void locateWorkingDirectories(final File pLocation,
-                                              final ReportStatus pReport) throws JOceanusException {
+        private void locateWorkingDirectories(final File pLocation) throws JOceanusException {
             /* Return if file is not a directory */
             if (!pLocation.isDirectory()) {
                 return;
             }
 
+            /* Check for top-level checkout */
+            registerBranch(pLocation);
+
             /* Access underlying files */
             for (File myFile : pLocation.listFiles()) {
                 /* Ignore if file is not a directory */
-                if (!myFile.isDirectory()) {
-                    continue;
-                }
+                registerBranch(myFile);
+            }
+        }
 
-                /* Ignore if file is special file/directory */
-                if (myFile.getName().startsWith(".")) {
-                    continue;
-                }
+        /**
+         * Register a check out branch if represented by file.
+         * @param pFile the file
+         * @throws JOceanusException on error
+         */
+        private void registerBranch(final File pFile) throws JOceanusException {
+            /* Ignore if file is not a directory */
+            if (!pFile.isDirectory()) {
+                return;
+            }
 
-                /* Access status for the file */
-                SVNStatus myStatus = getFileStatus(theRepository, myFile);
+            /* Ignore if file is special file/directory */
+            if (pFile.getName().startsWith(".")) {
+                return;
+            }
 
-                /* If this is a working copy */
-                if (myStatus != null) {
-                    /* Obtain the repository URL */
-                    SVNURL myURL = myStatus.getRemoteURL();
+            /* Access status for the directory */
+            SVNStatus myStatus = getFileStatus(theRepository, pFile);
 
-                    /* Obtain the relevant branch in the repository */
-                    SvnBranch myBranch = theRepository.locateBranch(myURL);
+            /* If this is a working copy */
+            if ((myStatus != null) && myStatus.isVersioned()) {
+                /* Obtain the repository URL */
+                SVNURL myURL = myStatus.getRemoteURL();
 
-                    /* If we found the branch */
-                    if (myBranch != null) {
-                        /* Create the working copy */
-                        SvnWorkingCopy myCopy = new SvnWorkingCopy(myFile, myBranch, myStatus.getRevision());
+                /* Obtain the relevant branch in the repository */
+                SvnBranch myBranch = theRepository.locateBranch(myURL);
 
+                /* If we found the branch */
+                if (myBranch != null) {
+                    /* Create the working copy */
+                    SvnWorkingCopy myCopy = new SvnWorkingCopy(pFile, myBranch, myStatus.getRevision());
+
+                    /* If the element is not already in the list */
+                    if (indexOf(myCopy) == -1) {
                         /* Add to the list */
                         add(myCopy);
                     }

@@ -356,7 +356,9 @@ public final class SvnBranch
             /* If we have a trunk */
             if (myTrunk != null) {
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+                if (!pReport.setNewStage("Analysing branch " + myTrunk.getBranchName())) {
+                    return;
+                }
 
                 /* Analyse history map */
                 myTrunk.discoverHistory();
@@ -377,7 +379,9 @@ public final class SvnBranch
                 }
 
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
+                if (!pReport.setNewStage("Analysing branch " + myBranch.getBranchName())) {
+                    break;
+                }
 
                 /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {

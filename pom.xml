@@ -75,6 +75,22 @@
     <XercesVersion>2.9.1</XercesVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
+  <repositories>
+    <repository>
+      <id>svnkit</id>
+      <name>SubVersion Repository</name>
+      <url>http://maven.tmatesoft.com/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>atlassian-public</id>
+      <name>Atlassian Repository</name>
+      <url>https://m2proxy.atlassian.com/repository/public</url>
+    </repository>
+    <repository>
+      <id>jgit-repository</id>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+    </repository>
+  </repositories>
   <build>
     <resources>
       <resource>

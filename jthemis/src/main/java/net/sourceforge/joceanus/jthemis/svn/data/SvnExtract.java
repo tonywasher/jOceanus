@@ -161,6 +161,14 @@ public class SvnExtract
     }
 
     /**
+     * Obtain the number of plans.
+     * @return the number of plans
+     */
+    public int numPlans() {
+        return 1 + theBranches.size() + theTags.size();
+    }
+
+    /**
      * Constructor.
      * @param pComponent the component.
      * @throws JOceanusException on error
@@ -181,10 +189,10 @@ public class SvnExtract
         /* Build tags */
         buildTags(myTrunk);
 
-        /* Loop through the branches */
-        Iterator<SvnBranch> myIterator = theComponent.branchIterator();
-        while (myIterator.hasNext()) {
-            SvnBranch myBranch = myIterator.next();
+        /* Loop through the branches in reverse order */
+        ListIterator<SvnBranch> myIterator = theComponent.branchIterator();
+        while (myIterator.hasPrevious()) {
+            SvnBranch myBranch = myIterator.previous();
 
             /* Ignore if trunk */
             if (myBranch.isTrunk()) {
@@ -197,6 +205,22 @@ public class SvnExtract
                 SvnBranchExtractPlan myPlan = new SvnBranchExtractPlan(myBranch);
                 theBranches.add(myPlan);
                 myPlan.buildView();
+
+                /* If the plan is not anchored */
+                if (!myPlan.isAnchored()) {
+                    /* Obtain the origin view of this and the trunk */
+                    SvnExtractView myView = myPlan.viewIterator().next();
+                    SvnExtractView myTrunkView = theTrunk.viewIterator().next();
+
+                    /* Reject if not possible to repair */
+                    SVNRevision myRev = myView.getRevision();
+                    if (!myRev.equals(myTrunkView.getRevision())) {
+                        throw new JThemisDataException(myPlan, "Branch Plan is not anchored");
+                    }
+
+                    /* Migrate the view to the trunk */
+                    myPlan.migrateView(myView, theTrunk);
+                }
             }
 
             /* Build tags */
@@ -219,6 +243,11 @@ public class SvnExtract
             SvnTagExtractPlan myPlan = new SvnTagExtractPlan(myTag);
             theTags.add(myPlan);
             myPlan.buildView();
+
+            /* Make sure that the plan is anchored */
+            if (!myPlan.isAnchored()) {
+                throw new JThemisDataException(myPlan, "Tag Plan is not anchored");
+            }
         }
     }
 
@@ -275,6 +304,22 @@ public class SvnExtract
         @Override
         public String formatObject() {
             return toString();
+        }
+
+        /**
+         * Obtain owner.
+         * @return the owner
+         */
+        public Object getOwner() {
+            return theOwner;
+        }
+
+        /**
+         * Obtain revision.
+         * @return the revision
+         */
+        public SVNRevision getRevision() {
+            return theRevision;
         }
 
         /**
@@ -525,11 +570,27 @@ public class SvnExtract
         }
 
         /**
+         * Is the plan anchored.
+         * @return true/false
+         */
+        public boolean isAnchored() {
+            return theAnchor != null;
+        }
+
+        /**
          * Obtain the element iterator.
          * @return the iterator
          */
         public Iterator<SvnExtractView> viewIterator() {
             return theViews.iterator();
+        }
+
+        /**
+         * Obtain the number of views.
+         * @return the number of views
+         */
+        public int numViews() {
+            return theViews.size();
         }
 
         /**
@@ -614,8 +675,9 @@ public class SvnExtract
                 myEntry = myEntry.getBasedOn();
             }
 
-            /* Process any source directories */
+            /* If we have source directories */
             if (!mySourceDirs.isEmpty()) {
+                /* Process them */
                 processSourceDirs(mySourceDirs);
             }
         }
@@ -699,7 +761,7 @@ public class SvnExtract
 
                 /* Access the view */
                 SvnRevisionKey myKey = myEntry.getRevisionKey();
-                adjustView(mySource.getRevision(), myComp, myKey, pEntry);
+                adjustView(mySource.getRevision(), myComp, myKey, myEntry);
 
                 /* If we have an origin */
                 if (myEntry.isOrigin()) {
@@ -714,6 +776,7 @@ public class SvnExtract
 
             /* If we have source directories */
             if (!mySourceDirs.isEmpty()) {
+                /* Process them */
                 processSourceDirs(mySourceDirs);
             }
         }
@@ -773,6 +836,25 @@ public class SvnExtract
             theViews.add(0, myView);
             myView.addDirectory(pComp, theRepo.getURL(myBase));
         }
+
+        /**
+         * Migrate the view.
+         * @param pView the view to migrate
+         * @param pTarget the target plan to migrate to
+         * @throws JOceanusException on error
+         */
+        protected void migrateView(final SvnExtractView pView,
+                                   final SvnExtractPlan<T> pTarget) throws JOceanusException {
+            /* Remove from view list */
+            theViews.remove(pView);
+
+            /* Set as anchor */
+            theAnchor = new SvnExtractAnchor(theOwner, pView.getRevision());
+
+            /* Add to target plan */
+            SvnExtractMigratedView myMigrate = new SvnExtractMigratedView(theOwner, pView);
+            pTarget.theViews.add(0, myMigrate);
+        }
     }
 
     /**
@@ -816,14 +898,71 @@ public class SvnExtract
     }
 
     /**
+     * Migrated Extract View.
+     */
+    public static final class SvnExtractMigratedView
+            extends SvnExtractView {
+        /**
+         * DataFields.
+         */
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractMigratedView.class.getSimpleName(), SvnExtractView.FIELD_DEFS);
+
+        /**
+         * Owner field.
+         */
+        private static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_OWNER.equals(pField)) {
+                return theOwner;
+            }
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * Original owner.
+         */
+        private final Object theOwner;
+
+        /**
+         * Obtain the owner.
+         * @return the owner
+         */
+        public Object getOwner() {
+            return theOwner;
+        }
+
+        /**
+         * Constructor.
+         * @param pOwner the owner
+         * @param pSource the original view
+         * @throws JOceanusException on error
+         */
+        private SvnExtractMigratedView(final Object pOwner,
+                                       final SvnExtractView pSource) throws JOceanusException {
+            /* Call the super-constructor */
+            super(pSource);
+
+            /* Store the owner */
+            theOwner = pOwner;
+        }
+    }
+
+    /**
      * Extract View.
      */
-    public static final class SvnExtractView
+    public static class SvnExtractView
             implements JDataContents {
         /**
          * DataFields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractItem.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(SvnExtractView.class.getSimpleName());
 
         /**
          * Revision field.
@@ -975,6 +1114,33 @@ public class SvnExtract
             }
         }
 
+        /**
+         * Constructor.
+         * @param pView the view to copy from
+         * @throws JOceanusException on error
+         */
+        protected SvnExtractView(final SvnExtractView pView) throws JOceanusException {
+            /* Store parameters */
+            theRepo = pView.theRepo;
+            theRevision = pView.getRevision();
+
+            /* Obtain details from the source view */
+            theDate = pView.getDate();
+            theLogMessage = pView.getLogMessage();
+
+            /* Create the list */
+            theItems = new SvnExtractItemList();
+
+            /* Loop through the underlying items */
+            Iterator<SvnExtractItem> myIterator = pView.elementIterator();
+            while (myIterator.hasNext()) {
+                SvnExtractItem myItem = myIterator.next();
+
+                /* Add the item */
+                theItems.addItem(myItem);
+            }
+        }
+
         @Override
         public String toString() {
             /* Create a stringBuilder */
@@ -1023,11 +1189,13 @@ public class SvnExtract
         /**
          * Extract item.
          * @param pTarget the target location
+         * @param pKeep the name of a file/directory to preserve
          * @throws JOceanusException on error
          */
-        public void extractItem(final File pTarget) throws JOceanusException {
+        public void extractItem(final File pTarget,
+                                final String pKeep) throws JOceanusException {
             /* Clear the target directory */
-            Directory.clearDirectory(pTarget);
+            Directory.clearDirectory(pTarget, pKeep);
 
             /* Access update client */
             SVNClientManager myMgr = theRepo.getClientManager();
@@ -1045,7 +1213,7 @@ public class SvnExtract
                     File myTarget = myItem.getTarget(pTarget);
 
                     /* Export the item */
-                    myUpdate.doExport(myItem.getSource(), myTarget, theRevision, theRevision, null, false, SVNDepth.INFINITY);
+                    myUpdate.doExport(myItem.getSource(), myTarget, theRevision, theRevision, null, true, SVNDepth.INFINITY);
                 }
 
             } catch (SVNException e) {

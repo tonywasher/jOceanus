@@ -24,12 +24,8 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
-
-import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
@@ -41,8 +37,7 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
  * @author Tony Washer
  */
 public class CreateTagExtract
-        extends SwingWorker<Void, String>
-        implements ReportStatus {
+        extends ScmThread {
     /**
      * Tags.
      */
@@ -85,6 +80,9 @@ public class CreateTagExtract
     public CreateTagExtract(final SvnTag[] pTags,
                             final File pLocation,
                             final ReportTask pReport) {
+        /* Call super-constructor */
+        super(pReport);
+
         /* Store parameters */
         theLocation = pLocation;
         theReport = pReport;
@@ -112,7 +110,7 @@ public class CreateTagExtract
         /* Protect against exceptions */
         try {
             /* Check out the branches */
-            CheckOut myCheckOut = new CheckOut(theRepository, theReport);
+            CheckOut myCheckOut = new CheckOut(theRepository, this);
             myCheckOut.exportTags(theTags, theLocation);
         } catch (JOceanusException e) {
             /* Store the error */
@@ -132,29 +130,5 @@ public class CreateTagExtract
     public void done() {
         /* Report task complete */
         theReport.completeTask(this);
-    }
-
-    @Override
-    public boolean initTask(final String pTask) {
-        publish(pTask);
-        return true;
-    }
-
-    @Override
-    public boolean setNewStage(final String pStage) {
-        publish(pStage);
-        return true;
-    }
-
-    @Override
-    public boolean setNumStages(final int pNumStages) {
-        return true;
-    }
-
-    @Override
-    public void process(final List<String> pStatus) {
-        for (String myStatus : pStatus) {
-            theReport.setNewStage(myStatus);
-        }
     }
 }

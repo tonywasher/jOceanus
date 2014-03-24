@@ -33,9 +33,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
+import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
+import net.sourceforge.joceanus.jthemis.svn.threads.ScmThread;
 
 /**
  * Status window for SubVersion operations.
@@ -75,6 +76,11 @@ public class JSvnStatusWindow
     private int thePosition = 0;
 
     /**
+     * The StatusPosition.
+     */
+    private int theStatusPosition = 0;
+
+    /**
      * The Clear button.
      */
     private final JButton theClearButton;
@@ -92,7 +98,12 @@ public class JSvnStatusWindow
     /**
      * The active thread.
      */
-    private transient SwingWorker<Void, String> theThread = null;
+    private transient ScmThread theThread = null;
+
+    /**
+     * The current status.
+     */
+    private transient ScmStatus theStatus = new ScmStatus();
 
     /**
      * Constructor.
@@ -135,7 +146,7 @@ public class JSvnStatusWindow
      * Run thread.
      * @param pThread the thread to run
      */
-    protected void runThread(final SwingWorker<Void, String> pThread) {
+    protected void runThread(final ScmThread pThread) {
         /* Store thread and enable cancel button */
         theThread = pThread;
         theCancelButton.setVisible(true);
@@ -152,30 +163,30 @@ public class JSvnStatusWindow
         theExecutor.shutdown();
     }
 
-    @Override
-    public boolean initTask(final String pTask) {
+    /**
+     * Set new stage.
+     * @param pStage the stage to set
+     */
+    private void setNewStage(final String pStage) {
         /* Add status to text area */
-        return setNewStage(pTask);
-    }
-
-    @Override
-    public boolean setNewStage(final String pStage) {
-        /* Add status to text area */
-        theText.append(pStage);
+        theText.replaceRange(pStage, theStatusPosition, thePosition);
         theText.append("\n");
-        thePosition += pStage.length() + 1;
+        thePosition = theStatusPosition + pStage.length() + 1;
+        theStatusPosition = thePosition;
         theText.setCaretPosition(thePosition);
-        return true;
     }
 
-    @Override
-    public boolean setNumStages(final int pNumStages) {
-        return true;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return false;
+    /**
+     * Set new step.
+     * @param pStep the step to set
+     */
+    public void setNewStep(final String pStep) {
+        /* Replace any existing status */
+        theText.replaceRange(pStep, theStatusPosition, thePosition);
+        thePosition = theStatusPosition + pStep.length();
+        theText.insert("\n", thePosition);
+        thePosition++;
+        theText.setCaretPosition(thePosition);
     }
 
     @Override
@@ -186,6 +197,40 @@ public class JSvnStatusWindow
         /* Clear the thread indication and hide the cancel button */
         theThread = null;
         theCancelButton.setVisible(false);
+    }
+
+    @Override
+    public void setNewStatus(final ScmStatus pStatus) {
+        /* Set new status */
+        ScmStatus myOld = theStatus;
+        theStatus = pStatus;
+
+        /* Handle new task */
+        String myNewTask = pStatus.getTask();
+        if ((myNewTask != null)
+            && (!myNewTask.equals(myOld.getTask()))) {
+            setNewStage(myNewTask);
+            return;
+        }
+
+        /* Handle new stage */
+        int myStagesDone = pStatus.getStagesDone();
+        if (myStagesDone != myOld.getStagesDone()) {
+            setNewStage(pStatus.getStage());
+            return;
+        }
+
+        /* Handle new step */
+        int myStepsDone = pStatus.getStepsDone();
+        if (myStepsDone != myOld.getStepsDone()) {
+            StringBuilder myBuilder = new StringBuilder();
+            myBuilder.append(myStepsDone + 1);
+            myBuilder.append(" of ");
+            myBuilder.append(pStatus.getNumSteps());
+            myBuilder.append(": ");
+            myBuilder.append(pStatus.getStep());
+            setNewStep(myBuilder.toString());
+        }
     }
 
     /**
@@ -203,7 +248,7 @@ public class JSvnStatusWindow
                 theText.setText(null);
                 thePosition = 0;
 
-                /* If this is the clear button */
+                /* If this is the cancel button */
             } else if (theCancelButton.equals(o)) {
                 /* Cancel any running thread */
                 if (theThread != null) {

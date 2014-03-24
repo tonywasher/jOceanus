@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
 
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -129,13 +130,16 @@ public class GitRepository
         setComponents(myComponents);
 
         /* Report start of analysis */
-        pReport.initTask("Analysing components");
+        if (pReport.initTask("Analysing components")) {
 
-        /* Discover components */
-        myComponents.discover(pReport);
+            /* Discover components */
+            myComponents.discover(pReport);
 
-        /* Report completion of pass */
-        pReport.initTask("Component Analysis complete");
+            /* Report completion of pass */
+            if (!pReport.isCancelled()) {
+                pReport.initTask("Component Analysis complete");
+            }
+        }
     }
 
     @Override
@@ -234,9 +238,12 @@ public class GitRepository
             myPathBuilder.append(pName);
             String myRepoPath = myPathBuilder.toString();
 
+            /* Make sure that the path is deleted */
+            Directory.removeDirectory(new File(myRepoPath));
+
             /* Create repository */
             FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
-            myBuilder.setGitDir(new File(myRepoPath, ".git"));
+            myBuilder.setGitDir(new File(myRepoPath, GitComponent.NAME_GITDIR));
             Repository myRepo = myBuilder.build();
             myRepo.create();
             myRepo.close();

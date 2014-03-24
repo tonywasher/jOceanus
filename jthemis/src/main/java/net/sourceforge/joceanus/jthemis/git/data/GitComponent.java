@@ -67,7 +67,7 @@ public final class GitComponent
     /**
      * The git directory name.
      */
-    private static final String NAME_GITDIR = ".git";
+    public static final String NAME_GITDIR = ".git";
 
     /**
      * Report fields.
@@ -225,15 +225,17 @@ public final class GitComponent
      */
     public InputStream getFileObjectAsInputStream(final ObjectId pCommitId,
                                                   final String pPath) throws JOceanusException {
+        /* Allocate walkers */
+        RevWalk myRevWalk = new RevWalk(theGitRepo);
+        TreeWalk myTreeWalk = new TreeWalk(theGitRepo);
+
         /* Protect against exceptions */
         try {
             /* Access the tree associated with the commit as part of a Revision Walk */
-            RevWalk myRevWalk = new RevWalk(theGitRepo);
             RevCommit myCommit = myRevWalk.parseCommit(pCommitId);
             RevTree myTree = myCommit.getTree();
 
             /* Look for the file matching the path */
-            TreeWalk myTreeWalk = new TreeWalk(theGitRepo);
             myTreeWalk.addTree(myTree);
             myTreeWalk.setRecursive(true);
             myTreeWalk.setFilter(PathFilter.create(pPath));
@@ -247,6 +249,9 @@ public final class GitComponent
             return myLoader.openStream();
         } catch (IOException e) {
             throw new JThemisIOException("Unable to read File Object", e);
+        } finally {
+            myRevWalk.release();
+            myTreeWalk.release();
         }
     }
 
@@ -326,7 +331,9 @@ public final class GitComponent
             }
 
             /* Report number of stages */
-            pReport.setNumStages(size() + 2);
+            if (!pReport.setNumStages(size() + 2)) {
+                return;
+            }
 
             /* Loop through the components */
             Iterator<GitComponent> myIterator = iterator();
@@ -336,7 +343,9 @@ public final class GitComponent
                 GitBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
-                pReport.setNewStage("Analysing component " + myComponent.getName());
+                if (!pReport.setNewStage("Analysing component " + myComponent.getName())) {
+                    break;
+                }
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);

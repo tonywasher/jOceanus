@@ -22,7 +22,7 @@
       <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
       <item name="Source Xref" href="xref/index.html" />
-      <item name="Sonar Report" href="../jOceanus.pdf" />
+      <item name="Sonar Report" href="../joceanus.pdf" />
     </menu>
 
     <menu ref="modules"/>

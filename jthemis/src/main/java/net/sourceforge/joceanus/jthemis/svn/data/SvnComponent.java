@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.logging.Level;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
@@ -100,8 +101,8 @@ public final class SvnComponent
      * Get the branch iterator for this component.
      * @return the iterator
      */
-    public Iterator<SvnBranch> branchIterator() {
-        return getBranches().iterator();
+    public ListIterator<SvnBranch> branchIterator() {
+        return getBranches().listIterator();
     }
 
     /**
@@ -379,7 +380,9 @@ public final class SvnComponent
             }
 
             /* Report number of stages */
-            pReport.setNumStages(size() + 2);
+            if (!pReport.setNumStages(size() + 2)) {
+                return;
+            }
 
             /* Loop through the components */
             Iterator<SvnComponent> myIterator = iterator();
@@ -389,7 +392,9 @@ public final class SvnComponent
                 SvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
-                pReport.setNewStage("Analysing component " + myComponent.getName());
+                if (!pReport.setNewStage("Analysing component " + myComponent.getName())) {
+                    break;
+                }
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);

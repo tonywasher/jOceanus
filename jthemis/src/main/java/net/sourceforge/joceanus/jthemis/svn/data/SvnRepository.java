@@ -190,13 +190,15 @@ public class SvnRepository
         theRevisionHistory = new SvnRevisionHistoryMap(this);
 
         /* Report start of analysis */
-        pReport.initTask("Analysing components");
+        if (pReport.initTask("Analysing components")) {
+            /* Discover components */
+            myComponents.discover(pReport);
 
-        /* Discover components */
-        myComponents.discover(pReport);
-
-        /* Report completion of pass */
-        pReport.initTask("Component Analysis complete");
+            /* Report completion of pass */
+            if (!pReport.isCancelled()) {
+                pReport.initTask("Component Analysis complete");
+            }
+        }
     }
 
     /**

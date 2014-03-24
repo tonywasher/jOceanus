@@ -23,12 +23,8 @@
 package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.io.File;
-import java.util.List;
-
-import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
@@ -39,8 +35,7 @@ import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
  * @author Tony Washer
  */
 public class RevertWorkingCopy
-        extends SwingWorker<Void, String>
-        implements ReportStatus {
+        extends ScmThread {
     /**
      * Report object.
      */
@@ -89,6 +84,9 @@ public class RevertWorkingCopy
      */
     public RevertWorkingCopy(final SvnWorkingCopySet pWorkingSet,
                              final ReportTask pReport) {
+        /* Call super-constructor */
+        super(pReport);
+
         /* Store parameters */
         theWorkingCopySet = pWorkingSet;
         theLocation = pWorkingSet.getLocation();
@@ -101,7 +99,7 @@ public class RevertWorkingCopy
         /* Protect against exceptions */
         try {
             /* Update the working copy set */
-            CheckOut myCheckOut = new CheckOut(theRepository, theReport);
+            CheckOut myCheckOut = new CheckOut(theRepository, this);
             myCheckOut.revertWorkingCopySet(theWorkingCopySet);
 
             /* Discover new workingSet details */
@@ -124,29 +122,5 @@ public class RevertWorkingCopy
     public void done() {
         /* Report task complete */
         theReport.completeTask(this);
-    }
-
-    @Override
-    public boolean initTask(final String pTask) {
-        publish(pTask);
-        return true;
-    }
-
-    @Override
-    public boolean setNewStage(final String pStage) {
-        publish(pStage);
-        return true;
-    }
-
-    @Override
-    public boolean setNumStages(final int pNumStages) {
-        return true;
-    }
-
-    @Override
-    public void process(final List<String> pStatus) {
-        for (String myStatus : pStatus) {
-            theReport.setNewStage(myStatus);
-        }
     }
 }

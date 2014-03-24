@@ -224,10 +224,14 @@ public final class GitBranch
             discoverBranches(myGit);
 
             /* Discover virtual branches */
-            discoverVirtualBranches(myGit);
+            if (!pReport.isCancelled()) {
+                discoverVirtualBranches(myGit);
+            }
 
             /* Discover tags for the branches */
-            discoverTags(pReport);
+            if (!pReport.isCancelled()) {
+                discoverTags(pReport);
+            }
         }
 
         /**
@@ -318,7 +322,7 @@ public final class GitBranch
                     /* If this looks like a valid branch */
                     if (myName.startsWith(myPrefix)) {
                         /* Strip prefix */
-                        myName = myName.substring(myPrefix.length());
+                        myName = myName.substring(GitTag.REF_TAGS.length());
 
                         /* Locate the tag separator */
                         int iIndex = myName.indexOf(GitTag.PREFIX_TAG);
@@ -331,6 +335,9 @@ public final class GitBranch
 
                         /* If this is an unknown branch */
                         if (locateBranch(myName) == null) {
+                            /* Strip prefix */
+                            myName = myName.substring(BRANCH_PREFIX.length());
+
                             /* Create the new branch and add it */
                             GitBranch myBranch = new GitBranch(theComponent, myName, null);
                             add(myBranch);
@@ -355,14 +362,42 @@ public final class GitBranch
             /* Access repository */
             GitRepository myRepo = theComponent.getRepository();
 
+            /* Access trunk */
+            GitBranch myTrunk = locateTrunk();
+            if (myTrunk != null) {
+                /* Report stage */
+                if (!pReport.setNewStage("Analysing branch " + myTrunk.getBranchName())) {
+                    return;
+                }
+
+                /* Parse project file */
+                MvnProjectDefinition myProject = theComponent.parseProjectObject(myTrunk.getCommitId(), "");
+                myTrunk.setProjectDefinition(myProject);
+
+                /* Register the branch */
+                if (myProject != null) {
+                    myRepo.registerBranch(myProject.getDefinition(), myTrunk);
+                }
+
+                /* Discover tags */
+                myTrunk.getTagList().discover(pReport);
+            }
+
             /* Loop through the entries */
             Iterator<GitBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
                 GitBranch myBranch = myIterator.next();
 
+                /* Skip trunk branch */
+                if (myBranch.isTrunk()) {
+                    continue;
+                }
+
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
+                if (!pReport.setNewStage("Analysing branch " + myBranch.getBranchName())) {
+                    break;
+                }
 
                 /* If this is a real branch */
                 if (!myBranch.isVirtual()) {

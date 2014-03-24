@@ -22,11 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.data;
 
+import net.sourceforge.joceanus.jthemis.scm.tasks.ScmStatus;
+
 /**
  * Report Subversion events.
  * @author Tony Washer
  */
-public class ScmReporter {
+public final class ScmReporter {
+    /**
+     * Private constructor.
+     */
+    private ScmReporter() {
+    }
+
     /**
      * Report status.
      */
@@ -53,6 +61,20 @@ public class ScmReporter {
         boolean setNewStage(final String pStage);
 
         /**
+         * Set number of steps.
+         * @param pNumSteps the number of steps
+         * @return continue? true/false
+         */
+        boolean setNumSteps(final int pNumSteps);
+
+        /**
+         * Set new step.
+         * @param pStep the new step
+         * @return continue? true/false
+         */
+        boolean setNewStep(final String pStep);
+
+        /**
          * Is the task cancelled?
          * @return true/false
          */
@@ -62,8 +84,13 @@ public class ScmReporter {
     /**
      * Report Task.
      */
-    public interface ReportTask
-            extends ReportStatus {
+    public interface ReportTask {
+        /**
+         * Set new status for thread.
+         * @param pStatus the new status.
+         */
+        void setNewStatus(final ScmStatus pStatus);
+
         /**
          * Complete Task.
          * @param pTask the task that has completed.

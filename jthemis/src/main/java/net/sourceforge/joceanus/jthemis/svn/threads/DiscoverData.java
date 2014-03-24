@@ -24,11 +24,9 @@ package net.sourceforge.joceanus.jthemis.svn.threads;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
-import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
@@ -36,20 +34,19 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
 import net.sourceforge.joceanus.jthemis.git.data.GitRepository;
-import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.tasks.BuildGit;
 
 /**
  * Thread to handle analysis of repository.
  * @author Tony Washer
  */
 public class DiscoverData
-        extends SwingWorker<Void, String>
-        implements ReportStatus {
+        extends ScmThread {
     /**
      * Preference Manager.
      */
@@ -79,11 +76,6 @@ public class DiscoverData
      * The extract plan map.
      */
     private final Map<String, SvnExtract> theExtractPlanMap;
-
-    /**
-     * The Error.
-     */
-    private JOceanusException theError = null;
 
     /**
      * Obtain the repository.
@@ -142,20 +134,13 @@ public class DiscoverData
     }
 
     /**
-     * Obtain the error.
-     * @return the error
-     */
-    public JOceanusException getError() {
-        return theError;
-    }
-
-    /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
      */
     public DiscoverData(final PreferenceManager pPreferenceMgr,
                         final ReportTask pReport) {
+        super(pReport);
         thePreferenceMgr = pPreferenceMgr;
         theReport = pReport;
         theExtractPlanMap = new LinkedHashMap<String, SvnExtract>();
@@ -169,13 +154,26 @@ public class DiscoverData
             theRepository = new SvnRepository(thePreferenceMgr, this);
 
             /* Discover workingSet details */
-            theWorkingCopySet = new SvnWorkingCopySet(theRepository, this);
+            if (!isCancelled()) {
+                theWorkingCopySet = new SvnWorkingCopySet(theRepository, this);
+            }
 
             /* Build the Extract Plans */
-            deriveExtractPlans();
+            if (!isCancelled()) {
+                deriveExtractPlans();
+            }
 
             /* Discover git repository details */
-            theGitRepo = new GitRepository(thePreferenceMgr, this);
+            if (!isCancelled()) {
+                theGitRepo = new GitRepository(thePreferenceMgr, this);
+            }
+
+            /* Create a new JDateButton repository */
+            if (!isCancelled()) {
+                SvnComponent myComp = theRepository.locateComponent("jOceanus");
+                BuildGit myBuild = new BuildGit(myComp, theGitRepo);
+                myBuild.buildRepository(this);
+            }
 
             /* Return null */
             return null;
@@ -196,36 +194,13 @@ public class DiscoverData
             get();
 
             /* Catch exceptions */
-        } catch (InterruptedException
+        } catch (CancellationException
+                | InterruptedException
                 | ExecutionException e) {
-            theError = new JThemisIOException("Failed to perform background task", e);
+            setError(new JThemisIOException("Failed to perform background task", e));
         }
 
         /* Report task complete */
         theReport.completeTask(this);
-    }
-
-    @Override
-    public boolean initTask(final String pTask) {
-        publish(pTask);
-        return true;
-    }
-
-    @Override
-    public boolean setNewStage(final String pStage) {
-        publish(pStage);
-        return true;
-    }
-
-    @Override
-    public boolean setNumStages(final int pNumStages) {
-        return true;
-    }
-
-    @Override
-    public void process(final List<String> pStatus) {
-        for (String myStatus : pStatus) {
-            theReport.setNewStage(myStatus);
-        }
     }
 }

@@ -538,6 +538,27 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
         }
 
         /**
+         * Locate Trunk.
+         * @return the trunk branch or Null
+         */
+        protected B locateTrunk() {
+            /* Loop through the entries */
+            Iterator<B> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                B myBranch = myIterator.next();
+
+                /* If this is the correct branch */
+                if (myBranch.isTrunk()) {
+                    /* Return it */
+                    return myBranch;
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
          * Locate Tag.
          * @param pVersion the version to locate
          * @param pTag the tag to locate

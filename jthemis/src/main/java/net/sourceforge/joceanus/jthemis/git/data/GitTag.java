@@ -276,7 +276,9 @@ public final class GitTag
                 GitTag myTag = myIterator.next();
 
                 /* Report stage */
-                pReport.setNewStage("Analysing tag " + myTag.getTagName());
+                if (!pReport.setNewStage("Analysing tag " + myTag.getTagName())) {
+                    break;
+                }
 
                 /* Parse project file */
                 MvnProjectDefinition myProject = theComponent.parseProjectObject(myTag.getCommitId(), "");
