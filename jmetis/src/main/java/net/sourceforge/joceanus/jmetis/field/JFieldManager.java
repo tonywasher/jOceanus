@@ -28,9 +28,6 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
@@ -47,6 +44,9 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 
 /**
  * Class to determine rendering details for an item.
@@ -57,6 +57,16 @@ public class JFieldManager {
      * Money accounting format width.
      */
     private static final int ACCOUNTING_WIDTH = 10;
+
+    /**
+     * Standard Font pitch.
+     */
+    private static final int PITCH_STD = 12;
+
+    /**
+     * Highlighted Font Pitch.
+     */
+    private static final int PITCH_HILITE = 14;
 
     /**
      * Value Font.
@@ -71,22 +81,42 @@ public class JFieldManager {
     /**
      * The standard font.
      */
-    private static final Font FONT_STANDARD = new Font(FONTFACE_VALUE, Font.PLAIN, 12);
+    private static final Font FONT_STANDARD = new Font(FONTFACE_VALUE, Font.PLAIN, PITCH_STD);
 
     /**
      * The numeric font.
      */
-    private static final Font FONT_NUMERIC = new Font(FONTFACE_NUMERIC, Font.PLAIN, 12);
+    private static final Font FONT_NUMERIC = new Font(FONTFACE_NUMERIC, Font.PLAIN, PITCH_STD);
 
     /**
      * The changed font.
      */
-    private static final Font FONT_CHANGED = new Font(FONTFACE_VALUE, Font.ITALIC, 12);
+    private static final Font FONT_CHANGED = new Font(FONTFACE_VALUE, Font.ITALIC, PITCH_STD);
 
     /**
      * The changed numeric font.
      */
-    private static final Font FONT_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.ITALIC, 12);
+    private static final Font FONT_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.ITALIC, PITCH_STD);
+
+    /**
+     * The standard font.
+     */
+    private static final Font FONT_HI_STANDARD = new Font(FONTFACE_VALUE, Font.BOLD, PITCH_HILITE);
+
+    /**
+     * The numeric font.
+     */
+    private static final Font FONT_HI_NUMERIC = new Font(FONTFACE_NUMERIC, Font.BOLD, PITCH_HILITE);
+
+    /**
+     * The changed font.
+     */
+    private static final Font FONT_HI_CHANGED = new Font(FONTFACE_VALUE, Font.BOLD + Font.ITALIC, PITCH_HILITE);
+
+    /**
+     * The changed numeric font.
+     */
+    private static final Font FONT_HI_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.BOLD + Font.ITALIC, PITCH_HILITE);
 
     /**
      * The Data Manager.
@@ -386,6 +416,14 @@ public class JFieldManager {
     }
 
     /**
+     * Determine Zebra color.
+     * @return the zebra color
+     */
+    public Color getZebraColor() {
+        return theConfig.getZebraColor();
+    }
+
+    /**
      * Determine Standard Font.
      * @param pItem the Item
      * @param pField the Field
@@ -395,7 +433,7 @@ public class JFieldManager {
     public Font determineFont(final JFieldSetItem pItem,
                               final JDataField pField,
                               final boolean isFixed) {
-        /* Return the toolTip */
+        /* Return the font */
         return determineFont(pItem.getFieldState(pField), isFixed);
     }
 
@@ -411,12 +449,47 @@ public class JFieldManager {
         switch (pState) {
             case CHANGED:
                 return isFixed
-                        ? FONT_NUMCHANGED
-                        : FONT_CHANGED;
+                              ? FONT_NUMCHANGED
+                              : FONT_CHANGED;
             default:
                 return isFixed
-                        ? FONT_NUMERIC
-                        : FONT_STANDARD;
+                              ? FONT_NUMERIC
+                              : FONT_STANDARD;
+        }
+    }
+
+    /**
+     * Determine Highlighted Font.
+     * @param pItem the Item
+     * @param pField the Field
+     * @param isFixed is the item fixed width
+     * @return the standard Font for the item
+     */
+    public Font determineHiFont(final JFieldSetItem pItem,
+                                final JDataField pField,
+                                final boolean isFixed) {
+        /* Return the font */
+        return determineHiFont(pItem.getFieldState(pField), isFixed);
+    }
+
+    /**
+     * Determine Highlighted Font.
+     * @param pState render state
+     * @param isFixed is the item fixed width
+     * @return the standard Font for the item
+     */
+    protected Font determineHiFont(final JFieldState pState,
+                                   final boolean isFixed) {
+        /* Switch on the state */
+        switch (pState) {
+            case CHANGED:
+                return isFixed
+                              ? FONT_HI_NUMCHANGED
+                              : FONT_HI_CHANGED;
+            default:
+                return isFixed
+                              ? FONT_HI_NUMERIC
+                              : FONT_HI_STANDARD;
         }
     }
 

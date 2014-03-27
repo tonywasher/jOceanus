@@ -194,24 +194,21 @@ public final class JFieldData {
         /* Obtain the field state */
         theState = pRow.getFieldState(pField);
 
-        /* Obtain the foreground and background for the state */
+        /* Obtain the foreground for the state */
         Color myFore = theManager.getForeground(theState);
-        Color myBack = theManager.getStandardBackground();
+        Color myBack = (theRow & 1) == 0
+                                        ? theManager.getStandardBackground()
+                                        : theManager.getZebraColor();
 
         /* Determine toolTip */
         String myTip = theState.isError()
-                ? pRow.getFieldErrors(pField)
-                : null;
-
-        /* For selected items flip the foreground/background */
-        if (isSelected()) {
-            Color myTemp = myFore;
-            myFore = myBack;
-            myBack = myTemp;
-        }
+                                         ? pRow.getFieldErrors(pField)
+                                         : null;
 
         /* Select the font */
-        Font myFont = theManager.determineFont(theState, isFixed);
+        Font myFont = isSelected()
+                                  ? theManager.determineHiFont(theState, isFixed)
+                                  : theManager.determineFont(theState, isFixed);
 
         /* Set the data */
         theForeGround = myFore;
@@ -277,8 +274,8 @@ public final class JFieldData {
         /* Obtain the state */
         JDataField myField = pElement.getField();
         theState = (isNull)
-                ? JFieldState.NORMAL
-                : pItem.getFieldState(myField);
+                           ? JFieldState.NORMAL
+                           : pItem.getFieldState(myField);
 
         /* Determine the standard colours */
         theForeGround = theManager.getForeground(theState);
@@ -287,7 +284,7 @@ public final class JFieldData {
         /* Determine the Font and ToolTip */
         theFont = theManager.determineFont(theState, isFixed);
         theToolTipText = (isNull)
-                ? null
-                : theManager.determineToolTip(theState, pItem, myField);
+                                 ? null
+                                 : theManager.determineToolTip(theState, pItem, myField);
     }
 }

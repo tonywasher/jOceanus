@@ -41,10 +41,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
@@ -61,6 +57,10 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
@@ -101,6 +101,11 @@ public class MaintenanceTab
     private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
 
     /**
+     * Account tab title.
+     */
+    private static final String TITLE_ACCOUNT = NLS_BUNDLE.getString("TabAccount");
+
+    /**
      * Category tab title.
      */
     private static final String TITLE_CATEGORY = NLS_BUNDLE.getString("TabCategory");
@@ -129,6 +134,11 @@ public class MaintenanceTab
      * The TaxYear Panel.
      */
     private final MaintTaxYear theTaxYearTab;
+
+    /**
+     * The Account Panel.
+     */
+    private final AccountPanel theAccountTab;
 
     /**
      * The Category Panel.
@@ -184,6 +194,11 @@ public class MaintenanceTab
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
         theTabs.addChangeListener(myListener);
+
+        /* Create the account Tab and add it */
+        theAccountTab = new AccountPanel(theView);
+        theTabs.addTab(TITLE_ACCOUNT, theAccountTab);
+        theAccountTab.addChangeListener(myListener);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
@@ -252,6 +267,7 @@ public class MaintenanceTab
     private void refreshData() {
         try {
             /* Refresh sub-panels */
+            theAccountTab.refreshData();
             theCategoryTab.refreshData();
             theTaxYearTab.refreshData();
             theStatic.refreshData();
@@ -270,7 +286,10 @@ public class MaintenanceTab
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        boolean hasUpdates = theCategoryTab.hasUpdates();
+        boolean hasUpdates = theAccountTab.hasUpdates();
+        if (!hasUpdates) {
+            hasUpdates = theCategoryTab.hasUpdates();
+        }
         if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
         }
@@ -316,8 +335,16 @@ public class MaintenanceTab
         /* Determine whether we have any updates */
         boolean hasUpdates = hasUpdates();
 
+        /* Access the Account index */
+        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNT);
+
+        /* Enable/Disable the Account tab */
+        if (iIndex != -1) {
+            theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
+        }
+
         /* Access the Category index */
-        int iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
+        iIndex = theTabs.indexOfTab(TITLE_CATEGORY);
 
         /* Enable/Disable the Category tab */
         if (iIndex != -1) {
@@ -359,8 +386,13 @@ public class MaintenanceTab
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
-        /* If the selected component is Category */
+        /* If the selected component is Account */
         if (myComponent.equals(theCategoryTab)) {
+            /* Set the debug focus */
+            theAccountTab.determineFocus();
+
+            /* If the selected component is Category */
+        } else if (myComponent.equals(theCategoryTab)) {
             /* Set the debug focus */
             theCategoryTab.determineFocus();
 

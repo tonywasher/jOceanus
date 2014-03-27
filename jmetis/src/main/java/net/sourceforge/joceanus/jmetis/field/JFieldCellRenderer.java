@@ -30,11 +30,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellRenderer;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalFormatter;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 
 /**
  * Cell renderers.
@@ -133,7 +133,7 @@ public final class JFieldCellRenderer {
             super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
             /* Declare the Cell position */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pRowIndex, pColIndex, isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
@@ -224,7 +224,7 @@ public final class JFieldCellRenderer {
                         && ((Boolean) pValue).booleanValue());
 
             /* Declare the Cell position */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pRowIndex, pColIndex, isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
@@ -272,7 +272,7 @@ public final class JFieldCellRenderer {
             super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
             /* Declare the Cell position in terms of the model */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pRowIndex, pColIndex, isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);

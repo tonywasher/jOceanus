@@ -319,12 +319,15 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
 
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
+        iRow = theTable.convertRowIndexToModel(iRow);
         T myRow = getItemAtIndex(iRow);
 
         /* If this is a data row */
         if (!myRow.isHeader()) {
-            /* Access the row */
-            JDataField iField = getFieldForCell(myRow, pData.getCol());
+            /* Access the field */
+            int iCol = pData.getCol();
+            iCol = theTable.convertColumnIndexToModel(iCol);
+            JDataField iField = getFieldForCell(myRow, iCol);
 
             /* Has the field changed */
             pData.processTableRow(myRow, iField);

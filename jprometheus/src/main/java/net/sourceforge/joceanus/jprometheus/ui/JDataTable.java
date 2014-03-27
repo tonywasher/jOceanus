@@ -273,6 +273,10 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theModel.registerFilter(myFilter);
         setRowSorter(myFilter);
 
+        /* Set up for zebra stripes */
+        setRowMargin(0);
+        setShowGrid(false);
+
         /* Create a row Header table */
         theRowHdrTable = new JTable(theRowHdrModel, new RowColumnModel<E>(this));
         theRowHdrTable.setBackground(getTableHeader().getBackground());

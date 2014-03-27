@@ -22,36 +22,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
-import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -64,43 +53,41 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
- * Deposit Category Maintenance.
+ * Payee Table.
  */
-public class DepositCategoryTable
-        extends JDataTable<DepositCategory, MoneyWiseDataType> {
+public class PayeeTable
+        extends JDataTable<Payee, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 733879777015598066L;
+    private static final long serialVersionUID = -4131041926113875356L;
 
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DepositCategoryTable.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PayeeTable.class.getName());
 
     /**
      * Name Column Title.
      */
-    private static final String TITLE_NAME = DepositCategory.FIELD_NAME.getName();
-
-    /**
-     * FullName Column Title.
-     */
-    private static final String TITLE_FULLNAME = NLS_BUNDLE.getString("TitleFullName");
-
-    /**
-     * Category Column Title.
-     */
-    private static final String TITLE_CAT = DepositCategory.FIELD_CATTYPE.getName();
+    private static final String TITLE_NAME = Payee.FIELD_NAME.getName();
 
     /**
      * Description Column Title.
      */
-    private static final String TITLE_DESC = DepositCategory.FIELD_DESC.getName();
+    private static final String TITLE_DESC = Payee.FIELD_DESC.getName();
+
+    /**
+     * Category Column Title.
+     */
+    private static final String TITLE_CAT = Payee.FIELD_PAYEETYPE.getName();
+
+    /**
+     * Closed Column Title.
+     */
+    private static final String TITLE_CLOSED = Payee.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -108,14 +95,9 @@ public class DepositCategoryTable
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
-     * Filter Prompt.
+     * LastTransaction Column Title.
      */
-    private static final String TITLE_FILTER = NLS_BUNDLE.getString("PromptFilter");
-
-    /**
-     * Filter Parents Title.
-     */
-    private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
+    private static final String TITLE_LASTTRAN = NLS_BUNDLE.getString("TitleLastTran");
 
     /**
      * The data view.
@@ -133,14 +115,14 @@ public class DepositCategoryTable
     private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
 
     /**
-     * The event entry.
+     * The data entry.
      */
-    private final transient UpdateEntry<DepositCategory, MoneyWiseDataType> theCategoryEntry;
+    private final transient UpdateEntry<Payee, MoneyWiseDataType> thePayeeEntry;
 
     /**
      * The analysis data entry.
      */
-    private final transient JDataEntry theDataCategories;
+    private final transient JDataEntry theDataPayees;
 
     /**
      * The save buttons.
@@ -153,14 +135,9 @@ public class DepositCategoryTable
     private final ErrorPanel theError;
 
     /**
-     * The table model.
-     */
-    private final CategoryTableModel theModel;
-
-    /**
      * The Column Model.
      */
-    private final CategoryColumnModel theColumns;
+    private final PayeeColumnModel theColumns;
 
     /**
      * The panel.
@@ -168,24 +145,9 @@ public class DepositCategoryTable
     private final JEnablePanel thePanel;
 
     /**
-     * The filter panel.
+     * Payees.
      */
-    private final JEnablePanel theFilterPanel;
-
-    /**
-     * The select button.
-     */
-    private final JButton theSelectButton;
-
-    /**
-     * Deposit Categories.
-     */
-    private transient DepositCategoryList theCategories = null;
-
-    /**
-     * Active parent.
-     */
-    private transient DepositCategory theParent = null;
+    private transient PayeeList thePayees = null;
 
     /**
      * Obtain the panel.
@@ -196,18 +158,10 @@ public class DepositCategoryTable
     }
 
     /**
-     * Obtain the filter panel.
-     * @return the filter panel
-     */
-    protected JPanel getFilterPanel() {
-        return theFilterPanel;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
-    public DepositCategoryTable(final View pView) {
+    public PayeeTable(final View pView) {
         /* Record the passed details */
         theView = pView;
         theFieldMgr = theView.getFieldMgr();
@@ -215,45 +169,29 @@ public class DepositCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theCategoryEntry = theUpdateSet.registerClass(DepositCategory.class);
+        thePayeeEntry = theUpdateSet.registerClass(Payee.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCategories = myDataMgr.new JDataEntry(DepositCategoryTable.class.getSimpleName());
-        theDataCategories.addAsChildOf(mySection);
-        theDataCategories.setObject(theUpdateSet);
+        theDataPayees = myDataMgr.new JDataEntry(PayeeTable.class.getSimpleName());
+        theDataPayees.addAsChildOf(mySection);
+        theDataPayees.setObject(theUpdateSet);
 
         /* Create the save buttons */
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataCategories);
+        theError = new ErrorPanel(myDataMgr, theDataPayees);
 
         /* Create the table model */
-        theModel = new CategoryTableModel(this);
-        setModel(theModel);
+        PayeeTableModel myModel = new PayeeTableModel(this);
+        setModel(myModel);
 
         /* Create the data column model and declare it */
-        theColumns = new CategoryColumnModel(this);
+        theColumns = new PayeeColumnModel(this);
         setColumnModel(theColumns);
-
-        /* Create the filter components */
-        JLabel myPrompt = new JLabel(TITLE_FILTER);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theSelectButton.setText(FILTER_PARENTS);
-
-        /* Create the filter panel */
-        theFilterPanel = new JEnablePanel();
-        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
-        theFilterPanel.add(Box.createHorizontalGlue());
-        theFilterPanel.add(myPrompt);
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
-        theFilterPanel.add(theSelectButton);
-        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
@@ -263,9 +201,8 @@ public class DepositCategoryTable
         thePanel.add(theSaveButtons);
 
         /* Create listener */
-        CategoryListener myListener = new CategoryListener();
+        PayeeListener myListener = new PayeeListener();
         theView.addChangeListener(myListener);
-        theSelectButton.addActionListener(myListener);
     }
 
     /**
@@ -276,7 +213,7 @@ public class DepositCategoryTable
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataCategories.setFocus();
+        theDataPayees.setFocus();
     }
 
     /**
@@ -285,15 +222,15 @@ public class DepositCategoryTable
     public void refreshData() {
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
-        DepositCategoryList myCategories = myData.getDepositCategories();
-        theCategories = myCategories.deriveEditList();
-        setList(theCategories);
-        theCategoryEntry.setDataList(theCategories);
+        PayeeList myPayees = myData.getPayees();
+        thePayees = myPayees.deriveEditList();
+        setList(thePayees);
+        thePayeeEntry.setDataList(thePayees);
         theSaveButtons.setEnabled(true);
         fireStateChanged();
 
         /* Touch the updateSet */
-        theDataCategories.setObject(theUpdateSet);
+        theDataPayees.setObject(theUpdateSet);
     }
 
     @Override
@@ -314,18 +251,18 @@ public class DepositCategoryTable
     /**
      * JTable Data Model.
      */
-    private final class CategoryTableModel
-            extends JDataTableModel<DepositCategory, MoneyWiseDataType> {
+    private final class PayeeTableModel
+            extends JDataTableModel<Payee, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
-        private static final long serialVersionUID = -5385379974935354260L;
+        private static final long serialVersionUID = -3911480564558276094L;
 
         /**
          * Constructor.
          * @param pTable the table
          */
-        private CategoryTableModel(final DepositCategoryTable pTable) {
+        private PayeeTableModel(final PayeeTable pTable) {
             /* call constructor */
             super(pTable);
         }
@@ -339,34 +276,34 @@ public class DepositCategoryTable
 
         @Override
         public int getRowCount() {
-            return (theCategories == null)
-                                          ? 0
-                                          : theCategories.size();
+            return (thePayees == null)
+                                      ? 0
+                                      : thePayees.size();
         }
 
         @Override
-        public JDataField getFieldForCell(final DepositCategory pItem,
+        public JDataField getFieldForCell(final Payee pItem,
                                           final int pColIndex) {
             return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final DepositCategory pCategory,
+        public boolean isCellEditable(final Payee pItem,
                                       final int pColIndex) {
             return false;
         }
 
         @Override
-        public DepositCategory getItemAtIndex(final int pRowIndex) {
+        public Payee getItemAtIndex(final int pRowIndex) {
             /* Extract item from index */
-            return theCategories.get(pRowIndex);
+            return thePayees.get(pRowIndex);
         }
 
         @Override
-        public Object getItemValue(final DepositCategory pCategory,
+        public Object getItemValue(final Payee pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return theColumns.getItemValue(pCategory, pColIndex);
+            return theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
@@ -376,24 +313,22 @@ public class DepositCategoryTable
         }
 
         @Override
-        public boolean includeRow(final DepositCategory pRow) {
+        public boolean includeRow(final Payee pRow) {
             /* Ignore deleted rows */
             if (pRow.isDeleted()) {
                 return false;
             }
 
             /* Handle filter */
-            return (theParent == null)
-                                      ? pRow.isCategoryClass(DepositCategoryClass.PARENT)
-                                      : theParent.equals(pRow.getParentCategory());
+            return true;
         }
     }
 
     /**
      * Listener class.
      */
-    private final class CategoryListener
-            implements ChangeListener, ActionListener {
+    private final class PayeeListener
+            implements ChangeListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -406,131 +341,17 @@ public class DepositCategoryTable
                 refreshData();
             }
         }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Show the select menu */
-            if (theCategories != null) {
-                showSelectMenu();
-            }
-        }
-
-        /**
-         * Show Select menu.
-         */
-        private void showSelectMenu() {
-            /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-            /* Record active item */
-            JMenuItem myActive = null;
-
-            /* Create the no filter JMenuItem and add it to the popUp */
-            CategoryAction myAction = new CategoryAction(null, FILTER_PARENTS);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active parent */
-            if (theParent == null) {
-                /* Record it */
-                myActive = myItem;
-            }
-
-            /* Loop through the available category values */
-            Iterator<DepositCategory> myIterator = theCategories.iterator();
-            while (myIterator.hasNext()) {
-                DepositCategory myCurr = myIterator.next();
-
-                /* Ignore category if it is not a subTotal */
-                DepositCategoryClass myClass = myCurr.getCategoryTypeClass();
-                if (!myClass.isParentCategory()) {
-                    continue;
-                }
-
-                /* Create a new JMenuItem and add it to the popUp */
-                myAction = new CategoryAction(myCurr);
-                myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
-
-                /* If this is the active parent */
-                if (myCurr.equals(theParent)) {
-                    /* Record it */
-                    myActive = myItem;
-                }
-            }
-
-            /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Select menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 3157988261193706811L;
-
-        /**
-         * Category.
-         */
-        private final DepositCategory theCategory;
-
-        /**
-         * Label.
-         */
-        private final String theLabel;
-
-        /**
-         * Constructor.
-         * @param pCategory the deposit category bucket
-         */
-        private CategoryAction(final DepositCategory pCategory) {
-            super(pCategory.getName());
-            theCategory = pCategory;
-            theLabel = pCategory.getName();
-        }
-
-        /**
-         * Constructor.
-         * @param pCategory the account category bucket
-         * @param pName the name
-         */
-        private CategoryAction(final DepositCategory pCategory,
-                               final String pName) {
-            super(pName);
-            theCategory = pCategory;
-            theLabel = pName;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If this is a different category */
-            if (!Difference.isEqual(theCategory, theParent)) {
-                /* Store new category */
-                theParent = theCategory;
-                theSelectButton.setText(theLabel);
-                theModel.fireNewDataEvents();
-            }
-        }
     }
 
     /**
      * Column Model class.
      */
-    private final class CategoryColumnModel
+    private final class PayeeColumnModel
             extends JDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 6374822452498064568L;
+        private static final long serialVersionUID = -2827155530206802585L;
 
         /**
          * Name column id.
@@ -548,9 +369,9 @@ public class DepositCategoryTable
         private static final int COLUMN_DESC = 2;
 
         /**
-         * FullName column id.
+         * Closed column id.
          */
-        private static final int COLUMN_FULLNAME = 3;
+        private static final int COLUMN_CLOSED = 3;
 
         /**
          * Active column id.
@@ -558,9 +379,19 @@ public class DepositCategoryTable
         private static final int COLUMN_ACTIVE = 4;
 
         /**
+         * LastTran column id.
+         */
+        private static final int COLUMN_LASTTRAN = 5;
+
+        /**
          * Boolean Renderer.
          */
         private final BooleanCellRenderer theBooleanRenderer;
+
+        /**
+         * Date Renderer.
+         */
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * String Renderer.
@@ -571,20 +402,22 @@ public class DepositCategoryTable
          * Constructor.
          * @param pTable the table
          */
-        private CategoryColumnModel(final DepositCategoryTable pTable) {
+        private PayeeColumnModel(final PayeeTable pTable) {
             /* call constructor */
             super(pTable);
 
             /* Create the relevant formatters */
             theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CLOSED, WIDTH_BOOL, theBooleanRenderer));
             addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
         }
 
         /**
@@ -600,35 +433,42 @@ public class DepositCategoryTable
                     return TITLE_DESC;
                 case COLUMN_CATEGORY:
                     return TITLE_CAT;
-                case COLUMN_FULLNAME:
-                    return TITLE_FULLNAME;
+                case COLUMN_CLOSED:
+                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
+                case COLUMN_LASTTRAN:
+                    return TITLE_LASTTRAN;
                 default:
                     return null;
             }
         }
 
         /**
-         * Obtain the value for the category column.
-         * @param pCategory event category
+         * Obtain the value for the payee column.
+         * @param pPayee payee
          * @param pColIndex column index
          * @return the value
          */
-        protected Object getItemValue(final DepositCategory pCategory,
+        protected Object getItemValue(final Payee pPayee,
                                       final int pColIndex) {
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return pCategory.getSubCategory();
-                case COLUMN_FULLNAME:
-                    return pCategory.getName();
+                    return pPayee.getName();
                 case COLUMN_CATEGORY:
-                    return pCategory.getCategoryType();
+                    return pPayee.getPayeeType();
                 case COLUMN_DESC:
-                    return pCategory.getDesc();
+                    return pPayee.getDesc();
+                case COLUMN_CLOSED:
+                    return pPayee.isClosed();
                 case COLUMN_ACTIVE:
-                    return pCategory.isActive();
+                    return pPayee.isActive();
+                case COLUMN_LASTTRAN:
+                    Transaction myTran = pPayee.getLatest();
+                    return (myTran == null)
+                                           ? null
+                                           : myTran.getDate();
                 default:
                     return null;
             }
@@ -643,15 +483,15 @@ public class DepositCategoryTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return DepositCategory.FIELD_SUBCAT;
+                    return Payee.FIELD_NAME;
                 case COLUMN_DESC:
-                    return DepositCategory.FIELD_DESC;
+                    return Payee.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return DepositCategory.FIELD_CATTYPE;
-                case COLUMN_FULLNAME:
-                    return DepositCategory.FIELD_NAME;
+                    return Payee.FIELD_PAYEETYPE;
+                case COLUMN_CLOSED:
+                    return Payee.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
-                    return DepositCategory.FIELD_TOUCH;
+                    return Payee.FIELD_TOUCH;
                 default:
                     return null;
             }

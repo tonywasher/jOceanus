@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.BucketValues;
@@ -38,17 +39,16 @@ import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisAttribute;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.AccountBucket.AccountValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.EventCategoryBucket.CategoryValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeValues;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisValues;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -438,10 +438,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      */
     public static class DepositFilter
             extends AccountFilter<Deposit> {
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
+        @Override
         public DepositBucket getBucket() {
             return (DepositBucket) super.getBucket();
         }
@@ -466,10 +463,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      */
     public static class CashFilter
             extends AccountFilter<Cash> {
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
+        @Override
         public CashBucket getBucket() {
             return (CashBucket) super.getBucket();
         }
@@ -494,10 +488,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      */
     public static class LoanFilter
             extends AccountFilter<Loan> {
-        /**
-         * Obtain bucket.
-         * @return theBucket
-         */
+        @Override
         public LoanBucket getBucket() {
             return (LoanBucket) super.getBucket();
         }

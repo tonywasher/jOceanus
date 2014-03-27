@@ -66,7 +66,7 @@ public class JFieldPreferences
     /**
      * Registry name for Recovered foreground.
      */
-    public static final String NAME_RECOVERED = "ColorRecovered";
+    public static final String NAME_ZEBRA = "ColorZebra";
 
     /**
      * Registry name for Link foreground.
@@ -109,9 +109,9 @@ public class JFieldPreferences
     private static final String DISPLAY_DELETED = "Deleted Colour";
 
     /**
-     * Display name for Recovered foreground.
+     * Display name for Zebra background.
      */
-    private static final String DISPLAY_RECOVERED = "Recovered Colour";
+    private static final String DISPLAY_ZEBRA = "Zebra Colour";
 
     /**
      * Display name for Link foreground.
@@ -145,7 +145,7 @@ public class JFieldPreferences
         myConfig.setDeletedColor(getColorValue(NAME_DELETED));
         myConfig.setErrorColor(getColorValue(NAME_ERROR));
         myConfig.setNewColor(getColorValue(NAME_NEW));
-        myConfig.setRecoveredColor(getColorValue(NAME_RECOVERED));
+        myConfig.setZebraColor(getColorValue(NAME_ZEBRA));
         myConfig.setStandardColor(getColorValue(NAME_STANDARD));
         myConfig.setLinkColor(getColorValue(NAME_LINK));
         myConfig.setChgLinkColor(getColorValue(NAME_CHGLINK));
@@ -163,7 +163,7 @@ public class JFieldPreferences
         defineColorPreference(NAME_NEW, Color.blue);
         defineColorPreference(NAME_CHANGED, Color.magenta.darker());
         defineColorPreference(NAME_DELETED, Color.gray);
-        defineColorPreference(NAME_RECOVERED, Color.darkGray);
+        defineColorPreference(NAME_ZEBRA, Color.decode("#e3e4fa"));
         defineColorPreference(NAME_LINK, Color.blue);
         defineColorPreference(NAME_CHGLINK, Color.green);
     }
@@ -189,8 +189,8 @@ public class JFieldPreferences
         if (pName.equals(NAME_DELETED)) {
             return DISPLAY_DELETED;
         }
-        if (pName.equals(NAME_RECOVERED)) {
-            return DISPLAY_RECOVERED;
+        if (pName.equals(NAME_ZEBRA)) {
+            return DISPLAY_ZEBRA;
         }
         if (pName.equals(NAME_LINK)) {
             return DISPLAY_LINK;

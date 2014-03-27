@@ -47,11 +47,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public class QDataSet {
     /**
-     * Quicken Date Format.
-     */
-    private static final String QIF_DATEFORMAT = "dd/MM/yy";
-
-    /**
      * Windows CharacterSet.
      */
     private static final String NAME_CHARSET = "Windows-1252";
@@ -98,7 +93,7 @@ public class QDataSet {
         theQIFType = thePreferences.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
 
         /* Set Data Formatter to correct date format */
-        theFormatter.setFormat(QIF_DATEFORMAT);
+        theFormatter.setFormat(theQIFType.getDateFormat());
 
         /* Create the analysis */
         theAnalysis = new QAnalysis(theFormatter, theQIFType);

@@ -50,9 +50,9 @@ public class JFieldConfig {
     private Color theDeletedColor = Color.lightGray;
 
     /**
-     * The recovered colour.
+     * The zebra colour.
      */
-    private Color theRecoveredColor = Color.darkGray;
+    private Color theZebraColor = Color.darkGray;
 
     /**
      * The standard colour.
@@ -90,7 +90,7 @@ public class JFieldConfig {
             case DELETED:
                 return theDeletedColor;
             case RESTORED:
-                return theRecoveredColor;
+                return theNewColor;
             case NORMAL:
             default:
                 return theStandardColor;
@@ -146,6 +146,14 @@ public class JFieldConfig {
     }
 
     /**
+     * Get zebra colour.
+     * @return the colour
+     */
+    public Color getZebraColor() {
+        return theZebraColor;
+    }
+
+    /**
      * Set error colour.
      * @param pColor the colour
      */
@@ -178,11 +186,11 @@ public class JFieldConfig {
     }
 
     /**
-     * Set recovered colour.
+     * Set zebra colour.
      * @param pColor the colour
      */
-    public void setRecoveredColor(final Color pColor) {
-        theRecoveredColor = pColor;
+    public void setZebraColor(final Color pColor) {
+        theZebraColor = pColor;
     }
 
     /**

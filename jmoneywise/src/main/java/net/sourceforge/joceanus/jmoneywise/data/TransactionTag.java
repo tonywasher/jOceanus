@@ -491,6 +491,33 @@ public class TransactionTag
         }
 
         /**
+         * Derive Edit list.
+         * @return the edit list
+         */
+        public TransactionTagList deriveEditList() {
+            /* Build an empty List */
+            TransactionTagList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the tags */
+            Iterator<TransactionTag> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                TransactionTag myCurr = myIterator.next();
+
+                /* Ignore deleted tags */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
+                /* Build the new linked tag and add it to the list */
+                TransactionTag myTag = new TransactionTag(myList, myCurr);
+                myList.append(myTag);
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pTag item
          * @return the newly added item

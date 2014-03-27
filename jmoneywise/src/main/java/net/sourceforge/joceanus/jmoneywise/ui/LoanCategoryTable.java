@@ -48,7 +48,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -644,15 +643,15 @@ public class LoanCategoryTable
             /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return TransactionCategory.FIELD_SUBCAT;
+                    return LoanCategory.FIELD_SUBCAT;
                 case COLUMN_DESC:
-                    return TransactionCategory.FIELD_DESC;
+                    return LoanCategory.FIELD_DESC;
                 case COLUMN_CATEGORY:
-                    return TransactionCategory.FIELD_CATTYPE;
+                    return LoanCategory.FIELD_CATTYPE;
                 case COLUMN_FULLNAME:
-                    return TransactionCategory.FIELD_NAME;
+                    return LoanCategory.FIELD_NAME;
                 case COLUMN_ACTIVE:
-                    return TransactionCategory.FIELD_TOUCH;
+                    return LoanCategory.FIELD_TOUCH;
                 default:
                     return null;
             }

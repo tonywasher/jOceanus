@@ -48,14 +48,14 @@ import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 
 /**
- * Top-level panel for Account/EventCategories.
+ * Top-level panel for Accounts.
  */
-public class CategoryPanel
+public class AccountPanel
         extends JEventPanel {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 418093805893095098L;
+    private static final long serialVersionUID = 2128429177675141337L;
 
     /**
      * Strut width.
@@ -65,7 +65,7 @@ public class CategoryPanel
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CategoryPanel.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPanel.class.getName());
 
     /**
      * Text for Selection Title.
@@ -93,56 +93,52 @@ public class CategoryPanel
     private final CardLayout theLayout;
 
     /**
-     * The filter card panel.
-     */
-    private final JPanel theFilterCardPanel;
-
-    /**
-     * The filter card layout.
-     */
-    private final CardLayout theFilterLayout;
-
-    /**
      * The active panel.
      */
     private PanelName theActive;
 
     /**
-     * Deposit Categories Table.
+     * Deposit Table.
      */
-    private final DepositCategoryTable theDepositTable;
+    private final DepositTable theDepositTable;
 
     /**
-     * Cash Categories Table.
+     * Cash Table.
      */
-    private final CashCategoryTable theCashTable;
+    private final CashTable theCashTable;
 
     /**
-     * Loan Categories Table.
+     * Loan Table.
      */
-    private final LoanCategoryTable theLoanTable;
+    private final LoanTable theLoanTable;
 
     /**
-     * Event Categories Table.
+     * Portfolio Table.
      */
-    private final TransactionCategoryTable theEventTable;
+    private final PortfolioTable thePortfolioTable;
 
     /**
-     * Event Tags Table.
+     * Security Table.
      */
-    private final TransactionTagTable theTagTable;
+    private final SecurityTable theSecurityTable;
+
+    /**
+     * Payee Table.
+     */
+    private final PayeeTable thePayeeTable;
 
     /**
      * Constructor.
      * @param pView the data view
      */
-    public CategoryPanel(final View pView) {
+    public AccountPanel(final View pView) {
         /* Create the table panels */
-        theDepositTable = new DepositCategoryTable(pView);
-        theCashTable = new CashCategoryTable(pView);
-        theLoanTable = new LoanCategoryTable(pView);
-        theEventTable = new TransactionCategoryTable(pView);
-        theTagTable = new TransactionTagTable(pView);
+        theDepositTable = new DepositTable(pView);
+        theCashTable = new CashTable(pView);
+        theLoanTable = new LoanTable(pView);
+        thePortfolioTable = new PortfolioTable(pView);
+        theSecurityTable = new SecurityTable(pView);
+        thePayeeTable = new PayeeTable(pView);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -159,22 +155,11 @@ public class CategoryPanel
         theCardPanel.add(theDepositTable.getPanel(), PanelName.DEPOSITS.toString());
         theCardPanel.add(theCashTable.getPanel(), PanelName.CASH.toString());
         theCardPanel.add(theLoanTable.getPanel(), PanelName.LOANS.toString());
-        theCardPanel.add(theEventTable.getPanel(), PanelName.EVENTS.toString());
-        theCardPanel.add(theTagTable.getPanel(), PanelName.EVENTTAGS.toString());
+        theCardPanel.add(thePortfolioTable.getPanel(), PanelName.PORTFOLIOS.toString());
+        theCardPanel.add(theSecurityTable.getPanel(), PanelName.SECURITIES.toString());
+        theCardPanel.add(thePayeeTable.getPanel(), PanelName.PAYEES.toString());
         theActive = PanelName.DEPOSITS;
         theSelectButton.setText(theActive.toString());
-
-        /* Create the card panel */
-        theFilterCardPanel = new JEnablePanel();
-        theFilterLayout = new CardLayout();
-        theFilterCardPanel.setLayout(theFilterLayout);
-
-        /* Add to the card panels */
-        theFilterCardPanel.add(theDepositTable.getFilterPanel(), PanelName.DEPOSITS.toString());
-        theFilterCardPanel.add(theCashTable.getFilterPanel(), PanelName.CASH.toString());
-        theFilterCardPanel.add(theLoanTable.getFilterPanel(), PanelName.LOANS.toString());
-        theFilterCardPanel.add(theEventTable.getFilterPanel(), PanelName.EVENTS.toString());
-        theFilterCardPanel.add(theTagTable.getFilterPanel(), PanelName.EVENTTAGS.toString());
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -186,7 +171,6 @@ public class CategoryPanel
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
         mySelect.add(Box.createHorizontalGlue());
-        mySelect.add(theFilterCardPanel);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -194,13 +178,14 @@ public class CategoryPanel
         add(theCardPanel);
 
         /* Create the listener */
-        CategoryListener myListener = new CategoryListener();
+        AccountListener myListener = new AccountListener();
         theSelectButton.addActionListener(myListener);
         theDepositTable.addChangeListener(myListener);
         theCashTable.addChangeListener(myListener);
         theLoanTable.addChangeListener(myListener);
-        theEventTable.addChangeListener(myListener);
-        theTagTable.addChangeListener(myListener);
+        thePortfolioTable.addChangeListener(myListener);
+        theSecurityTable.addChangeListener(myListener);
+        thePayeeTable.addChangeListener(myListener);
     }
 
     /**
@@ -210,8 +195,9 @@ public class CategoryPanel
         theDepositTable.refreshData();
         theCashTable.refreshData();
         theLoanTable.refreshData();
-        theEventTable.refreshData();
-        theTagTable.refreshData();
+        thePortfolioTable.refreshData();
+        theSecurityTable.refreshData();
+        thePayeeTable.refreshData();
     }
 
     /**
@@ -229,11 +215,14 @@ public class CategoryPanel
             case LOANS:
                 theLoanTable.determineFocus();
                 break;
-            case EVENTS:
-                theEventTable.determineFocus();
+            case PORTFOLIOS:
+                thePortfolioTable.determineFocus();
                 break;
-            case EVENTTAGS:
-                theTagTable.determineFocus();
+            case SECURITIES:
+                theSecurityTable.determineFocus();
+                break;
+            case PAYEES:
+                thePayeeTable.determineFocus();
                 break;
             default:
                 break;
@@ -254,10 +243,13 @@ public class CategoryPanel
             hasUpdates = theLoanTable.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = theEventTable.hasUpdates();
+            hasUpdates = thePortfolioTable.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = theTagTable.hasUpdates();
+            hasUpdates = theSecurityTable.hasUpdates();
+        }
+        if (!hasUpdates) {
+            hasUpdates = thePayeeTable.hasUpdates();
         }
 
         /* Return to caller */
@@ -278,10 +270,13 @@ public class CategoryPanel
             hasErrors = theLoanTable.hasErrors();
         }
         if (!hasErrors) {
-            hasErrors = theEventTable.hasErrors();
+            hasErrors = thePortfolioTable.hasErrors();
         }
         if (!hasErrors) {
-            hasErrors = theTagTable.hasErrors();
+            hasErrors = theSecurityTable.hasErrors();
+        }
+        if (!hasErrors) {
+            hasErrors = thePayeeTable.hasErrors();
         }
 
         /* Return to caller */
@@ -291,7 +286,7 @@ public class CategoryPanel
     /**
      * Listener.
      */
-    private final class CategoryListener
+    private final class AccountListener
             implements ActionListener, ChangeListener {
         /**
          * Show Selection menu.
@@ -303,7 +298,7 @@ public class CategoryPanel
             /* Loop through the panel names */
             for (PanelName myName : PanelName.values()) {
                 /* Add reference */
-                CategoryAction myAction = new CategoryAction(myName);
+                AccountAction myAction = new AccountAction(myName);
                 JMenuItem myItem = new JMenuItem(myAction);
                 myPopUp.add(myItem);
             }
@@ -334,12 +329,12 @@ public class CategoryPanel
     /**
      * Category action class.
      */
-    private final class CategoryAction
+    private final class AccountAction
             extends AbstractAction {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 9120967972698885733L;
+        private static final long serialVersionUID = -1763554175717417130L;
 
         /**
          * Category name.
@@ -350,7 +345,7 @@ public class CategoryPanel
          * Constructor.
          * @param pName the panel name
          */
-        private CategoryAction(final PanelName pName) {
+        private AccountAction(final PanelName pName) {
             super(pName.toString());
             theName = pName;
         }
@@ -359,7 +354,6 @@ public class CategoryPanel
         public void actionPerformed(final ActionEvent e) {
             /* Move correct card to front */
             theLayout.show(theCardPanel, theName.toString());
-            theFilterLayout.show(theFilterCardPanel, theName.toString());
 
             /* Note the active panel */
             theActive = theName;
@@ -387,14 +381,19 @@ public class CategoryPanel
         LOANS,
 
         /**
-         * Events.
+         * Portfolios.
          */
-        EVENTS,
+        PORTFOLIOS,
 
         /**
-         * Tags.
+         * Securities.
          */
-        EVENTTAGS;
+        SECURITIES,
+
+        /**
+         * Payees.
+         */
+        PAYEES;
 
         /**
          * The String name.

@@ -34,24 +34,29 @@ public enum QIFType {
     ACEMONEY,
 
     /**
-     * BankTree.
-     */
-    BANKTREE,
-
-    /**
      * MoneyDance.
      */
     MONEYDANCE,
 
     /**
-     * YouNeedABudget.
+     * Quicken2004.
      */
-    YNAB;
+    QUICKEN;
 
     /**
      * Quicken suffix.
      */
     public static final String QIF_SUFFIX = ".qif";
+
+    /**
+     * Standard Quicken Date Format.
+     */
+    private static final String QIF_DATEFORMAT = "dd/MM/yy";
+
+    /**
+     * Quicken2004 Date Format.
+     */
+    private static final String QIF2004_DATEFORMAT = "MM/dd/yy";
 
     /**
      * Resource Bundle.
@@ -84,9 +89,8 @@ public enum QIFType {
     public boolean useConsolidatedFile() {
         switch (this) {
             case ACEMONEY:
-            case BANKTREE:
             case MONEYDANCE:
-            case YNAB:
+            case QUICKEN:
                 return true;
             default:
                 return false;
@@ -101,11 +105,10 @@ public enum QIFType {
      */
     public boolean useSimpleTransfer() {
         switch (this) {
-            case BANKTREE:
-            case YNAB:
             case MONEYDANCE:
                 return true;
             case ACEMONEY:
+            case QUICKEN:
             default:
                 return false;
         }
@@ -122,8 +125,7 @@ public enum QIFType {
             case ACEMONEY:
             case MONEYDANCE:
                 return true;
-            case BANKTREE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return false;
         }
@@ -139,9 +141,8 @@ public enum QIFType {
     public boolean selfOpeningBalance() {
         switch (this) {
             case ACEMONEY:
-            case BANKTREE:
             case MONEYDANCE:
-            case YNAB:
+            case QUICKEN:
                 return false;
             default:
                 return true;
@@ -159,9 +160,8 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
             case MONEYDANCE:
+            case QUICKEN:
                 return true;
-            case BANKTREE:
-            case YNAB:
             default:
                 return false;
         }
@@ -176,10 +176,9 @@ public enum QIFType {
     public boolean useStockSplit() {
         switch (this) {
             case ACEMONEY:
-            case BANKTREE:
-            case YNAB:
                 return false;
             case MONEYDANCE:
+            case QUICKEN:
             default:
                 return true;
         }
@@ -196,8 +195,7 @@ public enum QIFType {
             case ACEMONEY:
                 return false;
             case MONEYDANCE:
-            case BANKTREE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return true;
         }
@@ -215,8 +213,7 @@ public enum QIFType {
             case MONEYDANCE:
             case ACEMONEY:
                 return false;
-            case BANKTREE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return true;
         }
@@ -233,8 +230,7 @@ public enum QIFType {
             case ACEMONEY:
                 return false;
             case MONEYDANCE:
-            case BANKTREE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return true;
         }
@@ -252,10 +248,24 @@ public enum QIFType {
             case ACEMONEY:
                 return false;
             case MONEYDANCE:
-            case BANKTREE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Obtain date format.
+     * @return true/false
+     */
+    public String getDateFormat() {
+        switch (this) {
+            case QUICKEN:
+                return QIF2004_DATEFORMAT;
+            case ACEMONEY:
+            case MONEYDANCE:
+            default:
+                return QIF_DATEFORMAT;
         }
     }
 
@@ -268,9 +278,8 @@ public enum QIFType {
             case ACEMONEY:
                 return "all accounts"
                        + QIF_SUFFIX;
-            case BANKTREE:
             case MONEYDANCE:
-            case YNAB:
+            case QUICKEN:
             default:
                 return toString()
                        + QIF_SUFFIX;
