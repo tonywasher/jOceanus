@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -47,8 +46,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -120,19 +117,14 @@ public class PortfolioTable
     private final transient UpdateEntry<Portfolio, MoneyWiseDataType> thePortfolioEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataPortfolios;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * The Table Model.
+     */
+    private final PortfolioTableModel theModel;
 
     /**
      * The Column Model.
@@ -160,34 +152,30 @@ public class PortfolioTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public PortfolioTable(final View pView) {
+    public PortfolioTable(final View pView,
+                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                          final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        PortfolioListener myListener = new PortfolioListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         thePortfolioEntry = theUpdateSet.registerClass(Portfolio.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataPortfolios = myDataMgr.new JDataEntry(PortfolioTable.class.getSimpleName());
-        theDataPortfolios.addAsChildOf(mySection);
-        theDataPortfolios.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataPortfolios);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
-        PortfolioTableModel myModel = new PortfolioTableModel(this);
-        setModel(myModel);
+        theModel = new PortfolioTableModel(this);
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new PortfolioColumnModel(this);
@@ -196,41 +184,35 @@ public class PortfolioTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Create listener */
-        PortfolioListener myListener = new PortfolioListener();
+        /* Listen to view */
         theView.addChangeListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataPortfolios.setFocus();
+        pEntry.setFocus(thePortfolioEntry.getName());
     }
 
     /**
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
         PortfolioList myPortfolios = myData.getPortfolios();
         thePortfolios = myPortfolios.deriveEditList();
         setList(thePortfolios);
         thePortfolioEntry.setDataList(thePortfolios);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataPortfolios.setObject(theUpdateSet);
     }
 
     @Override
@@ -246,6 +228,19 @@ public class PortfolioTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select portfolio.
+     * @param pPortfolio the portfolio to select
+     */
+    protected void selectPortfolio(final Portfolio pPortfolio) {
+        /* Find the item in the list */
+        int myIndex = thePortfolios.indexOf(pPortfolio);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -339,6 +334,12 @@ public class PortfolioTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }

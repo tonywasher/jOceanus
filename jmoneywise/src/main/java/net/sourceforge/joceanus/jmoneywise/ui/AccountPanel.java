@@ -42,7 +42,21 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
@@ -66,6 +80,11 @@ public class AccountPanel
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPanel.class.getName());
+
+    /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = NLS_BUNDLE.getString("DataEntryTitle");
 
     /**
      * Text for Selection Title.
@@ -128,17 +147,48 @@ public class AccountPanel
     private final PayeeTable thePayeeTable;
 
     /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+
+    /**
+     * The data entry.
+     */
+    private final transient JDataEntry theDataEntry;
+
+    /**
+     * The save buttons panel.
+     */
+    private final SaveButtons theSaveButtons;
+
+    /**
      * Constructor.
      * @param pView the data view
      */
     public AccountPanel(final View pView) {
+        /* Build the Update set */
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView);
+
+        /* Create the top level debug entry for this view */
+        JDataManager myDataMgr = pView.getDataMgr();
+        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
+
+        /* Create the error panel */
+        ErrorPanel myError = new ErrorPanel(myDataMgr, theDataEntry);
+
+        /* Create the save buttons panel */
+        theSaveButtons = new SaveButtons(theUpdateSet);
+
         /* Create the table panels */
-        theDepositTable = new DepositTable(pView);
-        theCashTable = new CashTable(pView);
-        theLoanTable = new LoanTable(pView);
-        thePortfolioTable = new PortfolioTable(pView);
-        theSecurityTable = new SecurityTable(pView);
-        thePayeeTable = new PayeeTable(pView);
+        theDepositTable = new DepositTable(pView, theUpdateSet, myError);
+        theCashTable = new CashTable(pView, theUpdateSet, myError);
+        theLoanTable = new LoanTable(pView, theUpdateSet, myError);
+        thePortfolioTable = new PortfolioTable(pView, theUpdateSet, myError);
+        theSecurityTable = new SecurityTable(pView, theUpdateSet, myError);
+        thePayeeTable = new PayeeTable(pView, theUpdateSet, myError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -175,7 +225,9 @@ public class AccountPanel
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
+        add(myError);
         add(theCardPanel);
+        add(theSaveButtons);
 
         /* Create the listener */
         AccountListener myListener = new AccountListener();
@@ -198,6 +250,12 @@ public class AccountPanel
         thePortfolioTable.refreshData();
         theSecurityTable.refreshData();
         thePayeeTable.refreshData();
+
+        /* Enable the save buttons */
+        theSaveButtons.setEnabled(true);
+
+        /* Touch the updateSet */
+        theDataEntry.setObject(theUpdateSet);
     }
 
     /**
@@ -207,22 +265,22 @@ public class AccountPanel
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
-                theDepositTable.determineFocus();
+                theDepositTable.determineFocus(theDataEntry);
                 break;
             case CASH:
-                theCashTable.determineFocus();
+                theCashTable.determineFocus(theDataEntry);
                 break;
             case LOANS:
-                theLoanTable.determineFocus();
+                theLoanTable.determineFocus(theDataEntry);
                 break;
             case PORTFOLIOS:
-                thePortfolioTable.determineFocus();
+                thePortfolioTable.determineFocus(theDataEntry);
                 break;
             case SECURITIES:
-                theSecurityTable.determineFocus();
+                theSecurityTable.determineFocus(theDataEntry);
                 break;
             case PAYEES:
-                thePayeeTable.determineFocus();
+                thePayeeTable.determineFocus(theDataEntry);
                 break;
             default:
                 break;
@@ -281,6 +339,49 @@ public class AccountPanel
 
         /* Return to caller */
         return hasErrors;
+    }
+
+    /**
+     * Select account.
+     * @param pAccount the account to select
+     */
+    protected void selectAccount(final AssetBase<?> pAccount) {
+        /* Determine which panel to show */
+        if (pAccount instanceof Deposit) {
+            theDepositTable.selectDeposit((Deposit) pAccount);
+            showPanel(PanelName.DEPOSITS);
+        } else if (pAccount instanceof Cash) {
+            theCashTable.selectCash((Cash) pAccount);
+            showPanel(PanelName.CASH);
+        } else if (pAccount instanceof Loan) {
+            theLoanTable.selectLoan((Loan) pAccount);
+            showPanel(PanelName.LOANS);
+        } else if (pAccount instanceof Portfolio) {
+            thePortfolioTable.selectPortfolio((Portfolio) pAccount);
+            showPanel(PanelName.PORTFOLIOS);
+        } else if (pAccount instanceof Security) {
+            theSecurityTable.selectSecurity((Security) pAccount);
+            showPanel(PanelName.SECURITIES);
+        } else if (pAccount instanceof Payee) {
+            thePayeeTable.selectPayee((Payee) pAccount);
+            showPanel(PanelName.PAYEES);
+        }
+    }
+
+    /**
+     * Show panel.
+     * @param pName the panel name
+     */
+    private void showPanel(final PanelName pName) {
+        /* Obtain name of panel */
+        String myName = pName.toString();
+
+        /* Move correct card to front */
+        theLayout.show(theCardPanel, myName);
+
+        /* Note the active panel */
+        theActive = pName;
+        theSelectButton.setText(myName);
     }
 
     /**
@@ -352,12 +453,8 @@ public class AccountPanel
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            /* Move correct card to front */
-            theLayout.show(theCardPanel, theName.toString());
-
-            /* Note the active panel */
-            theActive = theName;
-            theSelectButton.setText(theName.toString());
+            /* Show the desired panel */
+            showPanel(theName);
         }
     }
 

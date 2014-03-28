@@ -23,12 +23,12 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
@@ -197,7 +197,7 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(pItemClass);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addActionListener(new StaticListener());
+        theUpdateSet.addChangeListener(new StaticListener());
 
         /* Set the table model */
         theModel = new StaticModel();
@@ -263,14 +263,28 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
     }
 
     /**
+     * Select static data.
+     * @param pStatic the static data
+     */
+    protected void selectStatic(final StaticData<?, ?, E> pStatic) {
+        /* Find the item in the list */
+        int myIndex = theStatic.indexOf(pStatic);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
+    }
+
+    /**
      * The listener class.
      */
     private final class StaticListener
-            implements ActionListener {
+            implements ChangeListener {
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            Object o = e.getSource();
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {

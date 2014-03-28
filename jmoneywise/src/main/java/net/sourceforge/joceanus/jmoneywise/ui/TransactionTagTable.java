@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -45,8 +44,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -103,19 +100,14 @@ public class TransactionTagTable
     private final transient UpdateEntry<TransactionTag, MoneyWiseDataType> theTransactionTagEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataTransactionTags;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * The Table Model.
+     */
+    private final TransactionTagTableModel theModel;
 
     /**
      * The Column Model.
@@ -156,34 +148,30 @@ public class TransactionTagTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public TransactionTagTable(final View pView) {
+    public TransactionTagTable(final View pView,
+                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                               final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        TransactionTagListener myListener = new TransactionTagListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         theTransactionTagEntry = theUpdateSet.registerClass(TransactionTag.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataTransactionTags = myDataMgr.new JDataEntry(TransactionTagTable.class.getSimpleName());
-        theDataTransactionTags.addAsChildOf(mySection);
-        theDataTransactionTags.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataTransactionTags);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
-        TransactionTagTableModel myModel = new TransactionTagTableModel(this);
-        setModel(myModel);
+        theModel = new TransactionTagTableModel(this);
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new TransactionTagColumnModel(this);
@@ -192,27 +180,25 @@ public class TransactionTagTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
         /* Create a dummy filter panel */
         theFilterPanel = new JPanel();
 
-        /* Create listener */
-        TransactionTagListener myListener = new TransactionTagListener();
+        /* Listen to view */
         theView.addChangeListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataTransactionTags.setFocus();
+        pEntry.setFocus(theTransactionTagEntry.getName());
     }
 
     /**
@@ -225,11 +211,7 @@ public class TransactionTagTable
         theTransactionTags = myTransactionTags.deriveEditList();
         setList(theTransactionTags);
         theTransactionTagEntry.setDataList(theTransactionTags);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataTransactionTags.setObject(theUpdateSet);
     }
 
     @Override
@@ -245,6 +227,19 @@ public class TransactionTagTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select tag.
+     * @param pTag the tag to select
+     */
+    protected void selectTag(final TransactionTag pTag) {
+        /* Find the item in the list */
+        int myIndex = theTransactionTags.indexOf(pTag);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -338,6 +333,12 @@ public class TransactionTagTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }

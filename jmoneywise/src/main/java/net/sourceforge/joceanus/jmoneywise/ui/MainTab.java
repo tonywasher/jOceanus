@@ -72,6 +72,31 @@ public class MainTab
     protected static final int ACTION_VIEWREGISTER = ACTION_VIEWSTATEMENT + 1;
 
     /**
+     * View Account.
+     */
+    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
+
+    /**
+     * View Category.
+     */
+    protected static final int ACTION_VIEWCATEGORY = ACTION_VIEWACCOUNT + 1;
+
+    /**
+     * View Tag.
+     */
+    protected static final int ACTION_VIEWTAG = ACTION_VIEWCATEGORY + 1;
+
+    /**
+     * View TaxYear.
+     */
+    protected static final int ACTION_VIEWTAXYEAR = ACTION_VIEWTAG + 1;
+
+    /**
+     * View Static.
+     */
+    protected static final int ACTION_VIEWSTATIC = ACTION_VIEWTAXYEAR + 1;
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainTab.class.getName());
@@ -233,7 +258,7 @@ public class MainTab
         theStatement = new AnalysisStatement(theView);
         theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
 
-        /* Create the register table and add to tabbed pane */
+        /* Create the Register Tab */
         theRegister = new Register(theView);
         theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
@@ -250,9 +275,11 @@ public class MainTab
         theView.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
         theRegister.addChangeListener(myListener);
+        theStatement.addChangeListener(myListener);
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
         theRegister.addActionListener(myListener);
+        theStatement.addActionListener(myListener);
         myReportTab.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
@@ -387,7 +414,7 @@ public class MainTab
         /* Pass through to the Statement view */
         theStatement.selectStatement(pSelect);
 
-        /* Goto the Accounts tab */
+        /* Goto the Statement tab */
         gotoNamedTab(TITLE_STATEMENT);
     }
 
@@ -401,6 +428,18 @@ public class MainTab
 
         /* Goto the Register tab */
         gotoNamedTab(TITLE_REGISTER);
+    }
+
+    /**
+     * Select maintenance.
+     * @param pEvent the action request
+     */
+    private void selectMaintenance(final ActionDetailEvent pEvent) {
+        /* Pass through to the Maintenance view */
+        theMaint.selectMaintenance(pEvent);
+
+        /* Goto the Maintenance tab */
+        gotoNamedTab(TITLE_MAINT);
     }
 
     /**
@@ -436,7 +475,16 @@ public class MainTab
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
         boolean showTab = !hasWorker && (!hasUpdates || theRegister.hasUpdates());
 
-        /* Enable/Disable the extract tab */
+        /* Enable/Disable the register tab */
+        if (iIndex != -1) {
+            theTabs.setEnabledAt(iIndex, showTab);
+        }
+
+        /* Access the Statement panel */
+        iIndex = theTabs.indexOfTab(TITLE_STATEMENT);
+        showTab = !hasWorker && !hasUpdates;
+
+        /* Enable/Disable the statement tab */
         if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
         }
@@ -534,7 +582,10 @@ public class MainTab
                 setVisibility();
 
                 /* else if it is one of the sub-panels */
-            } else if (theRegister.equals(o) || theMaint.equals(o) || theSpotView.equals(o)) {
+            } else if (theRegister.equals(o)
+                       || theStatement.equals(o)
+                       || theMaint.equals(o)
+                       || theSpotView.equals(o)) {
                 /* Set the visibility */
                 setVisibility();
             }
@@ -557,6 +608,15 @@ public class MainTab
                     case ACTION_VIEWSTATEMENT:
                         StatementSelect mySelect = evt.getDetails(StatementSelect.class);
                         selectStatement(mySelect);
+                        break;
+
+                    /* Access maintenance */
+                    case ACTION_VIEWACCOUNT:
+                    case ACTION_VIEWTAXYEAR:
+                    case ACTION_VIEWCATEGORY:
+                    case ACTION_VIEWTAG:
+                    case ACTION_VIEWSTATIC:
+                        selectMaintenance(evt);
                         break;
                     default:
                         break;

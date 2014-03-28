@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.event.ChangeEvent;
@@ -33,6 +35,8 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferencesPanel;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
@@ -63,11 +67,13 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.ui.StaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jthemis.git.data.GitPreferences;
@@ -199,38 +205,42 @@ public class MaintenanceTab
         theAccountTab = new AccountPanel(theView);
         theTabs.addTab(TITLE_ACCOUNT, theAccountTab);
         theAccountTab.addChangeListener(myListener);
+        theAccountTab.addActionListener(myListener);
 
         /* Create the category Tab and add it */
         theCategoryTab = new CategoryPanel(theView);
         theTabs.addTab(TITLE_CATEGORY, theCategoryTab);
         theCategoryTab.addChangeListener(myListener);
+        theCategoryTab.addActionListener(myListener);
 
         /* Create the TaxYears Tab */
         theTaxYearTab = new MaintTaxYear(theView);
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab);
         theTaxYearTab.addChangeListener(myListener);
+        theTaxYearTab.addActionListener(myListener);
 
         /* Create the Static Tab */
         theStatic = new StaticDataPanel<MoneyWiseDataType>(theView);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
+        theStatic.addActionListener(myListener);
         theView.addChangeListener(myListener);
 
         /* Add the static elements */
-        theStatic.addStatic(DepositCategoryType.LIST_NAME, DepositCategoryTypeList.class, DepositCategoryType.class);
-        theStatic.addStatic(CashCategoryType.LIST_NAME, CashCategoryTypeList.class, CashCategoryType.class);
-        theStatic.addStatic(LoanCategoryType.LIST_NAME, LoanCategoryTypeList.class, LoanCategoryType.class);
-        theStatic.addStatic(PayeeType.LIST_NAME, PayeeTypeList.class, PayeeType.class);
-        theStatic.addStatic(SecurityType.LIST_NAME, SecurityTypeList.class, SecurityType.class);
-        theStatic.addStatic(TransactionCategoryType.LIST_NAME, TransactionCategoryTypeList.class, TransactionCategoryType.class);
-        theStatic.addStatic(AccountCurrency.LIST_NAME, AccountCurrencyList.class, AccountCurrency.class);
-        theStatic.addStatic(TaxBasis.LIST_NAME, TaxBasisList.class, TaxBasis.class);
-        theStatic.addStatic(TaxCategory.LIST_NAME, TaxCategoryList.class, TaxCategory.class);
-        theStatic.addStatic(TaxRegime.LIST_NAME, TaxRegimeList.class, TaxRegime.class);
-        theStatic.addStatic(Frequency.LIST_NAME, FrequencyList.class, Frequency.class);
-        theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
-        theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
-        theStatic.addStatic(TransactionInfoType.LIST_NAME, TransactionInfoTypeList.class, TransactionInfoType.class);
+        theStatic.addStatic(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class, DepositCategoryType.class);
+        theStatic.addStatic(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class, CashCategoryType.class);
+        theStatic.addStatic(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class, LoanCategoryType.class);
+        theStatic.addStatic(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class, PayeeType.class);
+        theStatic.addStatic(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class, SecurityType.class);
+        theStatic.addStatic(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class, TransactionCategoryType.class);
+        theStatic.addStatic(MoneyWiseDataType.CURRENCY, AccountCurrencyList.class, AccountCurrency.class);
+        theStatic.addStatic(MoneyWiseDataType.TAXBASIS, TaxBasisList.class, TaxBasis.class);
+        theStatic.addStatic(MoneyWiseDataType.TAXTYPE, TaxCategoryList.class, TaxCategory.class);
+        theStatic.addStatic(MoneyWiseDataType.TAXREGIME, TaxRegimeList.class, TaxRegime.class);
+        theStatic.addStatic(MoneyWiseDataType.FREQUENCY, FrequencyList.class, Frequency.class);
+        theStatic.addStatic(MoneyWiseDataType.TAXINFOTYPE, TaxYearInfoTypeList.class, TaxYearInfoType.class);
+        theStatic.addStatic(MoneyWiseDataType.ACCOUNTINFOTYPE, AccountInfoTypeList.class, AccountInfoType.class);
+        theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class, TransactionInfoType.class);
 
         /* Create the Preferences Tab */
         PreferenceManager myPrefs = theView.getPreferenceMgr();
@@ -305,16 +315,67 @@ public class MaintenanceTab
     }
 
     /**
-     * Select an explicit account for maintenance.
-     * @param pAccount the account
+     * Select maintenance.
+     * @param pEvent the action request
      */
-    // public void selectAccount(final AssetBase<?> pAccount) {
-    /* Pass through to the Account control */
-    // theAccountTab.selectAccount(pAccount);
+    protected void selectMaintenance(final ActionDetailEvent pEvent) {
+        /* Switch on the subId */
+        switch (pEvent.getSubId()) {
+        /* View the requested account */
+            case MainTab.ACTION_VIEWACCOUNT:
+                /* Select the requested account */
+                AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
+                theAccountTab.selectAccount(myAccount);
 
-    /* Goto the Accounts tab */
-    // gotoNamedTab(TITLE_ACCOUNTS);
-    // }
+                /* Goto the Account tab */
+                gotoNamedTab(TITLE_ACCOUNT);
+                break;
+
+            /* View the requested category */
+            case MainTab.ACTION_VIEWCATEGORY:
+                /* Select the requested category */
+                Object myCategory = pEvent.getDetails();
+                theCategoryTab.selectCategory(myCategory);
+
+                /* Goto the Category tab */
+                gotoNamedTab(TITLE_CATEGORY);
+                break;
+
+            /* View the requested tag */
+            case MainTab.ACTION_VIEWTAG:
+                /* Select the requested tag */
+                Object myTag = pEvent.getDetails();
+                theCategoryTab.selectTag(myTag);
+
+                /* Goto the Category tab */
+                gotoNamedTab(TITLE_CATEGORY);
+                break;
+
+            /* View the requested taxYear */
+            case MainTab.ACTION_VIEWTAXYEAR:
+                /* Select the requested tag */
+                TaxYear myYear = pEvent.getDetails(TaxYear.class);
+                theTaxYearTab.selectTaxYear(myYear);
+
+                /* Goto the TaxYears tab */
+                gotoNamedTab(TITLE_TAXYEARS);
+                break;
+
+            /* View the requested static */
+            case MainTab.ACTION_VIEWSTATIC:
+                /* Select the requested tag */
+                StaticData<?, ?, MoneyWiseDataType> myData = pEvent.getDetails(StaticData.class);
+                theStatic.selectStatic(myData);
+
+                /* Goto the Static tab */
+                gotoNamedTab(TITLE_STATIC);
+                break;
+
+            /* Unsupported request */
+            default:
+                break;
+        }
+    }
 
     /**
      * Goto the specific tab.
@@ -417,7 +478,7 @@ public class MaintenanceTab
      * The listener class.
      */
     private final class MaintenanceListener
-            implements ChangeListener {
+            implements ChangeListener, ActionListener {
         @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();
@@ -432,6 +493,33 @@ public class MaintenanceTab
             } else {
                 /* Set the visibility */
                 setVisibility();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If this is an ActionDetailEvent */
+            if (e instanceof ActionDetailEvent) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) e;
+                switch (evt.getSubId()) {
+                /* Pass through the event */
+                    case MainTab.ACTION_VIEWREGISTER:
+                    case MainTab.ACTION_VIEWSTATEMENT:
+                        cascadeActionEvent(evt);
+                        break;
+
+                    /* Access maintenance */
+                    case MainTab.ACTION_VIEWACCOUNT:
+                    case MainTab.ACTION_VIEWTAXYEAR:
+                    case MainTab.ACTION_VIEWCATEGORY:
+                    case MainTab.ACTION_VIEWTAG:
+                    case MainTab.ACTION_VIEWSTATIC:
+                        selectMaintenance(evt);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

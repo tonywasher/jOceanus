@@ -42,7 +42,19 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
+import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
+import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
+import net.sourceforge.joceanus.jprometheus.views.DataControl;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
@@ -66,6 +78,11 @@ public class CategoryPanel
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CategoryPanel.class.getName());
+
+    /**
+     * Text for DataEntry Title.
+     */
+    private static final String NLS_DATAENTRY = NLS_BUNDLE.getString("DataEntryTitle");
 
     /**
      * Text for Selection Title.
@@ -133,16 +150,47 @@ public class CategoryPanel
     private final TransactionTagTable theTagTable;
 
     /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+
+    /**
+     * The data entry.
+     */
+    private final transient JDataEntry theDataEntry;
+
+    /**
+     * The save buttons panel.
+     */
+    private final SaveButtons theSaveButtons;
+
+    /**
      * Constructor.
      * @param pView the data view
      */
     public CategoryPanel(final View pView) {
+        /* Build the Update set */
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView);
+
+        /* Create the top level debug entry for this view */
+        JDataManager myDataMgr = pView.getDataMgr();
+        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new JDataEntry(NLS_DATAENTRY);
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
+
+        /* Create the error panel */
+        ErrorPanel myError = new ErrorPanel(myDataMgr, theDataEntry);
+
+        /* Create the save buttons panel */
+        theSaveButtons = new SaveButtons(theUpdateSet);
+
         /* Create the table panels */
-        theDepositTable = new DepositCategoryTable(pView);
-        theCashTable = new CashCategoryTable(pView);
-        theLoanTable = new LoanCategoryTable(pView);
-        theEventTable = new TransactionCategoryTable(pView);
-        theTagTable = new TransactionTagTable(pView);
+        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, myError);
+        theCashTable = new CashCategoryTable(pView, theUpdateSet, myError);
+        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, myError);
+        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, myError);
+        theTagTable = new TransactionTagTable(pView, theUpdateSet, myError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -191,7 +239,9 @@ public class CategoryPanel
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
+        add(myError);
         add(theCardPanel);
+        add(theSaveButtons);
 
         /* Create the listener */
         CategoryListener myListener = new CategoryListener();
@@ -207,11 +257,18 @@ public class CategoryPanel
      * Refresh data.
      */
     protected void refreshData() {
+        /* Refresh the tables */
         theDepositTable.refreshData();
         theCashTable.refreshData();
         theLoanTable.refreshData();
         theEventTable.refreshData();
         theTagTable.refreshData();
+
+        /* Enable the save buttons */
+        theSaveButtons.setEnabled(true);
+
+        /* Touch the updateSet */
+        theDataEntry.setObject(theUpdateSet);
     }
 
     /**
@@ -221,19 +278,19 @@ public class CategoryPanel
         /* Switch on active component */
         switch (theActive) {
             case DEPOSITS:
-                theDepositTable.determineFocus();
+                theDepositTable.determineFocus(theDataEntry);
                 break;
             case CASH:
-                theCashTable.determineFocus();
+                theCashTable.determineFocus(theDataEntry);
                 break;
             case LOANS:
-                theLoanTable.determineFocus();
+                theLoanTable.determineFocus(theDataEntry);
                 break;
             case EVENTS:
-                theEventTable.determineFocus();
+                theEventTable.determineFocus(theDataEntry);
                 break;
             case EVENTTAGS:
-                theTagTable.determineFocus();
+                theTagTable.determineFocus(theDataEntry);
                 break;
             default:
                 break;
@@ -286,6 +343,56 @@ public class CategoryPanel
 
         /* Return to caller */
         return hasErrors;
+    }
+
+    /**
+     * Select category.
+     * @param pCategory the category to select
+     */
+    protected void selectCategory(final Object pCategory) {
+        /* Determine which panel to show */
+        if (pCategory instanceof DepositCategory) {
+            theDepositTable.selectCategory((DepositCategory) pCategory);
+            showPanel(PanelName.DEPOSITS);
+        } else if (pCategory instanceof CashCategory) {
+            theCashTable.selectCategory((CashCategory) pCategory);
+            showPanel(PanelName.CASH);
+        } else if (pCategory instanceof LoanCategory) {
+            theLoanTable.selectCategory((LoanCategory) pCategory);
+            showPanel(PanelName.LOANS);
+        } else if (pCategory instanceof TransactionCategory) {
+            theEventTable.selectCategory((TransactionCategory) pCategory);
+            showPanel(PanelName.EVENTS);
+        }
+    }
+
+    /**
+     * Select tag.
+     * @param pTag the category to select
+     */
+    protected void selectTag(final Object pTag) {
+        /* Determine which panel to show */
+        if (pTag instanceof TransactionTag) {
+            theTagTable.selectTag((TransactionTag) pTag);
+            showPanel(PanelName.EVENTTAGS);
+        }
+    }
+
+    /**
+     * Show panel.
+     * @param pName the panel name
+     */
+    private void showPanel(final PanelName pName) {
+        /* Obtain name of panel */
+        String myName = pName.toString();
+
+        /* Move correct card to front */
+        theLayout.show(theCardPanel, myName);
+        theFilterLayout.show(theFilterCardPanel, myName);
+
+        /* Note the active panel */
+        theActive = pName;
+        theSelectButton.setText(myName);
     }
 
     /**
@@ -357,13 +464,8 @@ public class CategoryPanel
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            /* Move correct card to front */
-            theLayout.show(theCardPanel, theName.toString());
-            theFilterLayout.show(theFilterCardPanel, theName.toString());
-
-            /* Note the active panel */
-            theActive = theName;
-            theSelectButton.setText(theName.toString());
+            /* Show the desired panel */
+            showPanel(theName);
         }
     }
 

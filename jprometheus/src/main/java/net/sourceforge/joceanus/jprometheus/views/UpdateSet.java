@@ -51,11 +51,6 @@ public class UpdateSet<E extends Enum<E>>
         extends JEventObject
         implements JDataContents {
     /**
-     * Rewind action.
-     */
-    public static final String ACTION_REWIND = "ReWind";
-
-    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(UpdateSet.class.getName());
@@ -249,7 +244,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Fire that we have rewound the updateSet */
-        fireActionPerformed(ACTION_REWIND);
+        fireStateChanged();
     }
 
     /**
@@ -294,7 +289,7 @@ public class UpdateSet<E extends Enum<E>>
         /* Reject request if there are errors */
         if (hasErrors()) {
             /* Fire that we have rewound the updateSet */
-            fireActionPerformed(ACTION_REWIND);
+            fireStateChanged();
             return;
         }
 

@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -47,8 +46,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -125,19 +122,14 @@ public class CashTable
     private final transient UpdateEntry<Cash, MoneyWiseDataType> theCashEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataCashs;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * The Table Model.
+     */
+    private final CashTableModel theModel;
 
     /**
      * The Column Model.
@@ -165,34 +157,30 @@ public class CashTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public CashTable(final View pView) {
+    public CashTable(final View pView,
+                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                     final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        CashListener myListener = new CashListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         theCashEntry = theUpdateSet.registerClass(Cash.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCashs = myDataMgr.new JDataEntry(CashTable.class.getSimpleName());
-        theDataCashs.addAsChildOf(mySection);
-        theDataCashs.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataCashs);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
-        CashTableModel myModel = new CashTableModel(this);
-        setModel(myModel);
+        theModel = new CashTableModel(this);
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new CashColumnModel(this);
@@ -201,41 +189,35 @@ public class CashTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Create listener */
-        CashListener myListener = new CashListener();
+        /* Listen to view */
         theView.addChangeListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataCashs.setFocus();
+        pEntry.setFocus(theCashEntry.getName());
     }
 
     /**
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Cash edit list */
         MoneyWiseData myData = theView.getData();
         CashList myCash = myData.getCash();
         theCash = myCash.deriveEditList();
         setList(theCash);
         theCashEntry.setDataList(theCash);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataCashs.setObject(theUpdateSet);
     }
 
     @Override
@@ -251,6 +233,19 @@ public class CashTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select cash.
+     * @param pCash the cash to select
+     */
+    protected void selectCash(final Cash pCash) {
+        /* Find the item in the list */
+        int myIndex = theCash.indexOf(pCash);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -344,6 +339,12 @@ public class CashTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }

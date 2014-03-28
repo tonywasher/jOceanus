@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRend
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
@@ -47,8 +46,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -130,19 +127,14 @@ public class LoanTable
     private final transient UpdateEntry<Loan, MoneyWiseDataType> theLoanEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataLoans;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * The Table Model.
+     */
+    private final LoanTableModel theModel;
 
     /**
      * The Column Model.
@@ -170,34 +162,30 @@ public class LoanTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public LoanTable(final View pView) {
+    public LoanTable(final View pView,
+                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                     final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        LoanListener myListener = new LoanListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         theLoanEntry = theUpdateSet.registerClass(Loan.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataLoans = myDataMgr.new JDataEntry(LoanTable.class.getSimpleName());
-        theDataLoans.addAsChildOf(mySection);
-        theDataLoans.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataLoans);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
-        LoanTableModel myModel = new LoanTableModel(this);
-        setModel(myModel);
+        theModel = new LoanTableModel(this);
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new LoanColumnModel(this);
@@ -206,41 +194,35 @@ public class LoanTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Create listener */
-        LoanListener myListener = new LoanListener();
+        /* Listen to view */
         theView.addChangeListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataLoans.setFocus();
+        pEntry.setFocus(theLoanEntry.getName());
     }
 
     /**
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Loans edit list */
         MoneyWiseData myData = theView.getData();
         LoanList myLoans = myData.getLoans();
         theLoans = myLoans.deriveEditList();
         setList(theLoans);
         theLoanEntry.setDataList(theLoans);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataLoans.setObject(theUpdateSet);
     }
 
     @Override
@@ -256,6 +238,19 @@ public class LoanTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select loan.
+     * @param pLoan the loan to select
+     */
+    protected void selectLoan(final Loan pLoan) {
+        /* Find the item in the list */
+        int myIndex = theLoans.indexOf(pLoan);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -349,6 +344,12 @@ public class LoanTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }

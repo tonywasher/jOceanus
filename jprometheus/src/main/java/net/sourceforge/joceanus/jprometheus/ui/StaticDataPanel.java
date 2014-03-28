@@ -45,6 +45,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldEnum;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
@@ -62,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * @author Tony Washer
  * @param <E> the data type enum class
  */
-public class StaticDataPanel<E extends Enum<E>>
+public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         extends JEventPanel {
     /**
      * Serial Id.
@@ -216,13 +217,13 @@ public class StaticDataPanel<E extends Enum<E>>
 
     /**
      * Add static panel.
-     * @param pListName the name of the list
+     * @param pItemType the type of the list
      * @param pListClass the class of the list
      * @param pItemClass the class of the items
      * @param <L> the list type
      * @param <T> the data type
      */
-    public <L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>> void addStatic(final String pListName,
+    public <L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>> void addStatic(final E pItemType,
                                                                                          final Class<L> pListClass,
                                                                                          final Class<T> pItemClass) {
         /* Create the new panel */
@@ -231,16 +232,19 @@ public class StaticDataPanel<E extends Enum<E>>
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);
 
+        /* Access list name */
+        String myName = pItemType.getFieldName();
+
         /* Add to the card panels */
-        theCardPanel.add(myPanel.getPanel(), pListName);
+        theCardPanel.add(myPanel.getPanel(), myName);
 
         /* Add to the Map */
-        theMap.put(pListName, myPanel);
+        theMap.put(myName, myPanel);
 
         /* If we do not have an active panel */
         if (theActive == null) {
             /* select this panel */
-            setSelection(pListName);
+            setSelection(myName);
         }
     }
 
@@ -287,6 +291,24 @@ public class StaticDataPanel<E extends Enum<E>>
     }
 
     /**
+     * Select static data.
+     * @param pStatic the static data to select
+     */
+    public void selectStatic(final StaticData<?, ?, E> pStatic) {
+        /* Access the item type */
+        E myType = pStatic.getItemType();
+        String myName = myType.getFieldName();
+
+        /* Access the panel */
+        StaticDataTable<?, ?, E> myPanel = theMap.get(myName);
+        if (myPanel != null) {
+            /* Update selection */
+            myPanel.selectStatic(pStatic);
+            setSelection(myName);
+        }
+    }
+
+    /**
      * Refresh views/controls after a load/update of underlying data.
      * @throws JOceanusException on error
      */
@@ -296,6 +318,9 @@ public class StaticDataPanel<E extends Enum<E>>
             /* Refresh the panel */
             myPanel.refreshData();
         }
+
+        /* Enable the save buttons */
+        theSaveButtons.setEnabled(true);
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -310,15 +335,6 @@ public class StaticDataPanel<E extends Enum<E>>
             /* Refresh the underlying children */
             myPanel.cancelEditing();
         }
-    }
-
-    @Override
-    public void setEnabled(final boolean bEnabled) {
-        /* Pass on to important elements */
-        theSelectButton.setEnabled(bEnabled);
-        theError.setEnabled(bEnabled);
-        theCardPanel.setEnabled(bEnabled);
-        theSaveButtons.setEnabled(bEnabled);
     }
 
     /**

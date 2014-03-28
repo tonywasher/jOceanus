@@ -395,7 +395,7 @@ public final class TransactionCategory
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBase.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

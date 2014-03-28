@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRender
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -58,8 +57,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -138,16 +135,6 @@ public class TransactionCategoryTable
     private final transient UpdateEntry<TransactionCategory, MoneyWiseDataType> theCategoryEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataCategories;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -206,30 +193,26 @@ public class TransactionCategoryTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public TransactionCategoryTable(final View pView) {
+    public TransactionCategoryTable(final View pView,
+                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                    final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        CategoryListener myListener = new CategoryListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         theCategoryEntry = theUpdateSet.registerClass(TransactionCategory.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataCategories = myDataMgr.new JDataEntry(TransactionCategoryTable.class.getSimpleName());
-        theDataCategories.addAsChildOf(mySection);
-        theDataCategories.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataCategories);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new CategoryTableModel(this);
@@ -258,25 +241,23 @@ public class TransactionCategoryTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Create listener */
-        CategoryListener myListener = new CategoryListener();
+        /* Listen to view and selection */
         theView.addChangeListener(myListener);
         theSelectButton.addActionListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataCategories.setFocus();
+        pEntry.setFocus(theCategoryEntry.getName());
     }
 
     /**
@@ -289,11 +270,7 @@ public class TransactionCategoryTable
         theCategories = myCategories.deriveEditList();
         setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataCategories.setObject(theUpdateSet);
     }
 
     @Override
@@ -309,6 +286,33 @@ public class TransactionCategoryTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select category.
+     * @param pCategory the category to select
+     */
+    protected void selectCategory(final TransactionCategory pCategory) {
+        /* Obtain the parent of the category */
+        TransactionCategory myParent = pCategory.getParentCategory();
+
+        /* If we have a changed category */
+        if (!Difference.isEqual(myParent, theParent)) {
+            /* Store new category */
+            theParent = pCategory;
+            theSelectButton.setText(pCategory.getName());
+            theModel.fireNewDataEvents();
+        }
+
+        /* Find the item in the list */
+        int myIndex = theCategories.indexOf(pCategory);
+        if (myIndex != -1) {
+            myIndex = convertRowIndexToView(myIndex);
+        }
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -404,6 +408,12 @@ public class TransactionCategoryTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
 

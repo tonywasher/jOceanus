@@ -779,6 +779,14 @@ public class MaintTaxYear
     }
 
     /**
+     * Select taxYear.
+     * @param pYear the taxYear to select
+     */
+    protected void selectTaxYear(final TaxYear pYear) {
+        /* Intentionally null */
+    }
+
+    /**
      * Show the tax year.
      */
     private void showTaxYear() {

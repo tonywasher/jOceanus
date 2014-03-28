@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRende
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -45,8 +44,6 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
-import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -128,19 +125,14 @@ public class SecurityTable
     private final transient UpdateEntry<Security, MoneyWiseDataType> theSecurityEntry;
 
     /**
-     * The analysis data entry.
-     */
-    private final transient JDataEntry theDataSecurities;
-
-    /**
-     * The save buttons.
-     */
-    private final SaveButtons theSaveButtons;
-
-    /**
      * The error panel.
      */
     private final ErrorPanel theError;
+
+    /**
+     * The Table Model.
+     */
+    private final SecurityTableModel theModel;
 
     /**
      * The Column Model.
@@ -168,34 +160,30 @@ public class SecurityTable
     /**
      * Constructor.
      * @param pView the data view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public SecurityTable(final View pView) {
+    public SecurityTable(final View pView,
+                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                         final ErrorPanel pError) {
         /* Record the passed details */
         theView = pView;
+        theError = pError;
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
+        /* Create listener */
+        SecurityListener myListener = new SecurityListener();
+
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
+        theUpdateSet = pUpdateSet;
         theSecurityEntry = theUpdateSet.registerClass(Security.class);
         setUpdateSet(theUpdateSet);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
-        theDataSecurities = myDataMgr.new JDataEntry(SecurityTable.class.getSimpleName());
-        theDataSecurities.addAsChildOf(mySection);
-        theDataSecurities.setObject(theUpdateSet);
-
-        /* Create the save buttons */
-        theSaveButtons = new SaveButtons(theUpdateSet);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataSecurities);
+        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
-        SecurityTableModel myModel = new SecurityTableModel(this);
-        setModel(myModel);
+        theModel = new SecurityTableModel(this);
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new SecurityColumnModel(this);
@@ -204,41 +192,34 @@ public class SecurityTable
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(theError);
         thePanel.add(getScrollPane());
-        thePanel.add(theSaveButtons);
 
-        /* Create listener */
-        SecurityListener myListener = new SecurityListener();
         theView.addChangeListener(myListener);
     }
 
     /**
      * Determine Focus.
+     * @param pEntry the master data entry
      */
-    protected void determineFocus() {
+    protected void determineFocus(final JDataEntry pEntry) {
         /* Request the focus */
         requestFocusInWindow();
 
         /* Set the required focus */
-        theDataSecurities.setFocus();
+        pEntry.setFocus(theSecurityEntry.getName());
     }
 
     /**
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Securities edit list */
         MoneyWiseData myData = theView.getData();
         SecurityList mySecurities = myData.getSecurities();
         theSecurities = mySecurities.deriveEditList();
         setList(theSecurities);
         theSecurityEntry.setDataList(theSecurities);
-        theSaveButtons.setEnabled(true);
         fireStateChanged();
-
-        /* Touch the updateSet */
-        theDataSecurities.setObject(theUpdateSet);
     }
 
     @Override
@@ -254,6 +235,19 @@ public class SecurityTable
     @Override
     public boolean hasErrors() {
         return theUpdateSet.hasErrors();
+    }
+
+    /**
+     * Select security.
+     * @param pSecurity the security to select
+     */
+    protected void selectSecurity(final Security pSecurity) {
+        /* Find the item in the list */
+        int myIndex = theSecurities.indexOf(pSecurity);
+        if (myIndex != -1) {
+            /* Select the row and ensure that it is visible */
+            selectRowWithScroll(myIndex);
+        }
     }
 
     /**
@@ -347,6 +341,12 @@ public class SecurityTable
             if (theView.equals(o)) {
                 /* Refresh the data */
                 refreshData();
+            }
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }
