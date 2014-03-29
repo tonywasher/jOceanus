@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -369,9 +369,9 @@ public class TransactionTagTable
         private static final int COLUMN_ACTIVE = 2;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * String Renderer.
@@ -387,13 +387,13 @@ public class TransactionTagTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -429,7 +429,9 @@ public class TransactionTagTable
                 case COLUMN_DESC:
                     return pTransactionTag.getDesc();
                 case COLUMN_ACTIVE:
-                    return pTransactionTag.isActive();
+                    return pTransactionTag.isActive()
+                                                     ? ICON_ACTIVE
+                                                     : null;
                 default:
                     return null;
             }

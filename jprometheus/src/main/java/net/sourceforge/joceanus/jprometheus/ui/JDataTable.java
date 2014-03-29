@@ -23,12 +23,15 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
 import java.util.logging.Logger;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -64,6 +67,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     private static final long serialVersionUID = 1258025191244933784L;
 
     /**
+     * The reconciled icon.
+     */
+    protected static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")));
+
+    /**
      * Row Header Width.
      */
     protected static final int ROWHDR_WIDTH = 30;
@@ -72,6 +80,11 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Row Header Height.
      */
     private static final int ROWHDR_HEIGHT = 200;
+
+    /**
+     * Default row height.
+     */
+    private static final int ROW_HEIGHT = 16;
 
     /**
      * The Row Header Table.
@@ -277,6 +290,9 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         setRowMargin(0);
         setShowGrid(false);
 
+        /* Set the row height */
+        setRowHeight(ROW_HEIGHT);
+
         /* Create a row Header table */
         theRowHdrTable = new JTable(theRowHdrModel, new RowColumnModel<E>(this));
         theRowHdrTable.setBackground(getTableHeader().getBackground());
@@ -294,6 +310,17 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theScroll.setRowHeaderView(theRowHdrTable);
         theScroll.getRowHeader().setPreferredSize(new Dimension(ROWHDR_WIDTH, ROWHDR_HEIGHT));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, theRowHdrTable.getTableHeader());
+    }
+
+    /**
+     * Resize an icon to the row height
+     * @param pSource the source icon
+     * @return the resized icon
+     */
+    protected static Icon resizeImage(final ImageIcon pSource) {
+        Image myImage = pSource.getImage();
+        Image myNewImage = myImage.getScaledInstance(ROW_HEIGHT, ROW_HEIGHT, Image.SCALE_SMOOTH);
+        return new ImageIcon(myNewImage);
     }
 
     @Override

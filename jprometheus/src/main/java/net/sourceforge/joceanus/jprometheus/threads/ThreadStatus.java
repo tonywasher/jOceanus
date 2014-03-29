@@ -310,5 +310,9 @@ public class ThreadStatus<T extends DataSet<T, E>, E extends Enum<E>>
             }
             return null;
         }
+
+        public boolean isDisabled() {
+            return false;
+        }
     }
 }

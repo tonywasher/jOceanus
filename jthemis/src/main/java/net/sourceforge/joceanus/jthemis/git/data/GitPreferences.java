@@ -106,4 +106,8 @@ public class GitPreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

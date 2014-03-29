@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -186,7 +187,7 @@ public final class JFieldCellRenderer {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 2197785411706668287L;
+        private static final long serialVersionUID = 5574017062142502506L;
 
         /**
          * The Render Data.
@@ -228,6 +229,67 @@ public final class JFieldCellRenderer {
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
+
+            /* Return this as the render item */
+            return this;
+        }
+    }
+
+    /**
+     * Icon Cell Renderer.
+     */
+    public static class IconCellRenderer
+            extends DefaultTableCellRenderer {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 5499592875529141189L;
+
+        /**
+         * The Render Data.
+         */
+        private final transient JFieldData theData;
+
+        /**
+         * Constructor.
+         * @param pManager the renderer manager
+         */
+        protected IconCellRenderer(final JFieldManager pManager) {
+            this(pManager.allocateRenderData(true), SwingConstants.CENTER);
+        }
+
+        /**
+         * Constructor for fixed width.
+         * @param pData the render data
+         * @param pAlignment the alignment
+         */
+        protected IconCellRenderer(final JFieldData pData,
+                                   final int pAlignment) {
+            theData = pData;
+            setHorizontalAlignment(pAlignment);
+        }
+
+        @Override
+        public JComponent getTableCellRendererComponent(final JTable pTable,
+                                                        final Object pValue,
+                                                        final boolean isSelected,
+                                                        final boolean hasFocus,
+                                                        final int pRowIndex,
+                                                        final int pColIndex) {
+            /* Pass call on */
+            super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
+
+            /* Declare the Cell position */
+            theData.setPosition(pRowIndex, pColIndex, isSelected);
+
+            /* Determine the render data */
+            renderComponent(pTable, this, theData);
+
+            /* Set Icon */
+            setIcon((pValue instanceof Icon)
+                                            ? (Icon) pValue
+                                            : null);
+            setText(null);
 
             /* Return this as the render item */
             return this;

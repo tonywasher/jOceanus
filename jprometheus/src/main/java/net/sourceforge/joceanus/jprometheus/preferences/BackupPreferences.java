@@ -165,4 +165,8 @@ public class BackupPreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

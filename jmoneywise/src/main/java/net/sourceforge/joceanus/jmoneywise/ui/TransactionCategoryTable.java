@@ -40,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -580,9 +580,9 @@ public class TransactionCategoryTable
         private static final int COLUMN_ACTIVE = 4;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * String Renderer.
@@ -598,7 +598,7 @@ public class TransactionCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
@@ -606,7 +606,7 @@ public class TransactionCategoryTable
             addColumn(new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -650,7 +650,9 @@ public class TransactionCategoryTable
                 case COLUMN_DESC:
                     return pCategory.getDesc();
                 case COLUMN_ACTIVE:
-                    return pCategory.isActive();
+                    return pCategory.isActive()
+                                               ? ICON_ACTIVE
+                                               : null;
                 default:
                     return null;
             }

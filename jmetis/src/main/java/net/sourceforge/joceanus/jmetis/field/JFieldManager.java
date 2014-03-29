@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -251,6 +252,24 @@ public class JFieldManager {
     }
 
     /**
+     * Allocate a BooleanRenderer object.
+     * @return the boolean renderer
+     */
+    public BooleanCellRenderer allocateBooleanCellRenderer() {
+        /* Return a new BooleanRenderer object */
+        return new BooleanCellRenderer(this);
+    }
+
+    /**
+     * Allocate an IconRenderer object.
+     * @return the icon renderer
+     */
+    public IconCellRenderer allocateIconCellRenderer() {
+        /* Return a new IconRenderer object */
+        return new IconCellRenderer(this);
+    }
+
+    /**
      * Allocate an IntegerRenderer object.
      * @return the integer renderer
      */
@@ -275,15 +294,6 @@ public class JFieldManager {
     public DecimalCellRenderer allocateDecimalCellRenderer() {
         /* Return a new DecimalRenderer object */
         return new DecimalCellRenderer(this, theFormatter.getDecimalFormatter());
-    }
-
-    /**
-     * Allocate a DecimalRenderer object.
-     * @return the decimal renderer
-     */
-    public BooleanCellRenderer allocateBooleanCellRenderer() {
-        /* Return a new BooleanRenderer object */
-        return new BooleanCellRenderer(this);
     }
 
     /**
@@ -413,6 +423,14 @@ public class JFieldManager {
      */
     public Color getStandardBackground() {
         return theConfig.getBackgroundColor();
+    }
+
+    /**
+     * Determine Disabled color.
+     * @return the disabled color
+     */
+    public Color getDisabledColor() {
+        return theConfig.getDisabledColor();
     }
 
     /**

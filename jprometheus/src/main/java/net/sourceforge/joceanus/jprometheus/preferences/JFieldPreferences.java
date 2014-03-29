@@ -59,9 +59,9 @@ public class JFieldPreferences
     public static final String NAME_CHANGED = "ColorChanged";
 
     /**
-     * Registry name for Deleted foreground.
+     * Registry name for Disabled foreground.
      */
-    public static final String NAME_DELETED = "ColorDeleted";
+    public static final String NAME_DISABLED = "ColorDisabled";
 
     /**
      * Registry name for Recovered foreground.
@@ -104,9 +104,9 @@ public class JFieldPreferences
     private static final String DISPLAY_CHANGED = "Changed Colour";
 
     /**
-     * Display name for Deleted foreground.
+     * Display name for Disabled foreground.
      */
-    private static final String DISPLAY_DELETED = "Deleted Colour";
+    private static final String DISPLAY_DISABLED = "Disabled Colour";
 
     /**
      * Display name for Zebra background.
@@ -142,7 +142,7 @@ public class JFieldPreferences
         /* Set the values */
         myConfig.setBackgroundColor(getColorValue(NAME_BACKGROUND));
         myConfig.setChangedColor(getColorValue(NAME_CHANGED));
-        myConfig.setDeletedColor(getColorValue(NAME_DELETED));
+        myConfig.setDisabledColor(getColorValue(NAME_DISABLED));
         myConfig.setErrorColor(getColorValue(NAME_ERROR));
         myConfig.setNewColor(getColorValue(NAME_NEW));
         myConfig.setZebraColor(getColorValue(NAME_ZEBRA));
@@ -162,7 +162,7 @@ public class JFieldPreferences
         defineColorPreference(NAME_ERROR, Color.red);
         defineColorPreference(NAME_NEW, Color.blue);
         defineColorPreference(NAME_CHANGED, Color.magenta.darker());
-        defineColorPreference(NAME_DELETED, Color.gray);
+        defineColorPreference(NAME_DISABLED, Color.gray);
         defineColorPreference(NAME_ZEBRA, Color.decode("#e3e4fa"));
         defineColorPreference(NAME_LINK, Color.blue);
         defineColorPreference(NAME_CHGLINK, Color.green);
@@ -186,8 +186,8 @@ public class JFieldPreferences
         if (pName.equals(NAME_CHANGED)) {
             return DISPLAY_CHANGED;
         }
-        if (pName.equals(NAME_DELETED)) {
-            return DISPLAY_DELETED;
+        if (pName.equals(NAME_DISABLED)) {
+            return DISPLAY_DISABLED;
         }
         if (pName.equals(NAME_ZEBRA)) {
             return DISPLAY_ZEBRA;
@@ -199,5 +199,9 @@ public class JFieldPreferences
             return DISPLAY_CHGLINK;
         }
         return null;
+    }
+
+    public boolean isDisabled() {
+        return false;
     }
 }

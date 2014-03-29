@@ -436,11 +436,6 @@ public class PricePoint
         return false;
     }
 
-    /**
-     * Check whether we duplicate a row.
-     * @param pRow the row
-     * @return true
-     */
     @Override
     protected boolean disableShowAll(final SpotSecurityPrice pRow) {
         return true;
@@ -559,7 +554,7 @@ public class PricePoint
         @Override
         public boolean includeRow(final SpotSecurityPrice pRow) {
             /* Return visibility of row */
-            return showAll() || !pRow.getSecurity().isClosed();
+            return showAll() || !pRow.isDisabled();
         }
 
         /**

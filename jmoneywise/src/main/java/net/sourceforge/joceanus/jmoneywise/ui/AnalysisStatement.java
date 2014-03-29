@@ -30,6 +30,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -496,34 +497,39 @@ public class AnalysisStatement
         private static final int COLUMN_CATEGORY = 1;
 
         /**
-         * Description column id.
-         */
-        private static final int COLUMN_DESC = 2;
-
-        /**
          * Debit column id.
          */
-        private static final int COLUMN_DEBIT = 3;
+        private static final int COLUMN_DEBIT = 2;
 
         /**
          * Credit column id.
          */
-        private static final int COLUMN_CREDIT = 4;
+        private static final int COLUMN_CREDIT = 3;
+
+        /**
+         * Description column id.
+         */
+        private static final int COLUMN_DESC = 4;
+
+        /**
+         * Reconciled column id.
+         */
+        private static final int COLUMN_RECONCILED = 5;
 
         /**
          * Debited column id.
          */
-        private static final int COLUMN_DEBITED = 5;
+        private static final int COLUMN_DEBITED = 6;
 
         /**
          * Credited column id.
          */
-        private static final int COLUMN_CREDITED = 6;
+        private static final int COLUMN_CREDITED = 7;
 
         /**
          * Balance column id.
          */
-        private static final int COLUMN_BALANCE = 7;
+        private static final int COLUMN_BALANCE = 8;
 
         /**
          * Date Renderer.
@@ -541,6 +547,11 @@ public class AnalysisStatement
         private final StringCellRenderer theStringRenderer;
 
         /**
+         * Icon Renderer.
+         */
+        private final IconCellRenderer theIconRenderer;
+
+        /**
          * Constructor.
          * @param pTable the table
          */
@@ -552,13 +563,15 @@ public class AnalysisStatement
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
             addColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
             addColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
             addColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
@@ -587,6 +600,8 @@ public class AnalysisStatement
                     return TITLE_CREDITED;
                 case COLUMN_BALANCE:
                     return TITLE_BALANCE;
+                case COLUMN_RECONCILED:
+                    return "C";
                 default:
                     return null;
             }
@@ -612,6 +627,10 @@ public class AnalysisStatement
                     return pTrans.getDebit();
                 case COLUMN_DESC:
                     return pTrans.getComments();
+                case COLUMN_RECONCILED:
+                    return pTrans.isReconciled()
+                                                ? Register.ICON_RECONCILED
+                                                : null;
                 case COLUMN_DEBITED:
                     return theFilter.getDebitForTransaction(pTrans);
                 case COLUMN_CREDITED:
@@ -660,6 +679,8 @@ public class AnalysisStatement
                     return Transaction.FIELD_CREDIT;
                 case COLUMN_DEBIT:
                     return Transaction.FIELD_DEBIT;
+                case COLUMN_RECONCILED:
+                    return Transaction.FIELD_RECONCILED;
                 default:
                     return null;
             }

@@ -183,4 +183,8 @@ public class DatabasePreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

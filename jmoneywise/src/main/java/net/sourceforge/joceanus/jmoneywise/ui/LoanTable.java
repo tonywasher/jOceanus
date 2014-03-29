@@ -29,8 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -90,11 +90,6 @@ public class LoanTable
      * Currency Column Title.
      */
     private static final String TITLE_CURRENCY = Loan.FIELD_CURRENCY.getName();
-
-    /**
-     * Closed Column Title.
-     */
-    private static final String TITLE_CLOSED = Loan.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -325,7 +320,7 @@ public class LoanTable
             }
 
             /* Handle filter */
-            return true;
+            return showAll() || !pRow.isDisabled();
         }
     }
 
@@ -390,24 +385,19 @@ public class LoanTable
         private static final int COLUMN_CURR = 4;
 
         /**
-         * Closed column id.
-         */
-        private static final int COLUMN_CLOSED = 5;
-
-        /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 6;
+        private static final int COLUMN_ACTIVE = 5;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 7;
+        private static final int COLUMN_LASTTRAN = 6;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * Date Renderer.
@@ -428,7 +418,7 @@ public class LoanTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
@@ -437,9 +427,8 @@ public class LoanTable
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CLOSED, WIDTH_BOOL, theBooleanRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
             addColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
         }
 
@@ -460,8 +449,6 @@ public class LoanTable
                     return TITLE_PARENT;
                 case COLUMN_CURR:
                     return TITLE_CURRENCY;
-                case COLUMN_CLOSED:
-                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 case COLUMN_LASTTRAN:
@@ -491,10 +478,10 @@ public class LoanTable
                     return pLoan.getParentName();
                 case COLUMN_CURR:
                     return pLoan.getLoanCurrencyName();
-                case COLUMN_CLOSED:
-                    return pLoan.isClosed();
                 case COLUMN_ACTIVE:
-                    return pLoan.isActive();
+                    return pLoan.isActive()
+                                           ? ICON_ACTIVE
+                                           : null;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pLoan.getLatest();
                     return (myTran == null)
@@ -523,8 +510,6 @@ public class LoanTable
                     return Loan.FIELD_PARENT;
                 case COLUMN_CURR:
                     return Loan.FIELD_CURRENCY;
-                case COLUMN_CLOSED:
-                    return Loan.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Loan.FIELD_TOUCH;
                 default:

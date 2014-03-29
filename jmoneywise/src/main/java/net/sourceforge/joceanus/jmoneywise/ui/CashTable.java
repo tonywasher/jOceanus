@@ -29,8 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -85,11 +85,6 @@ public class CashTable
      * Currency Column Title.
      */
     private static final String TITLE_CURRENCY = Cash.FIELD_CURRENCY.getName();
-
-    /**
-     * Closed Column Title.
-     */
-    private static final String TITLE_CLOSED = Cash.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -320,7 +315,7 @@ public class CashTable
             }
 
             /* Handle filter */
-            return true;
+            return showAll() || !pRow.isDisabled();
         }
     }
 
@@ -380,24 +375,19 @@ public class CashTable
         private static final int COLUMN_CURR = 3;
 
         /**
-         * Closed column id.
-         */
-        private static final int COLUMN_CLOSED = 4;
-
-        /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 5;
+        private static final int COLUMN_ACTIVE = 4;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 6;
+        private static final int COLUMN_LASTTRAN = 5;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * Date Renderer.
@@ -418,7 +408,7 @@ public class CashTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
@@ -426,9 +416,8 @@ public class CashTable
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CLOSED, WIDTH_BOOL, theBooleanRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
             addColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
         }
 
@@ -447,8 +436,6 @@ public class CashTable
                     return TITLE_CAT;
                 case COLUMN_CURR:
                     return TITLE_CURRENCY;
-                case COLUMN_CLOSED:
-                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 case COLUMN_LASTTRAN:
@@ -476,10 +463,10 @@ public class CashTable
                     return pCash.getDesc();
                 case COLUMN_CURR:
                     return pCash.getCashCurrencyName();
-                case COLUMN_CLOSED:
-                    return pCash.isClosed();
                 case COLUMN_ACTIVE:
-                    return pCash.isActive();
+                    return pCash.isActive()
+                                           ? ICON_ACTIVE
+                                           : null;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pCash.getLatest();
                     return (myTran == null)
@@ -506,8 +493,6 @@ public class CashTable
                     return Cash.FIELD_CATEGORY;
                 case COLUMN_CURR:
                     return Cash.FIELD_CURRENCY;
-                case COLUMN_CLOSED:
-                    return Cash.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Cash.FIELD_TOUCH;
                 default:

@@ -202,6 +202,11 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         return getEnabled(getValueSet());
     }
 
+    @Override
+    public boolean isDisabled() {
+        return !getEnabled();
+    }
+
     /**
      * Return the name of the Static Data.
      * @param pValueSet the valueSet

@@ -141,9 +141,14 @@ public class JDataTableColumn
         protected static final int WIDTH_DESC = 200;
 
         /**
-         * Active column width.
+         * Icon column width.
          */
-        protected static final int WIDTH_BOOL = 20;
+        protected static final int WIDTH_ICON = 20;
+
+        /**
+         * Currency column width.
+         */
+        protected static final int WIDTH_CURR = 50;
 
         /**
          * The DataTableModel.

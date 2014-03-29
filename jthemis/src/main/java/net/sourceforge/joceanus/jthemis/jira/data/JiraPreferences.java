@@ -125,4 +125,8 @@ public class JiraPreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

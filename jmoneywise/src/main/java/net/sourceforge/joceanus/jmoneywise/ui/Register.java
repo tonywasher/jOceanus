@@ -30,6 +30,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -38,6 +40,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -82,6 +85,11 @@ public class Register
      * Serial Id.
      */
     private static final long serialVersionUID = -5531752729052421790L;
+
+    /**
+     * The reconciled icon.
+     */
+    protected static final Icon ICON_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("Reconciled.png")));
 
     /**
      * Resource Bundle.
@@ -270,6 +278,11 @@ public class Register
      * Credit column id.
      */
     private static final int COLUMN_CREDIT = 5;
+
+    /**
+     * Reconciled column id.
+     */
+    private static final int COLUMN_RECONCILED = 6;
 
     /**
      * Panel width.
@@ -959,6 +972,11 @@ public class Register
         private final StringCellRenderer theStringRenderer;
 
         /**
+         * Icon Renderer.
+         */
+        private final IconCellRenderer theIconRenderer;
+
+        /**
          * Constructor.
          */
         private RegisterColumnModel() {
@@ -969,6 +987,7 @@ public class Register
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
@@ -977,6 +996,7 @@ public class Register
             addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -998,6 +1018,8 @@ public class Register
                     return TITLE_CREDIT;
                 case COLUMN_DEBIT:
                     return TITLE_DEBIT;
+                case COLUMN_RECONCILED:
+                    return "C";
                 default:
                     return null;
             }
@@ -1025,6 +1047,10 @@ public class Register
                     return pTrans.getAmount();
                 case COLUMN_DESC:
                     return pTrans.getComments();
+                case COLUMN_RECONCILED:
+                    return pTrans.isReconciled()
+                                                ? ICON_RECONCILED
+                                                : null;
                 default:
                     return null;
             }
@@ -1050,6 +1076,8 @@ public class Register
                     return Transaction.FIELD_CREDIT;
                 case COLUMN_DEBIT:
                     return Transaction.FIELD_DEBIT;
+                case COLUMN_RECONCILED:
+                    return Transaction.FIELD_RECONCILED;
                 default:
                     return null;
             }

@@ -30,10 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -83,16 +80,6 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
      * Description column title.
      */
     private static final String TITLE_DESC = StaticData.FIELD_DESC.getName();
-
-    /**
-     * Order column title.
-     */
-    private static final String TITLE_ORDER = StaticData.FIELD_ORDER.getName();
-
-    /**
-     * Enabled column title.
-     */
-    private static final String TITLE_ENABLED = StaticData.FIELD_ENABLED.getName();
 
     /**
      * Active column title.
@@ -354,10 +341,9 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
         }
 
         @Override
-        public boolean isCellEditable(final T pItem,
+        public boolean isCellEditable(final T pTrans,
                                       final int pColIndex) {
-            /* Is the cell editable? */
-            return theColumns.isCellEditable(pItem, pColIndex);
+            return false;
         }
 
         @Override
@@ -365,14 +351,6 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                                    final int pColIndex) {
             /* Obtain the item value for the column */
             return theColumns.getItemValue(pItem, pColIndex);
-        }
-
-        @Override
-        public void setItemValue(final T pItem,
-                                 final int pColIndex,
-                                 final Object pValue) throws JOceanusException {
-            /* Set the item value for the column */
-            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
     }
 
@@ -402,14 +380,9 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
         private static final int COLUMN_DESC = 2;
 
         /**
-         * Order column id.
+         * Active column id.
          */
-        private static final int COLUMN_ORDER = 3;
-
-        /**
-         * Enabled column id.
-         */
-        private static final int COLUMN_ENABLED = 4;
+        private static final int COLUMN_ACTIVE = 4;
 
         /**
          * Class column width.
@@ -417,39 +390,14 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
         private static final int WIDTH_CLASS = 90;
 
         /**
-         * Order column width.
-         */
-        private static final int WIDTH_ORDER = 20;
-
-        /**
-         * Active column id.
-         */
-        private static final int COLUMN_ACTIVE = 5;
-
-        /**
-         * Integer renderer.
-         */
-        private final IntegerCellRenderer theIntegerRenderer;
-
-        /**
          * String renderer.
          */
         private final StringCellRenderer theStringRenderer;
 
         /**
-         * Boolean renderer.
+         * Icon renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
-
-        /**
-         * String Editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Boolean Editor.
-         */
-        private final BooleanCellEditor theBooleanEditor;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * Constructor.
@@ -458,20 +406,15 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
             /* call constructor */
             super(StaticDataTable.this);
 
-            /* Create the relevant formatters/editors */
-            theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            /* Create the relevant renderers */
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theBooleanEditor = theFieldMgr.allocateBooleanCellEditor();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_BOOL, theBooleanRenderer, theBooleanEditor));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -487,10 +430,6 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                     return TITLE_NAME;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_ORDER:
-                    return TITLE_ORDER;
-                case COLUMN_ENABLED:
-                    return TITLE_ENABLED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 default:
@@ -514,63 +453,12 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                     return pItem.getName();
                 case COLUMN_DESC:
                     return pItem.getDesc();
-                case COLUMN_ENABLED:
-                    return pItem.getEnabled();
-                case COLUMN_ORDER:
-                    return pItem.getOrder();
                 case COLUMN_ACTIVE:
-                    return pItem.isActive();
+                    return pItem.isActive()
+                                           ? ICON_ACTIVE
+                                           : null;
                 default:
                     return null;
-            }
-        }
-
-        /**
-         * Set the value for the item column.
-         * @param pItem the item
-         * @param pColIndex column index
-         * @param pValue the value
-         * @throws JOceanusException on error
-         */
-        private void setItemValue(final T pItem,
-                                  final int pColIndex,
-                                  final Object pValue) throws JOceanusException {
-            /* Store the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_NAME:
-                    pItem.setName((String) pValue);
-                    break;
-                case COLUMN_DESC:
-                    pItem.setDescription((String) pValue);
-                    break;
-                case COLUMN_ENABLED:
-                    pItem.setEnabled((Boolean) pValue);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Is the item editable at the column index.
-         * @param pItem the item
-         * @param pColIndex column index
-         * @return true/false
-         */
-        private boolean isCellEditable(final T pItem,
-                                       final int pColIndex) {
-            /* switch on column */
-            switch (pColIndex) {
-                case COLUMN_NAME:
-                case COLUMN_DESC:
-                    return pItem.getEnabled();
-                case COLUMN_ENABLED:
-                    return !pItem.isActive();
-                case COLUMN_CLASS:
-                case COLUMN_ORDER:
-                case COLUMN_ACTIVE:
-                default:
-                    return false;
             }
         }
 
@@ -588,10 +476,6 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                     return StaticData.FIELD_NAME;
                 case COLUMN_DESC:
                     return StaticData.FIELD_DESC;
-                case COLUMN_ENABLED:
-                    return StaticData.FIELD_ENABLED;
-                case COLUMN_ORDER:
-                    return StaticData.FIELD_ORDER;
                 case COLUMN_ACTIVE:
                     return DataItem.FIELD_TOUCH;
                 default:

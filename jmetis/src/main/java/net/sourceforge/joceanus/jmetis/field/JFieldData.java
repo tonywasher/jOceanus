@@ -193,9 +193,12 @@ public final class JFieldData {
                                 final JDataField pField) {
         /* Obtain the field state */
         theState = pRow.getFieldState(pField);
+        boolean isDisabled = pRow.isDisabled();
 
         /* Obtain the foreground for the state */
-        Color myFore = theManager.getForeground(theState);
+        Color myFore = isDisabled
+                                 ? theManager.getDisabledColor()
+                                 : theManager.getForeground(theState);
         Color myBack = (theRow & 1) == 0
                                         ? theManager.getStandardBackground()
                                         : theManager.getZebraColor();

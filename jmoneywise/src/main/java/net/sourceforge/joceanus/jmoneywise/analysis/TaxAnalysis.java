@@ -140,6 +140,10 @@ public class TaxAnalysis {
             }
             return null;
         }
+
+        public boolean isDisabled() {
+            return false;
+        }
     }
 
     /**

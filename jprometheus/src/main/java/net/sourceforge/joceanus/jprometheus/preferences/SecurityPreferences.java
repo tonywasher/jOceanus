@@ -207,4 +207,8 @@ public class SecurityPreferences
         /* return the parameters */
         return myParms;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

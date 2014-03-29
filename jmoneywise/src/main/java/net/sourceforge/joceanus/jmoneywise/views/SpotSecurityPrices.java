@@ -569,6 +569,11 @@ public class SpotSecurityPrices
         }
 
         @Override
+        public boolean isDisabled() {
+            return getSecurity().isClosed();
+        }
+
+        @Override
         public SecurityPrice getBase() {
             return (SecurityPrice) super.getBase();
         }

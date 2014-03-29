@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.definitions;
 
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * Quicken Preferences.
@@ -105,5 +105,9 @@ public class QIFPreference
             return DISPLAY_LASTEVENT;
         }
         return null;
+    }
+
+    public boolean isDisabled() {
+        return false;
     }
 }

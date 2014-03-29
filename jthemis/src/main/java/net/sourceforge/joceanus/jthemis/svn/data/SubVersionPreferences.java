@@ -201,4 +201,8 @@ public class SubVersionPreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

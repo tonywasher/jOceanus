@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -93,11 +93,6 @@ public class SecurityTable
      * Currency Column Title.
      */
     private static final String TITLE_CURRENCY = Security.FIELD_CURRENCY.getName();
-
-    /**
-     * Closed Column Title.
-     */
-    private static final String TITLE_CLOSED = Security.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -322,7 +317,7 @@ public class SecurityTable
             }
 
             /* Handle filter */
-            return true;
+            return showAll() || !pRow.isDisabled();
         }
     }
 
@@ -392,19 +387,14 @@ public class SecurityTable
         private static final int COLUMN_CURR = 5;
 
         /**
-         * Closed column id.
-         */
-        private static final int COLUMN_CLOSED = 6;
-
-        /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 7;
+        private static final int COLUMN_ACTIVE = 6;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * String Renderer.
@@ -420,7 +410,7 @@ public class SecurityTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
@@ -429,9 +419,8 @@ public class SecurityTable
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CLOSED, WIDTH_BOOL, theBooleanRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -447,8 +436,6 @@ public class SecurityTable
                     return TITLE_DESC;
                 case COLUMN_CATEGORY:
                     return TITLE_CAT;
-                case COLUMN_CLOSED:
-                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 case COLUMN_PARENT:
@@ -478,10 +465,10 @@ public class SecurityTable
                     return pSecurity.getSecurityType();
                 case COLUMN_DESC:
                     return pSecurity.getDesc();
-                case COLUMN_CLOSED:
-                    return pSecurity.isClosed();
                 case COLUMN_ACTIVE:
-                    return pSecurity.isActive();
+                    return pSecurity.isActive()
+                                               ? ICON_ACTIVE
+                                               : null;
                 case COLUMN_SYMBOL:
                     return pSecurity.getSymbol();
                 case COLUMN_PARENT:
@@ -507,8 +494,6 @@ public class SecurityTable
                     return Security.FIELD_DESC;
                 case COLUMN_CATEGORY:
                     return Security.FIELD_SECTYPE;
-                case COLUMN_CLOSED:
-                    return Security.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Security.FIELD_TOUCH;
                 case COLUMN_SYMBOL:

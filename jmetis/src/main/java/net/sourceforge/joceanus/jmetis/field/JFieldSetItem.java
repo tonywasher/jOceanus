@@ -38,6 +38,12 @@ public interface JFieldSetItem
     boolean isEditable();
 
     /**
+     * Is the item disabled?
+     * @return true/false
+     */
+    boolean isDisabled();
+
+    /**
      * Get the state for the item.
      * @return the render state
      */

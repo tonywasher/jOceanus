@@ -317,6 +317,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return isClosed(getValueSet());
     }
 
+    @Override
+    public boolean isDisabled() {
+        return isClosed();
+    }
+
     /**
      * Obtain Name.
      * @param pValueSet the valueSet

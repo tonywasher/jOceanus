@@ -68,4 +68,8 @@ public class DataListPreferences
         }
         return null;
     }
+
+    public boolean isDisabled() {
+        return false;
+    }
 }

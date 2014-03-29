@@ -29,8 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -80,11 +80,6 @@ public class PortfolioTable
      * Holding Column Title.
      */
     private static final String TITLE_HOLDING = Portfolio.FIELD_HOLDING.getName();
-
-    /**
-     * Closed Column Title.
-     */
-    private static final String TITLE_CLOSED = Portfolio.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -315,7 +310,7 @@ public class PortfolioTable
             }
 
             /* Handle filter */
-            return true;
+            return showAll() || !pRow.isDisabled();
         }
     }
 
@@ -370,24 +365,19 @@ public class PortfolioTable
         private static final int COLUMN_HOLDING = 2;
 
         /**
-         * Closed column id.
-         */
-        private static final int COLUMN_CLOSED = 3;
-
-        /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 4;
+        private static final int COLUMN_ACTIVE = 3;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 5;
+        private static final int COLUMN_LASTTRAN = 4;
 
         /**
-         * Boolean Renderer.
+         * Icon Renderer.
          */
-        private final BooleanCellRenderer theBooleanRenderer;
+        private final IconCellRenderer theIconRenderer;
 
         /**
          * Date Renderer.
@@ -408,7 +398,7 @@ public class PortfolioTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
@@ -416,8 +406,7 @@ public class PortfolioTable
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
             addColumn(new JDataTableColumn(COLUMN_HOLDING, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CLOSED, WIDTH_BOOL, theBooleanRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_BOOL, theBooleanRenderer));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
             addColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
         }
 
@@ -434,8 +423,6 @@ public class PortfolioTable
                     return TITLE_DESC;
                 case COLUMN_HOLDING:
                     return TITLE_HOLDING;
-                case COLUMN_CLOSED:
-                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 case COLUMN_LASTTRAN:
@@ -461,10 +448,10 @@ public class PortfolioTable
                     return pPortfolio.getHoldingName();
                 case COLUMN_DESC:
                     return pPortfolio.getDesc();
-                case COLUMN_CLOSED:
-                    return pPortfolio.isClosed();
                 case COLUMN_ACTIVE:
-                    return pPortfolio.isActive();
+                    return pPortfolio.isActive()
+                                                ? ICON_ACTIVE
+                                                : null;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pPortfolio.getLatest();
                     return (myTran == null)
@@ -489,8 +476,6 @@ public class PortfolioTable
                     return Portfolio.FIELD_DESC;
                 case COLUMN_HOLDING:
                     return Portfolio.FIELD_HOLDING;
-                case COLUMN_CLOSED:
-                    return Portfolio.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Portfolio.FIELD_TOUCH;
                 default:
