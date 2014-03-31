@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
+import java.awt.Point;
 import java.util.ResourceBundle;
 
 import javax.swing.event.TableModelEvent;
@@ -338,6 +339,11 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
         }
     }
 
+    @Override
+    public Object buttonClick(final Point pCell) {
+        return null;
+    }
+
     /**
      * Row Table model class.
      * @param <E> the data type enum class
@@ -410,6 +416,11 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
                 /* Has the row changed */
                 pData.processRowHeader(myRow, iFields);
             }
+        }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            return null;
         }
     }
 }

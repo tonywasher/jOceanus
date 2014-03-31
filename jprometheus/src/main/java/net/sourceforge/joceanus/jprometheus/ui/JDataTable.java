@@ -267,7 +267,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theRowHdrModel = new RowTableModel<E>(this);
 
         /* Set the selection mode */
-        setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     }
 
     /**

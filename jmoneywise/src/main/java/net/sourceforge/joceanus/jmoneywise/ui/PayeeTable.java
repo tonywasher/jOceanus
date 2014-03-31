@@ -261,7 +261,7 @@ public class PayeeTable
         public int getColumnCount() {
             return (theColumns == null)
                                        ? 0
-                                       : theColumns.getColumnCount();
+                                       : theColumns.getDeclaredCount();
         }
 
         @Override
@@ -403,11 +403,11 @@ public class PayeeTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
-            addColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
         }
 
         /**

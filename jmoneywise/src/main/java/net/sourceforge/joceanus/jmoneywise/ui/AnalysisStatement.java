@@ -103,6 +103,11 @@ public class AnalysisStatement
     private static final String TITLE_CREDIT = Transaction.FIELD_CREDIT.getName();
 
     /**
+     * Reconciled Column Title.
+     */
+    private static final String TITLE_RECONCILED = NLS_BUNDLE.getString("TitleReconciled");
+
+    /**
      * Debited Column Title.
      */
     private static final String TITLE_DEBITED = NLS_BUNDLE.getString("TitleDebited");
@@ -386,7 +391,7 @@ public class AnalysisStatement
         public int getColumnCount() {
             return (theColumns == null)
                                        ? 0
-                                       : theColumns.getColumnCount();
+                                       : theColumns.getDeclaredCount();
         }
 
         @Override
@@ -566,15 +571,15 @@ public class AnalysisStatement
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
-            addColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
         }
 
         /**
@@ -601,7 +606,7 @@ public class AnalysisStatement
                 case COLUMN_BALANCE:
                     return TITLE_BALANCE;
                 case COLUMN_RECONCILED:
-                    return "C";
+                    return TITLE_RECONCILED;
                 default:
                     return null;
             }

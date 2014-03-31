@@ -22,14 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -39,7 +44,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -102,8 +109,8 @@ public class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             theField.setText(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
-                    ? STR_EMPTY
-                    : (String) pValue);
+                                                                                     ? STR_EMPTY
+                                                                                     : (String) pValue);
             return theField;
         }
 
@@ -225,8 +232,8 @@ public class JFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             theField.setSelected(((pValue == null) || (JFieldValue.ERROR.equals(pValue)))
-                    ? Boolean.FALSE
-                    : (Boolean) pValue);
+                                                                                         ? Boolean.FALSE
+                                                                                         : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -259,8 +266,138 @@ public class JFieldCellEditor {
         private class BooleanListener
                 implements ItemListener {
             @Override
-            public void itemStateChanged(final ItemEvent arg0) {
+            public void itemStateChanged(final ItemEvent pEvent) {
                 stopCellEditing();
+            }
+        }
+    }
+
+    /**
+     * Icon Cell Editor.
+     */
+    public static class IconCellEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 838279262363600243L;
+
+        /**
+         * The button.
+         */
+        private final JButton theButton;
+
+        /**
+         * The selection Listener.
+         */
+        private final transient ButtonListener theListener = new ButtonListener();
+
+        /**
+         * The editor table.
+         */
+        private transient JTable theTable;
+
+        /**
+         * The editor value.
+         */
+        private transient Object theValue;
+
+        /**
+         * Is the editor active?
+         */
+        private transient boolean isActive;
+
+        /**
+         * Constructor.
+         * @param pTable the table
+         */
+        protected IconCellEditor(final JTable pTable) {
+            theButton = new JButton();
+            theButton.addActionListener(theListener);
+            pTable.addMouseListener(new MouseListener());
+        }
+
+        @Override
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
+                                                      final boolean isSelected,
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            /* Save table and value */
+            theTable = pTable;
+            theValue = pValue;
+            isActive = true;
+
+            /* Set the icon into the button */
+            theButton.setIcon((pValue instanceof Icon)
+                                                      ? (Icon) pValue
+                                                      : null);
+
+            /* Return the button */
+            return theButton;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return theValue;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            if (super.stopCellEditing()) {
+                isActive = false;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void cancelCellEditing() {
+            super.cancelCellEditing();
+            isActive = false;
+        }
+
+        /**
+         * Button Listener class.
+         */
+        private class ButtonListener
+                implements ActionListener {
+            @Override
+            public void actionPerformed(final ActionEvent pEvent) {
+                /* If we can notify regarding the click */
+                TableModel myModel = theTable.getModel();
+                if (myModel instanceof PopulateFieldData) {
+                    /* Determine the row that this has been invoked in */
+                    int myRow = theTable.getEditingRow();
+                    myRow = theTable.convertRowIndexToModel(myRow);
+
+                    /* Determine the column that this has been invoked in */
+                    int myCol = theTable.getEditingColumn();
+                    myCol = theTable.convertColumnIndexToModel(myCol);
+
+                    /* Notify the model regarding the click */
+                    Point myPoint = new Point(myCol, myRow);
+                    theValue = ((PopulateFieldData) myModel).buttonClick(myPoint);
+                }
+
+                /* Stop editing */
+                stopCellEditing();
+            }
+        }
+
+        /**
+         * Mouse Adapter class.
+         * <p>
+         * Required if button clicked and released in different place
+         */
+        private class MouseListener
+                extends MouseAdapter {
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+                if (isActive) {
+                    stopCellEditing();
+                }
             }
         }
     }
@@ -353,8 +490,8 @@ public class JFieldCellEditor {
         @Override
         public Object getCellEditorValue() {
             return (theCombo != null)
-                    ? theCombo.getSelectedItem()
-                    : null;
+                                     ? theCombo.getSelectedItem()
+                                     : null;
         }
 
         @Override
@@ -417,11 +554,11 @@ public class JFieldCellEditor {
                                                       final int pColIndex) {
             /* Access the range */
             JDateDay myStart = (theRange == null)
-                    ? null
-                    : theRange.getStart();
+                                                 ? null
+                                                 : theRange.getStart();
             JDateDay myEnd = (theRange == null)
-                    ? null
-                    : theRange.getEnd();
+                                               ? null
+                                               : theRange.getEnd();
             JDateDay myCurr;
 
             /* If the value is null */

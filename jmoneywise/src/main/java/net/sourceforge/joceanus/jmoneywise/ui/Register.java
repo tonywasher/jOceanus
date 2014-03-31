@@ -127,6 +127,11 @@ public class Register
     protected static final String TITLE_CREDIT = Transaction.FIELD_CREDIT.getName();
 
     /**
+     * Reconciled Column Title.
+     */
+    private static final String TITLE_RECONCILED = NLS_BUNDLE.getString("TitleReconciled");
+
+    /**
      * PopUp viewAccount.
      */
     private static final String POPUP_VIEW = NLS_BUNDLE.getString("PopUpViewAccount");
@@ -575,7 +580,7 @@ public class Register
         public int getColumnCount() {
             return (theColumns == null)
                                        ? 0
-                                       : theColumns.getColumnCount();
+                                       : theColumns.getDeclaredCount();
         }
 
         /**
@@ -990,13 +995,13 @@ public class Register
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer));
-            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            addColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
         }
 
         /**
@@ -1019,7 +1024,7 @@ public class Register
                 case COLUMN_DEBIT:
                     return TITLE_DEBIT;
                 case COLUMN_RECONCILED:
-                    return "C";
+                    return TITLE_RECONCILED;
                 default:
                     return null;
             }

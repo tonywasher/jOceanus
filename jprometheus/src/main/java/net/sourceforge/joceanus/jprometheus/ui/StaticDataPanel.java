@@ -27,6 +27,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,6 +40,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -109,6 +112,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * The selection button.
      */
     private final JButton theSelectButton;
+
+    /**
+     * The disabled check box.
+     */
+    private final JCheckBox theDisabledCheckBox;
 
     /**
      * The Panel map.
@@ -183,10 +191,14 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
+        /* Create the CheckBox */
+        theDisabledCheckBox = new JCheckBox("Show Disabled");
+
         /* Add the listener for item changes */
         theSelectButton.addActionListener(theListener);
         theError.addChangeListener(theListener);
         theSaveButtons.addActionListener(theListener);
+        theDisabledCheckBox.addItemListener(theListener);
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -197,6 +209,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         mySelect.add(myLabel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
+        mySelect.add(Box.createHorizontalGlue());
+        mySelect.add(theDisabledCheckBox);
         mySelect.add(Box.createHorizontalGlue());
 
         /* Create the card panel */
@@ -213,6 +227,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         add(theError);
         add(theCardPanel);
         add(theSaveButtons);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
     }
 
     /**
@@ -327,6 +344,18 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     }
 
     /**
+     * Show disabled.
+     * @param pShow true/false
+     */
+    public void showDisabled(final boolean pShow) {
+        /* Loop through the map */
+        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
+            /* Update the panel */
+            myPanel.setShowAll(pShow);
+        }
+    }
+
+    /**
      * Cancel Editing of underlying tables.
      */
     private void cancelEditing() {
@@ -341,11 +370,16 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Set Visibility.
      */
     protected void setVisibility() {
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
         /* Lock down Selection if required */
-        theSelectButton.setEnabled(!hasUpdates());
+        theSelectButton.setEnabled(!hasUpdates);
+        theDisabledCheckBox.setEnabled(!hasUpdates);
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
+        theSaveButtons.setVisible(hasUpdates);
 
         /* Alert listeners that there has been a change */
         fireStateChanged();
@@ -355,7 +389,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Listener class.
      */
     private final class StaticListener
-            implements ChangeListener, ActionListener {
+            implements ChangeListener, ActionListener, ItemListener {
         /**
          * Show StaticData menu.
          */
@@ -406,10 +440,10 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         }
 
         @Override
-        public void actionPerformed(final ActionEvent evt) {
+        public void actionPerformed(final ActionEvent pEvent) {
             /* Access reporting object and command */
-            Object o = evt.getSource();
-            String myCmd = evt.getActionCommand();
+            Object o = pEvent.getSource();
+            String myCmd = pEvent.getActionCommand();
 
             /* if this is the save buttons reporting */
             if (theSaveButtons.equals(o)) {
@@ -430,6 +464,18 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
                 /* Show data menu */
                 showDataMenu();
+            }
+        }
+
+        @Override
+        public void itemStateChanged(final ItemEvent pEvent) {
+            /* Access reporting object and command */
+            Object o = pEvent.getSource();
+
+            /* if this is the disabled check box reporting */
+            if (theDisabledCheckBox.equals(o)) {
+                /* Adjust the disabled settings */
+                showDisabled(theDisabledCheckBox.isSelected());
             }
         }
     }

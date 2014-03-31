@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.ui;
 
+import java.util.Enumeration;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
@@ -156,6 +158,19 @@ public class JDataTableColumn
         private final JDataTableModel<?, E> theModel;
 
         /**
+         * The Declared column count.
+         */
+        private int theDeclaredCount;
+
+        /**
+         * Obtain the declared column count.
+         * @return the column count
+         */
+        public int getDeclaredCount() {
+            return theDeclaredCount;
+        }
+
+        /**
          * Constructor.
          * @param pTable the table with which this model is associated
          */
@@ -165,26 +180,68 @@ public class JDataTableColumn
         }
 
         /**
-         * Add a column to the end of the model.
+         * Declare a column and add to the end of the model.
          * @param pColumn the column
          */
-        protected void addColumn(final JDataTableColumn pColumn) {
-            /* Set the range */
-            super.addColumn(pColumn);
+        protected void declareColumn(final JDataTableColumn pColumn) {
+            /* Declare the column */
+            addColumn(pColumn);
             pColumn.setMember(true);
             pColumn.setModel(theModel);
+
+            /* Increment column count */
+            theDeclaredCount++;
         }
 
         /**
-         * Obtain column name
-         */
-        /**
-         * Remove a column from the model.
+         * Reveal column in its natural position.
          * @param pColumn the column
          */
-        protected void removeColumn(final JDataTableColumn pColumn) {
+        protected void revealColumn(final JDataTableColumn pColumn) {
+            /* Ignore if already a member */
+            if (pColumn.isMember()) {
+                return;
+            }
+
+            /* Determine various factors */
+            int myIndex = pColumn.getModelIndex();
+            int myNumCols = getColumnCount();
+
+            /* Determine insert point in table */
+            int myInsert = 0;
+            Enumeration<TableColumn> myEnumerator = getColumns();
+            while (myEnumerator.hasMoreElements()) {
+                TableColumn myColumn = myEnumerator.nextElement();
+
+                /* If this column is prior to the revealed column */
+                if (myColumn.getModelIndex() < myIndex) {
+                    /* Bump insert point */
+                    myInsert++;
+
+                    /* else we have found the insert point */
+                } else {
+                    break;
+                }
+            }
+
+            /* Insert the column */
+            addColumn(pColumn);
+            pColumn.setMember(true);
+
+            /* If we need to move the column */
+            if (myInsert < myNumCols) {
+                /* Move the column to the correct place */
+                moveColumn(myNumCols, myInsert);
+            }
+        }
+
+        /**
+         * Hide a column in the model.
+         * @param pColumn the column
+         */
+        protected void hideColumn(final JDataTableColumn pColumn) {
             /* Set the range */
-            super.removeColumn(pColumn);
+            removeColumn(pColumn);
             pColumn.setMember(false);
         }
 

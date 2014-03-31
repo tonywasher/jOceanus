@@ -565,7 +565,7 @@ public class PricePoint
         public int getColumnCount() {
             return (theColumns == null)
                                        ? 0
-                                       : theColumns.getColumnCount();
+                                       : theColumns.getDeclaredCount();
         }
 
         /**
@@ -730,10 +730,10 @@ public class PricePoint
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
-            addColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
-            addColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer, null));
+            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));
+            declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer, null));
+            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer, null));
         }
     }
 }
