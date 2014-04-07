@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,6 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
@@ -222,12 +225,20 @@ public class TransactionCategoryTable
         theColumns = new CategoryColumnModel(this);
         setColumnModel(theColumns);
 
+        /* Prevent reordering of columns and auto-resizing */
+        getTableHeader().setReorderingAllowed(false);
+        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+
+        /* Set the number of visible rows */
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+
         /* Create the filter components */
         JLabel myPrompt = new JLabel(TITLE_FILTER);
         theSelectButton = new JButton(ArrowIcon.DOWN);
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
         theSelectButton.setText(FILTER_ALL);
+        theSelectButton.addActionListener(myListener);
 
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
@@ -243,9 +254,8 @@ public class TransactionCategoryTable
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
-        /* Listen to view and selection */
-        theView.addChangeListener(myListener);
-        theSelectButton.addActionListener(myListener);
+        /* Initialise the columns */
+        theColumns.setColumns();
     }
 
     /**
@@ -299,20 +309,29 @@ public class TransactionCategoryTable
         /* If we have a changed category */
         if (!Difference.isEqual(myParent, theParent)) {
             /* Store new category */
-            theParent = pCategory;
-            theSelectButton.setText(pCategory.getName());
-            theModel.fireNewDataEvents();
+            selectParent(pCategory);
         }
 
         /* Find the item in the list */
         int myIndex = theCategories.indexOf(pCategory);
-        if (myIndex != -1) {
-            myIndex = convertRowIndexToView(myIndex);
-        }
+        myIndex = convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    /**
+     * Select parent.
+     * @param pParent the parent category
+     */
+    private void selectParent(final TransactionCategory pParent) {
+        theParent = pParent;
+        theSelectButton.setText(pParent == null
+                                               ? FILTER_ALL
+                                               : pParent.getName());
+        theColumns.setColumns();
+        theModel.fireNewDataEvents();
     }
 
     /**
@@ -355,9 +374,9 @@ public class TransactionCategoryTable
         }
 
         @Override
-        public boolean isCellEditable(final TransactionCategory pCategory,
+        public boolean isCellEditable(final TransactionCategory pItem,
                                       final int pColIndex) {
-            return false;
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -367,10 +386,18 @@ public class TransactionCategoryTable
         }
 
         @Override
-        public Object getItemValue(final TransactionCategory pCategory,
+        public Object getItemValue(final TransactionCategory pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return theColumns.getItemValue(pCategory, pColIndex);
+            return theColumns.getItemValue(pItem, pColIndex);
+        }
+
+        @Override
+        public void setItemValue(final TransactionCategory pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
 
         @Override
@@ -391,6 +418,15 @@ public class TransactionCategoryTable
                                       ? true
                                       : theParent.equals(pRow.getParentCategory());
         }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            /* Access the item */
+            TransactionCategory myItem = getItemAtIndex(pCell.y);
+
+            /* Process the click */
+            return theColumns.buttonClick(myItem, pCell.x);
+        }
     }
 
     /**
@@ -403,12 +439,6 @@ public class TransactionCategoryTable
         public void stateChanged(final ChangeEvent pEvent) {
             /* Access source */
             Object o = pEvent.getSource();
-
-            /* If this is the View */
-            if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-            }
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
@@ -436,7 +466,7 @@ public class TransactionCategoryTable
             JMenuItem myActive = null;
 
             /* Create the no filter JMenuItem and add it to the popUp */
-            CategoryAction myAction = new CategoryAction(null, FILTER_ALL);
+            CategoryAction myAction = new CategoryAction(FILTER_ALL);
             JMenuItem myItem = new JMenuItem(myAction);
             myPopUp.addMenuItem(myItem);
 
@@ -448,7 +478,7 @@ public class TransactionCategoryTable
 
             /* Create the totals JMenuItem and add it to the popUp */
             TransactionCategory myTotals = theCategories.getSingularClass(TransactionCategoryClass.TOTALS);
-            myAction = new CategoryAction(myTotals, myTotals.getName());
+            myAction = new CategoryAction(myTotals);
             myItem = new JMenuItem(myAction);
             myPopUp.addMenuItem(myItem);
 
@@ -506,18 +536,12 @@ public class TransactionCategoryTable
         private final TransactionCategory theCategory;
 
         /**
-         * Label.
-         */
-        private final String theLabel;
-
-        /**
          * Constructor.
          * @param pCategory the account category bucket
          */
         private CategoryAction(final TransactionCategory pCategory) {
             super(pCategory.getName());
             theCategory = pCategory;
-            theLabel = pCategory.getName();
         }
 
         /**
@@ -525,11 +549,9 @@ public class TransactionCategoryTable
          * @param pCategory the account category bucket
          * @param pName the name
          */
-        private CategoryAction(final TransactionCategory pCategory,
-                               final String pName) {
+        private CategoryAction(final String pName) {
             super(pName);
-            theCategory = pCategory;
-            theLabel = pName;
+            theCategory = null;
         }
 
         @Override
@@ -537,9 +559,7 @@ public class TransactionCategoryTable
             /* If this is a different category */
             if (!Difference.isEqual(theCategory, theParent)) {
                 /* Store new category */
-                theParent = theCategory;
-                theSelectButton.setText(theLabel);
-                theModel.fireNewDataEvents();
+                selectParent(theCategory);
             }
         }
     }
@@ -585,9 +605,24 @@ public class TransactionCategoryTable
         private final IconCellRenderer theIconRenderer;
 
         /**
+         * Icon editor.
+         */
+        private final IconCellEditor theIconEditor;
+
+        /**
          * String Renderer.
          */
         private final StringCellRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
+        private final StringCellEditor theStringEditor;
+
+        /**
+         * FullName column.
+         */
+        private final JDataTableColumn theFullNameColumn;
 
         /**
          * Constructor.
@@ -600,13 +635,29 @@ public class TransactionCategoryTable
             /* Create the relevant formatters */
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
+            theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
+            declareColumn(theFullNameColumn);
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+        }
+
+        /**
+         * Set visible columns according to the mode.
+         */
+        private void setColumns() {
+            /* Switch on parent */
+            if ((theParent == null)
+                || !theParent.isCategoryClass(TransactionCategoryClass.TOTALS)) {
+                revealColumn(theFullNameColumn);
+            } else {
+                hideColumn(theFullNameColumn);
+            }
         }
 
         /**
@@ -642,7 +693,10 @@ public class TransactionCategoryTable
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    return pCategory.getSubCategory();
+                    String mySubCat = pCategory.getSubCategory();
+                    return (mySubCat == null)
+                                             ? pCategory.getName()
+                                             : mySubCat;
                 case COLUMN_FULLNAME:
                     return pCategory.getName();
                 case COLUMN_CATEGORY:
@@ -652,9 +706,69 @@ public class TransactionCategoryTable
                 case COLUMN_ACTIVE:
                     return pCategory.isActive()
                                                ? ICON_ACTIVE
-                                               : null;
+                                               : ICON_DELETE;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        private void setItemValue(final TransactionCategory pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JOceanusException {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    pItem.setSubCategoryName((String) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setDescription((String) pValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Handle a button click.
+         * @param pItem the item
+         * @param pColIndex the column
+         * @return the new object
+         */
+        private Object buttonClick(final TransactionCategory pItem,
+                                   final int pColIndex) {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ACTIVE:
+                    deleteRow(pItem);
+                    return null;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final TransactionCategory pItem,
+                                       final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                case COLUMN_DESC:
+                    return true;
+                case COLUMN_ACTIVE:
+                    return !pItem.isActive();
+                default:
+                    return false;
             }
         }
 

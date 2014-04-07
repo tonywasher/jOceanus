@@ -210,16 +210,6 @@ public class PricePoint
     private static final int WIDTH_COLUMN = 130;
 
     /**
-     * The Panel height.
-     */
-    private static final int HEIGHT_PANEL = 200;
-
-    /**
-     * The Panel width.
-     */
-    private static final int WIDTH_PANEL = 900;
-
-    /**
      * Constructor.
      * @param pView the data view
      */

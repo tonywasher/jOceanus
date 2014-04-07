@@ -294,9 +294,7 @@ public class AnalysisSelect
         /* Create the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(myPanel);
-        add(Box.createRigidArea(new Dimension(0, STRUT_SIZE)));
         add(theRangeSelect);
-        add(Box.createRigidArea(new Dimension(0, STRUT_SIZE)));
         add(theFilterSelect);
 
         /* Initially hide the select boxes */

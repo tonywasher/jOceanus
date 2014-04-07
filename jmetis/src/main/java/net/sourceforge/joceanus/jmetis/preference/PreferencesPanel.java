@@ -47,10 +47,10 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
-import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
@@ -145,6 +145,11 @@ public class PreferencesPanel
     private final JEnablePanel theProperties;
 
     /**
+     * The buttons panel.
+     */
+    private final JPanel theButtons;
+
+    /**
      * The layout.
      */
     private final CardLayout theLayout;
@@ -187,16 +192,16 @@ public class PreferencesPanel
         theListener = new PropertyListener();
 
         /* Create the buttons panel */
-        JPanel myButtons = new JPanel();
-        myButtons.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
+        theButtons = new JPanel();
+        theButtons.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
 
         /* Create the layout for the buttons panel */
-        myButtons.setLayout(new BoxLayout(myButtons, BoxLayout.X_AXIS));
-        myButtons.add(Box.createHorizontalGlue());
-        myButtons.add(theOKButton);
-        myButtons.add(Box.createHorizontalGlue());
-        myButtons.add(theResetButton);
-        myButtons.add(Box.createHorizontalGlue());
+        theButtons.setLayout(new BoxLayout(theButtons, BoxLayout.X_AXIS));
+        theButtons.add(Box.createHorizontalGlue());
+        theButtons.add(theOKButton);
+        theButtons.add(Box.createHorizontalGlue());
+        theButtons.add(theResetButton);
+        theButtons.add(Box.createHorizontalGlue());
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
@@ -242,7 +247,7 @@ public class PreferencesPanel
         add(mySelection);
         add(myScroll);
         add(Box.createVerticalGlue());
-        add(myButtons);
+        add(theButtons);
 
         /* Determine the active items */
         theActive = thePanels.get(0);
@@ -342,11 +347,9 @@ public class PreferencesPanel
         theSelectButton.setEnabled((theActive != null)
                                    && !theActive.hasChanges());
 
-        /* Enable the buttons */
-        theOKButton.setEnabled((theActive != null)
-                               && theActive.hasChanges());
-        theResetButton.setEnabled((theActive != null)
-                                  && theActive.hasChanges());
+        /* Show/Hide the buttons */
+        theButtons.setVisible((theActive != null)
+                              && theActive.hasChanges());
     }
 
     /**
@@ -355,8 +358,8 @@ public class PreferencesPanel
     private void setSelectText() {
         /* Show selection text */
         theSelectButton.setText((theActive == null)
-                ? null
-                : theActive.toString());
+                                                   ? null
+                                                   : theActive.toString());
     }
 
     /**

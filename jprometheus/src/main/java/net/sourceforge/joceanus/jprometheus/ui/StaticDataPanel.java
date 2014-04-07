@@ -206,9 +206,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(myLabel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theDisabledCheckBox);
         mySelect.add(Box.createHorizontalGlue());
@@ -225,6 +227,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
         add(theError);
+        add(Box.createVerticalGlue());
         add(theCardPanel);
         add(theSaveButtons);
 

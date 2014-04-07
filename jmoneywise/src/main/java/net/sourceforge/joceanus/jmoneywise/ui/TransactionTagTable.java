@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -29,6 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
@@ -177,6 +181,13 @@ public class TransactionTagTable
         theColumns = new TransactionTagColumnModel(this);
         setColumnModel(theColumns);
 
+        /* Prevent reordering of columns and auto-resizing */
+        getTableHeader().setReorderingAllowed(false);
+        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+
+        /* Set the number of visible rows */
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -184,9 +195,6 @@ public class TransactionTagTable
 
         /* Create a dummy filter panel */
         theFilterPanel = new JPanel();
-
-        /* Listen to view */
-        theView.addChangeListener(myListener);
     }
 
     /**
@@ -284,7 +292,7 @@ public class TransactionTagTable
         @Override
         public boolean isCellEditable(final TransactionTag pItem,
                                       final int pColIndex) {
-            return false;
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -298,6 +306,14 @@ public class TransactionTagTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pItem, pColIndex);
+        }
+
+        @Override
+        public void setItemValue(final TransactionTag pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
 
         @Override
@@ -316,6 +332,15 @@ public class TransactionTagTable
             /* Handle filter */
             return true;
         }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            /* Access the item */
+            TransactionTag myItem = getItemAtIndex(pCell.y);
+
+            /* Process the click */
+            return theColumns.buttonClick(myItem, pCell.x);
+        }
     }
 
     /**
@@ -328,12 +353,6 @@ public class TransactionTagTable
         public void stateChanged(final ChangeEvent pEvent) {
             /* Access source */
             Object o = pEvent.getSource();
-
-            /* If this is the View */
-            if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-            }
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
@@ -374,9 +393,19 @@ public class TransactionTagTable
         private final IconCellRenderer theIconRenderer;
 
         /**
+         * Icon editor.
+         */
+        private final IconCellEditor theIconEditor;
+
+        /**
          * String Renderer.
          */
         private final StringCellRenderer theStringRenderer;
+
+        /**
+         * String Editor.
+         */
+        private final StringCellEditor theStringEditor;
 
         /**
          * Constructor.
@@ -389,11 +418,13 @@ public class TransactionTagTable
             /* Create the relevant formatters */
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
         }
 
         /**
@@ -431,9 +462,69 @@ public class TransactionTagTable
                 case COLUMN_ACTIVE:
                     return pTransactionTag.isActive()
                                                      ? ICON_ACTIVE
-                                                     : null;
+                                                     : ICON_DELETE;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        private void setItemValue(final TransactionTag pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JOceanusException {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    pItem.setName((String) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setDescription((String) pValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Handle a button click.
+         * @param pItem the item
+         * @param pColIndex the column
+         * @return the new object
+         */
+        private Object buttonClick(final TransactionTag pItem,
+                                   final int pColIndex) {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ACTIVE:
+                    deleteRow(pItem);
+                    return null;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final TransactionTag pItem,
+                                       final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                case COLUMN_DESC:
+                    return true;
+                case COLUMN_ACTIVE:
+                    return !pItem.isActive();
+                default:
+                    return false;
             }
         }
 

@@ -314,6 +314,7 @@ public class JFieldCellEditor {
          */
         protected IconCellEditor(final JTable pTable) {
             theButton = new JButton();
+            theButton.setFocusPainted(false);
             theButton.addActionListener(theListener);
             pTable.addMouseListener(new MouseListener());
         }

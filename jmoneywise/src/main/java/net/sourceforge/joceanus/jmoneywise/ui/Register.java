@@ -295,11 +295,6 @@ public class Register
     private static final int PANEL_WIDTH = 980;
 
     /**
-     * Panel height.
-     */
-    private static final int PANEL_HEIGHT = 200;
-
-    /**
      * Constructor for Register Window.
      * @param pView the data view
      */
@@ -334,7 +329,7 @@ public class Register
         setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, HEIGHT_PANEL));
 
         /* Add the mouse listener */
         RegisterMouse myMouse = new RegisterMouse();

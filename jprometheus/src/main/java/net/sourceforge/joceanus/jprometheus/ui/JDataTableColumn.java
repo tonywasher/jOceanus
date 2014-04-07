@@ -153,6 +153,11 @@ public class JDataTableColumn
         protected static final int WIDTH_CURR = 50;
 
         /**
+         * Row Header Width.
+         */
+        protected static final int WIDTH_ROWHDR = 40;
+
+        /**
          * The DataTableModel.
          */
         private final JDataTableModel<?, E> theModel;
@@ -296,7 +301,7 @@ public class JDataTableColumn
             theRowRenderer = pTable.getFieldMgr().allocateRowRenderer();
 
             /* Create the columns */
-            JDataTableColumn myCol = new JDataTableColumn(0, JDataTable.ROWHDR_WIDTH, theRowRenderer, null);
+            JDataTableColumn myCol = new JDataTableColumn(0, WIDTH_ROWHDR, theRowRenderer, null);
             addColumn(myCol);
             myCol.setModel(pTable.getRowTableModel());
         }

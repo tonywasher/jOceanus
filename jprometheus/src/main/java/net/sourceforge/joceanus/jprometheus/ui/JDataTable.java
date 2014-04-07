@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -67,19 +68,24 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     private static final long serialVersionUID = 1258025191244933784L;
 
     /**
-     * The reconciled icon.
+     * The active icon.
      */
     protected static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")));
 
     /**
-     * Row Header Width.
+     * The delete icon.
      */
-    protected static final int ROWHDR_WIDTH = 30;
+    protected static final Icon ICON_DELETE = resizeImage(new ImageIcon(JDataTable.class.getResource("Delete.png")));
 
     /**
-     * Row Header Height.
+     * Panel height.
      */
-    private static final int ROWHDR_HEIGHT = 200;
+    protected static final int HEIGHT_PANEL = 200;
+
+    /**
+     * Panel width.
+     */
+    public static final int WIDTH_PANEL = 900;
 
     /**
      * Default row height.
@@ -308,7 +314,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
         /* Add as the row header */
         theScroll.setRowHeaderView(theRowHdrTable);
-        theScroll.getRowHeader().setPreferredSize(new Dimension(ROWHDR_WIDTH, ROWHDR_HEIGHT));
+        theScroll.getRowHeader().setPreferredSize(new Dimension(JDataTableColumnModel.WIDTH_ROWHDR, HEIGHT_PANEL));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, theRowHdrTable.getTableHeader());
     }
 
@@ -564,6 +570,24 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
     /**
      * Delete the selected items.
+     */
+    protected void deleteRow(final T pRow) {
+        /* Access the row # and adjust for header */
+        int myRowNo = pRow.indexOf();
+
+        /* Mark the row as deleted */
+        pRow.setDeleted(true);
+
+        /* Notify of the update of the row */
+        theModel.fireUpdateRowEvents(myRowNo);
+
+        /* Increment version */
+        incrementVersion();
+        notifyChanges();
+    }
+
+    /**
+     * Delete the row.
      */
     protected void deleteRows() {
         /* Access the selected rows */

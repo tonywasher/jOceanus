@@ -514,7 +514,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         String myName = getName();
         if (myName != null) {
             /* Look for separator */
-            int iIndex = myName.indexOf(TransactionCategory.STR_SEP);
+            int iIndex = myName.indexOf(STR_SEP);
             if (iIndex != -1) {
                 /* Access and set subCategory */
                 String mySub = myName.substring(iIndex + 1);
@@ -533,6 +533,23 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
         /* Resolve the subCategory */
         resolveSubCategory();
+    }
+
+    /**
+     * Set a new category name.
+     * @param pName the new name
+     * @throws JOceanusException on error
+     */
+    public void setSubCategoryName(final String pName) throws JOceanusException {
+        /* Obtain parent */
+        T myParent = getParentCategory();
+
+        /* Set full name appropriately */
+        if (myParent != null) {
+            setCategoryName(myParent.getName() + STR_SEP + pName);
+        } else {
+            setCategoryName(pName);
+        }
     }
 
     /**

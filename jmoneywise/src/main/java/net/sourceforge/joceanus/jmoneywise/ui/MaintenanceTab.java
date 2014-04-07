@@ -448,7 +448,7 @@ public class MaintenanceTab
         Component myComponent = theTabs.getSelectedComponent();
 
         /* If the selected component is Account */
-        if (myComponent.equals(theCategoryTab)) {
+        if (myComponent.equals(theAccountTab)) {
             /* Set the debug focus */
             theAccountTab.determineFocus();
 

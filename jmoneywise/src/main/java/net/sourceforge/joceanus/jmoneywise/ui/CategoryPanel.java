@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -165,6 +166,11 @@ public class CategoryPanel
     private final SaveButtons theSaveButtons;
 
     /**
+     * The error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
      * Constructor.
      * @param pView the data view
      */
@@ -180,17 +186,17 @@ public class CategoryPanel
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel */
-        ErrorPanel myError = new ErrorPanel(myDataMgr, theDataEntry);
+        theError = new ErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the save buttons panel */
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the table panels */
-        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, myError);
-        theCashTable = new CashCategoryTable(pView, theUpdateSet, myError);
-        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, myError);
-        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, myError);
-        theTagTable = new TransactionTagTable(pView, theUpdateSet, myError);
+        theDepositTable = new DepositCategoryTable(pView, theUpdateSet, theError);
+        theCashTable = new CashCategoryTable(pView, theUpdateSet, theError);
+        theLoanTable = new LoanCategoryTable(pView, theUpdateSet, theError);
+        theEventTable = new TransactionCategoryTable(pView, theUpdateSet, theError);
+        theTagTable = new TransactionTagTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -230,16 +236,21 @@ public class CategoryPanel
 
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(myLabel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theFilterCardPanel);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.setMaximumSize(new Dimension(JDataTable.WIDTH_PANEL + 50, 50));
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
-        add(myError);
+        add(theError);
+        add(Box.createVerticalGlue());
         add(theCardPanel);
         add(theSaveButtons);
 
@@ -251,6 +262,10 @@ public class CategoryPanel
         theLoanTable.addChangeListener(myListener);
         theEventTable.addChangeListener(myListener);
         theTagTable.addChangeListener(myListener);
+        theSaveButtons.addActionListener(myListener);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
     }
 
     /**
@@ -396,6 +411,37 @@ public class CategoryPanel
     }
 
     /**
+     * Set Visibility.
+     */
+    protected void setVisibility() {
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
+        /* Lock down Selection if required */
+        theSelectButton.setEnabled(!hasUpdates);
+        theFilterCardPanel.setEnabled(!hasUpdates);
+
+        /* Update the save buttons */
+        theSaveButtons.setEnabled(true);
+        theSaveButtons.setVisible(hasUpdates);
+
+        /* Alert listeners that there has been a change */
+        fireStateChanged();
+    }
+
+    /**
+     * Cancel Editing of underlying tables.
+     */
+    private void cancelEditing() {
+        /* Cancel editing on subPanels */
+        theDepositTable.cancelEditing();
+        theCashTable.cancelEditing();
+        theLoanTable.cancelEditing();
+        theEventTable.cancelEditing();
+        theTagTable.cancelEditing();
+    }
+
+    /**
      * Listener.
      */
     private final class CategoryListener
@@ -423,18 +469,34 @@ public class CategoryPanel
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
+            String myCmd = pEvent.getActionCommand();
 
             /* If this event relates to the SelectButton */
             if (theSelectButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
                 /* Show the selection menu */
                 showSelectMenu();
+            }
+
+            /* if this is the save buttons reporting */
+            if (theSaveButtons.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Process the command */
+                theUpdateSet.processCommand(myCmd, theError);
+
+                /* Adjust visibility */
+                setVisibility();
             }
         }
 
         @Override
         public void stateChanged(final ChangeEvent e) {
-            /* Pass on notification */
-            fireStateChanged();
+            /* Adjust visibility */
+            setVisibility();
         }
     }
 

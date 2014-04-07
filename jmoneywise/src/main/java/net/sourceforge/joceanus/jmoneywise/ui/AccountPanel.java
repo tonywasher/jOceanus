@@ -27,6 +27,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -35,6 +37,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -54,6 +57,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
@@ -100,6 +104,11 @@ public class AccountPanel
      * The select button.
      */
     private final JButton theSelectButton;
+
+    /**
+     * The locked check box.
+     */
+    private final JCheckBox theLockedCheckBox;
 
     /**
      * The card panel.
@@ -157,6 +166,11 @@ public class AccountPanel
     private final transient JDataEntry theDataEntry;
 
     /**
+     * The error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
      * The save buttons panel.
      */
     private final SaveButtons theSaveButtons;
@@ -177,18 +191,21 @@ public class AccountPanel
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel */
-        ErrorPanel myError = new ErrorPanel(myDataMgr, theDataEntry);
+        theError = new ErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the save buttons panel */
         theSaveButtons = new SaveButtons(theUpdateSet);
 
+        /* Create the CheckBox */
+        theLockedCheckBox = new JCheckBox("Show Closed");
+
         /* Create the table panels */
-        theDepositTable = new DepositTable(pView, theUpdateSet, myError);
-        theCashTable = new CashTable(pView, theUpdateSet, myError);
-        theLoanTable = new LoanTable(pView, theUpdateSet, myError);
-        thePortfolioTable = new PortfolioTable(pView, theUpdateSet, myError);
-        theSecurityTable = new SecurityTable(pView, theUpdateSet, myError);
-        thePayeeTable = new PayeeTable(pView, theUpdateSet, myError);
+        theDepositTable = new DepositTable(pView, theUpdateSet, theError);
+        theCashTable = new CashTable(pView, theUpdateSet, theError);
+        theLoanTable = new LoanTable(pView, theUpdateSet, theError);
+        thePortfolioTable = new PortfolioTable(pView, theUpdateSet, theError);
+        theSecurityTable = new SecurityTable(pView, theUpdateSet, theError);
+        thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
@@ -220,24 +237,61 @@ public class AccountPanel
         mySelect.add(myLabel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(theSelectButton);
+        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         mySelect.add(Box.createHorizontalGlue());
+        mySelect.add(theLockedCheckBox);
+        mySelect.add(Box.createHorizontalGlue());
+        mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, 50));
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
-        add(myError);
+        add(theError);
         add(theCardPanel);
         add(theSaveButtons);
 
         /* Create the listener */
         AccountListener myListener = new AccountListener();
+        theError.addChangeListener(myListener);
         theSelectButton.addActionListener(myListener);
+        theLockedCheckBox.addItemListener(myListener);
         theDepositTable.addChangeListener(myListener);
         theCashTable.addChangeListener(myListener);
         theLoanTable.addChangeListener(myListener);
         thePortfolioTable.addChangeListener(myListener);
         theSecurityTable.addChangeListener(myListener);
         thePayeeTable.addChangeListener(myListener);
+        theSaveButtons.addActionListener(myListener);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
+    }
+
+    /**
+     * Show locked accounts.
+     * @param pShow true/false
+     */
+    public void showLocked(final boolean pShow) {
+        /* Adjust lock settings */
+        theDepositTable.setShowAll(pShow);
+        theCashTable.setShowAll(pShow);
+        theLoanTable.setShowAll(pShow);
+        thePortfolioTable.setShowAll(pShow);
+        theSecurityTable.setShowAll(pShow);
+        thePayeeTable.setShowAll(pShow);
+    }
+
+    /**
+     * Cancel Editing of underlying tables.
+     */
+    private void cancelEditing() {
+        /* Cancel editing */
+        theDepositTable.cancelEditing();
+        theCashTable.cancelEditing();
+        theLoanTable.cancelEditing();
+        thePortfolioTable.cancelEditing();
+        theSecurityTable.cancelEditing();
+        thePayeeTable.cancelEditing();
     }
 
     /**
@@ -385,10 +439,29 @@ public class AccountPanel
     }
 
     /**
+     * Set Visibility.
+     */
+    protected void setVisibility() {
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
+        /* Lock down Selection if required */
+        theSelectButton.setEnabled(!hasUpdates);
+        theLockedCheckBox.setEnabled(!hasUpdates);
+
+        /* Update the save buttons */
+        theSaveButtons.setEnabled(true);
+        theSaveButtons.setVisible(hasUpdates);
+
+        /* Alert listeners that there has been a change */
+        fireStateChanged();
+    }
+
+    /**
      * Listener.
      */
     private final class AccountListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, ItemListener {
         /**
          * Show Selection menu.
          */
@@ -412,9 +485,25 @@ public class AccountPanel
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
+            String myCmd = pEvent.getActionCommand();
+
+            /* if this is the save buttons reporting */
+            if (theSaveButtons.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Process the command */
+                theUpdateSet.processCommand(myCmd, theError);
+
+                /* Adjust visibility */
+                setVisibility();
+            }
 
             /* If this event relates to the SelectButton */
             if (theSelectButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
                 /* Show the selection menu */
                 showSelectMenu();
             }
@@ -422,8 +511,40 @@ public class AccountPanel
 
         @Override
         public void stateChanged(final ChangeEvent e) {
-            /* Pass on notification */
-            fireStateChanged();
+            /* Access reporting object */
+            Object o = e.getSource();
+
+            /* If this is the error panel reporting */
+            if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelectButton.setVisible(!isError);
+
+                /* Lock scroll-able area */
+                theCardPanel.setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButtons.setEnabled(!isError);
+
+                /* if this is one of the sub-panels */
+            } else {
+                /* Adjust visibility */
+                setVisibility();
+            }
+        }
+
+        @Override
+        public void itemStateChanged(final ItemEvent pEvent) {
+            /* Access reporting object and command */
+            Object o = pEvent.getSource();
+
+            /* if this is the disabled check box reporting */
+            if (theLockedCheckBox.equals(o)) {
+                /* Adjust the locked settings */
+                showLocked(theLockedCheckBox.isSelected());
+            }
         }
     }
 

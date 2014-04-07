@@ -27,6 +27,8 @@ import java.awt.Point;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -69,6 +71,11 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataTable.class.getName());
 
     /**
+     * The disabled icon.
+     */
+    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(StaticDataTable.class.getResource("Disabled.png")));
+
+    /**
      * Class column title.
      */
     private static final String TITLE_CLASS = StaticData.FIELD_CLASS.getName();
@@ -92,16 +99,6 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
      * Active column title.
      */
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
-
-    /**
-     * Panel width.
-     */
-    private static final int WIDTH_PANEL = 900;
-
-    /**
-     * Panel height.
-     */
-    private static final int HEIGHT_PANEL = 200;
 
     /**
      * The Data view.
@@ -475,12 +472,12 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
             theIconEditor = theFieldMgr.allocateIconCellEditor(StaticDataTable.this);
 
             /* Create and declare the columns */
-            declareColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             theEnabledColumn = new JDataTableColumn(COLUMN_ENABLED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theEnabledColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
 
             /* Initialise the columns display */
             setColumns();
@@ -490,7 +487,7 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
          * Set visible columns according to the mode.
          */
         private void setColumns() {
-            /* Switch on statement type */
+            /* Switch on mode */
             if (showAll()) {
                 revealColumn(theEnabledColumn);
             } else {
@@ -539,11 +536,11 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                 case COLUMN_ENABLED:
                     return pItem.getEnabled()
                                              ? ICON_ACTIVE
-                                             : null;
+                                             : ICON_DISABLED;
                 case COLUMN_ACTIVE:
                     return pItem.isActive()
                                            ? ICON_ACTIVE
-                                           : null;
+                                           : ICON_DELETE;
                 default:
                     return null;
             }
@@ -587,6 +584,9 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                                    final int pColIndex) {
             /* Set the appropriate value */
             switch (pColIndex) {
+                case COLUMN_ACTIVE:
+                    deleteRow(pItem);
+                    return null;
                 case COLUMN_ENABLED:
                     return !pItem.getEnabled();
                 default:
@@ -606,6 +606,7 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_ACTIVE:
                 case COLUMN_ENABLED:
                     return !pItem.isActive();
                 default:

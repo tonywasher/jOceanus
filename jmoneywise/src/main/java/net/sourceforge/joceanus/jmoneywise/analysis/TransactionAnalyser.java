@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -56,6 +55,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -362,6 +362,7 @@ public class TransactionAnalyser
                 Cash myCash = (Cash) myDebit;
                 TransactionCategory myAuto = myCash.getAutoExpense();
                 myDebit = myCash.getAutoPayee();
+                myDebit.touchItem(pTrans);
 
                 /* Subtract expense from Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
@@ -393,6 +394,7 @@ public class TransactionAnalyser
                 Cash myCash = (Cash) myCredit;
                 TransactionCategory myAuto = myCash.getAutoExpense();
                 myCredit = myCash.getAutoPayee();
+                myCredit.touchItem(pTrans);
 
                 /* Add expense to Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);

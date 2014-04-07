@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -507,14 +508,31 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public void touchItem(final DataItem<MoneyWiseDataType> pSource) {
         /* If we are being touched by a transaction */
         if (pSource instanceof Transaction) {
-            /* Access as event */
+            /* Access as transaction */
             Transaction myTrans = (Transaction) pSource;
 
-            /* Record the event */
+            /* Record the transaction */
             if (theEarliest == null) {
                 theEarliest = myTrans;
             }
             theLatest = myTrans;
+
+            /* Touch parent if it exists */
+            AssetBase<?> myParent = getParent();
+            if (myParent != null) {
+                myParent.touchItem(pSource);
+            }
+        }
+
+        /* If we are being touched by an asset */
+        if (pSource instanceof AssetBase) {
+            /* Access as assetBase */
+            AssetBase<?> myAsset = (AssetBase<?>) pSource;
+
+            /* Mark as relevant if child is open */
+            if (!myAsset.isClosed()) {
+                setRelevant();
+            }
         }
 
         /* Pass call onwards */
@@ -530,6 +548,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
                         final AssetBase<T> pAsset) {
         /* Set standard values */
         super(pList, pAsset);
+
+        /* If we are creating an edit copy from core */
+        ListStyle myBaseStyle = pAsset.getList().getStyle();
+        if ((pList.getStyle() == ListStyle.EDIT)
+            && (myBaseStyle == ListStyle.CORE)) {
+            /* Update underlying flags */
+            theCloseDate = pAsset.getCloseDate();
+            theEarliest = pAsset.getEarliest();
+            theLatest = pAsset.getLatest();
+            isRelevant = pAsset.isRelevant();
+        }
     }
 
     /**

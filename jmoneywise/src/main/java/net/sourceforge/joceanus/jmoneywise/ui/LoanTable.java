@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -29,6 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -90,6 +94,11 @@ public class LoanTable
      * Currency Column Title.
      */
     private static final String TITLE_CURRENCY = Loan.FIELD_CURRENCY.getName();
+
+    /**
+     * Closed Column Title.
+     */
+    private static final String TITLE_CLOSED = Loan.FIELD_CLOSED.getName();
 
     /**
      * Active Column Title.
@@ -186,6 +195,13 @@ public class LoanTable
         theColumns = new LoanColumnModel(this);
         setColumnModel(theColumns);
 
+        /* Prevent reordering of columns and auto-resizing */
+        getTableHeader().setReorderingAllowed(false);
+        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
+
+        /* Set the number of visible rows */
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
+
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
@@ -221,6 +237,12 @@ public class LoanTable
     }
 
     @Override
+    public void setShowAll(final boolean pShow) {
+        super.setShowAll(pShow);
+        theColumns.setColumns();
+    }
+
+    @Override
     protected void setError(final JOceanusException pError) {
         theError.addError(pError);
     }
@@ -242,6 +264,7 @@ public class LoanTable
     protected void selectLoan(final Loan pLoan) {
         /* Find the item in the list */
         int myIndex = theLoans.indexOf(pLoan);
+        myIndex = convertRowIndexToView(myIndex);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
@@ -290,7 +313,7 @@ public class LoanTable
         @Override
         public boolean isCellEditable(final Loan pItem,
                                       final int pColIndex) {
-            return false;
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -304,6 +327,14 @@ public class LoanTable
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pItem, pColIndex);
+        }
+
+        @Override
+        public void setItemValue(final Loan pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
 
         @Override
@@ -321,6 +352,15 @@ public class LoanTable
 
             /* Handle filter */
             return showAll() || !pRow.isDisabled();
+        }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            /* Access the item */
+            Loan myItem = getItemAtIndex(pCell.y);
+
+            /* Process the click */
+            return theColumns.buttonClick(myItem, pCell.x);
         }
     }
 
@@ -385,14 +425,19 @@ public class LoanTable
         private static final int COLUMN_CURR = 4;
 
         /**
+         * Closed column id.
+         */
+        private static final int COLUMN_CLOSED = 5;
+
+        /**
          * Active column id.
          */
-        private static final int COLUMN_ACTIVE = 5;
+        private static final int COLUMN_ACTIVE = 6;
 
         /**
          * LastTran column id.
          */
-        private static final int COLUMN_LASTTRAN = 6;
+        private static final int COLUMN_LASTTRAN = 7;
 
         /**
          * Icon Renderer.
@@ -410,6 +455,21 @@ public class LoanTable
         private final StringCellRenderer theStringRenderer;
 
         /**
+         * String editor.
+         */
+        private final StringCellEditor theStringEditor;
+
+        /**
+         * Icon editor.
+         */
+        private final IconCellEditor theIconEditor;
+
+        /**
+         * Closed column.
+         */
+        private final JDataTableColumn theClosedColumn;
+
+        /**
          * Constructor.
          * @param pTable the table
          */
@@ -421,15 +481,34 @@ public class LoanTable
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer));
+            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
+            declareColumn(theClosedColumn);
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
             declareColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
+
+            /* Initialise the columns */
+            setColumns();
+        }
+
+        /**
+         * Set visible columns according to the mode.
+         */
+        private void setColumns() {
+            /* Switch on mode */
+            if (showAll()) {
+                revealColumn(theClosedColumn);
+            } else {
+                hideColumn(theClosedColumn);
+            }
         }
 
         /**
@@ -449,6 +528,8 @@ public class LoanTable
                     return TITLE_PARENT;
                 case COLUMN_CURR:
                     return TITLE_CURRENCY;
+                case COLUMN_CLOSED:
+                    return TITLE_CLOSED;
                 case COLUMN_ACTIVE:
                     return TITLE_ACTIVE;
                 case COLUMN_LASTTRAN:
@@ -478,6 +559,13 @@ public class LoanTable
                     return pLoan.getParentName();
                 case COLUMN_CURR:
                     return pLoan.getLoanCurrencyName();
+                case COLUMN_CLOSED:
+                    if (pLoan.isClosed()) {
+                        return DepositTable.ICON_LOCKED;
+                    }
+                    return pLoan.isRelevant()
+                                             ? null
+                                             : DepositTable.ICON_LOCKABLE;
                 case COLUMN_ACTIVE:
                     return pLoan.isActive()
                                            ? ICON_ACTIVE
@@ -489,6 +577,75 @@ public class LoanTable
                                            : myTran.getDate();
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Handle a button click.
+         * @param pItem the item
+         * @param pColIndex the column
+         * @return the new object
+         */
+        private Object buttonClick(final Loan pItem,
+                                   final int pColIndex) {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ACTIVE:
+                    deleteRow(pItem);
+                    return null;
+                case COLUMN_CLOSED:
+                    return !pItem.isClosed();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        private void setItemValue(final Loan pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JOceanusException {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    pItem.setName((String) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setDescription((String) pValue);
+                    break;
+                case COLUMN_CLOSED:
+                    if (pValue instanceof Boolean) {
+                        pItem.setClosed((Boolean) pValue);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final Loan pItem,
+                                       final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                case COLUMN_DESC:
+                    return true;
+                case COLUMN_ACTIVE:
+                    return !pItem.isActive();
+                case COLUMN_CLOSED:
+                    return pItem.isClosed() || !pItem.isRelevant();
+                default:
+                    return false;
             }
         }
 
@@ -510,6 +667,8 @@ public class LoanTable
                     return Loan.FIELD_PARENT;
                 case COLUMN_CURR:
                     return Loan.FIELD_CURRENCY;
+                case COLUMN_CLOSED:
+                    return Loan.FIELD_CLOSED;
                 case COLUMN_ACTIVE:
                     return Loan.FIELD_TOUCH;
                 default:
