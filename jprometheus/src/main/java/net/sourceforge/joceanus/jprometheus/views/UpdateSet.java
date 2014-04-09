@@ -156,6 +156,30 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
+     * Obtain the list for a class.
+     * @param <T> the data type
+     * @param pClass the class
+     * @return the list
+     */
+    public <T extends DataItem<E> & Comparable<? super T>> DataList<?, E> findClass(final Class<T> pClass) {
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access entry */
+            UpdateEntry<?, E> myEntry = myIterator.next();
+
+            /* If we have found the class */
+            if (myEntry.isClass(pClass)) {
+                /* Update list to null and return */
+                return myEntry.getDataList();
+            }
+        }
+
+        /* Not found , so add it */
+        return null;
+    }
+
+    /**
      * Find the value for a field.
      * @param pName the name of the field
      * @return the value

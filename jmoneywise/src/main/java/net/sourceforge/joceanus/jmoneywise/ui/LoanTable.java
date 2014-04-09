@@ -24,14 +24,22 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -42,8 +50,15 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
+import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -54,12 +69,15 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Loan Table.
  */
 public class LoanTable
-        extends JDataTable<Loan, MoneyWiseDataType> {
+        extends JDataTable<Loan, MoneyWiseDataType>
+        implements PopUpMenuSelector {
     /**
      * Serial Id.
      */
@@ -156,6 +174,16 @@ public class LoanTable
     private transient LoanList theLoans = null;
 
     /**
+     * Categories.
+     */
+    private transient LoanCategoryList theCategories = null;
+
+    /**
+     * Currencies.
+     */
+    private transient AccountCurrencyList theCurrencies = null;
+
+    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -206,9 +234,6 @@ public class LoanTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
-
-        /* Listen to view */
-        theView.addChangeListener(myListener);
     }
 
     /**
@@ -227,12 +252,16 @@ public class LoanTable
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Loans edit list */
+        /* Access the various lists */
         MoneyWiseData myData = theView.getData();
+        theCurrencies = myData.getAccountCurrencies();
+        theCategories = myData.getLoanCategories();
+
+        /* Obtain the loan edit list */
         LoanList myLoans = myData.getLoans();
         theLoans = myLoans.deriveEditList();
-        setList(theLoans);
         theLoanEntry.setDataList(theLoans);
+        setList(theLoans);
         fireStateChanged();
     }
 
@@ -269,6 +298,175 @@ public class LoanTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                   final int pRowIndex,
+                                   final int pColIndex) {
+        /* Record active item */
+        Loan myLoan = theLoans.get(pRowIndex);
+
+        /* Switch on column */
+        switch (pColIndex) {
+            case LoanColumnModel.COLUMN_PARENT:
+                return getParentPopUpMenu(pEditor, myLoan);
+            case LoanColumnModel.COLUMN_CURR:
+                return getCurrencyPopUpMenu(pEditor, myLoan);
+            case LoanColumnModel.COLUMN_CATEGORY:
+                return getCategoryPopUpMenu(pEditor, myLoan);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the popUpMenu for parents.
+     * @param pEditor the Cell Editor
+     * @param pLoan the active loan
+     * @return the popUp menu
+     */
+    private JPopupMenu getParentPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                          final Loan pLoan) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        Payee myCurr = pLoan.getParent();
+        JMenuItem myActive = null;
+
+        /* We should use the update payee list */
+        PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted/non-parent/closed */
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+            bIgnore |= myPayee.isClosed();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(myPayee);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
+    }
+
+    /**
+     * Obtain the popUpMenu for categories.
+     * @param pEditor the Cell Editor
+     * @param pLoan the active loan
+     * @return the popUp menu
+     */
+    private JPopupMenu getCategoryPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                            final Loan pLoan) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Create a simple map for top-level categories */
+        Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+        /* Loop through the available category values */
+        Iterator<LoanCategory> myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategory myCategory = myIterator.next();
+
+            /* Only process parent items */
+            if (!myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                continue;
+            }
+
+            /* Create a new JMenu and add it to the popUp */
+            String myName = myCategory.getName();
+            JScrollMenu myMenu = new JScrollMenu(myName);
+            myMap.put(myName, myMenu);
+            myPopUp.addMenuItem(myMenu);
+        }
+
+        /* Re-Loop through the available category values */
+        myIterator = theCategories.iterator();
+        while (myIterator.hasNext()) {
+            LoanCategory myCategory = myIterator.next();
+
+            /* Only process low-level items */
+            if (myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                continue;
+            }
+
+            /* Determine menu to add to */
+            LoanCategory myParent = myCategory.getParentCategory();
+            JScrollMenu myMenu = myMap.get(myParent.getName());
+
+            /* Create a new JMenuItem and add it to the popUp */
+            PopUpAction myAction = pEditor.getNewAction(myCategory);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myMenu.addMenuItem(myItem);
+        }
+
+        /* Return the menu */
+        return myPopUp;
+    }
+
+    /**
+     * Obtain the popUpMenu for currencies.
+     * @param pEditor the Cell Editor
+     * @param pLoan the active loan
+     * @return the popUp menu
+     */
+    private JPopupMenu getCurrencyPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                            final Loan pLoan) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        AccountCurrency myCurr = pLoan.getLoanCurrency();
+        JMenuItem myActive = null;
+
+        /* Loop through the Currencies */
+        Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            PopUpAction myAction = pEditor.getNewAction(myCurrency);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
     }
 
     /**
@@ -375,12 +573,6 @@ public class LoanTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the View */
-            if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-            }
-
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
@@ -465,6 +657,11 @@ public class LoanTable
         private final IconCellEditor theIconEditor;
 
         /**
+         * PopUp Menu Editor.
+         */
+        private final PopUpMenuCellEditor theMenuEditor;
+
+        /**
          * Closed column.
          */
         private final JDataTableColumn theClosedColumn;
@@ -483,13 +680,14 @@ public class LoanTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theMenuEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
@@ -618,6 +816,15 @@ public class LoanTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_CATEGORY:
+                    pItem.setLoanCategory((LoanCategory) pValue);
+                    break;
+                case COLUMN_PARENT:
+                    pItem.setParent((Payee) pValue);
+                    break;
+                case COLUMN_CURR:
+                    pItem.setLoanCurrency((AccountCurrency) pValue);
+                    break;
                 case COLUMN_CLOSED:
                     if (pValue instanceof Boolean) {
                         pItem.setClosed((Boolean) pValue);
@@ -640,6 +847,10 @@ public class LoanTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_PARENT:
+                    return !pItem.isClosed();
+                case COLUMN_CATEGORY:
+                case COLUMN_CURR:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:

@@ -107,6 +107,7 @@ public class QIFPreference
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

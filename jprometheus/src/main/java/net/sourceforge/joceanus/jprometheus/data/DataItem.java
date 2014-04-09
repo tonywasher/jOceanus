@@ -409,6 +409,7 @@ public abstract class DataItem<E extends Enum<E>>
         return theTouchStatus.isActive();
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

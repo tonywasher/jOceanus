@@ -24,14 +24,20 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -44,6 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -54,12 +62,14 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Payee Table.
  */
 public class PayeeTable
-        extends JDataTable<Payee, MoneyWiseDataType> {
+        extends JDataTable<Payee, MoneyWiseDataType>
+        implements PopUpMenuSelector {
     /**
      * Serial Id.
      */
@@ -146,6 +156,11 @@ public class PayeeTable
     private transient PayeeList thePayees = null;
 
     /**
+     * Payee types.
+     */
+    private transient PayeeTypeList thePayeeTypes = null;
+
+    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -196,9 +211,6 @@ public class PayeeTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
-
-        /* Listen to view */
-        theView.addChangeListener(myListener);
     }
 
     /**
@@ -217,12 +229,15 @@ public class PayeeTable
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Payees edit list */
+        /* Access the various lists */
         MoneyWiseData myData = theView.getData();
+        thePayeeTypes = myData.getPayeeTypes();
+
+        /* Get the Payees edit list */
         PayeeList myPayees = myData.getPayees();
         thePayees = myPayees.deriveEditList();
-        setList(thePayees);
         thePayeeEntry.setDataList(thePayees);
+        setList(thePayees);
         fireStateChanged();
     }
 
@@ -259,6 +274,50 @@ public class PayeeTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                   final int pRowIndex,
+                                   final int pColIndex) {
+        /* Access item */
+        Payee myPayee = thePayees.get(pRowIndex);
+
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        PayeeType myCurr = myPayee.getPayeeType();
+        JMenuItem myActive = null;
+
+        /* Loop through the Payee Types */
+        Iterator<PayeeType> myIterator = thePayeeTypes.iterator();
+        while (myIterator.hasNext()) {
+            PayeeType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(myType);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
     }
 
     /**
@@ -365,12 +424,6 @@ public class PayeeTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the View */
-            if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-            }
-
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
@@ -445,6 +498,11 @@ public class PayeeTable
         private final IconCellEditor theIconEditor;
 
         /**
+         * PopUp Menu Editor.
+         */
+        private final PopUpMenuCellEditor theMenuEditor;
+
+        /**
          * Closed column.
          */
         private final JDataTableColumn theClosedColumn;
@@ -463,10 +521,11 @@ public class PayeeTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
@@ -588,6 +647,9 @@ public class PayeeTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_CATEGORY:
+                    pItem.setPayeeType((PayeeType) pValue);
+                    break;
                 case COLUMN_CLOSED:
                     if (pValue instanceof Boolean) {
                         pItem.setClosed((Boolean) pValue);
@@ -610,6 +672,7 @@ public class PayeeTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_CATEGORY:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:

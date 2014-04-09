@@ -107,6 +107,7 @@ public class GitPreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

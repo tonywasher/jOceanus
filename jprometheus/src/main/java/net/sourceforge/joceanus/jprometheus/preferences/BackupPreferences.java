@@ -166,6 +166,7 @@ public class BackupPreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

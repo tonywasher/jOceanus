@@ -76,6 +76,11 @@ public class CategoryPanel
     protected static final int STRUT_WIDTH = 5;
 
     /**
+     * Panel padding.
+     */
+    protected static final int PANEL_PAD = 50;
+
+    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CategoryPanel.class.getName());
@@ -244,7 +249,7 @@ public class CategoryPanel
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theFilterCardPanel);
         mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        mySelect.setMaximumSize(new Dimension(JDataTable.WIDTH_PANEL + 50, 50));
+        mySelect.setMaximumSize(new Dimension(JDataTable.WIDTH_PANEL + PANEL_PAD, PANEL_PAD));
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -408,6 +413,9 @@ public class CategoryPanel
         /* Note the active panel */
         theActive = pName;
         theSelectButton.setText(myName);
+
+        /* Determine the focus */
+        determineFocus();
     }
 
     /**

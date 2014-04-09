@@ -201,6 +201,7 @@ public class JFieldPreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

@@ -184,6 +184,7 @@ public class DatabasePreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

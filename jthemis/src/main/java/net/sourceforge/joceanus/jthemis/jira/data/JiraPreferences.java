@@ -126,6 +126,7 @@ public class JiraPreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

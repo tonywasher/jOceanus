@@ -208,6 +208,7 @@ public class SecurityPreferences
         return myParms;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

@@ -241,7 +241,7 @@ public class AccountPanel
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theLockedCheckBox);
         mySelect.add(Box.createHorizontalGlue());
-        mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, 50));
+        mySelect.setPreferredSize(new Dimension(JDataTable.WIDTH_PANEL, CategoryPanel.PANEL_PAD));
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

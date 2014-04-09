@@ -332,7 +332,7 @@ public class TransactionCategoryTable
         if (!Difference.isEqual(myParent, theParent)) {
             /* Store new category */
             myParent = theCategories.findItemById(myParent.getId());
-            selectParent(pCategory);
+            selectParent(myParent);
         }
 
         /* Find the item in the list */
@@ -615,7 +615,6 @@ public class TransactionCategoryTable
 
         /**
          * Constructor.
-         * @param pCategory the account category bucket
          * @param pName the name
          */
         private CategoryAction(final String pName) {
@@ -919,7 +918,7 @@ public class TransactionCategoryTable
 
         /**
          * Determine type.
-         * @param pType the transaction category type
+         * @param pCategory the transaction category
          * @return the category type
          */
         private static CategoryType determineType(final TransactionCategory pCategory) {

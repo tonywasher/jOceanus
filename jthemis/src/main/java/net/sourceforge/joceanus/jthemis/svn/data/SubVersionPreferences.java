@@ -202,6 +202,7 @@ public class SubVersionPreferences
         return null;
     }
 
+    @Override
     public boolean isDisabled() {
         return false;
     }

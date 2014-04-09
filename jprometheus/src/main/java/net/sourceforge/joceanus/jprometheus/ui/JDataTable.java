@@ -319,7 +319,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     }
 
     /**
-     * Resize an icon to the row height
+     * Resize an icon to the row height.
      * @param pSource the source icon
      * @return the resized icon
      */
@@ -570,6 +570,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
     /**
      * Delete the selected items.
+     * @param pRow the row to delete
      */
     protected void deleteRow(final T pRow) {
         /* Access the row # and adjust for header */

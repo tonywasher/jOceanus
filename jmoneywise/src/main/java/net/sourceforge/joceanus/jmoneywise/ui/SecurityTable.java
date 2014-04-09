@@ -24,14 +24,20 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -40,8 +46,14 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -52,12 +64,14 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Security Table.
  */
 public class SecurityTable
-        extends JDataTable<Security, MoneyWiseDataType> {
+        extends JDataTable<Security, MoneyWiseDataType>
+        implements PopUpMenuSelector {
     /**
      * Serial Id.
      */
@@ -154,6 +168,16 @@ public class SecurityTable
     private transient SecurityList theSecurities = null;
 
     /**
+     * Security types.
+     */
+    private transient SecurityTypeList theSecTypes = null;
+
+    /**
+     * Currencies.
+     */
+    private transient AccountCurrencyList theCurrencies = null;
+
+    /**
      * Obtain the panel.
      * @return the panel
      */
@@ -204,8 +228,6 @@ public class SecurityTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
-
-        theView.addChangeListener(myListener);
     }
 
     /**
@@ -224,12 +246,16 @@ public class SecurityTable
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Securities edit list */
+        /* Access the various lists */
         MoneyWiseData myData = theView.getData();
+        theCurrencies = myData.getAccountCurrencies();
+        theSecTypes = myData.getSecurityTypes();
+
+        /* Obtain the security edit list */
         SecurityList mySecurities = myData.getSecurities();
         theSecurities = mySecurities.deriveEditList();
-        setList(theSecurities);
         theSecurityEntry.setDataList(theSecurities);
+        setList(theSecurities);
         fireStateChanged();
     }
 
@@ -266,6 +292,165 @@ public class SecurityTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                   final int pRowIndex,
+                                   final int pColIndex) {
+        /* Record active item */
+        Security mySecurity = theSecurities.get(pRowIndex);
+
+        /* Switch on column */
+        switch (pColIndex) {
+            case SecurityColumnModel.COLUMN_PARENT:
+                return getParentPopUpMenu(pEditor, mySecurity);
+            case SecurityColumnModel.COLUMN_CURR:
+                return getCurrencyPopUpMenu(pEditor, mySecurity);
+            case SecurityColumnModel.COLUMN_CATEGORY:
+                return getSecTypePopUpMenu(pEditor, mySecurity);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the popUpMenu for parents.
+     * @param pEditor the Cell Editor
+     * @param pSecurity the active security
+     * @return the popUp menu
+     */
+    private JPopupMenu getParentPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                          final Security pSecurity) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        Payee myCurr = pSecurity.getParent();
+        JMenuItem myActive = null;
+
+        /* We should use the update payee list */
+        PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+
+        /* Loop through the Payees */
+        Iterator<Payee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            Payee myPayee = myIterator.next();
+
+            /* Ignore deleted/non-parent/closed */
+            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+            bIgnore |= myPayee.isClosed();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(myPayee);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active parent */
+            if (myPayee.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
+    }
+
+    /**
+     * Obtain the popUpMenu for security types.
+     * @param pEditor the Cell Editor
+     * @param pSecurity the active security
+     * @return the popUp menu
+     */
+    private JPopupMenu getSecTypePopUpMenu(final PopUpMenuCellEditor pEditor,
+                                           final Security pSecurity) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        SecurityType myCurr = pSecurity.getSecurityType();
+        JMenuItem myActive = null;
+
+        /* Loop through the Security Types */
+        Iterator<SecurityType> myIterator = theSecTypes.iterator();
+        while (myIterator.hasNext()) {
+            SecurityType mySecType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = mySecType.isDeleted() || !mySecType.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(mySecType);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active type */
+            if (mySecType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
+    }
+
+    /**
+     * Obtain the popUpMenu for currencies.
+     * @param pEditor the Cell Editor
+     * @param pSecurity the active security
+     * @return the popUp menu
+     */
+    private JPopupMenu getCurrencyPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                            final Security pSecurity) {
+        /* Create new menu */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Record active item */
+        AccountCurrency myCurr = pSecurity.getSecurityCurrency();
+        JMenuItem myActive = null;
+
+        /* Loop through the Currencies */
+        Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
+        while (myIterator.hasNext()) {
+            AccountCurrency myCurrency = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the currency */
+            PopUpAction myAction = pEditor.getNewAction(myCurrency);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+
+            /* If this is the active currency */
+            if (myCurrency.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
+
+        /* Return the menu */
+        return myPopUp;
     }
 
     /**
@@ -372,12 +557,6 @@ public class SecurityTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the View */
-            if (theView.equals(o)) {
-                /* Refresh the data */
-                refreshData();
-            }
-
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
@@ -457,6 +636,11 @@ public class SecurityTable
         private final IconCellEditor theIconEditor;
 
         /**
+         * PopUp Menu Editor.
+         */
+        private final PopUpMenuCellEditor theMenuEditor;
+
+        /**
          * Closed column.
          */
         private final JDataTableColumn theClosedColumn;
@@ -474,14 +658,15 @@ public class SecurityTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theMenuEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
@@ -603,8 +788,20 @@ public class SecurityTable
                 case COLUMN_NAME:
                     pItem.setName((String) pValue);
                     break;
+                case COLUMN_CATEGORY:
+                    pItem.setSecurityType((SecurityType) pValue);
+                    break;
+                case COLUMN_PARENT:
+                    pItem.setParent((Payee) pValue);
+                    break;
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
+                    break;
+                case COLUMN_SYMBOL:
+                    pItem.setSymbol((String) pValue);
+                    break;
+                case COLUMN_CURR:
+                    pItem.setSecurityCurrency((AccountCurrency) pValue);
                     break;
                 case COLUMN_CLOSED:
                     if (pValue instanceof Boolean) {
@@ -628,6 +825,11 @@ public class SecurityTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_SYMBOL:
+                case COLUMN_PARENT:
+                    return !pItem.isClosed();
+                case COLUMN_CATEGORY:
+                case COLUMN_CURR:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 case COLUMN_CLOSED:

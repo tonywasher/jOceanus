@@ -141,6 +141,7 @@ public class TaxAnalysis {
             return null;
         }
 
+        @Override
         public boolean isDisabled() {
             return false;
         }
