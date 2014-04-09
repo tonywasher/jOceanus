@@ -133,7 +133,6 @@ public class UpdateSet<E extends Enum<E>>
      * @param pClass the class
      * @return the list class entry
      */
-    @SuppressWarnings("unchecked")
     public <T extends DataItem<E> & Comparable<? super T>> UpdateEntry<T, E> registerClass(final Class<T> pClass) {
         /* Loop through the items in the list */
         Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();

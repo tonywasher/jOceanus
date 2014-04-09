@@ -38,10 +38,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -54,6 +58,8 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -71,7 +77,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * Deposit Category Maintenance.
  */
 public class DepositCategoryTable
-        extends JDataTable<DepositCategory, MoneyWiseDataType> {
+        extends JDataTable<DepositCategory, MoneyWiseDataType>
+        implements PopUpMenuSelector {
     /**
      * Serial Id.
      */
@@ -171,6 +178,11 @@ public class DepositCategoryTable
      * Deposit Categories.
      */
     private transient DepositCategoryList theCategories = null;
+
+    /**
+     * Deposit Categories Types.
+     */
+    private transient DepositCategoryTypeList theCategoryTypes = null;
 
     /**
      * Active parent.
@@ -274,12 +286,22 @@ public class DepositCategoryTable
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
+        theCategoryTypes = myData.getDepositCategoryTypes();
         DepositCategoryList myCategories = myData.getDepositCategories();
         theCategories = myCategories.deriveEditList();
-        setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
+
+        /* If we have a parent */
+        if (theParent != null) {
+            /* Update the parent via the edit list */
+            theParent = theCategories.findItemById(theParent.getId());
+            theSelectButton.setText(theParent.getName());
+        }
+
+        /* Notify of the change */
+        setList(theCategories);
         fireStateChanged();
     }
 
@@ -306,6 +328,7 @@ public class DepositCategoryTable
         /* Ensure the correct parent is selected */
         DepositCategory myParent = pCategory.getParentCategory();
         if (!myParent.equals(theParent)) {
+            myParent = theCategories.findItemById(myParent.getId());
             selectParent(myParent);
         }
 
@@ -329,6 +352,51 @@ public class DepositCategoryTable
                                                : pParent.getName());
         theColumns.setColumns();
         theModel.fireNewDataEvents();
+    }
+
+    @Override
+    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                   final int pRowIndex,
+                                   final int pColIndex) {
+        /* Create new menu */
+        JScrollPopupMenu myMenu = new JScrollPopupMenu();
+
+        /* Record active item */
+        DepositCategory myCategory = theCategories.get(pRowIndex);
+        DepositCategoryType myCurr = myCategory.getCategoryType();
+        JMenuItem myActive = null;
+
+        /* Loop through the DepositCategoryTypes */
+        Iterator<DepositCategoryType> myIterator = theCategoryTypes.iterator();
+        while (myIterator.hasNext()) {
+            DepositCategoryType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+            /* Ignore category if it is a parent */
+            bIgnore |= myType.getDepositClass().isParentCategory();
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(myType);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myMenu.addMenuItem(myItem);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myMenu.showItem(myActive);
+
+        /* Return the menu */
+        return myMenu;
     }
 
     /**
@@ -477,10 +545,14 @@ public class DepositCategoryTable
             Iterator<DepositCategory> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
                 DepositCategory myCurr = myIterator.next();
+                DepositCategoryType myType = myCurr.getCategoryType();
 
-                /* Ignore category if it is not a subTotal */
-                DepositCategoryClass myClass = myCurr.getCategoryTypeClass();
-                if (!myClass.isParentCategory()) {
+                /* Ignore deleted */
+                boolean bIgnore = myCurr.isDeleted();
+
+                /* Ignore category if it is not a parent */
+                bIgnore |= !myType.getDepositClass().isParentCategory();
+                if (bIgnore) {
                     continue;
                 }
 
@@ -604,6 +676,11 @@ public class DepositCategoryTable
         private final StringCellEditor theStringEditor;
 
         /**
+         * PopUp Menu Editor.
+         */
+        private final PopUpMenuCellEditor theMenuEditor;
+
+        /**
          * FullName column.
          */
         private final JDataTableColumn theFullNameColumn;
@@ -626,12 +703,13 @@ public class DepositCategoryTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
             declareColumn(theFullNameColumn);
-            theCategoryColumn = new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer);
+            theCategoryColumn = new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor);
             declareColumn(theCategoryColumn);
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
@@ -721,6 +799,9 @@ public class DepositCategoryTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_CATEGORY:
+                    pItem.setCategoryType((DepositCategoryType) pValue);
+                    break;
                 default:
                     break;
             }
@@ -756,6 +837,7 @@ public class DepositCategoryTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_CATEGORY:
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 default:

@@ -33,11 +33,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.CategoryInterface;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <S> the Static Data type
  * @param <C> the Static Data class
  */
-public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & StaticInterface>
+public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
         extends EncryptedItem<MoneyWiseDataType>
         implements Comparable<T> {
     /**
@@ -537,18 +537,51 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
     /**
      * Set a new category name.
+     * @param pParentName the parent name
+     * @param pSubCatName the subCategory name
+     * @throws JOceanusException on error
+     */
+    public void setCategoryName(final String pParentName,
+                                final String pSubCatName) throws JOceanusException {
+        setCategoryName(pParentName + STR_SEP + pSubCatName);
+    }
+
+    /**
+     * Set a new category name.
      * @param pName the new name
      * @throws JOceanusException on error
      */
     public void setSubCategoryName(final String pName) throws JOceanusException {
         /* Obtain parent */
         T myParent = getParentCategory();
+        String myName = getName();
+        boolean updateChildren = false;
 
-        /* Set full name appropriately */
+        /* Set name appropriately */
         if (myParent != null) {
-            setCategoryName(myParent.getName() + STR_SEP + pName);
+            /* Access class of parent */
+            C myClass = myParent.getCategoryTypeClass();
+
+            /* Handle subTotals separately */
+            if (myClass.isTotals()) {
+                setCategoryName(pName);
+                updateChildren = !pName.equals(myName);
+            } else {
+                setCategoryName(myParent.getName(), pName);
+            }
+
+            /* else this is a parent */
         } else {
             setCategoryName(pName);
+            if (!getCategoryTypeClass().isTotals()) {
+                updateChildren = !pName.equals(myName);
+            }
+        }
+
+        /* If we should update the children */
+        if (updateChildren) {
+            CategoryBaseList<T, S, C> myList = getList();
+            myList.updateChildren((T) this);
         }
     }
 
@@ -614,7 +647,6 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
             addError(ERROR_LENGTH, FIELD_DESC);
         }
-
     }
 
     /**
@@ -634,17 +666,18 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
         /* Update the parent category if required */
         if (!Difference.isEqual(getParentCategory(), pCategory.getParentCategory())) {
+            /* Set value */
             setValueParent(pCategory.getParentCategory());
         }
     }
 
     /**
      * The Category Base List class.
-     * @param <T>
-     * @param <S>
-     * @param <C>
+     * @param <T> the Category Data type
+     * @param <S> the Static Data type
+     * @param <C> the Static Data class
      */
-    public abstract static class CategoryBaseList<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & StaticInterface>
+    public abstract static class CategoryBaseList<T extends CategoryBase<T, S, C>, S extends StaticData<S, C, MoneyWiseDataType>, C extends Enum<C> & CategoryInterface>
             extends EncryptedList<T, MoneyWiseDataType> {
         /**
          * Local Report fields.
@@ -704,10 +737,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          * @return The Item if present (or null)
          */
         public T findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
             /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
                 if (pName.equals(myCurr.getName())) {
@@ -717,6 +748,32 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Update Children.
+         * @param pParent the parent item
+         * @throws JOceanusException on error
+         */
+        private void updateChildren(final T pParent) throws JOceanusException {
+            /* Determine the id */
+            Integer myId = pParent.getId();
+            String myName = pParent.getName();
+
+            /* Loop through the items */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+
+                /* If we have a child of the parent */
+                if (myId.equals(myCurr.getParentCategoryId())) {
+                    /* Update name and point to edit parent */
+                    myCurr.pushHistory();
+                    myCurr.setParentCategory(pParent);
+                    myCurr.setCategoryName(myName, myCurr.getSubCategory());
+                    myCurr.checkForHistory();
+                }
+            }
         }
     }
 }

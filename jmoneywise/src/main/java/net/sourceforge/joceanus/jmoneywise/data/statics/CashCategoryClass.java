@@ -26,13 +26,12 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of CashCategory Type Classes.
  */
-public enum CashCategoryClass implements StaticInterface {
+public enum CashCategoryClass implements CategoryInterface {
     /**
      * Cash Account.
      * <p>
@@ -116,8 +115,8 @@ public enum CashCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType is a parent category.
-     * @return <code>true</code> if the account category type is a parent category, <code>false</code> otherwise.
+     * Determine whether the CashCategoryType is a parent category.
+     * @return <code>true</code> if the cash category type is a parent category, <code>false</code> otherwise.
      */
     public boolean isParentCategory() {
         switch (this) {
@@ -126,5 +125,10 @@ public enum CashCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean isTotals() {
+        return false;
     }
 }

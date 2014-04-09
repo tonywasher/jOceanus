@@ -26,13 +26,12 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of TransactionCategory Classes.
  */
-public enum TransactionCategoryClass implements StaticInterface {
+public enum TransactionCategoryClass implements CategoryInterface {
     /**
      * Taxed Salary Income.
      */
@@ -432,6 +431,9 @@ public enum TransactionCategoryClass implements StaticInterface {
             case CHARITYDONATION:
             case CAPITALGAIN:
             case TAXFREEGAIN:
+            case TAXRELIEF:
+            case TAXSETTLEMENT:
+            case TAXABLEGAIN:
             case TOTALS:
                 return true;
             default:
@@ -655,5 +657,10 @@ public enum TransactionCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean isTotals() {
+        return this == TransactionCategoryClass.TOTALS;
     }
 }

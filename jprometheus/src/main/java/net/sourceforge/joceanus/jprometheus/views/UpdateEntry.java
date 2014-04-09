@@ -151,7 +151,8 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
             }
         }
 
-        /* Re-sort the underlying list */
+        /* Resolve links and re-sort the underlying list */
+        myBaseList.resolveDataSetLinks();
         myBaseList.reSort();
     }
 

@@ -26,13 +26,12 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of DepositCategory Type Classes.
  */
-public enum DepositCategoryClass implements StaticInterface {
+public enum DepositCategoryClass implements CategoryInterface {
     /**
      * Checking Deposit.
      * <p>
@@ -171,5 +170,10 @@ public enum DepositCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean isTotals() {
+        return false;
     }
 }

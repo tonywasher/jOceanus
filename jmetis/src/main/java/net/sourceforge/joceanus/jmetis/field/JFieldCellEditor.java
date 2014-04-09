@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -32,12 +33,14 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -76,6 +79,22 @@ public class JFieldCellEditor {
          */
         JComboBox<?> getComboBox(final int pRowIndex,
                                  final int pColIndex);
+    }
+
+    /**
+     * PopUpMenuSelector interface.
+     */
+    public interface PopUpMenuSelector {
+        /**
+         * Get the popUpMenu for the item at row and column.
+         * @param pEditor the cell editor
+         * @param pRowIndex the row
+         * @param pColIndex the column
+         * @return the popUpMenu
+         */
+        JPopupMenu getPopUpMenu(PopUpMenuCellEditor pEditor,
+                                final int pRowIndex,
+                                final int pColIndex);
     }
 
     /**
@@ -390,7 +409,7 @@ public class JFieldCellEditor {
         /**
          * Mouse Adapter class.
          * <p>
-         * Required if button clicked and released in different place
+         * Required to handle button clicked, dragged, and released in different place
          */
         private class MouseListener
                 extends MouseAdapter {
@@ -399,6 +418,251 @@ public class JFieldCellEditor {
                 if (isActive) {
                     stopCellEditing();
                 }
+            }
+        }
+    }
+
+    /**
+     * PopUpMenu Cell Editor.
+     */
+    public static class PopUpMenuCellEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 6815861197403796996L;
+
+        /**
+         * The button.
+         */
+        private final JButton theButton;
+
+        /**
+         * The selection Listener.
+         */
+        private final transient ButtonListener theButtonListener = new ButtonListener();
+
+        /**
+         * The popUp Listener.
+         */
+        private final transient PopUpListener thePopUpListener = new PopUpListener();
+
+        /**
+         * The mouse Listener.
+         */
+        private final transient MouseListener theMouseListener = new MouseListener();
+
+        /**
+         * The popUp Menu.
+         */
+        private transient JPopupMenu theMenu;
+
+        /**
+         * The table.
+         */
+        private transient JTable theTable;
+
+        /**
+         * The editor value.
+         */
+        private transient Object theValue;
+
+        /**
+         * Is the button active?
+         */
+        private transient boolean isActive;
+
+        /**
+         * Constructor.
+         */
+        protected PopUpMenuCellEditor() {
+            theButton = new JButton();
+            theButton.setHorizontalAlignment(SwingConstants.LEFT);
+            theButton.setFocusPainted(false);
+            theButton.addActionListener(theButtonListener);
+        }
+
+        @Override
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
+                                                      final boolean isSelected,
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            /* Determine the menu to display */
+            if (!(pTable instanceof PopUpMenuSelector)) {
+                return null;
+            }
+            PopUpMenuSelector myTable = (PopUpMenuSelector) pTable;
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            theMenu = myTable.getPopUpMenu(this, myRow, myCol);
+            theTable = pTable;
+
+            /* Set value */
+            theValue = pValue;
+            isActive = true;
+
+            /* Set button text */
+            if (pValue instanceof String) {
+                theButton.setText((String) pValue);
+            } else if (pValue != null) {
+                theButton.setText(pValue.toString());
+            } else {
+                theButton.setText(null);
+            }
+
+            /* Declare the mouse listener */
+            pTable.addMouseListener(theMouseListener);
+
+            /* Return the button */
+            return theButton;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return theValue;
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            if (super.stopCellEditing()) {
+                theMenu.removePopupMenuListener(thePopUpListener);
+                theTable.removeMouseListener(theMouseListener);
+                isActive = false;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void cancelCellEditing() {
+            super.cancelCellEditing();
+            theMenu.removePopupMenuListener(thePopUpListener);
+            theTable.removeMouseListener(theMouseListener);
+            isActive = false;
+        }
+
+        /**
+         * Button Listener class.
+         */
+        private class ButtonListener
+                implements ActionListener {
+            @Override
+            public void actionPerformed(final ActionEvent pEvent) {
+                /* Stop mouse listener */
+                isActive = false;
+
+                /* Add the listener to the menu */
+                theMenu.addPopupMenuListener(thePopUpListener);
+
+                /* Show the popUp menu in the correct place */
+                Rectangle myLoc = theButton.getBounds();
+                theMenu.show(theButton, 0, myLoc.height);
+            }
+        }
+
+        /**
+         * Mouse Adapter class.
+         * <p>
+         * Required to handle button clicked, dragged, and released in different place
+         */
+        private class MouseListener
+                extends MouseAdapter {
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+                if (isActive) {
+                    stopCellEditing();
+                }
+            }
+        }
+
+        /**
+         * Obtain new action element for given value.
+         * @param pValue the value
+         * @return the new action
+         */
+        public PopUpAction getNewAction(final Object pValue) {
+            return new PopUpAction(pValue);
+        }
+
+        /**
+         * Obtain new action element for given name and value.
+         * @param pName the name
+         * @param pValue the value
+         * @return the new action
+         */
+        public PopUpAction getNewAction(final String pName,
+                                        final Object pValue) {
+            return new PopUpAction(pName, pValue);
+        }
+
+        /**
+         * PopUp action class.
+         */
+        public final class PopUpAction
+                extends AbstractAction {
+            /**
+             * Serial Id.
+             */
+            private static final long serialVersionUID = -8465776918544737464L;
+
+            /**
+             * Action value.
+             */
+            private final Object theActionValue;
+
+            /**
+             * Constructor.
+             * @param pValue the value
+             */
+            private PopUpAction(final Object pValue) {
+                super(pValue.toString());
+                theActionValue = pValue;
+            }
+
+            /**
+             * Constructor.
+             * @param pName the name
+             * @param pValue the value
+             */
+            private PopUpAction(final String pName,
+                                final Object pValue) {
+                super(pName);
+                theActionValue = pValue;
+            }
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                /* Record the value */
+                theValue = theActionValue;
+
+                /* Remove listener and stop editing */
+                theMenu.removePopupMenuListener(thePopUpListener);
+                stopCellEditing();
+            }
+        }
+
+        /**
+         * PopUp listener class.
+         * <p>
+         * Required to handle button clicked, dragged, and released in different place
+         */
+        private class PopUpListener
+                implements PopupMenuListener {
+            @Override
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
+                /* Ignore */
+            }
+
+            @Override
+            public void popupMenuCanceled(final PopupMenuEvent e) {
+                cancelCellEditing();
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
+                /* Ignore */
             }
         }
     }

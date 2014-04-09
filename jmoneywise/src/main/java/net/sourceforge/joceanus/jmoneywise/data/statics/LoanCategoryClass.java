@@ -26,13 +26,12 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
  * Enumeration of LoanCategory Type Classes.
  */
-public enum LoanCategoryClass implements StaticInterface {
+public enum LoanCategoryClass implements CategoryInterface {
     /**
      * CreditCard.
      * <p>
@@ -157,5 +156,10 @@ public enum LoanCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean isTotals() {
+        return false;
     }
 }

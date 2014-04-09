@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
@@ -368,6 +369,15 @@ public class JFieldManager {
     public IconCellEditor allocateIconCellEditor(final JTable pTable) {
         /* Return a new IconEditor object */
         return new IconCellEditor(pTable);
+    }
+
+    /**
+     * Allocate a PopUpMenuEditor object.
+     * @return the PopUpMenu editor
+     */
+    public PopUpMenuCellEditor allocatePopUpMenuCellEditor() {
+        /* Return a new PopUpMenuEditor object */
+        return new PopUpMenuCellEditor();
     }
 
     /**

@@ -38,10 +38,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -54,6 +58,8 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -71,7 +77,8 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
  * Transaction Category Maintenance.
  */
 public class TransactionCategoryTable
-        extends JDataTable<TransactionCategory, MoneyWiseDataType> {
+        extends JDataTable<TransactionCategory, MoneyWiseDataType>
+        implements PopUpMenuSelector {
     /**
      * Serial Id.
      */
@@ -171,6 +178,11 @@ public class TransactionCategoryTable
      * Event Categories.
      */
     private transient TransactionCategoryList theCategories = null;
+
+    /**
+     * Transaction Categories Types.
+     */
+    private transient TransactionCategoryTypeList theCategoryTypes = null;
 
     /**
      * Active parent.
@@ -274,12 +286,22 @@ public class TransactionCategoryTable
      * Refresh data.
      */
     public void refreshData() {
-        /* Get the Events edit list */
+        /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
+        theCategoryTypes = myData.getTransCategoryTypes();
         TransactionCategoryList myCategories = myData.getTransCategories();
         theCategories = myCategories.deriveEditList();
-        setList(theCategories);
         theCategoryEntry.setDataList(theCategories);
+
+        /* If we have a parent */
+        if (theParent != null) {
+            /* Update the parent via the edit list */
+            theParent = theCategories.findItemById(theParent.getId());
+            theSelectButton.setText(theParent.getName());
+        }
+
+        /* Notify of the change */
+        setList(theCategories);
         fireStateChanged();
     }
 
@@ -309,6 +331,7 @@ public class TransactionCategoryTable
         /* If we have a changed category */
         if (!Difference.isEqual(myParent, theParent)) {
             /* Store new category */
+            myParent = theCategories.findItemById(myParent.getId());
             selectParent(pCategory);
         }
 
@@ -427,6 +450,52 @@ public class TransactionCategoryTable
             /* Process the click */
             return theColumns.buttonClick(myItem, pCell.x);
         }
+    }
+
+    @Override
+    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
+                                   final int pRowIndex,
+                                   final int pColIndex) {
+        /* Create new menu */
+        JScrollPopupMenu myMenu = new JScrollPopupMenu();
+
+        /* Record active item */
+        TransactionCategory myCategory = theCategories.get(pRowIndex);
+        TransactionCategoryType myCurr = myCategory.getCategoryType();
+        CategoryType myCurrType = CategoryType.determineType(myCurr);
+        JMenuItem myActive = null;
+
+        /* Loop through the TransactionCategoryTypes */
+        Iterator<TransactionCategoryType> myIterator = theCategoryTypes.iterator();
+        while (myIterator.hasNext()) {
+            TransactionCategoryType myType = myIterator.next();
+
+            /* Ignore deleted or disabled */
+            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+            /* Ignore category if wrong type */
+            bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
+            if (bIgnore) {
+                continue;
+            }
+
+            /* Create a new action for the type */
+            PopUpAction myAction = pEditor.getNewAction(myType);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myMenu.addMenuItem(myItem);
+
+            /* If this is the active type */
+            if (myType.equals(myCurr)) {
+                /* Record it */
+                myActive = myItem;
+            }
+        }
+
+        /* Ensure active item is visible */
+        myMenu.showItem(myActive);
+
+        /* Return the menu */
+        return myMenu;
     }
 
     /**
@@ -620,6 +689,11 @@ public class TransactionCategoryTable
         private final StringCellEditor theStringEditor;
 
         /**
+         * PopUp Menu Editor.
+         */
+        private final PopUpMenuCellEditor theMenuEditor;
+
+        /**
          * FullName column.
          */
         private final JDataTableColumn theFullNameColumn;
@@ -637,12 +711,13 @@ public class TransactionCategoryTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
             declareColumn(theFullNameColumn);
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
         }
@@ -730,6 +805,9 @@ public class TransactionCategoryTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_CATEGORY:
+                    pItem.setCategoryType((TransactionCategoryType) pValue);
+                    break;
                 default:
                     break;
             }
@@ -765,6 +843,10 @@ public class TransactionCategoryTable
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
+                case COLUMN_CATEGORY:
+                    return (pItem.isActive())
+                                             ? false
+                                             : CategoryType.determineType(pItem).isChangeable();
                 case COLUMN_ACTIVE:
                     return !pItem.isActive();
                 default:
@@ -792,6 +874,110 @@ public class TransactionCategoryTable
                     return TransactionCategory.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+    }
+
+    /**
+     * Category Type.
+     */
+    private enum CategoryType {
+        /**
+         * Income.
+         */
+        INCOME,
+
+        /**
+         * Expense.
+         */
+        EXPENSE,
+
+        /**
+         * Totals.
+         */
+        TOTALS,
+
+        /**
+         * SubTotal.
+         */
+        SUBTOTAL,
+
+        /**
+         * Singular.
+         */
+        SINGULAR,
+
+        /**
+         * StockXfer.
+         */
+        STOCKXFER,
+
+        /**
+         * Transfer.
+         */
+        XFER;
+
+        /**
+         * Determine type.
+         * @param pType the transaction category type
+         * @return the category type
+         */
+        private static CategoryType determineType(final TransactionCategory pCategory) {
+            return determineType(pCategory.getCategoryType());
+        }
+
+        /**
+         * Determine type.
+         * @param pType the transaction category type
+         * @return the category type
+         */
+        private static CategoryType determineType(final TransactionCategoryType pType) {
+            /* Access class */
+            TransactionCategoryClass myClass = pType.getCategoryClass();
+
+            /* Handle Totals */
+            if (myClass.isTotals()) {
+                return TOTALS;
+            }
+
+            /* Handle SubTotals */
+            if (myClass.isSubTotal()) {
+                return SUBTOTAL;
+            }
+
+            /* Handle Singular */
+            if (myClass.isSingular()) {
+                return SUBTOTAL;
+            }
+
+            /* Handle Income */
+            if (myClass.isIncome()) {
+                return INCOME;
+            }
+
+            /* Handle Transfer */
+            if (myClass.isTransfer()) {
+                return myClass.isStockTransfer()
+                                                ? STOCKXFER
+                                                : XFER;
+            }
+
+            /* Must be expense */
+            return EXPENSE;
+        }
+
+        /**
+         * Is this type changeable?
+         * @return true/false
+         */
+        private boolean isChangeable() {
+            switch (this) {
+                case TOTALS:
+                case XFER:
+                case SINGULAR:
+                    return false;
+                default:
+                    return true;
             }
         }
     }
