@@ -113,7 +113,7 @@ public class AnalysisManager
      */
     public Analysis getAnalysis(final JDateDay pDate) {
         /* Create the new Range */
-        JDateDayRange myRange = new JDateDayRange(theFirstDate, pDate);
+        JDateDayRange myRange = new JDateDayRange(null, pDate);
 
         /* Look for the existing analysis */
         Analysis myAnalysis = get(myRange);

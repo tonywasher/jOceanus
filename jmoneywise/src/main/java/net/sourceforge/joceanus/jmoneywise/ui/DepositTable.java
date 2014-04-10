@@ -779,7 +779,7 @@ public class DepositTable
                 case COLUMN_ACTIVE:
                     return pDeposit.isActive()
                                               ? ICON_ACTIVE
-                                              : null;
+                                              : ICON_DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pDeposit.getLatest();
                     return (myTran == null)

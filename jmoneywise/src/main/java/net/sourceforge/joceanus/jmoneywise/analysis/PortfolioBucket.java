@@ -563,8 +563,12 @@ public final class PortfolioBucket
                 /* Access the bucket for this date */
                 PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
 
-                /* Add to the list */
-                append(myBucket);
+                /* Ignore if no active securities */
+                SecurityBucketList mySecurities = myBucket.getSecurities();
+                if (!mySecurities.isEmpty()) {
+                    /* Add to the list */
+                    append(myBucket);
+                }
             }
         }
 

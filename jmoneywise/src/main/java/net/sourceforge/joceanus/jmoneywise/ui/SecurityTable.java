@@ -741,7 +741,7 @@ public class SecurityTable
                 case COLUMN_ACTIVE:
                     return pSecurity.isActive()
                                                ? ICON_ACTIVE
-                                               : null;
+                                               : ICON_DELETE;
                 case COLUMN_SYMBOL:
                     return pSecurity.getSymbol();
                 case COLUMN_PARENT:

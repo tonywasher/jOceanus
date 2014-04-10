@@ -598,7 +598,7 @@ public class PayeeTable
                 case COLUMN_ACTIVE:
                     return pPayee.isActive()
                                             ? ICON_ACTIVE
-                                            : null;
+                                            : ICON_DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pPayee.getLatest();
                     return (myTran == null)

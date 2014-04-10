@@ -767,7 +767,7 @@ public class LoanTable
                 case COLUMN_ACTIVE:
                     return pLoan.isActive()
                                            ? ICON_ACTIVE
-                                           : null;
+                                           : ICON_DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pLoan.getLatest();
                     return (myTran == null)

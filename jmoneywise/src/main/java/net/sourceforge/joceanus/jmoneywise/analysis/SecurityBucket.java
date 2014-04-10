@@ -815,8 +815,11 @@ public final class SecurityBucket
                 /* Access the bucket for this date */
                 SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pDate);
 
-                /* Add to the list */
-                append(myBucket);
+                /* Ignore idle (i.e unused) securities */
+                if (!myBucket.isIdle()) {
+                    /* Add to the list */
+                    append(myBucket);
+                }
             }
         }
 

@@ -436,6 +436,9 @@ public class AccountPanel
         /* Note the active panel */
         theActive = pName;
         theSelectButton.setText(myName);
+
+        /* Determine the focus */
+        determineFocus();
     }
 
     /**

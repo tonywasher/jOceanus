@@ -699,7 +699,7 @@ public class CashTable
                 case COLUMN_ACTIVE:
                     return pCash.isActive()
                                            ? ICON_ACTIVE
-                                           : null;
+                                           : ICON_DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pCash.getLatest();
                     return (myTran == null)
