@@ -49,6 +49,8 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo;
+import net.sourceforge.joceanus.jmoneywise.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
@@ -131,6 +133,11 @@ public class PayeeTable
     private final transient UpdateEntry<Payee, MoneyWiseDataType> thePayeeEntry;
 
     /**
+     * PayeeInfo Update Entry.
+     */
+    private final transient UpdateEntry<PayeeInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -189,6 +196,7 @@ public class PayeeTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         thePayeeEntry = theUpdateSet.registerClass(Payee.class);
+        theInfoEntry = theUpdateSet.registerClass(PayeeInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -237,6 +245,8 @@ public class PayeeTable
         PayeeList myPayees = myData.getPayees();
         thePayees = myPayees.deriveEditList();
         thePayeeEntry.setDataList(thePayees);
+        PayeeInfoList myInfo = thePayees.getPayeeInfo();
+        theInfoEntry.setDataList(myInfo);
         setList(thePayees);
         fireStateChanged();
     }

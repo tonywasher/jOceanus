@@ -21,6 +21,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -28,6 +31,9 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -38,9 +44,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
@@ -59,6 +67,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
@@ -274,6 +283,11 @@ public class AnalysisStatement
         AnalysisListener myListener = new AnalysisListener();
         theView.addChangeListener(myListener);
         theSelect.addChangeListener(myListener);
+        theSaveButtons.addActionListener(myListener);
+        theUpdateSet.addActionListener(myListener);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
     }
 
     /**
@@ -321,6 +335,28 @@ public class AnalysisStatement
     @Override
     protected void setError(final JOceanusException pError) {
         theError.addError(pError);
+    }
+
+    /**
+     * Call underlying controls to take notice of changes in view/selection.
+     */
+    @Override
+    public void notifyChanges() {
+        /* Find the edit state */
+        if (theTransactions != null) {
+            theTransactions.findEditState();
+        }
+
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
+        /* Update the table buttons */
+        theSaveButtons.setEnabled(true);
+        theSaveButtons.setVisible(hasUpdates);
+        theSelect.setEnabled(!hasUpdates);
+
+        /* Update the top level tabs */
+        fireStateChanged();
     }
 
     /**
@@ -408,9 +444,9 @@ public class AnalysisStatement
         }
 
         @Override
-        public boolean isCellEditable(final Transaction pTrans,
+        public boolean isCellEditable(final Transaction pItem,
                                       final int pColIndex) {
-            return false;
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -422,12 +458,20 @@ public class AnalysisStatement
         }
 
         @Override
-        public Object getItemValue(final Transaction pTrans,
+        public Object getItemValue(final Transaction pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            return pTrans.isHeader()
-                                    ? theColumns.getHeaderValue(pColIndex)
-                                    : theColumns.getItemValue(pTrans, pColIndex);
+            return pItem.isHeader()
+                                   ? theColumns.getHeaderValue(pColIndex)
+                                   : theColumns.getItemValue(pItem, pColIndex);
+        }
+
+        @Override
+        public void setItemValue(final Transaction pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
 
         @Override
@@ -446,13 +490,22 @@ public class AnalysisStatement
             /* Return visibility of row */
             return !pRow.isDeleted() && !theFilter.filterTransaction(pRow);
         }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            /* Access the item */
+            Transaction myItem = getItemAtIndex(pCell.y);
+
+            /* Process the click */
+            return theColumns.buttonClick(myItem, pCell.x);
+        }
     }
 
     /**
      * Listener class.
      */
     private final class AnalysisListener
-            implements ChangeListener {
+            implements ChangeListener, ActionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -477,6 +530,28 @@ public class AnalysisStatement
                 } else {
                     setSelection(myRange);
                 }
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If this event relates to the save buttons */
+            if (theSaveButtons.equals(o)) {
+                /* Cancel any editing */
+                cancelEditing();
+
+                /* Perform the command */
+                theUpdateSet.processCommand(e.getActionCommand(), theError);
+
+                /* Notify listeners of changes */
+                notifyChanges();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
             }
         }
     }
@@ -557,6 +632,21 @@ public class AnalysisStatement
         private final IconCellRenderer theIconRenderer;
 
         /**
+         * Date editor.
+         */
+        private final CalendarCellEditor theDateEditor;
+
+        /**
+         * Icon editor.
+         */
+        private final IconCellEditor theIconEditor;
+
+        /**
+         * String editor.
+         */
+        private final StringCellEditor theStringEditor;
+
+        /**
          * Constructor.
          * @param pTable the table
          */
@@ -569,14 +659,17 @@ public class AnalysisStatement
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer, theIconEditor));
             declareColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));
             declareColumn(new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer));
@@ -663,6 +756,79 @@ public class AnalysisStatement
                     return theFilter.getStartingBalance();
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Handle a button click.
+         * @param pItem the item
+         * @param pColIndex the column
+         * @return the new object
+         */
+        private Object buttonClick(final Transaction pItem,
+                                   final int pColIndex) {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_RECONCILED:
+                    return !pItem.isReconciled();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        private void setItemValue(final Transaction pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JOceanusException {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pItem.setDate((JDateDay) pValue);
+                    break;
+                case COLUMN_CATEGORY:
+                    pItem.setCategory((TransactionCategory) pValue);
+                    break;
+                case COLUMN_DEBIT:
+                    pItem.setDebit((AssetBase<?>) pValue);
+                    break;
+                case COLUMN_CREDIT:
+                    pItem.setCredit((AssetBase<?>) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setComments((String) pValue);
+                    break;
+                case COLUMN_RECONCILED:
+                    if (pValue instanceof Boolean) {
+                        pItem.setReconciled((Boolean) pValue);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final Transaction pItem,
+                                       final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                case COLUMN_RECONCILED:
+                    return !pItem.isLocked();
+                case COLUMN_DESC:
+                    return true;
+                default:
+                    return false;
             }
         }
 

@@ -873,6 +873,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         if (myValue == null) {
             addError(ERROR_MISSING, FIELD_VALUE);
         }
+
+        /* Set validation flag */
+        if (!hasErrors()) {
+            setValidEdit();
+        }
     }
 
     /**

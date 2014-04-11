@@ -54,6 +54,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -161,6 +163,11 @@ public class DepositTable
     private final transient UpdateEntry<Deposit, MoneyWiseDataType> theDepositEntry;
 
     /**
+     * DepositInfo Update Entry.
+     */
+    private final transient UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -224,6 +231,7 @@ public class DepositTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theDepositEntry = theUpdateSet.registerClass(Deposit.class);
+        theInfoEntry = theUpdateSet.registerClass(DepositInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -273,6 +281,8 @@ public class DepositTable
         DepositList myDeposits = myData.getDeposits();
         theDeposits = myDeposits.deriveEditList();
         theDepositEntry.setDataList(theDeposits);
+        DepositInfoList myInfo = theDeposits.getDepositInfo();
+        theInfoEntry.setDataList(myInfo);
         setList(theDeposits);
         fireStateChanged();
     }

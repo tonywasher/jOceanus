@@ -51,6 +51,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -131,6 +133,11 @@ public class PortfolioTable
     private final transient UpdateEntry<Portfolio, MoneyWiseDataType> thePortfolioEntry;
 
     /**
+     * PortfolioInfo Update Entry.
+     */
+    private final transient UpdateEntry<PortfolioInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -184,6 +191,7 @@ public class PortfolioTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         thePortfolioEntry = theUpdateSet.registerClass(Portfolio.class);
+        theInfoEntry = theUpdateSet.registerClass(PortfolioInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -229,8 +237,10 @@ public class PortfolioTable
         MoneyWiseData myData = theView.getData();
         PortfolioList myPortfolios = myData.getPortfolios();
         thePortfolios = myPortfolios.deriveEditList();
-        setList(thePortfolios);
         thePortfolioEntry.setDataList(thePortfolios);
+        PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
+        theInfoEntry.setDataList(myInfo);
+        setList(thePortfolios);
         fireStateChanged();
     }
 

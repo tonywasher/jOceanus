@@ -194,6 +194,27 @@ public class AccountCurrency
     }
 
     @Override
+    public int compareTo(final AccountCurrency pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* Handle differences in default value */
+        if (isDefault() != pThat.isDefault()) {
+            return isDefault()
+                              ? -1
+                              : 1;
+        }
+
+        /* Handle normally */
+        return super.compareTo(pThat);
+    }
+
+    @Override
     public void resolveDataSetLinks() throws JOceanusException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();

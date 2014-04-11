@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -344,26 +349,29 @@ public class SpotSecurityPrices
             theView = pPrices.getView();
             thePortfolio = pPrices.getPortfolio();
 
+            /* Obtain the portfolio bucket */
+            AnalysisManager myManager = theView.getAnalysisManager();
+            Analysis myAnalysis = myManager.getAnalysis();
+            PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
+            PortfolioBucket myBucket = myPortfolios.findItemById(thePortfolio.getId());
+            SecurityBucketList mySecurities = myBucket.getSecurities();
+
             /* Loop through the Securities */
             MoneyWiseData myData = theView.getData();
             Iterator<Security> mySecIterator = myData.getSecurities().listIterator();
             while (mySecIterator.hasNext()) {
                 Security mySecurity = mySecIterator.next();
-                /* Ignore accounts that are wrong portfolio, have no prices or are aliases */
-                // if ((!Difference.isEqual(myPortfolio, thePortfolio))) {
-                // continue;
-                // }
+
+                /* Ignore accounts that are wrong portfolio */
+                if (mySecurities.findItemById(mySecurity.getId()) == null) {
+                    continue;
+                }
 
                 /* Create a SpotPrice entry */
                 SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
                 mySpot.setId(mySecurity.getId());
                 mySpot.setDate(new JDateDay(theDate));
                 add(mySpot);
-
-                /* If the account is closed then hide the entry */
-                if (mySecurity.isClosed()) {
-                    mySpot.setDeleted(true);
-                }
             }
 
             /* Set the base for this list */
@@ -374,10 +382,6 @@ public class SpotSecurityPrices
             Iterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasNext()) {
                 SecurityPrice myPrice = myIterator.next();
-                /* Ignore accounts that are wrong type */
-                // if (!Difference.isEqual(myPrice.getSecurity().getPortfolio(), thePortfolio)) {
-                // continue;
-                // }
 
                 /* Test the Date */
                 int iDiff = theDate.compareTo(myPrice.getDate());
@@ -389,9 +393,12 @@ public class SpotSecurityPrices
                     break;
                 }
 
-                /* Access the Spot Price */
+                /* Access the Spot Price and ignore if not relevant */
                 Security mySecurity = myPrice.getSecurity();
                 SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
+                if (mySpot == null) {
+                    continue;
+                }
 
                 /* If we are exactly the date */
                 if (iDiff == 0) {
@@ -482,9 +489,10 @@ public class SpotSecurityPrices
                     case DELCHG:
                     case CHANGED:
                     case RECOVERED:
+                    case DELNEW:
+                    case NEW:
                         return true;
                     case CLEAN:
-                    case DELNEW:
                     default:
                         break;
                 }

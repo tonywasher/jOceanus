@@ -185,26 +185,6 @@ public class PricePoint
     private static final String TITLE_PREVDATE = SpotSecurityPrice.FIELD_PREVDATE.getName();
 
     /**
-     * The Asset column id.
-     */
-    private static final int COLUMN_ASSET = 0;
-
-    /**
-     * The Price column id.
-     */
-    private static final int COLUMN_PRICE = 1;
-
-    /**
-     * The Previous price column id.
-     */
-    private static final int COLUMN_PREVPRICE = 2;
-
-    /**
-     * The Previous Date column id.
-     */
-    private static final int COLUMN_PREVDATE = 3;
-
-    /**
      * The column width.
      */
     private static final int WIDTH_COLUMN = 130;
@@ -241,7 +221,7 @@ public class PricePoint
 
         /* Prevent reordering of columns and auto-resizing */
         getTableHeader().setReorderingAllowed(false);
-        setAutoResizeMode(AUTO_RESIZE_OFF);
+        setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
@@ -274,6 +254,9 @@ public class PricePoint
         thePanel.add(theError);
         thePanel.add(getScrollPane());
         thePanel.add(theSaveButtons);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
     }
 
     /**
@@ -315,9 +298,13 @@ public class PricePoint
      */
     @Override
     public void notifyChanges() {
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
         /* Update the table buttons */
         theSaveButtons.setEnabled(true);
-        theSelect.setEnabled(!hasUpdates());
+        theSaveButtons.setVisible(hasUpdates);
+        theSelect.setEnabled(!hasUpdates);
 
         /* Notify listeners */
         fireStateChanged();
@@ -571,93 +558,35 @@ public class PricePoint
 
         @Override
         public String getColumnName(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_ASSET:
-                    return TITLE_ASSET;
-                case COLUMN_PRICE:
-                    return TITLE_PRICE;
-                case COLUMN_PREVPRICE:
-                    return TITLE_PREVPRICE;
-                case COLUMN_PREVDATE:
-                    return TITLE_PREVDATE;
-                default:
-                    return null;
-            }
+            /* Obtain the column name */
+            return theColumns.getColumnName(pColIndex);
         }
 
         @Override
-        public Class<?> getColumnClass(final int pColIndex) {
-            switch (pColIndex) {
-                case COLUMN_ASSET:
-                    return String.class;
-                default:
-                    return Object.class;
-            }
-        }
-
-        @Override
-        public JDataField getFieldForCell(final SpotSecurityPrice pSpot,
+        public JDataField getFieldForCell(final SpotSecurityPrice pItem,
                                           final int pColIndex) {
-            /* Switch on column */
-            switch (pColIndex) {
-                case COLUMN_ASSET:
-                    return SecurityPrice.FIELD_SECURITY;
-                case COLUMN_PRICE:
-                    return SecurityPrice.FIELD_PRICE;
-                case COLUMN_PREVPRICE:
-                    return SpotSecurityPrice.FIELD_PREVPRICE;
-                case COLUMN_PREVDATE:
-                    return SpotSecurityPrice.FIELD_PREVDATE;
-                default:
-                    return null;
-            }
+            return theColumns.getFieldForCell(pColIndex);
         }
 
         @Override
-        public boolean isCellEditable(final SpotSecurityPrice pSpot,
+        public boolean isCellEditable(final SpotSecurityPrice pItem,
                                       final int pColIndex) {
-            /* switch on column */
-            switch (pColIndex) {
-                case COLUMN_ASSET:
-                case COLUMN_PREVPRICE:
-                case COLUMN_PREVDATE:
-                    return false;
-                case COLUMN_PRICE:
-                default:
-                    return true;
-            }
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
-        public Object getItemValue(final SpotSecurityPrice pSpot,
+        public Object getItemValue(final SpotSecurityPrice pItem,
                                    final int pColIndex) {
             /* Return the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_ASSET:
-                    return pSpot.getSecurity().getName();
-                case COLUMN_PRICE:
-                    return pSpot.getPrice();
-                case COLUMN_PREVPRICE:
-                    return pSpot.getPrevPrice();
-                case COLUMN_PREVDATE:
-                    return pSpot.getPrevDate();
-                default:
-                    return null;
-            }
+            return theColumns.getItemValue(pItem, pColIndex);
         }
 
         @Override
-        public void setItemValue(final SpotSecurityPrice pSpot,
+        public void setItemValue(final SpotSecurityPrice pItem,
                                  final int pColIndex,
                                  final Object pValue) throws JOceanusException {
-            /* Store the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_PRICE:
-                    pSpot.setPrice((JPrice) pValue);
-                    break;
-                default:
-                    break;
-            }
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
         }
     }
 
@@ -685,6 +614,26 @@ public class PricePoint
          * Serial Id.
          */
         private static final long serialVersionUID = 5102715203937500181L;
+
+        /**
+         * The Asset column id.
+         */
+        private static final int COLUMN_ASSET = 0;
+
+        /**
+         * The Price column id.
+         */
+        private static final int COLUMN_PRICE = 1;
+
+        /**
+         * The Previous price column id.
+         */
+        private static final int COLUMN_PREVPRICE = 2;
+
+        /**
+         * The Previous Date column id.
+         */
+        private static final int COLUMN_PREVDATE = 3;
 
         /**
          * Date Renderer.
@@ -720,10 +669,114 @@ public class PricePoint
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));
+            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer, null));
-            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer, null));
+            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer));
+        }
+
+        /**
+         * Obtain column name.
+         * @param pColIndex the column index
+         * @return the column name
+         */
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_ASSET:
+                    return TITLE_ASSET;
+                case COLUMN_PRICE:
+                    return TITLE_PRICE;
+                case COLUMN_PREVPRICE:
+                    return TITLE_PREVPRICE;
+                case COLUMN_PREVDATE:
+                    return TITLE_PREVDATE;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the value for the price column.
+         * @param pSpot spot price
+         * @param pColIndex column index
+         * @return the value
+         */
+        public Object getItemValue(final SpotSecurityPrice pSpot,
+                                   final int pColIndex) {
+            /* Return the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_ASSET:
+                    return pSpot.getSecurity().getName();
+                case COLUMN_PRICE:
+                    return pSpot.getPrice();
+                case COLUMN_PREVPRICE:
+                    return pSpot.getPrevPrice();
+                case COLUMN_PREVDATE:
+                    return pSpot.getPrevDate();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        public void setItemValue(final SpotSecurityPrice pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_PRICE:
+                    pItem.setPrice((JPrice) pValue);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        public boolean isCellEditable(final SpotSecurityPrice pItem,
+                                      final int pColIndex) {
+            /* switch on column */
+            switch (pColIndex) {
+                case COLUMN_ASSET:
+                case COLUMN_PREVPRICE:
+                case COLUMN_PREVDATE:
+                    return false;
+                case COLUMN_PRICE:
+                default:
+                    return true;
+            }
+        }
+
+        /**
+         * Obtain the field for the column index.
+         * @param pColIndex column index
+         * @return the field
+         */
+        public JDataField getFieldForCell(final int pColIndex) {
+            /* Switch on column */
+            switch (pColIndex) {
+                case COLUMN_ASSET:
+                    return SecurityPrice.FIELD_SECURITY;
+                case COLUMN_PRICE:
+                    return SecurityPrice.FIELD_PRICE;
+                case COLUMN_PREVPRICE:
+                    return SpotSecurityPrice.FIELD_PREVPRICE;
+                case COLUMN_PREVDATE:
+                    return SpotSecurityPrice.FIELD_PREVDATE;
+                default:
+                    return null;
+            }
         }
     }
 }

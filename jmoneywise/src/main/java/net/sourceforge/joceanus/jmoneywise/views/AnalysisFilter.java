@@ -163,7 +163,12 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             TransactionList myList = pTrans.getList();
             TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
-            /* Loop through the elements */
+            /* Check parent */
+            if (!filterSingleTransaction(pTrans)) {
+                return false;
+            }
+
+            /* Loop through the children */
             Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
                 Transaction myTrans = myIterator.next();
@@ -187,7 +192,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return true/false
      */
-    private boolean filterSingleTransaction(final Transaction pTrans) {
+    public boolean filterSingleTransaction(final Transaction pTrans) {
         /* Check whether this transaction is registered */
         return !pTrans.isHeader()
                && getValuesForTransaction(pTrans) == null;
@@ -234,10 +239,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             TransactionList myList = pTrans.getList();
             TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
-            /* Initialise return value */
-            JDecimal myBalance = null;
+            /* Initialise return as the balance for the parent */
+            JDecimal myBalance = getSingleBalanceForTransaction(pTrans);
 
-            /* Loop through the elements */
+            /* Loop through the children */
             Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
                 Transaction myTrans = myIterator.next();
@@ -245,7 +250,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
                 /* Access Balance for transaction */
                 JDecimal myValue = getSingleBalanceForTransaction(myTrans);
                 if (myValue != null) {
-                    /* Record as value */
+                    /* We need the latest value */
                     myBalance = myValue;
                 }
             }
@@ -303,10 +308,10 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
             TransactionList myList = pTrans.getList();
             TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
 
-            /* Initialise return value */
-            JDecimal myTotal = null;
+            /* Initialise return value as delta for parent */
+            JDecimal myTotal = getDeltaForTransaction(pTrans);
 
-            /* Loop through the elements */
+            /* Loop through the children */
             Iterator<Transaction> myIterator = myGroup.iterator();
             while (myIterator.hasNext()) {
                 Transaction myTrans = myIterator.next();
@@ -360,7 +365,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
      * @param pTrans the transaction to check
      * @return the value
      */
-    private JDecimal getSingleBalanceForTransaction(final Transaction pTrans) {
+    public JDecimal getSingleBalanceForTransaction(final Transaction pTrans) {
         BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
         return (myValues == null)
                                  ? null

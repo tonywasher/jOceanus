@@ -52,6 +52,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.CashInfo;
+import net.sourceforge.joceanus.jmoneywise.data.CashInfo.CashInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
@@ -142,6 +144,11 @@ public class CashTable
     private final transient UpdateEntry<Cash, MoneyWiseDataType> theCashEntry;
 
     /**
+     * CashInfo Update Entry.
+     */
+    private final transient UpdateEntry<CashInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -205,6 +212,7 @@ public class CashTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theCashEntry = theUpdateSet.registerClass(Cash.class);
+        theInfoEntry = theUpdateSet.registerClass(CashInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -254,6 +262,8 @@ public class CashTable
         CashList myCash = myData.getCash();
         theCash = myCash.deriveEditList();
         theCashEntry.setDataList(theCash);
+        CashInfoList myInfo = theCash.getCashInfo();
+        theInfoEntry.setDataList(myInfo);
         setList(theCash);
         fireStateChanged();
     }

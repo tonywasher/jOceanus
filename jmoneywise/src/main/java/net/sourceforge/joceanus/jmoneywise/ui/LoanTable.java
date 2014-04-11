@@ -52,6 +52,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.LoanInfo;
+import net.sourceforge.joceanus.jmoneywise.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -149,6 +151,11 @@ public class LoanTable
     private final transient UpdateEntry<Loan, MoneyWiseDataType> theLoanEntry;
 
     /**
+     * LoanInfo Update Entry.
+     */
+    private final transient UpdateEntry<LoanInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -212,6 +219,7 @@ public class LoanTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theLoanEntry = theUpdateSet.registerClass(Loan.class);
+        theInfoEntry = theUpdateSet.registerClass(LoanInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -261,6 +269,8 @@ public class LoanTable
         LoanList myLoans = myData.getLoans();
         theLoans = myLoans.deriveEditList();
         theLoanEntry.setDataList(theLoans);
+        LoanInfoList myInfo = theLoans.getLoanInfo();
+        theInfoEntry.setDataList(myInfo);
         setList(theLoans);
         fireStateChanged();
     }

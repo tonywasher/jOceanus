@@ -31,11 +31,11 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataFieldRequired;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
-import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataInfoSet;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -244,20 +244,20 @@ public class TransactionInfoSet
             case NATINSURANCE:
             case DEEMEDBENEFIT:
                 return (myClass == TransactionCategoryClass.TAXEDINCOME)
-                                                                  ? JDataFieldRequired.CANEXIST
-                                                                  : JDataFieldRequired.NOTALLOWED;
+                                                                        ? JDataFieldRequired.CANEXIST
+                                                                        : JDataFieldRequired.NOTALLOWED;
 
                 /* Credit amount and date are only available for transfer */
             case CREDITDATE:
                 return (myClass == TransactionCategoryClass.TRANSFER)
-                                                               ? JDataFieldRequired.CANEXIST
-                                                               : JDataFieldRequired.NOTALLOWED;
+                                                                     ? JDataFieldRequired.CANEXIST
+                                                                     : JDataFieldRequired.NOTALLOWED;
 
                 /* Charity donation is only available for interest */
             case CHARITYDONATION:
                 return (myClass == TransactionCategoryClass.INTEREST)
-                                                               ? JDataFieldRequired.CANEXIST
-                                                               : JDataFieldRequired.NOTALLOWED;
+                                                                     ? JDataFieldRequired.CANEXIST
+                                                                     : JDataFieldRequired.NOTALLOWED;
 
                 /* Handle Tax Credit */
             case TAXCREDIT:
@@ -527,6 +527,7 @@ public class TransactionInfoSet
                 case PORTFOLIO:
                 case CREDITAMOUNT:
                 case PENSION:
+                case TRANSTAG:
                 default:
                     break;
             }

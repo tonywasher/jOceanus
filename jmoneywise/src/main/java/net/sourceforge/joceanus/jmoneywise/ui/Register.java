@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -38,6 +39,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -70,6 +74,7 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -255,41 +260,6 @@ public class Register
     }
 
     /**
-     * Date column id.
-     */
-    private static final int COLUMN_DATE = 0;
-
-    /**
-     * Category column id.
-     */
-    private static final int COLUMN_CATEGORY = 1;
-
-    /**
-     * Description column id.
-     */
-    private static final int COLUMN_DESC = 2;
-
-    /**
-     * Amount column id.
-     */
-    private static final int COLUMN_AMOUNT = 3;
-
-    /**
-     * Debit column id.
-     */
-    private static final int COLUMN_DEBIT = 4;
-
-    /**
-     * Credit column id.
-     */
-    private static final int COLUMN_CREDIT = 5;
-
-    /**
-     * Reconciled column id.
-     */
-    private static final int COLUMN_RECONCILED = 6;
-
-    /**
      * Panel width.
      */
     private static final int PANEL_WIDTH = 980;
@@ -359,6 +329,9 @@ public class Register
         thePanel.add(theSelect);
         thePanel.add(getScrollPane());
         thePanel.add(theSaveButtons);
+
+        /* Hide the save buttons initially */
+        theSaveButtons.setVisible(false);
     }
 
     /**
@@ -408,9 +381,13 @@ public class Register
             theTransactions.findEditState();
         }
 
+        /* Determine whether we have updates */
+        boolean hasUpdates = hasUpdates();
+
         /* Update the table buttons */
         theSaveButtons.setEnabled(true);
-        theSelect.setEnabled(!hasUpdates());
+        theSaveButtons.setVisible(hasUpdates);
+        theSelect.setEnabled(!hasUpdates);
 
         /* Update the top level tabs */
         fireStateChanged();
@@ -608,9 +585,9 @@ public class Register
         }
 
         @Override
-        public boolean isCellEditable(final Transaction pTrans,
+        public boolean isCellEditable(final Transaction pItem,
                                       final int pColIndex) {
-            return false;
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -618,6 +595,23 @@ public class Register
                                    final int pColIndex) {
             /* Return the appropriate value */
             return theColumns.getItemValue(pTrans, pColIndex);
+        }
+
+        @Override
+        public void setItemValue(final Transaction pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JOceanusException {
+            /* Set the item value for the column */
+            theColumns.setItemValue(pItem, pColIndex, pValue);
+        }
+
+        @Override
+        public Object buttonClick(final Point pCell) {
+            /* Access the item */
+            Transaction myItem = getItemAtIndex(pCell.y);
+
+            /* Process the click */
+            return theColumns.buttonClick(myItem, pCell.x);
         }
     }
 
@@ -815,9 +809,9 @@ public class Register
 
             /* If the column is Credit */
             AssetBase<?> myAccount;
-            if (myCol == COLUMN_CREDIT) {
+            if (myCol == RegisterColumnModel.COLUMN_CREDIT) {
                 myAccount = myTrans.getCredit();
-            } else if (myCol == COLUMN_DEBIT) {
+            } else if (myCol == RegisterColumnModel.COLUMN_DEBIT) {
                 myAccount = myTrans.getDebit();
             } else {
                 myAccount = null;
@@ -957,6 +951,41 @@ public class Register
         private static final long serialVersionUID = -7502445487118370020L;
 
         /**
+         * Date column id.
+         */
+        private static final int COLUMN_DATE = 0;
+
+        /**
+         * Category column id.
+         */
+        private static final int COLUMN_CATEGORY = 1;
+
+        /**
+         * Description column id.
+         */
+        private static final int COLUMN_DESC = 2;
+
+        /**
+         * Amount column id.
+         */
+        private static final int COLUMN_AMOUNT = 3;
+
+        /**
+         * Debit column id.
+         */
+        private static final int COLUMN_DEBIT = 4;
+
+        /**
+         * Credit column id.
+         */
+        private static final int COLUMN_CREDIT = 5;
+
+        /**
+         * Reconciled column id.
+         */
+        private static final int COLUMN_RECONCILED = 6;
+
+        /**
          * Date Renderer.
          */
         private final CalendarCellRenderer theDateRenderer;
@@ -977,6 +1006,21 @@ public class Register
         private final IconCellRenderer theIconRenderer;
 
         /**
+         * Date editor.
+         */
+        private final CalendarCellEditor theDateEditor;
+
+        /**
+         * Icon editor.
+         */
+        private final IconCellEditor theIconEditor;
+
+        /**
+         * String editor.
+         */
+        private final StringCellEditor theStringEditor;
+
+        /**
          * Constructor.
          */
         private RegisterColumnModel() {
@@ -988,15 +1032,18 @@ public class Register
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconRenderer = theFieldMgr.allocateIconCellRenderer();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theIconEditor = theFieldMgr.allocateIconCellEditor(Register.this);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer));
             declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer));
+            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer, theIconEditor));
         }
 
         /**
@@ -1053,6 +1100,82 @@ public class Register
                                                 : null;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * Handle a button click.
+         * @param pItem the item
+         * @param pColIndex the column
+         * @return the new object
+         */
+        private Object buttonClick(final Transaction pItem,
+                                   final int pColIndex) {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_RECONCILED:
+                    return !pItem.isReconciled();
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Set the value for the item column.
+         * @param pItem the item
+         * @param pColIndex column index
+         * @param pValue the value to set
+         * @throws JOceanusException on error
+         */
+        private void setItemValue(final Transaction pItem,
+                                  final int pColIndex,
+                                  final Object pValue) throws JOceanusException {
+            /* Set the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pItem.setDate((JDateDay) pValue);
+                    break;
+                case COLUMN_CATEGORY:
+                    pItem.setCategory((TransactionCategory) pValue);
+                    break;
+                case COLUMN_DEBIT:
+                    pItem.setDebit((AssetBase<?>) pValue);
+                    break;
+                case COLUMN_CREDIT:
+                    pItem.setCredit((AssetBase<?>) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setComments((String) pValue);
+                    break;
+                case COLUMN_AMOUNT:
+                    pItem.setAmount((JMoney) pValue);
+                    break;
+                case COLUMN_RECONCILED:
+                    if (pValue instanceof Boolean) {
+                        pItem.setReconciled((Boolean) pValue);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /**
+         * Is the cell editable?
+         * @param pItem the item
+         * @param pColIndex the column index
+         * @return true/false
+         */
+        private boolean isCellEditable(final Transaction pItem,
+                                       final int pColIndex) {
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                case COLUMN_RECONCILED:
+                    return !pItem.isLocked();
+                case COLUMN_DESC:
+                    return true;
+                default:
+                    return false;
             }
         }
 

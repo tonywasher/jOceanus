@@ -200,12 +200,12 @@ public class AccountPanel
         theLockedCheckBox = new JCheckBox("Show Closed");
 
         /* Create the table panels */
+        thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
+        theSecurityTable = new SecurityTable(pView, theUpdateSet, theError);
         theDepositTable = new DepositTable(pView, theUpdateSet, theError);
         theCashTable = new CashTable(pView, theUpdateSet, theError);
         theLoanTable = new LoanTable(pView, theUpdateSet, theError);
         thePortfolioTable = new PortfolioTable(pView, theUpdateSet, theError);
-        theSecurityTable = new SecurityTable(pView, theUpdateSet, theError);
-        thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);

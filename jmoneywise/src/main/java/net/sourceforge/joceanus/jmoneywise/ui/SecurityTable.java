@@ -50,6 +50,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
@@ -143,6 +145,11 @@ public class SecurityTable
     private final transient UpdateEntry<Security, MoneyWiseDataType> theSecurityEntry;
 
     /**
+     * SecurityInfo Update Entry.
+     */
+    private final transient UpdateEntry<SecurityInfo, MoneyWiseDataType> theInfoEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -206,6 +213,7 @@ public class SecurityTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theSecurityEntry = theUpdateSet.registerClass(Security.class);
+        theInfoEntry = theUpdateSet.registerClass(SecurityInfo.class);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -255,6 +263,8 @@ public class SecurityTable
         SecurityList mySecurities = myData.getSecurities();
         theSecurities = mySecurities.deriveEditList();
         theSecurityEntry.setDataList(theSecurities);
+        SecurityInfoList myInfo = theSecurities.getSecurityInfo();
+        theInfoEntry.setDataList(myInfo);
         setList(theSecurities);
         fireStateChanged();
     }

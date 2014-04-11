@@ -45,9 +45,11 @@ import javax.swing.JMenuItem;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
@@ -140,7 +142,7 @@ public class SpotSelect
     /**
      * The Portfolio list.
      */
-    private transient PortfolioList thePortfolios = null;
+    private transient PortfolioBucketList thePortfolios = null;
 
     /**
      * The current state.
@@ -175,7 +177,10 @@ public class SpotSelect
      * @return the portfolio
      */
     public final Portfolio getPortfolio() {
-        return theState.getPortfolio();
+        PortfolioBucket myBucket = theState.getPortfolio();
+        return (myBucket == null)
+                                 ? null
+                                 : myBucket.getPortfolio();
     }
 
     /**
@@ -267,17 +272,16 @@ public class SpotSelect
         /* Set the range for the Date Button */
         setRange(myRange);
 
-        /* Access the data */
-        MoneyWiseData myData = theView.getData();
-
         /* Access portfolio list */
-        thePortfolios = myData.getPortfolios();
+        AnalysisManager myManager = theView.getAnalysisManager();
+        Analysis myAnalysis = myManager.getAnalysis();
+        thePortfolios = myAnalysis.getPortfolios();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
         /* Obtain the current portfolio */
-        Portfolio myPortfolio = theState.getPortfolio();
+        PortfolioBucket myPortfolio = theState.getPortfolio();
 
         /* If we have a selected Portfolio */
         if (myPortfolio != null) {
@@ -303,17 +307,17 @@ public class SpotSelect
      * Obtain first portfolio.
      * @return the first portfolio
      */
-    private Portfolio getFirstPortfolio() {
+    private PortfolioBucket getFirstPortfolio() {
         /* Loop through the available account values */
-        Iterator<Portfolio> myIterator = thePortfolios.iterator();
+        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            Portfolio myPortfolio = myIterator.next();
+            PortfolioBucket myPortfolio = myIterator.next();
 
             /* Return the bucket */
             return myPortfolio;
         }
 
-        /* No such account */
+        /* No such portfolio */
         return null;
     }
 
@@ -432,15 +436,15 @@ public class SpotSelect
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Access current portfolio */
-            Portfolio myPortfolio = theState.getPortfolio();
+            PortfolioBucket myPortfolio = theState.getPortfolio();
 
             /* Record active item */
             JMenuItem myActive = null;
 
             /* Loop through the available portfolio values */
-            Iterator<Portfolio> myIterator = thePortfolios.iterator();
+            Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
             while (myIterator.hasNext()) {
-                Portfolio myCurr = myIterator.next();
+                PortfolioBucket myCurr = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
                 PortfolioAction myAction = new PortfolioAction(myCurr);
@@ -476,13 +480,13 @@ public class SpotSelect
         /**
          * Portfolio.
          */
-        private final Portfolio thePortfolio;
+        private final PortfolioBucket thePortfolio;
 
         /**
          * Constructor.
          * @param pPortfolio the portfolio
          */
-        private PortfolioAction(final Portfolio pPortfolio) {
+        private PortfolioAction(final PortfolioBucket pPortfolio) {
             super(pPortfolio.getName());
             thePortfolio = pPortfolio;
         }
@@ -504,7 +508,7 @@ public class SpotSelect
         /**
          * Portfolio.
          */
-        private Portfolio thePortfolio = null;
+        private PortfolioBucket thePortfolio = null;
 
         /**
          * Selected date.
@@ -525,7 +529,7 @@ public class SpotSelect
          * Get the portfolio.
          * @return the portfolio
          */
-        private Portfolio getPortfolio() {
+        private PortfolioBucket getPortfolio() {
             return thePortfolio;
         }
 
@@ -580,7 +584,7 @@ public class SpotSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final Portfolio pPortfolio) {
+        private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!Difference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;

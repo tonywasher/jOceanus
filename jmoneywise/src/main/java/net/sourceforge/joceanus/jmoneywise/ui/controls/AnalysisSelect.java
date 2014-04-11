@@ -681,6 +681,9 @@ public class AnalysisSelect
             if (theRangeButton.equals(o)) {
                 /* Toggle visibility of range selection */
                 boolean isVisible = theRangeSelect.isVisible();
+                theRangeButton.setIcon(isVisible
+                                                ? ArrowIcon.DOWN
+                                                : ArrowIcon.UP);
                 theRangeSelect.setVisible(!isVisible);
             }
 
@@ -688,6 +691,9 @@ public class AnalysisSelect
             if (theFilterButton.equals(o)) {
                 /* Toggle visibility of filter selection */
                 boolean isVisible = theFilterSelect.isVisible();
+                theFilterButton.setIcon(isVisible
+                                                 ? ArrowIcon.DOWN
+                                                 : ArrowIcon.UP);
                 theFilterSelect.setVisible(!isVisible);
             }
 
