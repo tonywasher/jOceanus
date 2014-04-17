@@ -237,6 +237,9 @@ public class TransactionAnalyser
         JDateDay myDate = null;
         int myResult = -1;
 
+        /* reset groups */
+        myTrans.resetGroups();
+
         /* Loop through the Transactions extracting relevant elements */
         while (myIterator.hasNext()) {
             Transaction myCurr = myIterator.next();

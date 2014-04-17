@@ -107,6 +107,9 @@ public class QPrice
         /* Access the security */
         Security mySecurity = thePrice.getSecurity();
 
+        /* Determine whether to escape prices */
+        boolean escapePrices = getQIFType().escapePrices();
+
         /* Reset the builder */
         reset();
 
@@ -123,9 +126,13 @@ public class QPrice
 
         /* Add the Price (as a simple decimal) */
         JDecimal myValue = new JDecimal(thePrice.getPrice());
-        append(QIF_QUOTE);
+        if (escapePrices) {
+            append(QIF_QUOTE);
+        }
         addSimpleDecimal(myValue);
-        append(QIF_QUOTE);
+        if (escapePrices) {
+            append(QIF_QUOTE);
+        }
         append(QIF_COMMA);
 
         /* Add the Date */

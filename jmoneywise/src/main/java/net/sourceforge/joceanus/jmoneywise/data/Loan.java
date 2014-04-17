@@ -731,6 +731,12 @@ public class Loan
     }
 
     @Override
+    protected MoneyWiseDataType[] getUniqueSet() {
+        return new MoneyWiseDataType[]
+        { MoneyWiseDataType.DEPOSIT, MoneyWiseDataType.CASH, MoneyWiseDataType.PORTFOLIO };
+    }
+
+    @Override
     public void validate() {
         Payee myParent = getParent();
         LoanCategory myCategory = getCategory();

@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetPair.AssetPairManager;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.GroupedItem;
@@ -946,6 +946,26 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     /**
+     * Determine transaction Type according to category.
+     * @return transaction type
+     */
+    public TransactionType deriveCategoryTranType() {
+        /* Analyse the components */
+        return TransactionType.deriveType(getCategory());
+    }
+
+    /**
+     * Determine transaction Type according to accounts.
+     * @return transaction type
+     */
+    public TransactionType deriveAccountTranType() {
+        /* Analyse the components */
+        AssetType myDebitType = getDebit().getAssetType();
+        AssetType myCreditType = getCredit().getAssetType();
+        return myDebitType.getTransactionType(myCreditType);
+    }
+
+    /**
      * Determine validity of an event between the two assets, for the given category.
      * @param pCategory The category of the event
      * @param pDebit the debit account
@@ -995,7 +1015,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         /* If this is an non-recursive expense (i.e. decreases the value of assets) */
         if (myActTran.isExpense() && !isRecursive) {
-            /* Switch Debit and Credit so that this look like an expense */
+            /* Switch Debit and Credit so that this look like an income */
             AssetBase<?> myAsset = myDebit;
             myDebit = myCredit;
             myCredit = myAsset;

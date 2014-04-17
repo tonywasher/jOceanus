@@ -440,8 +440,8 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the debit
      */
     protected void adjustForDebit(final Transaction pTrans) {
-        /* Analyse the event */
-        TransactionType myCatTran = TransactionType.deriveType(pTrans.getCategory());
+        /* Analyse the transaction */
+        TransactionType myCatTran = pTrans.deriveCategoryTranType();
         JMoney myIncome = null;
         JMoney myExpense = null;
 
@@ -513,12 +513,34 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the credit
      */
     protected void adjustForCredit(final Transaction pTrans) {
+        /* Analyse the transaction */
+        TransactionType myCatTran = pTrans.deriveCategoryTranType();
+        JMoney myExpense = null;
+
         /* Access amount */
         JMoney myAmount = pTrans.getAmount();
         if (myAmount.isNonZero()) {
             /* Update the expense */
-            JMoney myExpense = getNewExpense();
+            myExpense = getNewExpense();
             myExpense.addAmount(myAmount);
+        }
+
+        /* If this is an expense */
+        if (myCatTran.isExpense()) {
+            /* If there is a non-zero TaxCredit */
+            JMoney myTaxCred = pTrans.getTaxCredit();
+            if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
+                /* Adjust for Tax Credit */
+                if (myExpense == null) {
+                    myExpense = getNewExpense();
+                }
+                myExpense.addAmount(myTaxCred);
+            }
+        }
+
+        /* If we have an expense */
+        if (myExpense != null) {
+            /* Record it */
             setValue(PayeeAttribute.EXPENSE, myExpense);
         }
 
@@ -549,28 +571,36 @@ public final class PayeeBucket
      * @param pTrans the transaction causing the payments
      */
     protected void adjustForTaxPayments(final Transaction pTrans) {
-        JMoney myExpense = null;
+        /* Determine transaction type */
+        TransactionType myType = pTrans.deriveCategoryTranType();
+        JMoney myValue = null;
 
         /* Adjust for Tax credit */
         JMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
-            myExpense = getNewExpense();
-            myExpense.addAmount(myTaxCred);
+            myValue = new JMoney(myTaxCred);
         }
 
         /* Adjust for national insurance */
         JMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
-            if (myExpense == null) {
-                myExpense = getNewExpense();
+            if (myValue == null) {
+                myValue = new JMoney(myNatIns);
+            } else {
+                myValue.addAmount(myNatIns);
             }
-            myExpense.addAmount(myNatIns);
         }
 
-        /* If we have tax payments */
-        if (myExpense != null) {
-            /* Set value */
-            setValue(PayeeAttribute.EXPENSE, myExpense);
+        /* If we have payments */
+        if (myValue != null) {
+            /* Adjust correct bucket */
+            if (myType.isExpense()) {
+                myValue.addAmount(theValues.getMoneyValue(PayeeAttribute.INCOME));
+                setValue(PayeeAttribute.INCOME, myValue);
+            } else {
+                myValue.addAmount(theValues.getMoneyValue(PayeeAttribute.EXPENSE));
+                setValue(PayeeAttribute.EXPENSE, myValue);
+            }
 
             /* Register the transaction in the history */
             theHistory.registerTransaction(pTrans, theValues);

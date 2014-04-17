@@ -204,7 +204,7 @@ public class AccountCurrency
         }
 
         /* Handle differences in default value */
-        if (isDefault() != pThat.isDefault()) {
+        if (!isDefault().equals(pThat.isDefault())) {
             return isDefault()
                               ? -1
                               : 1;

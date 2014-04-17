@@ -517,6 +517,12 @@ public abstract class AssetBase<T extends AssetBase<T>>
             }
             theLatest = myTrans;
 
+            /* if this transaction is not reconciled */
+            if (!myTrans.isReconciled()) {
+                /* Mark account as relevant */
+                setRelevant();
+            }
+
             /* Touch parent if it exists */
             AssetBase<?> myParent = getParent();
             if (myParent != null) {
@@ -679,6 +685,15 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Check unique set
+     * @return the set among which the name must be unique
+     */
+    protected MoneyWiseDataType[] getUniqueSet() {
+        return new MoneyWiseDataType[]
+        {};
+    }
+
+    /**
      * Validate the account.
      */
     @Override
@@ -700,6 +715,16 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
             if (myList.countInstances(myName) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
+            }
+
+            /* Loop through any unique lists */
+            MoneyWiseData myData = getDataSet();
+            for (MoneyWiseDataType myType : getUniqueSet()) {
+                myList = myData.getDataList(myType, AssetBaseList.class);
+                if (myList.findItemByName(myName) != null) {
+                    addError(ERROR_DUPLICATE, FIELD_NAME);
+                    break;
+                }
             }
         }
 

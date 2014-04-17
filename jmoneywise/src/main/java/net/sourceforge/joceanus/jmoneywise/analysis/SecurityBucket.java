@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisMaps.SecurityPriceMap;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
@@ -888,16 +889,22 @@ public final class SecurityBucket
                 SecurityBucket myCurr = myIterator.next();
                 Security mySecurity = myCurr.getSecurity();
 
-                /* If we are closed */
-                if (mySecurity.isClosed()) {
-                    /* Ensure that we have correct closed dates */
-                    mySecurity.adjustClosed();
-                }
-
                 /* If we are active */
                 if (myCurr.isActive()) {
                     /* Set the security as relevant */
                     mySecurity.setRelevant();
+                }
+
+                /* If we are closed */
+                if (mySecurity.isClosed()) {
+                    /* Ensure that we have correct closed dates */
+                    mySecurity.adjustClosed();
+
+                    /* If we are Relevant */
+                    if (mySecurity.isRelevant()) {
+                        /* throw exception */
+                        throw new JMoneyWiseDataException(myCurr, "Illegally closed security");
+                    }
                 }
             }
         }

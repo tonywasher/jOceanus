@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.TransactionInfoTypeList;
+import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
@@ -856,7 +857,7 @@ public class Transaction
         /**
          * EventGroupMap.
          */
-        private final Map<Integer, TransactionGroup<Transaction>> theGroups = new HashMap<Integer, TransactionGroup<Transaction>>();
+        private final Map<Integer, TransactionGroup> theGroups = new LinkedHashMap<Integer, TransactionGroup>();
 
         /**
          * The TransactionInfo List.
@@ -1065,9 +1066,9 @@ public class Transaction
             myParent = findItemById(myId);
 
             /* Access TransactionGroup */
-            TransactionGroup<Transaction> myGroup = theGroups.get(myId);
+            TransactionGroup myGroup = theGroups.get(myId);
             if (myGroup == null) {
-                myGroup = new TransactionGroup<Transaction>(myParent, Transaction.class);
+                myGroup = new TransactionGroup(myParent);
                 theGroups.put(myId, myGroup);
             }
 
@@ -1080,7 +1081,7 @@ public class Transaction
          * @param pParent the parent event
          * @return the group
          */
-        public TransactionGroup<Transaction> getGroup(final Transaction pParent) {
+        public TransactionGroup getGroup(final Transaction pParent) {
             return theGroups.get(pParent.getId());
         }
 
@@ -1089,6 +1090,39 @@ public class Transaction
          */
         public void resetGroups() {
             theGroups.clear();
+        }
+
+        /**
+         * Validate groups.
+         * @return the error list (or null if no errors)
+         */
+        public DataErrorList<Transaction> validateGroups() {
+            /* Note error list */
+            DataErrorList<Transaction> myErrorList = null;
+
+            /* Loop through the groups */
+            Iterator<TransactionGroup> myIterator = theGroups.values().iterator();
+            while (myIterator.hasNext()) {
+                TransactionGroup myGroup = myIterator.next();
+
+                /* Validate the group */
+                DataErrorList<Transaction> myErrors = myGroup.validate();
+
+                /* If we have any errors */
+                if (myErrors != null) {
+                    /* If this is the first error */
+                    if (myErrorList == null) {
+                        /* Record as error list */
+                        myErrorList = myErrors;
+                    } else {
+                        /* Add to the error list */
+                        myErrorList.addAll(myErrors);
+                    }
+                }
+            }
+
+            /* Return the error list */
+            return myErrorList;
         }
 
         /**

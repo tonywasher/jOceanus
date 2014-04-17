@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
@@ -493,6 +493,7 @@ public final class TaxBasisBucket
     private void addExpenseTransaction(final Transaction pTrans) {
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
+        JMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
         AssetBase<?> myDebit = pTrans.getDebit();
@@ -516,6 +517,13 @@ public final class TaxBasisBucket
             /* Adjust the gross and net */
             myGross.addAmount(myAmount);
             myNet.addAmount(myAmount);
+
+            /* If we have a tax relief */
+            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+                /* Adjust the gross and net */
+                myGross.addAmount(myTaxCredit);
+                myNet.addAmount(myTaxCredit);
+            }
         }
 
         /* Set the values */

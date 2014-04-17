@@ -22,282 +22,75 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jmetis.viewer.Difference;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jprometheus.data.DataGroup;
-import net.sourceforge.joceanus.jtethys.decimal.JMoney;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 
 /**
- * Event group type.
- * @param <T> the event type
+ * Transaction group type.
  * @author Tony Washer
  */
-public class TransactionGroup<T extends TransactionBase<T>>
-        extends DataGroup<T, MoneyWiseDataType> {
+public class TransactionGroup
+        extends TransactionBaseGroup<Transaction> {
     /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TransactionGroup.class.getName());
 
     /**
-     * Split Indication.
+     * Multiple Portfolios Error.
      */
-    protected static final String NAME_SPLIT = NLS_BUNDLE.getString("SplitIndication");
+    private static final String ERROR_PORTFOLIO = NLS_BUNDLE.getString("ErrorMultiplePortfolios");
 
     /**
-     * Local Report fields.
+     * Active Portfolio.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(TransactionGroup.class.getSimpleName(), DataGroup.FIELD_DEFS);
+    private Portfolio thePortfolio;
 
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
+    /**
+     * Obtain portfolio.
+     * @return the portfolio if it exists
+     */
+    public Portfolio getPortfolio() {
+        return thePortfolio;
     }
 
     /**
      * Constructor.
      * @param pParent the parent.
-     * @param pClass the class
      */
-    public TransactionGroup(final T pParent,
-                            final Class<T> pClass) {
+    public TransactionGroup(final Transaction pParent) {
         /* Call super-constructor */
-        super(pParent, pClass);
+        super(pParent, Transaction.class);
     }
 
-    /**
-     * Does this group relate to the asset?
-     * @param pAsset the asset
-     * @return true/false
-     */
-    public boolean relatesTo(final AssetBase<?> pAsset) {
-        /* Loop through the events */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myEvent = myIterator.next();
+    @Override
+    protected void analyseParent() {
+        /* Analyse underlying */
+        super.analyseParent();
 
-            /* Ignore deleted children */
-            if (myEvent.isDeleted()) {
-                continue;
-            }
-
-            /* If the child relates to the asset, say so */
-            if (myEvent.relatesTo(pAsset)) {
-                return true;
-            }
-        }
-
-        /* Does not relate */
-        return false;
+        /* Access parent details */
+        Transaction myParent = getParent();
+        thePortfolio = myParent.getPortfolio();
     }
 
-    /**
-     * Get display debit.
-     * @return the display text for debit
-     */
-    public String getDebit() {
-        /* Access parent debit */
-        AssetBase<?> myDebit = getParent().getDebit();
+    @Override
+    protected void validateChild(final Transaction pTrans) {
+        /* Analyse underlying */
+        super.validateChild(pTrans);
 
-        /* Access iterator and skip first transaction */
-        Iterator<T> myIterator = iterator();
-        myIterator.next();
+        /* If we have a portfolio */
+        Portfolio myPortfolio = pTrans.getPortfolio();
+        if (myPortfolio != null) {
+            /* If this is the first portfolio */
+            if (thePortfolio == null) {
+                /* Store it */
+                thePortfolio = myPortfolio;
 
-        /* Loop through transactions */
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* Handle different debits */
-            if (!myDebit.equals(myTrans.getDebit())) {
-                return NAME_SPLIT;
+                /* else check that it is the same portfolio */
+            } else if (!thePortfolio.equals(myPortfolio)) {
+                pTrans.addError(ERROR_PORTFOLIO, TransactionInfoSet.getFieldForClass(TransactionInfoClass.PORTFOLIO));
             }
         }
-
-        /* Return the standard debit name */
-        return myDebit.getName();
-    }
-
-    /**
-     * Get display credit.
-     * @return the display text for debit
-     */
-    public String getCredit() {
-        /* Access parent credit */
-        AssetBase<?> myCredit = getParent().getCredit();
-
-        /* Access iterator and skip first transactiont */
-        Iterator<T> myIterator = iterator();
-        myIterator.next();
-
-        /* Loop through transactions */
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* Handle different credits */
-            if (!myCredit.equals(myTrans.getCredit())) {
-                return NAME_SPLIT;
-            }
-        }
-
-        /* Return the standard credit name */
-        return myCredit.getName();
-    }
-
-    /**
-     * Get display category.
-     * @return the display text for category
-     */
-    public String getCategory() {
-        /* Access parent category */
-        TransactionCategory myCategory = getParent().getCategory();
-
-        /* Access iterator and skip first transaction */
-        Iterator<T> myIterator = iterator();
-        myIterator.next();
-
-        /* Loop through transactions */
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* Handle different categories */
-            if (!myCategory.equals(myTrans.getCategory())) {
-                return NAME_SPLIT;
-            }
-        }
-
-        /* Return the standard category name */
-        return myCategory.getName();
-    }
-
-    /**
-     * Get display partner for asset.
-     * @param pAsset the asset
-     * @return the display text for partner
-     */
-    public String getPartner(final AssetBase<?> pAsset) {
-        /* Initialise partner name */
-        String myPartner = null;
-
-        /* Access iterator and loop through transactions */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access partner name */
-                String myName = (pAsset.equals(myTrans.getDebit()))
-                                                                   ? myTrans.getCreditName()
-                                                                   : myTrans.getDebitName();
-
-                /* Determine differences in partners */
-                if (myPartner == null) {
-                    myPartner = myName;
-                } else if (!Difference.isEqual(myName, myPartner)) {
-                    return NAME_SPLIT;
-                }
-            }
-        }
-
-        /* Return the standard partner name */
-        return myPartner;
-    }
-
-    /**
-     * Get display category for asset.
-     * @param pAsset the asset
-     * @return the display text for category
-     */
-    public String getCategory(final AssetBase<?> pAsset) {
-        /* Initialise category name */
-        String myCategory = null;
-
-        /* Access iterator and loop through transactions */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access category name */
-                String myName = myTrans.getCategoryName();
-
-                /* Determine differences in partners */
-                if (myCategory == null) {
-                    myCategory = myName;
-                } else if (!Difference.isEqual(myName, myCategory)) {
-                    return NAME_SPLIT;
-                }
-            }
-        }
-
-        /* Return the standard category name */
-        return myCategory;
-    }
-
-    /**
-     * Get display amount for asset.
-     * @param pAsset the asset
-     * @return the display amount
-     */
-    public JMoney getAmount(final AssetBase<?> pAsset) {
-        /* Initialise category name */
-        JMoney myAmount = new JMoney();
-
-        /* Access iterator and loop through transactions */
-        Iterator<T> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            T myTrans = myIterator.next();
-
-            /* Ignore deleted children */
-            if (myTrans.isDeleted()) {
-                continue;
-            }
-
-            /* If the transaction relates to the asset */
-            if (myTrans.relatesTo(pAsset)) {
-                /* Access amount */
-                JMoney myValue = myTrans.getAmount();
-
-                /* Handle deltas to the asset */
-                if (pAsset.equals(myTrans.getCredit())) {
-                    myAmount.addAmount(myValue);
-                } else if ((!myTrans.isDividend()) && (!myTrans.isInterest())) {
-                    myAmount.subtractAmount(myValue);
-                }
-            }
-        }
-
-        /* Return the amount */
-        return myAmount;
     }
 }

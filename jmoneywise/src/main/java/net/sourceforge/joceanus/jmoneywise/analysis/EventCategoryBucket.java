@@ -36,17 +36,17 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.AssetType;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
-import net.sourceforge.joceanus.jmoneywise.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
@@ -579,6 +579,12 @@ public final class EventCategoryBucket
                     myExpense.addAmount(myAmount);
                     setValue(EventAttribute.EXPENSE, myExpense);
                     isIncome = false;
+
+                    /* Adjust for TaxCredit(Relief) */
+                    JMoney myTaxCredit = pTrans.getTaxCredit();
+                    if (myTaxCredit != null) {
+                        myExpense.addAmount(myTaxCredit);
+                    }
                 }
             }
 
@@ -825,6 +831,11 @@ public final class EventCategoryBucket
         private final EventCategoryBucket theTaxCredit;
 
         /**
+         * The TaxRelief.
+         */
+        private final EventCategoryBucket theTaxRelief;
+
+        /**
          * The NatInsurance.
          */
         private final EventCategoryBucket theNatInsurance;
@@ -882,6 +893,7 @@ public final class EventCategoryBucket
             theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.NATINSURANCE));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
             theCharityDonation = getBucket(myList.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION));
+            theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
             theTaxableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXABLEGAIN));
             theTaxFreeGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXFREEGAIN));
             theCapitalGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CAPITALGAIN));
@@ -908,6 +920,7 @@ public final class EventCategoryBucket
             theNatInsurance = null;
             theDeemedBenefit = null;
             theCharityDonation = null;
+            theTaxRelief = null;
             theTaxableGains = null;
             theTaxFreeGains = null;
             theCapitalGains = null;
@@ -949,6 +962,7 @@ public final class EventCategoryBucket
             theNatInsurance = null;
             theDeemedBenefit = null;
             theCharityDonation = null;
+            theTaxRelief = null;
             theTaxableGains = null;
             theTaxFreeGains = null;
             theCapitalGains = null;
@@ -1036,8 +1050,15 @@ public final class EventCategoryBucket
             /* Adjust for Tax Credit */
             JMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
-                theTaxCredit.addExpense(pTrans, myTaxCredit);
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
+                if (pCategory.isCategoryClass(TransactionCategoryClass.LOANINTERESTCHARGED)) {
+                    theTaxRelief.addIncome(pTrans, myTaxCredit);
+                    myTaxCredit = new JMoney(myTaxCredit);
+                    myTaxCredit.negate();
+                    theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myTaxCredit);
+                } else {
+                    theTaxCredit.addExpense(pTrans, myTaxCredit);
+                    theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
+                }
             }
 
             /* Adjust for NatInsurance */

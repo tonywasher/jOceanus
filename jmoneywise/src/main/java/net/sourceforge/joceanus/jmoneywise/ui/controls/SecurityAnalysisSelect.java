@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
@@ -212,7 +212,9 @@ public class SecurityAnalysisSelect
             }
 
             /* Use the first security for portfolio */
-            mySecurity = getFirstSecurity(myPortBucket);
+            mySecurity = (myPortBucket == null)
+                                               ? null
+                                               : getFirstSecurity(myPortBucket);
         }
 
         /* Set the security */

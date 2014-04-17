@@ -161,7 +161,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
 
             /* Access the group */
             TransactionList myList = pTrans.getList();
-            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
+            TransactionGroup myGroup = myList.getGroup(pTrans);
 
             /* Check parent */
             if (!filterSingleTransaction(pTrans)) {
@@ -237,7 +237,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         if (pTrans.isSplit()) {
             /* Access the group */
             TransactionList myList = pTrans.getList();
-            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
+            TransactionGroup myGroup = myList.getGroup(pTrans);
 
             /* Initialise return as the balance for the parent */
             JDecimal myBalance = getSingleBalanceForTransaction(pTrans);
@@ -306,7 +306,7 @@ public abstract class AnalysisFilter<T extends Enum<T> & BucketAttribute>
         if (pTrans.isSplit()) {
             /* Access the group */
             TransactionList myList = pTrans.getList();
-            TransactionGroup<Transaction> myGroup = myList.getGroup(pTrans);
+            TransactionGroup myGroup = myList.getGroup(pTrans);
 
             /* Initialise return value as delta for parent */
             JDecimal myTotal = getDeltaForTransaction(pTrans);

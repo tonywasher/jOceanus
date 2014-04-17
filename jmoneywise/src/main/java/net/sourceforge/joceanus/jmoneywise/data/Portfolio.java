@@ -679,6 +679,12 @@ public class Portfolio
     }
 
     @Override
+    protected MoneyWiseDataType[] getUniqueSet() {
+        return new MoneyWiseDataType[]
+        { MoneyWiseDataType.LOAN, MoneyWiseDataType.CASH, MoneyWiseDataType.DEPOSIT };
+    }
+
+    @Override
     public void validate() {
         Deposit myHolding = getHolding();
 

@@ -630,6 +630,12 @@ public class Cash
     }
 
     @Override
+    protected MoneyWiseDataType[] getUniqueSet() {
+        return new MoneyWiseDataType[]
+        { MoneyWiseDataType.LOAN, MoneyWiseDataType.DEPOSIT, MoneyWiseDataType.PORTFOLIO };
+    }
+
+    @Override
     public void validate() {
         CashCategory myCategory = getCategory();
         AccountCurrency myCurrency = getCashCurrency();

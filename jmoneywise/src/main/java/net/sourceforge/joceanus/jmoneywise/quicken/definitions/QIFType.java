@@ -54,11 +54,6 @@ public enum QIFType {
     private static final String QIF_DATEFORMAT = "dd/MM/yy";
 
     /**
-     * Quicken2004 Date Format.
-     */
-    private static final String QIF2004_DATEFORMAT = "MM/dd/yy";
-
-    /**
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(QIFType.class.getName());
@@ -237,6 +232,23 @@ public enum QIFType {
     }
 
     /**
+     * Should we escape prices?
+     * <p>
+     * Some programs require prices in price records to be escaped with quotes. Others insist on no escaping.
+     * @return true/false
+     */
+    public boolean escapePrices() {
+        switch (this) {
+            case QUICKEN:
+                return false;
+            case MONEYDANCE:
+            case ACEMONEY:
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Can we transfer to/from the portfolio account as part of an investment transaction?
      * <p>
      * Some programs do not allow you to use the investment transfer types BuyX, SellX, RtrnCapX and DivX, which allow a linked transfer. In this case the
@@ -261,7 +273,6 @@ public enum QIFType {
     public String getDateFormat() {
         switch (this) {
             case QUICKEN:
-                return QIF2004_DATEFORMAT;
             case ACEMONEY:
             case MONEYDANCE:
             default:

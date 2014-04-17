@@ -313,6 +313,7 @@ public class TransactionInfoSet
             case BENEFITINCOME:
                 return JDataFieldRequired.MUSTEXIST;
             case GRANTINCOME:
+            case LOANINTERESTCHARGED:
                 return JDataFieldRequired.CANEXIST;
             case INTEREST:
                 if (!(pDebit instanceof Deposit)) {

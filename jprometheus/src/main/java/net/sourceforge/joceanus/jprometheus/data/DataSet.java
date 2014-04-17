@@ -521,8 +521,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pListClass the class of the list
      * @return the list of items
      */
-    protected <L extends DataList<?, E>> L getDataList(final E pListType,
-                                                       final Class<L> pListClass) {
+    public <L extends DataList<?, E>> L getDataList(final E pListType,
+                                                    final Class<L> pListClass) {
         /* Access the list */
         DataList<?, E> myList = theListMap.get(pListType);
 

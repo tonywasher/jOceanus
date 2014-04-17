@@ -42,7 +42,7 @@ public enum AssetType {
     CASH(2),
 
     /**
-     * AuotExpense.
+     * AutoExpense.
      */
     AUTOEXPENSE(3),
 

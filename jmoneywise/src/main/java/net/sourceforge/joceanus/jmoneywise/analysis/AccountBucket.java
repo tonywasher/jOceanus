@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
@@ -746,16 +747,22 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 B myCurr = myIterator.next();
                 T myAccount = myCurr.getAccount();
 
-                /* If we are closed */
-                if (myAccount.isClosed()) {
-                    /* Ensure that we have correct closed/maturity dates */
-                    myAccount.adjustClosed();
-                }
-
                 /* If we are active */
                 if (myCurr.isActive()) {
                     /* Set the account as relevant */
                     myAccount.setRelevant();
+                }
+
+                /* If we are closed */
+                if (myAccount.isClosed()) {
+                    /* Ensure that we have correct closed/maturity dates */
+                    myAccount.adjustClosed();
+
+                    /* If we are Relevant */
+                    if (myAccount.isRelevant()) {
+                        /* throw exception */
+                        throw new JMoneyWiseDataException(myCurr, "Illegally closed account");
+                    }
                 }
             }
         }
