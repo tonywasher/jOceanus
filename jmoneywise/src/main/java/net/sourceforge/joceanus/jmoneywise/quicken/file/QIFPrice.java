@@ -24,11 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 
 /**
- * Class representing a QIF Account record.
+ * Class representing a QIF Price record.
  */
 public class QIFPrice {
     /**
@@ -45,6 +46,11 @@ public class QIFPrice {
      * Quicken Comma.
      */
     private static final String QIF_COMMA = ",";
+
+    /**
+     * The file type.
+     */
+    private final QIFType theFileType;
 
     /**
      * The security.
@@ -64,12 +70,15 @@ public class QIFPrice {
     /**
      * Constructor.
      * @param pFile the QIF File
+     * @param pSecurity the security
      * @param pPrice the price
      */
     protected QIFPrice(final QIFFile pFile,
+                       final QIFSecurity pSecurity,
                        final SecurityPrice pPrice) {
         /* Store data */
-        theSecurity = pFile.getSecurity(pPrice.getSecurityName());
+        theFileType = pFile.getFileType();
+        theSecurity = pSecurity;
         theDate = pPrice.getDate();
         thePrice = pPrice.getPrice();
     }
@@ -89,13 +98,14 @@ public class QIFPrice {
         /* Strip leading and trailing quotes */
         for (int i = 0; i < myParts.length; i++) {
             String myStr = myParts[i];
-            if ((myStr.startsWith(QIF_COMMA))
-                && (myStr.endsWith(QIF_COMMA))) {
+            if ((myStr.startsWith(QIF_QUOTE))
+                && (myStr.endsWith(QIF_QUOTE))) {
                 myParts[i] = myStr.substring(1, myStr.length() - 2);
             }
         }
 
         /* Store the data */
+        theFileType = pFile.getFileType();
         theSecurity = pFile.getSecurity(myParts[0]);
         theDate = pFormatter.getDateFormatter().parseDateDay(myParts[2]);
         thePrice = pFormatter.getDecimalParser().parsePriceValue(myParts[1]);
@@ -114,11 +124,15 @@ public class QIFPrice {
         pBuilder.append(QIF_QUOTE);
         pBuilder.append(QIF_COMMA);
 
-        /* Format the security */
-        pBuilder.append(QIF_QUOTE);
+        /* Format the price */
+        if (theFileType.escapePrices()) {
+            pBuilder.append(QIF_QUOTE);
+        }
         pBuilder.append(thePrice.toString());
         pBuilder.append(QIF_QUOTE);
-        pBuilder.append(QIF_COMMA);
+        if (theFileType.escapePrices()) {
+            pBuilder.append(QIF_COMMA);
+        }
 
         /* Format the date */
         pBuilder.append(QIF_QUOTE);

@@ -57,7 +57,7 @@ public class WriteQIF
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public WriteQIF(final FinanceStatus pStatus) {
+    public WriteQIF(final MoneyWiseStatus pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

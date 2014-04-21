@@ -37,7 +37,7 @@ public class QIFClass
     /**
      * Item type.
      */
-    protected static final String QIF_ITEM = "Cat";
+    protected static final String QIF_ITEM = "Class";
 
     /**
      * The Class Name.

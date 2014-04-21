@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -103,12 +103,12 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         theFile = pFile;
 
         /* Create the map */
-        theMap = new HashMap<T, QIFLine<T>>();
+        theMap = new EnumMap<T, QIFLine<T>>(pClass);
 
         /* Allocate list if required */
         theSubList = (hasSubRecords)
-                ? new ArrayList<QIFRecord<T>>()
-                : null;
+                                    ? new ArrayList<QIFRecord<T>>()
+                                    : null;
     }
 
     /**

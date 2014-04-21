@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
-import net.sourceforge.joceanus.jmoneywise.threads.FinanceStatus;
+import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
@@ -359,7 +359,7 @@ public class MainTab
      */
     public void loadSpreadsheet() {
         /* Allocate the status */
-        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
+        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         LoadArchive myThread = new LoadArchive(myStatus);
@@ -372,7 +372,7 @@ public class MainTab
      */
     public void backupSubversion() {
         /* Allocate the status */
-        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
+        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         SubversionBackup<MoneyWiseData> myThread = new SubversionBackup<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
@@ -385,7 +385,7 @@ public class MainTab
      */
     public void restoreSubversion() {
         /* Allocate the status */
-        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
+        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         SubversionRestore<MoneyWiseData> myThread = new SubversionRestore<MoneyWiseData>(myStatus, theView.getPreferenceMgr());
@@ -398,7 +398,7 @@ public class MainTab
      */
     public void createQIF() {
         /* Allocate the status */
-        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
+        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         WriteQIF myThread = new WriteQIF(myStatus);

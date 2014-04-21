@@ -685,7 +685,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
-     * Check unique set
+     * Check unique set.
      * @return the set among which the name must be unique
      */
     protected MoneyWiseDataType[] getUniqueSet() {

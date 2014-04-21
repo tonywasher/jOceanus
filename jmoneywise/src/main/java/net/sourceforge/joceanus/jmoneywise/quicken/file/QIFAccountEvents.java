@@ -20,43 +20,46 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmoneywise.threads;
+package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
-import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
-import net.sourceforge.joceanus.jmoneywise.views.View;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
-import net.sourceforge.joceanus.jprometheus.ui.StatusBar;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 
 /**
- * Finance Status Thread control.
+ * Class representing an account and its events.
  */
-public class FinanceStatus
-        extends ThreadStatus<MoneyWiseData, MoneyWiseDataType> {
+public class QIFAccountEvents {
     /**
-     * The view.
+     * Account.
      */
-    private final View theView;
+    private final QIFAccount theAccount;
 
     /**
-     * Obtain view.
-     * @return the view
+     * Events.
      */
-    protected View getView() {
-        return theView;
+    private final List<QIFRecord<?>> theEvents;
+
+    /**
+     * Obtain the account.
+     * @return the account
+     */
+    public QIFAccount getAccount() {
+        return theAccount;
     }
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pStatusBar the status bar
+     * @param pFile the QIF file.
+     * @param pAccount the account.
      */
-    public FinanceStatus(final View pView,
-                         final StatusBar pStatusBar) {
-        /* Call super constructor */
-        super(pView, pStatusBar);
+    protected QIFAccountEvents(final QIFFile pFile,
+                               final AssetBase<?> pAccount) {
+        /* Store parameters */
+        theAccount = new QIFAccount(pFile, pAccount);
 
-        /* Store view */
-        theView = pView;
+        /* Create the list */
+        theEvents = new ArrayList<QIFRecord<?>>();
     }
 }

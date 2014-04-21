@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataGroup;
-import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
@@ -185,7 +184,7 @@ public abstract class TransactionBaseGroup<T extends TransactionBase<T>>
 
     /**
      * Validate the item.
-     * @throws JOceanusException on error
+     * @param pTrans the child transaction
      */
     protected void validateChild(final T pTrans) {
         /* Access details */

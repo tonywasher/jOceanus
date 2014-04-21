@@ -36,8 +36,6 @@ import net.sourceforge.joceanus.jmoneywise.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -47,13 +45,14 @@ import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.QCategory.QCategoryList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QClass.QClassList;
 import net.sourceforge.joceanus.jmoneywise.quicken.QSecurity.QSecurityList;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -609,62 +608,5 @@ public class QAnalysis
                                                final AssetBase<?> pSecurity) {
         /* Locate the security bucket */
         return theAnalysis.getPortfolios().getBucket(pPortfolio, pSecurity);
-    }
-
-    /**
-     * Build QIF File from list.
-     * @return the QIF File
-     */
-    protected QIFFile buildQIFFile() {
-        /* Create new QIF File */
-        QIFFile myFile = new QIFFile();
-
-        /* Loop through the classes */
-        Iterator<QClass> myClassIterator = classIterator();
-        while (myClassIterator.hasNext()) {
-            QClass myClass = myClassIterator.next();
-
-            /* Register Class details */
-            myFile.registerClass(myClass.getEventClass());
-        }
-
-        /* Loop through the categories */
-        Iterator<QCategory> myCatIterator = categoryIterator();
-        while (myCatIterator.hasNext()) {
-            QCategory myCategory = myCatIterator.next();
-
-            /* Register Category details */
-            myFile.registerCategory(myCategory.getCategory());
-        }
-
-        /* Loop through the parents */
-        Iterator<QAccount> myIterator = accountIterator();
-        while (myIterator.hasNext()) {
-            QAccount myAccount = myIterator.next();
-
-            /* Register Account details */
-            myFile.registerAccount(myAccount.getAccount());
-        }
-
-        /* Loop through the securities */
-        Iterator<QSecurity> mySecIterator = securityIterator();
-        while (mySecIterator.hasNext()) {
-            QSecurity mySecurity = mySecIterator.next();
-
-            /* Register Security details */
-            myFile.registerSecurity(mySecurity.getSecurity());
-
-            /* Obtain the price iterator */
-            Iterator<QPrice> myPrcIterator = mySecurity.priceIterator();
-            while (myPrcIterator.hasNext()) {
-                QPrice myCurr = myPrcIterator.next();
-
-                /* Register price details */
-                myFile.registerPrice(myCurr.getPrice());
-            }
-        }
-
-        /* Return the QIF File */
-        return myFile;
     }
 }

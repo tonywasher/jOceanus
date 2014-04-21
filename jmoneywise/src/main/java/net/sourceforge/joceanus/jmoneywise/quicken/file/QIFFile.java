@@ -22,52 +22,54 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * QIF File representation.
  */
 public class QIFFile {
     /**
-     * Quicken Date Format.
+     * Type of file.
      */
-    private static final String QIF_DATEFORMAT = "dd/MM/yy";
+    private final QIFType theFileType;
 
     /**
-     * AutoSwitch option.
+     * Last event Date.
      */
-    protected static final String QIF_AUTOSWITCH = "AutoSwitch";
+    private final JDateDay theLastDate;
 
     /**
-     * The formatter.
+     * Map of Accounts with Events.
      */
-    private final JDataFormatter theFormatter;
+    private final Map<String, QIFAccountEvents> theAccounts;
 
     /**
-     * Map of Accounts.
+     * Map of Payees.
      */
-    private final Map<String, QIFAccount> theAccounts;
+    private final Map<String, QIFPayee> thePayees;
 
     /**
-     * Map of Securities.
+     * Map of Securities with Prices.
      */
-    private final Map<String, QIFSecurity> theSecurities;
+    private final Map<String, QIFSecurityPrices> theSecurities;
+
+    /**
+     * Map of Parent Categories.
+     */
+    private final Map<String, QIFParentCategory> theParentCategories;
 
     /**
      * Map of Categories.
@@ -80,64 +82,243 @@ public class QIFFile {
     private final Map<String, QIFClass> theClasses;
 
     /**
-     * List of prices.
+     * Obtain the file type.
+     * @return the file type
      */
-    private final List<QIFPrice> thePrices;
+    protected QIFType getFileType() {
+        return theFileType;
+    }
+
+    /**
+     * Does the file have classes?
+     * @return true/false
+     */
+    protected boolean hasClasses() {
+        return !theClasses.isEmpty();
+    }
+
+    /**
+     * Obtain the number of class.
+     * @return the number
+     */
+    protected int numClasses() {
+        return theClasses.size();
+    }
+
+    /**
+     * Obtain the classes iterator.
+     * @return the iterator
+     */
+    protected Iterator<QIFClass> classIterator() {
+        return theClasses.values().iterator();
+    }
+
+    /**
+     * Obtain the number of categories.
+     * @return the number
+     */
+    protected int numCategories() {
+        return theCategories.size();
+    }
+
+    /**
+     * Obtain the category iterator.
+     * @return the iterator
+     */
+    protected Iterator<QIFParentCategory> categoryIterator() {
+        return theParentCategories.values().iterator();
+    }
+
+    /**
+     * Obtain the number of accounts.
+     * @return the number
+     */
+    protected int numAccounts() {
+        return theAccounts.size();
+    }
+
+    /**
+     * Obtain the account iterator.
+     * @return the iterator
+     */
+    protected Iterator<QIFAccountEvents> accountIterator() {
+        return theAccounts.values().iterator();
+    }
+
+    /**
+     * Does the file have securities?
+     * @return true/false
+     */
+    protected boolean hasSecurities() {
+        return !theSecurities.isEmpty();
+    }
+
+    /**
+     * Obtain the number of securities.
+     * @return the number
+     */
+    protected int numSecurities() {
+        return theSecurities.size();
+    }
+
+    /**
+     * Obtain the account iterator.
+     * @return the iterator
+     */
+    protected Iterator<QIFSecurityPrices> securityIterator() {
+        return theSecurities.values().iterator();
+    }
 
     /**
      * Constructor.
+     * @param pType the file type
+     * @param pLastDate the last date
      */
-    public QIFFile() {
-        /* Allocate lists */
-        theAccounts = new LinkedHashMap<String, QIFAccount>();
-        theSecurities = new LinkedHashMap<String, QIFSecurity>();
+    public QIFFile(final QIFType pType,
+                   final JDateDay pLastDate) {
+        /* Store file type */
+        theFileType = pType;
+        theLastDate = pLastDate;
+
+        /* Allocate maps */
+        theAccounts = new LinkedHashMap<String, QIFAccountEvents>();
+        thePayees = new LinkedHashMap<String, QIFPayee>();
+        theSecurities = new LinkedHashMap<String, QIFSecurityPrices>();
+        theParentCategories = new LinkedHashMap<String, QIFParentCategory>();
         theCategories = new LinkedHashMap<String, QIFEventCategory>();
         theClasses = new LinkedHashMap<String, QIFClass>();
-        thePrices = new ArrayList<QIFPrice>();
+    }
 
-        /* Allocate the formatter and set date format */
-        theFormatter = new JDataFormatter();
-        theFormatter.setFormat(QIF_DATEFORMAT);
+    /**
+     * Build QIF File from data.
+     * @param pData the dataSet
+     * @param pFileType the file type
+     * @param pLastDate the last date to write out
+     * @return the QIF File
+     */
+    public static QIFFile buildQIFFile(final MoneyWiseData pData,
+                                       final QIFType pFileType,
+                                       final JDateDay pLastDate) {
+        /* Create new QIF File */
+        QIFFile myFile = new QIFFile(pFileType, pLastDate);
+
+        /* Build the price lists for the securities */
+        myFile.buildPrices(pData.getSecurityPrices());
+
+        /* Return the QIF File */
+        return myFile;
     }
 
     /**
      * Register class.
      * @param pClass the class
+     * @return the QIFClass representation
      */
-    public void registerClass(final TransactionTag pClass) {
-        /* Create the new Category and add to the map */
-        QIFClass myClass = new QIFClass(this, pClass);
-        theClasses.put(myClass.getName(), myClass);
+    public QIFClass registerClass(final TransactionTag pClass) {
+        /* Locate an existing class */
+        QIFClass myClass = theClasses.get(pClass.getName());
+        if (myClass != null) {
+            /* Create the new Class */
+            myClass = new QIFClass(this, pClass);
+            theClasses.put(myClass.getName(), myClass);
+        }
+
+        /* Return the class */
+        return myClass;
     }
 
     /**
      * Register category.
      * @param pCategory the category
+     * @return the QIFEventCategory representation
      */
-    public void registerCategory(final TransactionCategory pCategory) {
-        /* Create the new Category and add to the map */
-        QIFEventCategory myCat = new QIFEventCategory(this, pCategory);
-        theCategories.put(myCat.getName(), myCat);
+    public QIFEventCategory registerCategory(final TransactionCategory pCategory) {
+        /* Locate an existing category */
+        QIFEventCategory myCat = theCategories.get(pCategory.getName());
+        if (myCat == null) {
+            /* Create the new Category and add to the map */
+            myCat = new QIFEventCategory(this, pCategory);
+            theCategories.put(myCat.getName(), myCat);
+
+            /* Register against parent */
+            registerCategoryToParent(pCategory.getParentCategory(), myCat);
+        }
+
+        /* Return the category */
+        return myCat;
+    }
+
+    /**
+     * Register parent category.
+     * @param pParent the parent category
+     * @param pCategory the QIFEventCategory to register
+     */
+    private void registerCategoryToParent(final TransactionCategory pParent,
+                                          final QIFEventCategory pCategory) {
+        /* Locate an existing parent category */
+        QIFParentCategory myParent = theParentCategories.get(pParent.getName());
+        if (myParent == null) {
+            /* Create the new Parent Category */
+            myParent = new QIFParentCategory(this, pParent);
+            theParentCategories.put(pParent.getName(), myParent);
+        }
+
+        /* Register the category */
+        myParent.registerChild(pCategory);
     }
 
     /**
      * Register account.
      * @param pAccount the account
+     * @return the QIFAccount representation
      */
-    public void registerAccount(final AssetBase<?> pAccount) {
-        /* Create the new Account and add to the map */
-        QIFAccount myAct = new QIFAccount(this, pAccount);
-        theAccounts.put(myAct.getName(), myAct);
+    public QIFAccount registerAccount(final AssetBase<?> pAccount) {
+        /* Locate an existing account */
+        QIFAccountEvents myAccount = theAccounts.get(pAccount.getName());
+        if (myAccount == null) {
+            /* Create the new Account and add to the map */
+            myAccount = new QIFAccountEvents(this, pAccount);
+            theAccounts.put(pAccount.getName(), myAccount);
+        }
+
+        /* Return the account */
+        return myAccount.getAccount();
+    }
+
+    /**
+     * Register payee.
+     * @param pPayee the payee
+     * @return the QIFPayee representation
+     */
+    public QIFPayee registerPayee(final Payee pPayee) {
+        /* Locate an existing payee */
+        QIFPayee myPayee = thePayees.get(pPayee.getName());
+        if (myPayee == null) {
+            /* Create the new Payee and add to the map */
+            myPayee = new QIFPayee(this, pPayee);
+            thePayees.put(myPayee.getName(), myPayee);
+        }
+
+        /* Return the payee */
+        return myPayee;
     }
 
     /**
      * Register security.
      * @param pSecurity the security
+     * @return the QIFSecurity representation
      */
-    public void registerSecurity(final Security pSecurity) {
-        /* Create the new Security and add to the map */
-        QIFSecurity mySec = new QIFSecurity(this, pSecurity);
-        theSecurities.put(mySec.getName(), mySec);
+    public QIFSecurity registerSecurity(final Security pSecurity) {
+        /* Locate an existing security */
+        QIFSecurityPrices mySecurity = theSecurities.get(pSecurity.getName());
+        if (mySecurity == null) {
+            /* Create the new Security and add to the map */
+            mySecurity = new QIFSecurityPrices(this, pSecurity);
+            theSecurities.put(pSecurity.getName(), mySecurity);
+        }
+
+        /* Return the security */
+        return mySecurity.getSecurity();
     }
 
     /**
@@ -145,9 +326,13 @@ public class QIFFile {
      * @param pPrice the price
      */
     public void registerPrice(final SecurityPrice pPrice) {
-        /* Allocate price and add to list */
-        QIFPrice myPrice = new QIFPrice(this, pPrice);
-        thePrices.add(myPrice);
+        /* Locate an existing security price list */
+        Security mySecurity = pPrice.getSecurity();
+        QIFSecurityPrices mySecurityList = theSecurities.get(mySecurity.getName());
+        if (mySecurityList != null) {
+            /* Add price to the list */
+            mySecurityList.addPrice(pPrice);
+        }
     }
 
     /**
@@ -166,6 +351,19 @@ public class QIFFile {
      * @return the account
      */
     protected QIFAccount getAccount(final String pName) {
+        /* Lookup the security */
+        QIFAccountEvents myAccount = getAccountEvents(pName);
+        return (myAccount == null)
+                                  ? null
+                                  : myAccount.getAccount();
+    }
+
+    /**
+     * Obtain account events.
+     * @param pName the name of the account
+     * @return the account
+     */
+    protected QIFAccountEvents getAccountEvents(final String pName) {
         /* Lookup the account */
         return theAccounts.get(pName);
     }
@@ -176,6 +374,19 @@ public class QIFFile {
      * @return the security
      */
     protected QIFSecurity getSecurity(final String pName) {
+        /* Lookup the security */
+        QIFSecurityPrices myList = getSecurityPrices(pName);
+        return (myList == null)
+                               ? null
+                               : myList.getSecurity();
+    }
+
+    /**
+     * Obtain security prices.
+     * @param pName the name of the security
+     * @return the security
+     */
+    protected QIFSecurityPrices getSecurityPrices(final String pName) {
         /* Lookup the security */
         return theSecurities.get(pName);
     }
@@ -191,308 +402,23 @@ public class QIFFile {
     }
 
     /**
-     * Write File.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
+     * Build prices.
+     * @param pPriceList the price list
      */
-    public boolean writeFile(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                             final OutputStreamWriter pStream) throws IOException {
-        /* Write the classes */
-        boolean bContinue = writeClasses(pStatus, pStream);
-
-        /* Write the categories */
-        if (bContinue) {
-            bContinue = writeCategories(pStatus, pStream);
-        }
-
-        /* Write the accounts */
-        if (bContinue) {
-            bContinue = writeAccounts(pStatus, pStream);
-        }
-
-        /* Write the securities */
-        if (bContinue) {
-            bContinue = writeSecurities(pStatus, pStream);
-        }
-
-        /* Write the prices */
-        if (bContinue) {
-            bContinue = writePrices(pStatus, pStream);
-        }
-
-        /* Return success */
-        return bContinue;
-    }
-
-    /**
-     * Write Classes.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
-     */
-    private boolean writeClasses(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                 final OutputStreamWriter pStream) throws IOException {
-        /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Access the number of reporting steps */
-        int mySteps = pStatus.getReportingSteps();
-        int myCount = 0;
-
-        /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing classes")) && (pStatus.setNumSteps(theClasses.size()));
-
-        /* Skip step if we have no classes */
-        if (theClasses.isEmpty()) {
-            return true;
-        }
-
-        /* Format Item Type header */
-        QIFRecord.formatItemType(QIFClass.QIF_ITEM, myBuilder);
-
-        /* Write Class header */
-        pStream.write(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Loop through the categories */
-        Iterator<QIFClass> myIterator = theClasses.values().iterator();
-        while (myIterator.hasNext()) {
-            QIFClass myClass = myIterator.next();
-
-            /* Format the record */
-            myClass.formatRecord(theFormatter, myBuilder);
-
-            /* Write Category record */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-
-            /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
-                bContinue = false;
-            }
-        }
-
-        /* Return success */
-        return bContinue;
-    }
-
-    /**
-     * Write Categories.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
-     */
-    private boolean writeCategories(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                    final OutputStreamWriter pStream) throws IOException {
-        /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Access the number of reporting steps */
-        int mySteps = pStatus.getReportingSteps();
-        int myCount = 0;
-
-        /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing categories")) && (pStatus.setNumSteps(theCategories.size()));
-
-        /* Format Item Type header */
-        QIFRecord.formatItemType(QIFEventCategory.QIF_ITEM, myBuilder);
-
-        /* Write Category header */
-        pStream.write(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Loop through the categories */
-        Iterator<QIFEventCategory> myIterator = theCategories.values().iterator();
-        while (myIterator.hasNext()) {
-            QIFEventCategory myCategory = myIterator.next();
-
-            /* Format the record */
-            myCategory.formatRecord(theFormatter, myBuilder);
-
-            /* Write Category record */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-
-            /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
-                bContinue = false;
-            }
-        }
-
-        /* Return success */
-        return bContinue;
-    }
-
-    /**
-     * Write Accounts.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
-     */
-    private boolean writeAccounts(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                  final OutputStreamWriter pStream) throws IOException {
-        /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Access the number of reporting steps */
-        int mySteps = pStatus.getReportingSteps();
-        int myCount = 0;
-
-        /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing accounts")) && (pStatus.setNumSteps(theAccounts.size()));
-
-        /* Set AutoSwitch and header */
-        QIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);
-        QIFRecord.formatHeader(QIFAccount.QIF_HDR, myBuilder);
-
-        /* Write Accounts header */
-        pStream.write(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Loop through the accounts */
-        Iterator<QIFAccount> myIterator = theAccounts.values().iterator();
-        while (myIterator.hasNext()) {
-            QIFAccount myAccount = myIterator.next();
-
-            /* Format the record */
-            myAccount.formatRecord(theFormatter, myBuilder);
-
-            /* Write Account record */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-
-            /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
-                bContinue = false;
-            }
-        }
-
-        /* Return success */
-        return bContinue;
-    }
-
-    /**
-     * Write Securities.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
-     */
-    private boolean writeSecurities(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                    final OutputStreamWriter pStream) throws IOException {
-        /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Access the number of reporting steps */
-        int mySteps = pStatus.getReportingSteps();
-        int myCount = 0;
-
-        /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing securities")) && (pStatus.setNumSteps(theSecurities.size()));
-
-        /* Skip step if we have no securities */
-        if (theSecurities.isEmpty()) {
-            return true;
-        }
-
-        /* Clear AutoSwitch */
-        QIFRecord.clearSwitch(QIF_AUTOSWITCH, myBuilder);
-
-        /* Write Securities header */
-        pStream.write(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Loop through the securities */
-        Iterator<QIFSecurity> myIterator = theSecurities.values().iterator();
-        while (myIterator.hasNext()) {
-            QIFSecurity mySecurity = myIterator.next();
-
-            /* Format Item Type header */
-            QIFRecord.formatItemType(QIFSecurity.QIF_ITEM, myBuilder);
-
-            /* Format the record */
-            mySecurity.formatRecord(theFormatter, myBuilder);
-
-            /* Write Security record */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-
-            /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
-                bContinue = false;
-            }
-        }
-
-        /* If we should continue */
-        if (bContinue) {
-            /* Set AutoSwitch */
-            QIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);
-
-            /* Write Securities header */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-        }
-
-        /* Return success */
-        return bContinue;
-    }
-
-    /**
-     * Write Prices.
-     * @param pStatus the thread status
-     * @param pStream the output stream
-     * @return continue true/false
-     * @throws IOException on error
-     */
-    private boolean writePrices(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
-                                final OutputStreamWriter pStream) throws IOException {
-        /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Access the number of reporting steps */
-        int mySteps = pStatus.getReportingSteps();
-        int myCount = 0;
-
-        /* Update status bar */
-        boolean bContinue = (pStatus.setNewStage("Writing prices")) && (pStatus.setNumSteps(thePrices.size()));
-
-        /* Skip step if we have no prices */
-        if (thePrices.isEmpty()) {
-            return true;
-        }
-
+    public void buildPrices(final SecurityPriceList pPriceList) {
         /* Loop through the prices */
-        Iterator<QIFPrice> myIterator = thePrices.iterator();
+        Iterator<SecurityPrice> myIterator = pPriceList.iterator();
         while (myIterator.hasNext()) {
-            QIFPrice myPrice = myIterator.next();
+            SecurityPrice myPrice = myIterator.next();
 
-            /* Format Item Type header */
-            QIFRecord.formatItemType(QIFPrice.QIF_ITEM, myBuilder);
-
-            /* Format the record */
-            myPrice.formatRecord(theFormatter, myBuilder);
-
-            /* Write Security record */
-            pStream.write(myBuilder.toString());
-            myBuilder.setLength(0);
-
-            /* Report the progress */
-            myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
-                bContinue = false;
+            /* Break loop if the price is too late */
+            JDateDay myDate = myPrice.getDate();
+            if (myDate.compareTo(theLastDate) > 0) {
+                break;
             }
-        }
 
-        /* Return success */
-        return bContinue;
+            /* Register the price */
+            registerPrice(myPrice);
+        }
     }
 }
