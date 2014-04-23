@@ -62,4 +62,13 @@ public class QIFAccountEvents {
         /* Create the list */
         theEvents = new ArrayList<QIFRecord<?>>();
     }
+
+    /**
+     * Add event.
+     * @param pEvent the event record set
+     */
+    protected void addEvent(final QIFRecord<?> pEvent) {
+        /* Add the event */
+        theEvents.add(pEvent);
+    }
 }

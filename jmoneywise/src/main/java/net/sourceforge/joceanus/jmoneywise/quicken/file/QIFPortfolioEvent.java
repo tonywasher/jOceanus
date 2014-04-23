@@ -581,7 +581,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pPayee the payee
          */
-        protected QIFPortfolioPayeeAccountLine(final QIFAccount pPayee) {
+        protected QIFPortfolioPayeeAccountLine(final QIFPayee pPayee) {
             /* Call super-constructor */
             super(pPayee);
         }

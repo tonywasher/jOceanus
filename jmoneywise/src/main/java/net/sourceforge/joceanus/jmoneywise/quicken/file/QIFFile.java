@@ -32,8 +32,11 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -192,18 +195,20 @@ public class QIFFile {
     /**
      * Build QIF File from data.
      * @param pData the dataSet
-     * @param pFileType the file type
-     * @param pLastDate the last date to write out
+     * @param pPreferences the preferences
      * @return the QIF File
      */
     public static QIFFile buildQIFFile(final MoneyWiseData pData,
-                                       final QIFType pFileType,
-                                       final JDateDay pLastDate) {
-        /* Create new QIF File */
-        QIFFile myFile = new QIFFile(pFileType, pLastDate);
+                                       final QIFPreference pPreferences) {
+        /* Access preference details */
+        QIFType myType = pPreferences.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
+        JDateDay myLastDate = pPreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
 
-        /* Build the price lists for the securities */
-        myFile.buildPrices(pData.getSecurityPrices());
+        /* Create new QIF File */
+        QIFFile myFile = new QIFFile(myType, myLastDate);
+
+        /* Build the data for the accounts */
+        myFile.buildData(pData);
 
         /* Return the QIF File */
         return myFile;
@@ -272,7 +277,7 @@ public class QIFFile {
      * @param pAccount the account
      * @return the QIFAccount representation
      */
-    public QIFAccount registerAccount(final AssetBase<?> pAccount) {
+    public QIFAccountEvents registerAccount(final AssetBase<?> pAccount) {
         /* Locate an existing account */
         QIFAccountEvents myAccount = theAccounts.get(pAccount.getName());
         if (myAccount == null) {
@@ -282,7 +287,7 @@ public class QIFFile {
         }
 
         /* Return the account */
-        return myAccount.getAccount();
+        return myAccount;
     }
 
     /**
@@ -402,10 +407,38 @@ public class QIFFile {
     }
 
     /**
+     * Build data.
+     * @param pData the dataSet
+     */
+    public void buildData(final MoneyWiseData pData) {
+        /* Create a builder */
+        QIFBuilder myBuilder = new QIFBuilder(this, pData);
+
+        /* Loop through the prices */
+        TransactionList myEvents = pData.getTransactions();
+        Iterator<Transaction> myIterator = myEvents.iterator();
+        while (myIterator.hasNext()) {
+            Transaction myEvent = myIterator.next();
+
+            /* Break loop if the event is too late */
+            JDateDay myDate = myEvent.getDate();
+            if (myDate.compareTo(theLastDate) > 0) {
+                break;
+            }
+
+            /* Process the event */
+            myBuilder.processEvent(myEvent);
+        }
+
+        /* Build prices for securities */
+        buildPrices(pData.getSecurityPrices());
+    }
+
+    /**
      * Build prices.
      * @param pPriceList the price list
      */
-    public void buildPrices(final SecurityPriceList pPriceList) {
+    private void buildPrices(final SecurityPriceList pPriceList) {
         /* Loop through the prices */
         Iterator<SecurityPrice> myIterator = pPriceList.iterator();
         while (myIterator.hasNext()) {

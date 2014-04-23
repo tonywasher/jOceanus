@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.database.Database;
 import net.sourceforge.joceanus.jprometheus.preferences.BackupPreferences;
 import net.sourceforge.joceanus.jprometheus.threads.LoaderThread;
-import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -52,13 +51,13 @@ public class LoadArchive
     /**
      * Thread status.
      */
-    private final ThreadStatus<MoneyWiseData, MoneyWiseDataType> theStatus;
+    private final MoneyWiseStatus theStatus;
 
     /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public LoadArchive(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) {
+    public LoadArchive(final MoneyWiseStatus pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 

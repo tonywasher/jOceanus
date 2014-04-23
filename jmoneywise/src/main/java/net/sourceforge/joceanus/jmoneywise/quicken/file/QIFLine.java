@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JRatio;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
-import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
 
 /**
  * A standard event line in the QIF file.
@@ -624,32 +624,32 @@ public abstract class QIFLine<T extends QLineType> {
     public abstract static class QIFPayeeLine<X extends QLineType>
             extends QIFLine<X> {
         /**
-         * The account.
+         * The payee.
          */
-        private final QIFAccount theAccount;
+        private final QIFPayee thePayee;
 
         /**
-         * Obtain account.
-         * @return the account
+         * Obtain payee.
+         * @return the payee
          */
-        public QIFAccount getAccount() {
-            return theAccount;
+        public QIFPayee getPayee() {
+            return thePayee;
         }
 
         /**
          * Constructor.
-         * @param pAccount the Account
+         * @param pPayee the Payee
          */
-        protected QIFPayeeLine(final QIFAccount pAccount) {
+        protected QIFPayeeLine(final QIFPayee pPayee) {
             /* Store data */
-            theAccount = pAccount;
+            thePayee = pPayee;
         }
 
         @Override
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
-            pBuilder.append(theAccount.getName());
+            pBuilder.append(thePayee.getName());
         }
     }
 

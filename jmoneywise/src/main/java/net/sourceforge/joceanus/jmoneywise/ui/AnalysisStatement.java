@@ -668,7 +668,7 @@ public class AnalysisStatement
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_NAME, theStringRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theIconRenderer, theIconEditor));
             declareColumn(new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer));
             declareColumn(new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer));

@@ -22,10 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.threads;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseCancelException;
-import net.sourceforge.joceanus.jmoneywise.quicken.QDataSet;
+import net.sourceforge.joceanus.jmoneywise.JMoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
+import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFFile;
+import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.WorkerThread;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -33,12 +43,22 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 /**
  * WorkerThread extension to create a QIF archive.
  */
-public class WriteQIF
+public class WriteQIF2
         extends WorkerThread<Void> {
     /**
      * Task description.
      */
     private static final String TASK_NAME = "QIF Creation";
+
+    /**
+     * Windows CharacterSet.
+     */
+    private static final String NAME_CHARSET = "Windows-1252";
+
+    /**
+     * Delete error text.
+     */
+    private static final String ERROR_DELETE = "Failed to delete file";
 
     /**
      * Data View.
@@ -54,7 +74,7 @@ public class WriteQIF
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public WriteQIF(final MoneyWiseStatus pStatus) {
+    public WriteQIF2(final MoneyWiseStatus pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
@@ -71,22 +91,53 @@ public class WriteQIF
         /* Initialise the status window */
         theStatus.initTask("Analysing Data");
 
+        /* Assume failure */
+        boolean bSuccess = false;
+
         /* Load configuration */
         PreferenceManager myMgr = theView.getPreferenceMgr();
         QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
-        /* Create QIF analysis */
-        QDataSet myQData = new QDataSet(theStatus, theView, myPrefs);
+        /* Create QIF file */
+        QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myPrefs);
 
         /* Initialise the status window */
         theStatus.initTask("Writing QIF file");
 
-        /* Create file */
-        boolean bContinue = myQData.outputData(theStatus);
+        /* Determine name of output file */
+        String myDirectory = myPrefs.getStringValue(QIFPreference.NAME_QIFDIR);
+        QIFType myType = myPrefs.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
 
-        /* Check for cancellation */
-        if (!bContinue) {
-            throw new JMoneyWiseCancelException("Operation Cancelled");
+        /* Determine the output name */
+        File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
+
+        /* Create the Writer */
+        QIFWriter myQWriter = new QIFWriter(theStatus, myQFile);
+
+        /* Protect against exceptions */
+        try (FileOutputStream myOutput = new FileOutputStream(myOutFile);
+             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
+             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, NAME_CHARSET)) {
+
+            /* Output the data */
+            boolean isSuccess = myQWriter.writeFile(myWriter);
+            myWriter.close();
+            bSuccess = isSuccess;
+
+            /* Check for cancellation */
+            if (!isSuccess) {
+                throw new JMoneyWiseCancelException("Operation Cancelled");
+            }
+
+        } catch (IOException e) {
+            /* Report the error */
+            throw new JMoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
+        } finally {
+            /* Delete the file */
+            if ((!bSuccess) && (!myOutFile.delete())) {
+                /* Nothing that we can do. At least we tried */
+                theStatus.getLogger().log(Level.SEVERE, ERROR_DELETE);
+            }
         }
 
         /* Return nothing */

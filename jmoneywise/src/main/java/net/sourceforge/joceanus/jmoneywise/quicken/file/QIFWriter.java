@@ -63,8 +63,8 @@ public class QIFWriter {
      * @param pStatus the thread status
      * @param pFile the QIF file.
      */
-    protected QIFWriter(final MoneyWiseStatus pStatus,
-                        final QIFFile pFile) {
+    public QIFWriter(final MoneyWiseStatus pStatus,
+                     final QIFFile pFile) {
         /* Store parameters */
         theStatus = pStatus;
         theFile = pFile;
