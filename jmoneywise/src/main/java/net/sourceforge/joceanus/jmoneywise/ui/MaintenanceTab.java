@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -257,8 +257,7 @@ public class MaintenanceTab
         myPrefs.getPreferenceSet(QIFPreference.class);
 
         /* Create the layout for the panel */
-        FlowLayout myLayout = new FlowLayout();
-        myLayout.setAlignment(FlowLayout.LEADING);
+        BorderLayout myLayout = new BorderLayout();
         setLayout(myLayout);
 
         /* Set the layout */
