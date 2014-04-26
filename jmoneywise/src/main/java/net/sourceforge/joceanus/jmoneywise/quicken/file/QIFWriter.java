@@ -27,7 +27,9 @@ import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 
 /**
  * Writer class for QIF Files.
@@ -44,9 +46,19 @@ public class QIFWriter {
     protected static final String QIF_AUTOSWITCH = "AutoSwitch";
 
     /**
+     * Item type.
+     */
+    protected static final String QIF_ITEM = "!Account";
+
+    /**
+     * Number of stages.
+     */
+    protected static final int NUM_STAGES = 6;
+
+    /**
      * Thread Status.
      */
-    private final MoneyWiseStatus theStatus;
+    private final ThreadStatus<MoneyWiseData, MoneyWiseDataType> theStatus;
 
     /**
      * QIF File.
@@ -63,7 +75,7 @@ public class QIFWriter {
      * @param pStatus the thread status
      * @param pFile the QIF file.
      */
-    public QIFWriter(final MoneyWiseStatus pStatus,
+    public QIFWriter(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus,
                      final QIFFile pFile) {
         /* Store parameters */
         theStatus = pStatus;
@@ -81,8 +93,13 @@ public class QIFWriter {
      * @throws IOException on error
      */
     public boolean writeFile(final OutputStreamWriter pStream) throws IOException {
+        /* Declare the stages */
+        boolean bContinue = theStatus.setNumStages(NUM_STAGES);
+
         /* Write the classes */
-        boolean bContinue = writeClasses(pStream);
+        if (bContinue) {
+            bContinue = writeClasses(pStream);
+        }
 
         /* Write the categories */
         if (bContinue) {
@@ -97,6 +114,11 @@ public class QIFWriter {
         /* Write the securities */
         if (bContinue) {
             bContinue = writeSecurities(pStream);
+        }
+
+        /* Write the events */
+        if (bContinue) {
+            bContinue = writeEvents(pStream);
         }
 
         /* Write the prices */
@@ -325,6 +347,70 @@ public class QIFWriter {
         /* Write Securities header */
         pStream.write(myBuilder.toString());
         myBuilder.setLength(0);
+
+        /* Return success */
+        return true;
+    }
+
+    /**
+     * Write Prices.
+     * @param pStream the output stream
+     * @return continue true/false
+     * @throws IOException on error
+     */
+    private boolean writeEvents(final OutputStreamWriter pStream) throws IOException {
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* Access the number of reporting steps */
+        int mySteps = theStatus.getReportingSteps();
+        int myCount = 0;
+
+        /* Update status bar */
+        boolean bContinue = (theStatus.setNewStage("Writing account events"))
+                            && (theStatus.setNumSteps(theFile.numAccounts()));
+        if (!bContinue) {
+            return false;
+        }
+
+        /* Loop through the accounts */
+        Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
+        while (myIterator.hasNext()) {
+            QIFAccountEvents myEvents = myIterator.next();
+            QIFAccount myAccount = myEvents.getAccount();
+
+            /* Format Item Type header */
+            QIFRecord.formatHeader(QIFAccount.QIF_HDR, myBuilder);
+
+            /* Format the record */
+            myAccount.formatRecord(theFormatter, myBuilder);
+
+            /* Format Item Type */
+            QIFRecord.formatItemType(myAccount.getType(), myBuilder);
+
+            /* Write Account record */
+            pStream.write(myBuilder.toString());
+            myBuilder.setLength(0);
+
+            /* Loop through the events */
+            Iterator<QIFRecord<?>> myEvtIterator = myEvents.eventIterator();
+            while (myEvtIterator.hasNext()) {
+                QIFRecord<?> myEvent = myEvtIterator.next();
+
+                /* Format the record */
+                myEvent.formatRecord(theFormatter, myBuilder);
+
+                /* Write Event record */
+                pStream.write(myBuilder.toString());
+                myBuilder.setLength(0);
+            }
+
+            /* Report the progress */
+            myCount++;
+            if (((myCount % mySteps) == 0) && (!theStatus.setStepsDone(myCount))) {
+                return false;
+            }
+        }
 
         /* Return success */
         return true;

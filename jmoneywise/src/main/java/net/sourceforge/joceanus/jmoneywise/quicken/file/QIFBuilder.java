@@ -26,15 +26,20 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.views.View;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
@@ -44,17 +49,17 @@ public class QIFBuilder {
     /**
      * Quicken Transfer.
      */
-    protected static final String QIF_XFER = "Transfer";
+    private static final String QIF_XFER = "Transfer";
 
     /**
      * Quicken Transfer from.
      */
-    protected static final String QIF_XFERFROM = " from ";
+    private static final String QIF_XFERFROM = " from ";
 
     /**
      * Quicken Transfer to.
      */
-    protected static final String QIF_XFERTO = " to ";
+    private static final String QIF_XFERTO = " to ";
 
     /**
      * The QIF File.
@@ -65,6 +70,11 @@ public class QIFBuilder {
      * The QIF File Type.
      */
     private final QIFType theFileType;
+
+    /**
+     * The QIF Portfolio Builder.
+     */
+    private final QIFPortfolioBuilder thePortBuilder;
 
     /**
      * The TaxMan payee.
@@ -92,26 +102,62 @@ public class QIFBuilder {
     private final TransactionCategory theDonateCategory;
 
     /**
+     * The Opening category.
+     */
+    private final TransactionCategory theOpeningCategory;
+
+    /**
+     * Obtain the file.
+     * @return the file
+     */
+    protected QIFFile getFile() {
+        return theFile;
+    }
+
+    /**
+     * Obtain the tax category.
+     * @return the category
+     */
+    protected QIFEventCategory getTaxCategory() {
+        return theFile.registerCategory(theTaxCategory);
+    }
+
+    /**
+     * Obtain the tax payee.
+     * @return the payee
+     */
+    protected QIFPayee getTaxMan() {
+        return theFile.registerPayee(theTaxMan);
+    }
+
+    /**
      * Constructor.
      * @param pFile the QIF File
-     * @param pData the dataSet
+     * @param pView the view
      */
     protected QIFBuilder(final QIFFile pFile,
-                         final MoneyWiseData pData) {
+                         final View pView) {
         /* Store parameters */
         theFile = pFile;
         theFileType = pFile.getFileType();
 
+        /* Access the data */
+        MoneyWiseData myData = pView.getData();
+
+        /* Create portfolio builder */
+        thePortBuilder = new QIFPortfolioBuilder(this, pView);
+
         /* Store Tax account */
-        PayeeList myPayees = pData.getPayees();
+        PayeeList myPayees = myData.getPayees();
         theTaxMan = myPayees.getSingularClass(PayeeTypeClass.TAXMAN);
 
         /* Store categories */
-        TransactionCategoryList myCategories = pData.getTransCategories();
+        TransactionCategoryList myCategories = myData.getTransCategories();
         theTaxCategory = myCategories.getEventInfoCategory(TransactionInfoClass.TAXCREDIT);
         theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
         theDonateCategory = myCategories.getEventInfoCategory(TransactionInfoClass.CHARITYDONATION);
+        theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.INHERITED);
     }
 
     /**
@@ -171,6 +217,38 @@ public class QIFBuilder {
     }
 
     /**
+     * Process opening balance.
+     * @param pDeposit the deposit
+     * @param pStartDate the start date
+     * @param pBalance the opening balance
+     */
+    protected void processBalance(final Deposit pDeposit,
+                                  final JDateDay pStartDate,
+                                  final JMoney pBalance) {
+        /* Access the Account details */
+        QIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
+
+        /* Create the event */
+        QIFEvent myEvent = new QIFEvent(theFile, pStartDate);
+        myEvent.recordAmount(pBalance);
+
+        /* If we are using self-Opening balance */
+        if (theFileType.selfOpeningBalance()) {
+            /* Record self reference */
+            myEvent.recordAccount(myAccount.getAccount());
+
+            /* else use an event */
+        } else {
+            /* Register category */
+            QIFEventCategory myCategory = theFile.registerCategory(theOpeningCategory);
+            myEvent.recordCategory(myCategory);
+        }
+
+        /* Add event to event list */
+        myAccount.addEvent(myEvent);
+    }
+
+    /**
      * Process debit payee event.
      * @param pPayee the payee
      * @param pTrans the transaction
@@ -185,6 +263,11 @@ public class QIFBuilder {
             && ((Cash) myCredit).isAutoExpense()) {
             /* process as cash recovery */
             processCashRecovery(pPayee, (Cash) myCredit, pTrans);
+
+            /* If this is a income to a security */
+        } else if (myCredit instanceof Security) {
+            /* process as income to security */
+            thePortBuilder.processIncomeToSecurity(pPayee, (Security) myCredit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -212,6 +295,11 @@ public class QIFBuilder {
             && ((Cash) myDebit).isAutoExpense()) {
             /* process as cash payment */
             processCashPayment(pPayee, (Cash) myDebit, pTrans);
+
+            /* If this is a income to a security */
+        } else if (myDebit instanceof Security) {
+            /* process as expense from security */
+            thePortBuilder.processExpenseFromSecurity(pPayee, (Security) myDebit, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -246,6 +334,16 @@ public class QIFBuilder {
             /* Process as standard expense */
             processCashReceipt((Cash) myDebit, pTrans);
 
+            /* If this is a transfer from a security */
+        } else if (myDebit instanceof Security) {
+            /* process as expense from security */
+            thePortBuilder.processTransferFromSecurity((Security) myDebit, pTrans);
+
+            /* If this is a transfer to a security */
+        } else if (myCredit instanceof Security) {
+            /* process as expense to security */
+            thePortBuilder.processTransferToSecurity((Security) myCredit, pTrans);
+
         } else {
             /* Switch on category class */
             switch (myCat.getCategoryTypeClass()) {
@@ -278,16 +376,16 @@ public class QIFBuilder {
      * @return true/false
      */
     protected static boolean hasXtraDetail(final Transaction pTrans) {
-        if (pTrans.getTaxCredit() == null) {
+        if (pTrans.getTaxCredit() != null) {
             return true;
         }
-        if (pTrans.getNatInsurance() == null) {
+        if (pTrans.getNatInsurance() != null) {
             return true;
         }
-        if (pTrans.getDeemedBenefit() == null) {
+        if (pTrans.getDeemedBenefit() != null) {
             return true;
         }
-        if (pTrans.getCharityDonation() == null) {
+        if (pTrans.getCharityDonation() != null) {
             return true;
         }
         return false;
@@ -358,7 +456,7 @@ public class QIFBuilder {
         JMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Add to amount */
-            myAmount.addValue(myTaxCredit);
+            myAmount.addAmount(myTaxCredit);
             myTaxCredit = new JMoney(myTaxCredit);
             myTaxCredit.negate();
 
@@ -373,7 +471,7 @@ public class QIFBuilder {
         JMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             /* Add to amount */
-            myAmount.addValue(myNatIns);
+            myAmount.addAmount(myNatIns);
             myNatIns = new JMoney(myNatIns);
             myNatIns.negate();
 
@@ -388,7 +486,7 @@ public class QIFBuilder {
         JMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Add to amount */
-            myAmount.addValue(myBenefit);
+            myAmount.addAmount(myBenefit);
             myBenefit = new JMoney(myBenefit);
             myBenefit.negate();
 
@@ -466,14 +564,14 @@ public class QIFBuilder {
         myEvent.recordAmount(myAmount);
 
         /* Add Split event */
-        myAmount = new JMoney(pTrans.getAmount());
+        myAmount = new JMoney(myAmount);
         myEvent.recordSplitRecord(myCategory, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
         JMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Subtract from amount */
-            myAmount.subtractValue(myTaxCredit);
+            myAmount.subtractAmount(myTaxCredit);
 
             /* Access the Category details */
             QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
@@ -486,7 +584,7 @@ public class QIFBuilder {
         JMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             /* Subtract from amount */
-            myAmount.subtractValue(myNatIns);
+            myAmount.subtractAmount(myNatIns);
 
             /* Access the Category details */
             QIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
@@ -499,7 +597,7 @@ public class QIFBuilder {
         JMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Subtract from amount */
-            myAmount.subtractValue(myBenefit);
+            myAmount.subtractAmount(myBenefit);
 
             /* Access the Category details */
             QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
@@ -522,9 +620,6 @@ public class QIFBuilder {
         AssetBase<?> myCredit = pTrans.getCredit();
         JMoney myAmount = pTrans.getAmount();
 
-        /* Determine mode */
-        boolean useSimpleTransfer = theFileType.useSimpleTransfer();
-
         /* Access the Account details */
         QIFAccountEvents myDebitAccount = theFile.registerAccount(myDebit);
         QIFAccountEvents myCreditAccount = theFile.registerAccount(myCredit);
@@ -535,13 +630,7 @@ public class QIFBuilder {
         myEvent.recordAccount(myDebitAccount.getAccount());
 
         /* Build payee description */
-        StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(QIF_XFER);
-        if (!useSimpleTransfer) {
-            myBuilder.append(QIF_XFERFROM);
-            myBuilder.append(myDebit.getName());
-        }
-        myEvent.recordPayee(myBuilder.toString());
+        myEvent.recordPayee(buildXferFromPayee(myDebit));
 
         /* Add event to event list */
         myCreditAccount.addEvent(myEvent);
@@ -556,16 +645,52 @@ public class QIFBuilder {
         myEvent.recordAccount(myCreditAccount.getAccount());
 
         /* Build payee description */
-        myBuilder.setLength(0);
-        myBuilder.append(QIF_XFER);
-        if (!useSimpleTransfer) {
-            myBuilder.append(QIF_XFERTO);
-            myBuilder.append(myCredit.getName());
-        }
-        myEvent.recordPayee(myBuilder.toString());
+        myEvent.recordPayee(buildXferToPayee(myCredit));
 
         /* Add event to event list */
         myDebitAccount.addEvent(myEvent);
+    }
+
+    /**
+     * Build xferFrom payee line.
+     * @param pPartner the Transfer Partner
+     * @return the line
+     */
+    protected String buildXferFromPayee(final AssetBase<?> pPartner) {
+        /* Determine mode */
+        boolean useSimpleTransfer = theFileType.useSimpleTransfer();
+
+        /* Build payee description */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(QIF_XFER);
+        if (!useSimpleTransfer) {
+            myBuilder.append(QIF_XFERFROM);
+            myBuilder.append(pPartner.getName());
+        }
+
+        /* Return the payee */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Build xferFrom payee line.
+     * @param pPartner the Transfer Partner
+     * @return the line
+     */
+    protected String buildXferToPayee(final AssetBase<?> pPartner) {
+        /* Determine mode */
+        boolean useSimpleTransfer = theFileType.useSimpleTransfer();
+
+        /* Build payee description */
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(QIF_XFER);
+        if (!useSimpleTransfer) {
+            myBuilder.append(QIF_XFERTO);
+            myBuilder.append(pPartner.getName());
+        }
+
+        /* Return the payee */
+        return myBuilder.toString();
     }
 
     /**
@@ -627,7 +752,7 @@ public class QIFBuilder {
                 QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
                 /* Add to amount */
-                myAmount.addValue(myTaxCredit);
+                myAmount.addAmount(myTaxCredit);
                 myTaxCredit = new JMoney(myTaxCredit);
                 myTaxCredit.negate();
 
@@ -642,7 +767,7 @@ public class QIFBuilder {
             JMoney myDonation = pTrans.getCharityDonation();
             if (myDonation != null) {
                 /* Add to amount */
-                myAmount.addValue(myDonation);
+                myAmount.addAmount(myDonation);
                 myDonation = new JMoney(myDonation);
                 myDonation.negate();
 
@@ -674,23 +799,16 @@ public class QIFBuilder {
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
             QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
-            boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
             /* Create a new event */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Build simple event and add it */
-            myEvent.recordAmount(myAmount);
+            myEvent.recordAmount(pTrans.getAmount());
             myEvent.recordAccount(myIntAccount.getAccount());
 
             /* Build payee description */
-            StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(QIF_XFER);
-            if (!useSimpleTransfer) {
-                myBuilder.append(QIF_XFERFROM);
-                myBuilder.append(myDebit.getName());
-            }
-            myEvent.recordPayee(myBuilder.toString());
+            myEvent.recordPayee(buildXferFromPayee(myDebit));
 
             /* Add event to event list */
             myAccount.addEvent(myEvent);
@@ -811,7 +929,7 @@ public class QIFBuilder {
         QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getDebit());
+        QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getCredit());
 
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);

@@ -49,6 +49,11 @@ public class QIFClass
      */
     private final String theDesc;
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Obtain the Name.
      * @return the Name

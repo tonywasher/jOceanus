@@ -54,7 +54,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     /**
      * Quicken End of Item indicator.
      */
-    private static final String QIF_EOI = "^";
+    protected static final String QIF_EOI = "^";
 
     /**
      * Quicken New line.

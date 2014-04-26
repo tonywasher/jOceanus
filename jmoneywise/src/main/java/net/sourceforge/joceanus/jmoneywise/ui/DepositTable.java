@@ -402,6 +402,12 @@ public class DepositTable
         /* Create new menu */
         JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
+        /* Access active category */
+        JMenuItem myActive = null;
+        DepositCategory myActiveCat = (pDeposit == null)
+                                                        ? null
+                                                        : pDeposit.getCategory();
+
         /* Create a simple map for top-level categories */
         Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
@@ -440,7 +446,16 @@ public class DepositTable
             PopUpAction myAction = pEditor.getNewAction(myCategory);
             JMenuItem myItem = new JMenuItem(myAction);
             myMenu.addMenuItem(myItem);
+
+            /* Note active category */
+            if (myCategory.equals(myActiveCat)) {
+                myActive = myMenu;
+                myMenu.showItem(myItem);
+            }
         }
+
+        /* Ensure active item is visible */
+        myPopUp.showItem(myActive);
 
         /* Return the menu */
         return myPopUp;

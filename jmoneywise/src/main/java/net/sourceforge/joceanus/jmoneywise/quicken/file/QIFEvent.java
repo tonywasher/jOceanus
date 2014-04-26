@@ -80,7 +80,7 @@ public class QIFEvent
     protected QIFEvent(final QIFFile pFile,
                        final Transaction pTrans) {
         /* Call super-constructor */
-        super(pFile, QEventLineType.class);
+        super(pFile, QEventLineType.class, true);
 
         /* Store values */
         theDate = pTrans.getDate();
@@ -101,6 +101,26 @@ public class QIFEvent
         if (myComment != null) {
             recordComment(myComment);
         }
+    }
+
+    /**
+     * Constructor for opening balance.
+     * @param pFile the QIF File
+     * @param pStartDate the start date
+     */
+    protected QIFEvent(final QIFFile pFile,
+                       final JDateDay pStartDate) {
+        /* Call super-constructor */
+        super(pFile, QEventLineType.class, false);
+
+        /* Store values */
+        theDate = pStartDate;
+        isCleared = true;
+
+        /* Add the lines */
+        addLine(new QIFEventDateLine(theDate));
+        addLine(new QIFEventClearedLine(isCleared));
+        addLine(new QIFEventPayeeDescLine("OpeningBalance"));
     }
 
     /**

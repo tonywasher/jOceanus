@@ -28,7 +28,7 @@ package net.sourceforge.joceanus.jtethys.decimal;
 public class JUnits
         extends JDecimal {
     /**
-     * Standard number of decimals for Units.
+     * Singular unit.
      */
     protected static final int NUM_DECIMALS = 4;
 
@@ -59,6 +59,17 @@ public class JUnits
         /* Parse the string and correct the scale */
         JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);
+    }
+
+    /**
+     * Construct a new Units by setting the value explicitly.
+     * @param pValue the unscaled value
+     * @return the new Rate
+     */
+    public static JUnits getWholeUnits(final long pValue) {
+        JUnits myUnits = new JUnits();
+        myUnits.setValue(adjustDecimals(pValue, NUM_DECIMALS), NUM_DECIMALS);
+        return myUnits;
     }
 
     /**

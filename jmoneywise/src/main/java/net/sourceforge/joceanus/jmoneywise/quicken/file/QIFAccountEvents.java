@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
@@ -47,6 +48,14 @@ public class QIFAccountEvents {
      */
     public QIFAccount getAccount() {
         return theAccount;
+    }
+
+    /**
+     * Event iterator.
+     * @return the iterator
+     */
+    public Iterator<QIFRecord<?>> eventIterator() {
+        return theEvents.iterator();
     }
 
     /**

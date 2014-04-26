@@ -44,6 +44,11 @@ public class QIFParentCategory {
      */
     private final List<QIFEventCategory> theChildren;
 
+    @Override
+    public String toString() {
+        return theSelf.toString();
+    }
+
     /**
      * Obtain number of children.
      * @return the number of children

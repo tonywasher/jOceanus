@@ -218,7 +218,7 @@ public class QPortfolioEvent
         JUnits myUnits = myTrans.getCreditUnits();
         if (myUnits == null) {
             myUnits = new JUnits();
-            autoCorrectZeroUnits = !getQIFType().canInvestCapital();
+            autoCorrectZeroUnits = !getQIFType().canTradeZeroShares();
         }
 
         /* Determine reconciled flag */
@@ -544,7 +544,7 @@ public class QPortfolioEvent
         JUnits myUnits = myTrans.getCreditUnits();
         if (myUnits == null) {
             myUnits = new JUnits();
-            autoCorrectZeroUnits = !myQIFType.canInvestCapital();
+            autoCorrectZeroUnits = !myQIFType.canTradeZeroShares();
         }
 
         /* Determine additional features */

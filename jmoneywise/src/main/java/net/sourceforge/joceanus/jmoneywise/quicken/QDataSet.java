@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
-import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.threads.ThreadStatus;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -109,7 +108,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputData(final MoneyWiseStatus pStatus) throws JOceanusException {
+    public boolean outputData(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) throws JOceanusException {
         /* Determine whether to use consolidated file */
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
@@ -145,7 +144,7 @@ public class QDataSet {
      * @return success true/false
      * @throws JOceanusException on error
      */
-    public boolean outputSingleFile(final MoneyWiseStatus pStatus) throws JOceanusException {
+    public boolean outputSingleFile(final ThreadStatus<MoneyWiseData, MoneyWiseDataType> pStatus) throws JOceanusException {
         /* Assume failure */
         boolean bSuccess = false;
 

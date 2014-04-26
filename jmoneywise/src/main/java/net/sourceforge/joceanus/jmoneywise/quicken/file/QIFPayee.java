@@ -42,13 +42,16 @@ public class QIFPayee {
         return theName;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Constructor.
-     * @param pFile the QIF File
      * @param pPayee the Payee
      */
-    public QIFPayee(final QIFFile pFile,
-                    final Payee pPayee) {
+    public QIFPayee(final Payee pPayee) {
         /* Store data */
         theName = pPayee.getName();
     }

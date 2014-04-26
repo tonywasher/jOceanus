@@ -111,6 +111,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final String theValue;
 
+        @Override
+        public String toString() {
+            return getValue();
+        }
+
         /**
          * Obtain Value.
          * @return the value
@@ -146,6 +151,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The money.
          */
         private final JMoney theMoney;
+
+        @Override
+        public String toString() {
+            return getMoney().toString();
+        }
 
         /**
          * Obtain Money.
@@ -186,6 +196,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JDateDay theDate;
 
+        @Override
+        public String toString() {
+            return getDate().toString();
+        }
+
         /**
          * Obtain Date.
          * @return the date
@@ -221,6 +236,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The flag status.
          */
         private final Boolean isSet;
+
+        @Override
+        public String toString() {
+            return isSet().toString();
+        }
 
         /**
          * Obtain Cleared status.
@@ -285,6 +305,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JPrice thePrice;
 
+        @Override
+        public String toString() {
+            return getPrice().toString();
+        }
+
         /**
          * Obtain price.
          * @return the price
@@ -324,6 +349,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JUnits theUnits;
 
+        @Override
+        public String toString() {
+            return getUnits().toString();
+        }
+
         /**
          * Obtain units.
          * @return the units
@@ -359,6 +389,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The Rate.
          */
         private final JRate theRate;
+
+        @Override
+        public String toString() {
+            return getRate().toString();
+        }
 
         /**
          * Obtain rate.
@@ -396,6 +431,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final JRatio theRatio;
 
+        @Override
+        public String toString() {
+            return getRatio().toString();
+        }
+
         /**
          * Obtain ratio.
          * @return the ratio
@@ -431,6 +471,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The security.
          */
         private final QIFSecurity theSecurity;
+
+        @Override
+        public String toString() {
+            return theSecurity.toString();
+        }
 
         /**
          * Obtain account.
@@ -472,6 +517,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The class list.
          */
         private final List<QIFClass> theClasses;
+
+        @Override
+        public String toString() {
+            return theAccount.toString();
+        }
 
         /**
          * Obtain account.
@@ -628,6 +678,11 @@ public abstract class QIFLine<T extends QLineType> {
          */
         private final QIFPayee thePayee;
 
+        @Override
+        public String toString() {
+            return thePayee.toString();
+        }
+
         /**
          * Obtain payee.
          * @return the payee
@@ -668,6 +723,11 @@ public abstract class QIFLine<T extends QLineType> {
          * The class list.
          */
         private final List<QIFClass> theClasses;
+
+        @Override
+        public String toString() {
+            return theCategory.toString();
+        }
 
         /**
          * Obtain event category.

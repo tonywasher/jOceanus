@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jprometheus.preferences;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
 import net.sourceforge.joceanus.jprometheus.database.BatchControl;
-import net.sourceforge.joceanus.jprometheus.database.JDBCDriver;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

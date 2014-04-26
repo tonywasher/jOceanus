@@ -129,15 +129,19 @@ public class QIFPrice {
             pBuilder.append(QIF_QUOTE);
         }
         pBuilder.append(thePrice.toString());
-        pBuilder.append(QIF_QUOTE);
         if (theFileType.escapePrices()) {
-            pBuilder.append(QIF_COMMA);
+            pBuilder.append(QIF_QUOTE);
         }
+        pBuilder.append(QIF_COMMA);
 
         /* Format the date */
         pBuilder.append(QIF_QUOTE);
         pBuilder.append(pFormatter.formatObject(theDate));
         pBuilder.append(QIF_QUOTE);
+        pBuilder.append(QIFRecord.QIF_EOL);
+
+        /* Add the end of record indicator */
+        pBuilder.append(QIFRecord.QIF_EOI);
         pBuilder.append(QIFRecord.QIF_EOL);
     }
 }

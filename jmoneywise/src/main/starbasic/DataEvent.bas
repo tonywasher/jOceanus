@@ -43,8 +43,11 @@ Private Const colEvtThirdParty As Integer = 16
 Public Const catTransfer As String = "Transfer"
 Public Const catInterest As String = "Income:Interest"
 Public Const catDividend As String = "Income:Dividend"
+Public Const catShareDividend As String = "Income:ShareDividend"
 Public Const catUnitDividend As String = "Income:UnitTrustDividend"
 Public Const catTaxFreeDividend As String = "Income:TaxFreeDividend"
+Public Const catTaxedInterest As String = "Income:TaxedInterest"
+Public Const catGrossInterest As String = "Income:GrossInterest"
 Public Const catTaxFreeInterest As String = "Income:TaxFreeInterest"
 
 'Event information
@@ -100,12 +103,18 @@ Private Sub adjustCategory(ByRef Context As FinanceState, _
 		Case catInterest
 			If (myDebitInfo.isTaxFree) Then
 				myCategory = catTaxFreeInterest
+			ElseIf (myDebitInfo.isGross) Then
+				myCategory = catGrossInterest
+			Else
+				myCategory = catTaxedInterest
 			End If
 		Case catDividend
 			If (myDebitInfo.isTaxFree) Then
 				myCategory = catTaxFreeDividend
 			ElseIf (myDebitInfo.isUnitTrust) Then
 				myCategory = catUnitDividend
+			Else
+				myCategory = catShareDividend
 			End If
 	End Select
 	

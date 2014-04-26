@@ -99,7 +99,7 @@ public class WriteQIF2
         QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
         /* Create QIF file */
-        QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myPrefs);
+        QIFFile myQFile = QIFFile.buildQIFFile(theView, myPrefs);
 
         /* Initialise the status window */
         theStatus.initTask("Writing QIF file");

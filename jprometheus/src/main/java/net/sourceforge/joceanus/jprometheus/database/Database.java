@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.TaskControl;
 import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
+import net.sourceforge.joceanus.jprometheus.preferences.JDBCDriver;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**

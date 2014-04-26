@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QActionType;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QPortfolioLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFCategoryAccountLine;
@@ -70,16 +70,6 @@ public class QIFPortfolioEvent
     private final QActionType theAction;
 
     /**
-     * The Amount.
-     */
-    private final JMoney theAmount;
-
-    /**
-     * The Comment.
-     */
-    private final String theComment;
-
-    /**
      * Obtain the date.
      * @return the date.
      */
@@ -104,53 +94,31 @@ public class QIFPortfolioEvent
     }
 
     /**
-     * Obtain the amount.
-     * @return the amount.
-     */
-    public JMoney getAmount() {
-        return theAmount;
-    }
-
-    /**
-     * Obtain the comment.
-     * @return the comment.
-     */
-    public String getComment() {
-        return theComment;
-    }
-
-    /**
      * Constructor.
      * @param pFile the QIF File
-     * @param pDate the Date of the event
+     * @param pTrans the transaction
      * @param pAction the action
-     * @param pCleared is the event cleared?
-     * @param pAmount the amount
-     * @param pComment the comment
      */
     protected QIFPortfolioEvent(final QIFFile pFile,
-                                final JDateDay pDate,
-                                final QActionType pAction,
-                                final Boolean pCleared,
-                                final JMoney pAmount,
-                                final String pComment) {
+                                final Transaction pTrans,
+                                final QActionType pAction) {
         /* Call super-constructor */
         super(pFile, QPortfolioLineType.class);
 
         /* Store values */
-        theDate = pDate;
-        isCleared = pCleared;
-        theAmount = pAmount;
-        theComment = pComment;
+        theDate = pTrans.getDate();
+        isCleared = pTrans.isReconciled();
         theAction = pAction;
 
         /* Add the lines */
-        addLine(new QIFPortfolioDateLine(pDate));
-        addLine(new QIFPortfolioActionLine(pAction));
-        addLine(new QIFPortfolioClearedLine(pCleared));
-        addLine(new QIFPortfolioAmountLine(pAmount));
-        if (pComment != null) {
-            addLine(new QIFPortfolioCommentLine(pComment));
+        addLine(new QIFPortfolioDateLine(theDate));
+        addLine(new QIFPortfolioActionLine(theAction));
+        addLine(new QIFPortfolioClearedLine(isCleared));
+
+        /* Add the comment line if it exists */
+        String myComment = pTrans.getComments();
+        if (myComment != null) {
+            addLine(new QIFPortfolioCommentLine(myComment));
         }
     }
 
@@ -170,8 +138,6 @@ public class QIFPortfolioEvent
         JDateDay myDate = null;
         QActionType myAction = null;
         Boolean myCleared = null;
-        JMoney myAmount = null;
-        String myComment = null;
 
         /* Obtain parsers */
         JDateDayFormatter myDateParser = pFormatter.getDateFormatter();
@@ -203,11 +169,9 @@ public class QIFPortfolioEvent
                     case AMOUNT:
                         JMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioAmountLine(myMoney));
-                        myAmount = myMoney;
                         break;
                     case COMMENT:
                         addLine(new QIFPortfolioCommentLine(myData));
-                        myComment = myData;
                         break;
                     case ACTION:
                         myAction = QActionType.parseLine(myData);
@@ -259,17 +223,33 @@ public class QIFPortfolioEvent
         theDate = myDate;
         theAction = myAction;
         isCleared = myCleared;
-        theAmount = myAmount;
-        theComment = myComment;
     }
 
     /**
      * record security.
      * @param pSecurity the security
      */
-    protected void recordSecurity(final AssetBase<?> pSecurity) {
+    protected void recordSecurity(final QIFSecurity pSecurity) {
         /* Add security line */
-        addLine(new QIFPortfolioSecurityLine(getFile().getSecurity(pSecurity.getName())));
+        addLine(new QIFPortfolioSecurityLine(pSecurity));
+    }
+
+    /**
+     * record category.
+     * @param pCategory the category
+     */
+    protected void recordCategory(final QIFEventCategory pCategory) {
+        /* Add security line */
+        addLine(new QIFPortfolioCategoryLine(pCategory));
+    }
+
+    /**
+     * record amount.
+     * @param pAmount the amount
+     */
+    protected void recordAmount(final JMoney pAmount) {
+        /* Add amount line */
+        addLine(new QIFPortfolioAmountLine(pAmount));
     }
 
     /**
@@ -282,14 +262,35 @@ public class QIFPortfolioEvent
     }
 
     /**
+     * record payee.
+     * @param pPayee the payee
+     */
+    protected void recordPayee(final QIFPayee pPayee) {
+        /* Add payee line */
+        addLine(new QIFPortfolioPayeeLine(pPayee));
+    }
+
+    /**
      * record transfer.
      * @param pAccount the transfer account
      * @param pAmount the transfer amount
      */
-    protected void recordXfer(final AssetBase<?> pAccount,
+    protected void recordXfer(final QIFAccount pAccount,
                               final JMoney pAmount) {
         /* Add transfer lines */
-        addLine(new QIFPortfolioAccountLine(getFile().getAccount(pAccount.getName())));
+        addLine(new QIFPortfolioAccountLine(pAccount));
+        addLine(new QIFPortfolioXferAmountLine(pAmount));
+    }
+
+    /**
+     * record transfer.
+     * @param pCategory the transfer category
+     * @param pAmount the transfer amount
+     */
+    protected void recordXfer(final QIFEventCategory pCategory,
+                              final JMoney pAmount) {
+        /* Add transfer lines */
+        addLine(new QIFPortfolioCategoryLine(pCategory));
         addLine(new QIFPortfolioXferAmountLine(pAmount));
     }
 
@@ -314,12 +315,18 @@ public class QIFPortfolioEvent
     /**
      * record price.
      * @param pPrice the price
+     */
+    protected void recordPrice(final JPrice pPrice) {
+        /* Add price line */
+        addLine(new QIFPortfolioPriceLine(pPrice));
+    }
+
+    /**
+     * record commission.
      * @param pCommission the commission
      */
-    protected void recordPrice(final JPrice pPrice,
-                               final JMoney pCommission) {
-        /* Add price and commission lines */
-        addLine(new QIFPortfolioPriceLine(pPrice));
+    protected void recordCommission(final JMoney pCommission) {
+        /* Add commission line */
         addLine(new QIFPortfolioCommissionLine(pCommission));
     }
 
@@ -519,7 +526,7 @@ public class QIFPortfolioEvent
 
         @Override
         public QPortfolioLineType getLineType() {
-            return QPortfolioLineType.SECURITY;
+            return QPortfolioLineType.ACTION;
         }
 
         /**
@@ -543,7 +550,7 @@ public class QIFPortfolioEvent
         protected void formatData(final JDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
-            pBuilder.append(theAction.toString());
+            pBuilder.append(theAction.getSymbol());
         }
     }
 
@@ -570,7 +577,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Payee Account line.
      */
-    public class QIFPortfolioPayeeAccountLine
+    public class QIFPortfolioPayeeLine
             extends QIFPayeeLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -581,7 +588,7 @@ public class QIFPortfolioEvent
          * Constructor.
          * @param pPayee the payee
          */
-        protected QIFPortfolioPayeeAccountLine(final QIFPayee pPayee) {
+        protected QIFPortfolioPayeeLine(final QIFPayee pPayee) {
             /* Call super-constructor */
             super(pPayee);
         }

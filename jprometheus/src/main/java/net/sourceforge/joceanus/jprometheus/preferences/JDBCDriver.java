@@ -20,12 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.database;
+package net.sourceforge.joceanus.jprometheus.preferences;
 
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ColumnType;
-import net.sourceforge.joceanus.jprometheus.preferences.DatabasePreferences;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
@@ -40,6 +39,16 @@ public enum JDBCDriver {
      * PostgreSQL.
      */
     POSTGRESQL;
+
+    /**
+     * The index prefix.
+     */
+    public static final String PREFIX_INDEX = "idx_";
+
+    /**
+     * The quote string.
+     */
+    public static final String QUOTE_STRING = "\"";
 
     /**
      * Resource Bundle.
@@ -154,8 +163,8 @@ public enum JDBCDriver {
         switch (pType) {
             case BOOLEAN:
                 return (isSQLServer)
-                        ? "bit"
-                        : "boolean";
+                                    ? "bit"
+                                    : "boolean";
             case SHORT:
                 return "smallint";
             case INTEGER:
@@ -166,22 +175,22 @@ public enum JDBCDriver {
                 return "real";
             case DOUBLE:
                 return (isSQLServer)
-                        ? "float"
-                        : "double precision";
+                                    ? "float"
+                                    : "double precision";
             case DATE:
                 return "date";
             case MONEY:
                 return (isSQLServer)
-                        ? "money"
-                        : "numeric(18,2)";
+                                    ? "money"
+                                    : "numeric(18,2)";
             case DECIMAL:
                 return (isSQLServer)
-                        ? "decimal"
-                        : "numeric";
+                                    ? "decimal"
+                                    : "numeric";
             case BINARY:
                 return (isSQLServer)
-                        ? "varbinary"
-                        : "bytea";
+                                    ? "varbinary"
+                                    : "bytea";
             case STRING:
             default:
                 return "varchar";
@@ -198,18 +207,18 @@ public enum JDBCDriver {
         switch (this) {
             case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.tables where name = '");
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(pName);
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append("') drop table ");
                 myBuilder.append(pName);
                 break;
             case POSTGRESQL:
             default:
                 myBuilder.append("drop table if exists ");
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(pName);
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 break;
         }
 
@@ -227,23 +236,23 @@ public enum JDBCDriver {
         switch (this) {
             case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.indexes where name = '");
-                myBuilder.append(TableDefinition.QUOTE_STRING);
-                myBuilder.append(TableDefinition.PREFIX_INDEX);
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
                 myBuilder.append(pName);
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append("') drop index ");
-                myBuilder.append(TableDefinition.QUOTE_STRING);
-                myBuilder.append(TableDefinition.PREFIX_INDEX);
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
                 myBuilder.append(pName);
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 break;
             case POSTGRESQL:
             default:
                 myBuilder.append("drop index if exists ");
-                myBuilder.append(TableDefinition.QUOTE_STRING);
-                myBuilder.append(TableDefinition.PREFIX_INDEX);
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
                 myBuilder.append(pName);
-                myBuilder.append(TableDefinition.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 break;
         }
 

@@ -81,7 +81,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     myCharInfo = getCategoryStats(Context, catCharityDonate) 
 	
     'Build the new date
-    'myFinalDate = DateSerial(2013, 10, 20)     
+    myFinalDate = DateSerial(2015, 04, 05)     
     
 	'Loop through the rows in the range    
     For Each myRow in myRange.getRows()
@@ -102,9 +102,9 @@ Sub analyseYear(ByRef Context As FinanceState, _
 		myCredUnits = myEvent.evtCredUnits
 			
 		'Break Off after date
-		'If (myDate > myFinalDate) Then
-		'	Exit For
-		'End If	
+		If (myDate > myFinalDate) Then
+			Exit For
+		End If	
 						      
     	'If we have a value in the Units cell
 		If ((myDebUnits <> 0) Or (myCredUnits <> 0)) Then

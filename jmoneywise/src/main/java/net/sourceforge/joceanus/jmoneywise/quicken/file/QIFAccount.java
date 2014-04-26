@@ -72,6 +72,11 @@ public class QIFAccount
      */
     private final Enum<?> theClass;
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Obtain the Name.
      * @return the Name
@@ -86,6 +91,14 @@ public class QIFAccount
      */
     public String getDesc() {
         return theDesc;
+    }
+
+    /**
+     * Obtain the account type.
+     * @return the Type
+     */
+    public String getType() {
+        return QIF_ACTCATMAP.get(theClass);
     }
 
     /**
@@ -287,6 +300,11 @@ public class QIFAccount
          * The Account Category Class.
          */
         private final Enum<?> theClass;
+
+        @Override
+        public String toString() {
+            return theClass.toString();
+        }
 
         /**
          * Obtain account class.

@@ -62,6 +62,11 @@ public class QIFSecurity
      */
     private final SecurityTypeClass theClass;
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Obtain the Name.
      * @return the Name
@@ -90,8 +95,10 @@ public class QIFSecurity
         myMap.put(SecurityTypeClass.SHARES, "Share");
         myMap.put(SecurityTypeClass.UNITTRUST, "Unit/Inv. Trust");
         myMap.put(SecurityTypeClass.LIFEBOND, "Bond");
-        myMap.put(SecurityTypeClass.ASSET, "Real Estate");
+        myMap.put(SecurityTypeClass.ASSET, "Asset");
         myMap.put(SecurityTypeClass.ENDOWMENT, "Trust");
+        myMap.put(SecurityTypeClass.VEHICLE, "Vehicle");
+        myMap.put(SecurityTypeClass.PROPERTY, "Real Estate");
 
         /* Return the map */
         return myMap;
@@ -241,6 +248,11 @@ public class QIFSecurity
          * The Security Type Class.
          */
         private final SecurityTypeClass theClass;
+
+        @Override
+        public String toString() {
+            return theClass.toString();
+        }
 
         /**
          * Obtain security class.

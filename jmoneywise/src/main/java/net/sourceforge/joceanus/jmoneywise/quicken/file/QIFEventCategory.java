@@ -28,6 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionType;
+import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
 
@@ -55,6 +56,11 @@ public class QIFEventCategory
      * The Category Type.
      */
     private final TransactionType theType;
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 
     /**
      * Obtain the Name.
@@ -101,7 +107,16 @@ public class QIFEventCategory
         /* Store data */
         theName = pCategory.getName();
         theDesc = pCategory.getDesc();
-        theType = TransactionType.deriveType(pCategory);
+
+        /* Handle parent categories specially */
+        TransactionCategoryClass myClass = pCategory.getCategoryTypeClass();
+        if (myClass.canParentCategory()) {
+            theType = myClass.isIncome()
+                                        ? TransactionType.INCOME
+                                        : TransactionType.EXPENSE;
+        } else {
+            theType = TransactionType.deriveType(pCategory);
+        }
 
         /* Build lines */
         addLine(new QIFCategoryNameLine(theName));
@@ -238,6 +253,11 @@ public class QIFEventCategory
             return QCategoryLineType.INCOME;
         }
 
+        @Override
+        public String toString() {
+            return getLineType().getSymbol();
+        }
+
         /**
          * Constructor.
          */
@@ -261,6 +281,11 @@ public class QIFEventCategory
             return QCategoryLineType.EXPENSE;
         }
 
+        @Override
+        public String toString() {
+            return getLineType().getSymbol();
+        }
+
         /**
          * Constructor.
          */
@@ -281,7 +306,12 @@ public class QIFEventCategory
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
-            return QCategoryLineType.INCOME;
+            return QCategoryLineType.TAX;
+        }
+
+        @Override
+        public String toString() {
+            return getLineType().getSymbol();
         }
 
         /**

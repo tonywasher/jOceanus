@@ -27,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
@@ -38,7 +40,9 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFPreference;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
+import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 
 /**
  * QIF File representation.
@@ -50,9 +54,14 @@ public class QIFFile {
     private final QIFType theFileType;
 
     /**
+     * Start event Date.
+     */
+    private JDateDay theStartDate;
+
+    /**
      * Last event Date.
      */
-    private final JDateDay theLastDate;
+    private JDateDay theLastDate;
 
     /**
      * Map of Accounts with Events.
@@ -175,13 +184,10 @@ public class QIFFile {
     /**
      * Constructor.
      * @param pType the file type
-     * @param pLastDate the last date
      */
-    public QIFFile(final QIFType pType,
-                   final JDateDay pLastDate) {
+    public QIFFile(final QIFType pType) {
         /* Store file type */
         theFileType = pType;
-        theLastDate = pLastDate;
 
         /* Allocate maps */
         theAccounts = new LinkedHashMap<String, QIFAccountEvents>();
@@ -194,21 +200,21 @@ public class QIFFile {
 
     /**
      * Build QIF File from data.
-     * @param pData the dataSet
+     * @param pView the view
      * @param pPreferences the preferences
      * @return the QIF File
      */
-    public static QIFFile buildQIFFile(final MoneyWiseData pData,
+    public static QIFFile buildQIFFile(final View pView,
                                        final QIFPreference pPreferences) {
         /* Access preference details */
         QIFType myType = pPreferences.getEnumValue(QIFPreference.NAME_QIFTYPE, QIFType.class);
         JDateDay myLastDate = pPreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
 
         /* Create new QIF File */
-        QIFFile myFile = new QIFFile(myType, myLastDate);
+        QIFFile myFile = new QIFFile(myType);
 
         /* Build the data for the accounts */
-        myFile.buildData(pData);
+        myFile.buildData(pView, myLastDate);
 
         /* Return the QIF File */
         return myFile;
@@ -300,7 +306,7 @@ public class QIFFile {
         QIFPayee myPayee = thePayees.get(pPayee.getName());
         if (myPayee == null) {
             /* Create the new Payee and add to the map */
-            myPayee = new QIFPayee(this, pPayee);
+            myPayee = new QIFPayee(pPayee);
             thePayees.put(myPayee.getName(), myPayee);
         }
 
@@ -408,21 +414,31 @@ public class QIFFile {
 
     /**
      * Build data.
-     * @param pData the dataSet
+     * @param pView the view
+     * @param pLastDate the last date
      */
-    public void buildData(final MoneyWiseData pData) {
+    public void buildData(final View pView,
+                          final JDateDay pLastDate) {
         /* Create a builder */
-        QIFBuilder myBuilder = new QIFBuilder(this, pData);
+        QIFBuilder myBuilder = new QIFBuilder(this, pView);
 
-        /* Loop through the prices */
-        TransactionList myEvents = pData.getTransactions();
+        /* Store dates */
+        MoneyWiseData myData = pView.getData();
+        theStartDate = myData.getDateRange().getStart();
+        theLastDate = pLastDate;
+
+        /* Build opening balances */
+        buildOpeningBalances(myBuilder, myData.getDeposits());
+
+        /* Loop through the events */
+        TransactionList myEvents = myData.getTransactions();
         Iterator<Transaction> myIterator = myEvents.iterator();
         while (myIterator.hasNext()) {
             Transaction myEvent = myIterator.next();
 
             /* Break loop if the event is too late */
             JDateDay myDate = myEvent.getDate();
-            if (myDate.compareTo(theLastDate) > 0) {
+            if (myDate.compareTo(pLastDate) > 0) {
                 break;
             }
 
@@ -431,7 +447,30 @@ public class QIFFile {
         }
 
         /* Build prices for securities */
-        buildPrices(pData.getSecurityPrices());
+        buildPrices(myData.getSecurityPrices());
+    }
+
+    /**
+     * Build opening balances.
+     * @param pBuilder the builder
+     * @param pDepositList the deposit list
+     */
+    private void buildOpeningBalances(final QIFBuilder pBuilder,
+                                      final DepositList pDepositList) {
+        /* Loop through the prices */
+        Iterator<Deposit> myIterator = pDepositList.iterator();
+        while (myIterator.hasNext()) {
+            Deposit myDeposit = myIterator.next();
+
+            /* Ignore if no opening balance */
+            JMoney myBalance = myDeposit.getOpeningBalance();
+            if (myBalance == null) {
+                continue;
+            }
+
+            /* Process the balance */
+            pBuilder.processBalance(myDeposit, theStartDate, myBalance);
+        }
     }
 
     /**

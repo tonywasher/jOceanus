@@ -27,29 +27,32 @@ Private Const rangeAccountCategories As String = "AccountCategoryInfo"
 'Account Column locations
 Private Const colAcctName As Integer = 1
 Private Const colAcctType As Integer = 2
-Private Const colAcctTaxFree As Integer = 3
-Private Const colAcctGross As Integer = 4
-Private Const colAcctClosed As Integer = 5
-Private Const colAcctParent As Integer = 6
-Private Const colAcctAlias As Integer = 7
-Private Const colAcctPortfolio As Integer = 8
-Private Const colAcctHolding As Integer = 9
-Private Const colAcctMaturity As Integer = 10
-Private Const colAcctOpenBal As Integer = 11
-Private Const colAcctSymbol As Integer = 12
-Private Const colAcctAutoExp As Integer = 13
+Private Const colAcctClass As Integer = 3
+Private Const colAcctTaxFree As Integer = 4
+Private Const colAcctGross As Integer = 5
+Private Const colAcctClosed As Integer = 6
+Private Const colAcctParent As Integer = 7
+Private Const colAcctAlias As Integer = 8
+Private Const colAcctPortfolio As Integer = 9
+Private Const colAcctHolding As Integer = 10
+Private Const colAcctMaturity As Integer = 11
+Private Const colAcctOpenBal As Integer = 12
+Private Const colAcctSymbol As Integer = 13
+Private Const colAcctAutoExp As Integer = 14
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
 Private Const colAcTpClass As Integer = 1
 Private Const colAcTpParent As Integer = 2
-Private Const colAcTpValue As Integer = 3
-Private Const colAcTpUnits As Integer = 4
-Private Const colAcTpUnitTrust As Integer = 5
-Private Const colAcTpEndowment As Integer = 6
-Private Const colAcTpPortfolio As Integer = 7
-Private Const colAcTpCapital As Integer = 8
-Private Const colAcTpLifeBond As Integer = 9
+Private Const colAcTpNewClass As Integer = 3
+Private Const colAcTpNetCat As Integer = 4
+Private Const colAcTpValue As Integer = 5
+Private Const colAcTpUnits As Integer = 6
+Private Const colAcTpUnitTrust As Integer = 7
+Private Const colAcTpEndowment As Integer = 8
+Private Const colAcTpPortfolio As Integer = 9
+Private Const colAcTpCapital As Integer = 10
+Private Const colAcTpLifeBond As Integer = 11
 
 'Account Type
 Public Type AccountType

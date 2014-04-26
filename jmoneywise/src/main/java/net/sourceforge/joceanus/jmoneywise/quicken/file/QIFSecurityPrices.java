@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 
 /**
  * Security Price List.
- * @author Tony Wahser
+ * @author Tony Washer
  */
 public class QIFSecurityPrices {
     /**
@@ -64,7 +64,7 @@ public class QIFSecurityPrices {
      * @param pSecurity the security.
      */
     protected QIFSecurityPrices(final QIFFile pFile,
-                                   final Security pSecurity) {
+                                final Security pSecurity) {
         /* Store parameters */
         theFile = pFile;
         theSecurity = new QIFSecurity(pFile, pSecurity);

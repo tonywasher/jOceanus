@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+p * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -136,9 +136,9 @@ public enum QIFType {
     public boolean selfOpeningBalance() {
         switch (this) {
             case ACEMONEY:
+                return false;
             case MONEYDANCE:
             case QUICKEN:
-                return false;
             default:
                 return true;
         }
@@ -154,9 +154,9 @@ public enum QIFType {
     public boolean useInvestmentHolding4Category() {
         switch (this) {
             case ACEMONEY:
+                return true;
             case MONEYDANCE:
             case QUICKEN:
-                return true;
             default:
                 return false;
         }
@@ -180,12 +180,13 @@ public enum QIFType {
     }
 
     /**
-     * Can we invest capital?
+     * Can we buy zero shares?
      * <p>
-     * Some programs do not allow you to buy zero shares, in order to directly add to the cost. In this case we must buy a single share and remove it.
+     * Some programs do not allow you to buy/sell zero shares, in order to directly add to the cost. In this case we must buy/sell a single share and then
+     * perform an adjustment.
      * @return true/false
      */
-    public boolean canInvestCapital() {
+    public boolean canTradeZeroShares() {
         switch (this) {
             case ACEMONEY:
                 return false;
@@ -199,14 +200,14 @@ public enum QIFType {
     /**
      * Can we return capital?
      * <p>
-     * Some programs do not allow you to sell zero shares, treating such an event as a dividend as opposed to a return of capital. In this case we must sell a
-     * single share and restore it.
+     * Some programs do not allow you to return capital, treating such an event as a dividend as opposed to a return of capital. In this case we must treat it
+     * as a sale of zero shares.
      * @return true/false
      */
     public boolean canReturnCapital() {
         switch (this) {
-            case MONEYDANCE:
             case ACEMONEY:
+            case MONEYDANCE:
                 return false;
             case QUICKEN:
             default:
