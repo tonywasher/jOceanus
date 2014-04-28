@@ -461,7 +461,7 @@ public class QAnalysis
                     if ((!(mySource instanceof Security))
                         && (myTarget instanceof Security)) {
                         /* Needs a debit line if we cannot use BuyX */
-                        return myType.canXferPortfolioLinked();
+                        return myType.canXferPortfolio();
                     }
                     /* All other elements need a debit line */
                     return false;
@@ -483,7 +483,7 @@ public class QAnalysis
                 if ((mySource instanceof Security)
                     && !(myTarget instanceof Security)) {
                     /* Needs a credit line if we cannot use SellX */
-                    return myType.canXferPortfolioLinked();
+                    return myType.canXferPortfolio();
                 }
 
                 /* All other elements need a credit line */

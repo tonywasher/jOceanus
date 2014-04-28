@@ -336,12 +336,17 @@ public class QIFBuilder {
 
             /* If this is a transfer from a security */
         } else if (myDebit instanceof Security) {
-            /* process as expense from security */
-            thePortBuilder.processTransferFromSecurity((Security) myDebit, pTrans);
-
+            /* Handle transfer between securities */
+            if (myCredit instanceof Security) {
+                /* process as transfer between securities */
+                thePortBuilder.processTransferBetweenSecurities((Security) myDebit, (Security) myCredit, pTrans);
+            } else {
+                /* process as transfer from security */
+                thePortBuilder.processTransferFromSecurity((Security) myDebit, pTrans);
+            }
             /* If this is a transfer to a security */
         } else if (myCredit instanceof Security) {
-            /* process as expense to security */
+            /* process as transfer to security */
             thePortBuilder.processTransferToSecurity((Security) myCredit, pTrans);
 
         } else {

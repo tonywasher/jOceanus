@@ -101,9 +101,9 @@ public enum QIFType {
     public boolean useSimpleTransfer() {
         switch (this) {
             case MONEYDANCE:
+            case QUICKEN:
                 return true;
             case ACEMONEY:
-            case QUICKEN:
             default:
                 return false;
         }
@@ -163,6 +163,24 @@ public enum QIFType {
     }
 
     /**
+     * Can we use MiscIncX for Reinvested TaxCredit?
+     * <p>
+     * The Tax Credit for a re-invested dividend must be extracted from the security using MiscInc. Ideally we use MiscIncX to directly assign the value to the
+     * TaxCredit category. This is not always available and instead we must use MiscInc and then either Cash or the holding account
+     * @return true/false
+     */
+    public boolean useMiscIncX4TaxCredit() {
+        switch (this) {
+            case QUICKEN:
+                return true;
+            case MONEYDANCE:
+            case ACEMONEY:
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Should we provide true stock splits?
      * <p>
      * Some programs do not support the StockSplit operation and hence require stock splits to be represented by StockAdjustments
@@ -216,12 +234,13 @@ public enum QIFType {
     }
 
     /**
-     * Can we transfer directly to/from the portfolio account?
+     * Can we transfer to/from the portfolio account?
      * <p>
-     * Some programs do not allow you to use the investment transfer types XIn and XOut. In this case the transfer has to be driven from the partner account.
+     * Some programs do not allow you to perform a transfer using the investment transfer types XIn/XOut and the consolidated types BuyX/SellX/RtrnCapX/DivX
+     * etc. In this case the transfer has to be driven from the partner account.
      * @return true/false
      */
-    public boolean canXferPortfolioDirect() {
+    public boolean canXferPortfolio() {
         switch (this) {
             case ACEMONEY:
                 return false;
@@ -244,24 +263,6 @@ public enum QIFType {
                 return false;
             case MONEYDANCE:
             case ACEMONEY:
-            default:
-                return true;
-        }
-    }
-
-    /**
-     * Can we transfer to/from the portfolio account as part of an investment transaction?
-     * <p>
-     * Some programs do not allow you to use the investment transfer types BuyX, SellX, RtrnCapX and DivX, which allow a linked transfer. In this case the
-     * transfer has to be specified separately by the partner account.
-     * @return true/false
-     */
-    public boolean canXferPortfolioLinked() {
-        switch (this) {
-            case ACEMONEY:
-                return false;
-            case MONEYDANCE:
-            case QUICKEN:
             default:
                 return true;
         }

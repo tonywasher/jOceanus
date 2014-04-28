@@ -88,12 +88,12 @@ public class QPortfolioEvent
                 if (Difference.isEqual(myDebit, myTrans.getCredit())) {
                     return false;
                 }
-                return !(myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect());
+                return !myType.canXferPortfolio();
             case STOCKTAKEOVER:
                 if (myTrans.getThirdParty() == null) {
                     return false;
                 }
-                return !myType.canXferPortfolioDirect();
+                return !myType.canXferPortfolio();
             default:
                 return false;
         }
@@ -226,7 +226,7 @@ public class QPortfolioEvent
 
         /* Determine additional features */
         boolean useBuyX4Event = (!(myDebit instanceof Payee))
-                                && getQIFType().canXferPortfolioLinked();
+                                && getQIFType().canXferPortfolio();
 
         /* Reset the builder */
         reset();
@@ -333,7 +333,7 @@ public class QPortfolioEvent
 
         /* Determine additional flags */
         boolean useSellX4Event = (!(myCredit instanceof Payee))
-                                 && getQIFType().canXferPortfolioLinked();
+                                 && getQIFType().canXferPortfolio();
 
         /* Reset the builder */
         reset();
@@ -553,10 +553,7 @@ public class QPortfolioEvent
         boolean isTaxFreeDiv = !isReinvested
                                && (myTaxCredit == null);
         boolean useDivX4Event = isTaxFreeDiv
-                                && myQIFType.canXferPortfolioLinked();
-        boolean useXOut4Event = isTaxFreeDiv
-                                && !useDivX4Event
-                                && myQIFType.canXferPortfolioDirect();
+                                && myQIFType.canXferPortfolio();
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -656,34 +653,6 @@ public class QPortfolioEvent
 
             /* Add the Cleared status */
             addStringLine(QPortfolioLineType.CLEARED, myReconciled);
-
-            /* Add description */
-            if (myDesc != null) {
-                /* Add the Description */
-                addStringLine(QPortfolioLineType.COMMENT, myDesc);
-            }
-        }
-
-        /* If should use XOut for the tax free dividend */
-        if (useXOut4Event) {
-            /* End the main item */
-            endItem();
-
-            /* Add the Date */
-            addDateLine(QPortfolioLineType.DATE, myDate);
-
-            /* Add the action */
-            addActionLine(QPortfolioLineType.ACTION, QActionType.XOUT);
-
-            /* Add the Amount (as a simple decimal) */
-            myValue = new JDecimal(myAmount);
-            addDecimalLine(QPortfolioLineType.AMOUNT, myValue);
-
-            /* Add the Cleared status */
-            addStringLine(QPortfolioLineType.CLEARED, myReconciled);
-
-            /* Add the transfer line */
-            addXferAccountLine(QPortfolioLineType.XFERACCOUNT, myCredit);
 
             /* Add description */
             if (myDesc != null) {
@@ -883,7 +852,7 @@ public class QPortfolioEvent
 
         /* If we have a ThirdParty cash component that we can use XOut on */
         if ((myThirdParty != null)
-            && (getQIFType().canXferPortfolioDirect())) {
+            && (getQIFType().canXferPortfolio())) {
             /* Add the Date */
             addDateLine(QPortfolioLineType.DATE, myDate);
 
