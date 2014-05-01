@@ -239,8 +239,19 @@ public class QIFPortfolioEvent
      * @param pCategory the category
      */
     protected void recordCategory(final QIFEventCategory pCategory) {
-        /* Add security line */
+        /* Add category line */
         addLine(new QIFPortfolioCategoryLine(pCategory));
+    }
+
+    /**
+     * record category.
+     * @param pCategory the category
+     * @param pClasses the classes
+     */
+    protected void recordCategory(final QIFEventCategory pCategory,
+                                  final List<QIFClass> pClasses) {
+        /* Add category line */
+        addLine(new QIFPortfolioCategoryLine(pCategory, pClasses));
     }
 
     /**
@@ -279,6 +290,20 @@ public class QIFPortfolioEvent
                               final JMoney pAmount) {
         /* Add transfer lines */
         addLine(new QIFPortfolioAccountLine(pAccount));
+        addLine(new QIFPortfolioXferAmountLine(pAmount));
+    }
+
+    /**
+     * record transfer.
+     * @param pAccount the transfer account
+     * @param pClasses the classes
+     * @param pAmount the transfer amount
+     */
+    protected void recordXfer(final QIFAccount pAccount,
+                              final List<QIFClass> pClasses,
+                              final JMoney pAmount) {
+        /* Add transfer lines */
+        addLine(new QIFPortfolioAccountLine(pAccount, pClasses));
         addLine(new QIFPortfolioXferAmountLine(pAmount));
     }
 

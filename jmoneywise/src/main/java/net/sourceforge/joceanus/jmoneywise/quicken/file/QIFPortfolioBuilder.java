@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
+import java.util.List;
+
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.analysis.PortfolioBucket.PortfolioBucketList;
@@ -190,6 +192,9 @@ public class QIFPortfolioBuilder {
         QIFSecurity mySecurity = theFile.registerSecurity(pSecurity);
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
         JUnits myUnits = pTrans.getCreditUnits();
@@ -210,7 +215,7 @@ public class QIFPortfolioBuilder {
             myEvent.recordPayee(myPayee);
 
             /* record the splits */
-            myEvent.recordSplitRecord(myCategory, myAmount, myPayee.getName());
+            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
             myEvent.recordSplitRecord(myPortfolio.getAccount(), myOutAmount, myPort.getName());
 
             /* Add to event list */
@@ -222,7 +227,7 @@ public class QIFPortfolioBuilder {
             QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(myPayee);
-            myEvent.recordCategory(myCategory);
+            myEvent.recordCategory(myCategory, myList);
 
             /* Add to event list */
             myPortfolio.addEvent(myEvent);
@@ -260,6 +265,9 @@ public class QIFPortfolioBuilder {
         QIFSecurity mySecurity = theFile.registerSecurity(pSecurity);
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
         JUnits myUnits = pTrans.getDebitUnits();
@@ -291,7 +299,7 @@ public class QIFPortfolioBuilder {
 
             /* record the splits */
             myHoldEvent.recordSplitRecord(myPortfolio.getAccount(), myAmount, myPort.getName());
-            myHoldEvent.recordSplitRecord(myCategory, myOutAmount, myPayee.getName());
+            myHoldEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
 
             /* Add to event list */
             myHolding.addEvent(myEvent);
@@ -302,7 +310,7 @@ public class QIFPortfolioBuilder {
             myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
             myEvent.recordAmount(myOutAmount);
             myEvent.recordPayee(myPayee);
-            myEvent.recordCategory(myCategory);
+            myEvent.recordCategory(myCategory, myList);
 
             /* Add to event list */
             myPortfolio.addEvent(myEvent);
@@ -331,6 +339,9 @@ public class QIFPortfolioBuilder {
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
 
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
         JUnits myUnits = pTrans.getCreditUnits();
@@ -356,7 +367,7 @@ public class QIFPortfolioBuilder {
         myPortEvent.recordQuantity(myUnits);
         myPortEvent.recordPrice(myPrice);
         if (canXferLinked) {
-            myPortEvent.recordXfer(mySource.getAccount(), myAmount);
+            myPortEvent.recordXfer(mySource.getAccount(), myList, myAmount);
         }
 
         /* Add to event list */
@@ -381,7 +392,7 @@ public class QIFPortfolioBuilder {
 
             /* Build the source transfer */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
-            myEvent.recordAccount(myPortfolio.getAccount());
+            myEvent.recordAccount(myPortfolio.getAccount(), myList);
             myEvent.recordAmount(myOutAmount);
 
             /* Build payee description */
@@ -393,9 +404,7 @@ public class QIFPortfolioBuilder {
     }
 
     /**
-     * Process transfer from a security.
-     * <p>
-     * Note that this handles transfers between Securities
+     * Process transfer between securities.
      * @param pSource the source security
      * @param pTarget the target security
      * @param pTrans the transaction
@@ -433,8 +442,6 @@ public class QIFPortfolioBuilder {
 
     /**
      * Process transfer from a security.
-     * <p>
-     * Note that this handles transfers between Securities
      * @param pSecurity the security
      * @param pTrans the transaction
      */
@@ -551,6 +558,9 @@ public class QIFPortfolioBuilder {
             myFullAmount.addAmount(myTaxCredit);
         }
 
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
         /* Determine whether we should XferLinked */
         boolean doXferLinked = canXferLinked && myTaxCredit == null;
 
@@ -562,7 +572,7 @@ public class QIFPortfolioBuilder {
         myEvent.recordAmount(myFullAmount);
         if (doXferLinked) {
             myEvent.recordPayee(theBuilder.buildXferFromPayee(myPort));
-            myEvent.recordXfer(myTarget.getAccount(), myAmount);
+            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
         }
 
         /* Add to event list */
@@ -576,7 +586,7 @@ public class QIFPortfolioBuilder {
             myEvent.recordSecurity(mySecurity);
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(theBuilder.buildXferFromPayee(myPort));
-            myEvent.recordXfer(myTarget.getAccount(), myAmount);
+            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
 
             /* Add to event list */
             myPortfolio.addEvent(myEvent);
@@ -586,7 +596,7 @@ public class QIFPortfolioBuilder {
         QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
         myXferEvent.recordAmount(myAmount);
         myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPort));
-        myXferEvent.recordAccount(myPortfolio.getAccount());
+        myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
 
         /* Add to event list */
         myTarget.addEvent(myXferEvent);
@@ -941,6 +951,9 @@ public class QIFPortfolioBuilder {
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
 
+        /* Obtain classes */
+        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+
         /* Access details */
         JMoney myAmount = pTrans.getAmount();
         JUnits myUnits = pTrans.getDebitUnits();
@@ -975,7 +988,7 @@ public class QIFPortfolioBuilder {
         }
         myPortEvent.recordPrice(myPrice);
         if (canXferLinked) {
-            myPortEvent.recordXfer(myTarget.getAccount(), myAmount);
+            myPortEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
         }
 
         /* Add to event list */
@@ -996,7 +1009,7 @@ public class QIFPortfolioBuilder {
         if (!hideBalancingSplitXfer || !canXferLinked) {
             /* Build the source transfer */
             QIFEvent myEvent = new QIFEvent(theFile, pTrans);
-            myEvent.recordAccount(myPortfolio.getAccount());
+            myEvent.recordAccount(myPortfolio.getAccount(), myList);
             myEvent.recordAmount(myAmount);
 
             /* Build payee description */

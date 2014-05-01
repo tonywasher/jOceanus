@@ -228,7 +228,7 @@ public class QIFFile {
     public QIFClass registerClass(final TransactionTag pClass) {
         /* Locate an existing class */
         QIFClass myClass = theClasses.get(pClass.getName());
-        if (myClass != null) {
+        if (myClass == null) {
             /* Create the new Class */
             myClass = new QIFClass(this, pClass);
             theClasses.put(myClass.getName(), myClass);

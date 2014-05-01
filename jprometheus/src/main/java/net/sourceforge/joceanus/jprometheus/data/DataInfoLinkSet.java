@@ -250,6 +250,29 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     }
 
     /**
+     * Obtain item linked to value.
+     * @param pValue the value to check
+     * @return true/false
+     */
+    public T getItemForValue(final DataItem<E> pValue) {
+        /* Loop through the list */
+        T myItem = null;
+        Iterator<T> myIterator = theLinks.iterator();
+        while (myIterator.hasNext()) {
+            T myLink = myIterator.next();
+
+            /* If this item is the correct link */
+            if (pValue.equals(myLink.getLink())) {
+                myItem = myLink;
+                break;
+            }
+        }
+
+        /* Return the item */
+        return myItem;
+    }
+
+    /**
      * Sort the list.
      */
     protected void sortLinks() {
@@ -507,9 +530,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>, O extends DataIt
     }
 
     @Override
-    public int compareTo(final T arg0) {
-        // TODO Auto-generated method stub
-        return 0;
+    public int compareTo(final T pThat) {
+        return getInfoType().compareTo(pThat.getInfoType());
     }
-
 }

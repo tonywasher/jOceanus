@@ -262,6 +262,104 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
     }
 
     /**
+     * Obtain the link iterator for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the iterator
+     */
+    public Iterator<T> linkIterator(final S pInfoClass) {
+        /* Reject if not called for LinkSet */
+        if (!pInfoClass.isLinkSet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Access existing entry */
+        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (mySet == null) {
+            return null;
+        }
+
+        /* Return the iterator */
+        return mySet.iterator();
+    }
+
+    /**
+     * link the value for the the infoClass.
+     * @param pInfoClass the Info Class
+     * @param pLink the link value
+     */
+    public void linkValue(final S pInfoClass,
+                          final DataItem<E> pLink) {
+        /* Reject if not called for LinkSet */
+        if (!pInfoClass.isLinkSet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Access existing set */
+        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+
+        /* If we have no set, create one */
+        if (mySet == null) {
+            /* Obtain infoType */
+            I myInfoType = theTypeList.findItemByClass(pInfoClass);
+
+            /* Allocate the new set */
+            mySet = new DataInfoLinkSet<T, O, I, S, E>(theInfoList, theOwner, myInfoType);
+
+            /* Add to the map */
+            theMap.put(pInfoClass, mySet);
+        }
+
+        /* Locate any existing link */
+        T myItem = mySet.getItemForValue(pLink);
+
+        /* If this is a new link */
+        if (myItem == null) {
+            /* Obtain infoType */
+            I myInfoType = theTypeList.findItemByClass(pInfoClass);
+
+            /* Create the entry and add to list */
+            myItem = theInfoList.addNewItem(theOwner, myInfoType);
+            myItem.setNewVersion();
+
+            /* else if this is a deleted link */
+        } else if (myItem.isDeleted()) {
+            /* Restore the value */
+            myItem.setDeleted(false);
+        }
+    }
+
+    /**
+     * clear the value for the the infoClass.
+     * @param pInfoClass the Info Class
+     * @param pLink the link value
+     */
+    public void clearValue(final S pInfoClass,
+                           final DataItem<E> pLink) {
+        /* Reject if not called for LinkSet */
+        if (!pInfoClass.isLinkSet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Access existing set */
+        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+
+        /* If we have a set */
+        if (mySet != null) {
+            /* Locate the link */
+            T myItem = mySet.getItemForValue(pLink);
+
+            /* If it exists and is not deleted */
+            if ((myItem != null)
+                && !myItem.isDeleted()) {
+                /* Delete the value */
+                myItem.setDeleted(true);
+            }
+        }
+    }
+
+    /**
      * Obtain the infoLinkSet for the infoClass.
      * @param pInfoClass the Info Class
      * @return the value

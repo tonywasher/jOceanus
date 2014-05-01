@@ -290,12 +290,34 @@ public class QIFEvent
     }
 
     /**
+     * record transfer account.
+     * @param pAccount the account
+     * @param pClasses the classes
+     */
+    protected void recordAccount(final QIFAccount pAccount,
+                                 final List<QIFClass> pClasses) {
+        /* Add account line */
+        addLine(new QIFEventAccountLine(pAccount, pClasses));
+    }
+
+    /**
      * record category.
      * @param pCategory the category
      */
     protected void recordCategory(final QIFEventCategory pCategory) {
         /* Add category line */
         addLine(new QIFEventCategoryLine(pCategory));
+    }
+
+    /**
+     * record category.
+     * @param pCategory the category
+     * @param pClasses the classes
+     */
+    protected void recordCategory(final QIFEventCategory pCategory,
+                                  final List<QIFClass> pClasses) {
+        /* Add category line */
+        addLine(new QIFEventCategoryLine(pCategory, pClasses));
     }
 
     /**

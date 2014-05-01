@@ -34,6 +34,11 @@ public enum QIFType {
     ACEMONEY,
 
     /**
+     * GnuCash.
+     */
+    GNUCASH,
+
+    /**
      * MoneyDance.
      */
     MONEYDANCE,
@@ -84,6 +89,7 @@ public enum QIFType {
     public boolean useConsolidatedFile() {
         switch (this) {
             case ACEMONEY:
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
                 return true;
@@ -100,6 +106,7 @@ public enum QIFType {
      */
     public boolean useSimpleTransfer() {
         switch (this) {
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
                 return true;
@@ -118,6 +125,7 @@ public enum QIFType {
     public boolean hideBalancingSplitTransfer() {
         switch (this) {
             case ACEMONEY:
+            case GNUCASH:
             case MONEYDANCE:
                 return true;
             case QUICKEN:
@@ -137,6 +145,7 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
                 return false;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:
@@ -155,6 +164,7 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
                 return true;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:
@@ -173,6 +183,7 @@ public enum QIFType {
         switch (this) {
             case QUICKEN:
                 return true;
+            case GNUCASH:
             case MONEYDANCE:
             case ACEMONEY:
             default:
@@ -190,6 +201,7 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
                 return false;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:
@@ -208,6 +220,7 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
                 return false;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:
@@ -225,6 +238,7 @@ public enum QIFType {
     public boolean canReturnCapital() {
         switch (this) {
             case ACEMONEY:
+            case GNUCASH:
             case MONEYDANCE:
                 return false;
             case QUICKEN:
@@ -244,6 +258,7 @@ public enum QIFType {
         switch (this) {
             case ACEMONEY:
                 return false;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:
@@ -259,6 +274,7 @@ public enum QIFType {
      */
     public boolean escapePrices() {
         switch (this) {
+            case GNUCASH:
             case QUICKEN:
                 return false;
             case MONEYDANCE:
@@ -275,6 +291,7 @@ public enum QIFType {
     public String getDateFormat() {
         switch (this) {
             case QUICKEN:
+            case GNUCASH:
             case ACEMONEY:
             case MONEYDANCE:
             default:
@@ -291,6 +308,7 @@ public enum QIFType {
             case ACEMONEY:
                 return "all accounts"
                        + QIF_SUFFIX;
+            case GNUCASH:
             case MONEYDANCE:
             case QUICKEN:
             default:

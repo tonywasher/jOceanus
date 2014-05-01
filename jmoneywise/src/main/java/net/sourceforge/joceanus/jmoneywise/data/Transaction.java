@@ -306,6 +306,16 @@ public class Transaction
                          : null;
     }
 
+    /**
+     * Obtain the iterator for Transaction tags.
+     * @return the iterator (or null if no tags)
+     */
+    public Iterator<TransactionInfo> tagIterator() {
+        return hasInfoSet
+                         ? theInfoSet.linkIterator(TransactionInfoClass.TRANSTAG)
+                         : null;
+    }
+
     @Override
     public DataState getState() {
         /* Pop history for self */
@@ -759,6 +769,36 @@ public class Transaction
      */
     public final void setPortfolio(final Portfolio pPortfolio) throws JOceanusException {
         setInfoSetValue(TransactionInfoClass.PORTFOLIO, pPortfolio);
+    }
+
+    /**
+     * Set a transaction tag.
+     * @param pTag the tag
+     * @throws JOceanusException on error
+     */
+    public final void setTransactionTag(final TransactionTag pTag) throws JOceanusException {
+        /* Reject if there is no infoSet */
+        if (!hasInfoSet) {
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+        }
+
+        /* Link the value */
+        theInfoSet.linkValue(TransactionInfoClass.TRANSTAG, pTag);
+    }
+
+    /**
+     * Clear a transaction tag.
+     * @param pTag the tag
+     * @throws JOceanusException on error
+     */
+    public final void clearTransactionTag(final TransactionTag pTag) throws JOceanusException {
+        /* Reject if there is no infoSet */
+        if (!hasInfoSet) {
+            throw new JMoneyWiseLogicException(ERROR_BADINFOSET);
+        }
+
+        /* Link the value */
+        theInfoSet.clearValue(TransactionInfoClass.TRANSTAG, pTag);
     }
 
     /**

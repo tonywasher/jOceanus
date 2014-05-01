@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
@@ -34,6 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
@@ -415,11 +419,14 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory);
+        myEvent.recordCategory(myCategory, myList);
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -445,6 +452,9 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(myCredit);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Obtain basic amount */
         JMoney myAmount = pTrans.getAmount();
 
@@ -455,7 +465,7 @@ public class QIFBuilder {
 
         /* Add Split event */
         myAmount = new JMoney(myAmount);
-        myEvent.recordSplitRecord(myCategory, myAmount, myPayee.getName());
+        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
         JMoney myTaxCredit = pTrans.getTaxCredit();
@@ -525,6 +535,9 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(myDebit);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Access the amount */
         JMoney myAmount = new JMoney(pTrans.getAmount());
         myAmount.negate();
@@ -533,7 +546,7 @@ public class QIFBuilder {
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory);
+        myEvent.recordCategory(myCategory, myList);
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -559,6 +572,9 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(myDebit);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Obtain basic amount */
         JMoney myAmount = new JMoney(pTrans.getAmount());
         myAmount.negate();
@@ -570,7 +586,7 @@ public class QIFBuilder {
 
         /* Add Split event */
         myAmount = new JMoney(myAmount);
-        myEvent.recordSplitRecord(myCategory, myAmount, myPayee.getName());
+        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
         JMoney myTaxCredit = pTrans.getTaxCredit();
@@ -629,10 +645,13 @@ public class QIFBuilder {
         QIFAccountEvents myDebitAccount = theFile.registerAccount(myDebit);
         QIFAccountEvents myCreditAccount = theFile.registerAccount(myCredit);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myAmount);
-        myEvent.recordAccount(myDebitAccount.getAccount());
+        myEvent.recordAccount(myDebitAccount.getAccount(), myList);
 
         /* Build payee description */
         myEvent.recordPayee(buildXferFromPayee(myDebit));
@@ -647,7 +666,7 @@ public class QIFBuilder {
         /* Create a new event */
         myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myOutAmount);
-        myEvent.recordAccount(myCreditAccount.getAccount());
+        myEvent.recordAccount(myCreditAccount.getAccount(), myList);
 
         /* Build payee description */
         myEvent.recordPayee(buildXferToPayee(myCredit));
@@ -722,6 +741,9 @@ public class QIFBuilder {
         /* Access the category */
         QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* If this is a simple interest */
         if (isRecursive && !hasXtraDetail) {
             /* Create a new event */
@@ -730,7 +752,7 @@ public class QIFBuilder {
             /* Build simple event and add it */
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(myPayee);
-            myEvent.recordCategory(myCategory);
+            myEvent.recordCategory(myCategory, myList);
 
             /* Add event to event list */
             myIntAccount.addEvent(myEvent);
@@ -748,7 +770,7 @@ public class QIFBuilder {
 
             /* Add Split event */
             myAmount = new JMoney(myAmount);
-            myEvent.recordSplitRecord(myCategory, myAmount, myPayee.getName());
+            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Handle Tax Credit */
             JMoney myTaxCredit = pTrans.getTaxCredit();
@@ -810,7 +832,7 @@ public class QIFBuilder {
 
             /* Build simple event and add it */
             myEvent.recordAmount(pTrans.getAmount());
-            myEvent.recordAccount(myIntAccount.getAccount());
+            myEvent.recordAccount(myIntAccount.getAccount(), myList);
 
             /* Build payee description */
             myEvent.recordPayee(buildXferFromPayee(myDebit));
@@ -839,6 +861,9 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(pCash);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Access the amount */
         JMoney myInAmount = pTrans.getAmount();
         JMoney myOutAmount = new JMoney(myInAmount);
@@ -848,8 +873,8 @@ public class QIFBuilder {
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(new JMoney());
         myEvent.recordPayee(myPayee);
-        myEvent.recordSplitRecord(myCategory, myInAmount, myPayee.getName());
-        myEvent.recordSplitRecord(myAutoCategory, myOutAmount, pCash.getAutoPayee().getName());
+        myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
+        myEvent.recordSplitRecord(myAutoCategory, myList, myOutAmount, pCash.getAutoPayee().getName());
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -874,6 +899,9 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(pCash);
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Access the amount */
         JMoney myInAmount = pTrans.getAmount();
         JMoney myOutAmount = new JMoney(myInAmount);
@@ -883,8 +911,8 @@ public class QIFBuilder {
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(new JMoney());
         myEvent.recordPayee(myPayee);
-        myEvent.recordSplitRecord(myAutoCategory, myInAmount, pCash.getAutoPayee().getName());
-        myEvent.recordSplitRecord(myCategory, myOutAmount, myPayee.getName());
+        myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
+        myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -903,6 +931,9 @@ public class QIFBuilder {
         /* Access the Category details */
         QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getDebit());
 
@@ -914,7 +945,7 @@ public class QIFBuilder {
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory);
+        myEvent.recordCategory(myCategory, myList);
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -936,13 +967,50 @@ public class QIFBuilder {
         /* Access the Account details */
         QIFAccountEvents myAccount = theFile.registerAccount(pTrans.getCredit());
 
+        /* Obtain classes */
+        List<QIFClass> myList = getTransactionClasses(pTrans);
+
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory);
+        myEvent.recordCategory(myCategory, myList);
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
+    }
+
+    /**
+     * Obtain classes for transaction.
+     * @param pTrans the transaction
+     * @return the class list (or null)
+     */
+    protected List<QIFClass> getTransactionClasses(final Transaction pTrans) {
+        /* Create return value */
+        List<QIFClass> myList = null;
+
+        /* Obtain the iterator for the transaction */
+        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+
+        /* If we have tags */
+        if (myIterator != null) {
+            /* Allocate the list */
+            myList = new ArrayList<QIFClass>();
+
+            /* Loop through the classes */
+            while (myIterator.hasNext()) {
+                TransactionInfo myInfo = myIterator.next();
+
+                /* Access the transaction tag */
+                TransactionTag myTag = myInfo.getTransactionTag();
+                QIFClass myClass = theFile.registerClass(myTag);
+
+                /* Add to the list */
+                myList.add(myClass);
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }
