@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
@@ -34,7 +34,8 @@ import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
  * Security Price List.
  * @author Tony Washer
  */
-public class QIFSecurityPrices {
+public class QIFSecurityPrices
+        implements Comparable<QIFSecurityPrices> {
     /**
      * The QIF File.
      */
@@ -48,7 +49,7 @@ public class QIFSecurityPrices {
     /**
      * The Price List.
      */
-    private final List<QIFPrice> thePrices;
+    private final OrderedList<QIFPrice> thePrices;
 
     /**
      * Obtain the security.
@@ -56,6 +57,14 @@ public class QIFSecurityPrices {
      */
     public QIFSecurity getSecurity() {
         return theSecurity;
+    }
+
+    /**
+     * Obtain the prices.
+     * @return the prices
+     */
+    public List<QIFPrice> getPrices() {
+        return thePrices;
     }
 
     /**
@@ -70,7 +79,22 @@ public class QIFSecurityPrices {
         theSecurity = new QIFSecurity(pFile, pSecurity);
 
         /* Create the list */
-        thePrices = new ArrayList<QIFPrice>();
+        thePrices = new OrderedList<QIFPrice>(QIFPrice.class);
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pSecurity the security.
+     */
+    protected QIFSecurityPrices(final QIFFile pFile,
+                                final QIFSecurity pSecurity) {
+        /* Store parameters */
+        theFile = pFile;
+        theSecurity = pSecurity;
+
+        /* Create the list */
+        thePrices = new OrderedList<QIFPrice>(QIFPrice.class);
     }
 
     /**
@@ -82,7 +106,23 @@ public class QIFSecurityPrices {
         QIFPrice myPrice = new QIFPrice(theFile, theSecurity, pPrice);
 
         /* Add to the list */
-        thePrices.add(myPrice);
+        thePrices.append(myPrice);
+    }
+
+    /**
+     * Add price.
+     * @param pPrice the price to add
+     */
+    protected void addPrice(final QIFPrice pPrice) {
+        /* Add to the list */
+        thePrices.append(pPrice);
+    }
+
+    /**
+     * Sort the prices.
+     */
+    protected void sortPrices() {
+        thePrices.reSort();
     }
 
     /**
@@ -103,5 +143,43 @@ public class QIFSecurityPrices {
             /* Format the record */
             myPrice.formatRecord(pFormatter, pBuilder);
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFSecurityPrices myPrices = (QIFSecurityPrices) pThat;
+
+        /* Check security */
+        if (!theSecurity.equals(myPrices.getSecurity())) {
+            return false;
+        }
+
+        /* Check prices */
+        return thePrices.equals(myPrices.getPrices());
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theSecurity.hashCode();
+        return myResult + thePrices.hashCode();
+    }
+
+    @Override
+    public int compareTo(final QIFSecurityPrices pThat) {
+        return theSecurity.compareTo(pThat.getSecurity());
     }
 }

@@ -162,7 +162,7 @@ public class QIFPortfolioEvent
                         myDate = myDateDay;
                         break;
                     case CLEARED:
-                        Boolean myFlag = Boolean.parseBoolean(myData);
+                        Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
                         addLine(new QIFPortfolioClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
@@ -203,10 +203,12 @@ public class QIFPortfolioEvent
                         if (myAccount == null) {
                             myClasses = QIFCategoryLine.parseCategoryClasses(pFile, myData);
                             addLine(new QIFPortfolioCategoryLine(myCategory, myClasses));
+                            convertPayee();
                         } else if (myCategory == null) {
                             addLine(new QIFPortfolioAccountLine(myAccount, myClasses));
                         } else {
                             addLine(new QIFPortfolioCategoryAccountLine(myCategory, myAccount, myClasses));
+                            convertPayee();
                         }
                         break;
                     case XFERAMOUNT:
@@ -217,6 +219,11 @@ public class QIFPortfolioEvent
                         break;
                 }
             }
+        }
+
+        /* Convert any split */
+        if (QActionType.STKSPLIT.equals(myAction)) {
+            convertSplit();
         }
 
         /* Build details */
@@ -353,6 +360,40 @@ public class QIFPortfolioEvent
     protected void recordCommission(final JMoney pCommission) {
         /* Add commission line */
         addLine(new QIFPortfolioCommissionLine(pCommission));
+    }
+
+    /**
+     * Convert Payee.
+     */
+    private void convertPayee() {
+        /* Look for a payee line */
+        QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.PAYEE);
+        if (myLine instanceof QIFPortfolioPayeeDescLine) {
+            /* Access payee */
+            QIFPortfolioPayeeDescLine myDesc = (QIFPortfolioPayeeDescLine) myLine;
+            String myName = myDesc.getValue();
+
+            /* Register the payee */
+            QIFPayee myPayee = getFile().registerPayee(myName);
+            addLine(new QIFPortfolioPayeeLine(myPayee));
+        }
+    }
+
+    /**
+     * Convert Split.
+     */
+    private void convertSplit() {
+        /* Look for an action line */
+        QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.QUANTITY);
+        if (myLine instanceof QIFPortfolioQuantityLine) {
+            /* Extract action */
+            QIFPortfolioQuantityLine myQuantity = (QIFPortfolioQuantityLine) myLine;
+            JUnits myUnits = myQuantity.getUnits();
+
+            /* Convert to ratio line */
+            JRatio myRatio = new JRatio(myUnits.toString());
+            addLine(new QIFPortfolioSplitRatioLine(myRatio));
+        }
     }
 
     /**

@@ -22,10 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
@@ -49,6 +50,11 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  */
 public class QIFFile {
     /**
+     * Hash multiplier.
+     */
+    protected static final int HASH_BASE = 37;
+
+    /**
      * Type of file.
      */
     private final QIFType theFileType;
@@ -66,22 +72,47 @@ public class QIFFile {
     /**
      * Map of Accounts with Events.
      */
-    private final Map<String, QIFAccountEvents> theAccounts;
+    private final Map<String, QIFAccountEvents> theAccountMap;
+
+    /**
+     * Sorted List of Accounts with Events.
+     */
+    private final OrderedList<QIFAccountEvents> theAccounts;
 
     /**
      * Map of Payees.
      */
-    private final Map<String, QIFPayee> thePayees;
+    private final Map<String, QIFPayee> thePayeeMap;
+
+    /**
+     * Sorted List of Payees.
+     */
+    private final OrderedList<QIFPayee> thePayees;
 
     /**
      * Map of Securities with Prices.
      */
-    private final Map<String, QIFSecurityPrices> theSecurities;
+    private final Map<String, QIFSecurityPrices> theSecurityMap;
+
+    /**
+     * Sorted List of Securities with Prices.
+     */
+    private final OrderedList<QIFSecurityPrices> theSecurities;
+
+    /**
+     * Map of Symbols to Securities.
+     */
+    private final Map<String, QIFSecurity> theSymbolMap;
 
     /**
      * Map of Parent Categories.
      */
-    private final Map<String, QIFParentCategory> theParentCategories;
+    private final Map<String, QIFParentCategory> theParentMap;
+
+    /**
+     * Sorted List of Parent Categories.
+     */
+    private final OrderedList<QIFParentCategory> theParentCategories;
 
     /**
      * Map of Categories.
@@ -91,13 +122,18 @@ public class QIFFile {
     /**
      * Map of Classes.
      */
-    private final Map<String, QIFClass> theClasses;
+    private final Map<String, QIFClass> theClassMap;
+
+    /**
+     * Sorted List of Classes.
+     */
+    private final OrderedList<QIFClass> theClasses;
 
     /**
      * Obtain the file type.
      * @return the file type
      */
-    protected QIFType getFileType() {
+    public QIFType getFileType() {
         return theFileType;
     }
 
@@ -122,7 +158,7 @@ public class QIFFile {
      * @return the iterator
      */
     protected Iterator<QIFClass> classIterator() {
-        return theClasses.values().iterator();
+        return theClasses.iterator();
     }
 
     /**
@@ -138,7 +174,7 @@ public class QIFFile {
      * @return the iterator
      */
     protected Iterator<QIFParentCategory> categoryIterator() {
-        return theParentCategories.values().iterator();
+        return theParentCategories.iterator();
     }
 
     /**
@@ -154,7 +190,7 @@ public class QIFFile {
      * @return the iterator
      */
     protected Iterator<QIFAccountEvents> accountIterator() {
-        return theAccounts.values().iterator();
+        return theAccounts.iterator();
     }
 
     /**
@@ -178,7 +214,7 @@ public class QIFFile {
      * @return the iterator
      */
     protected Iterator<QIFSecurityPrices> securityIterator() {
-        return theSecurities.values().iterator();
+        return theSecurities.iterator();
     }
 
     /**
@@ -190,12 +226,54 @@ public class QIFFile {
         theFileType = pType;
 
         /* Allocate maps */
-        theAccounts = new LinkedHashMap<String, QIFAccountEvents>();
-        thePayees = new LinkedHashMap<String, QIFPayee>();
-        theSecurities = new LinkedHashMap<String, QIFSecurityPrices>();
-        theParentCategories = new LinkedHashMap<String, QIFParentCategory>();
-        theCategories = new LinkedHashMap<String, QIFEventCategory>();
-        theClasses = new LinkedHashMap<String, QIFClass>();
+        theAccountMap = new HashMap<String, QIFAccountEvents>();
+        thePayeeMap = new HashMap<String, QIFPayee>();
+        theSecurityMap = new HashMap<String, QIFSecurityPrices>();
+        theSymbolMap = new HashMap<String, QIFSecurity>();
+        theParentMap = new HashMap<String, QIFParentCategory>();
+        theCategories = new HashMap<String, QIFEventCategory>();
+        theClassMap = new HashMap<String, QIFClass>();
+
+        /* Allocate maps */
+        theAccounts = new OrderedList<QIFAccountEvents>(QIFAccountEvents.class);
+        thePayees = new OrderedList<QIFPayee>(QIFPayee.class);
+        theSecurities = new OrderedList<QIFSecurityPrices>(QIFSecurityPrices.class);
+        theParentCategories = new OrderedList<QIFParentCategory>(QIFParentCategory.class);
+        theClasses = new OrderedList<QIFClass>(QIFClass.class);
+    }
+
+    /**
+     * Sort the lists.
+     */
+    protected void sortLists() {
+        /* Sort the classes */
+        theClasses.reSort();
+
+        /* Sort the payees */
+        thePayees.reSort();
+
+        /* Sort the categories */
+        theParentCategories.reSort();
+        Iterator<QIFParentCategory> myCatIterator = categoryIterator();
+        while (myCatIterator.hasNext()) {
+            QIFParentCategory myParent = myCatIterator.next();
+
+            /* Sort the children */
+            myParent.sortChildren();
+        }
+
+        /* Sort the securities */
+        theSecurities.reSort();
+        Iterator<QIFSecurityPrices> mySecIterator = securityIterator();
+        while (mySecIterator.hasNext()) {
+            QIFSecurityPrices mySecurity = mySecIterator.next();
+
+            /* Sort the prices */
+            mySecurity.sortPrices();
+        }
+
+        /* Sort the accounts */
+        theAccounts.reSort();
     }
 
     /**
@@ -215,6 +293,7 @@ public class QIFFile {
 
         /* Build the data for the accounts */
         myFile.buildData(pView, myLastDate);
+        myFile.sortLists();
 
         /* Return the QIF File */
         return myFile;
@@ -227,15 +306,32 @@ public class QIFFile {
      */
     public QIFClass registerClass(final TransactionTag pClass) {
         /* Locate an existing class */
-        QIFClass myClass = theClasses.get(pClass.getName());
+        String myName = pClass.getName();
+        QIFClass myClass = theClassMap.get(myName);
         if (myClass == null) {
             /* Create the new Class */
             myClass = new QIFClass(this, pClass);
-            theClasses.put(myClass.getName(), myClass);
+            theClassMap.put(myName, myClass);
+            theClasses.append(myClass);
         }
 
         /* Return the class */
         return myClass;
+    }
+
+    /**
+     * Register class.
+     * @param pClass the class
+     */
+    public void registerClass(final QIFClass pClass) {
+        /* Locate an existing class */
+        String myName = pClass.getName();
+        QIFClass myClass = theClassMap.get(myName);
+        if (myClass == null) {
+            /* Register the new Class */
+            theClassMap.put(myName, pClass);
+            theClasses.append(pClass);
+        }
     }
 
     /**
@@ -245,11 +341,12 @@ public class QIFFile {
      */
     public QIFEventCategory registerCategory(final TransactionCategory pCategory) {
         /* Locate an existing category */
-        QIFEventCategory myCat = theCategories.get(pCategory.getName());
+        String myName = pCategory.getName();
+        QIFEventCategory myCat = theCategories.get(myName);
         if (myCat == null) {
             /* Create the new Category and add to the map */
             myCat = new QIFEventCategory(this, pCategory);
-            theCategories.put(myCat.getName(), myCat);
+            theCategories.put(myName, myCat);
 
             /* Register against parent */
             registerCategoryToParent(pCategory.getParentCategory(), myCat);
@@ -267,15 +364,53 @@ public class QIFFile {
     private void registerCategoryToParent(final TransactionCategory pParent,
                                           final QIFEventCategory pCategory) {
         /* Locate an existing parent category */
-        QIFParentCategory myParent = theParentCategories.get(pParent.getName());
+        String myName = pParent.getName();
+        QIFParentCategory myParent = theParentMap.get(myName);
         if (myParent == null) {
             /* Create the new Parent Category */
             myParent = new QIFParentCategory(this, pParent);
-            theParentCategories.put(pParent.getName(), myParent);
+            theParentMap.put(myName, myParent);
+            theParentCategories.append(myParent);
         }
 
         /* Register the category */
         myParent.registerChild(pCategory);
+    }
+
+    /**
+     * Register category.
+     * @param pCategory the category
+     */
+    public void registerCategory(final QIFEventCategory pCategory) {
+        /* Locate an existing category */
+        String myName = pCategory.getName();
+        QIFEventCategory myCat = theCategories.get(myName);
+        if (myCat == null) {
+            /* Locate parent separator */
+            int myPos = myName.indexOf(TransactionCategory.STR_SEP);
+
+            /* If this is a parent category */
+            if (myPos < 0) {
+                /* Create the new Parent Category */
+                QIFParentCategory myParent = new QIFParentCategory(pCategory);
+                theParentMap.put(myName, myParent);
+                theParentCategories.append(myParent);
+
+                /* else this is a standard category */
+            } else {
+                /* Register the new category */
+                theCategories.put(myName, pCategory);
+
+                /* Determine parent name */
+                String myParentName = myName.substring(0, myPos);
+
+                /* Locate an existing parent category */
+                QIFParentCategory myParent = theParentMap.get(myParentName);
+
+                /* Register against parent */
+                myParent.registerChild(pCategory);
+            }
+        }
     }
 
     /**
@@ -285,11 +420,33 @@ public class QIFFile {
      */
     public QIFAccountEvents registerAccount(final AssetBase<?> pAccount) {
         /* Locate an existing account */
-        QIFAccountEvents myAccount = theAccounts.get(pAccount.getName());
+        String myName = pAccount.getName();
+        QIFAccountEvents myAccount = theAccountMap.get(myName);
         if (myAccount == null) {
-            /* Create the new Account and add to the map */
+            /* Create the new Account and add to the map and list */
             myAccount = new QIFAccountEvents(this, pAccount);
-            theAccounts.put(pAccount.getName(), myAccount);
+            theAccountMap.put(myName, myAccount);
+            theAccounts.append(myAccount);
+        }
+
+        /* Return the account */
+        return myAccount;
+    }
+
+    /**
+     * Register account.
+     * @param pAccount the account
+     * @return the QIFAccount representation
+     */
+    public QIFAccountEvents registerAccount(final QIFAccount pAccount) {
+        /* Locate an existing account */
+        String myName = pAccount.getName();
+        QIFAccountEvents myAccount = theAccountMap.get(myName);
+        if (myAccount == null) {
+            /* Create the new Account and add to the map/list */
+            myAccount = new QIFAccountEvents(pAccount);
+            theAccountMap.put(myName, myAccount);
+            theAccounts.append(myAccount);
         }
 
         /* Return the account */
@@ -303,11 +460,32 @@ public class QIFFile {
      */
     public QIFPayee registerPayee(final Payee pPayee) {
         /* Locate an existing payee */
-        QIFPayee myPayee = thePayees.get(pPayee.getName());
+        String myName = pPayee.getName();
+        QIFPayee myPayee = thePayeeMap.get(myName);
         if (myPayee == null) {
-            /* Create the new Payee and add to the map */
+            /* Create the new Payee and add to the map and list */
             myPayee = new QIFPayee(pPayee);
-            thePayees.put(myPayee.getName(), myPayee);
+            thePayeeMap.put(myName, myPayee);
+            thePayees.append(myPayee);
+        }
+
+        /* Return the payee */
+        return myPayee;
+    }
+
+    /**
+     * Register payee.
+     * @param pPayee the payee
+     * @return the QIFPayee representation
+     */
+    public QIFPayee registerPayee(final String pPayee) {
+        /* Locate an existing payee */
+        QIFPayee myPayee = thePayeeMap.get(pPayee);
+        if (myPayee == null) {
+            /* Create the new Payee and add to the map and list */
+            myPayee = new QIFPayee(pPayee);
+            thePayeeMap.put(pPayee, myPayee);
+            thePayees.append(myPayee);
         }
 
         /* Return the payee */
@@ -321,15 +499,35 @@ public class QIFFile {
      */
     public QIFSecurity registerSecurity(final Security pSecurity) {
         /* Locate an existing security */
-        QIFSecurityPrices mySecurity = theSecurities.get(pSecurity.getName());
+        String myName = pSecurity.getName();
+        QIFSecurityPrices mySecurity = theSecurityMap.get(myName);
         if (mySecurity == null) {
-            /* Create the new Security and add to the map */
+            /* Create the new Security and add to the maps/list */
             mySecurity = new QIFSecurityPrices(this, pSecurity);
-            theSecurities.put(pSecurity.getName(), mySecurity);
+            theSecurityMap.put(myName, mySecurity);
+            theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
+            theSecurities.append(mySecurity);
         }
 
         /* Return the security */
         return mySecurity.getSecurity();
+    }
+
+    /**
+     * Register security.
+     * @param pSecurity the security
+     */
+    public void registerSecurity(final QIFSecurity pSecurity) {
+        /* Locate an existing security */
+        String myName = pSecurity.getName();
+        QIFSecurityPrices mySecurity = theSecurityMap.get(myName);
+        if (mySecurity == null) {
+            /* Create the new Security and add to the map */
+            mySecurity = new QIFSecurityPrices(this, pSecurity);
+            theSecurityMap.put(myName, mySecurity);
+            theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
+            theSecurities.append(mySecurity);
+        }
     }
 
     /**
@@ -339,10 +537,30 @@ public class QIFFile {
     public void registerPrice(final SecurityPrice pPrice) {
         /* Locate an existing security price list */
         Security mySecurity = pPrice.getSecurity();
-        QIFSecurityPrices mySecurityList = theSecurities.get(mySecurity.getName());
+        QIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
         if (mySecurityList != null) {
             /* Add price to the list */
             mySecurityList.addPrice(pPrice);
+        }
+    }
+
+    /**
+     * Register price.
+     * @param pPrice the price
+     */
+    public void registerPrice(final QIFPrice pPrice) {
+        /* Locate an existing security price list */
+        QIFSecurity mySecurity = pPrice.getSecurity();
+        QIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());
+        if (mySecurityList != null) {
+            /* Loop through the prices */
+            Iterator<QIFPrice> myIterator = pPrice.priceIterator();
+            while (myIterator.hasNext()) {
+                QIFPrice myPrice = myIterator.next();
+
+                /* Add price to the list */
+                mySecurityList.addPrice(myPrice);
+            }
         }
     }
 
@@ -376,7 +594,7 @@ public class QIFFile {
      */
     protected QIFAccountEvents getAccountEvents(final String pName) {
         /* Lookup the account */
-        return theAccounts.get(pName);
+        return theAccountMap.get(pName);
     }
 
     /**
@@ -393,13 +611,23 @@ public class QIFFile {
     }
 
     /**
+     * Obtain security by Symbol.
+     * @param pSymbol the symbol of the security
+     * @return the security
+     */
+    protected QIFSecurity getSecurityBySymbol(final String pSymbol) {
+        /* Lookup the security */
+        return theSymbolMap.get(pSymbol);
+    }
+
+    /**
      * Obtain security prices.
      * @param pName the name of the security
      * @return the security
      */
     protected QIFSecurityPrices getSecurityPrices(final String pName) {
         /* Lookup the security */
-        return theSecurities.get(pName);
+        return theSecurityMap.get(pName);
     }
 
     /**
@@ -409,7 +637,7 @@ public class QIFFile {
      */
     protected QIFClass getClass(final String pName) {
         /* Lookup the class */
-        return theClasses.get(pName);
+        return theClassMap.get(pName);
     }
 
     /**
@@ -492,5 +720,67 @@ public class QIFFile {
             /* Register the price */
             registerPrice(myPrice);
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!(pThat instanceof QIFFile)) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFFile myThat = (QIFFile) pThat;
+
+        /* Check file type */
+        if (!theFileType.equals(myThat.theFileType)) {
+            return false;
+        }
+
+        /* Check class list */
+        if (!theClasses.equals(myThat.theClasses)) {
+            return false;
+        }
+
+        /* Check parent categories */
+        if (!theParentCategories.equals(myThat.theParentCategories)) {
+            return false;
+        }
+
+        /* Check securities list */
+        if (!theSecurities.equals(myThat.theSecurities)) {
+            return false;
+        }
+
+        /* Check payees list */
+        if (!thePayees.equals(myThat.thePayees)) {
+            return false;
+        }
+
+        /* Check accounts */
+        return theAccounts.equals(myThat.theAccounts);
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theFileType.hashCode();
+        myResult += theClasses.hashCode();
+        myResult *= QIFFile.HASH_BASE;
+        myResult += theParentCategories.hashCode();
+        myResult *= QIFFile.HASH_BASE;
+        myResult += theSecurities.hashCode();
+        myResult *= QIFFile.HASH_BASE;
+        myResult += thePayees.hashCode();
+        myResult *= QIFFile.HASH_BASE;
+        myResult += theAccounts.hashCode();
+        return myResult;
     }
 }

@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.list.OrderedList;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 
@@ -33,7 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
  * Parent category registration.
  * @author Tony Washer
  */
-public class QIFParentCategory {
+public class QIFParentCategory
+        implements Comparable<QIFParentCategory> {
     /**
      * Self definition.
      */
@@ -42,7 +43,7 @@ public class QIFParentCategory {
     /**
      * Children.
      */
-    private final List<QIFEventCategory> theChildren;
+    private final OrderedList<QIFEventCategory> theChildren;
 
     @Override
     public String toString() {
@@ -58,6 +59,22 @@ public class QIFParentCategory {
     }
 
     /**
+     * Obtain the security.
+     * @return the security
+     */
+    public QIFEventCategory getParent() {
+        return theSelf;
+    }
+
+    /**
+     * Obtain the children.
+     * @return the children
+     */
+    public List<QIFEventCategory> getChildren() {
+        return theChildren;
+    }
+
+    /**
      * Constructor.
      * @param pFile the file definition
      * @param pParent the parent category
@@ -68,7 +85,19 @@ public class QIFParentCategory {
         theSelf = new QIFEventCategory(pFile, pParent);
 
         /* Create child list */
-        theChildren = new ArrayList<QIFEventCategory>();
+        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
+    }
+
+    /**
+     * Constructor.
+     * @param pParent the parent category
+     */
+    protected QIFParentCategory(final QIFEventCategory pParent) {
+        /* Record self definition */
+        theSelf = pParent;
+
+        /* Create child list */
+        theChildren = new OrderedList<QIFEventCategory>(QIFEventCategory.class);
     }
 
     /**
@@ -78,6 +107,13 @@ public class QIFParentCategory {
     protected void registerChild(final QIFEventCategory pChild) {
         /* Add the child */
         theChildren.add(pChild);
+    }
+
+    /**
+     * Sort the children.
+     */
+    protected void sortChildren() {
+        theChildren.reSort();
     }
 
     /**
@@ -98,5 +134,43 @@ public class QIFParentCategory {
             /* Format the child */
             myCategory.formatRecord(pFormatter, pBuilder);
         }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFParentCategory myParent = (QIFParentCategory) pThat;
+
+        /* Check parent */
+        if (!theSelf.equals(myParent.getParent())) {
+            return false;
+        }
+
+        /* Check children */
+        return theChildren.equals(myParent.getChildren());
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theSelf.hashCode();
+        return myResult + theChildren.hashCode();
+    }
+
+    @Override
+    public int compareTo(final QIFParentCategory pThat) {
+        return theSelf.compareTo(pThat.getParent());
     }
 }

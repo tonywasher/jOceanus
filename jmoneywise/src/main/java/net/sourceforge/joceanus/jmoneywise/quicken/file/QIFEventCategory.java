@@ -36,7 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
  * Class representing a QIF Category record.
  */
 public class QIFEventCategory
-        extends QIFRecord<QCategoryLineType> {
+        extends QIFRecord<QCategoryLineType>
+        implements Comparable<QIFEventCategory> {
     /**
      * Item type.
      */
@@ -185,6 +186,11 @@ public class QIFEventCategory
         theName = myName;
         theDesc = myDesc;
         theType = myTType;
+    }
+
+    @Override
+    public int compareTo(final QIFEventCategory pThat) {
+        return theName.compareTo(pThat.getName());
     }
 
     /**

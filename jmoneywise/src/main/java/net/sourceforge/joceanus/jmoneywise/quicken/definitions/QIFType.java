@@ -286,7 +286,7 @@ public enum QIFType {
 
     /**
      * Obtain date format.
-     * @return true/false
+     * @return the date string
      */
     public String getDateFormat() {
         switch (this) {
@@ -301,7 +301,7 @@ public enum QIFType {
 
     /**
      * Obtain filename.
-     * @return true/false
+     * @return the file name
      */
     public String getFileName() {
         switch (this) {
@@ -314,6 +314,22 @@ public enum QIFType {
             default:
                 return toString()
                        + QIF_SUFFIX;
+        }
+    }
+
+    /**
+     * Use standard asset types.
+     * @return true/false
+     */
+    public boolean useStandardAssets() {
+        switch (this) {
+            case ACEMONEY:
+            case MONEYDANCE:
+                return true;
+            case GNUCASH:
+            case QUICKEN:
+            default:
+                return false;
         }
     }
 }

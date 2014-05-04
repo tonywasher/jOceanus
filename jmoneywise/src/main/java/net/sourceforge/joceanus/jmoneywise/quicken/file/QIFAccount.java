@@ -46,11 +46,42 @@ import net.sourceforge.joceanus.jtethys.decimal.JMoney;
  * Class representing a QIF Account record.
  */
 public class QIFAccount
-        extends QIFRecord<QAccountLineType> {
+        extends QIFRecord<QAccountLineType>
+        implements Comparable<QIFAccount> {
     /**
      * Item type.
      */
     protected static final String QIF_HDR = "!Account";
+
+    /**
+     * Bank Account Type.
+     */
+    protected static final String QIFACT_BANK = "Bank";
+
+    /**
+     * Cash Account Type.
+     */
+    protected static final String QIFACT_CASH = "Cash";
+
+    /**
+     * Investment Account Type.
+     */
+    protected static final String QIFACT_INVST = "Invst";
+
+    /**
+     * Credit Card Account Type.
+     */
+    protected static final String QIFACT_CCARD = "CCard";
+
+    /**
+     * Asset Account Type.
+     */
+    protected static final String QIFACT_ASSET = "Oth A";
+
+    /**
+     * Loan Account Type.
+     */
+    protected static final String QIFACT_LOAN = "Oth L";
 
     /**
      * Category Map.
@@ -110,14 +141,14 @@ public class QIFAccount
         Map<Enum<?>, String> myMap = new HashMap<Enum<?>, String>();
 
         /* Add the entries */
-        myMap.put(DepositCategoryClass.CHECKING, "Bank");
-        myMap.put(DepositCategoryClass.SAVINGS, "Bank");
-        myMap.put(DepositCategoryClass.BOND, "Bank");
-        myMap.put(CashCategoryClass.CASH, "Cash");
-        myMap.put(LoanCategoryClass.CREDITCARD, "CCard");
-        myMap.put(MoneyWiseDataType.PORTFOLIO, "Invst");
-        myMap.put(LoanCategoryClass.PRIVATELOAN, "Oth A");
-        myMap.put(LoanCategoryClass.LOAN, "Oth L");
+        myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);
+        myMap.put(DepositCategoryClass.SAVINGS, QIFACT_BANK);
+        myMap.put(DepositCategoryClass.BOND, QIFACT_BANK);
+        myMap.put(CashCategoryClass.CASH, QIFACT_CASH);
+        myMap.put(LoanCategoryClass.CREDITCARD, QIFACT_CCARD);
+        myMap.put(MoneyWiseDataType.PORTFOLIO, QIFACT_INVST);
+        myMap.put(LoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);
+        myMap.put(LoanCategoryClass.LOAN, QIFACT_LOAN);
 
         /* Return the map */
         return myMap;
@@ -228,6 +259,11 @@ public class QIFAccount
         theName = myName;
         theDesc = myDesc;
         theClass = myClass;
+    }
+
+    @Override
+    public int compareTo(final QIFAccount pThat) {
+        return theName.compareTo(pThat.getName());
     }
 
     /**

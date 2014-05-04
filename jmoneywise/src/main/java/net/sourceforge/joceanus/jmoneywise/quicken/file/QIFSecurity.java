@@ -36,7 +36,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
  * Class representing a QIF Security record.
  */
 public class QIFSecurity
-        extends QIFRecord<QSecurityLineType> {
+        extends QIFRecord<QSecurityLineType>
+        implements Comparable<QIFSecurity> {
     /**
      * Item type.
      */
@@ -176,6 +177,11 @@ public class QIFSecurity
         theName = myName;
         theSymbol = mySymbol;
         theClass = myClass;
+    }
+
+    @Override
+    public int compareTo(final QIFSecurity pThat) {
+        return theName.compareTo(pThat.getName());
     }
 
     /**

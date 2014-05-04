@@ -33,7 +33,8 @@ import net.sourceforge.joceanus.jmoneywise.quicken.file.QIFLine.QIFStringLine;
  * Class representing a QIF Class record.
  */
 public class QIFClass
-        extends QIFRecord<QClassLineType> {
+        extends QIFRecord<QClassLineType>
+        implements Comparable<QIFClass> {
     /**
      * Item type.
      */
@@ -127,7 +128,7 @@ public class QIFClass
                         myDesc = myData;
                         break;
                     default:
-                        break;
+                        throw new IllegalArgumentException("Unexpected QClassLineType: " + myLine);
                 }
             }
         }
@@ -135,6 +136,11 @@ public class QIFClass
         /* Build details */
         theName = myName;
         theDesc = myDesc;
+    }
+
+    @Override
+    public int compareTo(final QIFClass pThat) {
+        return theName.compareTo(pThat.getName());
     }
 
     /**

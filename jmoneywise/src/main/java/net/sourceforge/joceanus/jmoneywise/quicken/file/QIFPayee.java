@@ -28,7 +28,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
  * Class representing a Payee.
  * @author Tony Washer
  */
-public class QIFPayee {
+public class QIFPayee
+        implements Comparable<QIFPayee> {
     /**
      * Payee name.
      */
@@ -54,5 +55,46 @@ public class QIFPayee {
     public QIFPayee(final Payee pPayee) {
         /* Store data */
         theName = pPayee.getName();
+    }
+
+    /**
+     * Constructor.
+     * @param pPayee the Payee
+     */
+    public QIFPayee(final String pPayee) {
+        /* Store data */
+        theName = pPayee;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFPayee myPayee = (QIFPayee) pThat;
+
+        /* Check date */
+        return theName.equals(myPayee.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return theName.hashCode();
+    }
+
+    @Override
+    public int compareTo(final QIFPayee pThat) {
+        return theName.compareTo(pThat.getName());
     }
 }

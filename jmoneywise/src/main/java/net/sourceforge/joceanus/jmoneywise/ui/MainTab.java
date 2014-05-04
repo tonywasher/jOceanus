@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jmoneywise.help.FinanceHelp;
 import net.sourceforge.joceanus.jmoneywise.threads.LoadArchive;
 import net.sourceforge.joceanus.jmoneywise.threads.MoneyWiseStatus;
 import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF;
-import net.sourceforge.joceanus.jmoneywise.threads.WriteQIF2;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.MainWindow;
@@ -133,11 +132,6 @@ public class MainTab
     private static final String MENU_CREATEQIF = NLS_BUNDLE.getString("MenuCreateQIF");
 
     /**
-     * QIF menu title.
-     */
-    private static final String MENU_CREATEQIF2 = NLS_BUNDLE.getString("MenuCreateQIF2");
-
-    /**
      * Archive menu title.
      */
     private static final String MENU_ARCHIVE = NLS_BUNDLE.getString("MenuArchive");
@@ -211,11 +205,6 @@ public class MainTab
      * The CreateQIF menu.
      */
     private JMenuItem theCreateQIF = null;
-
-    /**
-     * The CreateQIF2 menu.
-     */
-    private JMenuItem theCreateQIF2 = null;
 
     @Override
     public View getView() {
@@ -325,11 +314,6 @@ public class MainTab
         theCreateQIF.addActionListener(this);
         pMenu.add(theCreateQIF);
 
-        /* Create the file menu items */
-        theCreateQIF2 = new JMenuItem(MENU_CREATEQIF2);
-        theCreateQIF2.addActionListener(this);
-        pMenu.add(theCreateQIF2);
-
         /* Pass call on */
         super.addDataMenuItems(pMenu);
     }
@@ -363,11 +347,6 @@ public class MainTab
         } else if (theCreateQIF.equals(o)) {
             /* Start a createQIF operation */
             createQIF();
-
-            /* If this event relates to the Create QIF2 item */
-        } else if (theCreateQIF2.equals(o)) {
-            /* Start a createQIF2 operation */
-            createQIF2();
 
             /* else pass the event on */
         } else {
@@ -423,19 +402,6 @@ public class MainTab
 
         /* Create the worker thread */
         WriteQIF myThread = new WriteQIF(myStatus);
-        myStatus.registerThread(myThread);
-        startThread(myThread);
-    }
-
-    /**
-     * Create QIF2 file.
-     */
-    public void createQIF2() {
-        /* Allocate the status */
-        MoneyWiseStatus myStatus = new MoneyWiseStatus(theView, getStatusBar());
-
-        /* Create the worker thread */
-        WriteQIF2 myThread = new WriteQIF2(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -504,7 +470,6 @@ public class MainTab
 
         /* Disable menus if we have no data */
         theCreateQIF.setEnabled(!hasWorker && hasControl);
-        theCreateQIF2.setEnabled(!hasWorker && hasControl);
 
         /* Access the Register panel and determine its status */
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);

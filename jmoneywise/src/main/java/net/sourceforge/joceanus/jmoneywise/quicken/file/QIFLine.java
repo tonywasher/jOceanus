@@ -44,7 +44,7 @@ public abstract class QIFLine<T extends QLineType> {
     /**
      * Reconciled flag.
      */
-    private static final String QIF_RECONCILED = "X";
+    protected static final String QIF_RECONCILED = "X";
 
     /**
      * Transfer begin char.
@@ -100,6 +100,33 @@ public abstract class QIFLine<T extends QLineType> {
         formatData(pFormatter, pBuilder);
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFLine<T> myLine = (QIFLine<T>) pThat;
+
+        /* Check value */
+        return getLineType().equals(myLine.getLineType());
+    }
+
+    @Override
+    public int hashCode() {
+        return getLineType().hashCode();
+    }
+
     /**
      * The String line.
      * @param <X> the line type
@@ -138,6 +165,39 @@ public abstract class QIFLine<T extends QLineType> {
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theValue);
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFStringLine<X> myLine = (QIFStringLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theValue.equals(myLine.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theValue.hashCode();
         }
     }
 
@@ -183,6 +243,39 @@ public abstract class QIFLine<T extends QLineType> {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFMoneyLine<X> myLine = (QIFMoneyLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theMoney.equals(myLine.getMoney());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theMoney.hashCode();
+        }
     }
 
     /**
@@ -224,6 +317,39 @@ public abstract class QIFLine<T extends QLineType> {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theDate));
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFDateLine<X> myLine = (QIFDateLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theDate.equals(myLine.getDate());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theDate.hashCode();
+        }
     }
 
     /**
@@ -257,6 +383,39 @@ public abstract class QIFLine<T extends QLineType> {
         protected QIFFlagLine(final Boolean pSet) {
             /* Store data */
             isSet = pSet;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFFlagLine<X> myLine = (QIFFlagLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return isSet.equals(myLine.isSet());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + isSet.hashCode();
         }
     }
 
@@ -336,6 +495,39 @@ public abstract class QIFLine<T extends QLineType> {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFPriceLine<X> myLine = (QIFPriceLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return thePrice.equals(myLine.getPrice());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + thePrice.hashCode();
+        }
     }
 
     /**
@@ -376,6 +568,39 @@ public abstract class QIFLine<T extends QLineType> {
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theUnits));
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFUnitsLine<X> myLine = (QIFUnitsLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theUnits.equals(myLine.getUnits());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theUnits.hashCode();
         }
     }
 
@@ -418,6 +643,39 @@ public abstract class QIFLine<T extends QLineType> {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRate));
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFRateLine<X> myLine = (QIFRateLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theRate.equals(myLine.getRate());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theRate.hashCode();
+        }
     }
 
     /**
@@ -459,6 +717,39 @@ public abstract class QIFLine<T extends QLineType> {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRatio));
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFRatioLine<X> myLine = (QIFRatioLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theRatio.equals(myLine.getRatio());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theRatio.hashCode();
+        }
     }
 
     /**
@@ -499,6 +790,39 @@ public abstract class QIFLine<T extends QLineType> {
                                   final StringBuilder pBuilder) {
             /* Append the security name */
             pBuilder.append(theSecurity.getName());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFSecurityLine<X> myLine = (QIFSecurityLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theSecurity.equals(myLine.getSecurity());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + theSecurity.hashCode();
         }
     }
 
@@ -618,7 +942,6 @@ public abstract class QIFLine<T extends QLineType> {
                 int i = QIF_XFERSTART.length();
                 int j = QIF_XFEREND.length();
                 String myAccount = myLine.substring(i, myLine.length()
-                                                       - i
                                                        - j);
                 return pFile.getAccount(myAccount);
             }
@@ -665,6 +988,54 @@ public abstract class QIFLine<T extends QLineType> {
             /* Return no classes */
             return null;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFXferAccountLine<X> myLine = (QIFXferAccountLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check account */
+            if (!theAccount.equals(myLine.getAccount())) {
+                return false;
+            }
+
+            /* Check classes */
+            List<QIFClass> myClasses = myLine.getClassList();
+            if (theClasses == null) {
+                return myClasses == null;
+            } else if (myClasses == null) {
+                return true;
+            }
+            return theClasses.equals(myClasses);
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            if (theClasses != null) {
+                myResult += theClasses.hashCode();
+                myResult *= QIFFile.HASH_BASE;
+            }
+            return myResult + theAccount.hashCode();
+        }
     }
 
     /**
@@ -705,6 +1076,39 @@ public abstract class QIFLine<T extends QLineType> {
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(thePayee.getName());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFPayeeLine<X> myLine = (QIFPayeeLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return thePayee.equals(myLine.getPayee());
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            return myResult + thePayee.hashCode();
         }
     }
 
@@ -864,6 +1268,54 @@ public abstract class QIFLine<T extends QLineType> {
             /* Return no classes */
             return null;
         }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFCategoryLine<X> myLine = (QIFCategoryLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check category */
+            if (!theCategory.equals(myLine.getEventCategory())) {
+                return false;
+            }
+
+            /* Check classes */
+            List<QIFClass> myClasses = myLine.getClassList();
+            if (theClasses == null) {
+                return myClasses == null;
+            } else if (myClasses == null) {
+                return true;
+            }
+            return theClasses.equals(myClasses);
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            if (theClasses != null) {
+                myResult += theClasses.hashCode();
+                myResult *= QIFFile.HASH_BASE;
+            }
+            return myResult + theCategory.hashCode();
+        }
     }
 
     /**
@@ -963,6 +1415,61 @@ public abstract class QIFLine<T extends QLineType> {
                     }
                 }
             }
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            QIFCategoryAccountLine<X> myLine = (QIFCategoryAccountLine<X>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check category */
+            if (!theCategory.equals(myLine.getEventCategory())) {
+                return false;
+            }
+
+            /* Check account */
+            if (!theAccount.equals(myLine.getAccount())) {
+                return false;
+            }
+
+            /* Check classes */
+            List<QIFClass> myClasses = myLine.getClassList();
+            if (theClasses == null) {
+                return myClasses == null;
+            } else if (myClasses == null) {
+                return true;
+            }
+            return theClasses.equals(myClasses);
+        }
+
+        @Override
+        public int hashCode() {
+            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            if (theClasses != null) {
+                myResult += theClasses.hashCode();
+                myResult *= QIFFile.HASH_BASE;
+            }
+            myResult += theAccount.hashCode();
+            myResult *= QIFFile.HASH_BASE;
+            return myResult + theCategory.hashCode();
         }
     }
 }

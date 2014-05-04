@@ -37,19 +37,24 @@ import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QLineType;
  */
 public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     /**
+     * Quicken Command.
+     */
+    protected static final String QIF_CMD = "!";
+
+    /**
      * Quicken Item type.
      */
-    private static final String QIF_ITEMTYPE = "!Type:";
+    protected static final String QIF_ITEMTYPE = QIF_CMD + "Type:";
 
     /**
      * Set option.
      */
-    private static final String QIF_SETOPT = "!Option:";
+    protected static final String QIF_SETOPT = QIF_CMD + "Option:";
 
     /**
      * Clear option.
      */
-    private static final String QIF_CLROPT = "!Clear:";
+    protected static final String QIF_CLROPT = QIF_CMD + "Clear:";
 
     /**
      * Quicken End of Item indicator.
@@ -79,7 +84,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     /**
      * List of subRecords.
      */
-    private final List<QIFRecord<T>> theSubList;
+    private List<QIFRecord<T>> theSubList;
 
     /**
      * Obtain file.
@@ -90,25 +95,36 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     }
 
     /**
-     * Constructor.
-     * @param pFile the QIF File
-     * @param pClass the class of the lines
-     * @param hasSubRecords does the record have subRecords?
+     * Obtain line class.
+     * @return the line class
      */
-    protected QIFRecord(final QIFFile pFile,
-                        final Class<T> pClass,
-                        final boolean hasSubRecords) {
-        /* Record the class and file */
-        theClass = pClass;
-        theFile = pFile;
+    protected Class<T> getLineClass() {
+        return theClass;
+    }
 
-        /* Create the map */
-        theMap = new EnumMap<T, QIFLine<T>>(pClass);
+    /**
+     * Obtain line map.
+     * @return the line map
+     */
+    protected Map<T, QIFLine<T>> getLineMap() {
+        return theMap;
+    }
 
-        /* Allocate list if required */
-        theSubList = (hasSubRecords)
-                                    ? new ArrayList<QIFRecord<T>>()
-                                    : null;
+    /**
+     * Obtain subList.
+     * @return the subList
+     */
+    protected List<QIFRecord<T>> getSubList() {
+        return theSubList;
+    }
+
+    /**
+     * Obtain line for record.
+     * @param pLineType the line type
+     * @return the record
+     */
+    protected QIFLine<T> getLine(final T pLineType) {
+        return theMap.get(pLineType);
     }
 
     /**
@@ -118,8 +134,12 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      */
     protected QIFRecord(final QIFFile pFile,
                         final Class<T> pClass) {
-        /* Record the class */
-        this(pFile, pClass, false);
+        /* Record the class and file */
+        theClass = pClass;
+        theFile = pFile;
+
+        /* Create the map */
+        theMap = new EnumMap<T, QIFLine<T>>(pClass);
     }
 
     /**
@@ -136,6 +156,11 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
      * @param pRecord the record to add
      */
     protected void addRecord(final QIFRecord<T> pRecord) {
+        /* Allocate list if required */
+        if (theSubList == null) {
+            theSubList = new ArrayList<QIFRecord<T>>();
+        }
+
         /* Add to the list */
         theSubList.add(pRecord);
     }
@@ -235,5 +260,55 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         pBuilder.append(QIF_CLROPT);
         pBuilder.append(pSwitch);
         pBuilder.append(QIF_EOL);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial case */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFRecord<T> myThat = (QIFRecord<T>) pThat;
+
+        /* Check class */
+        if (!theClass.equals(myThat.getLineClass())) {
+            return false;
+        }
+
+        /* Check map */
+        if (!theMap.equals(myThat.getLineMap())) {
+            return false;
+        }
+
+        /* Check SubLists */
+        List<QIFRecord<T>> mySubThat = myThat.getSubList();
+        if (theSubList == null) {
+            return mySubThat == null;
+        }
+        if (mySubThat == null) {
+            return false;
+        }
+        return theSubList.equals(mySubThat);
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theClass.hashCode();
+        myResult += theMap.hashCode();
+        if (theSubList != null) {
+            myResult *= QIFFile.HASH_BASE;
+            myResult += theSubList.hashCode();
+        }
+        return myResult;
     }
 }

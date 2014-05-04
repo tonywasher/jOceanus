@@ -80,7 +80,7 @@ public class QIFEvent
     protected QIFEvent(final QIFFile pFile,
                        final Transaction pTrans) {
         /* Call super-constructor */
-        super(pFile, QEventLineType.class, true);
+        super(pFile, QEventLineType.class);
 
         /* Store values */
         theDate = pTrans.getDate();
@@ -111,7 +111,7 @@ public class QIFEvent
     protected QIFEvent(final QIFFile pFile,
                        final JDateDay pStartDate) {
         /* Call super-constructor */
-        super(pFile, QEventLineType.class, false);
+        super(pFile, QEventLineType.class);
 
         /* Store values */
         theDate = pStartDate;
@@ -165,7 +165,7 @@ public class QIFEvent
                         myDate = myDateDay;
                         break;
                     case CLEARED:
-                        Boolean myFlag = Boolean.parseBoolean(myData);
+                        Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
                         addLine(new QIFEventClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
@@ -194,6 +194,7 @@ public class QIFEvent
                             /* Look for category classes */
                             List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
                             addLine(new QIFEventCategoryLine(myCategory, myClasses));
+                            convertPayee();
                         }
                         break;
                     case SPLITCATEGORY:
@@ -208,6 +209,7 @@ public class QIFEvent
                             /* Look for category classes */
                             List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
                             mySplit = new QIFSplitEvent(pFile, myCategory, myClasses);
+                            convertPayee();
                         }
 
                         /* Record new split record */
@@ -394,6 +396,23 @@ public class QIFEvent
             mySplit.setSplitComment(pComment);
         }
         addRecord(mySplit);
+    }
+
+    /**
+     * Convert Payee.
+     */
+    private void convertPayee() {
+        /* Look for a payee line */
+        QIFLine<QEventLineType> myLine = getLine(QEventLineType.PAYEE);
+        if (myLine instanceof QIFEventPayeeDescLine) {
+            /* Access payee */
+            QIFEventPayeeDescLine myDesc = (QIFEventPayeeDescLine) myLine;
+            String myName = myDesc.getValue();
+
+            /* Register the payee */
+            QIFPayee myPayee = getFile().registerPayee(myName);
+            addLine(new QIFEventPayeeLine(myPayee));
+        }
     }
 
     /**

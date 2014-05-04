@@ -22,6 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.quicken.definitions.QIFType;
@@ -31,7 +35,8 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 /**
  * Class representing a QIF Price record.
  */
-public class QIFPrice {
+public class QIFPrice
+        implements Comparable<QIFPrice> {
     /**
      * Item type.
      */
@@ -68,6 +73,43 @@ public class QIFPrice {
     private final JPrice thePrice;
 
     /**
+     * The element list.
+     */
+    private final List<QIFPrice> thePrices;
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public QIFSecurity getSecurity() {
+        return theSecurity;
+    }
+
+    /**
+     * Obtain the date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    /**
+     * Obtain the price.
+     * @return the security
+     */
+    public JPrice getPrice() {
+        return thePrice;
+    }
+
+    /**
+     * Obtain iterator for list.
+     * @return the iterator
+     */
+    public Iterator<QIFPrice> priceIterator() {
+        return thePrices.iterator();
+    }
+
+    /**
      * Constructor.
      * @param pFile the QIF File
      * @param pSecurity the security
@@ -81,6 +123,7 @@ public class QIFPrice {
         theSecurity = pSecurity;
         theDate = pPrice.getDate();
         thePrice = pPrice.getPrice();
+        thePrices = null;
     }
 
     /**
@@ -89,9 +132,9 @@ public class QIFPrice {
      * @param pFormatter the Data Formatter
      * @param pLine the line
      */
-    protected QIFPrice(final QIFFile pFile,
-                       final JDataFormatter pFormatter,
-                       final String pLine) {
+    private QIFPrice(final QIFFile pFile,
+                     final JDataFormatter pFormatter,
+                     final String pLine) {
         /* Split out the parts */
         String[] myParts = pLine.split(QIF_COMMA);
 
@@ -100,15 +143,44 @@ public class QIFPrice {
             String myStr = myParts[i];
             if ((myStr.startsWith(QIF_QUOTE))
                 && (myStr.endsWith(QIF_QUOTE))) {
-                myParts[i] = myStr.substring(1, myStr.length() - 2);
+                myParts[i] = myStr.substring(1, myStr.length() - 1);
             }
         }
 
         /* Store the data */
         theFileType = pFile.getFileType();
-        theSecurity = pFile.getSecurity(myParts[0]);
+        theSecurity = pFile.getSecurityBySymbol(myParts[0]);
         theDate = pFormatter.getDateFormatter().parseDateDay(myParts[2]);
         thePrice = pFormatter.getDecimalParser().parsePriceValue(myParts[1]);
+        thePrices = null;
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pFormatter the Data Formatter
+     * @param pLines the lines
+     */
+    protected QIFPrice(final QIFFile pFile,
+                       final JDataFormatter pFormatter,
+                       final List<String> pLines) {
+        /* Build the price list */
+        thePrices = new ArrayList<QIFPrice>();
+
+        /* Loop through the lines */
+        QIFSecurity mySecurity = null;
+        for (String myLine : pLines) {
+            /* Create the price and add to the list */
+            QIFPrice myPrice = new QIFPrice(pFile, pFormatter, myLine);
+            mySecurity = myPrice.getSecurity();
+            thePrices.add(myPrice);
+        }
+
+        /* Store the data */
+        theFileType = pFile.getFileType();
+        theSecurity = mySecurity;
+        theDate = null;
+        thePrice = null;
     }
 
     /**
@@ -143,5 +215,50 @@ public class QIFPrice {
         /* Add the end of record indicator */
         pBuilder.append(QIFRecord.QIF_EOI);
         pBuilder.append(QIFRecord.QIF_EOL);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFPrice myLine = (QIFPrice) pThat;
+
+        /* Check security */
+        if (!getSecurity().equals(myLine.getSecurity())) {
+            return false;
+        }
+
+        /* Check price */
+        if (!getPrice().equals(myLine.getPrice())) {
+            return false;
+        }
+
+        /* Check date */
+        return theDate.equals(myLine.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theSecurity.hashCode();
+        myResult += thePrice.hashCode();
+        myResult *= QIFFile.HASH_BASE;
+        return myResult + theDate.hashCode();
+    }
+
+    @Override
+    public int compareTo(final QIFPrice pThat) {
+        return theDate.compareTo(pThat.getDate());
     }
 }

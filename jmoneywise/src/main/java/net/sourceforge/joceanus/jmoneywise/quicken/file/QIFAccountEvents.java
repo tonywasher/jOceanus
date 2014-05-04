@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
 /**
  * Class representing an account and its events.
  */
-public class QIFAccountEvents {
+public class QIFAccountEvents
+        implements Comparable<QIFAccountEvents> {
     /**
      * Account.
      */
@@ -48,6 +49,14 @@ public class QIFAccountEvents {
      */
     public QIFAccount getAccount() {
         return theAccount;
+    }
+
+    /**
+     * Obtain the events.
+     * @return the events
+     */
+    public List<QIFRecord<?>> getEvents() {
+        return theEvents;
     }
 
     /**
@@ -73,11 +82,61 @@ public class QIFAccountEvents {
     }
 
     /**
+     * Constructor.
+     * @param pAccount the account.
+     */
+    protected QIFAccountEvents(final QIFAccount pAccount) {
+        /* Store parameters */
+        theAccount = pAccount;
+
+        /* Create the list */
+        theEvents = new ArrayList<QIFRecord<?>>();
+    }
+
+    /**
      * Add event.
      * @param pEvent the event record set
      */
     protected void addEvent(final QIFRecord<?> pEvent) {
         /* Add the event */
         theEvents.add(pEvent);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check class */
+        if (!getClass().equals(pThat.getClass())) {
+            return false;
+        }
+
+        /* Cast correctly */
+        QIFAccountEvents myEvents = (QIFAccountEvents) pThat;
+
+        /* Check account */
+        if (!theAccount.equals(myEvents.getAccount())) {
+            return false;
+        }
+
+        /* Check events */
+        return theEvents.equals(myEvents.getEvents());
+    }
+
+    @Override
+    public int hashCode() {
+        int myResult = QIFFile.HASH_BASE * theAccount.hashCode();
+        return myResult + theEvents.hashCode();
+    }
+
+    @Override
+    public int compareTo(final QIFAccountEvents pThat) {
+        return theAccount.compareTo(pThat.getAccount());
     }
 }
