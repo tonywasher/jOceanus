@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  * Class representing a QIF Portfolio Event record.
  */
 public class QIFPortfolioEvent
-        extends QIFRecord<QPortfolioLineType> {
+        extends QIFEventRecord<QPortfolioLineType> {
     /**
      * The Date.
      */
@@ -69,10 +69,7 @@ public class QIFPortfolioEvent
      */
     private final QActionType theAction;
 
-    /**
-     * Obtain the date.
-     * @return the date.
-     */
+    @Override
     public JDateDay getDate() {
         return theDate;
     }

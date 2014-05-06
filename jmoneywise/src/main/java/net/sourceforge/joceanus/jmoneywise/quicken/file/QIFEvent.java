@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JRate;
  * Class representing a QIF Event record.
  */
 public class QIFEvent
-        extends QIFRecord<QEventLineType> {
+        extends QIFEventRecord<QEventLineType> {
     /**
      * The Date.
      */
@@ -56,10 +56,7 @@ public class QIFEvent
      */
     private final Boolean isCleared;
 
-    /**
-     * Obtain the date.
-     * @return the date.
-     */
+    @Override
     public JDateDay getDate() {
         return theDate;
     }

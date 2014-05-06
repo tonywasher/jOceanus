@@ -274,6 +274,13 @@ public class QIFFile {
 
         /* Sort the accounts */
         theAccounts.reSort();
+        Iterator<QIFAccountEvents> myAccIterator = accountIterator();
+        while (myAccIterator.hasNext()) {
+            QIFAccountEvents myAccount = myAccIterator.next();
+
+            /* Sort the events */
+            myAccount.sortEvents();
+        }
     }
 
     /**

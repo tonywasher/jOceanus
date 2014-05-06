@@ -393,9 +393,9 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Loop through the events */
-            Iterator<QIFRecord<?>> myEvtIterator = myEvents.eventIterator();
+            Iterator<QIFEventRecord<?>> myEvtIterator = myEvents.eventIterator();
             while (myEvtIterator.hasNext()) {
-                QIFRecord<?> myEvent = myEvtIterator.next();
+                QIFEventRecord<?> myEvent = myEvtIterator.next();
 
                 /* Format the record */
                 myEvent.formatRecord(theFormatter, myBuilder);

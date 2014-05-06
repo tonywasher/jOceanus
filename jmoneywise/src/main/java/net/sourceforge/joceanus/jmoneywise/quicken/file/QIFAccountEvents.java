@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.quicken.file;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class QIFAccountEvents
     /**
      * Events.
      */
-    private final List<QIFRecord<?>> theEvents;
+    private final List<QIFEventRecord<?>> theEvents;
 
     /**
      * Obtain the account.
@@ -55,7 +56,7 @@ public class QIFAccountEvents
      * Obtain the events.
      * @return the events
      */
-    public List<QIFRecord<?>> getEvents() {
+    public List<QIFEventRecord<?>> getEvents() {
         return theEvents;
     }
 
@@ -63,7 +64,7 @@ public class QIFAccountEvents
      * Event iterator.
      * @return the iterator
      */
-    public Iterator<QIFRecord<?>> eventIterator() {
+    public Iterator<QIFEventRecord<?>> eventIterator() {
         return theEvents.iterator();
     }
 
@@ -78,7 +79,7 @@ public class QIFAccountEvents
         theAccount = new QIFAccount(pFile, pAccount);
 
         /* Create the list */
-        theEvents = new ArrayList<QIFRecord<?>>();
+        theEvents = new ArrayList<QIFEventRecord<?>>();
     }
 
     /**
@@ -90,16 +91,23 @@ public class QIFAccountEvents
         theAccount = pAccount;
 
         /* Create the list */
-        theEvents = new ArrayList<QIFRecord<?>>();
+        theEvents = new ArrayList<QIFEventRecord<?>>();
     }
 
     /**
      * Add event.
      * @param pEvent the event record set
      */
-    protected void addEvent(final QIFRecord<?> pEvent) {
+    protected void addEvent(final QIFEventRecord<?> pEvent) {
         /* Add the event */
         theEvents.add(pEvent);
+    }
+
+    /**
+     * Sort the events.
+     */
+    protected void sortEvents() {
+        Collections.sort(theEvents);
     }
 
     @Override
