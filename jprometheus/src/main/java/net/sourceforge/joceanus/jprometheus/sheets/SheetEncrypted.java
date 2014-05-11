@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends SheetDataItem<T, E> {
     /**
-     * ControlId column.
+     * KeySetId column.
      */
-    protected static final int COL_CONTROLID = COL_ID + 1;
+    protected static final int COL_KEYSETID = COL_ID + 1;
 
     /**
      * Constructor for a load operation.
@@ -64,7 +64,7 @@ public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? s
     @Override
     protected void insertSecureItem(final T pItem) throws JOceanusException {
         super.insertSecureItem(pItem);
-        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
     }
 
     @Override
@@ -73,7 +73,7 @@ public abstract class SheetEncrypted<T extends EncryptedItem<E> & Comparable<? s
         DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the control id and return the new values */
-        myValues.addValue(EncryptedItem.FIELD_CONTROL, loadInteger(COL_CONTROLID));
+        myValues.addValue(EncryptedItem.FIELD_KEYSET, loadInteger(COL_KEYSETID));
         return myValues;
     }
 }

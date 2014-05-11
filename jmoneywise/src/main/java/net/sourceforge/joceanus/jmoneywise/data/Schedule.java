@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.FrequencyClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -483,11 +482,6 @@ public class Schedule
             ScheduleList myList = new ScheduleList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public ScheduleList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (ScheduleList) super.cloneList(pDataSet);
         }
 
         /**

@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -425,11 +424,6 @@ public final class TransactionCategory
             TransactionCategoryList myList = new TransactionCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TransactionCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionCategoryList) super.cloneList(pDataSet);
         }
 
         /**

@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -860,12 +859,6 @@ public class TaxYear
             TaxYearList myList = new TaxYearList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TaxYearList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            /* Clone the list */
-            return (TaxYearList) super.cloneList(pDataSet);
         }
 
         /**

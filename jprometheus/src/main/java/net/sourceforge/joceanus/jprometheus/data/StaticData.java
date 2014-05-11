@@ -506,6 +506,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /* Record the name */
         setValueName(pClass.name());
         setValueEnabled(Boolean.TRUE);
+
+        /* Set the DataKeySet */
+        setNextDataKeySet();
     }
 
     /**

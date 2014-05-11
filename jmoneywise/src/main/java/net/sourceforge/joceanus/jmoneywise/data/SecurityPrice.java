@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurity
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -323,7 +322,7 @@ public class SecurityPrice
     protected SecurityPrice(final EncryptedList<? extends SecurityPrice, MoneyWiseDataType> pList,
                             final Security pSecurity) {
         super(pList, 0);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
         setValueSecurity(pSecurity);
     }
 
@@ -599,11 +598,6 @@ public class SecurityPrice
             SecurityPriceList myList = new SecurityPriceList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public SecurityPriceList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (SecurityPriceList) super.cloneList(pDataSet);
         }
 
         /**

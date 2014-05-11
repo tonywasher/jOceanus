@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
@@ -61,9 +62,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
     }
 
     /**
-     * Control Key Field Id.
+     * Data Key Set Field Id.
      */
-    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField(ControlKey.OBJECT_NAME);
+    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
 
     /**
      * Error message for bad usage.
@@ -76,22 +77,22 @@ public abstract class EncryptedItem<E extends Enum<E>>
     private EncryptionGenerator theGenerator = null;
 
     /**
-     * Get the ControlKey for this item.
-     * @return the ControlKey
+     * Get the DataKeySet for this item.
+     * @return the DataKeySet
      */
-    public final ControlKey getControlKey() {
-        return getControlKey(getValueSet());
+    public final DataKeySet getDataKeySet() {
+        return getDataKeySet(getValueSet());
     }
 
     /**
-     * Get the ControlKeyId for this item.
-     * @return the ControlKeyId
+     * Get the DataKeySetId for this item.
+     * @return the DataKeySetId
      */
-    public final Integer getControlKeyId() {
-        ControlKey myKey = getControlKey();
-        return (myKey == null)
+    public final Integer getDataKeySetId() {
+        DataKeySet mySet = getDataKeySet();
+        return (mySet == null)
                               ? null
-                              : myKey.getId();
+                              : mySet.getId();
     }
 
     /**
@@ -99,31 +100,36 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @param pValueSet the valueSet
      * @return the ControlKey
      */
-    public static ControlKey getControlKey(final EncryptedValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CONTROL, ControlKey.class);
+    public static DataKeySet getDataKeySet(final EncryptedValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYSET, DataKeySet.class);
     }
 
     /**
-     * Set the control Key for this item.
-     * @param pKey the control key
+     * Set the DataKeySet for this item.
+     * @param pSet the dataKeySet
      */
-    private void setValueControlKey(final ControlKey pKey) {
-        getValueSet().setValue(FIELD_CONTROL, pKey);
-        if (pKey != null) {
-            theGenerator = pKey.getFieldGenerator();
+    private void setValueDataKeySet(final DataKeySet pSet) {
+        getValueSet().setValue(FIELD_KEYSET, pSet);
+        if (pSet != null) {
+            theGenerator = pSet.getFieldGenerator();
         }
     }
 
     /**
-     * Set the control Key id for this item.
-     * @param pId the control key id
+     * Set the KeySet id for this item.
+     * @param pId the keySet id
      */
-    private void setValueControlKey(final Integer pId) {
-        getValueSet().setValue(FIELD_CONTROL, pId);
+    private void setValueDataKeySet(final Integer pId) {
+        getValueSet().setValue(FIELD_KEYSET, pId);
+    }
+
+    @Override
+    public EncryptedList<?, E> getList() {
+        return (EncryptedList<?, E>) super.getList();
     }
 
     /**
-     * Standard Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
+     * Standard Constructor. This creates a null encryption generator. This will be overridden when a DataKeySet is assigned to the item.
      * @param pList the list that this item is associated with
      * @param pId the Id of the new item (or 0 if not yet known)
      */
@@ -154,36 +160,43 @@ public abstract class EncryptedItem<E extends Enum<E>>
                          final DataValues<E> pValues) throws JOceanusException {
         super(pList, pValues);
 
-        /* Access control Key id */
-        Integer myId = pValues.getValue(FIELD_CONTROL, Integer.class);
+        /* Access dataKeySet id */
+        Integer myId = pValues.getValue(FIELD_KEYSET, Integer.class);
         if (myId != null) {
-            setControlKey(myId);
+            setDataKeySet(myId);
         } else {
             theGenerator = new EncryptionGenerator(null);
         }
     }
 
     /**
-     * Set ControlKey.
-     * @param pControlKey the Control Key
+     * Set DataKeySet.
+     * @param pKeySet the DataKeySet
      */
-    protected final void setControlKey(final ControlKey pControlKey) {
-        setValueControlKey(pControlKey);
+    protected final void setDataKeySet(final DataKeySet pKeySet) {
+        setValueDataKeySet(pKeySet);
     }
 
     /**
-     * Set ControlKey id.
-     * @param pControlId the Control Id
+     * Set Next DataKeySet.
+     */
+    protected final void setNextDataKeySet() {
+        setDataKeySet(getList().getNextDataKeySet());
+    }
+
+    /**
+     * Set DataKeySet id.
+     * @param pKeySetId the KeySet Id
      * @throws JOceanusException on error
      */
-    protected final void setControlKey(final Integer pControlId) throws JOceanusException {
+    protected final void setDataKeySet(final Integer pKeySetId) throws JOceanusException {
         /* Store the id */
-        setValueControlKey(pControlId);
+        setValueDataKeySet(pKeySetId);
 
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        resolveDataLink(FIELD_CONTROL, myData.getControlKeys());
-        theGenerator = getControlKey().getFieldGenerator();
+        resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
+        theGenerator = getDataKeySet().getFieldGenerator();
     }
 
     /**
@@ -256,46 +269,56 @@ public abstract class EncryptedItem<E extends Enum<E>>
     public void resolveDataSetLinks() throws JOceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        resolveDataLink(FIELD_CONTROL, myData.getControlKeys());
+        resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
     }
 
     /**
-     * Initialise security for all encrypted values.
-     * @param pControl the new Control Key
+     * Adopt security for all encrypted values.
+     * @param pKeySet the new KeySet
      * @param pBase the base item
      * @throws JOceanusException on error
      */
-    protected void adoptSecurity(final ControlKey pControl,
+    protected void adoptSecurity(final DataKeySet pKeySet,
                                  final EncryptedItem<E> pBase) throws JOceanusException {
-        /* Set the Control Key */
-        setValueControlKey(pControl);
+        /* Set the DataKeySet */
+        setValueDataKeySet(pKeySet);
 
         /* Access underlying values if they exist */
-        EncryptedValueSet myBaseValues = null;
-        if (pBase != null) {
-            myBaseValues = pBase.getValueSet();
-        }
+        EncryptedValueSet myBaseValues = pBase.getValueSet();
 
         /* Try to adopt the underlying */
         getValueSet().adoptSecurity(theGenerator, myBaseValues);
     }
 
     /**
-     * Update security for all encrypted values.
-     * @param pControl the new Control Key
+     * Initialise security for all encrypted values.
+     * @param pKeySet the new KeySet
      * @throws JOceanusException on error
      */
-    protected void updateSecurity(final ControlKey pControl) throws JOceanusException {
-        /* Ignore call if we have the same control key */
-        if (pControl.equals(getControlKey())) {
+    protected void initialiseSecurity(final DataKeySet pKeySet) throws JOceanusException {
+        /* Set the DataKeySet */
+        setValueDataKeySet(pKeySet);
+
+        /* Initialise security */
+        getValueSet().adoptSecurity(theGenerator, null);
+    }
+
+    /**
+     * Update security for all encrypted values.
+     * @param pKeySet the new KeySet
+     * @throws JOceanusException on error
+     */
+    protected void updateSecurity(final DataKeySet pKeySet) throws JOceanusException {
+        /* Ignore call if we have the same keySet */
+        if (pKeySet.equals(getDataKeySet())) {
             return;
         }
 
         /* Store the current detail into history */
         pushHistory();
 
-        /* Set the Control Key */
-        setControlKey(pControl);
+        /* Set the DataKeySet */
+        setDataKeySet(pKeySet);
 
         /* Update all elements */
         getValueSet().updateSecurity(theGenerator);
@@ -312,11 +335,22 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * Get the active controlKey.
          * @return the active controlKey
          */
-        public ControlKey getControlKey() {
+        private ControlKey getControlKey() {
             ControlData myControl = getDataSet().getControl();
             return (myControl == null)
                                       ? null
                                       : myControl.getControlKey();
+        }
+
+        /**
+         * Obtain the DataKeySet to use.
+         * @return the DataKeySet
+         */
+        private DataKeySet getNextDataKeySet() {
+            ControlKey myKey = getControlKey();
+            return (myKey == null)
+                                  ? null
+                                  : myKey.getNextDataKeySet();
         }
 
         /**
@@ -383,7 +417,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
             while (myIterator.hasNext()) {
                 /* Ensure encryption of the item */
                 T myCurr = myIterator.next();
-                myCurr.updateSecurity(pControl);
+                myCurr.updateSecurity(pControl.getNextDataKeySet());
 
                 /* Report the progress */
                 myCount++;
@@ -422,6 +456,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
                 return false;
             }
 
+            /* Obtain DataKeySet list */
+            DataSet<?, ?> myData = getDataSet();
+            DataKeySetList mySets = myData.getDataKeySets();
+
             /* Create an iterator for our new list */
             Iterator<T> myIterator = iterator();
             Class<T> myClass = getBaseClass();
@@ -432,14 +470,24 @@ public abstract class EncryptedItem<E extends Enum<E>>
                 EncryptedItem<E> myCurr = myIterator.next();
                 EncryptedItem<E> myBase = pBase.findItemById(myCurr.getId());
 
-                /* Cast the items correctly */
-                T mySource = (myBase == null)
-                                             ? null
-                                             : myClass.cast(myBase);
+                /* Access target correctly */
                 T myTarget = myClass.cast(myCurr);
 
-                /* Adopt/initialise the security */
-                myTarget.adoptSecurity(pControl, mySource);
+                /* If we have a base */
+                if (myBase != null) {
+                    /* Access base correctly */
+                    T mySource = myClass.cast(myBase);
+
+                    /* Obtain required KeySet */
+                    DataKeySet mySet = myBase.getDataKeySet();
+                    mySet = mySets.findItemById(mySet.getId());
+
+                    /* Adopt the security */
+                    myTarget.adoptSecurity(mySet, mySource);
+                } else {
+                    /* Initialise the security */
+                    myTarget.initialiseSecurity(getNextDataKeySet());
+                }
 
                 /* Report the progress */
                 myCount++;

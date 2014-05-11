@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -336,11 +335,6 @@ public class LoanCategory
             LoanCategoryList myList = new LoanCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public LoanCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (LoanCategoryList) super.cloneList(pDataSet);
         }
 
         /**

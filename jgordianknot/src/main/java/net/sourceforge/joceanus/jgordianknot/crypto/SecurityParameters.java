@@ -57,6 +57,11 @@ public class SecurityParameters {
     public static final String DEFAULT_SECURITY_PHRASE = "JG0rdianKn0t";
 
     /**
+     * Default Active KeySets.
+     */
+    public static final Integer DEFAULT_ACTIVE_KEYSETS = 4;
+
+    /**
      * The Security provider.
      */
     private final SecurityProvider theProvider;
@@ -85,6 +90,11 @@ public class SecurityParameters {
      * The Security phrase.
      */
     private String theSecurityPhrase;
+
+    /**
+     * The Number of active KeySets.
+     */
+    private int theActiveKeySets;
 
     /**
      * Access the Security provider.
@@ -135,6 +145,14 @@ public class SecurityParameters {
     }
 
     /**
+     * Access the number of Active KeySets.
+     * @return the number of active KeySets
+     */
+    protected int getNumActiveKeySets() {
+        return theActiveKeySets;
+    }
+
+    /**
      * Default Constructor.
      */
     public SecurityParameters() {
@@ -164,6 +182,7 @@ public class SecurityParameters {
         useLongHash = DEFAULT_LONGHASH;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
+        theActiveKeySets = DEFAULT_ACTIVE_KEYSETS;
         theSecurityPhrase = null;
     }
 
@@ -201,5 +220,14 @@ public class SecurityParameters {
     public void setSecurityPhrase(final String pSecurityPhrase) {
         /* Store parameters */
         theSecurityPhrase = pSecurityPhrase;
+    }
+
+    /**
+     * Set number of active KeySets.
+     * @param pNumActiveKeySets the number of active KeySets
+     */
+    public void setNumActiveKeySets(final int pNumActiveKeySets) {
+        /* Store parameters */
+        theActiveKeySets = pNumActiveKeySets;
     }
 }

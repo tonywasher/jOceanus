@@ -172,11 +172,6 @@ public class Frequency
             return myList;
         }
 
-        @Override
-        public FrequencyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (FrequencyList) super.cloneList(pDataSet);
-        }
-
         /**
          * Obtain the type of the item.
          * @return the type of the item

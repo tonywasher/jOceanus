@@ -182,11 +182,6 @@ public class TaxYearInfoType
         }
 
         @Override
-        public TaxYearInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TaxYearInfoTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public TaxYearInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an TaxYearInfoType */
             if (!(pItem instanceof TaxYearInfoType)) {

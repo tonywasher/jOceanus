@@ -45,7 +45,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -1132,11 +1131,6 @@ public class Deposit
             DepositList myList = new DepositList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public DepositList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (DepositList) super.cloneList(pDataSet);
         }
 
         /**

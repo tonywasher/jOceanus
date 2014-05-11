@@ -43,7 +43,7 @@ public class SheetDepositCategory
     /**
      * Name column.
      */
-    private static final int COL_NAME = COL_CONTROLID + 1;
+    private static final int COL_NAME = COL_KEYSETID + 1;
 
     /**
      * Type column.

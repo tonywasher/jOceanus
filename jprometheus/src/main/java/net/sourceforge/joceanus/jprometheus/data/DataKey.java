@@ -71,9 +71,9 @@ public class DataKey
     }
 
     /**
-     * ControlKey Field Id.
+     * DataKeySet Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(ControlKey.OBJECT_NAME);
+    public static final JDataField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME);
 
     /**
      * KeyType Field Id.
@@ -84,11 +84,6 @@ public class DataKey
      * KeyDefinition Field Id.
      */
     public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDefinition"));
-
-    /**
-     * Password Hash Field Id.
-     */
-    public static final JDataField FIELD_HASH = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataHash"));
 
     /**
      * DataKey Field Id.
@@ -106,19 +101,19 @@ public class DataKey
     public static final int KEYLEN = SymmetricKey.IDSIZE;
 
     /**
-     * Get the ControlKey.
-     * @return the controlKey
+     * Get the DataKeySet.
+     * @return the dataKeySet
      */
-    public ControlKey getControlKey() {
-        return getControlKey(getValueSet());
+    public DataKeySet getDataKeySet() {
+        return getDataKeySet(getValueSet());
     }
 
     /**
-     * Get the ControlKeyId for this item.
-     * @return the ControlKeyId
+     * Get the DataKeySetId for this item.
+     * @return the DataKeySetId
      */
-    public Integer getControlKeyId() {
-        ControlKey myKey = getControlKey();
+    public Integer getDataKeySetId() {
+        DataKeySet myKey = getDataKeySet();
         return (myKey == null)
                               ? null
                               : myKey.getId();
@@ -168,20 +163,12 @@ public class DataKey
     }
 
     /**
-     * Get the PasswordHash.
-     * @return the passwordHash
-     */
-    protected PasswordHash getPasswordHash() {
-        return getPasswordHash(getValueSet());
-    }
-
-    /**
-     * Get the ControlKey.
+     * Get the DataKeySet.
      * @param pValueSet the valueSet
-     * @return the control Key
+     * @return the dataKeySet
      */
-    public static ControlKey getControlKey(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
+    public static DataKeySet getDataKeySet(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYSET, DataKeySet.class);
     }
 
     /**
@@ -221,28 +208,19 @@ public class DataKey
     }
 
     /**
-     * Get the PasswordHash.
-     * @param pValueSet the valueSet
-     * @return the passwordHash
+     * Set the DataKeySet.
+     * @param pValue the dataKeySet
      */
-    protected static PasswordHash getPasswordHash(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_HASH, PasswordHash.class);
+    private void setValueDataKeySet(final DataKeySet pValue) {
+        getValueSet().setValue(FIELD_KEYSET, pValue);
     }
 
     /**
-     * Set the ControlKey.
-     * @param pValue the controlKey
+     * Set the DataKeySet Id.
+     * @param pId the dataKeySet id
      */
-    private void setValueControlKey(final ControlKey pValue) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pValue);
-    }
-
-    /**
-     * Set the ControlKey Id.
-     * @param pId the controlKey id
-     */
-    private void setValueControlKey(final Integer pId) {
-        getValueSet().setValue(FIELD_CONTROLKEY, pId);
+    private void setValueDataKeySet(final Integer pId) {
+        getValueSet().setValue(FIELD_KEYSET, pId);
     }
 
     /**
@@ -285,14 +263,6 @@ public class DataKey
         getValueSet().setValue(FIELD_CIPHER, pValue);
     }
 
-    /**
-     * Set the PasswordHash.
-     * @param pValue the passwordHash
-     */
-    private void setValuePasswordHash(final PasswordHash pValue) {
-        getValueSet().setValue(FIELD_HASH, pValue);
-    }
-
     @Override
     public DataKey getBase() {
         return (DataKey) super.getBase();
@@ -325,17 +295,17 @@ public class DataKey
         /* Initialise the item */
         super(pList, pValues);
 
-        /* Store the ControlKey */
-        Object myValue = pValues.getValue(FIELD_CONTROLKEY);
+        /* Store the DataKeySet */
+        Object myValue = pValues.getValue(FIELD_KEYSET);
         if (myValue instanceof Integer) {
             /* Store the integer */
             Integer myInt = (Integer) myValue;
-            setValueControlKey(myInt);
+            setValueDataKeySet(myInt);
 
-            /* Resolve the ControlKey */
+            /* Resolve the DataKeySet */
             DataSet<?, ?> myData = getDataSet();
-            resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-            ControlKey myControlKey = getControlKey();
+            resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
+            DataKeySet myKeySet = getDataKeySet();
 
             /* Store the KeyType */
             myValue = pValues.getValue(FIELD_KEYTYPE);
@@ -352,30 +322,29 @@ public class DataKey
                 setValueSecuredKeyDef(myBytes);
 
                 /* Create the Symmetric Key from the wrapped data */
-                PasswordHash myHash = getControlKey().getPasswordHash();
+                PasswordHash myHash = myKeySet.getPasswordHash();
                 CipherSet myCipher = myHash.getCipherSet();
                 SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
                 setValueDataKey(myKey);
-                setValuePasswordHash(myHash);
 
                 /* Access the Cipher */
                 setValueCipher(myKey.getDataCipher());
 
                 /* Register the DataKey */
-                myControlKey.registerDataKey(this);
+                myKeySet.registerDataKey(this);
             }
         }
     }
 
     /**
-     * Constructor for a new DataKey in a new ControlKey set.
+     * Constructor for a new DataKey in a new DataKeySet.
      * @param pList the list to add to
-     * @param pControlKey the ControlKey to which this key belongs
+     * @param pKeySet the KeySet to which this key belongs
      * @param pKeyType the Key type of the new key
      * @throws JOceanusException on error
      */
     private DataKey(final DataKeyList pList,
-                    final ControlKey pControlKey,
+                    final DataKeySet pKeySet,
                     final SymKeyType pKeyType) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
@@ -383,15 +352,14 @@ public class DataKey
         /* Protect against exceptions */
         try {
             /* Store the Details */
-            setValueControlKey(pControlKey);
+            setValueDataKeySet(pKeySet);
             setValueKeyType(pKeyType);
 
             /* Create the new key */
-            PasswordHash myHash = pControlKey.getPasswordHash();
+            PasswordHash myHash = pKeySet.getPasswordHash();
             CipherSet myCipher = myHash.getCipherSet();
             SecurityGenerator myGenerator = myHash.getSecurityGenerator();
             SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
-            setValuePasswordHash(myHash);
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
@@ -401,7 +369,7 @@ public class DataKey
             setValueCipher(myKey.getDataCipher());
 
             /* Register the DataKey */
-            pControlKey.registerDataKey(this);
+            pKeySet.registerDataKey(this);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -411,20 +379,20 @@ public class DataKey
     }
 
     /**
-     * Constructor for a cloned DataKey in a new ControlKey set.
+     * Constructor for a cloned DataKey in a new DataKeySet.
      * @param pList the list to add to
-     * @param pControlKey the ControlKey to which this key belongs
+     * @param pKeySet the ControlKey to which this key belongs
      * @param pDataKey the DataKey to clone
      * @throws JOceanusException on error
      */
     private DataKey(final DataKeyList pList,
-                    final ControlKey pControlKey,
+                    final DataKeySet pKeySet,
                     final DataKey pDataKey) throws JOceanusException {
         /* Initialise the item */
         super(pList, 0);
 
-        /* Store the Control details */
-        setValueControlKey(pControlKey);
+        /* Store the KeySet details */
+        setValueDataKeySet(pKeySet);
 
         /* Copy the key details */
         setValueDataKey(pDataKey.getDataKey());
@@ -451,11 +419,11 @@ public class DataKey
     public void resolveDataSetLinks() throws JOceanusException {
         /* Resolve the ControlKey */
         DataSet<?, ?> myData = getDataSet();
-        resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
-        ControlKey myControlKey = getControlKey();
+        resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
+        DataKeySet myKeySet = getDataKeySet();
 
         /* Register the Key */
-        myControlKey.registerDataKey(this);
+        myKeySet.registerDataKey(this);
     }
 
     /**
@@ -467,10 +435,9 @@ public class DataKey
         pushHistory();
 
         /* Update the Security Control Key and obtain the new secured KeyDef */
-        ControlKey myControlKey = getControlKey();
-        PasswordHash myHash = myControlKey.getPasswordHash();
+        DataKeySet myKeySet = getDataKeySet();
+        PasswordHash myHash = myKeySet.getPasswordHash();
         CipherSet myCipher = myHash.getCipherSet();
-        setValuePasswordHash(myHash);
         setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
 
         /* Check for changes */
@@ -541,11 +508,6 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (DataKeyList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public DataKeyList deriveList(final ListStyle pStyle) throws JOceanusException {
             return (DataKeyList) super.deriveList(pStyle);
         }
@@ -593,16 +555,16 @@ public class DataKey
         }
 
         /**
-         * Add a new DataKey for the passed ControlKey.
-         * @param pControlKey the ControlKey
+         * Add a new DataKey for the passed KeySet.
+         * @param pKeySet the dataKeySet
          * @param pKeyType the KeyType
          * @return the new DataKey
          * @throws JOceanusException on error
          */
-        public DataKey createNewKey(final ControlKey pControlKey,
+        public DataKey createNewKey(final DataKeySet pKeySet,
                                     final SymKeyType pKeyType) throws JOceanusException {
             /* Create the key */
-            DataKey myKey = new DataKey(this, pControlKey, pKeyType);
+            DataKey myKey = new DataKey(this, pKeySet, pKeyType);
 
             /* Add to the list */
             add(myKey);
@@ -610,16 +572,16 @@ public class DataKey
         }
 
         /**
-         * Add a clone of the passed DataKey for the passed ControlKey.
-         * @param pControlKey the ControlKey
+         * Add a clone of the passed DataKey for the passed KeySet.
+         * @param pKeySet the KeySet
          * @param pDataKey the DataKey
          * @return the new DataKey
          * @throws JOceanusException on error
          */
-        public DataKey cloneItem(final ControlKey pControlKey,
+        public DataKey cloneItem(final DataKeySet pKeySet,
                                  final DataKey pDataKey) throws JOceanusException {
             /* Create the key */
-            DataKey myKey = new DataKey(this, pControlKey, pDataKey);
+            DataKey myKey = new DataKey(this, pKeySet, pDataKey);
 
             /* Add to the list */
             add(myKey);

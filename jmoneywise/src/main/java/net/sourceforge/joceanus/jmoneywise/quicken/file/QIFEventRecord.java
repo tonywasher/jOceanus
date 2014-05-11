@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
  */
 public abstract class QIFEventRecord<T extends Enum<T> & QLineType>
         extends QIFRecord<T>
-        implements Comparable<QIFEventRecord<T>> {
+        implements Comparable<QIFEventRecord<?>> {
     /**
      * Obtain the date.
      * @return the date.
@@ -56,7 +56,7 @@ public abstract class QIFEventRecord<T extends Enum<T> & QLineType>
     }
 
     @Override
-    public int compareTo(final QIFEventRecord<T> pThat) {
+    public int compareTo(final QIFEventRecord<?> pThat) {
         return getDate().compareTo(pThat.getDate());
     }
 }

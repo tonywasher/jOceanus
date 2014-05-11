@@ -67,7 +67,7 @@
     <BouncyCastleVersion>1.50</BouncyCastleVersion>
     <SvnKitVersion>1.8.5</SvnKitVersion>
     <JGitVersion>3.3.2.201404171909-r</JGitVersion>
-    <JiraRestVersion>2.0.0-m26</JiraRestVersion>
+    <JiraRestVersion>2.0.0-m27</JiraRestVersion>
     <ApacheMavenVersion>3.2.1</ApacheMavenVersion>
     <PostGreSQLVersion>9.2-1003-jdbc4</PostGreSQLVersion>
     <ApachePOIVersion>3.10-FINAL</ApachePOIVersion>

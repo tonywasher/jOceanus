@@ -149,6 +149,7 @@ public abstract class Database<T extends DataSet<T, ?>> {
         /* Create table list and add the tables to the list */
         theTables = new ArrayList<DatabaseTable<?, ?>>();
         theTables.add(new TableControlKeys(this));
+        theTables.add(new TableDataKeySet(this));
         theTables.add(new TableDataKeys(this));
         theTables.add(new TableControlData(this));
     }

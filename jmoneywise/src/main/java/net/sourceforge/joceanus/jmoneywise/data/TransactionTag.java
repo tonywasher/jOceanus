@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -327,7 +326,7 @@ public class TransactionTag
      */
     public TransactionTag(final TransactionTagList pList) {
         super(pList, 0);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
     }
 
     @Override
@@ -475,11 +474,6 @@ public class TransactionTag
             TransactionTagList myList = new TransactionTagList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TransactionTagList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionTagList) super.cloneList(pDataSet);
         }
 
         /**

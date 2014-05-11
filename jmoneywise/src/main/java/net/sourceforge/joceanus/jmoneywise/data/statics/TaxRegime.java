@@ -196,11 +196,6 @@ public class TaxRegime
             return myList;
         }
 
-        @Override
-        public TaxRegimeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TaxRegimeList) super.cloneList(pDataSet);
-        }
-
         /**
          * Add a new item to the list.
          * @param pItem item to be added

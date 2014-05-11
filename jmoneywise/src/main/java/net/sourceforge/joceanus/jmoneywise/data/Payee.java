@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -781,11 +780,6 @@ public class Payee
             PayeeList myList = new PayeeList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public PayeeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (PayeeList) super.cloneList(pDataSet);
         }
 
         /**

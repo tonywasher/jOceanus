@@ -210,11 +210,6 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (AccountInfoTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public AccountInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {

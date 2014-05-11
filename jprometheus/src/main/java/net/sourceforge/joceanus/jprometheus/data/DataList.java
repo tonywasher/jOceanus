@@ -422,25 +422,22 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     protected abstract DataList<T, E> getEmptyList(final ListStyle pStyle);
 
     /**
-     * Derive an cloned extract of this list.
-     * @param pDataSet the new DataSet
-     * @return the cloned list
+     * Derive an cloned extract of the source list.
+     * @param pData the dataSet
+     * @param pSource the source list
      * @throws JOceanusException on error
      */
-    protected DataList<T, E> cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-        /* Obtain an empty list of the correct style */
-        DataList<T, E> myList = getEmptyList(ListStyle.CLONE);
-        myList.theDataSet = pDataSet;
+    protected void cloneList(final DataSet<?, ?> pData,
+                             final DataList<?, E> pSource) throws JOceanusException {
+        /* Correct the dataSet reference */
+        theDataSet = pData;
 
         /* Populate the list */
-        populateList(myList);
+        pSource.populateList(this);
 
         /* Remove base reference and reset to CORE list */
-        myList.theBase = null;
-        myList.theStyle = ListStyle.CORE;
-
-        /* Return the cloned list */
-        return myList;
+        theBase = null;
+        theStyle = ListStyle.CORE;
     }
 
     /**
@@ -465,7 +462,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pList the list to populate
      * @throws JOceanusException on error
      */
-    protected void populateList(final DataList<T, E> pList) throws JOceanusException {
+    protected void populateList(final DataList<?, E> pList) throws JOceanusException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = myStyle == ListStyle.UPDATE;

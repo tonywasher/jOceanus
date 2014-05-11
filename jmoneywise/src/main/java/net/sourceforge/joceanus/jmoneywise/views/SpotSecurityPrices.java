@@ -596,7 +596,6 @@ public class SpotSecurityPrices
             super(pList, pSecurity);
 
             /* Store base values */
-            setControlKey(pList.getControlKey());
             setDate(pList.theDate);
             setSecurity(pSecurity);
         }

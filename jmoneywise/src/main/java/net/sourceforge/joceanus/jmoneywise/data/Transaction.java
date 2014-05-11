@@ -44,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType.Tran
 import net.sourceforge.joceanus.jprometheus.data.DataErrorList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -965,11 +964,6 @@ public class Transaction
             TransactionList myList = new TransactionList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TransactionList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionList) super.cloneList(pDataSet);
         }
 
         /**

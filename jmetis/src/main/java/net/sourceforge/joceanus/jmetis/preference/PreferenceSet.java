@@ -26,7 +26,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -108,7 +108,7 @@ public abstract class PreferenceSet
         theHandle = theHandle.node(this.getClass().getSimpleName());
 
         /* Allocate the preference map */
-        theMap = new HashMap<String, PreferenceItem>();
+        theMap = new LinkedHashMap<String, PreferenceItem>();
 
         /* Access the active key names */
         try {
@@ -695,8 +695,8 @@ public abstract class PreferenceSet
         private Object getValue() {
             /* Return the active value */
             return (isChanged)
-                    ? theNewValue
-                    : theValue;
+                              ? theNewValue
+                              : theValue;
         }
 
         /**
@@ -740,8 +740,8 @@ public abstract class PreferenceSet
          */
         private void setNewValue(final Object pNewValue) {
             theNewValue = (pNewValue == null)
-                    ? theDefault
-                    : pNewValue;
+                                             ? theDefault
+                                             : pNewValue;
             isChanged = !Difference.isEqual(theNewValue, theValue);
         }
 
@@ -866,8 +866,8 @@ public abstract class PreferenceSet
 
                 /* Set as initial value */
                 super.setValue(myValue
-                        ? Boolean.TRUE
-                        : Boolean.FALSE);
+                                      ? Boolean.TRUE
+                                      : Boolean.FALSE);
 
                 /* else value does not exist */
             } else {
@@ -886,8 +886,8 @@ public abstract class PreferenceSet
             /* Take a copy if not null */
             if (myNewValue != null) {
                 myNewValue = myNewValue
-                        ? Boolean.TRUE
-                        : Boolean.FALSE;
+                                       ? Boolean.TRUE
+                                       : Boolean.FALSE;
             }
 
             /* Set the new value */
@@ -1328,8 +1328,8 @@ public abstract class PreferenceSet
         if (myPref != null) {
             /* Return the relevant state */
             return myPref.isChanged()
-                    ? JFieldState.CHANGED
-                    : JFieldState.NORMAL;
+                                     ? JFieldState.CHANGED
+                                     : JFieldState.NORMAL;
         }
 
         /* Not recognised */
@@ -1348,7 +1348,7 @@ public abstract class PreferenceSet
 
         /* Return the value */
         return (myPref == null)
-                ? JDataFieldValue.UNKNOWN
-                : myPref.getValue();
+                               ? JDataFieldValue.UNKNOWN
+                               : myPref.getValue();
     }
 }

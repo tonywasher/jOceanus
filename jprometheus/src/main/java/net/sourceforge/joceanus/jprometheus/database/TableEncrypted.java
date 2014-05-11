@@ -32,7 +32,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>> extends DatabaseTable<T, E> {
+public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
+        extends DatabaseTable<T, E> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -42,7 +43,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
                              final String pTabName) {
         super(pDatabase, pTabName);
         TableDefinition myTableDef = getTableDef();
-        myTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, TableControlKeys.TABLE_NAME);
+        myTableDef.addReferenceColumn(EncryptedItem.FIELD_KEYSET, TableDataKeySet.TABLE_NAME);
     }
 
     @Override
@@ -50,8 +51,8 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (EncryptedItem.FIELD_CONTROL.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
+        if (EncryptedItem.FIELD_KEYSET.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
         } else {
             super.setFieldValue(pItem, iField);
         }
@@ -64,7 +65,7 @@ public abstract class TableEncrypted<T extends EncryptedItem<E> & Comparable<? s
         TableDefinition myTableDef = getTableDef();
 
         /* Add the control id and return the new values */
-        myValues.addValue(EncryptedItem.FIELD_CONTROL, myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL));
+        myValues.addValue(EncryptedItem.FIELD_KEYSET, myTableDef.getIntegerValue(EncryptedItem.FIELD_KEYSET));
         return myValues;
     }
 }

@@ -462,14 +462,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
      * Secure constructor.
      * @param pList the list
      * @param uId the id
-     * @param uControlId the control id
+     * @param uKeySetId the keySet id
      * @param uInfoTypeId the info id
      * @param uOwnerId the owner id
      * @throws JOceanusException on error
      */
     protected DataInfo(final DataInfoList<T, O, I, S, E> pList,
                        final Integer uId,
-                       final Integer uControlId,
+                       final Integer uKeySetId,
                        final Integer uInfoTypeId,
                        final Integer uOwnerId) throws JOceanusException {
         /* Initialise the item */
@@ -479,8 +479,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>, O extends Data
         setValueInfoType(uInfoTypeId);
         setValueOwner(uOwnerId);
 
-        /* Store the controlId */
-        setControlKey(uControlId);
+        /* Store the keySetId */
+        setDataKeySet(uKeySetId);
     }
 
     /**

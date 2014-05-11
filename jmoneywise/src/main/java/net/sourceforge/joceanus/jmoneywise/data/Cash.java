@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType.AccountI
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.data.DataValues.InfoSetItem;
@@ -777,11 +776,6 @@ public class Cash
             CashList myList = new CashList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public CashList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (CashList) super.cloneList(pDataSet);
         }
 
         /**

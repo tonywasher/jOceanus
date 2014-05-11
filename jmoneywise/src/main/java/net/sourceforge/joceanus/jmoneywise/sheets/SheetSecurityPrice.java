@@ -51,7 +51,7 @@ public class SheetSecurityPrice
     /**
      * Security column.
      */
-    private static final int COL_SECURITY = COL_CONTROLID + 1;
+    private static final int COL_SECURITY = COL_KEYSETID + 1;
 
     /**
      * Date column.

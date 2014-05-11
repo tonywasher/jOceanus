@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -183,7 +182,6 @@ public class TransactionInfo
                               final TransactionInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
-        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -197,7 +195,7 @@ public class TransactionInfo
                             final TransactionInfoType pType) {
         /* Initialise the item */
         super(pList);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -442,11 +440,6 @@ public class TransactionInfo
             TransactionInfoList myList = new TransactionInfoList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TransactionInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionInfoList) super.cloneList(pDataSet);
         }
 
         @Override

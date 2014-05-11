@@ -200,11 +200,6 @@ public class TransactionInfoType
         }
 
         @Override
-        public TransactionInfoTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionInfoTypeList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public TransactionInfoType addCopyItem(final DataItem<?> pItem) {
             /* Can only clone a TransactioonInfoType */
             if (!(pItem instanceof TransactionInfoType)) {

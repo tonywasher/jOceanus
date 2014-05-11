@@ -327,11 +327,6 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (ControlDataList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public ControlDataList deriveList(final ListStyle pStyle) throws JOceanusException {
             return (ControlDataList) super.deriveList(pStyle);
         }

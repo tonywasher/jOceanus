@@ -22,24 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
-import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.CipherSet;
 import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.SymKeyType;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -48,7 +43,7 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  * DataKeys.
  * @author Tony Washer
  */
-public class ControlKey
+public final class ControlKey
         extends DataItem<CryptographyDataType>
         implements Comparable<ControlKey> {
     /**
@@ -92,14 +87,9 @@ public class ControlKey
     public static final JDataField FIELD_HASHBYTES = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataBytes"));
 
     /**
-     * Field ID for DataKeyMap.
+     * Field ID for DataKeySet.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataKeyMap"));
-
-    /**
-     * Field ID for CipherSet.
-     */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCipher"));
+    public static final JDataField FIELD_SETS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataKeySet"));
 
     /**
      * Name of Database.
@@ -112,32 +102,14 @@ public class ControlKey
     public static final int HASHLEN = PasswordHash.HASHSIZE;
 
     /**
-     * The DataKey Map.
+     * The DataKeySet.
      */
-    private Map<SymKeyType, DataKey> theMap = null;
-
-    /**
-     * The Encryption CipherSet.
-     */
-    private CipherSet theCipherSet = null;
-
-    /**
-     * The Security Generator.
-     */
-    private SecurityGenerator theSecurityGenerator = null;
-
-    /**
-     * The Encryption Field Generator.
-     */
-    private EncryptionGenerator theFieldGenerator = null;
+    private DataKeySet theDataKeySet = null;
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_MAP.equals(pField)) {
-            return theMap;
-        }
-        if (FIELD_CIPHER.equals(pField)) {
-            return theCipherSet;
+        if (FIELD_SETS.equals(pField)) {
+            return theDataKeySet;
         }
         return super.getFieldValue(pField);
     }
@@ -162,7 +134,7 @@ public class ControlKey
      * Get the HashKey.
      * @return the hash key
      */
-    private HashKey getHashKey() {
+    protected HashKey getHashKey() {
         return getHashKey(getValueSet());
     }
 
@@ -198,7 +170,7 @@ public class ControlKey
      * @return the field generator
      */
     public EncryptionGenerator getFieldGenerator() {
-        return theFieldGenerator;
+        return theDataKeySet.getFieldGenerator();
     }
 
     /**
@@ -242,26 +214,22 @@ public class ControlKey
     }
 
     /**
-     * Copy Constructor.
-     * @param pList the list the copy belongs to
-     * @param pSource The Key to copy
+     * Obtain the next DataKeySet.
+     * @return the next dataKeySet
      */
-    protected ControlKey(final ControlKeyList pList,
-                         final ControlKey pSource) {
-        /* Set standard values */
-        super(pList, pSource);
+    protected DataKeySet getNextDataKeySet() {
+        return theDataKeySet;
+    }
 
-        /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                theSecurityGenerator = pSource.theSecurityGenerator;
-                theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-                theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-                theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
-                break;
-            default:
-                break;
-        }
+    /**
+     * Copy constructor.
+     * @param pList the List to add to
+     * @param pSource the source key to copy
+     */
+    private ControlKey(final ControlKeyList pList,
+                       final ControlKey pSource) {
+        /* Initialise the item */
+        super(pList, pSource);
     }
 
     /**
@@ -284,27 +252,18 @@ public class ControlKey
         /* Access the Security manager */
         DataSet<?, ?> myData = getDataSet();
         SecureManager mySecure = myData.getSecurity();
-        JDataFormatter myFormatter = myData.getDataFormatter();
-
-        /* Record the security generator */
-        theSecurityGenerator = mySecure.getSecurityGenerator();
 
         /* Resolve the password hash */
         PasswordHash myHash = mySecure.resolvePasswordHash(getHashBytes(), NAME_DATABASE);
 
         /* Store the password hash */
         setValuePasswordHash(myHash);
-
-        /* Create the DataKey Map */
-        theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-        /* Create the CipherSet and security generator */
-        theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-        theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
     }
 
     /**
-     * Constructor for a new ControlKey. This will create a set of DataKeys.
+     * Constructor for a new ControlKey.
+     * <p>
+     * This will create a new DataKeySet with a new set of DataKeys.
      * @param pList the list to which to add the key to
      * @throws JOceanusException on error
      */
@@ -317,26 +276,15 @@ public class ControlKey
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
-            JDataFormatter myFormatter = myData.getDataFormatter();
 
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
-
-            /* Create a new password hash */
+            /* Create a new password hash with new password */
             PasswordHash myHash = mySecure.resolvePasswordHash(null, NAME_DATABASE);
 
             /* Store the password hash */
             setValuePasswordHash(myHash);
 
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Allocate the DataKeys */
-            allocateDataKeys(myData);
+            /* Allocate the DataKeySets */
+            allocateDataKeySets(myData);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -346,7 +294,9 @@ public class ControlKey
     }
 
     /**
-     * Constructor for a new ControlKey with the same password. This will create a set of DataKeys.
+     * Constructor for a new ControlKey with the same password.
+     * <p>
+     * This will create a new DataKeySet with a new cloned set of DataKeys.
      * @param pKey the key to copy
      * @throws JOceanusException on error
      */
@@ -359,13 +309,10 @@ public class ControlKey
             /* Access the Security manager */
             DataSet<?, ?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-
-            /* Record the security generator */
-            theSecurityGenerator = mySecure.getSecurityGenerator();
 
             /* ReSeed the security generator */
-            theSecurityGenerator.reSeedRandom();
+            SecurityGenerator myGenerator = mySecure.getSecurityGenerator();
+            myGenerator.reSeedRandom();
 
             /* Create a clone of the password hash */
             PasswordHash myHash = mySecure.clonePasswordHash(myData.getPasswordHash());
@@ -373,15 +320,8 @@ public class ControlKey
             /* Store the password Hash */
             setValuePasswordHash(myHash);
 
-            /* Create the DataKey Map */
-            theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
-
-            /* Create the CipherSet */
-            theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
-
-            /* Allocate the DataKeys */
-            allocateDataKeys(myData);
+            /* Allocate the DataKeySets */
+            allocateDataKeySets(myData);
 
             /* Catch Exceptions */
         } catch (JOceanusException e) {
@@ -405,43 +345,26 @@ public class ControlKey
     }
 
     /**
-     * Allocate a new set of DataKeys.
+     * Allocate a new DataKeySet.
      * @param pData the DataSet
      * @throws JOceanusException on error
      */
-    private void allocateDataKeys(final DataSet<?, ?> pData) throws JOceanusException {
-        /* Access the DataKey List */
-        DataKeyList myKeys = pData.getDataKeys();
+    private void allocateDataKeySets(final DataSet<?, ?> pData) throws JOceanusException {
+        /* Access the DataKeySet List */
+        DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
 
-        /* Loop through the SymKeyType values */
-        for (SymKeyType myType : SymKeyType.values()) {
-            /* Create a new DataKey for this ControlKey */
-            DataKey myKey = myKeys.createNewKey(this, myType);
-            myKey.setNewVersion();
-
-            /* Store the DataKey into the map */
-            theMap.put(myType, myKey);
-
-            /* Declare the Cipher */
-            theCipherSet.addCipher(myKey.getCipher());
-        }
+        /* Allocate the DataKeySet */
+        theDataKeySet = new DataKeySet(mySets, this);
+        mySets.add(theDataKeySet);
     }
 
     /**
      * Delete the old set of ControlKey and DataKeys.
      */
     private void deleteControlSet() {
-        /* Loop through the SymKeyType values */
-        for (SymKeyType myType : SymKeyType.values()) {
-            /* Access the Data Key */
-            DataKey myKey = theMap.get(myType);
-
-            /* Mark as deleted */
-            if (myKey != null) {
-                myKey.setDeleted(true);
-            }
-        }
+        /* Delete the DataKeySet */
+        theDataKeySet.deleteDataKeySet();
 
         /* Mark this control key as deleted */
         setDeleted(true);
@@ -459,31 +382,20 @@ public class ControlKey
         /* Update the password hash */
         setValuePasswordHash(pHash);
 
-        /* Loop through the SymKeyType values */
-        for (SymKeyType myType : SymKeyType.values()) {
-            /* Access the Data Key */
-            DataKey myKey = theMap.get(myType);
-
-            /* Update the password hash */
-            if (myKey != null) {
-                myKey.updatePasswordHash();
-            }
-        }
+        /* Update the hash for the KeySet */
+        theDataKeySet.updatePasswordHash(pHash);
 
         /* Check for changes */
         checkForHistory();
     }
 
     /**
-     * Register DataKey.
-     * @param pKey the DataKey to register
+     * Register DataKeySet.
+     * @param pKeySet the DataKeySet to register
      */
-    protected void registerDataKey(final DataKey pKey) {
+    protected void registerDataKeySet(final DataKeySet pKeySet) {
         /* Store the DataKey into the map */
-        theMap.put(pKey.getKeyType(), pKey);
-
-        /* Declare the Cipher */
-        theCipherSet.addCipher(pKey.getCipher());
+        theDataKeySet = pKeySet;
     }
 
     /**
@@ -547,11 +459,6 @@ public class ControlKey
             ControlKeyList myList = new ControlKeyList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public ControlKeyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (ControlKeyList) super.cloneList(pDataSet);
         }
 
         @Override
@@ -643,7 +550,7 @@ public class ControlKey
 
             /* If we have an existing security key */
             if (myDatabaseKey != null) {
-                /* Clone the Control Key and its DataKeys */
+                /* Clone the Control Key and its DataKeySets */
                 myKey = cloneControlKey(myDatabaseKey);
 
                 /* else create a new security set */
@@ -677,7 +584,7 @@ public class ControlKey
         }
 
         /**
-         * Clone Security from a DataBase.
+         * Clone ControlKey from dataBase.
          * @param pControlKey the ControlKey to clone
          * @return the new control key
          * @throws JOceanusException on error
@@ -693,22 +600,10 @@ public class ControlKey
 
             /* Access the DataKey List */
             DataSet<?, ?> myData = getDataSet();
-            DataKeyList myKeys = myData.getDataKeys();
+            DataKeySetList myKeySets = myData.getDataKeySets();
 
-            /* Loop through the SymKeyType values */
-            for (SymKeyType myType : SymKeyType.values()) {
-                /* Access the source Data key */
-                DataKey mySrcKey = pControlKey.theMap.get(myType);
-
-                /* Create a new DataKey for this ControlKey */
-                DataKey myKey = myKeys.cloneItem(myControl, mySrcKey);
-
-                /* Store the DataKey into the map */
-                myControl.theMap.put(myType, myKey);
-
-                /* Declare the Cipher */
-                myControl.theCipherSet.addCipher(myKey.getCipher());
-            }
+            /* Create a new DataKeySet for this ControlKey */
+            myControl.theDataKeySet = myKeySets.cloneDataKeySet(myControl, pControlKey.theDataKeySet);
 
             /* return the cloned key */
             return myControl;

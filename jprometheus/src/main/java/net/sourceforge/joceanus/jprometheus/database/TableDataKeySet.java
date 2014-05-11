@@ -23,39 +23,37 @@
 package net.sourceforge.joceanus.jprometheus.database;
 
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jprometheus.data.DataKey;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * Database table class for DataKey.
+ * Database table class for ControlKey.
  */
-public class TableDataKeys
-        extends DatabaseTable<DataKey, CryptographyDataType> {
+public class TableDataKeySet
+        extends DatabaseTable<DataKeySet, CryptographyDataType> {
     /**
-     * The name of the Static table.
+     * The name of the DataKeySet table.
      */
-    protected static final String TABLE_NAME = DataKey.LIST_NAME;
+    protected static final String TABLE_NAME = DataKeySet.LIST_NAME;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableDataKeys(final Database<?> pDatabase) {
+    protected TableDataKeySet(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addReferenceColumn(DataKey.FIELD_KEYSET, TableDataKeySet.TABLE_NAME);
-        myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
-        myTableDef.addBinaryColumn(DataKey.FIELD_KEYDEF, DataKey.KEYLEN);
+        myTableDef.addReferenceColumn(DataKeySet.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        setList(pData.getDataKeys());
+        setList(pData.getDataKeySets());
     }
 
     @Override
@@ -64,26 +62,20 @@ public class TableDataKeys
         TableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
-        myValues.addValue(DataKey.FIELD_KEYSET, myTableDef.getIntegerValue(DataKey.FIELD_KEYSET));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE));
-        myValues.addValue(DataKey.FIELD_KEYDEF, myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF));
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
+        myValues.addValue(DataKeySet.FIELD_CONTROLKEY, myTableDef.getIntegerValue(DataKeySet.FIELD_CONTROLKEY));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void setFieldValue(final DataKey pItem,
+    protected void setFieldValue(final DataKeySet pItem,
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (DataKey.FIELD_KEYSET.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
-        } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getKeyTypeId());
-        } else if (DataKey.FIELD_KEYDEF.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
+        if (DataKeySet.FIELD_CONTROLKEY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
         } else {
             super.setFieldValue(pItem, iField);
         }

@@ -620,7 +620,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public AssetBase(final AssetBaseList<T> pList) {
         super(pList, 0);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
     }
 
     @Override

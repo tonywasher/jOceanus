@@ -716,7 +716,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     protected TransactionBase(final TransactionBaseList<T> pList) {
         super(pList, 0);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
     }
 
     /**

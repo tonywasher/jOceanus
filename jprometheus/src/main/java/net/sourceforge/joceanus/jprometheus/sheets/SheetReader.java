@@ -266,6 +266,7 @@ public abstract class SheetReader<T extends DataSet<T, ?>> {
 
         /* Add security details */
         theSheets.add(new SheetControlKey(this));
+        theSheets.add(new SheetDataKeySet(this));
         theSheets.add(new SheetDataKey(this));
         theSheets.add(new SheetControlData(this));
 

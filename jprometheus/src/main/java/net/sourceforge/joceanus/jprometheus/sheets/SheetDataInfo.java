@@ -37,7 +37,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>, E extends
     /**
      * InfoType column.
      */
-    private static final int COL_INFOTYPE = COL_CONTROLID + 1;
+    private static final int COL_INFOTYPE = COL_KEYSETID + 1;
 
     /**
      * Owner column.

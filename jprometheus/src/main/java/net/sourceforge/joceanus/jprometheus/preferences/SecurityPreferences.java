@@ -68,6 +68,11 @@ public class SecurityPreferences
     public static final String NAME_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
+     * Registry name for NumActiveKeySets.
+     */
+    public static final String NAME_ACTIVE_KEYSETS = "NumActiveKeySets";
+
+    /**
      * Display name for Security Provider.
      */
     private static final String DISPLAY_PROVIDER = "Security Provider";
@@ -98,6 +103,11 @@ public class SecurityPreferences
     private static final String DISPLAY_SECURITY_PHRASE = "SecurityPhrase";
 
     /**
+     * Display name for NumActiveKeySets.
+     */
+    private static final String DISPLAY_ACTIVE_KEYSETS = "Number of Active KeySets";
+
+    /**
      * Default Security Provider.
      */
     private static final SecurityProvider DEFAULT_PROVIDER = SecurityParameters.DEFAULT_PROVIDER;
@@ -126,6 +136,11 @@ public class SecurityPreferences
      * Default Security Phrase.
      */
     private static final String DEFAULT_SECURITY_PHRASE = SecurityParameters.DEFAULT_SECURITY_PHRASE;
+
+    /**
+     * Default Number of Active KeySets.
+     */
+    private static final int DEFAULT_ACTIVE_KEYSETS = SecurityParameters.DEFAULT_ACTIVE_KEYSETS;
 
     /**
      * Constructor.
@@ -164,6 +179,7 @@ public class SecurityPreferences
         defineIntegerPreference(NAME_CIPHER_STEPS, DEFAULT_CIPHER_STEPS);
         defineIntegerPreference(NAME_HASH_ITERATIONS, DEFAULT_HASH_ITERATIONS);
         defineStringPreference(NAME_SECURITY_PHRASE, DEFAULT_SECURITY_PHRASE);
+        defineIntegerPreference(NAME_ACTIVE_KEYSETS, DEFAULT_ACTIVE_KEYSETS);
     }
 
     @Override
@@ -187,6 +203,9 @@ public class SecurityPreferences
         if (pName.equals(NAME_SECURITY_PHRASE)) {
             return DISPLAY_SECURITY_PHRASE;
         }
+        if (pName.equals(NAME_ACTIVE_KEYSETS)) {
+            return DISPLAY_ACTIVE_KEYSETS;
+        }
         return null;
     }
 
@@ -203,6 +222,7 @@ public class SecurityPreferences
         myParms.setNumCipherSteps(getIntegerValue(NAME_CIPHER_STEPS));
         myParms.setNumIterations(getIntegerValue(NAME_HASH_ITERATIONS));
         myParms.setSecurityPhrase(getStringValue(NAME_SECURITY_PHRASE));
+        myParms.setNumActiveKeySets(getIntegerValue(NAME_ACTIVE_KEYSETS));
 
         /* return the parameters */
         return myParms;

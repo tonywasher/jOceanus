@@ -57,7 +57,7 @@ public class SheetTransaction
     /**
      * Date column.
      */
-    private static final int COL_DATE = COL_CONTROLID + 1;
+    private static final int COL_DATE = COL_KEYSETID + 1;
 
     /**
      * Pair column.

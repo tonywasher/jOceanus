@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -118,7 +117,6 @@ public class TaxYearInfo
                           final TaxYearInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
-        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -132,7 +130,7 @@ public class TaxYearInfo
                         final TaxYearInfoType pType) {
         /* Initialise the item */
         super(pList);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -311,11 +309,6 @@ public class TaxYearInfo
             TaxInfoList myList = new TaxInfoList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public TaxInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TaxInfoList) super.cloneList(pDataSet);
         }
 
         @Override

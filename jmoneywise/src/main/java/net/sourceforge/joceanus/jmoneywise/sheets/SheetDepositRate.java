@@ -51,7 +51,7 @@ public class SheetDepositRate
     /**
      * Deposit column.
      */
-    private static final int COL_DEPOSIT = COL_CONTROLID + 1;
+    private static final int COL_DEPOSIT = COL_KEYSETID + 1;
 
     /**
      * Rate column.

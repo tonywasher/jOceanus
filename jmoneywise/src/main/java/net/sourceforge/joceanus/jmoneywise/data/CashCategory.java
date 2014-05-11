@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -336,11 +335,6 @@ public class CashCategory
             CashCategoryList myList = new CashCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public CashCategoryList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (CashCategoryList) super.cloneList(pDataSet);
         }
 
         /**

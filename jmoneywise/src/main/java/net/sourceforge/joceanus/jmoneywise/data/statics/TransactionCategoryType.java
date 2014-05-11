@@ -177,11 +177,6 @@ public class TransactionCategoryType
             return myList;
         }
 
-        @Override
-        public TransactionCategoryTypeList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TransactionCategoryTypeList) super.cloneList(pDataSet);
-        }
-
         /**
          * Add a new item to the list.
          * @param pItem item to be added

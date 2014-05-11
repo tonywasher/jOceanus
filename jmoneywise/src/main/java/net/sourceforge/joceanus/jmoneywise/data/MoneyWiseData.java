@@ -594,6 +594,9 @@ public class MoneyWiseData
         /* Build an empty DataSet */
         MoneyWiseData myExtract = new MoneyWiseData(this);
 
+        /* Create empty clone lists */
+        myExtract.buildEmptyCloneSet(this);
+
         /* Obtain underlying updates */
         myExtract.deriveCloneSet(this);
 

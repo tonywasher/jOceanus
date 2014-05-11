@@ -38,7 +38,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?, E>, E extends E
     /**
      * Enabled column.
      */
-    private static final int COL_ENABLED = COL_CONTROLID + 1;
+    private static final int COL_ENABLED = COL_KEYSETID + 1;
 
     /**
      * Order column.

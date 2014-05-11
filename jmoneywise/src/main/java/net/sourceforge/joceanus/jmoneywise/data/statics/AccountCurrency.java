@@ -341,11 +341,6 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrencyList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (AccountCurrencyList) super.cloneList(pDataSet);
-        }
-
-        @Override
         public AccountCurrency addCopyItem(final DataItem<?> pItem) {
             /* Can only clone an AccountCurrency */
             if (!(pItem instanceof AccountCurrency)) {

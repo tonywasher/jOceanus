@@ -22,95 +22,81 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.sheets;
 
-import net.sourceforge.joceanus.jprometheus.data.DataKey;
-import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
 /**
- * SheetDataItem extension for DataKey.
+ * SheetDataItem extension for DataKeySet.
  * @author Tony Washer
  */
-public class SheetDataKey
-        extends SheetDataItem<DataKey, CryptographyDataType> {
+public class SheetDataKeySet
+        extends SheetDataItem<DataKeySet, CryptographyDataType> {
     /**
-     * SheetName for Keys.
+     * SheetName for KeySets.
      */
-    private static final String SHEET_NAME = DataKey.class.getSimpleName();
+    private static final String SHEET_NAME = DataKeySet.class.getSimpleName();
 
     /**
-     * KeySetId column.
+     * ControlId column.
      */
-    private static final int COL_KEYSETID = COL_ID + 1;
+    private static final int COL_CONTROL = COL_ID + 1;
 
     /**
-     * KeyType column.
+     * DataKeySet data list.
      */
-    private static final int COL_KEYTYPE = COL_KEYSETID + 1;
-
-    /**
-     * KeyData column.
-     */
-    private static final int COL_KEYDATA = COL_KEYTYPE + 1;
-
-    /**
-     * DataKey list.
-     */
-    private DataKeyList theList = null;
+    private DataKeySetList theList = null;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetDataKey(final SheetReader<?> pReader) {
+    protected SheetDataKeySet(final SheetReader<?> pReader) {
         /* Call super constructor */
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
         DataSet<?, ?> myData = pReader.getData();
-        theList = myData.getDataKeys();
+        theList = myData.getDataKeySets();
         setDataList(theList);
     }
 
     /**
      * Constructor for creating a spreadsheet.
-     * @param pWriter the spreadsheet writer
+     * @param pWriter the Spreadsheet writer
      */
-    protected SheetDataKey(final SheetWriter<?> pWriter) {
+    protected SheetDataKeySet(final SheetWriter<?> pWriter) {
         /* Call super constructor */
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        theList = pWriter.getData().getDataKeys();
+        theList = pWriter.getData().getDataKeySets();
         setDataList(theList);
     }
 
     @Override
     protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
-        myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
-        myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
+        DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
+        myValues.addValue(DataKeySet.FIELD_CONTROLKEY, loadInteger(COL_CONTROL));
 
         /* Return the values */
         return myValues;
     }
 
     @Override
-    protected void insertSecureItem(final DataKey pItem) throws JOceanusException {
+    protected void insertSecureItem(final DataKeySet pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
-        writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
-        writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
+        writeInteger(COL_CONTROL, pItem.getControlKeyId());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_KEYDATA;
+        return COL_CONTROL;
     }
 }

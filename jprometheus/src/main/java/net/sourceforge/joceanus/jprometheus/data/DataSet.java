@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jprometheus.data.ControlData.ControlDataList;
 import net.sourceforge.joceanus.jprometheus.data.ControlKey.ControlKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
+import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem.EncryptedList;
 import net.sourceforge.joceanus.jprometheus.preferences.DataListPreferences;
@@ -97,6 +98,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.CONTROLKEY.getListName());
 
     /**
+     * DataKeySets Field Id.
+     */
+    public static final JDataField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(CryptographyDataType.DATAKEYSET.getListName());
+
+    /**
      * DataKeys Field Id.
      */
     public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(CryptographyDataType.DATAKEY.getListName());
@@ -135,6 +141,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                              ? JDataFieldValue.SKIP
                                              : theControlKeys;
         }
+        if (FIELD_DATAKEYSETS.equals(pField)) {
+            return (theDataKeySets.isEmpty())
+                                             ? JDataFieldValue.SKIP
+                                             : theDataKeySets;
+        }
         if (FIELD_DATAKEYS.equals(pField)) {
             return (theDataKeys.isEmpty())
                                           ? JDataFieldValue.SKIP
@@ -167,6 +178,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * ControlKeys.
      */
     private ControlKeyList theControlKeys = null;
+
+    /**
+     * DataKeySets.
+     */
+    private DataKeySetList theDataKeySets = null;
 
     /**
      * DataKeys.
@@ -235,6 +251,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public ControlKeyList getControlKeys() {
         return theControlKeys;
+    }
+
+    /**
+     * Get DataKeySets.
+     * @return the dataKeySets
+     */
+    public DataKeySetList getDataKeySets() {
+        return theDataKeySets;
     }
 
     /**
@@ -332,6 +356,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);
+        theDataKeySets = new DataKeySetList(this);
         theDataKeys = new DataKeyList(this);
         theControlData = new ControlDataList(this);
 
@@ -371,15 +396,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public abstract T deriveCloneSet() throws JOceanusException;
 
     /**
-     * Construct a Clone for a DataSet.
+     * Build an empty clone dataSet.
      * @param pSource the source DataSet
      * @throws JOceanusException on error
      */
-    protected void deriveCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
+    protected void buildEmptyCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
         /* Clone the Security items */
-        theControlKeys = pSource.getControlKeys().cloneList(this);
-        theDataKeys = pSource.getDataKeys().cloneList(this);
-        theControlData = pSource.getControlData().cloneList(this);
+        theControlKeys = pSource.getControlKeys().getEmptyList(ListStyle.CLONE);
+        theDataKeySets = pSource.getDataKeySets().getEmptyList(ListStyle.CLONE);
+        theDataKeys = pSource.getDataKeys().getEmptyList(ListStyle.CLONE);
+        theControlData = pSource.getControlData().getEmptyList(ListStyle.CLONE);
 
         /* Loop through the source lists */
         Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
@@ -390,8 +416,38 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             E myType = myEntry.getKey();
             DataList<?, E> myList = myEntry.getValue();
 
-            /* Create the cloned list */
-            addList(myType, myList.cloneList(this));
+            /* Create the empty cloned list */
+            addList(myType, myList.getEmptyList(ListStyle.CLONE));
+        }
+    }
+
+    /**
+     * Construct a Clone for a DataSet.
+     * @param pSource the source DataSet
+     * @throws JOceanusException on error
+     */
+    protected void deriveCloneSet(final DataSet<T, E> pSource) throws JOceanusException {
+        /* Clone the Security items */
+        theControlKeys.cloneList(this, pSource.getControlKeys());
+        theDataKeySets.cloneList(this, pSource.getDataKeySets());
+        theDataKeys.cloneList(this, pSource.getDataKeys());
+        theControlData.cloneList(this, pSource.getControlData());
+
+        /* Obtain listMaps */
+        Map<E, DataList<?, E>> myOldMap = pSource.getListMap();
+
+        /* Loop through the new lists */
+        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
+        while (myIterator.hasNext()) {
+            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+
+            /* Access components */
+            E myType = myEntry.getKey();
+            DataList<?, E> myNew = myEntry.getValue();
+            DataList<?, E> myOld = myOldMap.get(myType);
+
+            /* Clone the list */
+            myNew.cloneList(this, myOld);
         }
     }
 
@@ -410,6 +466,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     protected void deriveUpdateSet(final T pSource) throws JOceanusException {
         /* Build the security extract */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
+        theDataKeySets = pSource.getDataKeySets().deriveList(ListStyle.UPDATE);
         theDataKeys = pSource.getDataKeys().deriveList(ListStyle.UPDATE);
         theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
 
@@ -449,6 +506,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                      final T pOld) throws JOceanusException {
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
+        theDataKeySets = pNew.getDataKeySets().deriveDifferences(this, pOld.getDataKeySets());
         theDataKeys = pNew.getDataKeys().deriveDifferences(this, pOld.getDataKeys());
         theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
 
@@ -478,6 +536,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void reBase(final T pOld) throws JOceanusException {
         /* ReBase the security items */
         theControlKeys.reBase(pOld.getControlKeys());
+        theDataKeySets.reBase(pOld.getDataKeySets());
         theDataKeys.reBase(pOld.getDataKeys());
         theControlData.reBase(pOld.getControlData());
 
@@ -580,6 +639,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Set the security lists */
         theControlKeys.setGeneration(pGeneration);
+        theDataKeySets.setGeneration(pGeneration);
         theDataKeys.setGeneration(pGeneration);
         theControlData.setGeneration(pGeneration);
 
@@ -603,6 +663,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Set the security lists */
         theControlKeys.setVersion(pVersion);
+        theDataKeySets.setVersion(pVersion);
         theDataKeys.setVersion(pVersion);
         theControlData.setVersion(pVersion);
 
@@ -626,6 +687,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* rewind the security lists */
         theControlKeys.rewindToVersion(pVersion);
+        theDataKeySets.rewindToVersion(pVersion);
         theDataKeys.rewindToVersion(pVersion);
         theControlData.rewindToVersion(pVersion);
 
@@ -674,6 +736,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         if (!theControlKeys.equals(myThat.getControlKeys())) {
             return false;
         }
+        if (!theDataKeySets.equals(myThat.getDataKeySets())) {
+            return false;
+        }
         if (!theDataKeys.equals(myThat.getDataKeys())) {
             return false;
         }
@@ -694,6 +759,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public int hashCode() {
         /* Build initial hashCode */
         int myHashCode = theControlKeys.hashCode();
+        myHashCode *= HASH_PRIME;
+        myHashCode += theDataKeySets.hashCode();
         myHashCode *= HASH_PRIME;
         myHashCode += theDataKeys.hashCode();
         myHashCode *= HASH_PRIME;
@@ -719,7 +786,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean isEmpty() {
         /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty() || !theDataKeys.isEmpty() || !theControlData.isEmpty()) {
+        if (!theControlKeys.isEmpty() || !theControlData.isEmpty()) {
+            return false;
+        }
+        if (!theDataKeySets.isEmpty() || !theDataKeys.isEmpty()) {
             return false;
         }
 
@@ -744,7 +814,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        if ((theControlKeys.hasUpdates()) || (theDataKeys.hasUpdates()) || (theControlData.hasUpdates())) {
+        if (theControlKeys.hasUpdates() || theControlData.hasUpdates()) {
+            return true;
+        }
+        if (theDataKeySets.hasUpdates() || theDataKeys.hasUpdates()) {
             return true;
         }
 
@@ -996,6 +1069,11 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
          * ControlKey.
          */
         CONTROLKEY,
+
+        /**
+         * DataKey.
+         */
+        DATAKEYSET,
 
         /**
          * DataKey.

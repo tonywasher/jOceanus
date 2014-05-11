@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
@@ -687,11 +686,6 @@ public final class ExchangeRate
             ExchangeRateList myList = new ExchangeRateList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public ExchangeRateList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (ExchangeRateList) super.cloneList(pDataSet);
         }
 
         /**

@@ -31,7 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoType;
 import net.sourceforge.joceanus.jprometheus.data.DataInfo;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 
@@ -109,7 +108,6 @@ public class PayeeInfo
                         final PayeeInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
-        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -123,7 +121,7 @@ public class PayeeInfo
                       final AccountInfoType pType) {
         /* Initialise the item */
         super(pList);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -302,11 +300,6 @@ public class PayeeInfo
             PayeeInfoList myList = new PayeeInfoList(this);
             myList.setStyle(pStyle);
             return myList;
-        }
-
-        @Override
-        public PayeeInfoList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (PayeeInfoList) super.cloneList(pDataSet);
         }
 
         @Override

@@ -207,11 +207,6 @@ public class TaxBasis
             return myList;
         }
 
-        @Override
-        public TaxBasisList cloneList(final DataSet<?, ?> pDataSet) throws JOceanusException {
-            return (TaxBasisList) super.cloneList(pDataSet);
-        }
-
         /**
          * Add a new item to the list.
          * @param pItem item to be added

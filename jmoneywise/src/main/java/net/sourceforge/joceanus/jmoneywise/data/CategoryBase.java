@@ -465,7 +465,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public CategoryBase(final CategoryBaseList<T, S, C> pList) {
         super(pList, 0);
-        setControlKey(pList.getControlKey());
+        setNextDataKeySet();
     }
 
     @Override
