@@ -49,6 +49,7 @@ public class TableDataKeySet
 
         /* Define the columns */
         myTableDef.addReferenceColumn(DataKeySet.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
+        myTableDef.addDateColumn(DataKeySet.FIELD_CREATEDATE);
     }
 
     @Override
@@ -64,6 +65,7 @@ public class TableDataKeySet
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, myTableDef.getIntegerValue(DataKeySet.FIELD_CONTROLKEY));
+        myValues.addValue(DataKeySet.FIELD_CREATEDATE, myTableDef.getDateValue(DataKeySet.FIELD_CREATEDATE));
 
         /* Return the values */
         return myValues;
@@ -76,6 +78,8 @@ public class TableDataKeySet
         TableDefinition myTableDef = getTableDef();
         if (DataKeySet.FIELD_CONTROLKEY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
+        } else if (DataKeySet.FIELD_CREATEDATE.equals(iField)) {
+            myTableDef.setDateValue(iField, pItem.getCreationDate());
         } else {
             super.setFieldValue(pItem, iField);
         }

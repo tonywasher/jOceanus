@@ -46,6 +46,11 @@ public class SheetDataKeySet
     private static final int COL_CONTROL = COL_ID + 1;
 
     /**
+     * CreationDate column.
+     */
+    private static final int COL_CREATEDATE = COL_CONTROL + 1;
+
+    /**
      * DataKeySet data list.
      */
     private DataKeySetList theList = null;
@@ -82,6 +87,7 @@ public class SheetDataKeySet
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(DataKeySet.OBJECT_NAME);
         myValues.addValue(DataKeySet.FIELD_CONTROLKEY, loadInteger(COL_CONTROL));
+        myValues.addValue(DataKeySet.FIELD_CREATEDATE, loadDate(COL_CREATEDATE));
 
         /* Return the values */
         return myValues;
@@ -92,11 +98,12 @@ public class SheetDataKeySet
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_CONTROL, pItem.getControlKeyId());
+        writeDate(COL_CREATEDATE, pItem.getCreationDate());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_CONTROL;
+        return COL_CREATEDATE;
     }
 }

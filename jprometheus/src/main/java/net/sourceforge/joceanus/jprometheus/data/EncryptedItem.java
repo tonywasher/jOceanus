@@ -410,14 +410,16 @@ public abstract class EncryptedItem<E extends Enum<E>>
                 return false;
             }
 
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
             /* Loop through the items */
+            Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                /* Ensure encryption of the item */
                 T myCurr = myIterator.next();
-                myCurr.updateSecurity(pControl.getNextDataKeySet());
+
+                /* Only update if we are using the wrong controlKey */
+                if (!pControl.equals(myCurr.getDataKeySet().getControlKey())) {
+                    /* Update the security */
+                    myCurr.updateSecurity(pControl.getNextDataKeySet());
+                }
 
                 /* Report the progress */
                 myCount++;

@@ -29,9 +29,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.HashKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.PasswordHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecureManager;
 import net.sourceforge.joceanus.jgordianknot.crypto.SecurityGenerator;
-import net.sourceforge.joceanus.jmetis.viewer.EncryptionGenerator;
+import net.sourceforge.joceanus.jmetis.list.OrderedIdList;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataContents;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKeySet.DataKeySetList;
@@ -104,7 +106,7 @@ public final class ControlKey
     /**
      * The DataKeySet.
      */
-    private DataKeySet theDataKeySet = null;
+    private DataKeySetResource theDataKeySet = new DataKeySetResource();
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -166,14 +168,6 @@ public final class ControlKey
     }
 
     /**
-     * Get the Encryption Field Generator.
-     * @return the field generator
-     */
-    public EncryptionGenerator getFieldGenerator() {
-        return theDataKeySet.getFieldGenerator();
-    }
-
-    /**
      * Set the PasswordHash.
      * @param pValue the PasswordHash
      */
@@ -218,7 +212,7 @@ public final class ControlKey
      * @return the next dataKeySet
      */
     protected DataKeySet getNextDataKeySet() {
-        return theDataKeySet;
+        return theDataKeySet.getNextDataKeySet();
     }
 
     /**
@@ -354,9 +348,18 @@ public final class ControlKey
         DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
 
-        /* Allocate the DataKeySet */
-        theDataKeySet = new DataKeySet(mySets, this);
-        mySets.add(theDataKeySet);
+        SecureManager mySecure = pData.getSecurity();
+        int myNumKeySets = mySecure.getSecurityGenerator().getNumActiveKeySets();
+
+        /* Loop to create sufficient DataKeySets */
+        for (int i = 0; i < myNumKeySets; i++) {
+            /* Allocate the DataKeySet */
+            DataKeySet mySet = new DataKeySet(mySets, this);
+            mySets.add(mySet);
+
+            /* Register the DataKeySet */
+            theDataKeySet.registerKeySet(mySet);
+        }
     }
 
     /**
@@ -364,7 +367,7 @@ public final class ControlKey
      */
     private void deleteControlSet() {
         /* Delete the DataKeySet */
-        theDataKeySet.deleteDataKeySet();
+        theDataKeySet.deleteDataKeySets();
 
         /* Mark this control key as deleted */
         setDeleted(true);
@@ -395,7 +398,7 @@ public final class ControlKey
      */
     protected void registerDataKeySet(final DataKeySet pKeySet) {
         /* Store the DataKey into the map */
-        theDataKeySet = pKeySet;
+        theDataKeySet.registerKeySet(pKeySet);
     }
 
     /**
@@ -603,10 +606,151 @@ public final class ControlKey
             DataKeySetList myKeySets = myData.getDataKeySets();
 
             /* Create a new DataKeySet for this ControlKey */
-            myControl.theDataKeySet = myKeySets.cloneDataKeySet(myControl, pControlKey.theDataKeySet);
+            DataKeySetResource mySource = pControlKey.theDataKeySet;
+            myControl.theDataKeySet = mySource.cloneDataKeySetResource(myControl, myKeySets);
 
             /* return the cloned key */
             return myControl;
+        }
+    }
+
+    /**
+     * DataKeySetResource.
+     */
+    private static final class DataKeySetResource
+            extends OrderedIdList<Integer, DataKeySet>
+            implements JDataContents {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataKeySetResource"));
+
+        /**
+         * Size Field Id.
+         */
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject() {
+            return getDataFields().getName() + "(" + size() + ")";
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            return JDataFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Iterator.
+         */
+        private Iterator<DataKeySet> theIterator;
+
+        /**
+         * Constructor.
+         */
+        private DataKeySetResource() {
+            super(DataKeySet.class);
+        }
+
+        /**
+         * Register the KeySet.
+         * @param pKeySet the KeySet to register
+         */
+        private void registerKeySet(final DataKeySet pKeySet) {
+            /* If this is first registration */
+            if (!contains(pKeySet)) {
+                /* Add the KeySet */
+                append(pKeySet);
+
+                /* Reset any iterator */
+                if (theIterator != null) {
+                    theIterator = iterator();
+                }
+            }
+        }
+
+        /**
+         * Get next DataKeySet.
+         * @return the next KeySet
+         */
+        private DataKeySet getNextDataKeySet() {
+            /* Handle empty list */
+            if (isEmpty()) {
+                return null;
+            }
+
+            /* Handle initialisation and wrapping */
+            if ((theIterator == null)
+                || (!theIterator.hasNext())) {
+                theIterator = iterator();
+            }
+
+            /* Return the next KeySet */
+            return theIterator.next();
+        }
+
+        /**
+         * Delete the KeySets.
+         */
+        private void deleteDataKeySets() {
+            /* Loop through the KeySets */
+            Iterator<DataKeySet> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                DataKeySet mySet = myIterator.next();
+
+                /* Delete the KeySet */
+                mySet.deleteDataKeySet();
+            }
+        }
+
+        /**
+         * Update the Password Hash.
+         * @param pHash the new password hash
+         * @throws JOceanusException on error
+         */
+        private void updatePasswordHash(final PasswordHash pHash) throws JOceanusException {
+            /* Loop through the KeySets */
+            Iterator<DataKeySet> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                DataKeySet mySet = myIterator.next();
+
+                /* Update the KeySet */
+                mySet.updatePasswordHash(pHash);
+            }
+        }
+
+        /**
+         * Clone KeySet from a DataBase.
+         * @param pControlKey the ControlKey to clone
+         * @param pKeySets the DataKeySetList
+         * @return the new DataKeySet
+         * @throws JOceanusException on error
+         */
+        private DataKeySetResource cloneDataKeySetResource(final ControlKey pControlKey,
+                                                           final DataKeySetList pKeySets) throws JOceanusException {
+            /* Create a new resource */
+            DataKeySetResource myResource = new DataKeySetResource();
+
+            /* Loop through the KeySets */
+            Iterator<DataKeySet> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                DataKeySet mySet = myIterator.next();
+
+                /* Create a new DataKeySet for this ControlKey */
+                DataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKey, mySet);
+                myResource.registerKeySet(myNewSet);
+            }
+
+            /* Return the resource */
+            return myResource;
         }
     }
 }

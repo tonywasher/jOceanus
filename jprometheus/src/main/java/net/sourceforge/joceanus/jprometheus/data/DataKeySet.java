@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jprometheus.JPrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.data.DataKey.DataKeyList;
 import net.sourceforge.joceanus.jprometheus.data.DataSet.CryptographyDataType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
@@ -79,6 +80,11 @@ public class DataKeySet
      * Field ID for ControlKey.
      */
     public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataControlKey"));
+
+    /**
+     * Field ID for CreationDate.
+     */
+    public static final JDataField FIELD_CREATEDATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCreateDate"));
 
     /**
      * Field ID for DataKeyMap.
@@ -149,12 +155,29 @@ public class DataKeySet
     }
 
     /**
+     * Get the CreationDate.
+     * @return the creationDate
+     */
+    public final JDateDay getCreationDate() {
+        return getCreationDate(getValueSet());
+    }
+
+    /**
      * Get the ControlKey.
      * @param pValueSet the valueSet
      * @return the control Key
      */
     public static ControlKey getControlKey(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CONTROLKEY, ControlKey.class);
+    }
+
+    /**
+     * Get the CreationDate.
+     * @param pValueSet the valueSet
+     * @return the creationDate
+     */
+    public static JDateDay getCreationDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CREATEDATE, JDateDay.class);
     }
 
     /**
@@ -179,6 +202,14 @@ public class DataKeySet
      */
     private void setValueControlKey(final Integer pId) {
         getValueSet().setValue(FIELD_CONTROLKEY, pId);
+    }
+
+    /**
+     * Set the CreationDate.
+     * @param pValue the creationDate
+     */
+    private void setValueCreationDate(final JDateDay pValue) {
+        getValueSet().setValue(FIELD_CREATEDATE, pValue);
     }
 
     /**
@@ -260,6 +291,14 @@ public class DataKeySet
 
             /* Register the DataKeySet */
             getControlKey().registerDataKeySet(this);
+
+            /* Store the CreationDate */
+            myValue = pValues.getValue(FIELD_CREATEDATE);
+            if (!(myValue instanceof JDateDay)) {
+                myValue = new JDateDay();
+            }
+            setValueCreationDate((JDateDay) myValue);
+
         } else {
             /* Pass on exception */
             throw new JPrometheusDataException(this, ERROR_CREATEITEM);
@@ -296,6 +335,9 @@ public class DataKeySet
             /* Create the CipherSet */
             theCipherSet = new CipherSet(theSecurityGenerator, getHashKey());
             theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
+
+            /* Set the creationDate */
+            setValueCreationDate(new JDateDay());
 
             /* Allocate the DataKeys */
             allocateDataKeys(myData);
@@ -528,6 +570,7 @@ public class DataKeySet
             DataValues<CryptographyDataType> myValues = new DataValues<CryptographyDataType>(DataKeySet.OBJECT_NAME);
             myValues.addValue(DataKeySet.FIELD_ID, pKeySet.getId());
             myValues.addValue(DataKeySet.FIELD_CONTROLKEY, pControlKey.getId());
+            myValues.addValue(DataKeySet.FIELD_CREATEDATE, pKeySet.getCreationDate());
 
             /* Clone the dataKeySet */
             DataKeySet myKeySet = addValuesItem(myValues);

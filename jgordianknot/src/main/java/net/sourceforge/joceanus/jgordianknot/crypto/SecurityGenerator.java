@@ -78,6 +78,11 @@ public class SecurityGenerator {
     private final int theIterations;
 
     /**
+     * The Number of Active KeySets.
+     */
+    private final int theNumActiveKeySets;
+
+    /**
      * The Security phrase.
      */
     private final byte[] theSecurityPhrase;
@@ -164,6 +169,14 @@ public class SecurityGenerator {
     }
 
     /**
+     * Access the number of Active KeySets.
+     * @return the number of active KeySets
+     */
+    public int getNumActiveKeySets() {
+        return theNumActiveKeySets;
+    }
+
+    /**
      * Do we use restricted security.
      * @return true/false
      */
@@ -193,8 +206,8 @@ public class SecurityGenerator {
      */
     protected int getKeyLen() {
         return useRestricted
-                ? SMALL_KEYLEN
-                : BIG_KEYLEN;
+                            ? SMALL_KEYLEN
+                            : BIG_KEYLEN;
     }
 
     /**
@@ -229,12 +242,13 @@ public class SecurityGenerator {
         useLongHash = pParameters.useLongHash();
         theCipherSteps = pParameters.getNumCipherSteps();
         theIterations = pParameters.getNumHashIterations();
+        theNumActiveKeySets = pParameters.getNumActiveKeySets();
 
         /* Store security phrase */
         String myPhrase = pParameters.getSecurityPhrase();
         theSecurityPhrase = (myPhrase == null)
-                ? null
-                : DataConverter.stringToByteArray(myPhrase);
+                                              ? null
+                                              : DataConverter.stringToByteArray(myPhrase);
 
         /* Create the random builder */
         theRandomBuilder = new SP800SecureRandomBuilder();
