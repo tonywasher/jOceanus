@@ -69,6 +69,7 @@
     <JGitVersion>3.3.2.201404171909-r</JGitVersion>
     <JiraRestVersion>2.0.0-m27</JiraRestVersion>
     <ApacheMavenVersion>3.2.1</ApacheMavenVersion>
+    <MySQLVersion>5.1.30</MySQLVersion>
     <PostGreSQLVersion>9.2-1003-jdbc4</PostGreSQLVersion>
     <ApachePOIVersion>3.10-FINAL</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>

@@ -66,6 +66,16 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  */
 public class TableDefinition {
     /**
+     * The index prefix.
+     */
+    private static final String PREFIX_INDEX = "idx_";
+
+    /**
+     * The quote string.
+     */
+    protected static final String QUOTE_STRING = "\"";
+
+    /**
      * The Buffer length.
      */
     private static final int BUFFER_LEN = 1000;
@@ -1061,9 +1071,9 @@ public class TableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create table ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1099,14 +1109,14 @@ public class TableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create index ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
-        myBuilder.append(JDBCDriver.PREFIX_INDEX);
+        myBuilder.append(QUOTE_STRING);
+        myBuilder.append(PREFIX_INDEX);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" on ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1119,9 +1129,9 @@ public class TableDefinition {
             if (!myFirst) {
                 myBuilder.append(", ");
             }
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                 myBuilder.append(" DESC");
             }
@@ -1138,7 +1148,28 @@ public class TableDefinition {
      * @return the SQL string
      */
     protected String getDropTableString() {
-        return theDriver.getDropTableCommand(theTableName);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        switch (theDriver) {
+            case SQLSERVER:
+                myBuilder.append("if exists (select * from sys.tables where name = '");
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(theTableName);
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append("') drop table ");
+                myBuilder.append(theTableName);
+                break;
+            case MYSQL:
+            case POSTGRESQL:
+            default:
+                myBuilder.append("drop table if exists ");
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(theTableName);
+                myBuilder.append(QUOTE_STRING);
+                break;
+        }
+
+        /* Return the command */
+        return myBuilder.toString();
     }
 
     /**
@@ -1147,12 +1178,38 @@ public class TableDefinition {
      */
     protected String getDropIndexString() {
         /* Return null if we are not indexed */
-        if (!isIndexed()) {
+        if (!isIndexed() || !theDriver.explicitDropIndex()) {
             return null;
         }
 
         /* Build the drop command */
-        return theDriver.getDropIndexCommand(theTableName);
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        switch (theDriver) {
+            case SQLSERVER:
+                myBuilder.append("if exists (select * from sys.indexes where name = '");
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
+                myBuilder.append(theTableName);
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append("') drop index ");
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
+                myBuilder.append(theTableName);
+                myBuilder.append(QUOTE_STRING);
+                break;
+            case MYSQL:
+            case POSTGRESQL:
+            default:
+                myBuilder.append("drop index if exists ");
+                myBuilder.append(QUOTE_STRING);
+                myBuilder.append(PREFIX_INDEX);
+                myBuilder.append(theTableName);
+                myBuilder.append(QUOTE_STRING);
+                break;
+        }
+
+        /* Return the command */
+        return myBuilder.toString();
     }
 
     /**
@@ -1178,17 +1235,17 @@ public class TableDefinition {
             if (sortOnReference) {
                 myBuilder.append("a.");
             }
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             myFirst = false;
         }
 
         /* Close the statement */
         myBuilder.append(" from ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         if (sortOnReference) {
             myBuilder.append(" a");
         }
@@ -1272,18 +1329,18 @@ public class TableDefinition {
                     /* Handle standard column with prefix */
                     myBuilder.append(pChar);
                     myBuilder.append(".");
-                    myBuilder.append(JDBCDriver.QUOTE_STRING);
+                    myBuilder.append(QUOTE_STRING);
                     myBuilder.append(myDef.getColumnName());
-                    myBuilder.append(JDBCDriver.QUOTE_STRING);
+                    myBuilder.append(QUOTE_STRING);
                     if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                         myBuilder.append(" DESC");
                     }
                 }
             } else {
                 /* Handle standard column */
-                myBuilder.append(JDBCDriver.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(myDef.getColumnName());
-                myBuilder.append(JDBCDriver.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                     myBuilder.append(" DESC");
                 }
@@ -1306,9 +1363,9 @@ public class TableDefinition {
 
         /* Build the initial insert */
         myBuilder.append("insert into ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1322,9 +1379,9 @@ public class TableDefinition {
                 myBuilder.append(", ");
                 myValues.append(", ");
             }
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
-            myBuilder.append(JDBCDriver.QUOTE_STRING);
+            myBuilder.append(QUOTE_STRING);
             myValues.append('?');
             myFirst = false;
         }
@@ -1346,9 +1403,9 @@ public class TableDefinition {
 
         /* Build the initial update */
         myBuilder.append("update ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" set ");
 
         /* Create the iterator */
@@ -1376,9 +1433,9 @@ public class TableDefinition {
                 if (!myFirst) {
                     myBuilder.append(", ");
                 }
-                myBuilder.append(JDBCDriver.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(myDef.getColumnName());
-                myBuilder.append(JDBCDriver.QUOTE_STRING);
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append("=?");
                 myFirst = false;
             }
@@ -1391,9 +1448,9 @@ public class TableDefinition {
 
         /* Close the statement and return it */
         myBuilder.append(" where ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(myId.getColumnName());
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1407,18 +1464,18 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" where ");
 
         /* Access the id definition */
         ColumnDefinition myId = theList.get(0);
 
         /* Build the rest of the command */
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(myId.getColumnName());
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1432,9 +1489,9 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         return myBuilder.toString();
     }
 
@@ -1447,9 +1504,9 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("select count(*) from ");
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
-        myBuilder.append(JDBCDriver.QUOTE_STRING);
+        myBuilder.append(QUOTE_STRING);
         return myBuilder.toString();
     }
 }

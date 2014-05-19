@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jprometheus.preferences;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jprometheus.database.ColumnDefinition.ColumnType;
-
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
  */
@@ -38,17 +36,12 @@ public enum JDBCDriver {
     /**
      * PostgreSQL.
      */
-    POSTGRESQL;
+    POSTGRESQL,
 
     /**
-     * The index prefix.
+     * PostgreSQL.
      */
-    public static final String PREFIX_INDEX = "idx_";
-
-    /**
-     * The quote string.
-     */
-    public static final String QUOTE_STRING = "\"";
+    MYSQL;
 
     /**
      * Resource Bundle.
@@ -85,6 +78,8 @@ public enum JDBCDriver {
         switch (this) {
             case SQLSERVER:
                 return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+            case MYSQL:
+                return "com.mysql.jdbc.Driver";
             case POSTGRESQL:
             default:
                 return "org.postgresql.Driver";
@@ -99,6 +94,7 @@ public enum JDBCDriver {
         switch (this) {
             case SQLSERVER:
                 return true;
+            case MYSQL:
             case POSTGRESQL:
             default:
                 return false;
@@ -113,6 +109,8 @@ public enum JDBCDriver {
         switch (this) {
             case SQLSERVER:
                 return "jdbc:sqlserver://";
+            case MYSQL:
+                return "jdbc:mysql://";
             case POSTGRESQL:
             default:
                 return "jdbc:postgresql://";
@@ -139,6 +137,7 @@ public enum JDBCDriver {
                 myBuilder.append(pPreferences.getStringValue(DatabasePreferences.NAME_DBNAME));
                 myBuilder.append(";integratedSecurity=true");
                 break;
+            case MYSQL:
             case POSTGRESQL:
             default:
                 /* Build the connection string */
@@ -160,11 +159,12 @@ public enum JDBCDriver {
      */
     public String getDatabaseType(final ColumnType pType) {
         boolean isSQLServer = this.equals(SQLSERVER);
+        boolean isPostgreSQL = this.equals(POSTGRESQL);
         switch (pType) {
             case BOOLEAN:
-                return (isSQLServer)
-                                    ? "bit"
-                                    : "boolean";
+                return isPostgreSQL
+                                    ? "boolean"
+                                    : "bit";
             case SHORT:
                 return "smallint";
             case INTEGER:
@@ -174,9 +174,9 @@ public enum JDBCDriver {
             case FLOAT:
                 return "real";
             case DOUBLE:
-                return (isSQLServer)
+                return isSQLServer
                                     ? "float"
-                                    : "double precision";
+                                    : isPostgreSQL ? "double precision" : "double";
             case DATE:
                 return "date";
             case MONEY:
@@ -188,76 +188,13 @@ public enum JDBCDriver {
                                     ? "decimal"
                                     : "numeric";
             case BINARY:
-                return (isSQLServer)
-                                    ? "varbinary"
-                                    : "bytea";
+                return (isPostgreSQL)
+                                    ? "bytea"
+                                    : "varbinary";
             case STRING:
             default:
                 return "varchar";
         }
-    }
-
-    /**
-     * Get Drop table command.
-     * @param pName the table name
-     * @return the command
-     */
-    public String getDropTableCommand(final String pName) {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        switch (this) {
-            case SQLSERVER:
-                myBuilder.append("if exists (select * from sys.tables where name = '");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(pName);
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append("') drop table ");
-                myBuilder.append(pName);
-                break;
-            case POSTGRESQL:
-            default:
-                myBuilder.append("drop table if exists ");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(pName);
-                myBuilder.append(QUOTE_STRING);
-                break;
-        }
-
-        /* Return the command */
-        return myBuilder.toString();
-    }
-
-    /**
-     * Get Drop index command.
-     * @param pName the table name
-     * @return the command
-     */
-    public String getDropIndexCommand(final String pName) {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        switch (this) {
-            case SQLSERVER:
-                myBuilder.append("if exists (select * from sys.indexes where name = '");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(pName);
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append("') drop index ");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(pName);
-                myBuilder.append(QUOTE_STRING);
-                break;
-            case POSTGRESQL:
-            default:
-                myBuilder.append("drop index if exists ");
-                myBuilder.append(QUOTE_STRING);
-                myBuilder.append(PREFIX_INDEX);
-                myBuilder.append(pName);
-                myBuilder.append(QUOTE_STRING);
-                break;
-        }
-
-        /* Return the command */
-        return myBuilder.toString();
     }
 
     /**
@@ -266,9 +203,25 @@ public enum JDBCDriver {
      */
     public boolean defineBinaryLength() {
         switch (this) {
+            case MYSQL:
             case SQLSERVER:
                 return true;
             case POSTGRESQL:
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Should we explicitly drop indexes?
+     * @return true/false
+     */
+    public boolean explicitDropIndex() {
+        switch (this) {
+            case POSTGRESQL:
+            case SQLSERVER:
+                return true;
+            case MYSQL:
             default:
                 return false;
         }

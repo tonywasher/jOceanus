@@ -381,7 +381,6 @@ public abstract class Database<T extends DataSet<T, ?>> {
      * @throws JOceanusException on error
      */
     public void purgeTables(final TaskControl<T> pTask) throws JOceanusException {
-
         /* Set the number of stages */
         if (!pTask.setNumStages(1)) {
             return;

@@ -699,14 +699,12 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
      * @throws JOceanusException on error
      */
     protected void dropTable() throws JOceanusException {
-        String myDrop;
-
         /* Protect the drop */
         try {
-            /* If the table has an index */
-            if (theTable.isIndexed()) {
+            /* If we should drop the index */
+            String myDrop = theTable.getDropIndexString();
+            if (myDrop != null) {
                 /* Execute the drop index statement */
-                myDrop = theTable.getDropIndexString();
                 executeStatement(myDrop);
             }
 
