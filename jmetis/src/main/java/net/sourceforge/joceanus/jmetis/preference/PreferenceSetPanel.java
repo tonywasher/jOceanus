@@ -28,6 +28,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -40,19 +41,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
-import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.BooleanPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.ColorPreference;
@@ -61,10 +61,15 @@ import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.EnumPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.IntegerPreference;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.PreferenceItem;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet.StringPreference;
+import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Preference Set panel.
@@ -469,8 +474,8 @@ public class PreferenceSetPanel
             @Override
             protected JComponent getLabel() {
                 return (theType == PreferenceType.STRING)
-                        ? super.getLabel()
-                        : theButton;
+                                                         ? super.getLabel()
+                                                         : theButton;
             }
 
             /**
@@ -884,14 +889,19 @@ public class PreferenceSetPanel
         private final class EnumField
                 extends PreferenceField {
             /**
-             * The underlying combo box field.
+             * The underlying JButton field.
              */
-            private final JComboBox<Enum<?>> theField;
+            private final JButton theField;
 
             /**
              * The preference as an EnumPreference.
              */
             private final EnumPreference<?> theEnum;
+
+            /**
+             * The PopUp Menu.
+             */
+            private final JScrollPopupMenu thePopUp;
 
             /**
              * Constructor.
@@ -900,22 +910,29 @@ public class PreferenceSetPanel
             private EnumField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theEnum = (EnumPreference<?>) pPreference;
-                theField = new JComboBox<Enum<?>>();
+                theField = new JButton(ArrowIcon.DOWN);
+                theField.setVerticalTextPosition(AbstractButton.CENTER);
+                theField.setHorizontalTextPosition(AbstractButton.LEFT);
+
+                /* Create the popUp Menu */
+                thePopUp = new JScrollPopupMenu();
 
                 /* For all values */
                 for (Enum<?> myEnum : theEnum.getValues()) {
-                    /* Add to the combo box */
-                    theField.addItem(myEnum);
+                    /* Create a new JMenuItem and add it to the popUp */
+                    PropertyAction myAction = new PropertyAction(myEnum);
+                    JMenuItem myItem = new JMenuItem(myAction);
+                    thePopUp.addMenuItem(myItem);
                 }
 
-                /* Add item listener */
-                theField.addItemListener(new PreferenceListener());
+                /* Add action listener */
+                theField.addActionListener(new PreferenceListener());
             }
 
             @Override
             protected void updateField() {
                 /* Update the field */
-                theField.setSelectedItem(theEnum.getValue());
+                theField.setText(theEnum.getValue().toString());
 
                 /* Set font and foreground */
                 theField.setForeground(theFieldMgr.getForeground(thePreferences, theEnum.getDataField()));
@@ -928,22 +945,55 @@ public class PreferenceSetPanel
             }
 
             /**
+             * Property action class.
+             */
+            private final class PropertyAction
+                    extends AbstractAction {
+                /**
+                 * Serial Id.
+                 */
+                private static final long serialVersionUID = 933279753961407388L;
+
+                /**
+                 * Value.
+                 */
+                private final Enum<?> theValue;
+
+                /**
+                 * Constructor.
+                 * @param pValue the value
+                 */
+                private PropertyAction(final Enum<?> pValue) {
+                    super(pValue.toString());
+                    theValue = pValue;
+                }
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    /* Set the new value of the preference */
+                    theEnum.setValue(theValue);
+
+                    /* Note if we have any changes */
+                    notifyChanges();
+                }
+            }
+
+            /**
              * PropertyListener class.
              */
             private final class PreferenceListener
-                    implements ItemListener {
+                    implements ActionListener {
 
                 @Override
-                public void itemStateChanged(final ItemEvent evt) {
+                public void actionPerformed(final ActionEvent evt) {
+                    /* Access source of the event */
                     Object o = evt.getSource();
-                    /* If this is our preference */
-                    if ((theField.equals(o))
-                        && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                        /* Set the new value of the preference */
-                        theEnum.setValue(evt.getItem());
 
-                        /* Note if we have any changes */
-                        notifyChanges();
+                    /* Handle button */
+                    if (theField.equals(o)) {
+                        /* Show the Category menu in the correct place */
+                        Rectangle myLoc = theField.getBounds();
+                        thePopUp.show(theField, 0, myLoc.height);
                     }
                 }
             }

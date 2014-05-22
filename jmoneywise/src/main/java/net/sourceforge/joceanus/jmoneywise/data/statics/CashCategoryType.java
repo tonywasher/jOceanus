@@ -248,30 +248,22 @@ public class CashCategoryType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (CashCategoryClass myClass : CashCategoryClass.values()) {
-                /* Create new element */
-                CashCategoryType myCashType = new CashCategoryType(this, myClass);
+        @Override
+        protected CashCategoryType newItem(final CashCategoryClass pClass) throws JOceanusException {
+            /* Create the type */
+            CashCategoryType myType = new CashCategoryType(this, pClass);
 
-                /* Add the CashCategoryType to the list */
-                append(myCashType);
-
-                /* Validate the CashCategoryType */
-                myCashType.validate();
-
-                /* Handle validation failure */
-                if (myCashType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myCashType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

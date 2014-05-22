@@ -257,30 +257,22 @@ public class Frequency
             return myFreq;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (FrequencyClass myClass : FrequencyClass.values()) {
-                /* Create new element */
-                Frequency myFreq = new Frequency(this, myClass);
+        @Override
+        protected Frequency newItem(final FrequencyClass pClass) throws JOceanusException {
+            /* Create the frequency */
+            Frequency myFreq = new Frequency(this, pClass);
 
-                /* Add the Frequency to the list */
-                append(myFreq);
-
-                /* Validate the Frequency */
-                myFreq.validate();
-
-                /* Handle validation failure */
-                if (myFreq.hasErrors()) {
-                    throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
-                }
+            /* Check that this FreqId has not been previously added */
+            if (!isIdUnique(myFreq.getId())) {
+                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myFreq, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myFreq);
+
+            /* Return it */
+            return myFreq;
         }
     }
 }

@@ -281,30 +281,22 @@ public class TaxRegime
             return myRegime;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (TaxRegimeClass myClass : TaxRegimeClass.values()) {
-                /* Create new element */
-                TaxRegime myRegime = new TaxRegime(this, myClass);
+        @Override
+        protected TaxRegime newItem(final TaxRegimeClass pClass) throws JOceanusException {
+            /* Create the type */
+            TaxRegime myRegime = new TaxRegime(this, pClass);
 
-                /* Add the Regime to the list */
-                append(myRegime);
-
-                /* Validate the Regime */
-                myRegime.validate();
-
-                /* Handle validation failure */
-                if (myRegime.hasErrors()) {
-                    throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myRegime.getId())) {
+                myRegime.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myRegime, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myRegime);
+
+            /* Return it */
+            return myRegime;
         }
     }
 }

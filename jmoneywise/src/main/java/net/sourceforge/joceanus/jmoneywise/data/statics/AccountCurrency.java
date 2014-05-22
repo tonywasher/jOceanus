@@ -169,7 +169,7 @@ public class AccountCurrency
                             final AccountCurrencyClass pClass) throws JOceanusException {
         super(pList, pClass);
         setValueDefault(Boolean.FALSE);
-        setValueEnabled(Boolean.FALSE);
+        setValueEnabled(Boolean.TRUE);
         setValueDesc(pClass.getCurrency().getDisplayName());
     }
 
@@ -416,10 +416,7 @@ public class AccountCurrency
             return myCurrency;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
+        @Override
         public void populateDefaults() throws JOceanusException {
             /* Loop through all elements */
             for (AccountCurrencyClass myClass : AccountCurrencyClass.values()) {
@@ -538,6 +535,24 @@ public class AccountCurrency
 
             /* Return to caller */
             return null;
+        }
+
+        @Override
+        protected AccountCurrency newItem(final AccountCurrencyClass pClass) throws JOceanusException {
+            /* Create the currency */
+            AccountCurrency myCurr = new AccountCurrency(this, pClass);
+
+            /* Check that this CurrId has not been previously added */
+            if (!isIdUnique(myCurr.getId())) {
+                myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myCurr, ERROR_VALIDATION);
+            }
+
+            /* Add to the list */
+            append(myCurr);
+
+            /* Return it */
+            return myCurr;
         }
 
         /**

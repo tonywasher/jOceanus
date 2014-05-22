@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -499,6 +501,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /* Store the class */
         setValueClass(pClass);
 
+        /* Set encryption */
+        setNextDataKeySet();
+
         /* Access classId and order */
         setId(pClass.getClassId());
         setValueOrder(pClass.getOrder());
@@ -734,19 +739,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @return The Item if present (or <code>null</code> if not found)
          */
         public T findItemByClass(final S eClass) {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                if (myCurr.getStaticClass() == eClass) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
+            /* Look for item by class Id */
+            return findItemById(eClass.getClassId());
         }
 
         @Override
@@ -765,6 +759,78 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             /* Return not found */
             return null;
         }
+
+        /**
+         * Is the list full?
+         * @return true/false
+         */
+        public boolean isFull() {
+            /* We can only be full with the correct number of items */
+            if (size() < getEnumClass().getEnumConstants().length) {
+                return false;
+            }
+
+            /* Loop through all elements */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+
+                /* If the item is deleted */
+                if (myCurr.isDeleted()) {
+                    /* Not full */
+                    return false;
+                }
+            }
+
+            /* Must be full */
+            return true;
+        }
+
+        /**
+         * Obtain a list of classes that are missing/deleted.
+         * @return The List of classes
+         */
+        public List<S> getMissingClasses() {
+            /* Allocate the list */
+            List<S> myList = new ArrayList<S>();
+
+            /* Loop through all elements */
+            for (S myClass : getEnumClass().getEnumConstants()) {
+                /* Locate the element */
+                T myItem = findItemById(myClass.getClassId());
+
+                /* If the item is missing or deleted */
+                if ((myItem == null)
+                    || myItem.isDeleted()) {
+                    /* Add it to the list */
+                    myList.add(myClass);
+                }
+            }
+
+            /* Return the list */
+            return myList;
+        }
+
+        /**
+         * Add Item for class.
+         * @param pClass the class to add
+         * @return the added class
+         * @throws JOceanusException on error
+         */
+        public T addNewItem(final S pClass) throws JOceanusException {
+            /* Create the new item */
+            T myItem = newItem(pClass);
+            add(myItem);
+            return myItem;
+        }
+
+        /**
+         * Create new Item for class.
+         * @param pClass the class to create
+         * @return the created class
+         * @throws JOceanusException on error
+         */
+        protected abstract T newItem(final S pClass) throws JOceanusException;
 
         /**
          * Count the instances of a name.
@@ -808,6 +874,32 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
             /* Return to caller */
             return iCount;
+        }
+
+        /**
+         * Populate default values.
+         * @throws JOceanusException on error
+         */
+        public void populateDefaults() throws JOceanusException {
+            /* Loop through all elements */
+            for (S myClass : getEnumClass().getEnumConstants()) {
+                /* Create new element */
+                T myItem = newItem(myClass);
+
+                /* Add the item to the list */
+                append(myItem);
+
+                /* Validate the item */
+                myItem.validate();
+
+                /* Handle validation failure */
+                if (myItem.hasErrors()) {
+                    throw new JPrometheusDataException(myItem, ERROR_VALIDATION);
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

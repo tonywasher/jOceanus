@@ -53,6 +53,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataManager.JDataEntry;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -94,6 +95,16 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private static final String NLS_DATA = NLS_BUNDLE.getString("StaticData");
 
     /**
+     * Text for Show Disabled.
+     */
+    private static final String NLS_DISABLED = NLS_BUNDLE.getString("ShowDisabled");
+
+    /**
+     * Text for New Button.
+     */
+    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
+
+    /**
      * The data control.
      */
     private final transient DataControl<?, E> theControl;
@@ -114,6 +125,11 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     private final JButton theSelectButton;
 
     /**
+     * The new button.
+     */
+    private final JButton theNewButton;
+
+    /**
      * The disabled check box.
      */
     private final JCheckBox theDisabledCheckBox;
@@ -121,12 +137,12 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The Panel map.
      */
-    private final Map<String, StaticDataTable<?, ?, E>> theMap;
+    private final Map<String, StaticDataTable<?, ?, ?, E>> theMap;
 
     /**
      * The Active panel.
      */
-    private StaticDataTable<?, ?, E> theActive;
+    private StaticDataTable<?, ?, ?, E> theActive;
 
     /**
      * The error panel.
@@ -191,11 +207,17 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
         theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
+        /* Create new button */
+        theNewButton = new JButton(NLS_NEW, ArrowIcon.DOWN);
+        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+
         /* Create the CheckBox */
-        theDisabledCheckBox = new JCheckBox("Show Disabled");
+        theDisabledCheckBox = new JCheckBox(NLS_DISABLED);
 
         /* Add the listener for item changes */
         theSelectButton.addActionListener(theListener);
+        theNewButton.addActionListener(theListener);
         theError.addChangeListener(theListener);
         theSaveButtons.addActionListener(theListener);
         theDisabledCheckBox.addItemListener(theListener);
@@ -204,15 +226,20 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         JPanel mySelect = new JPanel();
         mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
+        /* Create the standard strut */
+        Dimension myStrutSize = new Dimension(STRUT_WIDTH, 0);
+
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.add(Box.createRigidArea(myStrutSize));
         mySelect.add(myLabel);
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.add(Box.createRigidArea(myStrutSize));
         mySelect.add(theSelectButton);
-        mySelect.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelect.add(Box.createRigidArea(myStrutSize));
         mySelect.add(Box.createHorizontalGlue());
         mySelect.add(theDisabledCheckBox);
+        mySelect.add(Box.createHorizontalGlue());
+        mySelect.add(theNewButton);
         mySelect.add(Box.createHorizontalGlue());
 
         /* Create the card panel */
@@ -221,7 +248,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theCardPanel.setLayout(theLayout);
 
         /* Create the panel map */
-        theMap = new LinkedHashMap<String, StaticDataTable<?, ?, E>>();
+        theMap = new LinkedHashMap<String, StaticDataTable<?, ?, ?, E>>();
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -230,6 +257,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         add(Box.createVerticalGlue());
         add(theCardPanel);
         add(theSaveButtons);
+
+        /* Set visibility of new button */
+        showNewButton();
 
         /* Hide the save buttons initially */
         theSaveButtons.setVisible(false);
@@ -241,13 +271,14 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * @param pListClass the class of the list
      * @param pItemClass the class of the items
      * @param <L> the list type
+     * @param <S> the static class
      * @param <T> the data type
      */
-    public <L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>> void addStatic(final E pItemType,
-                                                                                         final Class<L> pListClass,
-                                                                                         final Class<T> pItemClass) {
+    public <L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface> void addStatic(final E pItemType,
+                                                                                                                              final Class<L> pListClass,
+                                                                                                                              final Class<T> pItemClass) {
         /* Create the new panel */
-        StaticDataTable<L, T, E> myPanel = new StaticDataTable<L, T, E>(theControl, theUpdateSet, theError, pListClass, pItemClass);
+        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pListClass, pItemClass);
 
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);
@@ -320,7 +351,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         String myName = myType.getFieldName();
 
         /* Access the panel */
-        StaticDataTable<?, ?, E> myPanel = theMap.get(myName);
+        StaticDataTable<?, ?, ?, E> myPanel = theMap.get(myName);
         if (myPanel != null) {
             /* Update selection */
             myPanel.selectStatic(pStatic);
@@ -334,13 +365,16 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      */
     public void refreshData() throws JOceanusException {
         /* Loop through the map */
-        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?, ?, ?> myPanel : theMap.values()) {
             /* Refresh the panel */
             myPanel.refreshData();
         }
 
         /* Enable the save buttons */
         theSaveButtons.setEnabled(true);
+
+        /* Set visibility of new button */
+        showNewButton();
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -352,7 +386,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      */
     public void showDisabled(final boolean pShow) {
         /* Loop through the map */
-        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?, ?, ?> myPanel : theMap.values()) {
             /* Update the panel */
             myPanel.setShowAll(pShow);
         }
@@ -363,10 +397,20 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      */
     private void cancelEditing() {
         /* Loop through the map */
-        for (StaticDataTable<?, ?, ?> myPanel : theMap.values()) {
+        for (StaticDataTable<?, ?, ?, ?> myPanel : theMap.values()) {
             /* Refresh the underlying children */
             myPanel.cancelEditing();
         }
+    }
+
+    /**
+     * Show New button.
+     */
+    private void showNewButton() {
+        /* Set visibility of New Button */
+        boolean showNew = theActive != null
+                          && !theActive.isFull();
+        theNewButton.setVisible(showNew);
     }
 
     /**
@@ -383,6 +427,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
         theSaveButtons.setVisible(hasUpdates);
+
+        /* Set visibility of New Button */
+        showNewButton();
 
         /* Alert listeners that there has been a change */
         fireStateChanged();
@@ -401,9 +448,9 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             JScrollPopupMenu myPopUp = new JScrollPopupMenu();
 
             /* Loop through the panels */
-            Iterator<Map.Entry<String, StaticDataTable<?, ?, E>>> myIterator = theMap.entrySet().iterator();
+            Iterator<Map.Entry<String, StaticDataTable<?, ?, ?, E>>> myIterator = theMap.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Map.Entry<String, StaticDataTable<?, ?, E>> myEntry = myIterator.next();
+                Map.Entry<String, StaticDataTable<?, ?, ?, E>> myEntry = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
                 DataAction myAction = new DataAction(myEntry.getKey(), myEntry.getValue());
@@ -414,6 +461,18 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             /* Show the Data menu in the correct place */
             Rectangle myLoc = theSelectButton.getBounds();
             myPopUp.show(theSelectButton, 0, myLoc.height);
+        }
+
+        /**
+         * Show NewData menu.
+         */
+        private void showNewMenu() {
+            /* Create a new popUp menu */
+            JScrollPopupMenu myPopUp = theActive.getNewPopUp();
+
+            /* Show the New menu in the correct place */
+            Rectangle myLoc = theNewButton.getBounds();
+            myPopUp.show(theNewButton, 0, myLoc.height);
         }
 
         @Override
@@ -468,6 +527,15 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 /* Show data menu */
                 showDataMenu();
             }
+
+            /* if this is the new button reporting */
+            if (theNewButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Show data menu */
+                showNewMenu();
+            }
         }
 
         @Override
@@ -501,7 +569,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /**
          * Data Table.
          */
-        private final StaticDataTable<?, ?, ?> theTable;
+        private final StaticDataTable<?, ?, ?, E> theTable;
 
         /**
          * Constructor.
@@ -509,7 +577,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
          * @param pTable the table
          */
         private DataAction(final String pName,
-                           final StaticDataTable<?, ?, ?> pTable) {
+                           final StaticDataTable<?, ?, ?, E> pTable) {
             super(pName);
             theName = pName;
             theTable = pTable;
@@ -521,6 +589,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
             if (!Difference.isEqual(theActive, theTable)) {
                 /* Move correct card to front */
                 setSelection(theName);
+                showNewButton();
             }
         }
     }

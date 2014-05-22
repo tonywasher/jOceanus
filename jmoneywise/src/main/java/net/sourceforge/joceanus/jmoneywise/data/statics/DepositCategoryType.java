@@ -248,30 +248,22 @@ public class DepositCategoryType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (DepositCategoryClass myClass : DepositCategoryClass.values()) {
-                /* Create new element */
-                DepositCategoryType myActType = new DepositCategoryType(this, myClass);
+        @Override
+        protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws JOceanusException {
+            /* Create the type */
+            DepositCategoryType myType = new DepositCategoryType(this, pClass);
 
-                /* Add the DepositCategoryType to the list */
-                append(myActType);
-
-                /* Validate the DepositCategoryType */
-                myActType.validate();
-
-                /* Handle validation failure */
-                if (myActType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myActType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

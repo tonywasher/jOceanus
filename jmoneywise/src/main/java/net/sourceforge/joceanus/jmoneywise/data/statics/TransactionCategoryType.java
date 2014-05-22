@@ -262,30 +262,22 @@ public class TransactionCategoryType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (TransactionCategoryClass myClass : TransactionCategoryClass.values()) {
-                /* Create new element */
-                TransactionCategoryType myType = new TransactionCategoryType(this, myClass);
+        @Override
+        protected TransactionCategoryType newItem(final TransactionCategoryClass pClass) throws JOceanusException {
+            /* Create the type */
+            TransactionCategoryType myType = new TransactionCategoryType(this, pClass);
 
-                /* Add the Category to the list */
-                append(myType);
-
-                /* Validate the CategoryType */
-                myType.validate();
-
-                /* Handle validation failure */
-                if (myType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

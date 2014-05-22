@@ -257,30 +257,22 @@ public class TaxYearInfoType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (TaxYearInfoClass myClass : TaxYearInfoClass.values()) {
-                /* Create new element */
-                TaxYearInfoType myType = new TaxYearInfoType(this, myClass);
+        @Override
+        protected TaxYearInfoType newItem(final TaxYearInfoClass pClass) throws JOceanusException {
+            /* Create the type */
+            TaxYearInfoType myType = new TaxYearInfoType(this, pClass);
 
-                /* Add the InfoType to the list */
-                append(myType);
-
-                /* Validate the InfoType */
-                myType.validate();
-
-                /* Handle validation failure */
-                if (myType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

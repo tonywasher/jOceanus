@@ -292,30 +292,22 @@ public class TaxBasis
             return myBasis;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (TaxBasisClass myClass : TaxBasisClass.values()) {
-                /* Create new element */
-                TaxBasis myBasis = new TaxBasis(this, myClass);
+        @Override
+        protected TaxBasis newItem(final TaxBasisClass pClass) throws JOceanusException {
+            /* Create the basis */
+            TaxBasis myBasis = new TaxBasis(this, pClass);
 
-                /* Add the TaxBasis to the list */
-                append(myBasis);
-
-                /* Validate the TaxBasis */
-                myBasis.validate();
-
-                /* Handle validation failure */
-                if (myBasis.hasErrors()) {
-                    throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
-                }
+            /* Check that this BasisId has not been previously added */
+            if (!isIdUnique(myBasis.getId())) {
+                myBasis.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myBasis, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myBasis);
+
+            /* Return it */
+            return myBasis;
         }
     }
 }

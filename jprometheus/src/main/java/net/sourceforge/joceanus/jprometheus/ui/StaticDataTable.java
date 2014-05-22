@@ -24,11 +24,14 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -44,21 +47,24 @@ import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.data.StaticData.StaticList;
+import net.sourceforge.joceanus.jprometheus.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Static Data Table.
  * @author Tony Washer
  * @param <L> the list type
  * @param <T> the data type
+ * @param <S> the static class
  * @param <E> the data type enum class
  */
-public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData<T, ?, E>, E extends Enum<E>>
+public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
         extends JDataTable<T, E> {
     /**
      * Serial Id.
@@ -271,6 +277,90 @@ public class StaticDataTable<L extends StaticList<T, ?, E>, T extends StaticData
     public void setShowAll(final boolean pShow) {
         super.setShowAll(pShow);
         theColumns.setColumns();
+    }
+
+    /**
+     * Is the static table full?
+     * @return true/false
+     */
+    protected boolean isFull() {
+        return theStatic == null
+               || theStatic.isFull();
+    }
+
+    /**
+     * Obtain PopUp of available new items.
+     * @return the popUpMenu
+     */
+    protected JScrollPopupMenu getNewPopUp() {
+        /* Create the new popUp */
+        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+
+        /* Loop through the missing classes */
+        for (S myValue : theStatic.getMissingClasses()) {
+            /* Create a new JMenuItem and add it to the popUp */
+            StaticAction myAction = new StaticAction(myValue);
+            JMenuItem myItem = new JMenuItem(myAction);
+            myPopUp.addMenuItem(myItem);
+        }
+
+        /* Return the menu */
+        return myPopUp;
+    }
+
+    /**
+     * Static action class.
+     */
+    private final class StaticAction
+            extends AbstractAction {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -6837848768872886753L;
+
+        /**
+         * Class.
+         */
+        private final S theClass;
+
+        /**
+         * Constructor.
+         * @param pPortfolio the portfolio
+         */
+        private StaticAction(final S pValue) {
+            super(pValue.toString());
+            theClass = pValue;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent evt) {
+            /* Protect the action */
+            try {
+                /* Look to find a deleted value */
+                T myValue = theStatic.findItemByClass(theClass);
+
+                /* If we found a deleted value */
+                if (myValue != null) {
+                    /* reinstate it */
+                    myValue.setDeleted(false);
+
+                    /* else we have no existing value */
+                } else {
+                    /* Create the new value */
+                    myValue = theStatic.addNewItem(theClass);
+                    myValue.setNewVersion();
+                }
+
+                /* Update the table */
+                incrementVersion();
+                theModel.fireNewDataEvents();
+                notifyChanges();
+
+                /* Handle exceptions */
+            } catch (JOceanusException e) {
+                setError(e);
+            }
+        }
     }
 
     /**

@@ -247,30 +247,22 @@ public class SecurityType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (SecurityTypeClass myClass : SecurityTypeClass.values()) {
-                /* Create new element */
-                SecurityType mySecType = new SecurityType(this, myClass);
+        @Override
+        protected SecurityType newItem(final SecurityTypeClass pClass) throws JOceanusException {
+            /* Create the type */
+            SecurityType myType = new SecurityType(this, pClass);
 
-                /* Add the SecurityType to the list */
-                append(mySecType);
-
-                /* Validate the SecurityType */
-                mySecType.validate();
-
-                /* Handle validation failure */
-                if (mySecType.hasErrors()) {
-                    throw new JMoneyWiseDataException(mySecType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

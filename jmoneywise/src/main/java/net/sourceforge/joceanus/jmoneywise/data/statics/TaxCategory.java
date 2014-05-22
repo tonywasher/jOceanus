@@ -262,30 +262,22 @@ public class TaxCategory
             return myCategory;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (TaxCategoryClass myClass : TaxCategoryClass.values()) {
-                /* Create new element */
-                TaxCategory myCategory = new TaxCategory(this, myClass);
+        @Override
+        protected TaxCategory newItem(final TaxCategoryClass pClass) throws JOceanusException {
+            /* Create the category */
+            TaxCategory myTax = new TaxCategory(this, pClass);
 
-                /* Add the TaxCategory to the list */
-                append(myCategory);
-
-                /* Validate the TaxCategory */
-                myCategory.validate();
-
-                /* Handle validation failure */
-                if (myCategory.hasErrors()) {
-                    throw new JMoneyWiseDataException(myCategory, ERROR_VALIDATION);
-                }
+            /* Check that this TaxId has not been previously added */
+            if (!isIdUnique(myTax.getId())) {
+                myTax.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myTax, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myTax);
+
+            /* Return it */
+            return myTax;
         }
     }
 }

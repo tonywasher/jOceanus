@@ -247,30 +247,22 @@ public class PayeeType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (PayeeTypeClass myClass : PayeeTypeClass.values()) {
-                /* Create new element */
-                PayeeType myPayeeType = new PayeeType(this, myClass);
+        @Override
+        protected PayeeType newItem(final PayeeTypeClass pClass) throws JOceanusException {
+            /* Create the type */
+            PayeeType myType = new PayeeType(this, pClass);
 
-                /* Add the PayeeType to the list */
-                append(myPayeeType);
-
-                /* Validate the PayeeType */
-                myPayeeType.validate();
-
-                /* Handle validation failure */
-                if (myPayeeType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myPayeeType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

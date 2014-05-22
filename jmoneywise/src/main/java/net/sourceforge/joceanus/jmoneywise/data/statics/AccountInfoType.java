@@ -285,30 +285,22 @@ public class AccountInfoType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (AccountInfoClass myClass : AccountInfoClass.values()) {
-                /* Create new element */
-                AccountInfoType myType = new AccountInfoType(this, myClass);
+        @Override
+        protected AccountInfoType newItem(final AccountInfoClass pClass) throws JOceanusException {
+            /* Create the type */
+            AccountInfoType myType = new AccountInfoType(this, pClass);
 
-                /* Add the AccountInfoType to the list */
-                append(myType);
-
-                /* Validate the AccountInfoType */
-                myType.validate();
-
-                /* Handle validation failure */
-                if (myType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }

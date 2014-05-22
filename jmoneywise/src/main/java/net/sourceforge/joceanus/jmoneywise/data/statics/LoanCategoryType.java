@@ -248,30 +248,22 @@ public class LoanCategoryType
             return myType;
         }
 
-        /**
-         * Populate default values.
-         * @throws JOceanusException on error
-         */
-        public void populateDefaults() throws JOceanusException {
-            /* Loop through all elements */
-            for (LoanCategoryClass myClass : LoanCategoryClass.values()) {
-                /* Create new element */
-                LoanCategoryType myLoanType = new LoanCategoryType(this, myClass);
+        @Override
+        protected LoanCategoryType newItem(final LoanCategoryClass pClass) throws JOceanusException {
+            /* Create the type */
+            LoanCategoryType myType = new LoanCategoryType(this, pClass);
 
-                /* Add the LoanCategoryType to the list */
-                append(myLoanType);
-
-                /* Validate the LoanCategoryType */
-                myLoanType.validate();
-
-                /* Handle validation failure */
-                if (myLoanType.hasErrors()) {
-                    throw new JMoneyWiseDataException(myLoanType, ERROR_VALIDATION);
-                }
+            /* Check that this TypeId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JMoneyWiseDataException(myType, ERROR_VALIDATION);
             }
 
-            /* Ensure that the list is sorted */
-            reSort();
+            /* Add to the list */
+            append(myType);
+
+            /* Return it */
+            return myType;
         }
     }
 }
