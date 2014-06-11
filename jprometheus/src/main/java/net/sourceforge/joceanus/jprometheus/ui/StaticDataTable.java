@@ -325,7 +325,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
 
         /**
          * Constructor.
-         * @param pPortfolio the portfolio
+         * @param pValue the value
          */
         private StaticAction(final S pValue) {
             super(pValue.toString());

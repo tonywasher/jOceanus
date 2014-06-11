@@ -801,7 +801,7 @@ public abstract class ColumnDefinition {
 
             /* Build the date as a SQL date */
             if (myValue != null) {
-                Date myDateValue = myValue.getDate();
+                Date myDateValue = myValue.toDate();
                 myDate = new java.sql.Date(myDateValue.getTime());
             }
             pStatement.setDate(pIndex, myDate);

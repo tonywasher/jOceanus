@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import java.util.Calendar;
+import java.time.Month;
 import java.util.Locale;
 
 /**
@@ -32,27 +32,27 @@ public enum JFiscalYear {
     /**
      * Fiscal Year based on UK Model.
      */
-    UK(6, Calendar.APRIL),
+    UK(6, Month.APRIL),
 
     /**
      * April based start of year.
      */
-    MARCH(Calendar.MARCH),
+    MARCH(Month.MARCH),
 
     /**
      * April based start of year.
      */
-    APRIL(Calendar.APRIL),
+    APRIL(Month.APRIL),
 
     /**
      * July based start of year.
      */
-    JULY(Calendar.JULY),
+    JULY(Month.JULY),
 
     /**
      * October based start of year.
      */
-    OCTOBER(Calendar.OCTOBER),
+    OCTOBER(Month.OCTOBER),
 
     /**
      * Fiscal year based on the CalendarYear.
@@ -67,7 +67,7 @@ public enum JFiscalYear {
     /**
      * The month of the first day of fiscal year.
      */
-    private final int theMonth;
+    private final Month theMonth;
 
     /**
      * Obtain the day.
@@ -81,7 +81,7 @@ public enum JFiscalYear {
      * Obtain the month.
      * @return the month
      */
-    public int getFirstMonth() {
+    public Month getFirstMonth() {
         return theMonth;
     }
 
@@ -89,14 +89,14 @@ public enum JFiscalYear {
      * Constructor.
      */
     private JFiscalYear() {
-        this(Calendar.JANUARY);
+        this(Month.JANUARY);
     }
 
     /**
      * Constructor.
      * @param pMonth the first month of fiscal year
      */
-    private JFiscalYear(final int pMonth) {
+    private JFiscalYear(final Month pMonth) {
         this(1, pMonth);
     }
 
@@ -106,7 +106,7 @@ public enum JFiscalYear {
      * @param pMonth the first month of fiscal year
      */
     private JFiscalYear(final int pDay,
-                        final int pMonth) {
+                        final Month pMonth) {
         theDay = pDay;
         theMonth = pMonth;
     }

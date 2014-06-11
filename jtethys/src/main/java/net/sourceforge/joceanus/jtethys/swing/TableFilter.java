@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
@@ -771,6 +772,13 @@ public class TableFilter<T extends Comparable<? super T>>
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void forEachRemaining(final Consumer<? super T> pAction) {
+            while (hasNext()) {
+                pAction.accept(next());
+            }
         }
     }
 }

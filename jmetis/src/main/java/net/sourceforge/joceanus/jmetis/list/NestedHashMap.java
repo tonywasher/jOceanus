@@ -32,7 +32,15 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Nested Hash map implementation. Provides hash map functionality using nested child arrays as an expansion method, rather than expansion and rehashing as is
@@ -1240,6 +1248,13 @@ public class NestedHashMap<K, V>
             /* Adjust modification count */
             theExpectedModCount = theModCount;
         }
+
+        @Override
+        public void forEachRemaining(final Consumer<? super E> pAction) {
+            while (hasNext()) {
+                pAction.accept(next());
+            }
+        }
     }
 
     /**
@@ -1289,6 +1304,43 @@ public class NestedHashMap<K, V>
         public void clear() {
             /* Call clear function */
             theSelf.clear();
+        }
+
+        @Override
+        public void forEach(final Consumer<? super V> pAction) {
+            Iterator<V> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                pAction.accept(myIterator.next());
+            }
+        }
+
+        @Override
+        public boolean removeIf(final Predicate<? super V> pCheck) {
+            Iterator<V> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                if (pCheck.test(myIterator.next())) {
+                    myIterator.remove();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Spliterator<V> spliterator() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<V> stream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<V> parallelStream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -1344,6 +1396,43 @@ public class NestedHashMap<K, V>
         public void clear() {
             /* Call clear function */
             theSelf.clear();
+        }
+
+        @Override
+        public void forEach(final Consumer<? super K> pAction) {
+            Iterator<K> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                pAction.accept(myIterator.next());
+            }
+        }
+
+        @Override
+        public boolean removeIf(final Predicate<? super K> pCheck) {
+            Iterator<K> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                if (pCheck.test(myIterator.next())) {
+                    myIterator.remove();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Spliterator<K> spliterator() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<K> stream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<K> parallelStream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -1423,6 +1512,43 @@ public class NestedHashMap<K, V>
         public void clear() {
             /* Call clear function */
             theSelf.clear();
+        }
+
+        @Override
+        public void forEach(final Consumer<? super Entry<K, V>> pAction) {
+            Iterator<Entry<K, V>> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                pAction.accept(myIterator.next());
+            }
+        }
+
+        @Override
+        public boolean removeIf(final Predicate<? super Entry<K, V>> pCheck) {
+            Iterator<Entry<K, V>> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                if (pCheck.test(myIterator.next())) {
+                    myIterator.remove();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Spliterator<Entry<K, V>> spliterator() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<Entry<K, V>> stream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<Entry<K, V>> parallelStream() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -1517,6 +1643,263 @@ public class NestedHashMap<K, V>
             K myKey = (K) pInput.readObject();
             V myValue = (V) pInput.readObject();
             put(myKey, myValue);
+        }
+    }
+
+    @Override
+    public V compute(final K pKey,
+                     final BiFunction<? super K, ? super V, ? extends V> pReMap) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        V myOldValue = myEntry == null
+                                      ? null
+                                      : myEntry.getValue();
+
+        /* Determine new value */
+        V myNewValue = pReMap.apply(pKey, myOldValue);
+
+        /* If we had an old value */
+        if (myOldValue != null) {
+            /* If we have a replacement value */
+            if (myNewValue != null) {
+                /* Store it */
+                putEntry(iHash, pKey, myNewValue);
+
+                /* else remove old value */
+            } else {
+                removeEntry(iHash, pKey);
+            }
+
+            /* else no existing value but new value supplied */
+        } else if (myNewValue != null) {
+            putEntry(iHash, pKey, myNewValue);
+        }
+
+        /* Return the new value */
+        return myNewValue;
+    }
+
+    @Override
+    public V computeIfAbsent(final K pKey,
+                             final Function<? super K, ? extends V> pMap) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        V myOldValue = myEntry == null
+                                      ? null
+                                      : myEntry.getValue();
+
+        /* If we have no existing value */
+        if (myOldValue == null) {
+            /* Map the value */
+            V myNewValue = pMap.apply(pKey);
+
+            /* If we have a new value store it */
+            if (myNewValue != null) {
+                putEntry(iHash, pKey, myNewValue);
+            }
+
+            /* Return the new value */
+            return myNewValue;
+        }
+
+        /* No change */
+        return null;
+    }
+
+    @Override
+    public V computeIfPresent(final K pKey,
+                              final BiFunction<? super K, ? super V, ? extends V> pReMap) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        V myOldValue = myEntry == null
+                                      ? null
+                                      : myEntry.getValue();
+
+        /* If we had an old value */
+        if (myOldValue != null) {
+            /* Determine new value */
+            V myNewValue = pReMap.apply(pKey, myOldValue);
+
+            /* If we have a replacement value */
+            if (myNewValue != null) {
+                /* Store it */
+                putEntry(iHash, pKey, myNewValue);
+
+                /* else remove old value */
+            } else {
+                removeEntry(iHash, pKey);
+            }
+
+            /* Return the new value */
+            return myNewValue;
+        }
+
+        /* No change */
+        return null;
+    }
+
+    @Override
+    public void forEach(final BiConsumer<? super K, ? super V> pAction) {
+        /* Loop through the entry set */
+        for (Entry<K, V> myEntry : entrySet()) {
+            /* process the entry */
+            pAction.accept(myEntry.getKey(), myEntry.getValue());
+        }
+    }
+
+    @Override
+    public V getOrDefault(final Object pKey,
+                          final V pValue) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        return myEntry == null
+                              ? pValue
+                              : myEntry.getValue();
+    }
+
+    @Override
+    public V merge(final K pKey,
+                   final V pValue,
+                   final BiFunction<? super V, ? super V, ? extends V> pReMap) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        V myOldValue = myEntry == null
+                                      ? null
+                                      : myEntry.getValue();
+
+        /* Calculate new value */
+        V myNewValue = myOldValue != null
+                                         ? pReMap.apply(myOldValue, pValue)
+                                         : pValue;
+
+        /* If we have a replacement value */
+        if (myNewValue != null) {
+            /* Store it */
+            putEntry(iHash, pKey, myNewValue);
+
+            /* else remove old value */
+        } else {
+            removeEntry(iHash, pKey);
+        }
+
+        /* Return the new value */
+        return myNewValue;
+    }
+
+    @Override
+    public V putIfAbsent(final K pKey,
+                         final V pValue) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* Determine old value */
+        V myOldValue = myEntry == null
+                                      ? null
+                                      : myEntry.getValue();
+
+        /* If we have no existing value */
+        if (myEntry == null) {
+            /* Store new value */
+            putEntry(iHash, pKey, pValue);
+        }
+
+        /* Return the new value */
+        return myOldValue;
+    }
+
+    @Override
+    public boolean remove(final Object pKey,
+                          final Object pValue) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* If we have a match */
+        if ((myEntry != null) && Objects.equals(pValue, myEntry.getValue())) {
+            removeEntry(iHash, pKey);
+            return true;
+        }
+
+        /* NoOp */
+        return false;
+    }
+
+    @Override
+    public V replace(final K pKey,
+                     final V pValue) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* If we have an existing value */
+        if (myEntry != null) {
+            /* Replace it with the new value */
+            return putEntry(iHash, pKey, pValue);
+        }
+
+        /* NoOp */
+        return null;
+    }
+
+    @Override
+    public boolean replace(final K pKey,
+                           final V pOldValue,
+                           final V pNewValue) {
+        /* Calculate the hash */
+        int iHash = hashKey(pKey);
+
+        /* Locate the value */
+        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+
+        /* If we have a match */
+        if ((myEntry != null) && Objects.equals(pOldValue, myEntry.getValue())) {
+            putEntry(iHash, pKey, pNewValue);
+            return true;
+        }
+
+        /* NoOp */
+        return false;
+    }
+
+    @Override
+    public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> pReMap) {
+        /* Loop through the entry set */
+        for (Entry<K, V> myEntry : entrySet()) {
+            /* reMap the entry */
+            V myNewValue = pReMap.apply(myEntry.getKey(), myEntry.getValue());
+            myEntry.setValue(myNewValue);
         }
     }
 }

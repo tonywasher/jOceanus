@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Month;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -457,7 +457,7 @@ public class ArchiveLoader {
             }
 
             /* Create the date */
-            theDate = new JDateDay(myYear, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY);
+            theDate = new JDateDay(myYear, Month.APRIL, TaxYear.END_OF_MONTH_DAY);
         }
     }
 

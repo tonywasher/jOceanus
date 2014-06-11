@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.data;
 
-import java.util.Calendar;
+import java.time.Month;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -380,7 +380,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
             }
 
             /* The day and month must be 5th April */
-            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Calendar.APRIL)) {
+            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Month.APRIL.getValue())) {
                 addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }

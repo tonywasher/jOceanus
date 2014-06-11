@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import net.sourceforge.jdatebutton.JDateButton;
 
@@ -113,8 +113,8 @@ public class JDateDayButton
     }
 
     @Override
-    protected void fireDatePropertyChange(final Calendar pOldValue,
-                                          final Calendar pNewValue) {
+    protected void fireDatePropertyChange(final LocalDate pOldValue,
+                                          final LocalDate pNewValue) {
         /* Access new value as DateDay */
         JDateDay myNew = null;
         if (pNewValue != null) {

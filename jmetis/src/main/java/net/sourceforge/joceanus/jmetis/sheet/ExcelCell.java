@@ -223,7 +223,7 @@ public class ExcelCell
     protected void setDate(final JDateDay pValue) throws JOceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theExcelCell.setCellValue(pValue.getDate());
+            theExcelCell.setCellValue(pValue.toDate());
 
             /* Set the style for the cell */
             theExcelRow.setCellStyle(this, pValue);

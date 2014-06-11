@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -36,9 +36,9 @@ import net.sourceforge.jdatebutton.JDateConfig;
 public class JDateDayConfig
         extends JDateConfig {
     /**
-     * Currently selected date (Calendar).
+     * Currently selected date (LocalDate).
      */
-    private Calendar theSelectedDate = null;
+    private LocalDate theSelectedDate = null;
 
     /**
      * Currently selected date (DateDay).
@@ -46,9 +46,9 @@ public class JDateDayConfig
     private JDateDay theSelectedDateDay = null;
 
     /**
-     * Current earliest date (Calendar).
+     * Current earliest date (LocalDate).
      */
-    private Calendar theEarliestDate = null;
+    private LocalDate theEarliestDate = null;
 
     /**
      * Current earliest date (DateDay).
@@ -56,9 +56,9 @@ public class JDateDayConfig
     private JDateDay theEarliestDateDay = null;
 
     /**
-     * Current latest date (Calendar).
+     * Current latest date (LocalDate).
      */
-    private Calendar theLatestDate = null;
+    private LocalDate theLatestDate = null;
 
     /**
      * Current latest date (DateDay).
@@ -86,15 +86,15 @@ public class JDateDayConfig
      */
     public JDateDay getSelectedDateDay() {
         /* Access selected date */
-        Calendar myDate = getSelectedDate();
+        LocalDate myDate = getSelectedDate();
 
         /* If we have changed selected date */
         if (isDateChanged(theSelectedDate, myDate)) {
             /* Store the selected date and create the DateDay version */
             theSelectedDate = myDate;
             theSelectedDateDay = (myDate == null)
-                    ? null
-                    : new JDateDay(myDate, getLocale());
+                                                 ? null
+                                                 : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Selected DateDay */
@@ -110,7 +110,7 @@ public class JDateDayConfig
         if (pDate == null) {
             setSelectedDate(null);
         } else {
-            setSelectedDate(pDate.getCalendar());
+            setSelectedDate(pDate.getDate());
         }
     }
 
@@ -120,15 +120,15 @@ public class JDateDayConfig
      */
     public JDateDay getEarliestDateDay() {
         /* Access earliest date */
-        Calendar myDate = getEarliestDate();
+        LocalDate myDate = getEarliestDate();
 
         /* If we have changed earliest date */
         if (isDateChanged(theEarliestDate, myDate)) {
             /* Store the earliest date and create the DateDay version */
             theEarliestDate = myDate;
             theEarliestDateDay = (myDate == null)
-                    ? null
-                    : new JDateDay(myDate, getLocale());
+                                                 ? null
+                                                 : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Earliest DateDay */
@@ -144,7 +144,7 @@ public class JDateDayConfig
         if (pDate == null) {
             setEarliestDate(null);
         } else {
-            setEarliestDate(pDate.getCalendar());
+            setEarliestDate(pDate.getDate());
         }
     }
 
@@ -154,15 +154,15 @@ public class JDateDayConfig
      */
     public JDateDay getLatestDateDay() {
         /* Access latest date */
-        Calendar myDate = getLatestDate();
+        LocalDate myDate = getLatestDate();
 
         /* If we have changed latest date */
         if (isDateChanged(theLatestDate, myDate)) {
             /* Store the latest date and create the DateDay version */
             theLatestDate = myDate;
             theLatestDateDay = (myDate == null)
-                    ? null
-                    : new JDateDay(myDate, getLocale());
+                                               ? null
+                                               : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Latest DateDay */
@@ -178,7 +178,7 @@ public class JDateDayConfig
         if (pDate == null) {
             setLatestDate(null);
         } else {
-            setLatestDate(pDate.getCalendar());
+            setLatestDate(pDate.getDate());
         }
     }
 

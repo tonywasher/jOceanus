@@ -24,6 +24,9 @@ package net.sourceforge.joceanus.jtethys.dateday;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -59,6 +62,11 @@ public class JDateDayFormatter
     private SimpleDateFormat theDateFormat = null;
 
     /**
+     * The DateTime format for the locale and format string.
+     */
+    private DateTimeFormatter theLocalDateFormat = null;
+
+    /**
      * Constructor.
      */
     public JDateDayFormatter() {
@@ -89,7 +97,8 @@ public class JDateDayFormatter
 
         /* Create the simple date format */
         theFormat = pFormat;
-        theDateFormat = new SimpleDateFormat(pFormat, theLocale);
+        theDateFormat = new SimpleDateFormat(theFormat, theLocale);
+        theLocalDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);
 
         /* Notify of the change */
         fireStateChanged();
@@ -113,7 +122,11 @@ public class JDateDayFormatter
         setFormat(pFormat);
     }
 
-    @Override
+    /**
+     * Format a Date.
+     * @param pDate the date to format
+     * @return the formatted date
+     */
     public String formatCalendarDay(final Calendar pDate) {
         /* Handle null */
         if (pDate == null) {
@@ -122,6 +135,17 @@ public class JDateDayFormatter
 
         /* Format the date */
         return formatDate(pDate.getTime());
+    }
+
+    @Override
+    public String formatLocalDate(final LocalDate pDate) {
+        /* Handle null */
+        if (pDate == null) {
+            return null;
+        }
+
+        /* Format the date */
+        return pDate.format(theLocalDateFormat);
     }
 
     /**
@@ -151,7 +175,7 @@ public class JDateDayFormatter
         }
 
         /* Format the date */
-        return formatDate(pDate.getDate());
+        return formatLocalDate(pDate.getDate());
     }
 
     /**
@@ -199,6 +223,22 @@ public class JDateDayFormatter
     }
 
     /**
+     * Parse LocalDate.
+     * @param pValue Formatted Date
+     * @return the Date
+     * @throws IllegalArgumentException on error
+     */
+    public LocalDate parseLocalDate(final String pValue) {
+        /* Parse the date */
+        try {
+            return LocalDate.parse(pValue, theLocalDateFormat);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date: "
+                                               + pValue, e);
+        }
+    }
+
+    /**
      * Parse CalendarDay.
      * @param pValue Formatted CalendarDay
      * @return the CalendarDay
@@ -218,7 +258,7 @@ public class JDateDayFormatter
      * @throws IllegalArgumentException on error
      */
     public JDateDay parseDateDay(final String pValue) {
-        Date myDate = parseDate(pValue);
+        LocalDate myDate = parseLocalDate(pValue);
         return new JDateDay(myDate);
     }
 

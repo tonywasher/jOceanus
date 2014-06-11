@@ -22,14 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import net.sourceforge.jdatebutton.JDateConfig;
 
 /**
  * Represents a Date object that is fixed to a particular day. There is no concept of time within the day Calendar objects that are built to represent the Date
@@ -90,7 +94,7 @@ public class JDateDay
     /**
      * The Simple Date format for the locale and format string.
      */
-    private SimpleDateFormat theDateFormat = null;
+    private DateTimeFormatter theDateFormat = null;
 
     /**
      * The Date format.
@@ -100,7 +104,7 @@ public class JDateDay
     /**
      * The Date object in underlying Java form.
      */
-    private Calendar theDate = null;
+    private LocalDate theDate = null;
 
     /**
      * The year of the date.
@@ -155,18 +159,10 @@ public class JDateDay
     }
 
     /**
-     * Get the java date associated with this object.
-     * @return the java date
+     * Get the Date associated with this object.
+     * @return the date
      */
-    public Date getDate() {
-        return theDate.getTime();
-    }
-
-    /**
-     * Get the java Calendar associated with this object.
-     * @return the java calendar
-     */
-    public Calendar getCalendar() {
+    public LocalDate getDate() {
         return theDate;
     }
 
@@ -190,12 +186,51 @@ public class JDateDay
      * @param pLocale the locale
      */
     public JDateDay(final Locale pLocale) {
-        this(Calendar.getInstance(pLocale).getTime());
+        this(LocalDate.now(), pLocale);
     }
 
     /**
      * Construct a new Date and initialise from a java date.
      * @param pDate the java date to initialise from
+     */
+    public JDateDay(final LocalDate pDate) {
+        this(pDate, Locale.getDefault());
+    }
+
+    /**
+     * Construct a new Date and initialise from a java date.
+     * @param pDate the java date to initialise from
+     * @param pLocale the locale for this date
+     */
+    public JDateDay(final LocalDate pDate,
+                    final Locale pLocale) {
+        buildDateDay(pDate, pLocale);
+    }
+
+    /**
+     * Construct a new Date and initialise from a java calendar.
+     * @param pDate the java calendar to initialise from
+     */
+    public JDateDay(final Calendar pDate) {
+        this(pDate, Locale.getDefault());
+    }
+
+    /**
+     * Construct a new Date and initialise from a java date.
+     * @param pDate the java date to initialise from
+     * @param pLocale the locale for this date
+     */
+    public JDateDay(final Calendar pDate,
+                    final Locale pLocale) {
+        /* Null dates not allowed */
+        this(pDate == null
+                          ? null
+                          : pDate.getTime(), pLocale);
+    }
+
+    /**
+     * Construct a new Date and initialise from a java date.
+     * @param pDate the java calendar to initialise from
      */
     public JDateDay(final Date pDate) {
         this(pDate, Locale.getDefault());
@@ -208,31 +243,15 @@ public class JDateDay
      */
     public JDateDay(final Date pDate,
                     final Locale pLocale) {
-        buildDateDay(pDate, pLocale);
-    }
-
-    /**
-     * Construct a new DateDay and initialise from a java Calendar.
-     * @param pDate the java date to initialise from
-     */
-    public JDateDay(final Calendar pDate) {
-        this(pDate, Locale.getDefault());
-    }
-
-    /**
-     * Construct a new DateDay and initialise from a java Calendar.
-     * @param pDate the java date to initialise from
-     * @param pLocale the locale for this date
-     */
-    public JDateDay(final Calendar pDate,
-                    final Locale pLocale) {
         /* Null dates not allowed */
         if (pDate == null) {
             throw new IllegalArgumentException(ERROR_NULLDATE);
         }
 
         /* Create the Date */
-        buildDateDay(pDate.get(Calendar.YEAR), pDate.get(Calendar.MONTH), pDate.get(Calendar.DAY_OF_MONTH), pLocale);
+        Instant myInstant = Instant.ofEpochMilli(pDate.getTime());
+        LocalDateTime myDateTime = LocalDateTime.ofInstant(myInstant, ZoneId.systemDefault());
+        buildDateDay(myDateTime.toLocalDate(), pLocale);
     }
 
     /**
@@ -252,7 +271,7 @@ public class JDateDay
     /**
      * Construct an explicit Date.
      * @param pYear the year
-     * @param pMonth the month (Calendar.JUNE etc)
+     * @param pMonth the month (1 to 12 etc)
      * @param pDay the day of the month
      */
     public JDateDay(final int pYear,
@@ -262,9 +281,21 @@ public class JDateDay
     }
 
     /**
+     * Construct an explicit Date.
+     * @param pYear the year
+     * @param pMonth the month (Month.JUNE etc)
+     * @param pDay the day of the month
+     */
+    public JDateDay(final int pYear,
+                    final Month pMonth,
+                    final int pDay) {
+        this(pYear, pMonth.getValue(), pDay);
+    }
+
+    /**
      * Construct an explicit Date for a locale.
      * @param pYear the year
-     * @param pMonth the month (Calendar.JUNE etc)
+     * @param pMonth the month (1 to 12 etc)
      * @param pDay the day of the month
      * @param pLocale the locale for this date
      */
@@ -273,6 +304,20 @@ public class JDateDay
                     final int pDay,
                     final Locale pLocale) {
         buildDateDay(pYear, pMonth, pDay, pLocale);
+    }
+
+    /**
+     * Construct an explicit Date for a locale.
+     * @param pYear the year
+     * @param pMonth the month (Month.JUNE etc)
+     * @param pDay the day of the month
+     * @param pLocale the locale for this date
+     */
+    public JDateDay(final int pYear,
+                    final Month pMonth,
+                    final int pDay,
+                    final Locale pLocale) {
+        this(pYear, pMonth.getValue(), pDay, pLocale);
     }
 
     /**
@@ -303,15 +348,20 @@ public class JDateDay
     public JDateDay(final String pValue,
                     final Locale pLocale,
                     final String pFormat) {
+        /* Null dates not allowed */
+        if (pValue == null) {
+            throw new IllegalArgumentException(ERROR_NULLDATE);
+        }
+
         try {
             /* Access the date format */
             theFormat = pFormat;
-            theDateFormat = new SimpleDateFormat(theFormat, pLocale);
+            theDateFormat = DateTimeFormatter.ofPattern(theFormat, pLocale);
 
             /* Parse and build the date */
-            Date myDate = theDateFormat.parse(pValue);
+            LocalDate myDate = LocalDate.parse(pValue, theDateFormat);
             buildDateDay(myDate, pLocale);
-        } catch (ParseException e) {
+        } catch (DateTimeParseException e) {
             throw new IllegalArgumentException(ERROR_BADFORMAT
                                                + " "
                                                + pValue, e);
@@ -323,32 +373,13 @@ public class JDateDay
      * @param pDate the java date to initialise from
      * @param pLocale the locale for this date
      */
-    private void buildDateDay(final Date pDate,
+    private void buildDateDay(final LocalDate pDate,
                               final Locale pLocale) {
         /* Null dates not allowed */
         if (pDate == null) {
             throw new IllegalArgumentException(ERROR_NULLDATE);
         }
 
-        /* Access Date within calendar */
-        Calendar myDate = Calendar.getInstance(pLocale);
-        myDate.setTime(pDate);
-
-        /* Create the Date */
-        buildDateDay(myDate.get(Calendar.YEAR), myDate.get(Calendar.MONTH), myDate.get(Calendar.DAY_OF_MONTH), pLocale);
-    }
-
-    /**
-     * Construct an explicit Date for a locale.
-     * @param pYear the year
-     * @param pMonth the month (Calendar.JUNE etc)
-     * @param pDay the day of the month
-     * @param pLocale the locale for this date
-     */
-    private void buildDateDay(final int pYear,
-                              final int pMonth,
-                              final int pDay,
-                              final Locale pLocale) {
         /* Null locale not allowed */
         if (pLocale == null) {
             throw new IllegalArgumentException(ERROR_NULLLOCALE);
@@ -356,10 +387,23 @@ public class JDateDay
 
         /* Build date values */
         theLocale = pLocale;
-        theDate = Calendar.getInstance(theLocale);
-        theDate.set(pYear, pMonth, pDay, JDateConfig.NOON_HOUR, 0, 0);
-        theDate.set(Calendar.MILLISECOND, 0);
+        theDate = pDate;
         obtainValues();
+    }
+
+    /**
+     * Construct an explicit Date for a locale.
+     * @param pYear the year
+     * @param pMonth the month (1 to 12)
+     * @param pDay the day of the month
+     * @param pLocale the locale for this date
+     */
+    private void buildDateDay(final int pYear,
+                              final int pMonth,
+                              final int pDay,
+                              final Locale pLocale) {
+        /* Build the date day */
+        buildDateDay(LocalDate.of(pYear, pMonth, pDay), pLocale);
     }
 
     /**
@@ -395,7 +439,7 @@ public class JDateDay
      * @param iYear the number of years to adjust by
      */
     public void adjustYear(final int iYear) {
-        theDate.add(Calendar.YEAR, iYear);
+        theDate = theDate.plusYears(iYear);
         obtainValues();
     }
 
@@ -404,7 +448,7 @@ public class JDateDay
      * @param iMonth the number of months to adjust by
      */
     public void adjustMonth(final int iMonth) {
-        theDate.add(Calendar.MONTH, iMonth);
+        theDate = theDate.plusMonths(iMonth);
         obtainValues();
     }
 
@@ -413,7 +457,7 @@ public class JDateDay
      * @param iDay the number of days to adjust by
      */
     public void adjustDay(final int iDay) {
-        theDate.add(Calendar.DAY_OF_MONTH, iDay);
+        theDate = theDate.plusDays(iDay);
         obtainValues();
     }
 
@@ -422,9 +466,9 @@ public class JDateDay
      * @param iField the field to adjust
      * @param iUnits the number of units to adjust by
      */
-    public void adjustField(final int iField,
+    public void adjustField(final TemporalUnit iField,
                             final int iUnits) {
-        theDate.add(iField, iUnits);
+        theDate = theDate.plus(iUnits, iField);
         obtainValues();
     }
 
@@ -478,11 +522,11 @@ public class JDateDay
      */
     public void endNextMonth() {
         /* Move to the first of the current month */
-        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+        theDate = theDate.withDayOfMonth(1);
 
         /* Add two months and move back a day */
-        theDate.add(Calendar.MONTH, 2);
-        theDate.add(Calendar.DAY_OF_MONTH, -1);
+        theDate = theDate.plusMonths(2);
+        theDate = theDate.minusDays(1);
         obtainValues();
     }
 
@@ -491,7 +535,7 @@ public class JDateDay
      */
     public void startCalendarMonth() {
         /* Move to the first of the current month */
-        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+        theDate = theDate.withDayOfMonth(1);
         obtainValues();
     }
 
@@ -500,14 +544,14 @@ public class JDateDay
      */
     public void startCalendarQuarter() {
         /* Determine the month in quarter */
-        int myMiQ = theMonth
+        int myMiQ = (theMonth - 1)
                     % MONTHS_IN_QUARTER;
 
         /* Move to the first of the current month */
-        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
+        theDate = theDate.withDayOfMonth(1);
 
         /* Move to the first of the quarter */
-        theDate.add(Calendar.MONTH, -myMiQ);
+        theDate = theDate.minusMonths(myMiQ);
         obtainValues();
     }
 
@@ -516,8 +560,8 @@ public class JDateDay
      */
     public void startCalendarYear() {
         /* Move to the first of the current year */
-        theDate.add(Calendar.DAY_OF_MONTH, 1 - theDay);
-        theDate.add(Calendar.MONTH, -theMonth);
+        theDate = theDate.withDayOfMonth(1);
+        theDate = theDate.withMonth(Month.JANUARY.getValue());
         obtainValues();
     }
 
@@ -527,18 +571,18 @@ public class JDateDay
     public void startFiscalYear() {
         /* Determine Fiscal year type */
         JFiscalYear myFiscal = JFiscalYear.determineFiscalYear(theLocale);
-        int myMonth = myFiscal.getFirstMonth();
+        int myMonth = myFiscal.getFirstMonth().getValue();
         int myDay = myFiscal.getFirstDay();
 
         /* Determine which year we are in */
         if ((theMonth < myMonth)
             || ((theMonth == myMonth) && (theDay < myDay))) {
-            theDate.add(Calendar.YEAR, -1);
+            theDate = theDate.minusYears(1);
         }
 
         /* Move to the first of the current year */
-        theDate.set(Calendar.DAY_OF_MONTH, myDay);
-        theDate.set(Calendar.MONTH, myMonth);
+        theDate = theDate.withDayOfMonth(myDay);
+        theDate = theDate.withMonth(myMonth);
         obtainValues();
     }
 
@@ -549,15 +593,15 @@ public class JDateDay
      */
     public int ageOn(final JDateDay pDate) {
         /* Calculate the initial age assuming same date in year */
-        int myAge = pDate.theDate.get(Calendar.YEAR);
-        myAge -= theDate.get(Calendar.YEAR);
+        int myAge = pDate.theDate.getYear();
+        myAge -= theDate.getYear();
 
         /* Check whether we are later in the year */
-        int myDelta = theDate.get(Calendar.MONTH)
-                      - pDate.theDate.get(Calendar.MONTH);
+        int myDelta = theDate.getMonthValue()
+                      - pDate.theDate.getMonthValue();
         if (myDelta == 0) {
-            myDelta = theDate.get(Calendar.DAY_OF_MONTH)
-                      - pDate.theDate.get(Calendar.DAY_OF_MONTH);
+            myDelta = theDate.getDayOfMonth()
+                      - pDate.theDate.getDayOfMonth();
         }
 
         /* If so then subtract one from the year */
@@ -574,7 +618,7 @@ public class JDateDay
      * @param pDate the date to copy from
      */
     public void copyDate(final JDateDay pDate) {
-        buildDateDay(pDate.getYear(), pDate.getMonth(), pDate.getDay(), theLocale);
+        buildDateDay(pDate.getDate(), theLocale);
         obtainValues();
     }
 
@@ -583,13 +627,13 @@ public class JDateDay
      */
     private void obtainValues() {
         /* Access date details */
-        theYear = theDate.get(Calendar.YEAR);
-        theMonth = theDate.get(Calendar.MONTH);
-        theDay = theDate.get(Calendar.DAY_OF_MONTH);
+        theYear = theDate.getYear();
+        theMonth = theDate.getMonthValue();
+        theDay = theDate.getDayOfMonth();
 
         /* Calculate the id (512*year + dayofYear) */
         theId = (theYear << SHIFT_ID_YEAR)
-                + theDate.get(Calendar.DAY_OF_YEAR);
+                + theDate.getDayOfYear();
 
         /* Reset formatted date */
         theFormattedDate = null;
@@ -605,11 +649,11 @@ public class JDateDay
         /* If we have not obtained the date format */
         if (theDateFormat == null) {
             /* Create the simple date format */
-            theDateFormat = new SimpleDateFormat(theFormat, theLocale);
+            theDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);
         }
 
         /* Format the date */
-        theFormattedDate = theDateFormat.format(theDate.getTime());
+        theFormattedDate = theDate.format(theDateFormat);
 
         /* Return the date */
         return theFormattedDate;
@@ -701,6 +745,25 @@ public class JDateDay
         iHash *= HASH_PRIME;
         iHash += theDay;
         return iHash;
+    }
+
+    /**
+     * Convert the LocalDate to a Date.
+     * @return the associated date
+     */
+    public Date toDate() {
+        Instant myInstant = theDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(myInstant);
+    }
+
+    /**
+     * Convert the LocalDate to a Calendar.
+     * @return the Calendar
+     */
+    public Calendar toCalendar() {
+        Calendar myCalendar = Calendar.getInstance(theLocale);
+        myCalendar.setTime(toDate());
+        return myCalendar;
     }
 
     /**

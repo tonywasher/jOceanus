@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.dateday;
 
-import java.util.Calendar;
+import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
 /**
@@ -33,67 +33,67 @@ public enum JDatePeriod {
     /**
      * OneWeek.
      */
-    ONEWEEK(Calendar.DAY_OF_MONTH, 7),
+    ONEWEEK(ChronoUnit.WEEKS, 1),
 
     /**
      * Two Weeks.
      */
-    FORTNIGHT(Calendar.DAY_OF_MONTH, 14),
+    FORTNIGHT(ChronoUnit.WEEKS, 2),
 
     /**
      * One Month.
      */
-    ONEMONTH(Calendar.MONTH, 1),
+    ONEMONTH(ChronoUnit.MONTHS, 1),
 
     /**
      * Three Months.
      */
-    QUARTERYEAR(Calendar.MONTH, 3),
+    QUARTERYEAR(ChronoUnit.MONTHS, 3),
 
     /**
      * Six Months.
      */
-    HALFYEAR(Calendar.MONTH, 6),
+    HALFYEAR(ChronoUnit.MONTHS, 6),
 
     /**
      * One Year.
      */
-    ONEYEAR(Calendar.YEAR, 1),
+    ONEYEAR(ChronoUnit.YEARS, 1),
 
     /**
      * Calendar Month.
      */
-    CALENDARMONTH(Calendar.MONTH, 1),
+    CALENDARMONTH(ChronoUnit.MONTHS, 1),
 
     /**
      * Calendar Quarter.
      */
-    CALENDARQUARTER(Calendar.MONTH, 3),
+    CALENDARQUARTER(ChronoUnit.MONTHS, 3),
 
     /**
      * Calendar Year.
      */
-    CALENDARYEAR(Calendar.YEAR, 1),
+    CALENDARYEAR(ChronoUnit.YEARS, 1),
 
     /**
      * Fiscal Year.
      */
-    FISCALYEAR(Calendar.YEAR, 1),
+    FISCALYEAR(ChronoUnit.YEARS, 1),
 
     /**
      * Dates Up to.
      */
-    DATESUPTO(-1, -1),
+    DATESUPTO(null, -1),
 
     /**
      * Custom.
      */
-    CUSTOM(-1, -1),
+    CUSTOM(null, -1),
 
     /**
      * All.
      */
-    ALLDATES(-1, -1);
+    ALLDATES(null, -1);
 
     /**
      * Resource Bundle.
@@ -108,7 +108,7 @@ public enum JDatePeriod {
     /**
      * The calendar field.
      */
-    private final int theField;
+    private final ChronoUnit theField;
 
     /**
      * The adjustments amount.
@@ -119,7 +119,7 @@ public enum JDatePeriod {
      * Obtain field.
      * @return the field
      */
-    public int getField() {
+    public ChronoUnit getField() {
         return theField;
     }
 
@@ -130,8 +130,8 @@ public enum JDatePeriod {
      */
     public int getAmount(final boolean bForward) {
         return (bForward)
-                ? theAmount
-                : -theAmount;
+                         ? theAmount
+                         : -theAmount;
     }
 
     /**
@@ -139,7 +139,7 @@ public enum JDatePeriod {
      * @param pField the Calendar field
      * @param pAmount the adjustment value
      */
-    private JDatePeriod(final int pField,
+    private JDatePeriod(final ChronoUnit pField,
                         final int pAmount) {
         /* Store values */
         theField = pField;
@@ -163,7 +163,7 @@ public enum JDatePeriod {
      * @return true/false
      */
     public boolean adjustPeriod() {
-        return theField != -1;
+        return theField != null;
     }
 
     /**

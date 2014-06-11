@@ -75,7 +75,7 @@ public class JDateDayCellRenderer
         /* Handle DateDay values */
         if (value instanceof JDateDay) {
             JDateDay d = (JDateDay) value;
-            o = d.getCalendar();
+            o = d.getDate();
         }
 
         /* Pass the value on */

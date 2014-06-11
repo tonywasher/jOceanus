@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataState;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -769,6 +771,19 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         return new InfoIterator();
     }
 
+    @Override
+    public void forEach(final Consumer<? super T> pAction) {
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            pAction.accept(myIterator.next());
+        }
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Is the infoSet empty?
      * @return true/false.
@@ -844,6 +859,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>, O extends D
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void forEachRemaining(final Consumer<? super T> pAction) {
+            while (hasNext()) {
+                pAction.accept(next());
+            }
         }
     }
 }

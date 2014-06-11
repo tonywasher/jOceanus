@@ -27,10 +27,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.RandomAccess;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 /**
  * Ordered Linked list. Extension of {@link java.util.List} that provides a sorted list implementation. The underlying implementation is that of a linked list,
@@ -323,6 +329,54 @@ public class OrderedList<T extends Comparable<? super T>>
     public OrderedListIterator<T> listIterator() {
         /* Return a new iterator */
         return new OrderedListIterator<T>(this);
+    }
+
+    @Override
+    public void forEach(final Consumer<? super T> pAction) {
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            pAction.accept(myIterator.next());
+        }
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return new OrderedListSpliterator<T>(this);
+    }
+
+    @Override
+    public Stream<T> parallelStream() {
+        /* Throw exception */
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeIf(final Predicate<? super T> pCheck) {
+        OrderedListIterator<T> myIterator = listIterator();
+        while (myIterator.hasNext()) {
+            if (pCheck.test(myIterator.next())) {
+                myIterator.remove();
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Stream<T> stream() {
+        /* Throw exception */
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void replaceAll(final UnaryOperator<T> pAction) {
+        /* Throw exception */
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void sort(final Comparator<? super T> pComparator) {
+        /* Throw exception */
+        throw new UnsupportedOperationException();
     }
 
     /**

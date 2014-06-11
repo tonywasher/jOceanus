@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.list;
 import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 /**
  * Sorted Linked list iterator.
@@ -94,8 +95,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
     private OrderedNode<T> nextNode() {
         /* Return the next node */
         return (theNodeBefore != null)
-                ? theNodeBefore.getNext()
-                : theList.getFirst();
+                                      ? theNodeBefore.getNext()
+                                      : theList.getFirst();
     }
 
     /**
@@ -105,8 +106,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
     private OrderedNode<T> previousNode() {
         /* Return the previous node */
         return (theNodeAfter != null)
-                ? theNodeAfter.getPrev()
-                : theList.getLast();
+                                     ? theNodeAfter.getPrev()
+                                     : theList.getLast();
     }
 
     @Override
@@ -137,8 +138,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the next object */
         return (myNext != null)
-                ? myNext.getObject()
-                : null;
+                               ? myNext.getObject()
+                               : null;
     }
 
     /**
@@ -151,8 +152,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the previous object */
         return (myPrev != null)
-                ? myPrev.getObject()
-                : null;
+                               ? myPrev.getObject()
+                               : null;
     }
 
     /**
@@ -165,8 +166,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the next object */
         return (myFirst != null)
-                ? myFirst.getObject()
-                : null;
+                                ? myFirst.getObject()
+                                : null;
     }
 
     /**
@@ -179,8 +180,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the previous object */
         return (myLast != null)
-                ? myLast.getObject()
-                : null;
+                               ? myLast.getObject()
+                               : null;
     }
 
     @Override
@@ -236,8 +237,8 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the index */
         return (myNext != null)
-                ? myNext.getIndex()
-                : theList.size();
+                               ? myNext.getIndex()
+                               : theList.size();
     }
 
     @Override
@@ -247,8 +248,15 @@ public class OrderedListIterator<T extends Comparable<? super T>>
 
         /* Return the index */
         return (myPrev != null)
-                ? myPrev.getIndex()
-                : -1;
+                               ? myPrev.getIndex()
+                               : -1;
+    }
+
+    @Override
+    public void forEachRemaining(final Consumer<? super T> pAction) {
+        while (hasNext()) {
+            pAction.accept(next());
+        }
     }
 
     /**

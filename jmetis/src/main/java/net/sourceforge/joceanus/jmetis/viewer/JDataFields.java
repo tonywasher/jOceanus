@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Data Fields.
@@ -270,6 +271,13 @@ public class JDataFields {
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void forEachRemaining(final Consumer<? super JDataField> pAction) {
+            while (hasNext()) {
+                pAction.accept(next());
+            }
         }
     }
 
