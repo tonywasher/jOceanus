@@ -125,6 +125,11 @@ public class DepositCategoryTable
     private static final String FILTER_PARENTS = NLS_BUNDLE.getString("PromptFilterParents");
 
     /**
+     * Text for New Button.
+     */
+    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -173,6 +178,11 @@ public class DepositCategoryTable
      * The select button.
      */
     private final JButton theSelectButton;
+
+    /**
+     * The new button.
+     */
+    private final JButton theNewButton;
 
     /**
      * Deposit Categories.
@@ -252,6 +262,12 @@ public class DepositCategoryTable
         theSelectButton.setText(FILTER_PARENTS);
         theSelectButton.addActionListener(myListener);
 
+        /* Create new button */
+        theNewButton = new JButton(NLS_NEW);
+        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theNewButton.addActionListener(myListener);
+
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
         theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
@@ -259,6 +275,8 @@ public class DepositCategoryTable
         theFilterPanel.add(myPrompt);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
         theFilterPanel.add(theSelectButton);
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(theNewButton);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
@@ -513,10 +531,20 @@ public class DepositCategoryTable
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Show the select menu */
-            if (theCategories != null) {
-                showSelectMenu();
+        public void actionPerformed(final ActionEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If this is the select button */
+            if (theSelectButton.equals(o)) {
+                /* Show the select menu */
+                if (theCategories != null) {
+                    showSelectMenu();
+                }
+            }
+
+            /* If this is the new button */
+            if (theNewButton.equals(o)) {
             }
         }
 

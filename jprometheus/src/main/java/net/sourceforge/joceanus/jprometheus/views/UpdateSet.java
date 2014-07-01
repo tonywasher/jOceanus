@@ -103,6 +103,11 @@ public class UpdateSet<E extends Enum<E>>
     private final List<UpdateEntry<?, E>> theList;
 
     /**
+     * The base Set.
+     */
+    private final UpdateSet<E> theBase;
+
+    /**
      * The DataControl.
      */
     private final DataControl<?, E> theControl;
@@ -120,11 +125,32 @@ public class UpdateSet<E extends Enum<E>>
         /* Store the Control */
         theControl = pControl;
 
+        /* Set no base */
+        theBase = null;
+
         /* Create local fields */
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the list */
         theList = new ArrayList<UpdateEntry<?, E>>();
+    }
+
+    /**
+     * Constructor for an update set copy.
+     * @param pBase the Data Control
+     */
+    public UpdateSet(final UpdateSet<E> pBase) {
+        /* Store the Control */
+        theControl = pBase.theControl;
+
+        /* Store the base */
+        theBase = pBase;
+
+        /* Copy local fields */
+        theLocalFields = pBase.getDataFields();
+
+        /* Create the list */
+        theList = new ArrayList<UpdateEntry<?, E>>(pBase.theList);
     }
 
     /**

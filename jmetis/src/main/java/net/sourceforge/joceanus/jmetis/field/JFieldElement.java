@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 
@@ -134,6 +135,34 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Create the component */
         theComponent = JFieldComponent.deriveComponent(this, pComboBox, pClass);
+
+        /* Access the model */
+        theModel = theComponent.getModel();
+    }
+
+    /**
+     * Constructor.
+     * @param <I> ComboBox element type
+     * @param pFieldSet the field set
+     * @param pField the field id
+     * @param pPopUp the popUp manager.
+     * @param pClass the class of the combo box elements
+     * @param pLabel the label for the component
+     * @param pButton the button
+     */
+    protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
+                                final JDataField pField,
+                                final JFieldButtonPopUp pPopUp,
+                                final Class<I> pClass,
+                                final JComponent pLabel,
+                                final JButton pButton) {
+        /* Store parameters */
+        theFieldSet = pFieldSet;
+        theField = pField;
+        theLabel = pLabel;
+
+        /* Create the component */
+        theComponent = JFieldComponent.deriveComponent(this, pButton, pPopUp, pClass);
 
         /* Access the model */
         theModel = theComponent.getModel();

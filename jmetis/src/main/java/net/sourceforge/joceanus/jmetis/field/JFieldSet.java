@@ -26,10 +26,12 @@ import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
+import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
@@ -143,6 +145,27 @@ public class JFieldSet<T extends JFieldSetItem>
                                     final JComboBox<I> pComboBox) {
         /* Create the field */
         JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pLabel, pComboBox);
+
+        /* Add to the map */
+        theMap.put(pField, myElement);
+    }
+
+    /**
+     * Add Element to field set.
+     * @param <I> ComboBox element type
+     * @param pField the field id
+     * @param pPopUp the popUp manager.
+     * @param pClass the class of the value
+     * @param pLabel the label for the component
+     * @param pButton the button
+     */
+    public <I> void addFieldElement(final JDataField pField,
+                                    final JFieldButtonPopUp pPopUp,
+                                    final Class<I> pClass,
+                                    final JComponent pLabel,
+                                    final JButton pButton) {
+        /* Create the field */
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pPopUp, pClass, pLabel, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);

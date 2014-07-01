@@ -24,9 +24,14 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractButton;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -84,6 +89,11 @@ public class TransactionTagTable
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
+     * Text for New Button.
+     */
+    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -127,6 +137,11 @@ public class TransactionTagTable
      * The filter panel.
      */
     private final JPanel theFilterPanel;
+
+    /**
+     * The new button.
+     */
+    private final JButton theNewButton;
 
     /**
      * TransactionTags.
@@ -193,8 +208,18 @@ public class TransactionTagTable
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
+        /* Create new button */
+        theNewButton = new JButton(NLS_NEW);
+        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theNewButton.addActionListener(myListener);
+
         /* Create a dummy filter panel */
         theFilterPanel = new JPanel();
+        theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(theNewButton);
+        theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
     }
 
     /**
@@ -347,7 +372,7 @@ public class TransactionTagTable
      * Listener class.
      */
     private final class TransactionTagListener
-            implements ChangeListener {
+            implements ActionListener, ChangeListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -358,6 +383,16 @@ public class TransactionTagTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If this is the new button */
+            if (theNewButton.equals(o)) {
             }
         }
     }

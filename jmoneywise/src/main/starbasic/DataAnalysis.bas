@@ -148,7 +148,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					myParInfo = myCredInfo.acctParent					
 					
 					'Adjust parent expense
-					myParInfo.acctExpense = myParInfo.acctExpense + myValue
+					myParInfo.acctExpense = myParInfo.acctExpense + myTaxCred + myValue
 				Else
 					'Add to value
 					myCredInfo.acctValue = myCredInfo.acctValue + myValue
@@ -296,8 +296,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			
 			'If there is a TaxCredit
 			If (myTaxCred > 0) Or (myNatIns > 0) Then
-				'Adjust taxman expense
-				myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred + myNatIns
+                If (myCatInfo.isLoanPay) Then
+                    'Adjust taxman expense
+                    myTaxAcct.acctExpense = myTaxAcct.acctExpense - myTaxCred
+                Else
+				    'Adjust taxman expense
+                    myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred + myNatIns
+                End If 
 			End If
 			
 			'If this is not a transfer or taxable gain
@@ -310,7 +315,11 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				myCatInfo.catCharity = myCatInfo.catCharity + myCharity
 				
 				'Add the tax credit and Nat Insurance
-				myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
+                If (myCatInfo.isLoanPay) Then
+    				myTaxInfo.catValue = myTaxInfo.catValue - myTaxCred
+   				Else 
+    				myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
+   				End If
 				myInsInfo.catValue = myInsInfo.catValue + myNatIns				
 				myBenInfo.catValue = myBenInfo.catValue + myBenefit
 				myCharInfo.catValue = myCharInfo.catValue + myCharity

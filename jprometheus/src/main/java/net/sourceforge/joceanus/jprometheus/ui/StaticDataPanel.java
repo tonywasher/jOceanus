@@ -420,10 +420,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
 
-        /* Lock down Selection if required */
-        theSelectButton.setEnabled(!hasUpdates);
-        theDisabledCheckBox.setEnabled(!hasUpdates);
-
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
         theSaveButtons.setVisible(hasUpdates);

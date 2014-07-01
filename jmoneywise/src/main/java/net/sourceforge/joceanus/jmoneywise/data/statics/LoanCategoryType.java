@@ -66,6 +66,15 @@ public class LoanCategoryType
         return super.getStaticClass();
     }
 
+    /**
+     * Determine whether the LoanCategoryType is the required class.
+     * @param pClass the desired class
+     * @return <code>true</code> if the loan category type is the required class, <code>false</code> otherwise.
+     */
+    public boolean isLoanCategory(final LoanCategoryClass pClass) {
+        return getLoanClass().equals(pClass);
+    }
+
     @Override
     public LoanCategoryType getBase() {
         return (LoanCategoryType) super.getBase();

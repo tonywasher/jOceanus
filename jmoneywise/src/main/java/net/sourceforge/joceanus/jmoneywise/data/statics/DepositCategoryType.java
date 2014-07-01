@@ -66,6 +66,15 @@ public class DepositCategoryType
         return super.getStaticClass();
     }
 
+    /**
+     * Determine whether the DepositCategoryType is the required class.
+     * @param pClass the desired class
+     * @return <code>true</code> if the deposit category type is the required class, <code>false</code> otherwise.
+     */
+    public boolean isDepositCategory(final DepositCategoryClass pClass) {
+        return getDepositClass().equals(pClass);
+    }
+
     @Override
     public DepositCategoryType getBase() {
         return (DepositCategoryType) super.getBase();

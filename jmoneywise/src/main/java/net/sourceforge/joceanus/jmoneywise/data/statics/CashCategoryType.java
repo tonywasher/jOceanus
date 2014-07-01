@@ -66,6 +66,15 @@ public class CashCategoryType
         return super.getStaticClass();
     }
 
+    /**
+     * Determine whether the CashCategoryType is the required class.
+     * @param pClass the desired class
+     * @return <code>true</code> if the cash category type is the required class, <code>false</code> otherwise.
+     */
+    public boolean isCashCategory(final CashCategoryClass pClass) {
+        return getCashClass().equals(pClass);
+    }
+
     @Override
     public CashCategoryType getBase() {
         return (CashCategoryType) super.getBase();

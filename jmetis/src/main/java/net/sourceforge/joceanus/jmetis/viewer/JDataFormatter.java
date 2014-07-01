@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.viewer;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -223,6 +224,9 @@ public class JDataFormatter {
         if (myClass == Calendar.class) {
             return theDateFormatter.formatCalendarDay((Calendar) pValue);
         }
+        if (myClass == LocalDate.class) {
+            return theDateFormatter.formatLocalDate((LocalDate) pValue);
+        }
         if (myClass == JDateDay.class) {
             return theDateFormatter.formatDateDay((JDateDay) pValue);
         }
@@ -295,6 +299,10 @@ public class JDataFormatter {
         if (pClass == Calendar.class) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseCalendarDay(pSource));
+        }
+        if (pClass == LocalDate.class) {
+            /* Parse the date */
+            return pClass.cast(theDateFormatter.parseLocalDate(pSource));
         }
         if (pClass == JPrice.class) {
             /* Parse the price */

@@ -125,6 +125,11 @@ public class TransactionCategoryTable
     private static final String FILTER_ALL = NLS_BUNDLE.getString("PromptFilterAll");
 
     /**
+     * Text for New Button.
+     */
+    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
+
+    /**
      * The data view.
      */
     private final transient View theView;
@@ -173,6 +178,11 @@ public class TransactionCategoryTable
      * The select button.
      */
     private final JButton theSelectButton;
+
+    /**
+     * The new button.
+     */
+    private final JButton theNewButton;
 
     /**
      * Event Categories.
@@ -252,6 +262,12 @@ public class TransactionCategoryTable
         theSelectButton.setText(FILTER_ALL);
         theSelectButton.addActionListener(myListener);
 
+        /* Create new button */
+        theNewButton = new JButton(NLS_NEW);
+        theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
+        theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theNewButton.addActionListener(myListener);
+
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
         theFilterPanel.setLayout(new BoxLayout(theFilterPanel, BoxLayout.X_AXIS));
@@ -259,6 +275,8 @@ public class TransactionCategoryTable
         theFilterPanel.add(myPrompt);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
         theFilterPanel.add(theSelectButton);
+        theFilterPanel.add(Box.createHorizontalGlue());
+        theFilterPanel.add(theNewButton);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
@@ -517,10 +535,20 @@ public class TransactionCategoryTable
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Show the select menu */
-            if (theCategories != null) {
-                showSelectMenu();
+        public void actionPerformed(final ActionEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If this is the select button */
+            if (theSelectButton.equals(o)) {
+                /* Show the select menu */
+                if (theCategories != null) {
+                    showSelectMenu();
+                }
+            }
+
+            /* If this is the new button */
+            if (theNewButton.equals(o)) {
             }
         }
 
@@ -880,7 +908,7 @@ public class TransactionCategoryTable
     /**
      * Category Type.
      */
-    private enum CategoryType {
+    public enum CategoryType {
         /**
          * Income.
          */
@@ -921,7 +949,7 @@ public class TransactionCategoryTable
          * @param pCategory the transaction category
          * @return the category type
          */
-        private static CategoryType determineType(final TransactionCategory pCategory) {
+        public static CategoryType determineType(final TransactionCategory pCategory) {
             return determineType(pCategory.getCategoryType());
         }
 
@@ -930,7 +958,7 @@ public class TransactionCategoryTable
          * @param pType the transaction category type
          * @return the category type
          */
-        private static CategoryType determineType(final TransactionCategoryType pType) {
+        public static CategoryType determineType(final TransactionCategoryType pType) {
             /* Access class */
             TransactionCategoryClass myClass = pType.getCategoryClass();
 
