@@ -172,7 +172,10 @@ public class DiscoverData
             if (!isCancelled()) {
                 SvnComponent myComp = theRepository.locateComponent("jOceanus");
                 BuildGit myBuild = new BuildGit(myComp, theGitRepo);
+                Long myStart = System.currentTimeMillis();
                 myBuild.buildRepository(this);
+                Long myDuration = System.currentTimeMillis() - myStart;
+                setNewStage("Elapsed: " + myDuration);
             }
 
             /* Return null */

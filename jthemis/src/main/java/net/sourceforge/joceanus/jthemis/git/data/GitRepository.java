@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jthemis.git.data.GitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportStatus;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.MvnProjectId;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -239,7 +239,7 @@ public class GitRepository
             String myRepoPath = myPathBuilder.toString();
 
             /* Make sure that the path is deleted */
-            Directory.removeDirectory(new File(myRepoPath));
+            Directory2.removeDirectory(new File(myRepoPath));
 
             /* Create repository */
             FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();

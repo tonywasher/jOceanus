@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.tasks.CheckOut;
@@ -91,7 +91,7 @@ public class CreateTagExtract
         /* protect against exceptions */
         try {
             /* Create new directory for extract */
-            Directory.createDirectory(pLocation);
+            Directory2.createDirectory(pLocation);
 
             /* Access tag list for extract */
             // myTags = SvnTag.getTagMap(pTags).values();

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataObject.JDataFormat;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.JThemisDataException;
 import net.sourceforge.joceanus.jthemis.JThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistory.SvnSourceDir;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRevisionHistoryMap.SvnRevisionPath;
@@ -47,6 +47,7 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
@@ -1195,7 +1196,7 @@ public class SvnExtract
         public void extractItem(final File pTarget,
                                 final String pKeep) throws JOceanusException {
             /* Clear the target directory */
-            Directory.clearDirectory(pTarget, pKeep);
+            Directory2.clearDirectory(pTarget, pKeep);
 
             /* Access update client */
             SVNClientManager myMgr = theRepo.getClientManager();
@@ -1221,6 +1222,13 @@ public class SvnExtract
             } finally {
                 theRepo.releaseClientManager(myMgr);
             }
+        }
+
+        void kkk(final File pTarget) {
+            SVNClientManager myMgr = theRepo.getClientManager();
+            SVNDiffClient myDiff = myMgr.getDiffClient();
+
+            myDiff.doDiffStatus(pTarget, rN, rM, pegRevision, SVNDepth.INFINITY, false, handler);
         }
     }
 

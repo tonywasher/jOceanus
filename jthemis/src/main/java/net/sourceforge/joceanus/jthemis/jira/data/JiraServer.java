@@ -46,11 +46,8 @@ import com.atlassian.jira.rest.client.api.MetadataRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssueType;
 import com.atlassian.jira.rest.client.api.domain.BasicPriority;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
-import com.atlassian.jira.rest.client.api.domain.BasicResolution;
-import com.atlassian.jira.rest.client.api.domain.BasicStatus;
 import com.atlassian.jira.rest.client.api.domain.BasicUser;
 import com.atlassian.jira.rest.client.api.domain.Filter;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -405,7 +402,7 @@ public class JiraServer {
      * @return the IssueType
      * @throws JOceanusException on error
      */
-    protected JiraIssueType getIssueType(final BasicIssueType pType) throws JOceanusException {
+    protected JiraIssueType getIssueType(final IssueType pType) throws JOceanusException {
         /* Use name to search */
         return getIssueType(pType.getName());
     }
@@ -436,7 +433,7 @@ public class JiraServer {
      * @return the Status
      * @throws JOceanusException on error
      */
-    protected JiraStatus getStatus(final BasicStatus pStatus) throws JOceanusException {
+    protected JiraStatus getStatus(final Status pStatus) throws JOceanusException {
         /* Return an existing status if found in list */
         String myName = pStatus.getName();
         Iterator<JiraStatus> myIterator = theStatuses.iterator();
@@ -490,7 +487,7 @@ public class JiraServer {
      * @return the resolution
      * @throws JOceanusException on error
      */
-    protected JiraResolution getResolution(final BasicResolution pResolution) throws JOceanusException {
+    protected JiraResolution getResolution(final Resolution pResolution) throws JOceanusException {
         /* Use name to search */
         return getResolution(pResolution.getName());
     }
@@ -582,7 +579,7 @@ public class JiraServer {
         /* Protect against exceptions */
         try {
             /* Loop through all issueTypes */
-            for (BasicIssueType myType : theDataClient.getIssueTypes().claim()) {
+            for (IssueType myType : theDataClient.getIssueTypes().claim()) {
                 /* Access the issue type details */
                 IssueType myTypeDtl = theDataClient.getIssueType(myType.getSelf()).claim();
 
@@ -621,7 +618,7 @@ public class JiraServer {
         /* Protect against exceptions */
         try {
             /* Loop through all resolutions */
-            for (BasicResolution myRes : theDataClient.getResolutions().claim()) {
+            for (Resolution myRes : theDataClient.getResolutions().claim()) {
                 /* Access the resolution details */
                 Resolution myResolution = theDataClient.getResolution(myRes.getSelf()).claim();
 

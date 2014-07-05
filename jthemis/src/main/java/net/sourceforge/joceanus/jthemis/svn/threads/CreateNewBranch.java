@@ -30,7 +30,7 @@ import java.util.HashSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmBranch.ScmBranchOpType;
 import net.sourceforge.joceanus.jthemis.scm.data.ScmReporter.ReportTask;
-import net.sourceforge.joceanus.jthemis.scm.tasks.Directory;
+import net.sourceforge.joceanus.jthemis.scm.tasks.Directory2;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnTag;
 import net.sourceforge.joceanus.jthemis.svn.data.SvnWorkingCopy.SvnWorkingCopySet;
@@ -117,7 +117,7 @@ public class CreateNewBranch
         /* protect against exceptions */
         try {
             /* Create new directory for working copy */
-            Directory.createDirectory(pLocation);
+            Directory2.createDirectory(pLocation);
 
             /* Store the tags */
             myTags = new HashSet<SvnTag>(Arrays.asList(pTags));
