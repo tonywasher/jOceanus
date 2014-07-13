@@ -181,11 +181,30 @@ public class DataKeySet
     }
 
     /**
+     * Is this locked by prime hash.
+     * @return true/false
+     */
+    protected Boolean isHashPrime() {
+        return getControlKey().isHashPrime();
+    }
+
+    /**
      * Get the PassWordHash.
      * @return the passwordHash
+     * @throws JOceanusException on error
      */
-    protected PasswordHash getPasswordHash() {
+    protected PasswordHash getPasswordHash() throws JOceanusException {
         return getControlKey().getPasswordHash();
+    }
+
+    /**
+     * Get the PassWordHash.
+     * @param useHashPrime
+     * @return the passwordHash
+     * @throws JOceanusException on error
+     */
+    protected PasswordHash getPasswordHash(final Boolean useHashPrime) throws JOceanusException {
+        return getControlKey().getPasswordHash(useHashPrime);
     }
 
     /**
@@ -218,6 +237,14 @@ public class DataKeySet
      */
     protected final HashKey getHashKey() {
         return getControlKey().getHashKey();
+    }
+
+    /**
+     * Resolve the Active HashKey.
+     * @throws JOceanusException
+     */
+    protected final void resolveHashKey() throws JOceanusException {
+        getControlKey().resolveHashKey();
     }
 
     @Override
@@ -278,6 +305,9 @@ public class DataKeySet
 
             /* Resolve the ControlKey */
             resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
+
+            /* Resolve the Active HashKey */
+            resolveHashKey();
 
             /* Record the security generator */
             theSecurityGenerator = mySecure.getSecurityGenerator();
@@ -419,10 +449,12 @@ public class DataKeySet
 
     /**
      * Update password hash.
+     * @param pPrimeHash this is the prime hash
      * @param pHash the new password hash
      * @throws JOceanusException on error
      */
-    protected void updatePasswordHash(final PasswordHash pHash) throws JOceanusException {
+    protected void updatePasswordHash(final Boolean pPrimeHash,
+                                      final PasswordHash pHash) throws JOceanusException {
         /* Loop through the SymKeyType values */
         for (SymKeyType myType : SymKeyType.values()) {
             /* Access the Data Key */
@@ -430,7 +462,7 @@ public class DataKeySet
 
             /* Update the password hash */
             if (myKey != null) {
-                myKey.updatePasswordHash();
+                myKey.updatePasswordHash(pPrimeHash, pHash);
             }
         }
     }

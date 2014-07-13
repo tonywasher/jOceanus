@@ -81,6 +81,11 @@ public class DataKey
     public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataType"));
 
     /**
+     * HashPrime Field Id.
+     */
+    public static final JDataField FIELD_HASHPRIME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHashPrime"));
+
+    /**
      * KeyDefinition Field Id.
      */
     public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDefinition"));
@@ -139,6 +144,14 @@ public class DataKey
     }
 
     /**
+     * Is this locked by prime hash.
+     * @return true/false
+     */
+    public Boolean isHashPrime() {
+        return isHashPrime(getValueSet());
+    }
+
+    /**
      * Get the Key Definition.
      * @return the key definition
      */
@@ -178,6 +191,15 @@ public class DataKey
      */
     public static SymKeyType getKeyType(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_KEYTYPE, SymKeyType.class);
+    }
+
+    /**
+     * Is this locked by prime hash.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isHashPrime(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_HASHPRIME, Boolean.class);
     }
 
     /**
@@ -237,6 +259,14 @@ public class DataKey
      */
     private void setValueKeyType(final Integer pId) {
         getValueSet().setValue(FIELD_KEYTYPE, pId);
+    }
+
+    /**
+     * Set the HashPrime indicator.
+     * @param pPrime true/false
+     */
+    private void setValueHashPrime(final Boolean pPrime) {
+        getValueSet().setValue(FIELD_HASHPRIME, pPrime);
     }
 
     /**
@@ -315,6 +345,13 @@ public class DataKey
                 setValueKeyType(SymKeyType.fromId(myInt));
             }
 
+            /* Store the PrimeHash indicator */
+            myValue = pValues.getValue(FIELD_HASHPRIME);
+            Boolean isHashPrime = (myValue instanceof Boolean)
+                                                              ? (Boolean) myValue
+                                                              : Boolean.TRUE;
+            setValueHashPrime(isHashPrime);
+
             /* Store the KeyDef */
             myValue = pValues.getValue(FIELD_KEYDEF);
             if (myValue instanceof byte[]) {
@@ -322,7 +359,7 @@ public class DataKey
                 setValueSecuredKeyDef(myBytes);
 
                 /* Create the Symmetric Key from the wrapped data */
-                PasswordHash myHash = myKeySet.getPasswordHash();
+                PasswordHash myHash = myKeySet.getPasswordHash(isHashPrime);
                 CipherSet myCipher = myHash.getCipherSet();
                 SymmetricKey myKey = myCipher.deriveSymmetricKey(myBytes, getKeyType());
                 setValueDataKey(myKey);
@@ -356,7 +393,11 @@ public class DataKey
             setValueKeyType(pKeyType);
 
             /* Create the new key */
-            PasswordHash myHash = pKeySet.getPasswordHash();
+            Boolean isHashPrime = pKeySet.isHashPrime();
+            setValueHashPrime(isHashPrime);
+
+            /* Create the new key */
+            PasswordHash myHash = pKeySet.getPasswordHash(isHashPrime);
             CipherSet myCipher = myHash.getCipherSet();
             SecurityGenerator myGenerator = myHash.getSecurityGenerator();
             SymmetricKey myKey = myGenerator.generateSymmetricKey(pKeyType);
@@ -396,6 +437,7 @@ public class DataKey
 
         /* Copy the key details */
         setValueDataKey(pDataKey.getDataKey());
+        setValueHashPrime(pDataKey.isHashPrime());
         setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
         setValueCipher(pDataKey.getCipher());
         setValueKeyType(pDataKey.getKeyType());
@@ -428,20 +470,25 @@ public class DataKey
 
     /**
      * Update password hash.
+     * @param pPrimeHash this is the prime hash
+     * @param pHash the new password hash
      * @throws JOceanusException on error
      */
-    protected void updatePasswordHash() throws JOceanusException {
-        /* Store the current detail into history */
-        pushHistory();
+    protected void updatePasswordHash(final Boolean pPrimeHash,
+                                      final PasswordHash pHash) throws JOceanusException {
+        /* Determine whether we need to update */
+        if (!pPrimeHash.equals(isHashPrime())) {
+            /* Store the current detail into history */
+            pushHistory();
 
-        /* Update the Security Control Key and obtain the new secured KeyDef */
-        DataKeySet myKeySet = getDataKeySet();
-        PasswordHash myHash = myKeySet.getPasswordHash();
-        CipherSet myCipher = myHash.getCipherSet();
-        setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
+            /* Update the Security Control Key and obtain the new secured KeyDef */
+            CipherSet myCipher = pHash.getCipherSet();
+            setValueHashPrime(pPrimeHash);
+            setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
 
-        /* Check for changes */
-        checkForHistory();
+            /* Check for changes */
+            checkForHistory();
+        }
     }
 
     /**

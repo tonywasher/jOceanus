@@ -48,7 +48,9 @@ public class TableControlKeys
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addBinaryColumn(ControlKey.FIELD_PASSHASH, ControlKey.HASHLEN);
+        myTableDef.addBooleanColumn(ControlKey.FIELD_HASHPRIME);
+        myTableDef.addBinaryColumn(ControlKey.FIELD_PRIMEPASSHASH, ControlKey.HASHLEN);
+        myTableDef.addNullBinaryColumn(ControlKey.FIELD_ALTPASSHASH, ControlKey.HASHLEN);
     }
 
     @Override
@@ -63,7 +65,9 @@ public class TableControlKeys
 
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
-        myValues.addValue(ControlKey.FIELD_PASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH));
+        myValues.addValue(ControlKey.FIELD_HASHPRIME, myTableDef.getBooleanValue(ControlKey.FIELD_HASHPRIME));
+        myValues.addValue(ControlKey.FIELD_PRIMEPASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_PRIMEPASSHASH));
+        myValues.addValue(ControlKey.FIELD_ALTPASSHASH, myTableDef.getBinaryValue(ControlKey.FIELD_ALTPASSHASH));
 
         /* Return the values */
         return myValues;
@@ -74,8 +78,12 @@ public class TableControlKeys
                                  final JDataField iField) throws JOceanusException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (ControlKey.FIELD_PASSHASH.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getHashBytes());
+        if (ControlKey.FIELD_HASHPRIME.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isHashPrime());
+        } else if (ControlKey.FIELD_PRIMEPASSHASH.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getPrimeHashBytes());
+        } else if (ControlKey.FIELD_ALTPASSHASH.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getAltHashBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

@@ -43,7 +43,17 @@ public class SheetControlKey
     /**
      * KeyData column.
      */
-    private static final int COL_KEYDATA = COL_ID + 1;
+    private static final int COL_HASHPRIME = COL_ID + 1;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_PRIMEKEYDATA = COL_HASHPRIME + 1;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_ALTKEYDATA = COL_PRIMEKEYDATA + 1;
 
     /**
      * ControlKey data list.
@@ -81,7 +91,9 @@ public class SheetControlKey
     protected DataValues<CryptographyDataType> loadSecureValues() throws JOceanusException {
         /* Build data values */
         DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
-        myValues.addValue(ControlKey.FIELD_PASSHASH, loadBytes(COL_KEYDATA));
+        myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
+        myValues.addValue(ControlKey.FIELD_PRIMEPASSHASH, loadBytes(COL_PRIMEKEYDATA));
+        myValues.addValue(ControlKey.FIELD_ALTPASSHASH, loadBytes(COL_ALTKEYDATA));
 
         /* Return the values */
         return myValues;
@@ -91,12 +103,14 @@ public class SheetControlKey
     protected void insertSecureItem(final ControlKey pItem) throws JOceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
-        writeBytes(COL_KEYDATA, pItem.getHashBytes());
+        writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
+        writeBytes(COL_PRIMEKEYDATA, pItem.getPrimeHashBytes());
+        writeBytes(COL_ALTKEYDATA, pItem.getAltHashBytes());
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_KEYDATA;
+        return COL_ALTKEYDATA;
     }
 }

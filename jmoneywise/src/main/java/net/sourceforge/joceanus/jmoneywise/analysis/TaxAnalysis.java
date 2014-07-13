@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.analysis;
 
-import java.util.Calendar;
+import java.time.Month;
 
 import net.sourceforge.joceanus.jmetis.preference.PreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.PreferenceSet;
@@ -116,7 +116,7 @@ public class TaxAnalysis {
         /**
          * Default value for BirthDate.
          */
-        private static final JDateDay DEFAULT_BIRTHDATE = new JDateDay(1970, Calendar.JANUARY, 1);
+        private static final JDateDay DEFAULT_BIRTHDATE = new JDateDay(1970, Month.JANUARY, 1);
 
         /**
          * Constructor.

@@ -68,16 +68,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     private static final long serialVersionUID = 1258025191244933784L;
 
     /**
-     * The active icon.
-     */
-    protected static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")));
-
-    /**
-     * The delete icon.
-     */
-    protected static final Icon ICON_DELETE = resizeImage(new ImageIcon(JDataTable.class.getResource("Delete.png")));
-
-    /**
      * Panel height.
      */
     protected static final int HEIGHT_PANEL = 200;
@@ -91,6 +81,21 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Default row height.
      */
     private static final int ROW_HEIGHT = 16;
+
+    /**
+     * Default icon extra size.
+     */
+    protected static final int ICON_XTRA_SIZE = 8;
+
+    /**
+     * The active icon.
+     */
+    protected static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The delete icon.
+     */
+    protected static final Icon ICON_DELETE = resizeImage(new ImageIcon(JDataTable.class.getResource("RedDelete.png")), ICON_XTRA_SIZE);
 
     /**
      * The Row Header Table.
@@ -324,8 +329,19 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * @return the resized icon
      */
     protected static Icon resizeImage(final ImageIcon pSource) {
+        return resizeImage(pSource, 0);
+    }
+
+    /**
+     * Resize an icon to the row height.
+     * @param pSource the source icon
+     * @param pExtraSize the extra size
+     * @return the resized icon
+     */
+    protected static Icon resizeImage(final ImageIcon pSource,
+                                      final int pExtraSize) {
         Image myImage = pSource.getImage();
-        Image myNewImage = myImage.getScaledInstance(ROW_HEIGHT, ROW_HEIGHT, Image.SCALE_SMOOTH);
+        Image myNewImage = myImage.getScaledInstance(ROW_HEIGHT + pExtraSize, ROW_HEIGHT + pExtraSize, Image.SCALE_SMOOTH);
         return new ImageIcon(myNewImage);
     }
 

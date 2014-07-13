@@ -94,7 +94,12 @@ public class Register
     /**
      * The reconciled icon.
      */
-    protected static final Icon ICON_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("Reconciled.png")));
+    protected static final Icon ICON_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("GreenJellyCheck.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The frozen reconciled icon.
+     */
+    protected static final Icon ICON_FROZEN_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("BlueJellyCheck.png")), ICON_XTRA_SIZE);
 
     /**
      * Resource Bundle.
@@ -1096,7 +1101,9 @@ public class Register
                     return pTrans.getComments();
                 case COLUMN_RECONCILED:
                     return pTrans.isReconciled()
-                                                ? ICON_RECONCILED
+                                                ? pTrans.isLocked()
+                                                                   ? ICON_FROZEN_RECONCILED
+                                                                   : ICON_RECONCILED
                                                 : null;
                 default:
                     return null;

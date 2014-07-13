@@ -47,7 +47,6 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
@@ -1222,13 +1221,6 @@ public class SvnExtract
             } finally {
                 theRepo.releaseClientManager(myMgr);
             }
-        }
-
-        void kkk(final File pTarget) {
-            SVNClientManager myMgr = theRepo.getClientManager();
-            SVNDiffClient myDiff = myMgr.getDiffClient();
-
-            myDiff.doDiffStatus(pTarget, rN, rM, pegRevision, SVNDepth.INFINITY, false, handler);
         }
     }
 

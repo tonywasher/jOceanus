@@ -90,12 +90,12 @@ public class DepositTable
     /**
      * The locked icon.
      */
-    protected static final Icon ICON_LOCKED = resizeImage(new ImageIcon(DepositTable.class.getResource("Locked.png")));
+    protected static final Icon ICON_LOCKED = resizeImage(new ImageIcon(DepositTable.class.getResource("AccountLocked.png")));
 
     /**
      * The lockable icon.
      */
-    protected static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(DepositTable.class.getResource("Lockable.png")));
+    protected static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(DepositTable.class.getResource("AccountLockable.png")));
 
     /**
      * Resource Bundle.

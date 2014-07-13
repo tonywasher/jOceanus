@@ -727,7 +727,9 @@ public class AnalysisStatement
                     return pTrans.getComments();
                 case COLUMN_RECONCILED:
                     return pTrans.isReconciled()
-                                                ? Register.ICON_RECONCILED
+                                                ? pTrans.isLocked()
+                                                                   ? Register.ICON_FROZEN_RECONCILED
+                                                                   : Register.ICON_RECONCILED
                                                 : null;
                 case COLUMN_DEBITED:
                     return theFilter.getDebitForTransaction(pTrans);

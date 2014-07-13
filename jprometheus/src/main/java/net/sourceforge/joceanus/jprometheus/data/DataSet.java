@@ -930,7 +930,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     }
 
     /**
-     * Check Security for multiple controlKeys.
+     * Check Security for incomplete security operations.
      * @param pTask the task control
      * @return Continue <code>true/false</code>
      * @throws JOceanusException on error
@@ -940,6 +940,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         if (theControlKeys.size() > 1) {
             /* Update to the selected controlKey */
             return updateSecurity(pTask);
+        } else {
+            /* Make sure that password changes are OK */
+            getControlKey().ensurePasswordHash();
         }
 
         /* Return success */
