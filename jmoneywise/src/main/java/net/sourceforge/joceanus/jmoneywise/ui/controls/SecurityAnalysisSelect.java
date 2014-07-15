@@ -23,18 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -46,8 +44,8 @@ import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Security Analysis Selection.
@@ -88,12 +86,12 @@ public class SecurityAnalysisSelect
     /**
      * The security button.
      */
-    private final JButton theSecButton;
+    private final JScrollButton<SecurityBucket> theSecButton;
 
     /**
      * The portfolio button.
      */
-    private final JButton thePortButton;
+    private final JScrollButton<PortfolioBucket> thePortButton;
 
     @Override
     public SecurityFilter getFilter() {
@@ -110,14 +108,10 @@ public class SecurityAnalysisSelect
      */
     public SecurityAnalysisSelect() {
         /* Create the security button */
-        theSecButton = new JButton(ArrowIcon.DOWN);
-        theSecButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSecButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSecButton = new JScrollButton<SecurityBucket>();
 
         /* Create the portfolio button */
-        thePortButton = new JButton(ArrowIcon.DOWN);
-        thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
-        thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        thePortButton = new JScrollButton<PortfolioBucket>();
 
         /* Create the labels */
         JLabel myPortLabel = new JLabel(NLS_PORTFOLIO);
@@ -141,8 +135,8 @@ public class SecurityAnalysisSelect
 
         /* Create the listener */
         SecurityListener myListener = new SecurityListener();
-        theSecButton.addActionListener(myListener);
-        thePortButton.addActionListener(myListener);
+        theSecButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -270,32 +264,51 @@ public class SecurityAnalysisSelect
      * Listener class.
      */
     private final class SecurityListener
-            implements ActionListener {
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Portfolio menu builder.
+         */
+        private final JScrollMenuBuilder<PortfolioBucket> thePortfolioMenuBuilder;
+
+        /**
+         * Security menu builder.
+         */
+        private final JScrollMenuBuilder<SecurityBucket> theSecurityMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private SecurityListener() {
+            /* Access builders */
+            theSecurityMenuBuilder = theSecButton.newMenuBuilder();
+            theSecurityMenuBuilder.addChangeListener(this);
+            thePortfolioMenuBuilder = thePortButton.newMenuBuilder();
+            thePortfolioMenuBuilder.addChangeListener(this);
+        }
+
         @Override
-        public void actionPerformed(final ActionEvent evt) {
+        public void stateChanged(final ChangeEvent pEvent) {
             /* Access source of the event */
-            Object o = evt.getSource();
+            Object o = pEvent.getSource();
 
             /* Handle buttons */
-            if (thePortButton.equals(o)) {
-                showPortfolioMenu();
-            } else if (theSecButton.equals(o)) {
-                showSecurityMenu();
+            if (thePortfolioMenuBuilder.equals(o)) {
+                buildPortfolioMenu();
+            } else if (theSecurityMenuBuilder.equals(o)) {
+                buildSecurityMenu();
             }
         }
 
         /**
-         * Show Portfolio menu.
+         * Build Portfolio menu.
          */
-        private void showPortfolioMenu() {
+        private void buildPortfolioMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-            /* Access current portfolio */
-            PortfolioBucket myPortfolio = theState.getPortfolio();
+            thePortfolioMenuBuilder.newMenu();
 
             /* Record active item */
             JMenuItem myActive = null;
+            PortfolioBucket myCurr = theState.getPortfolio();
 
             /* Loop through the available portfolio values */
             Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
@@ -303,37 +316,29 @@ public class SecurityAnalysisSelect
                 PortfolioBucket myBucket = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = thePortfolioMenuBuilder.addItem(myBucket);
 
-                /* If this is the active portfolio */
-                if (myPortfolio.equals(myBucket)) {
+                /* If this is the active bucket */
+                if (myBucket.equals(myCurr)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Portfolio menu in the correct place */
-            Rectangle myLoc = thePortButton.getBounds();
-            myPopUp.show(thePortButton, 0, myLoc.height);
+            thePortfolioMenuBuilder.showItem(myActive);
         }
 
         /**
-         * Show Security menu.
+         * Build Security menu.
          */
-        private void showSecurityMenu() {
+        private void buildSecurityMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theSecurityMenuBuilder.newMenu();
 
-            /* Access current portfolio and security */
+            /* Access current portfolio */
             PortfolioBucket myPortfolio = theState.getPortfolio();
-            SecurityBucket mySecurity = theState.getSecurity();
-
-            /* Record active item */
+            SecurityBucket myCurr = theState.getSecurity();
             JMenuItem myActive = null;
 
             /* Loop through the available security values */
@@ -341,96 +346,41 @@ public class SecurityAnalysisSelect
             while (myIterator.hasNext()) {
                 SecurityBucket myBucket = myIterator.next();
 
-                /* Ignore if not the correct portfolio */
-                if (!Difference.isEqual(myPortfolio, myBucket.getPortfolio())) {
-                    continue;
-                }
-
                 /* Create a new JMenuItem and add it to the popUp */
-                SecurityAction myAction = new SecurityAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = theSecurityMenuBuilder.addItem(myBucket);
 
-                /* If this is the active security */
-                if (mySecurity.equals(myBucket)) {
+                /* If this is the active bucket */
+                if (myBucket.equals(myCurr)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Security menu in the correct place */
-            Rectangle myLoc = theSecButton.getBounds();
-            myPopUp.show(theSecButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Portfolio action class.
-     */
-    private final class PortfolioAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 5893139520863655067L;
-
-        /**
-         * Portfolio.
-         */
-        private final PortfolioBucket thePortfolio;
-
-        /**
-         * Constructor.
-         * @param pPortfolio the portfolio
-         */
-        private PortfolioAction(final PortfolioBucket pPortfolio) {
-            super(pPortfolio.getName());
-            thePortfolio = pPortfolio;
+            theSecurityMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new portfolio */
-            if (theState.setPortfolio(thePortfolio)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the portfolio button */
+            if (thePortButton.equals(o)) {
+                /* Select the new portfolio */
+                if (theState.setPortfolio(thePortButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
-        }
-    }
 
-    /**
-     * Security action class.
-     */
-    private final class SecurityAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -6698889706378932057L;
-
-        /**
-         * Security.
-         */
-        private final SecurityBucket theSecurity;
-
-        /**
-         * Constructor.
-         * @param pSecurity the security bucket
-         */
-        private SecurityAction(final SecurityBucket pSecurity) {
-            super(pSecurity.getName());
-            theSecurity = pSecurity;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new security */
-            if (theState.setSecurity(theSecurity)) {
-                theState.applyState();
-                fireStateChanged();
+            /* If this is the security button */
+            if (theSecButton.equals(o)) {
+                /* Select the new security */
+                if (theState.setSecurity(theSecButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -529,12 +479,8 @@ public class SecurityAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theSecButton.setText((theSecurity == null)
-                                                      ? null
-                                                      : theSecurity.getName());
-            thePortButton.setText((thePortfolio == null)
-                                                        ? null
-                                                        : thePortfolio.getName());
+            theSecButton.setValue(theSecurity);
+            thePortButton.setValue(thePortfolio);
         }
     }
 }

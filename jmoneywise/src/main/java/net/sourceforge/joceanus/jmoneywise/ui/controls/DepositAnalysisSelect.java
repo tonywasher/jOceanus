@@ -23,36 +23,34 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositBucket.DepositBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.DepositCategoryBucket.DepositCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.DepositFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Deposit Analysis Selection.
@@ -98,12 +96,12 @@ public class DepositAnalysisSelect
     /**
      * The deposit button.
      */
-    private final JButton theDepositButton;
+    private final JScrollButton<DepositBucket> theDepositButton;
 
     /**
      * The category button.
      */
-    private final JButton theCatButton;
+    private final JScrollButton<DepositCategory> theCatButton;
 
     @Override
     public DepositFilter getFilter() {
@@ -120,14 +118,10 @@ public class DepositAnalysisSelect
      */
     public DepositAnalysisSelect() {
         /* Create the deposit button */
-        theDepositButton = new JButton(ArrowIcon.DOWN);
-        theDepositButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theDepositButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theDepositButton = new JScrollButton<DepositBucket>();
 
         /* Create the category button */
-        theCatButton = new JButton(ArrowIcon.DOWN);
-        theCatButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theCatButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theCatButton = new JScrollButton<DepositCategory>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY);
@@ -151,8 +145,8 @@ public class DepositAnalysisSelect
 
         /* Create the listener */
         DepositListener myListener = new DepositListener();
-        theDepositButton.addActionListener(myListener);
-        theCatButton.addActionListener(myListener);
+        theDepositButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -273,29 +267,54 @@ public class DepositAnalysisSelect
      * Listener class.
      */
     private final class DepositListener
-            implements ActionListener {
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            /* Access source of the event */
-            Object o = evt.getSource();
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Category menu builder.
+         */
+        private final JScrollMenuBuilder<DepositCategory> theCategoryMenuBuilder;
 
-            /* Handle buttons */
-            if (theCatButton.equals(o)) {
-                showCategoryMenu();
-            } else if (theDepositButton.equals(o)) {
-                showAccountMenu();
+        /**
+         * Deposit menu builder.
+         */
+        private final JScrollMenuBuilder<DepositBucket> theDepositMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private DepositListener() {
+            /* Access builders */
+            theCategoryMenuBuilder = theCatButton.newMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
+            theDepositMenuBuilder = theDepositButton.newMenuBuilder();
+            theDepositMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source of the event */
+            Object o = pEvent.getSource();
+
+            /* Handle builders */
+            if (theCategoryMenuBuilder.equals(o)) {
+                buildCategoryMenu();
+            } else if (theDepositMenuBuilder.equals(o)) {
+                buildDepositMenu();
             }
         }
 
         /**
-         * Show Category menu.
+         * Build Category menu.
          */
-        private void showCategoryMenu() {
+        private void buildCategoryMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theCategoryMenuBuilder.newMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+            /* Record active item */
+            DepositCategory myCurrent = theState.getCategory();
+            JMenuItem myActive = null;
 
             /* Loop through the available category values */
             Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
@@ -309,9 +328,8 @@ public class DepositAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JScrollMenu myMenu = new JScrollMenu(myName);
+                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -329,24 +347,28 @@ public class DepositAnalysisSelect
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                CategoryAction myAction = new CategoryAction(myBucket.getAccountCategory());
-                JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.addMenuItem(myItem);
+                DepositCategory myCategory = myBucket.getAccountCategory();
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+                /* If this is the active category */
+                if (myBucket.equals(myCurrent)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Category menu in the correct place */
-            Rectangle myLoc = theCatButton.getBounds();
-            myPopUp.show(theCatButton, 0, myLoc.height);
+            /* Ensure active item is visible */
+            theCategoryMenuBuilder.showItem(myActive);
         }
 
         /**
-         * Show Account menu.
+         * Build Deposit menu.
          */
-        private void showAccountMenu() {
+        private void buildDepositMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theDepositMenuBuilder.newMenu();
 
-            /* Access current category and Deposit */
+            /* Access current category */
             DepositCategory myCategory = theState.getCategory();
             DepositBucket myDeposit = theState.getDeposit();
 
@@ -364,90 +386,40 @@ public class DepositAnalysisSelect
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                DepositAction myAction = new DepositAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = theDepositMenuBuilder.addItem(myBucket);
 
                 /* If this is the active deposit */
-                if (myDeposit.equals(myBucket)) {
+                if (myBucket.equals(myDeposit)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Deposit menu in the correct place */
-            Rectangle myLoc = theDepositButton.getBounds();
-            myPopUp.show(theDepositButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 4648108947359234200L;
-
-        /**
-         * Category.
-         */
-        private final DepositCategory theCategory;
-
-        /**
-         * Constructor.
-         * @param pCategory the category
-         */
-        private CategoryAction(final DepositCategory pCategory) {
-            super(pCategory.getSubCategory());
-            theCategory = pCategory;
+            theDepositMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new category */
-            if (theState.setCategory(theCategory)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the category button */
+            if (theCatButton.equals(o)) {
+                /* Select the new category */
+                if (theState.setCategory(theCatButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
-        }
-    }
 
-    /**
-     * Deposit action class.
-     */
-    private final class DepositAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -1615409703735943243L;
-
-        /**
-         * Deposit.
-         */
-        private final DepositBucket theDeposit;
-
-        /**
-         * Constructor.
-         * @param pDeposit the deposit bucket
-         */
-        private DepositAction(final DepositBucket pDeposit) {
-            super(pDeposit.getName());
-            theDeposit = pDeposit;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new deposit */
-            if (theState.setDeposit(theDeposit)) {
-                theState.applyState();
-                fireStateChanged();
+            /* If this is the deposit button */
+            if (theDepositButton.equals(o)) {
+                /* Select the new deposit */
+                if (theState.setDeposit(theDepositButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -544,12 +516,8 @@ public class DepositAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theDepositButton.setText((theDeposit == null)
-                                                         ? null
-                                                         : theDeposit.getName());
-            theCatButton.setText((theCategory == null)
-                                                      ? null
-                                                      : theCategory.getName());
+            theDepositButton.setValue(theDeposit);
+            theCatButton.setValue(theCategory);
         }
     }
 }

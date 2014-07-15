@@ -23,18 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -44,8 +42,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Payee Analysis Selection.
@@ -81,7 +79,7 @@ public class PayeeAnalysisSelect
     /**
      * The select button.
      */
-    private final JButton theButton;
+    private final JScrollButton<PayeeBucket> theButton;
 
     @Override
     public PayeeFilter getFilter() {
@@ -98,9 +96,7 @@ public class PayeeAnalysisSelect
      */
     public PayeeAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(ArrowIcon.DOWN);
-        theButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theButton = new JScrollButton<PayeeBucket>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_PAYEE);
@@ -118,7 +114,7 @@ public class PayeeAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        theButton.addActionListener(new ButtonListener());
+        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
     }
 
     /**
@@ -197,30 +193,42 @@ public class PayeeAnalysisSelect
      * Listener class.
      */
     private final class ButtonListener
-            implements ActionListener {
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            /* Access source of the event */
-            Object o = evt.getSource();
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Payee menu builder.
+         */
+        private final JScrollMenuBuilder<PayeeBucket> thePayeeMenuBuilder;
 
-            /* Handle buttons */
-            if (theButton.equals(o)) {
-                showPayeeMenu();
+        /**
+         * Constructor.
+         */
+        private ButtonListener() {
+            /* Access builders */
+            thePayeeMenuBuilder = theButton.newMenuBuilder();
+            thePayeeMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source of the event */
+            Object o = pEvent.getSource();
+
+            /* Handle builders */
+            if (thePayeeMenuBuilder.equals(o)) {
+                buildPayeeMenu();
             }
         }
 
         /**
-         * Show Payee menu.
+         * Build Payee menu.
          */
-        private void showPayeeMenu() {
+        private void buildPayeeMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-            /* Access current payee */
-            PayeeBucket myPayee = theState.getPayee();
+            thePayeeMenuBuilder.newMenu();
 
             /* Record active item */
             JMenuItem myActive = null;
+            PayeeBucket myCurr = theState.getPayee();
 
             /* Loop through the available payee values */
             Iterator<PayeeBucket> myIterator = thePayees.iterator();
@@ -228,56 +236,31 @@ public class PayeeAnalysisSelect
                 PayeeBucket myBucket = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PayeeAction myAction = new PayeeAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = thePayeeMenuBuilder.addItem(myBucket);
 
-                /* If this is the active payee */
-                if (myPayee.equals(myBucket)) {
+                /* If this is the active bucket */
+                if (myBucket.equals(myCurr)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Payee menu in the correct place */
-            Rectangle myLoc = theButton.getBounds();
-            myPopUp.show(theButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Payee action class.
-     */
-    private final class PayeeAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -7782620967078519039L;
-
-        /**
-         * Payee.
-         */
-        private final PayeeBucket thePayee;
-
-        /**
-         * Constructor.
-         * @param pPayee the payee bucket
-         */
-        private PayeeAction(final PayeeBucket pPayee) {
-            super(pPayee.getName());
-            thePayee = pPayee;
+            thePayeeMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new payee */
-            if (theState.setPayee(thePayee)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the payee button */
+            if (theButton.equals(o)) {
+                /* Select the new payee */
+                if (theState.setPayee(theButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -336,9 +319,7 @@ public class PayeeAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theButton.setText((thePayee == null)
-                                                ? null
-                                                : thePayee.getName());
+            theButton.setValue(thePayee);
         }
     }
 }

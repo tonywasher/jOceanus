@@ -28,7 +28,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -41,8 +40,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,7 +47,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
@@ -67,9 +63,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
 import net.sourceforge.joceanus.jtethys.swing.GridBagUtilities;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Preference Set panel.
@@ -889,19 +885,14 @@ public class PreferenceSetPanel
         private final class EnumField
                 extends PreferenceField {
             /**
-             * The underlying JButton field.
+             * The underlying JScrollButton field.
              */
-            private final JButton theField;
+            private final JScrollButton<Enum<?>> theField;
 
             /**
              * The preference as an EnumPreference.
              */
             private final EnumPreference<?> theEnum;
-
-            /**
-             * The PopUp Menu.
-             */
-            private final JScrollPopupMenu thePopUp;
 
             /**
              * Constructor.
@@ -910,29 +901,26 @@ public class PreferenceSetPanel
             private EnumField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theEnum = (EnumPreference<?>) pPreference;
-                theField = new JButton(ArrowIcon.DOWN);
-                theField.setVerticalTextPosition(AbstractButton.CENTER);
-                theField.setHorizontalTextPosition(AbstractButton.LEFT);
+                theField = new JScrollButton<Enum<?>>();
 
                 /* Create the popUp Menu */
-                thePopUp = new JScrollPopupMenu();
+                JScrollMenuBuilder<Enum<?>> myBuilder = theField.newMenuBuilder();
+                myBuilder.newMenu();
 
                 /* For all values */
                 for (Enum<?> myEnum : theEnum.getValues()) {
                     /* Create a new JMenuItem and add it to the popUp */
-                    PropertyAction myAction = new PropertyAction(myEnum);
-                    JMenuItem myItem = new JMenuItem(myAction);
-                    thePopUp.addMenuItem(myItem);
+                    myBuilder.addItem(myEnum);
                 }
 
                 /* Add action listener */
-                theField.addActionListener(new PreferenceListener());
+                theField.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new PreferenceListener());
             }
 
             @Override
             protected void updateField() {
                 /* Update the field */
-                theField.setText(theEnum.getValue().toString());
+                theField.setValue(theEnum.getValue());
 
                 /* Set font and foreground */
                 theField.setForeground(theFieldMgr.getForeground(thePreferences, theEnum.getDataField()));
@@ -945,55 +933,22 @@ public class PreferenceSetPanel
             }
 
             /**
-             * Property action class.
-             */
-            private final class PropertyAction
-                    extends AbstractAction {
-                /**
-                 * Serial Id.
-                 */
-                private static final long serialVersionUID = 933279753961407388L;
-
-                /**
-                 * Value.
-                 */
-                private final Enum<?> theValue;
-
-                /**
-                 * Constructor.
-                 * @param pValue the value
-                 */
-                private PropertyAction(final Enum<?> pValue) {
-                    super(pValue.toString());
-                    theValue = pValue;
-                }
-
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    /* Set the new value of the preference */
-                    theEnum.setValue(theValue);
-
-                    /* Note if we have any changes */
-                    notifyChanges();
-                }
-            }
-
-            /**
              * PropertyListener class.
              */
             private final class PreferenceListener
-                    implements ActionListener {
-
+                    implements PropertyChangeListener {
                 @Override
-                public void actionPerformed(final ActionEvent evt) {
+                public void propertyChange(final PropertyChangeEvent evt) {
                     /* Access source of the event */
                     Object o = evt.getSource();
 
                     /* Handle button */
                     if (theField.equals(o)) {
-                        /* Show the Category menu in the correct place */
-                        Rectangle myLoc = theField.getBounds();
-                        thePopUp.show(theField, 0, myLoc.height);
+                        /* Set the new value of the preference */
+                        theEnum.setValue(theField.getValue());
+
+                        /* Note if we have any changes */
+                        notifyChanges();
                     }
                 }
             }

@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -70,7 +70,8 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
@@ -177,7 +178,7 @@ public class LoanCategoryTable
     /**
      * The select button.
      */
-    private final JButton theSelectButton;
+    private final JScrollButton<LoanCategory> theSelectButton;
 
     /**
      * The new button.
@@ -230,14 +231,10 @@ public class LoanCategoryTable
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
-        /* Create listener */
-        CategoryListener myListener = new CategoryListener();
-
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theCategoryEntry = theUpdateSet.registerClass(LoanCategory.class);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new CategoryTableModel(this);
@@ -256,17 +253,13 @@ public class LoanCategoryTable
 
         /* Create the filter components */
         JLabel myPrompt = new JLabel(TITLE_FILTER);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theSelectButton.setText(FILTER_PARENTS);
-        theSelectButton.addActionListener(myListener);
+        theSelectButton = new JScrollButton<LoanCategory>();
+        theSelectButton.setValue(null, FILTER_PARENTS);
 
         /* Create new button */
         theNewButton = new JButton(NLS_NEW);
         theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
         theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theNewButton.addActionListener(myListener);
 
         /* Create the filter panel */
         theFilterPanel = new JEnablePanel();
@@ -286,6 +279,12 @@ public class LoanCategoryTable
 
         /* Initialise the columns */
         theColumns.setColumns();
+
+        /* Create listener */
+        CategoryListener myListener = new CategoryListener();
+        theUpdateSet.addChangeListener(myListener);
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        theNewButton.addActionListener(myListener);
     }
 
     /**
@@ -516,7 +515,20 @@ public class LoanCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements ChangeListener, ActionListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener {
+        /**
+         * Category menu builder.
+         */
+        private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private CategoryListener() {
+            /* Access builders */
+            theCategoryMenuBuilder = theSelectButton.newMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -528,6 +540,17 @@ public class LoanCategoryTable
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
             }
+
+            /* If we are building selection menu */
+            if (theCategoryMenuBuilder.equals(o)) {
+                /* Create a new popUp menu */
+                theCategoryMenuBuilder.newMenu();
+
+                /* Build the selection menu */
+                if (theCategories != null) {
+                    buildSelectMenu();
+                }
+            }
         }
 
         @Override
@@ -535,33 +558,20 @@ public class LoanCategoryTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the select button */
-            if (theSelectButton.equals(o)) {
-                /* Show the select menu */
-                if (theCategories != null) {
-                    showSelectMenu();
-                }
-            }
-
             /* If this is the new button */
             if (theNewButton.equals(o)) {
             }
         }
 
         /**
-         * Show Select menu.
+         * Build Select menu.
          */
-        private void showSelectMenu() {
-            /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
+        private void buildSelectMenu() {
             /* Record active item */
             JMenuItem myActive = null;
 
-            /* Create the no filter JMenuItem and add it to the popUp */
-            CategoryAction myAction = new CategoryAction(FILTER_PARENTS);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
+            /* Create the filter parents JMenuItem and add it to the popUp */
+            JMenuItem myItem = theCategoryMenuBuilder.addItem(null, FILTER_PARENTS);
 
             /* If this is the active parent */
             if (theParent == null) {
@@ -585,9 +595,7 @@ public class LoanCategoryTable
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                myAction = new CategoryAction(myCurr);
-                myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                myItem = theCategoryMenuBuilder.addItem(myCurr);
 
                 /* If this is the active parent */
                 if (myCurr.equals(theParent)) {
@@ -597,53 +605,22 @@ public class LoanCategoryTable
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Select menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 8329779340136316097L;
-
-        /**
-         * Category.
-         */
-        private final LoanCategory theCategory;
-
-        /**
-         * Constructor.
-         * @param pCategory the category bucket
-         */
-        private CategoryAction(final LoanCategory pCategory) {
-            super(pCategory.getName());
-            theCategory = pCategory;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the name
-         */
-        private CategoryAction(final String pName) {
-            super(pName);
-            theCategory = null;
+            theCategoryMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If this is a different category */
-            if (!Difference.isEqual(theCategory, theParent)) {
-                /* Store new category */
-                selectParent(theCategory);
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the select button */
+            if (theSelectButton.equals(o)) {
+                /* If this is a different category */
+                LoanCategory myCategory = theSelectButton.getValue();
+                if (!Difference.isEqual(myCategory, theParent)) {
+                    /* Store new category */
+                    selectParent(myCategory);
+                }
             }
         }
     }

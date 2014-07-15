@@ -23,22 +23,17 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.reports.ReportType;
@@ -46,7 +41,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.dateday.JDatePeriod;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Report selection panel.
@@ -90,9 +86,9 @@ public class ReportSelect
     private static final String NLS_TITLE = NLS_BUNDLE.getString("SelectTitle");
 
     /**
-     * Reports comboBox.
+     * Reports scroll button.
      */
-    private final JButton theReportButton;
+    private final JScrollButton<ReportType> theReportButton;
 
     /**
      * Range select.
@@ -142,12 +138,9 @@ public class ReportSelect
      * Constructor.
      */
     public ReportSelect() {
-        ReportListener myListener = new ReportListener();
-
-        /* Create the range button */
-        theReportButton = new JButton(ArrowIcon.DOWN);
-        theReportButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theReportButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        /* Create the report button */
+        theReportButton = new JScrollButton<ReportType>();
+        buildReportMenu();
 
         /* Create the Range Select and disable its border */
         theRangeSelect = new JDateDayRangeSelect();
@@ -162,7 +155,6 @@ public class ReportSelect
 
         /* Create the print button */
         thePrintButton = new JButton(NLS_PRINT);
-        thePrintButton.addActionListener(myListener);
 
         /* Create the selection panel */
         setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
@@ -183,8 +175,27 @@ public class ReportSelect
         theState.setType(ReportType.NETWORTH);
 
         /* Add the listener for item changes */
-        theReportButton.addActionListener(myListener);
+        ReportListener myListener = new ReportListener();
+        thePrintButton.addActionListener(myListener);
+        theReportButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
+    }
+
+    /**
+     * Build report menu.
+     */
+    private void buildReportMenu() {
+        /* Create builder */
+        JScrollMenuBuilder<ReportType> myBuilder = theReportButton.newMenuBuilder();
+
+        /* Create a new popUp menu */
+        myBuilder.newMenu();
+
+        /* Loop through the reports */
+        for (ReportType myType : ReportType.values()) {
+            /* Create a new JMenuItem for the report type */
+            myBuilder.addItem(myType);
+        }
     }
 
     /**
@@ -227,26 +238,6 @@ public class ReportSelect
      */
     private final class ReportListener
             implements ActionListener, PropertyChangeListener {
-        /**
-         * Show Report menu.
-         */
-        private void showReportMenu() {
-            /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
-
-            /* Loop through the reports */
-            for (ReportType myType : ReportType.values()) {
-                /* Create a new JMenuItem and add it to the popUp */
-                ReportAction myAction = new ReportAction(myType);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
-            }
-
-            /* Show the AnalysisType menu in the correct place */
-            Rectangle myLoc = theReportButton.getBounds();
-            myPopUp.show(theReportButton, 0, myLoc.height);
-        }
-
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -257,54 +248,23 @@ public class ReportSelect
                 fireActionPerformed(ACTION_PRINT);
             }
 
-            /* If this event relates to the ReportButton */
-            if (theReportButton.equals(o)) {
-                /* Show the report type menu */
-                showReportMenu();
-            }
         }
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             Object o = evt.getSource();
 
-            /* if this date relates to the Range Select */
-            if ((theRangeSelect.equals(o))
+            /* if this event relates to the Range Select */
+            if (theRangeSelect.equals(o)
                 && (theState.setRange(theRangeSelect))) {
                 /* Notify that the state has changed */
                 fireStateChanged();
             }
-        }
-    }
 
-    /**
-     * Bucket action class.
-     */
-    private final class ReportAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 6458171295976415700L;
-
-        /**
-         * Report Type.
-         */
-        private final ReportType theReport;
-
-        /**
-         * Constructor.
-         * @param pReport the report
-         */
-        private ReportAction(final ReportType pReport) {
-            super(pReport.toString());
-            theReport = pReport;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Record the bucket */
-            if (theState.setType(theReport)) {
+            /* if this event relates to the report button */
+            if (theReportButton.equals(o)
+                && (theState.setType(theReportButton.getValue()))) {
+                /* Notify that the state has changed */
                 fireStateChanged();
             }
         }

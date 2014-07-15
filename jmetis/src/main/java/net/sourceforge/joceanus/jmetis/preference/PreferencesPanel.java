@@ -24,9 +24,10 @@ package net.sourceforge.joceanus.jmetis.preference;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,8 +35,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -55,8 +54,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Preference maintenance panel.
@@ -137,7 +136,7 @@ public class PreferencesPanel
     /**
      * The selection button.
      */
-    private final JButton theSelectButton;
+    private final JScrollButton<PreferenceSetPanel> theSelectButton;
 
     /**
      * The properties panel.
@@ -188,9 +187,6 @@ public class PreferencesPanel
         theOKButton = new JButton(NLS_OK);
         theResetButton = new JButton(NLS_RESET);
 
-        /* Create the listener */
-        theListener = new PropertyListener();
-
         /* Create the buttons panel */
         theButtons = new JPanel();
         theButtons.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
@@ -205,9 +201,7 @@ public class PreferencesPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSelectButton = new JScrollButton<PreferenceSetPanel>();
 
         /* Create the selection panel */
         JPanel mySelection = new JPanel();
@@ -224,6 +218,12 @@ public class PreferencesPanel
         theProperties = new JEnablePanel();
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
+
+        /* Add Listeners */
+        theListener = new PropertyListener();
+        theOKButton.addActionListener(theListener);
+        theResetButton.addActionListener(theListener);
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theListener);
 
         /* Create the panel list */
         thePanels = new ArrayList<PreferenceSetPanel>();
@@ -253,11 +253,6 @@ public class PreferencesPanel
         theActive = thePanels.get(0);
         setSelectText();
         setVisibility();
-
-        /* Add Listeners */
-        theOKButton.addActionListener(theListener);
-        theResetButton.addActionListener(theListener);
-        theSelectButton.addActionListener(theListener);
 
         /* Create the debug entry, and attach to correct section */
         theDataEntry = pDataMgr.new JDataEntry("Preferences");
@@ -357,22 +352,37 @@ public class PreferencesPanel
      */
     private void setSelectText() {
         /* Show selection text */
-        theSelectButton.setText((theActive == null)
-                                                   ? null
-                                                   : theActive.toString());
+        theSelectButton.setValue(theActive);
     }
 
     /**
      * PropertyListener class.
      */
     private final class PropertyListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, PropertyChangeListener, ChangeListener {
+        /**
+         * Preference menu builder.
+         */
+        private final JScrollMenuBuilder<PreferenceSetPanel> thePrefMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private PropertyListener() {
+            /* Access builders */
+            thePrefMenuBuilder = theSelectButton.newMenuBuilder();
+            thePrefMenuBuilder.addChangeListener(this);
+        }
+
         /**
          * Show Preference menu.
          */
-        private void showPreferenceMenu() {
+        private void buildPreferenceMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            thePrefMenuBuilder.newMenu();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the panels */
             Iterator<PreferenceSetPanel> myIterator = thePanels.iterator();
@@ -380,14 +390,17 @@ public class PreferencesPanel
                 PreferenceSetPanel myPanel = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PreferenceAction myAction = new PreferenceAction(myPanel);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = thePrefMenuBuilder.addItem(myPanel);
+
+                /* If this is the active panel */
+                if (myPanel.equals(theActive)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Preference menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
+            /* Ensure active item is visible */
+            thePrefMenuBuilder.showItem(myActive);
         }
 
         @Override
@@ -403,58 +416,41 @@ public class PreferencesPanel
             } else if (theResetButton.equals(o)) {
                 /* Perform the command */
                 resetUpdates();
-
-                /* If this event relates to the select button */
-            } else if (theSelectButton.equals(o)) {
-                /* Show the menu */
-                showPreferenceMenu();
             }
         }
 
         @Override
-        public void stateChanged(final ChangeEvent e) {
-            /* Set visibility */
-            setVisibility();
+        public void stateChanged(final ChangeEvent pEvent) {
+            Object o = pEvent.getSource();
 
-            /* Notify listeners */
-            fireStateChanged();
-        }
-    }
+            if (thePrefMenuBuilder.equals(o)) {
+                /* Build the preference menu */
+                buildPreferenceMenu();
+            } else {
+                /* Set visibility */
+                setVisibility();
 
-    /**
-     * Preference action class.
-     */
-    private final class PreferenceAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 4736215082949452032L;
-
-        /**
-         * Preference Panel Type.
-         */
-        private final PreferenceSetPanel thePanel;
-
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         */
-        private PreferenceAction(final PreferenceSetPanel pPanel) {
-            super(pPanel.toString());
-            thePanel = pPanel;
+                /* Notify listeners */
+                fireStateChanged();
+            }
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If the panel has changed */
-            if (!Difference.isEqual(theActive, thePanel)) {
-                /* Set the Active component */
-                theActive = thePanel;
-                setSelectText();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
 
-                /* Move correct card to front */
-                theLayout.show(theProperties, theActive.toString());
+            /* If this is the Select button */
+            if (theSelectButton.equals(o)) {
+                /* If the panel has changed */
+                PreferenceSetPanel myPanel = theSelectButton.getValue();
+                if (!Difference.isEqual(theActive, myPanel)) {
+                    /* Set the Active component */
+                    theActive = myPanel;
+
+                    /* Move correct card to front */
+                    theLayout.show(theProperties, theActive.toString());
+                }
             }
         }
     }

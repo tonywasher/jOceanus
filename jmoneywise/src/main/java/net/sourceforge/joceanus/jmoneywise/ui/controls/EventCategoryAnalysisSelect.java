@@ -23,20 +23,18 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -48,9 +46,9 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.EventCategoryFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * EventCategory Analysis Selection.
@@ -86,7 +84,7 @@ public class EventCategoryAnalysisSelect
     /**
      * The select button.
      */
-    private final JButton theButton;
+    private final JScrollButton<EventCategoryBucket> theButton;
 
     @Override
     public EventCategoryFilter getFilter() {
@@ -103,9 +101,7 @@ public class EventCategoryAnalysisSelect
      */
     public EventCategoryAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(ArrowIcon.DOWN);
-        theButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theButton = new JScrollButton<EventCategoryBucket>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_CATEGORY);
@@ -123,7 +119,7 @@ public class EventCategoryAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        theButton.addActionListener(new ButtonListener());
+        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
     }
 
     /**
@@ -202,27 +198,45 @@ public class EventCategoryAnalysisSelect
      * Listener class.
      */
     private final class ButtonListener
-            implements ActionListener {
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            /* Access source of the event */
-            Object o = evt.getSource();
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Category menu builder.
+         */
+        private final JScrollMenuBuilder<EventCategoryBucket> theCategoryMenuBuilder;
 
-            /* Handle buttons */
-            if (theButton.equals(o)) {
-                showCategoryMenu();
+        /**
+         * Constructor.
+         */
+        private ButtonListener() {
+            /* Access builders */
+            theCategoryMenuBuilder = theButton.newMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source of the event */
+            Object o = pEvent.getSource();
+
+            /* Handle builders */
+            if (theCategoryMenuBuilder.equals(o)) {
+                buildCategoryMenu();
             }
         }
 
         /**
-         * Show Category menu.
+         * Build Category menu.
          */
-        private void showCategoryMenu() {
+        private void buildCategoryMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theCategoryMenuBuilder.newMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+            /* Record active item */
+            EventCategoryBucket myCurrent = theState.getEventCategory();
+            JMenuItem myActive = null;
 
             /* Loop through the available category values */
             Iterator<EventCategoryBucket> myIterator = theCategories.iterator();
@@ -237,9 +251,8 @@ public class EventCategoryAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JScrollMenu myMenu = new JScrollMenu(myName);
+                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -254,51 +267,36 @@ public class EventCategoryAnalysisSelect
                 }
 
                 /* Determine menu to add to */
-                TransactionCategory myParent = myBucket.getEventCategory().getParentCategory();
+                TransactionCategory myCategory = myBucket.getEventCategory();
+                TransactionCategory myParent = myCategory.getParentCategory();
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
-                /* Create a new JMenuItem and add it to the menu */
-                EventAction myAction = new EventAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.addMenuItem(myItem);
+                /* Create a new JMenuItem and add it to the popUp */
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myBucket, myCategory.getSubCategory());
+
+                /* If this is the active category */
+                if (myBucket.equals(myCurrent)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Category menu in the correct place */
-            Rectangle myLoc = theButton.getBounds();
-            myPopUp.show(theButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * EventCategory action class.
-     */
-    private final class EventAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -6988674038012323118L;
-
-        /**
-         * EventCategory.
-         */
-        private final EventCategoryBucket theCategory;
-
-        /**
-         * Constructor.
-         * @param pCategory the eventCategory bucket
-         */
-        private EventAction(final EventCategoryBucket pCategory) {
-            super(pCategory.getEventCategory().getSubCategory());
-            theCategory = pCategory;
+            /* Ensure active item is visible */
+            theCategoryMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new category */
-            if (theState.setEventCategory(theCategory)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the category button */
+            if (theButton.equals(o)) {
+                /* Select the new category */
+                if (theState.setEventCategory(theButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -357,9 +355,7 @@ public class EventCategoryAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theButton.setText((theCategory == null)
-                                                   ? null
-                                                   : theCategory.getName());
+            theButton.setValue(theCategory);
         }
     }
 }

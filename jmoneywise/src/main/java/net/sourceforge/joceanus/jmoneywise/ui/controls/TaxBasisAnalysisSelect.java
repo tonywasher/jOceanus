@@ -23,19 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -45,7 +42,8 @@ import net.sourceforge.joceanus.jmoneywise.analysis.TaxBasisBucket.TaxBasisBucke
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * TaxBasisAnalysis Selection.
@@ -81,7 +79,7 @@ public class TaxBasisAnalysisSelect
     /**
      * The select button.
      */
-    private final JButton theButton;
+    private final JScrollButton<TaxBasisBucket> theButton;
 
     @Override
     public TaxBasisFilter getFilter() {
@@ -98,9 +96,7 @@ public class TaxBasisAnalysisSelect
      */
     public TaxBasisAnalysisSelect() {
         /* Create the button */
-        theButton = new JButton(ArrowIcon.DOWN);
-        theButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theButton = new JScrollButton<TaxBasisBucket>();
 
         /* Create the label */
         JLabel myLabel = new JLabel(NLS_BASIS);
@@ -118,7 +114,7 @@ public class TaxBasisAnalysisSelect
         theState.applyState();
 
         /* Create the listener */
-        theButton.addActionListener(new ButtonListener());
+        theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, new ButtonListener());
     }
 
     /**
@@ -197,24 +193,42 @@ public class TaxBasisAnalysisSelect
      * Listener class.
      */
     private final class ButtonListener
-            implements ActionListener {
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            /* Access source of the event */
-            Object o = evt.getSource();
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Tax menu builder.
+         */
+        private final JScrollMenuBuilder<TaxBasisBucket> theTaxMenuBuilder;
 
-            /* Handle buttons */
-            if (theButton.equals(o)) {
-                showBasisMenu();
+        /**
+         * Constructor.
+         */
+        private ButtonListener() {
+            /* Access builders */
+            theTaxMenuBuilder = theButton.newMenuBuilder();
+            theTaxMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source of the event */
+            Object o = pEvent.getSource();
+
+            /* Handle builders */
+            if (theTaxMenuBuilder.equals(o)) {
+                buildBasisMenu();
             }
         }
 
         /**
-         * Show Basis menu.
+         * Build Basis menu.
          */
-        private void showBasisMenu() {
+        private void buildBasisMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            theTaxMenuBuilder.newMenu();
+
+            /* Record active item */
+            JMenuItem myActive = null;
+            TaxBasisBucket myCurr = theState.getTaxBasis();
 
             /* Loop through the available category values */
             Iterator<TaxBasisBucket> myIterator = theTaxBases.iterator();
@@ -222,47 +236,31 @@ public class TaxBasisAnalysisSelect
                 TaxBasisBucket myBucket = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                TaxBasisAction myAction = new TaxBasisAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
+                JMenuItem myItem = theTaxMenuBuilder.addItem(myBucket);
+
+                /* If this is the active bucket */
+                if (myBucket.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Category menu in the correct place */
-            Rectangle myLoc = theButton.getBounds();
-            myPopUp.show(theButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * TaxBasis Action class.
-     */
-    private final class TaxBasisAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -8236563867539368503L;
-
-        /**
-         * Tax Basis.
-         */
-        private final TaxBasisBucket theBasis;
-
-        /**
-         * Constructor.
-         * @param pTaxBasis the tax basis bucket
-         */
-        private TaxBasisAction(final TaxBasisBucket pTaxBasis) {
-            super(pTaxBasis.getName());
-            theBasis = pTaxBasis;
+            /* Ensure active item is visible */
+            theTaxMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new tax basis */
-            if (theState.setTaxBasis(theBasis)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the tax button */
+            if (theButton.equals(o)) {
+                /* Select the new basis */
+                if (theState.setTaxBasis(theButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -321,9 +319,7 @@ public class TaxBasisAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theButton.setText((theBasis == null)
-                                                ? null
-                                                : theBasis.getName());
+            theButton.setValue(theBasis);
         }
     }
 }

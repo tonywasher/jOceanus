@@ -23,36 +23,33 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanBucket.LoanBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.LoanCategoryBucket.LoanCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.LoanFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Loan Analysis Selection.
@@ -98,12 +95,12 @@ public class LoanAnalysisSelect
     /**
      * The loan button.
      */
-    private final JButton theLoanButton;
+    private final JScrollButton<LoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final JButton theCatButton;
+    private final JScrollButton<LoanCategory> theCatButton;
 
     @Override
     public LoanFilter getFilter() {
@@ -120,14 +117,10 @@ public class LoanAnalysisSelect
      */
     public LoanAnalysisSelect() {
         /* Create the loan button */
-        theLoanButton = new JButton(ArrowIcon.DOWN);
-        theLoanButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theLoanButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theLoanButton = new JScrollButton<LoanBucket>();
 
         /* Create the category button */
-        theCatButton = new JButton(ArrowIcon.DOWN);
-        theCatButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theCatButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theCatButton = new JScrollButton<LoanCategory>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY);
@@ -151,8 +144,8 @@ public class LoanAnalysisSelect
 
         /* Create the listener */
         LoanListener myListener = new LoanListener();
-        theLoanButton.addActionListener(myListener);
-        theCatButton.addActionListener(myListener);
+        theLoanButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -273,26 +266,47 @@ public class LoanAnalysisSelect
      * Listener class.
      */
     private final class LoanListener
-            implements ActionListener {
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Category menu builder.
+         */
+        private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
+
+        /**
+         * Loan menu builder.
+         */
+        private final JScrollMenuBuilder<LoanBucket> theLoanMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private LoanListener() {
+            /* Access builders */
+            theCategoryMenuBuilder = theCatButton.newMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
+            theLoanMenuBuilder = theLoanButton.newMenuBuilder();
+            theLoanMenuBuilder.addChangeListener(this);
+        }
+
         @Override
-        public void actionPerformed(final ActionEvent evt) {
+        public void stateChanged(final ChangeEvent pEvent) {
             /* Access source of the event */
-            Object o = evt.getSource();
+            Object o = pEvent.getSource();
 
             /* Handle buttons */
-            if (theCatButton.equals(o)) {
-                showCategoryMenu();
-            } else if (theLoanButton.equals(o)) {
-                showLoanMenu();
+            if (theCategoryMenuBuilder.equals(o)) {
+                buildCategoryMenu();
+            } else if (theLoanMenuBuilder.equals(o)) {
+                buildLoanMenu();
             }
         }
 
         /**
-         * Show Category menu.
+         * Build Category menu.
          */
-        private void showCategoryMenu() {
+        private void buildCategoryMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theCategoryMenuBuilder.newMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -309,9 +323,8 @@ public class LoanAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JScrollMenu myMenu = new JScrollMenu(myName);
+                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -329,29 +342,20 @@ public class LoanAnalysisSelect
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                CategoryAction myAction = new CategoryAction(myBucket.getAccountCategory());
-                JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.addMenuItem(myItem);
+                LoanCategory myCategory = myBucket.getAccountCategory();
+                theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
             }
-
-            /* Show the Category menu in the correct place */
-            Rectangle myLoc = theCatButton.getBounds();
-            myPopUp.show(theCatButton, 0, myLoc.height);
         }
 
         /**
-         * Show Loan menu.
+         * Build Loan menu.
          */
-        private void showLoanMenu() {
+        private void buildLoanMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theLoanMenuBuilder.newMenu();
 
             /* Access current category and Loan */
             LoanCategory myCategory = theState.getCategory();
-            LoanBucket myLoan = theState.getLoan();
-
-            /* Record active item */
-            JMenuItem myActive = null;
 
             /* Loop through the available account values */
             Iterator<LoanBucket> myIterator = theLoans.iterator();
@@ -364,90 +368,31 @@ public class LoanAnalysisSelect
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                LoanAction myAction = new LoanAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                theLoanMenuBuilder.addItem(myBucket);
+            }
+        }
 
-                /* If this is the active loan */
-                if (myLoan.equals(myBucket)) {
-                    /* Record it */
-                    myActive = myItem;
+        @Override
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the category button */
+            if (theCatButton.equals(o)) {
+                /* Select the new category */
+                if (theState.setCategory(theCatButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
                 }
             }
 
-            /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Loan menu in the correct place */
-            Rectangle myLoc = theLoanButton.getBounds();
-            myPopUp.show(theLoanButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -7865415601019352316L;
-
-        /**
-         * Category.
-         */
-        private final LoanCategory theCategory;
-
-        /**
-         * Constructor.
-         * @param pCategory the category
-         */
-        private CategoryAction(final LoanCategory pCategory) {
-            super(pCategory.getSubCategory());
-            theCategory = pCategory;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new category */
-            if (theState.setCategory(theCategory)) {
-                theState.applyState();
-                fireStateChanged();
-            }
-        }
-    }
-
-    /**
-     * Loan action class.
-     */
-    private final class LoanAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 2994073805894328142L;
-
-        /**
-         * Loan.
-         */
-        private final LoanBucket theLoan;
-
-        /**
-         * Constructor.
-         * @param pLoan the loan bucket
-         */
-        private LoanAction(final LoanBucket pLoan) {
-            super(pLoan.getName());
-            theLoan = pLoan;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new loan */
-            if (theState.setLoan(theLoan)) {
-                theState.applyState();
-                fireStateChanged();
+            /* If this is the loan button */
+            if (theLoanButton.equals(o)) {
+                /* Select the new loan */
+                if (theState.setLoan(theLoanButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -544,12 +489,8 @@ public class LoanAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theLoanButton.setText((theLoan == null)
-                                                   ? null
-                                                   : theLoan.getName());
-            theCatButton.setText((theCategory == null)
-                                                      ? null
-                                                      : theCategory.getName());
+            theLoanButton.setValue(theLoan);
+            theCatButton.setValue(theCategory);
         }
     }
 }

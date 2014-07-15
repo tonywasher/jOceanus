@@ -23,36 +23,34 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket;
-import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashBucket.CashBucketList;
+import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter.CashFilter;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Cash Analysis Selection.
@@ -98,12 +96,12 @@ public class CashAnalysisSelect
     /**
      * The cash button.
      */
-    private final JButton theCashButton;
+    private final JScrollButton<CashBucket> theCashButton;
 
     /**
      * The category button.
      */
-    private final JButton theCatButton;
+    private final JScrollButton<CashCategory> theCatButton;
 
     @Override
     public CashFilter getFilter() {
@@ -119,15 +117,11 @@ public class CashAnalysisSelect
      * Constructor.
      */
     public CashAnalysisSelect() {
-        /* Create the account button */
-        theCashButton = new JButton(ArrowIcon.DOWN);
-        theCashButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theCashButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        /* Create the cash button */
+        theCashButton = new JScrollButton<CashBucket>();
 
         /* Create the category button */
-        theCatButton = new JButton(ArrowIcon.DOWN);
-        theCatButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theCatButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theCatButton = new JScrollButton<CashCategory>();
 
         /* Create the labels */
         JLabel myCatLabel = new JLabel(NLS_CATEGORY);
@@ -151,8 +145,8 @@ public class CashAnalysisSelect
 
         /* Create the listener */
         CashListener myListener = new CashListener();
-        theCashButton.addActionListener(myListener);
-        theCatButton.addActionListener(myListener);
+        theCashButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        theCatButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -273,29 +267,54 @@ public class CashAnalysisSelect
      * Listener class.
      */
     private final class CashListener
-            implements ActionListener {
+            implements PropertyChangeListener, ChangeListener {
+        /**
+         * Category menu builder.
+         */
+        private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
+
+        /**
+         * Cash menu builder.
+         */
+        private final JScrollMenuBuilder<CashBucket> theCashMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private CashListener() {
+            /* Access builders */
+            theCategoryMenuBuilder = theCatButton.newMenuBuilder();
+            theCategoryMenuBuilder.addChangeListener(this);
+            theCashMenuBuilder = theCashButton.newMenuBuilder();
+            theCashMenuBuilder.addChangeListener(this);
+        }
+
         @Override
-        public void actionPerformed(final ActionEvent evt) {
+        public void stateChanged(final ChangeEvent pEvent) {
             /* Access source of the event */
-            Object o = evt.getSource();
+            Object o = pEvent.getSource();
 
             /* Handle buttons */
-            if (theCatButton.equals(o)) {
-                showCategoryMenu();
-            } else if (theCashButton.equals(o)) {
-                showCashMenu();
+            if (theCategoryMenuBuilder.equals(o)) {
+                buildCategoryMenu();
+            } else if (theCashMenuBuilder.equals(o)) {
+                buildCashMenu();
             }
         }
 
         /**
-         * Show Category menu.
+         * Build Category menu.
          */
-        private void showCategoryMenu() {
+        private void buildCategoryMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theCategoryMenuBuilder.newMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
+
+            /* Record active item */
+            CashCategory myCurrent = theState.getCategory();
+            JMenuItem myActive = null;
 
             /* Loop through the available category values */
             Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
@@ -309,9 +328,8 @@ public class CashAnalysisSelect
 
                 /* Create a new JMenu and add it to the popUp */
                 String myName = myBucket.getName();
-                JScrollMenu myMenu = new JScrollMenu(myName);
+                JScrollMenu myMenu = theCategoryMenuBuilder.addSubMenu(myName);
                 myMap.put(myName, myMenu);
-                myPopUp.addMenuItem(myMenu);
             }
 
             /* Re-Loop through the available category values */
@@ -329,22 +347,26 @@ public class CashAnalysisSelect
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                CategoryAction myAction = new CategoryAction(myBucket.getAccountCategory());
-                JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.addMenuItem(myItem);
+                CashCategory myCategory = myBucket.getAccountCategory();
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+                /* If this is the active category */
+                if (myBucket.equals(myCurrent)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Category menu in the correct place */
-            Rectangle myLoc = theCatButton.getBounds();
-            myPopUp.show(theCatButton, 0, myLoc.height);
+            /* Ensure active item is visible */
+            theCategoryMenuBuilder.showItem(myActive);
         }
 
         /**
-         * Show Cash menu.
+         * Build Cash menu.
          */
-        private void showCashMenu() {
+        private void buildCashMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theCashMenuBuilder.newMenu();
 
             /* Access current category and Account */
             CashCategory myCategory = theState.getCategory();
@@ -364,90 +386,40 @@ public class CashAnalysisSelect
                 }
 
                 /* Create a new JMenuItem and add it to the popUp */
-                CashAction myAction = new CashAction(myBucket);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = theCashMenuBuilder.addItem(myBucket);
 
-                /* If this is the active cash account */
-                if (myCash.equals(myBucket)) {
+                /* If this is the active cash */
+                if (myBucket.equals(myCash)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Cash menu in the correct place */
-            Rectangle myLoc = theCashButton.getBounds();
-            myPopUp.show(theCashButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 227719516993430947L;
-
-        /**
-         * Category.
-         */
-        private final CashCategory theCategory;
-
-        /**
-         * Constructor.
-         * @param pCategory the category
-         */
-        private CategoryAction(final CashCategory pCategory) {
-            super(pCategory.getSubCategory());
-            theCategory = pCategory;
+            theCashMenuBuilder.showItem(myActive);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new category */
-            if (theState.setCategory(theCategory)) {
-                theState.applyState();
-                fireStateChanged();
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the source */
+            Object o = pEvent.getSource();
+
+            /* If this is the category button */
+            if (theCatButton.equals(o)) {
+                /* Select the new category */
+                if (theState.setCategory(theCatButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
-        }
-    }
 
-    /**
-     * Cash action class.
-     */
-    private final class CashAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -2762120402812149795L;
-
-        /**
-         * Cash.
-         */
-        private final CashBucket theCash;
-
-        /**
-         * Constructor.
-         * @param pCash the cash bucket
-         */
-        private CashAction(final CashBucket pCash) {
-            super(pCash.getName());
-            theCash = pCash;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new cash */
-            if (theState.setCash(theCash)) {
-                theState.applyState();
-                fireStateChanged();
+            /* If this is the cash button */
+            if (theCashButton.equals(o)) {
+                /* Select the new cash */
+                if (theState.setCash(theCashButton.getValue())) {
+                    theState.applyState();
+                    fireStateChanged();
+                }
             }
         }
     }
@@ -544,12 +516,8 @@ public class CashAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theCashButton.setText((theCash == null)
-                                                   ? null
-                                                   : theCash.getName());
-            theCatButton.setText((theCategory == null)
-                                                      ? null
-                                                      : theCategory.getName());
+            theCashButton.setValue(theCash);
+            theCatButton.setValue(theCategory);
         }
     }
 }

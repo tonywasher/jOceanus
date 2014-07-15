@@ -199,7 +199,7 @@ public class DataKeySet
 
     /**
      * Get the PassWordHash.
-     * @param useHashPrime
+     * @param useHashPrime true/false
      * @return the passwordHash
      * @throws JOceanusException on error
      */
@@ -241,7 +241,7 @@ public class DataKeySet
 
     /**
      * Resolve the Active HashKey.
-     * @throws JOceanusException
+     * @throws JOceanusException on error
      */
     protected final void resolveHashKey() throws JOceanusException {
         getControlKey().resolveHashKey();

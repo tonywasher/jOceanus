@@ -185,7 +185,7 @@ public final class Directory2 {
     /**
      * Remove a file.
      * @param pFile the file to remove
-     * @throws JOceanusException on error
+     * @throws IOException on error
      */
     private static void removeFile(final Path pFile) throws IOException {
         /* Loop to retry deleting the file */
@@ -214,10 +214,10 @@ public final class Directory2 {
     /**
      * Visitor class.
      */
-    private static class DirVisitor
+    private static final class DirVisitor
             extends SimpleFileVisitor<Path> {
         /**
-         * Name of top-level directory
+         * Name of top-level directory.
          */
         private final Path theBase;
 

@@ -24,21 +24,17 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -58,7 +54,8 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Top-level panel for Account/EventCategories.
@@ -103,7 +100,7 @@ public class CategoryPanel
     /**
      * The select button.
      */
-    private final JButton theSelectButton;
+    private final JScrollButton<PanelName> theSelectButton;
 
     /**
      * The card panel.
@@ -205,9 +202,8 @@ public class CategoryPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSelectButton = new JScrollButton<PanelName>();
+        buildSelectMenu();
 
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
@@ -221,7 +217,7 @@ public class CategoryPanel
         theCardPanel.add(theEventTable.getPanel(), PanelName.EVENTS.toString());
         theCardPanel.add(theTagTable.getPanel(), PanelName.EVENTTAGS.toString());
         theActive = PanelName.DEPOSITS;
-        theSelectButton.setText(theActive.toString());
+        theSelectButton.setValue(theActive);
 
         /* Create the card panel */
         theFilterCardPanel = new JEnablePanel();
@@ -261,7 +257,7 @@ public class CategoryPanel
 
         /* Create the listener */
         CategoryListener myListener = new CategoryListener();
-        theSelectButton.addActionListener(myListener);
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theDepositTable.addChangeListener(myListener);
         theCashTable.addChangeListener(myListener);
         theLoanTable.addChangeListener(myListener);
@@ -271,6 +267,23 @@ public class CategoryPanel
 
         /* Hide the save buttons initially */
         theSaveButtons.setVisible(false);
+    }
+
+    /**
+     * Build select menu.
+     */
+    private void buildSelectMenu() {
+        /* Create builder */
+        JScrollMenuBuilder<PanelName> myBuilder = theSelectButton.newMenuBuilder();
+
+        /* Create a new popUp menu */
+        myBuilder.newMenu();
+
+        /* Loop through the panels */
+        for (PanelName myPanel : PanelName.values()) {
+            /* Create a new JMenuItem for the panel */
+            myBuilder.addItem(myPanel);
+        }
     }
 
     /**
@@ -453,40 +466,11 @@ public class CategoryPanel
      * Listener.
      */
     private final class CategoryListener
-            implements ActionListener, ChangeListener {
-        /**
-         * Show Selection menu.
-         */
-        private void showSelectMenu() {
-            /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
-
-            /* Loop through the panel names */
-            for (PanelName myName : PanelName.values()) {
-                /* Add reference */
-                CategoryAction myAction = new CategoryAction(myName);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
-            }
-
-            /* Show the AnalysisType menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
-        }
-
+            implements ActionListener, ChangeListener, PropertyChangeListener {
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
             String myCmd = pEvent.getActionCommand();
-
-            /* If this event relates to the SelectButton */
-            if (theSelectButton.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Show the selection menu */
-                showSelectMenu();
-            }
 
             /* if this is the save buttons reporting */
             if (theSaveButtons.equals(o)) {
@@ -506,36 +490,19 @@ public class CategoryPanel
             /* Adjust visibility */
             setVisibility();
         }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class CategoryAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 9120967972698885733L;
-
-        /**
-         * Category name.
-         */
-        private final PanelName theName;
-
-        /**
-         * Constructor.
-         * @param pName the panel name
-         */
-        private CategoryAction(final PanelName pName) {
-            super(pName.toString());
-            theName = pName;
-        }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Show the desired panel */
-            showPanel(theName);
+        public void propertyChange(final PropertyChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* if this event relates to the select button */
+            if (theSelectButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Show the correct panel */
+                showPanel(theSelectButton.getValue());
+            }
         }
     }
 

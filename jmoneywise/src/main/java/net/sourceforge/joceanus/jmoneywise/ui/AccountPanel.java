@@ -24,24 +24,20 @@ package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -63,7 +59,8 @@ import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
-import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Top-level panel for Accounts.
@@ -103,7 +100,7 @@ public class AccountPanel
     /**
      * The select button.
      */
-    private final JButton theSelectButton;
+    private final JScrollButton<PanelName> theSelectButton;
 
     /**
      * The locked check box.
@@ -209,9 +206,8 @@ public class AccountPanel
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSelectButton = new JScrollButton<PanelName>();
+        buildSelectMenu();
 
         /* Create the card panel */
         theCardPanel = new JEnablePanel();
@@ -253,7 +249,7 @@ public class AccountPanel
         /* Create the listener */
         AccountListener myListener = new AccountListener();
         theError.addChangeListener(myListener);
-        theSelectButton.addActionListener(myListener);
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theLockedCheckBox.addItemListener(myListener);
         theDepositTable.addChangeListener(myListener);
         theCashTable.addChangeListener(myListener);
@@ -265,6 +261,23 @@ public class AccountPanel
 
         /* Hide the save buttons initially */
         theSaveButtons.setVisible(false);
+    }
+
+    /**
+     * Build select menu.
+     */
+    private void buildSelectMenu() {
+        /* Create builder */
+        JScrollMenuBuilder<PanelName> myBuilder = theSelectButton.newMenuBuilder();
+
+        /* Create a new popUp menu */
+        myBuilder.newMenu();
+
+        /* Loop through the panels */
+        for (PanelName myPanel : PanelName.values()) {
+            /* Create a new JMenuItem for the panel */
+            myBuilder.addItem(myPanel);
+        }
     }
 
     /**
@@ -464,27 +477,7 @@ public class AccountPanel
      * Listener.
      */
     private final class AccountListener
-            implements ActionListener, ChangeListener, ItemListener {
-        /**
-         * Show Selection menu.
-         */
-        private void showSelectMenu() {
-            /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
-
-            /* Loop through the panel names */
-            for (PanelName myName : PanelName.values()) {
-                /* Add reference */
-                AccountAction myAction = new AccountAction(myName);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.add(myItem);
-            }
-
-            /* Show the AnalysisType menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
-        }
-
+            implements ActionListener, ChangeListener, ItemListener, PropertyChangeListener {
         @Override
         public void actionPerformed(final ActionEvent pEvent) {
             Object o = pEvent.getSource();
@@ -500,15 +493,6 @@ public class AccountPanel
 
                 /* Adjust visibility */
                 setVisibility();
-            }
-
-            /* If this event relates to the SelectButton */
-            if (theSelectButton.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Show the selection menu */
-                showSelectMenu();
             }
         }
 
@@ -549,36 +533,19 @@ public class AccountPanel
                 showLocked(theLockedCheckBox.isSelected());
             }
         }
-    }
-
-    /**
-     * Category action class.
-     */
-    private final class AccountAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -1763554175717417130L;
-
-        /**
-         * Category name.
-         */
-        private final PanelName theName;
-
-        /**
-         * Constructor.
-         * @param pName the panel name
-         */
-        private AccountAction(final PanelName pName) {
-            super(pName.toString());
-            theName = pName;
-        }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Show the desired panel */
-            showPanel(theName);
+        public void propertyChange(final PropertyChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* if this event relates to the select button */
+            if (theSelectButton.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* Show the correct panel */
+                showPanel(theSelectButton.getValue());
+            }
         }
     }
 

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -34,16 +33,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -66,6 +62,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Selection panel for Analysis Statement.
@@ -145,12 +143,12 @@ public class AnalysisSelect
     /**
      * Filter Type Button.
      */
-    private final JButton theFilterTypeButton;
+    private final JScrollButton<AnalysisType> theFilterTypeButton;
 
     /**
      * Bucket Type Button.
      */
-    private final JButton theBucketButton;
+    private final JScrollButton<BucketAttribute> theBucketButton;
 
     /**
      * The filter detail panel.
@@ -253,14 +251,10 @@ public class AnalysisSelect
         theFilterButton.setHorizontalTextPosition(AbstractButton.LEFT);
 
         /* Create the filter type button */
-        theFilterTypeButton = new JButton(ArrowIcon.DOWN);
-        theFilterTypeButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theFilterTypeButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theFilterTypeButton = new JScrollButton<AnalysisType>();
 
         /* Create the bucket button */
-        theBucketButton = new JButton(ArrowIcon.DOWN);
-        theBucketButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theBucketButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theBucketButton = new JScrollButton<BucketAttribute>();
 
         /* Create the Range Select panel */
         theRangeSelect = new JDateDayRangeSelect();
@@ -311,8 +305,8 @@ public class AnalysisSelect
         theRangeButton.addActionListener(myListener);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theFilterButton.addActionListener(myListener);
-        theFilterTypeButton.addActionListener(myListener);
-        theBucketButton.addActionListener(myListener);
+        theFilterTypeButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+        theBucketButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theDepositSelect.addChangeListener(myListener);
         theCashSelect.addChangeListener(myListener);
         theLoanSelect.addChangeListener(myListener);
@@ -625,11 +619,32 @@ public class AnalysisSelect
     private final class AnalysisListener
             implements PropertyChangeListener, ActionListener, ChangeListener {
         /**
-         * Show AnalysisType menu.
+         * AnalysisType menu builder.
          */
-        private void showAnalysisTypeMenu() {
+        private final JScrollMenuBuilder<AnalysisType> theTypeMenuBuilder;
+
+        /**
+         * Bucket menu builder.
+         */
+        private final JScrollMenuBuilder<BucketAttribute> theBucketMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private AnalysisListener() {
+            /* Access builders */
+            theTypeMenuBuilder = theFilterTypeButton.newMenuBuilder();
+            theTypeMenuBuilder.addChangeListener(this);
+            theBucketMenuBuilder = theBucketButton.newMenuBuilder();
+            theBucketMenuBuilder.addChangeListener(this);
+        }
+
+        /**
+         * Build AnalysisType menu.
+         */
+        private void buildAnalysisTypeMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            theTypeMenuBuilder.newMenu();
 
             /* Loop through the panels */
             Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
@@ -639,38 +654,26 @@ public class AnalysisSelect
                 /* If the filter is possible */
                 if (myEntry.getValue().isAvailable()) {
                     /* Create a new JMenuItem and add it to the popUp */
-                    AnalysisAction myAction = new AnalysisAction(myEntry.getKey());
-                    JMenuItem myItem = new JMenuItem(myAction);
-                    myPopUp.add(myItem);
+                    theTypeMenuBuilder.addItem(myEntry.getKey());
                 }
             }
-
-            /* Show the AnalysisType menu in the correct place */
-            Rectangle myLoc = theFilterTypeButton.getBounds();
-            myPopUp.show(theFilterTypeButton, 0, myLoc.height);
         }
 
         /**
-         * Show Bucket menu.
+         * Build Bucket menu.
          */
-        private void showBucketMenu() {
+        private void buildBucketMenu() {
             /* Create a new popUp menu */
-            JPopupMenu myPopUp = new JPopupMenu();
+            theBucketMenuBuilder.newMenu();
 
             /* Loop through the buckets */
             for (BucketAttribute myAttr : theState.getType().getValues()) {
                 /* If the value is a counter */
                 if (myAttr.isCounter()) {
                     /* Create a new JMenuItem and add it to the popUp */
-                    BucketAction myAction = new BucketAction(myAttr);
-                    JMenuItem myItem = new JMenuItem(myAction);
-                    myPopUp.add(myItem);
+                    theBucketMenuBuilder.addItem(myAttr);
                 }
             }
-
-            /* Show the Bucket menu in the correct place */
-            Rectangle myLoc = theBucketButton.getBounds();
-            myPopUp.show(theBucketButton, 0, myLoc.height);
         }
 
         @Override
@@ -696,18 +699,6 @@ public class AnalysisSelect
                                                  : ArrowIcon.UP);
                 theFilterSelect.setVisible(!isVisible);
             }
-
-            /* If this event relates to the FilterTypeButton */
-            if (theFilterTypeButton.equals(o)) {
-                /* Show the analysis type menu */
-                showAnalysisTypeMenu();
-            }
-
-            /* If this event relates to the BucketTypeButton */
-            if (theBucketButton.equals(o)) {
-                /* Show the bucket type menu */
-                showBucketMenu();
-            }
         }
 
         @Override
@@ -717,13 +708,49 @@ public class AnalysisSelect
                 return;
             }
 
+            /* Access the source */
+            Object o = pEvent.getSource();
+
             /* If this is the range select panel */
-            if (theRangeSelect.equals(pEvent.getSource())) {
+            if (theRangeSelect.equals(o)) {
                 /* If we have a change to the range */
                 if (theState.setRange(theRangeSelect)) {
                     /* Declare new analysis */
                     setAnalysis(getRange());
                     checkType();
+                    theState.applyState();
+                    fireStateChanged();
+                }
+            }
+
+            /* If this is the filter type button */
+            if (theFilterTypeButton.equals(o)) {
+                /* If the type has changed */
+                AnalysisType myType = theFilterTypeButton.getValue();
+                if (theState.setAnalysisType(myType)) {
+                    /* Move correct card to front */
+                    theLayout.show(theCardPanel, myType.name());
+
+                    /* Obtain the relevant filter */
+                    AnalysisFilterSelection myPanel = theMap.get(myType);
+                    AnalysisFilter<?> myFilter = myPanel.getFilter();
+                    myFilter.setCurrentAttribute(myType.getDefaultValue());
+
+                    /* Set new bucket type and apply state */
+                    theState.setFilter(myFilter);
+                    theState.setBucket(myFilter.getCurrentAttribute());
+                    theState.applyState();
+                    fireStateChanged();
+                }
+            }
+
+            /* If this is the bucket attribute button */
+            if (theBucketButton.equals(o)) {
+                /* Record the bucket */
+                BucketAttribute myBucket = theBucketButton.getValue();
+                if (theState.setBucket(myBucket)) {
+                    AnalysisFilter<?> myFilter = theState.getFilter();
+                    myFilter.setCurrentAttribute(myBucket);
                     theState.applyState();
                     fireStateChanged();
                 }
@@ -739,6 +766,18 @@ public class AnalysisSelect
 
             /* Obtain source */
             Object o = pEvent.getSource();
+
+            /* If this event relates to the FilterTypeMenuBuilder */
+            if (theTypeMenuBuilder.equals(o)) {
+                /* Build the analysis type menu */
+                buildAnalysisTypeMenu();
+            }
+
+            /* If this is the BucketMenuBuilder */
+            if (theBucketMenuBuilder.equals(o)) {
+                /* Build the bucket type menu */
+                buildBucketMenu();
+            }
 
             /* If this is the DepositSelect */
             if (theDepositSelect.equals(o)) {
@@ -820,87 +859,6 @@ public class AnalysisSelect
 
                 /* Apply filter and notify changes */
                 theState.setFilter(myFilter);
-                theState.applyState();
-                fireStateChanged();
-            }
-        }
-    }
-
-    /**
-     * Analysis action class.
-     */
-    private final class AnalysisAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 6340602588329110592L;
-
-        /**
-         * Analysis Type.
-         */
-        private final AnalysisType theType;
-
-        /**
-         * Constructor.
-         * @param pType the analysis type
-         */
-        private AnalysisAction(final AnalysisType pType) {
-            super(pType.toString());
-            theType = pType;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* If the type has changed */
-            if (theState.setAnalysisType(theType)) {
-                /* Move correct card to front */
-                theLayout.show(theCardPanel, theType.name());
-
-                /* Obtain the relevant filter */
-                AnalysisFilterSelection myPanel = theMap.get(theType);
-                AnalysisFilter<?> myFilter = myPanel.getFilter();
-                myFilter.setCurrentAttribute(theType.getDefaultValue());
-
-                /* Set new bucket type and apply state */
-                theState.setFilter(myFilter);
-                theState.setBucket(myFilter.getCurrentAttribute());
-                theState.applyState();
-                fireStateChanged();
-            }
-        }
-    }
-
-    /**
-     * Bucket action class.
-     */
-    private final class BucketAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -3522898133205693822L;
-
-        /**
-         * Bucket Type.
-         */
-        private final BucketAttribute theBucket;
-
-        /**
-         * Constructor.
-         * @param pBucket the bucket
-         */
-        private BucketAction(final BucketAttribute pBucket) {
-            super(pBucket.toString());
-            theBucket = pBucket;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Record the bucket */
-            if (theState.setBucket(theBucket)) {
-                AnalysisFilter<?> myFilter = theState.getFilter();
-                myFilter.setCurrentAttribute(theBucket);
                 theState.applyState();
                 fireStateChanged();
             }
@@ -1056,12 +1014,8 @@ public class AnalysisSelect
             theFilterButton.setText((theFilter == null)
                                                        ? null
                                                        : theFilter.getName());
-            theFilterTypeButton.setText((theType == null)
-                                                         ? null
-                                                         : theType.toString());
-            theBucketButton.setText((theBucket == null)
-                                                       ? null
-                                                       : theBucket.toString());
+            theFilterTypeButton.setValue(theType);
+            theBucketButton.setValue(theBucket);
         }
     }
 

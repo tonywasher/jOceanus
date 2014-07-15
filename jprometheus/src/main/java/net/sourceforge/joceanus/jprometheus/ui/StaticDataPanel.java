@@ -29,12 +29,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -60,6 +61,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
@@ -122,7 +125,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The selection button.
      */
-    private final JButton theSelectButton;
+    private final JScrollButton<StaticDataTable<?, ?, ?, E>> theSelectButton;
 
     /**
      * The new button.
@@ -167,7 +170,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * The selection listener.
      */
-    private final transient StaticListener theListener = new StaticListener();
+    private final transient StaticListener theListener;
 
     /**
      * Obtain the updateList.
@@ -203,9 +206,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         /* Create selection button and label */
         JLabel myLabel = new JLabel(NLS_DATA);
-        theSelectButton = new JButton(ArrowIcon.DOWN);
-        theSelectButton.setVerticalTextPosition(AbstractButton.CENTER);
-        theSelectButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        theSelectButton = new JScrollButton<StaticDataTable<?, ?, ?, E>>();
 
         /* Create new button */
         theNewButton = new JButton(NLS_NEW, ArrowIcon.DOWN);
@@ -216,7 +217,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
         theDisabledCheckBox = new JCheckBox(NLS_DISABLED);
 
         /* Add the listener for item changes */
-        theSelectButton.addActionListener(theListener);
+        theListener = new StaticListener();
+        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theListener);
         theNewButton.addActionListener(theListener);
         theError.addChangeListener(theListener);
         theSaveButtons.addActionListener(theListener);
@@ -435,13 +437,30 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Listener class.
      */
     private final class StaticListener
-            implements ChangeListener, ActionListener, ItemListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener, ItemListener {
         /**
-         * Show StaticData menu.
+         * Data menu builder.
          */
-        private void showDataMenu() {
+        private final JScrollMenuBuilder<StaticDataTable<?, ?, ?, E>> theDataMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private StaticListener() {
+            /* Access builder */
+            theDataMenuBuilder = theSelectButton.newMenuBuilder();
+            theDataMenuBuilder.addChangeListener(this);
+        }
+
+        /**
+         * Build StaticData menu.
+         */
+        private void buildDataMenu() {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
+            theDataMenuBuilder.newMenu();
+
+            /* Record active item */
+            JMenuItem myActive = null;
 
             /* Loop through the panels */
             Iterator<Map.Entry<String, StaticDataTable<?, ?, ?, E>>> myIterator = theMap.entrySet().iterator();
@@ -449,14 +468,18 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 Map.Entry<String, StaticDataTable<?, ?, ?, E>> myEntry = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                DataAction myAction = new DataAction(myEntry.getKey(), myEntry.getValue());
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                StaticDataTable<?, ?, ?, E> myTable = myEntry.getValue();
+                JMenuItem myItem = theDataMenuBuilder.addItem(myTable, myEntry.getKey());
+
+                /* If this is the active panel */
+                if (myTable.equals(theActive)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
 
-            /* Show the Data menu in the correct place */
-            Rectangle myLoc = theSelectButton.getBounds();
-            myPopUp.show(theSelectButton, 0, myLoc.height);
+            /* Ensure active item is visible */
+            theDataMenuBuilder.showItem(myActive);
         }
 
         /**
@@ -490,6 +513,14 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 /* Lock Save Buttons */
                 theSaveButtons.setEnabled(!isError);
 
+                /* if this is the data menu builder reporting */
+            } else if (theDataMenuBuilder.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
+                /* build data menu */
+                buildDataMenu();
+
                 /* if this is one of the static data panels */
             } else if (o instanceof StaticDataTable) {
                 /* Adjust visibility */
@@ -515,15 +546,6 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 setVisibility();
             }
 
-            /* if this is the select button reporting */
-            if (theSelectButton.equals(o)) {
-                /* Cancel Editing */
-                cancelEditing();
-
-                /* Show data menu */
-                showDataMenu();
-            }
-
             /* if this is the new button reporting */
             if (theNewButton.equals(o)) {
                 /* Cancel Editing */
@@ -536,7 +558,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
 
         @Override
         public void itemStateChanged(final ItemEvent pEvent) {
-            /* Access reporting object and command */
+            /* Access reporting object */
             Object o = pEvent.getSource();
 
             /* if this is the disabled check box reporting */
@@ -545,46 +567,13 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                 showDisabled(theDisabledCheckBox.isSelected());
             }
         }
-    }
-
-    /**
-     * Data action class.
-     */
-    private final class DataAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 7998735079273862989L;
-
-        /**
-         * Data Name.
-         */
-        private final String theName;
-
-        /**
-         * Data Table.
-         */
-        private final StaticDataTable<?, ?, ?, E> theTable;
-
-        /**
-         * Constructor.
-         * @param pName the panel name
-         * @param pTable the table
-         */
-        private DataAction(final String pName,
-                           final StaticDataTable<?, ?, ?, E> pTable) {
-            super(pName);
-            theName = pName;
-            theTable = pTable;
-        }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
+        public void propertyChange(final PropertyChangeEvent pEvent) {
             /* If the panel has changed */
-            if (!Difference.isEqual(theActive, theTable)) {
+            if (!Difference.isEqual(theActive, theSelectButton.getValue())) {
                 /* Move correct card to front */
-                setSelection(theName);
+                setSelection(theSelectButton.getDisplayName());
                 showNewButton();
             }
         }

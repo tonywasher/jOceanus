@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui.controls;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -33,8 +32,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -42,6 +39,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -56,7 +55,8 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.ArrowIcon;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * SpotPrice Date selection panel.
@@ -137,7 +137,7 @@ public class SpotSelect
     /**
      * The portfolio button.
      */
-    private final JButton thePortButton;
+    private final JScrollButton<PortfolioBucket> thePortButton;
 
     /**
      * The Portfolio list.
@@ -196,9 +196,6 @@ public class SpotSelect
      * @param pView the data view
      */
     public SpotSelect(final View pView) {
-        /* Create listener */
-        SpotListener myListener = new SpotListener();
-
         /* Store table and view details */
         theView = pView;
 
@@ -220,9 +217,7 @@ public class SpotSelect
         thePrev.setToolTipText(NLS_PREVTIP);
 
         /* Create the portfolio button */
-        thePortButton = new JButton(ArrowIcon.DOWN);
-        thePortButton.setVerticalTextPosition(AbstractButton.CENTER);
-        thePortButton.setHorizontalTextPosition(AbstractButton.LEFT);
+        thePortButton = new JScrollButton<PortfolioBucket>();
 
         /* Create initial state */
         theState = new SpotState();
@@ -255,11 +250,12 @@ public class SpotSelect
         theState.applyState();
 
         /* Add the listener for item changes */
+        SpotListener myListener = new SpotListener();
         theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theShowClosed.addItemListener(myListener);
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
-        thePortButton.addActionListener(myListener);
+        thePortButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -380,7 +376,21 @@ public class SpotSelect
      * Listener class.
      */
     private final class SpotListener
-            implements ActionListener, PropertyChangeListener, ItemListener {
+            implements ActionListener, ChangeListener, PropertyChangeListener, ItemListener {
+        /**
+         * The portfolio menu builder.
+         */
+        private final JScrollMenuBuilder<PortfolioBucket> thePortMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private SpotListener() {
+            /* Access builder */
+            thePortMenuBuilder = thePortButton.newMenuBuilder();
+            thePortMenuBuilder.addChangeListener(this);
+        }
+
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -396,17 +406,23 @@ public class SpotSelect
                 /* Set previous and notify changes */
                 theState.setPrev();
                 fireStateChanged();
-
-                /* If this event relates to the portfolio button */
-            } else if (thePortButton.equals(o)) {
-                showPortfolioMenu();
             }
         }
 
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
-            /* if this date relates to the Date button */
-            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
+            Object o = evt.getSource();
+
+            /* if event relates to the Date button */
+            if (theDateButton.equals(o)
+                && (theState.setDate(theDateButton))) {
+                fireStateChanged();
+            }
+
+            /* if event relates to the Date button */
+            if (thePortButton.equals(o)
+                && (theState.setPortfolio(thePortButton.getValue()))) {
+                theState.applyState();
                 fireStateChanged();
             }
         }
@@ -428,76 +444,32 @@ public class SpotSelect
             }
         }
 
-        /**
-         * Show Portfolio menu.
-         */
-        private void showPortfolioMenu() {
+        @Override
+        public void stateChanged(final ChangeEvent e) {
             /* Create a new popUp menu */
-            JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-            /* Access current portfolio */
-            PortfolioBucket myPortfolio = theState.getPortfolio();
+            thePortMenuBuilder.newMenu();
 
             /* Record active item */
             JMenuItem myActive = null;
+            PortfolioBucket myCurr = theState.getPortfolio();
 
             /* Loop through the available portfolio values */
             Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myCurr = myIterator.next();
+                PortfolioBucket myBucket = myIterator.next();
 
                 /* Create a new JMenuItem and add it to the popUp */
-                PortfolioAction myAction = new PortfolioAction(myCurr);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myPopUp.addMenuItem(myItem);
+                JMenuItem myItem = thePortMenuBuilder.addItem(myBucket);
 
-                /* If this is the active portfolio */
-                if (myCurr.equals(myPortfolio)) {
+                /* If this is the active bucket */
+                if (myBucket.equals(myCurr)) {
                     /* Record it */
                     myActive = myItem;
                 }
             }
 
             /* Ensure active item is visible */
-            myPopUp.showItem(myActive);
-
-            /* Show the Account menu in the correct place */
-            Rectangle myLoc = thePortButton.getBounds();
-            myPopUp.show(thePortButton, 0, myLoc.height);
-        }
-    }
-
-    /**
-     * Portfolio action class.
-     */
-    private final class PortfolioAction
-            extends AbstractAction {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -6312490702258532708L;
-
-        /**
-         * Portfolio.
-         */
-        private final PortfolioBucket thePortfolio;
-
-        /**
-         * Constructor.
-         * @param pPortfolio the portfolio
-         */
-        private PortfolioAction(final PortfolioBucket pPortfolio) {
-            super(pPortfolio.getName());
-            thePortfolio = pPortfolio;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            /* Select the new portfolio */
-            if (theState.setPortfolio(thePortfolio)) {
-                theState.applyState();
-                fireStateChanged();
-            }
+            thePortMenuBuilder.showItem(myActive);
         }
     }
 
@@ -648,9 +620,7 @@ public class SpotSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            thePortButton.setText((thePortfolio == null)
-                                                        ? null
-                                                        : thePortfolio.getName());
+            thePortButton.setValue(thePortfolio);
         }
     }
 }

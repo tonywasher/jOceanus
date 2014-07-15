@@ -402,7 +402,6 @@ public final class ControlKey
      * Obtain the required HashKey.
      * @param pUsePrime return prime hashKey (true/false)
      * @return the active HashKey
-     * @throws JOceanusException on error
      */
     protected HashKey getHashKey(final Boolean pUsePrime) {
         return pUsePrime
@@ -649,8 +648,7 @@ public final class ControlKey
     }
 
     /**
-     * Update password hash.
-     * @param pHash the new password hash
+     * Ensure password hash is updated.
      * @throws JOceanusException on error
      */
     protected void ensurePasswordHash() throws JOceanusException {
