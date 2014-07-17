@@ -283,9 +283,9 @@ public class CashAnalysisSelect
          */
         private CashListener() {
             /* Access builders */
-            theCategoryMenuBuilder = theCatButton.newMenuBuilder();
+            theCategoryMenuBuilder = theCatButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
-            theCashMenuBuilder = theCashButton.newMenuBuilder();
+            theCashMenuBuilder = theCashButton.getMenuBuilder();
             theCashMenuBuilder.addChangeListener(this);
         }
 
@@ -306,8 +306,8 @@ public class CashAnalysisSelect
          * Build Category menu.
          */
         private void buildCategoryMenu() {
-            /* Create a new popUp menu */
-            theCategoryMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theCategoryMenuBuilder.clearMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -365,8 +365,8 @@ public class CashAnalysisSelect
          * Build Cash menu.
          */
         private void buildCashMenu() {
-            /* Create a new popUp menu */
-            theCashMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theCashMenuBuilder.clearMenu();
 
             /* Access current category and Account */
             CashCategory myCategory = theState.getCategory();

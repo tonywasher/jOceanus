@@ -204,7 +204,7 @@ public class TaxBasisAnalysisSelect
          */
         private ButtonListener() {
             /* Access builders */
-            theTaxMenuBuilder = theButton.newMenuBuilder();
+            theTaxMenuBuilder = theButton.getMenuBuilder();
             theTaxMenuBuilder.addChangeListener(this);
         }
 
@@ -223,8 +223,8 @@ public class TaxBasisAnalysisSelect
          * Build Basis menu.
          */
         private void buildBasisMenu() {
-            /* Create a new popUp menu */
-            theTaxMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theTaxMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;

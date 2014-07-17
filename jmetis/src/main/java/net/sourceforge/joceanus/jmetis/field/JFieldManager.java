@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
@@ -345,11 +345,13 @@ public class JFieldManager {
 
     /**
      * Allocate a ComboBoxEditor object.
+     * @param <T> the type of the object
+     * @param pClass the class of the objects
      * @return the ComboBox editor
      */
-    public ComboBoxCellEditor allocateComboBoxCellEditor() {
+    public <T> ComboBoxCellEditor<T> allocateComboBoxCellEditor(final Class<T> pClass) {
         /* Return a new ComboBoxEditor object */
-        return new ComboBoxCellEditor();
+        return new ComboBoxCellEditor<T>(pClass);
     }
 
     /**
@@ -372,12 +374,14 @@ public class JFieldManager {
     }
 
     /**
-     * Allocate a PopUpMenuEditor object.
-     * @return the PopUpMenu editor
+     * Allocate a ScrollButtonEditor object.
+     * @param <T> the type of the object
+     * @param pClass the class of the objects
+     * @return the ScrollButton editor
      */
-    public PopUpMenuCellEditor allocatePopUpMenuCellEditor() {
-        /* Return a new PopUpMenuEditor object */
-        return new PopUpMenuCellEditor();
+    public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClass) {
+        /* Return a new ScrollButtonEditor object */
+        return new ScrollButtonCellEditor<T>(pClass);
     }
 
     /**

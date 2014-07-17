@@ -137,6 +137,12 @@ public class JScrollMenu
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void removeAll() {
+        /* Remove all items */
+        thePopUp.removeAll();
+    }
+
     /**
      * Add a menu Item.
      * @param pItem the item to add

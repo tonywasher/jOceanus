@@ -209,7 +209,7 @@ public class EventCategoryAnalysisSelect
          */
         private ButtonListener() {
             /* Access builders */
-            theCategoryMenuBuilder = theButton.newMenuBuilder();
+            theCategoryMenuBuilder = theButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
         }
 
@@ -228,8 +228,8 @@ public class EventCategoryAnalysisSelect
          * Build Category menu.
          */
         private void buildCategoryMenu() {
-            /* Create a new popUp menu */
-            theCategoryMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theCategoryMenuBuilder.clearMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();

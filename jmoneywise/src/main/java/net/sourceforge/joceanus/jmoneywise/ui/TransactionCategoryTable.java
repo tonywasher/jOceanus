@@ -38,14 +38,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -72,14 +69,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Transaction Category Maintenance.
  */
 public class TransactionCategoryTable
-        extends JDataTable<TransactionCategory, MoneyWiseDataType>
-        implements PopUpMenuSelector {
+        extends JDataTable<TransactionCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -469,52 +464,6 @@ public class TransactionCategoryTable
         }
     }
 
-    @Override
-    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                   final int pRowIndex,
-                                   final int pColIndex) {
-        /* Create new menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Record active item */
-        TransactionCategory myCategory = theCategories.get(pRowIndex);
-        TransactionCategoryType myCurr = myCategory.getCategoryType();
-        CategoryType myCurrType = CategoryType.determineType(myCurr);
-        JMenuItem myActive = null;
-
-        /* Loop through the TransactionCategoryTypes */
-        Iterator<TransactionCategoryType> myIterator = theCategoryTypes.iterator();
-        while (myIterator.hasNext()) {
-            TransactionCategoryType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-            /* Ignore category if wrong type */
-            bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
-    }
-
     /**
      * Listener class.
      */
@@ -530,7 +479,7 @@ public class TransactionCategoryTable
          */
         private CategoryListener() {
             /* Access builders */
-            theCategoryMenuBuilder = theSelectButton.newMenuBuilder();
+            theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
         }
 
@@ -547,8 +496,8 @@ public class TransactionCategoryTable
 
             /* If we are building selection menu */
             if (theCategoryMenuBuilder.equals(o)) {
-                /* Create a new popUp menu */
-                theCategoryMenuBuilder.newMenu();
+                /* Reset the popUp menu */
+                theCategoryMenuBuilder.clearMenu();
 
                 /* Build the selection menu */
                 if (theCategories != null) {
@@ -691,9 +640,9 @@ public class TransactionCategoryTable
         private final StringCellEditor theStringEditor;
 
         /**
-         * PopUp Menu Editor.
+         * ScrollButton Menu Editor.
          */
-        private final PopUpMenuCellEditor theMenuEditor;
+        private final ScrollButtonCellEditor<TransactionCategoryType> theScrollEditor;
 
         /**
          * FullName column.
@@ -713,15 +662,18 @@ public class TransactionCategoryTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
+            theScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategoryType.class);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
             declareColumn(theFullNameColumn);
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theScrollEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+
+            /* Add listener */
+            theScrollEditor.addChangeListener(new ScrollEditorListener());
         }
 
         /**
@@ -876,6 +828,60 @@ public class TransactionCategoryTable
                     return TransactionCategory.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                buildCategoryTypeMenu();
+            }
+
+            /**
+             * Build the category type list for the item.
+             */
+            private void buildCategoryTypeMenu() {
+                /* Access details */
+                JScrollMenuBuilder<TransactionCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
+                Point myCell = theScrollEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                TransactionCategory myCategory = theCategories.get(myCell.y);
+                TransactionCategoryType myCurr = myCategory.getCategoryType();
+                CategoryType myCurrType = CategoryType.determineType(myCurr);
+                JMenuItem myActive = null;
+
+                /* Loop through the TransactionCategoryTypes */
+                Iterator<TransactionCategoryType> myIterator = theCategoryTypes.iterator();
+                while (myIterator.hasNext()) {
+                    TransactionCategoryType myType = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+                    /* Ignore category if wrong type */
+                    bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the type */
+                    JMenuItem myItem = myBuilder.addItem(myType);
+
+                    /* If this is the active type */
+                    if (myType.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

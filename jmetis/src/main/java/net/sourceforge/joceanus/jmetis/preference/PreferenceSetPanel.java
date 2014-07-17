@@ -904,8 +904,7 @@ public class PreferenceSetPanel
                 theField = new JScrollButton<Enum<?>>();
 
                 /* Create the popUp Menu */
-                JScrollMenuBuilder<Enum<?>> myBuilder = theField.newMenuBuilder();
-                myBuilder.newMenu();
+                JScrollMenuBuilder<Enum<?>> myBuilder = theField.getMenuBuilder();
 
                 /* For all values */
                 for (Enum<?> myEnum : theEnum.getValues()) {

@@ -32,14 +32,12 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxSelector;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.EditState;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
@@ -60,8 +58,7 @@ import net.sourceforge.joceanus.jtethys.swing.TableFilter;
  * @param <E> the data type enum class
  */
 public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends JEventTable
-        implements ComboBoxSelector {
+        extends JEventTable {
     /**
      * Serial Id.
      */
@@ -254,12 +251,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     protected void notifyChanges() {
         /* Notify listeners */
         fireStateChanged();
-    }
-
-    @Override
-    public JComboBox<?> getComboBox(final int pRowIndex,
-                                    final int pColIndex) {
-        return null;
     }
 
     /**

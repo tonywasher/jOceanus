@@ -204,7 +204,7 @@ public class PayeeAnalysisSelect
          */
         private ButtonListener() {
             /* Access builders */
-            thePayeeMenuBuilder = theButton.newMenuBuilder();
+            thePayeeMenuBuilder = theButton.getMenuBuilder();
             thePayeeMenuBuilder.addChangeListener(this);
         }
 
@@ -223,8 +223,8 @@ public class PayeeAnalysisSelect
          * Build Payee menu.
          */
         private void buildPayeeMenu() {
-            /* Create a new popUp menu */
-            thePayeeMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            thePayeeMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;

@@ -31,6 +31,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.event.PopupMenuListener;
 
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
 
@@ -51,6 +52,11 @@ public class JScrollButton<T>
     public static final String PROPERTY_VALUE = "Value";
 
     /**
+     * Menu Builder.
+     */
+    private JScrollMenuBuilder<T> theMenuBuilder;
+
+    /**
      * Value.
      */
     private T theValue;
@@ -66,6 +72,11 @@ public class JScrollButton<T>
     private final String theText;
 
     /**
+     * Fire on menu close.
+     */
+    private boolean fireOnClose;
+
+    /**
      * Set the value.
      * @param pValue the value to set.
      */
@@ -73,6 +84,13 @@ public class JScrollButton<T>
         setValue(pValue, pValue == null
                                        ? null
                                        : pValue.toString());
+    }
+
+    /**
+     * Fire state change on menu cancel (either menu close or no-change selection).
+     */
+    public void fireOnClose() {
+        fireOnClose = true;
     }
 
     /**
@@ -86,13 +104,38 @@ public class JScrollButton<T>
         T myOld = theValue;
 
         /* Store new values */
-        storeValue(pValue, pName);
+        storeTheValue(pValue, pName);
 
         /* If the value has changed */
         if (isValueChanged(myOld, theValue)) {
             /* Fire the property change */
             firePropertyChange(PROPERTY_VALUE, myOld, theValue);
+
+            /* else note that the menu has been cancelled */
+        } else if (fireOnClose) {
+            theMenuBuilder.notifyClosed();
         }
+    }
+
+    /**
+     * Store the value without firing events.
+     * @param pValue the value to set.
+     */
+    public void storeValue(final T pValue) {
+        storeValue(pValue, pValue == null
+                                         ? null
+                                         : pValue.toString());
+    }
+
+    /**
+     * Store the value without firing events.
+     * @param pValue the value to set.
+     * @param pName the display name
+     */
+    public void storeValue(final T pValue,
+                           final String pName) {
+        /* Store new values */
+        storeTheValue(pValue, pName);
     }
 
     /**
@@ -116,13 +159,21 @@ public class JScrollButton<T>
      * @param pValue the value to set.
      * @param pName the display name
      */
-    private void storeValue(final T pValue,
-                            final String pName) {
+    private void storeTheValue(final T pValue,
+                               final String pName) {
         theValue = pValue;
         theName = pName;
         if (theText == null) {
             setText(theName);
         }
+    }
+
+    /**
+     * Obtain menuBuilder.
+     * @return the menuBuilder.
+     */
+    public JScrollMenuBuilder<T> getMenuBuilder() {
+        return theMenuBuilder;
     }
 
     /**
@@ -156,17 +207,10 @@ public class JScrollButton<T>
         super(ArrowIcon.DOWN);
         setVerticalTextPosition(AbstractButton.CENTER);
         setHorizontalTextPosition(AbstractButton.LEFT);
+        theMenuBuilder = new JScrollMenuBuilder<T>(this);
         theText = pText;
+        fireOnClose = false;
         setText(theText);
-    }
-
-    /**
-     * Obtain menuBuilder.
-     * @return the menuBuilder.
-     */
-    public JScrollMenuBuilder<T> newMenuBuilder() {
-        JScrollMenuBuilder<T> myBuilder = new JScrollMenuBuilder<T>(this);
-        return myBuilder;
     }
 
     /**
@@ -182,9 +226,22 @@ public class JScrollButton<T>
         private final JScrollButton<T> theButton;
 
         /**
+         * Building menu.
+         */
+        private boolean buildingMenu;
+
+        /**
          * The PopUpMenu.
          */
         private JScrollPopupMenu theMenu;
+
+        /**
+         * Are we building the menu?
+         * @return true/false
+         */
+        public boolean buildingMenu() {
+            return buildingMenu;
+        }
 
         /**
          * Constructor.
@@ -193,13 +250,30 @@ public class JScrollButton<T>
         private JScrollMenuBuilder(final JScrollButton<T> pButton) {
             theButton = pButton;
             theButton.addActionListener(this);
+            theMenu = new JScrollPopupMenu();
         }
 
         /**
-         * Create new menu.
+         * Clear menu.
          */
-        public void newMenu() {
-            theMenu = new JScrollPopupMenu();
+        public void clearMenu() {
+            theMenu.removeAll();
+        }
+
+        /**
+         * Add menu listener.
+         * @param pListener the listener
+         */
+        public void addPopupMenuListener(final PopupMenuListener pListener) {
+            theMenu.addPopupMenuListener(pListener);
+        }
+
+        /**
+         * Remove menu listener.
+         * @param pListener the listener
+         */
+        public void removePopupMenuListener(final PopupMenuListener pListener) {
+            theMenu.removePopupMenuListener(pListener);
         }
 
         /**
@@ -344,6 +418,7 @@ public class JScrollButton<T>
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* Ask listeners to provide the menu */
+            buildingMenu = true;
             fireStateChanged();
 
             /* If a menu is provided */
@@ -352,6 +427,15 @@ public class JScrollButton<T>
                 Rectangle myLoc = theButton.getBounds();
                 theMenu.show(theButton, 0, myLoc.height);
             }
+        }
+
+        /**
+         * Notify that we have closed the menu without a choice.
+         */
+        private void notifyClosed() {
+            /* Ask listeners to provide the menu */
+            buildingMenu = false;
+            fireStateChanged();
         }
     }
 

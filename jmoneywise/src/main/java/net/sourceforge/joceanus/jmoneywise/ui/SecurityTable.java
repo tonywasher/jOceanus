@@ -30,14 +30,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -66,14 +63,13 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Security Table.
  */
 public class SecurityTable
-        extends JDataTable<Security, MoneyWiseDataType>
-        implements PopUpMenuSelector {
+        extends JDataTable<Security, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -304,165 +300,6 @@ public class SecurityTable
         }
     }
 
-    @Override
-    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                   final int pRowIndex,
-                                   final int pColIndex) {
-        /* Record active item */
-        Security mySecurity = theSecurities.get(pRowIndex);
-
-        /* Switch on column */
-        switch (pColIndex) {
-            case SecurityColumnModel.COLUMN_PARENT:
-                return getParentPopUpMenu(pEditor, mySecurity);
-            case SecurityColumnModel.COLUMN_CURR:
-                return getCurrencyPopUpMenu(pEditor, mySecurity);
-            case SecurityColumnModel.COLUMN_CATEGORY:
-                return getSecTypePopUpMenu(pEditor, mySecurity);
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Obtain the popUpMenu for parents.
-     * @param pEditor the Cell Editor
-     * @param pSecurity the active security
-     * @return the popUp menu
-     */
-    private JPopupMenu getParentPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                          final Security pSecurity) {
-        /* Create new menu */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Record active item */
-        Payee myCurr = pSecurity.getParent();
-        JMenuItem myActive = null;
-
-        /* We should use the update payee list */
-        PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
-
-        /* Loop through the Payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
-
-            /* Ignore deleted/non-parent/closed */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
-            bIgnore |= myPayee.isClosed();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(myPayee);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active parent */
-            if (myPayee.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myPopUp.showItem(myActive);
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
-    /**
-     * Obtain the popUpMenu for security types.
-     * @param pEditor the Cell Editor
-     * @param pSecurity the active security
-     * @return the popUp menu
-     */
-    private JPopupMenu getSecTypePopUpMenu(final PopUpMenuCellEditor pEditor,
-                                           final Security pSecurity) {
-        /* Create new menu */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Record active item */
-        SecurityType myCurr = pSecurity.getSecurityType();
-        JMenuItem myActive = null;
-
-        /* Loop through the Security Types */
-        Iterator<SecurityType> myIterator = theSecTypes.iterator();
-        while (myIterator.hasNext()) {
-            SecurityType mySecType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = mySecType.isDeleted() || !mySecType.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(mySecType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (mySecType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myPopUp.showItem(myActive);
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
-    /**
-     * Obtain the popUpMenu for currencies.
-     * @param pEditor the Cell Editor
-     * @param pSecurity the active security
-     * @return the popUp menu
-     */
-    private JPopupMenu getCurrencyPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                            final Security pSecurity) {
-        /* Create new menu */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Record active item */
-        AccountCurrency myCurr = pSecurity.getSecurityCurrency();
-        JMenuItem myActive = null;
-
-        /* Loop through the Currencies */
-        Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
-        while (myIterator.hasNext()) {
-            AccountCurrency myCurrency = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the currency */
-            PopUpAction myAction = pEditor.getNewAction(myCurrency);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active currency */
-            if (myCurrency.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myPopUp.showItem(myActive);
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
     /**
      * JTable Data Model.
      */
@@ -646,9 +483,19 @@ public class SecurityTable
         private final IconCellEditor theIconEditor;
 
         /**
-         * PopUp Menu Editor.
+         * SecurityType ScrollButton Menu Editor.
          */
-        private final PopUpMenuCellEditor theMenuEditor;
+        private final ScrollButtonCellEditor<SecurityType> theTypeEditor;
+
+        /**
+         * Parent ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<Payee> theParentEditor;
+
+        /**
+         * Currency ScrollButton Menu Editor.
+         */
+        private final ScrollButtonCellEditor<AccountCurrency> theCurrencyEditor;
 
         /**
          * Closed column.
@@ -668,21 +515,29 @@ public class SecurityTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
+            theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(SecurityType.class);
+            theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theTypeEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
             declareColumn(new JDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
 
             /* Initialise the columns */
             setColumns();
+
+            /* Add listeners */
+            ScrollEditorListener myListener = new ScrollEditorListener();
+            theTypeEditor.addChangeListener(myListener);
+            theParentEditor.addChangeListener(myListener);
+            theCurrencyEditor.addChangeListener(myListener);
         }
 
         /**
@@ -755,9 +610,9 @@ public class SecurityTable
                 case COLUMN_SYMBOL:
                     return pSecurity.getSymbol();
                 case COLUMN_PARENT:
-                    return pSecurity.getParentName();
+                    return pSecurity.getParent();
                 case COLUMN_CURR:
-                    return pSecurity.getSecurityCurrencyName();
+                    return pSecurity.getSecurityCurrency();
                 default:
                     return null;
             }
@@ -875,6 +730,146 @@ public class SecurityTable
                     return Security.FIELD_CURRENCY;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (theTypeEditor.equals(o)) {
+                    buildSecurityTypeMenu();
+                } else if (theParentEditor.equals(o)) {
+                    buildParentMenu();
+                } else if (theCurrencyEditor.equals(o)) {
+                    buildCurrencyMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for parents.
+             */
+            private void buildParentMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
+                Point myCell = theParentEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                Security mySecurity = theSecurities.get(myCell.y);
+                Payee myCurr = mySecurity.getParent();
+                JMenuItem myActive = null;
+
+                /* We should use the update payee list */
+                PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+
+                /* Loop through the Payees */
+                Iterator<Payee> myIterator = myPayees.iterator();
+                while (myIterator.hasNext()) {
+                    Payee myPayee = myIterator.next();
+
+                    /* Ignore deleted/non-parent/closed */
+                    boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                    bIgnore |= myPayee.isClosed();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the type */
+                    JMenuItem myItem = myBuilder.addItem(myPayee);
+
+                    /* If this is the active parent */
+                    if (myPayee.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
+            }
+
+            /**
+             * Build the popUpMenu for securityType.
+             */
+            private void buildSecurityTypeMenu() {
+                /* Access details */
+                JScrollMenuBuilder<SecurityType> myBuilder = theTypeEditor.getMenuBuilder();
+                Point myCell = theTypeEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                Security mySecurity = theSecurities.get(myCell.y);
+                SecurityType myCurr = mySecurity.getSecurityType();
+                JMenuItem myActive = null;
+
+                /* Loop through the SecurityTypes */
+                Iterator<SecurityType> myIterator = theSecTypes.iterator();
+                while (myIterator.hasNext()) {
+                    SecurityType myType = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the securityType */
+                    JMenuItem myItem = myBuilder.addItem(myType);
+
+                    /* If this is the active type */
+                    if (myType.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
+            }
+
+            /**
+             * Build the popUpMenu for currencies.
+             */
+            private void buildCurrencyMenu() {
+                /* Access details */
+                JScrollMenuBuilder<AccountCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
+                Point myCell = theCurrencyEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                Security mySecurity = theSecurities.get(myCell.y);
+                AccountCurrency myCurr = mySecurity.getSecurityCurrency();
+                JMenuItem myActive = null;
+
+                /* Loop through the Currencies */
+                Iterator<AccountCurrency> myIterator = theCurrencies.iterator();
+                while (myIterator.hasNext()) {
+                    AccountCurrency myCurrency = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the currency */
+                    JMenuItem myItem = myBuilder.addItem(myCurrency);
+
+                    /* If this is the active currency */
+                    if (myCurrency.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

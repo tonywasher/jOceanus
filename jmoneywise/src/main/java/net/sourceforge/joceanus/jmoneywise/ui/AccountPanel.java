@@ -268,10 +268,7 @@ public class AccountPanel
      */
     private void buildSelectMenu() {
         /* Create builder */
-        JScrollMenuBuilder<PanelName> myBuilder = theSelectButton.newMenuBuilder();
-
-        /* Create a new popUp menu */
-        myBuilder.newMenu();
+        JScrollMenuBuilder<PanelName> myBuilder = theSelectButton.getMenuBuilder();
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {

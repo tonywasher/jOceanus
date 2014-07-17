@@ -289,11 +289,8 @@ public class JDateDayRangeSelect
      * Build period menu.
      */
     private void buildPeriodMenu() {
-        /* Create builder */
-        JScrollMenuBuilder<JDatePeriod> myBuilder = thePeriodButton.newMenuBuilder();
-
-        /* Create a new popUp menu */
-        myBuilder.newMenu();
+        /* Obtain builder */
+        JScrollMenuBuilder<JDatePeriod> myBuilder = thePeriodButton.getMenuBuilder();
 
         /* Loop through the periods */
         for (JDatePeriod myPeriod : JDatePeriod.values()) {

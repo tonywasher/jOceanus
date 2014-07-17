@@ -387,7 +387,7 @@ public class SpotSelect
          */
         private SpotListener() {
             /* Access builder */
-            thePortMenuBuilder = thePortButton.newMenuBuilder();
+            thePortMenuBuilder = thePortButton.getMenuBuilder();
             thePortMenuBuilder.addChangeListener(this);
         }
 
@@ -446,8 +446,8 @@ public class SpotSelect
 
         @Override
         public void stateChanged(final ChangeEvent e) {
-            /* Create a new popUp menu */
-            thePortMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            thePortMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;

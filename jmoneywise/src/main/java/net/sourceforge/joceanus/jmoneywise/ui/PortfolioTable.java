@@ -30,14 +30,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -64,14 +61,13 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Portfolio Table.
  */
 public class PortfolioTable
-        extends JDataTable<Portfolio, MoneyWiseDataType>
-        implements PopUpMenuSelector {
+        extends JDataTable<Portfolio, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -279,53 +275,6 @@ public class PortfolioTable
         }
     }
 
-    @Override
-    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                   final int pRowIndex,
-                                   final int pColIndex) {
-        /* Access item */
-        Portfolio myPortfolio = thePortfolios.get(pRowIndex);
-
-        /* Create new menu */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Record active item */
-        Deposit myCurr = myPortfolio.getHolding();
-        JMenuItem myActive = null;
-
-        /* We should use the update deposit list */
-        DepositList myDeposits = DepositList.class.cast(theUpdateSet.findClass(Deposit.class));
-
-        /* Loop through the Deposits */
-        Iterator<Deposit> myIterator = myDeposits.iterator();
-        while (myIterator.hasNext()) {
-            Deposit myDeposit = myIterator.next();
-
-            /* Ignore deleted or closed */
-            boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(myDeposit);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active account */
-            if (myDeposit.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myPopUp.showItem(myActive);
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
     /**
      * JTable Data Model.
      */
@@ -504,9 +453,9 @@ public class PortfolioTable
         private final IconCellEditor theIconEditor;
 
         /**
-         * PopUp Menu Editor.
+         * Holding ScrollButton Menu Editor.
          */
-        private final PopUpMenuCellEditor theMenuEditor;
+        private final ScrollButtonCellEditor<Deposit> theHoldingEditor;
 
         /**
          * Closed column.
@@ -527,12 +476,12 @@ public class PortfolioTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
+            theHoldingEditor = theFieldMgr.allocateScrollButtonCellEditor(Deposit.class);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_HOLDING, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_HOLDING, WIDTH_NAME, theStringRenderer, theHoldingEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
@@ -540,6 +489,10 @@ public class PortfolioTable
 
             /* Initialise the columns */
             setColumns();
+
+            /* Add listeners */
+            ScrollEditorListener myListener = new ScrollEditorListener();
+            theHoldingEditor.addChangeListener(myListener);
         }
 
         /**
@@ -591,7 +544,7 @@ public class PortfolioTable
                 case COLUMN_NAME:
                     return pPortfolio.getName();
                 case COLUMN_HOLDING:
-                    return pPortfolio.getHoldingName();
+                    return pPortfolio.getHolding();
                 case COLUMN_DESC:
                     return pPortfolio.getDesc();
                 case COLUMN_CLOSED:
@@ -708,6 +661,63 @@ public class PortfolioTable
                     return Portfolio.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (theHoldingEditor.equals(o)) {
+                    buildHoldingMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for holding.
+             */
+            private void buildHoldingMenu() {
+                /* Access details */
+                JScrollMenuBuilder<Deposit> myBuilder = theHoldingEditor.getMenuBuilder();
+                Point myCell = theHoldingEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                Portfolio myPortfolio = thePortfolios.get(myCell.y);
+                Deposit myCurr = myPortfolio.getHolding();
+                JMenuItem myActive = null;
+
+                /* We should use the update payee list */
+                DepositList myDeposits = DepositList.class.cast(theUpdateSet.findClass(Deposit.class));
+
+                /* Loop through the Deposits */
+                Iterator<Deposit> myIterator = myDeposits.iterator();
+                while (myIterator.hasNext()) {
+                    Deposit myDeposit = myIterator.next();
+
+                    /* Ignore deleted or closed */
+                    boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the deposit */
+                    JMenuItem myItem = myBuilder.addItem(myDeposit);
+
+                    /* If this is the active holding */
+                    if (myDeposit.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

@@ -283,9 +283,9 @@ public class DepositAnalysisSelect
          */
         private DepositListener() {
             /* Access builders */
-            theCategoryMenuBuilder = theCatButton.newMenuBuilder();
+            theCategoryMenuBuilder = theCatButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
-            theDepositMenuBuilder = theDepositButton.newMenuBuilder();
+            theDepositMenuBuilder = theDepositButton.getMenuBuilder();
             theDepositMenuBuilder.addChangeListener(this);
         }
 
@@ -306,8 +306,8 @@ public class DepositAnalysisSelect
          * Build Category menu.
          */
         private void buildCategoryMenu() {
-            /* Create a new popUp menu */
-            theCategoryMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theCategoryMenuBuilder.clearMenu();
 
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
@@ -365,8 +365,8 @@ public class DepositAnalysisSelect
          * Build Deposit menu.
          */
         private void buildDepositMenu() {
-            /* Create a new popUp menu */
-            theDepositMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theDepositMenuBuilder.clearMenu();
 
             /* Access current category */
             DepositCategory myCategory = theState.getCategory();

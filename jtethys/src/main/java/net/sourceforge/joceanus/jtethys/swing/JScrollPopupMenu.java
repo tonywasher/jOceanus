@@ -254,6 +254,13 @@ public class JScrollPopupMenu
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void removeAll() {
+        /* Clear menuItems */
+        theMenuItems.clear();
+        theFirstIndex = 0;
+    }
+
     /**
      * Add a menu Item.
      * @param pItem the item to add
@@ -384,7 +391,7 @@ public class JScrollPopupMenu
             int myScroll = Math.min(theMaxDisplayItems, myCount);
 
             /* Remove all items */
-            removeAll();
+            super.removeAll();
 
             /* If we do not need to scroll */
             if (myScroll == myCount) {

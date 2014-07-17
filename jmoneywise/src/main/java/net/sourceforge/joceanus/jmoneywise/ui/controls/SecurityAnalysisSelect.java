@@ -280,9 +280,9 @@ public class SecurityAnalysisSelect
          */
         private SecurityListener() {
             /* Access builders */
-            theSecurityMenuBuilder = theSecButton.newMenuBuilder();
+            theSecurityMenuBuilder = theSecButton.getMenuBuilder();
             theSecurityMenuBuilder.addChangeListener(this);
-            thePortfolioMenuBuilder = thePortButton.newMenuBuilder();
+            thePortfolioMenuBuilder = thePortButton.getMenuBuilder();
             thePortfolioMenuBuilder.addChangeListener(this);
         }
 
@@ -303,8 +303,8 @@ public class SecurityAnalysisSelect
          * Build Portfolio menu.
          */
         private void buildPortfolioMenu() {
-            /* Create a new popUp menu */
-            thePortfolioMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            thePortfolioMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;
@@ -333,8 +333,8 @@ public class SecurityAnalysisSelect
          * Build Security menu.
          */
         private void buildSecurityMenu() {
-            /* Create a new popUp menu */
-            theSecurityMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theSecurityMenuBuilder.clearMenu();
 
             /* Access current portfolio */
             PortfolioBucket myPortfolio = theState.getPortfolio();

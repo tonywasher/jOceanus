@@ -633,9 +633,9 @@ public class AnalysisSelect
          */
         private AnalysisListener() {
             /* Access builders */
-            theTypeMenuBuilder = theFilterTypeButton.newMenuBuilder();
+            theTypeMenuBuilder = theFilterTypeButton.getMenuBuilder();
             theTypeMenuBuilder.addChangeListener(this);
-            theBucketMenuBuilder = theBucketButton.newMenuBuilder();
+            theBucketMenuBuilder = theBucketButton.getMenuBuilder();
             theBucketMenuBuilder.addChangeListener(this);
         }
 
@@ -643,8 +643,8 @@ public class AnalysisSelect
          * Build AnalysisType menu.
          */
         private void buildAnalysisTypeMenu() {
-            /* Create a new popUp menu */
-            theTypeMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theTypeMenuBuilder.clearMenu();
 
             /* Loop through the panels */
             Iterator<Map.Entry<AnalysisType, AnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
@@ -663,8 +663,8 @@ public class AnalysisSelect
          * Build Bucket menu.
          */
         private void buildBucketMenu() {
-            /* Create a new popUp menu */
-            theBucketMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theBucketMenuBuilder.clearMenu();
 
             /* Loop through the buckets */
             for (BucketAttribute myAttr : theState.getType().getValues()) {

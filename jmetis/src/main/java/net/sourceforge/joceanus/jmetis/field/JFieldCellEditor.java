@@ -32,18 +32,20 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
@@ -56,6 +58,9 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
+import net.sourceforge.joceanus.jtethys.event.JEventCellEditor;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Cell editors.
@@ -66,36 +71,6 @@ public class JFieldCellEditor {
      * Empty string.
      */
     private static final String STR_EMPTY = "";
-
-    /**
-     * ComboBoxSelector interface.
-     */
-    public interface ComboBoxSelector {
-        /**
-         * Get the combo box for the item at row and column.
-         * @param pRowIndex the row
-         * @param pColIndex the column
-         * @return the combo box
-         */
-        JComboBox<?> getComboBox(final int pRowIndex,
-                                 final int pColIndex);
-    }
-
-    /**
-     * PopUpMenuSelector interface.
-     */
-    public interface PopUpMenuSelector {
-        /**
-         * Get the popUpMenu for the item at row and column.
-         * @param pEditor the cell editor
-         * @param pRowIndex the row
-         * @param pColIndex the column
-         * @return the popUpMenu
-         */
-        JPopupMenu getPopUpMenu(PopUpMenuCellEditor pEditor,
-                                final int pRowIndex,
-                                final int pColIndex);
-    }
 
     /**
      * String Cell Editor.
@@ -423,20 +398,36 @@ public class JFieldCellEditor {
     }
 
     /**
-     * PopUpMenu Cell Editor.
+     * ScrollButton Cell Editor.
+     * @param <T> the object type
      */
-    public static class PopUpMenuCellEditor
-            extends AbstractCellEditor
+    public static class ScrollButtonCellEditor<T>
+            extends JEventCellEditor
             implements TableCellEditor {
         /**
          * Serial Id.
          */
-        private static final long serialVersionUID = 6815861197403796996L;
+        private static final long serialVersionUID = 8612779653045598187L;
+
+        /**
+         * The class of the object.
+         */
+        private final Class<T> theClass;
 
         /**
          * The button.
          */
-        private final JButton theButton;
+        private final JScrollButton<T> theButton;
+
+        /**
+         * The menu Builder.
+         */
+        private final JScrollMenuBuilder<T> theMenuBuilder;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
 
         /**
          * The selection Listener.
@@ -454,33 +445,51 @@ public class JFieldCellEditor {
         private final transient MouseListener theMouseListener = new MouseListener();
 
         /**
-         * The popUp Menu.
-         */
-        private transient JPopupMenu theMenu;
-
-        /**
-         * The table.
-         */
-        private transient JTable theTable;
-
-        /**
          * The editor value.
          */
-        private transient Object theValue;
+        private transient T theValue;
 
         /**
-         * Is the button active?
+         * The active table.
          */
-        private transient boolean isActive;
+        private JTable theTable;
+
+        /**
+         * Obtain the menu Builder.
+         * @return the menuBuilder
+         */
+        public JScrollMenuBuilder<T> getMenuBuilder() {
+            return theMenuBuilder;
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
 
         /**
          * Constructor.
+         * @param pClass the class of the object
          */
-        protected PopUpMenuCellEditor() {
-            theButton = new JButton();
-            theButton.setHorizontalAlignment(SwingConstants.LEFT);
+        protected ScrollButtonCellEditor(final Class<T> pClass) {
+            /* Store parameters */
+            theClass = pClass;
+
+            /* Create button and menu builder */
+            theButton = new JScrollButton<T>();
+            theMenuBuilder = theButton.getMenuBuilder();
+
+            /* Add popupListener */
+            theMenuBuilder.addPopupMenuListener(thePopUpListener);
+            theButton.fireOnClose();
+
+            /* sort out listeners */
             theButton.setFocusPainted(false);
-            theButton.addActionListener(theButtonListener);
+            theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
+            theMenuBuilder.addChangeListener(theButtonListener);
         }
 
         @Override
@@ -489,31 +498,18 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            /* Determine the menu to display */
-            if (!(pTable instanceof PopUpMenuSelector)) {
-                return null;
-            }
-            PopUpMenuSelector myTable = (PopUpMenuSelector) pTable;
+            /* Store location of button */
             int myRow = pTable.convertRowIndexToModel(pRowIndex);
             int myCol = pTable.convertColumnIndexToModel(pColIndex);
-            theMenu = myTable.getPopUpMenu(this, myRow, myCol);
+            thePoint = new Point(myCol, myRow);
             theTable = pTable;
 
-            /* Set value */
-            theValue = pValue;
-            isActive = true;
-
-            /* Set button text */
-            if (pValue instanceof String) {
-                theButton.setText((String) pValue);
-            } else if (pValue != null) {
-                theButton.setText(pValue.toString());
-            } else {
-                theButton.setText(null);
-            }
+            /* Store current value */
+            theValue = theClass.cast(pValue);
+            theButton.storeValue(theValue);
 
             /* Declare the mouse listener */
-            pTable.addMouseListener(theMouseListener);
+            theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
             return theButton;
@@ -527,9 +523,8 @@ public class JFieldCellEditor {
         @Override
         public boolean stopCellEditing() {
             if (super.stopCellEditing()) {
-                theMenu.removePopupMenuListener(thePopUpListener);
                 theTable.removeMouseListener(theMouseListener);
-                isActive = false;
+                thePoint = null;
                 return true;
             }
             return false;
@@ -538,27 +533,29 @@ public class JFieldCellEditor {
         @Override
         public void cancelCellEditing() {
             super.cancelCellEditing();
-            theMenu.removePopupMenuListener(thePopUpListener);
+            thePoint = null;
             theTable.removeMouseListener(theMouseListener);
-            isActive = false;
         }
 
         /**
          * Button Listener class.
          */
         private class ButtonListener
-                implements ActionListener {
+                implements PropertyChangeListener, ChangeListener {
             @Override
-            public void actionPerformed(final ActionEvent pEvent) {
-                /* Stop mouse listener */
-                isActive = false;
+            public void propertyChange(final PropertyChangeEvent pEvent) {
+                /* Store value and stop editing */
+                theValue = theButton.getValue();
+                stopCellEditing();
+            }
 
-                /* Add the listener to the menu */
-                theMenu.addPopupMenuListener(thePopUpListener);
-
-                /* Show the popUp menu in the correct place */
-                Rectangle myLoc = theButton.getBounds();
-                theMenu.show(theButton, 0, myLoc.height);
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                if (theMenuBuilder.buildingMenu()) {
+                    fireStateChanged();
+                } else {
+                    cancelCellEditing();
+                }
             }
         }
 
@@ -571,82 +568,17 @@ public class JFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                if (isActive) {
-                    stopCellEditing();
+                Rectangle myRect = theButton.getBounds();
+                if (!myRect.contains(e.getPoint())) {
+                    cancelCellEditing();
                 }
-            }
-        }
-
-        /**
-         * Obtain new action element for given value.
-         * @param pValue the value
-         * @return the new action
-         */
-        public PopUpAction getNewAction(final Object pValue) {
-            return new PopUpAction(pValue);
-        }
-
-        /**
-         * Obtain new action element for given name and value.
-         * @param pName the name
-         * @param pValue the value
-         * @return the new action
-         */
-        public PopUpAction getNewAction(final String pName,
-                                        final Object pValue) {
-            return new PopUpAction(pName, pValue);
-        }
-
-        /**
-         * PopUp action class.
-         */
-        public final class PopUpAction
-                extends AbstractAction {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = -8465776918544737464L;
-
-            /**
-             * Action value.
-             */
-            private final Object theActionValue;
-
-            /**
-             * Constructor.
-             * @param pValue the value
-             */
-            private PopUpAction(final Object pValue) {
-                super(pValue.toString());
-                theActionValue = pValue;
-            }
-
-            /**
-             * Constructor.
-             * @param pName the name
-             * @param pValue the value
-             */
-            private PopUpAction(final String pName,
-                                final Object pValue) {
-                super(pName);
-                theActionValue = pValue;
-            }
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                /* Record the value */
-                theValue = theActionValue;
-
-                /* Remove listener and stop editing */
-                theMenu.removePopupMenuListener(thePopUpListener);
-                stopCellEditing();
             }
         }
 
         /**
          * PopUp listener class.
          * <p>
-         * Required to handle button clicked, dragged, and released in different place
+         * Required to handle popUp menu cancelled without selection
          */
         private class PopUpListener
                 implements PopupMenuListener {
@@ -669,9 +601,10 @@ public class JFieldCellEditor {
 
     /**
      * ComboBox Cell Editor.
+     * @param <T> the object type
      */
-    public static class ComboBoxCellEditor
-            extends AbstractCellEditor
+    public static class ComboBoxCellEditor<T>
+            extends JEventCellEditor
             implements TableCellEditor {
         /**
          * Serial Id.
@@ -681,7 +614,17 @@ public class JFieldCellEditor {
         /**
          * The ComboBox.
          */
-        private JComboBox<?> theCombo = null;
+        private final JComboBox<T> theCombo;
+
+        /**
+         * The class of the object.
+         */
+        private final Class<T> theClass;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
 
         /**
          * The action Listener.
@@ -694,9 +637,31 @@ public class JFieldCellEditor {
         private final transient ComboPopup thePopupListener = new ComboPopup();
 
         /**
-         * Constructor.
+         * Obtain the comboBox.
+         * @return the comboBox
          */
-        protected ComboBoxCellEditor() {
+        public JComboBox<T> getComboBox() {
+            return theCombo;
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
+
+        /**
+         * Constructor.
+         * @param pClass the class of the object
+         */
+        protected ComboBoxCellEditor(final Class<T> pClass) {
+            /* Store parameters */
+            theClass = pClass;
+
+            /* Create button and menu builder */
+            theCombo = new JComboBox<T>();
         }
 
         @Override
@@ -705,18 +670,27 @@ public class JFieldCellEditor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            if (!(pTable instanceof ComboBoxSelector)) {
-                return null;
-            }
-            ComboBoxSelector myTable = (ComboBoxSelector) pTable;
-            theCombo = myTable.getComboBox(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex));
-            if (pValue != null) {
-                theCombo.setSelectedItem(pValue);
+            /* Store location of box */
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            thePoint = new Point(myCol, myRow);
+
+            /* Enable updates to comboBox */
+            fireStateChanged();
+
+            /* Store current value */
+            T myValue = theClass.cast(pValue);
+            if (myValue != null) {
+                theCombo.setSelectedItem(myValue);
             } else {
                 theCombo.setSelectedIndex(-1);
             }
+
+            /* Set listeners */
             theCombo.addActionListener(theActionListener);
             theCombo.addPopupMenuListener(thePopupListener);
+
+            /* Return the component */
             return theCombo;
         }
 
@@ -732,7 +706,7 @@ public class JFieldCellEditor {
         }
 
         /**
-         * Combo Popup class.
+         * Combo PopUp class.
          */
         private class ComboPopup
                 implements PopupMenuListener {
@@ -754,9 +728,7 @@ public class JFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            return (theCombo != null)
-                                     ? theCombo.getSelectedItem()
-                                     : null;
+            return theCombo.getSelectedItem();
         }
 
         @Override
@@ -764,7 +736,7 @@ public class JFieldCellEditor {
             if (theCombo != null) {
                 theCombo.removePopupMenuListener(thePopupListener);
                 theCombo.removeActionListener(theActionListener);
-                theCombo = null;
+                thePoint = null;
             }
             super.cancelCellEditing();
         }
@@ -774,6 +746,7 @@ public class JFieldCellEditor {
             if (theCombo != null) {
                 theCombo.removePopupMenuListener(thePopupListener);
                 theCombo.removeActionListener(theActionListener);
+                thePoint = null;
             }
             return super.stopCellEditing();
         }

@@ -370,7 +370,7 @@ public class PreferencesPanel
          */
         private PropertyListener() {
             /* Access builders */
-            thePrefMenuBuilder = theSelectButton.newMenuBuilder();
+            thePrefMenuBuilder = theSelectButton.getMenuBuilder();
             thePrefMenuBuilder.addChangeListener(this);
         }
 
@@ -378,8 +378,8 @@ public class PreferencesPanel
          * Show Preference menu.
          */
         private void buildPreferenceMenu() {
-            /* Create a new popUp menu */
-            thePrefMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            thePrefMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;

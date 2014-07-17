@@ -30,14 +30,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
@@ -64,14 +61,13 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Payee Table.
  */
 public class PayeeTable
-        extends JDataTable<Payee, MoneyWiseDataType>
-        implements PopUpMenuSelector {
+        extends JDataTable<Payee, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -286,50 +282,6 @@ public class PayeeTable
         }
     }
 
-    @Override
-    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                   final int pRowIndex,
-                                   final int pColIndex) {
-        /* Access item */
-        Payee myPayee = thePayees.get(pRowIndex);
-
-        /* Create new menu */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Record active item */
-        PayeeType myCurr = myPayee.getPayeeType();
-        JMenuItem myActive = null;
-
-        /* Loop through the Payee Types */
-        Iterator<PayeeType> myIterator = thePayeeTypes.iterator();
-        while (myIterator.hasNext()) {
-            PayeeType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myPopUp.showItem(myActive);
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
     /**
      * JTable Data Model.
      */
@@ -508,9 +460,9 @@ public class PayeeTable
         private final IconCellEditor theIconEditor;
 
         /**
-         * PopUp Menu Editor.
+         * PayeeType ScrollButton Menu Editor.
          */
-        private final PopUpMenuCellEditor theMenuEditor;
+        private final ScrollButtonCellEditor<PayeeType> theTypeEditor;
 
         /**
          * Closed column.
@@ -531,11 +483,11 @@ public class PayeeTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
+            theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor));
+            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theTypeEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
             declareColumn(theClosedColumn);
@@ -544,6 +496,10 @@ public class PayeeTable
 
             /* Initialise the columns */
             setColumns();
+
+            /* Add listeners */
+            ScrollEditorListener myListener = new ScrollEditorListener();
+            theTypeEditor.addChangeListener(myListener);
         }
 
         /**
@@ -712,6 +668,60 @@ public class PayeeTable
                     return Payee.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                Object o = pEvent.getSource();
+
+                if (theTypeEditor.equals(o)) {
+                    buildPayeeTypeMenu();
+                }
+            }
+
+            /**
+             * Build the popUpMenu for payeeType.
+             */
+            private void buildPayeeTypeMenu() {
+                /* Access details */
+                JScrollMenuBuilder<PayeeType> myBuilder = theTypeEditor.getMenuBuilder();
+                Point myCell = theTypeEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                Payee myPayee = thePayees.get(myCell.y);
+                PayeeType myCurr = myPayee.getPayeeType();
+                JMenuItem myActive = null;
+
+                /* Loop through the PayeeTypes */
+                Iterator<PayeeType> myIterator = thePayeeTypes.iterator();
+                while (myIterator.hasNext()) {
+                    PayeeType myType = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the payeeType */
+                    JMenuItem myItem = myBuilder.addItem(myType);
+
+                    /* If this is the active type */
+                    if (myType.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

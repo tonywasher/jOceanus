@@ -448,7 +448,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
          */
         private StaticListener() {
             /* Access builder */
-            theDataMenuBuilder = theSelectButton.newMenuBuilder();
+            theDataMenuBuilder = theSelectButton.getMenuBuilder();
             theDataMenuBuilder.addChangeListener(this);
         }
 
@@ -456,8 +456,8 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
          * Build StaticData menu.
          */
         private void buildDataMenu() {
-            /* Create a new popUp menu */
-            theDataMenuBuilder.newMenu();
+            /* Reset the popUp menu */
+            theDataMenuBuilder.clearMenu();
 
             /* Record active item */
             JMenuItem myActive = null;

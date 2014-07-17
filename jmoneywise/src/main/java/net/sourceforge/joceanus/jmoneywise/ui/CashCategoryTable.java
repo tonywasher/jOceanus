@@ -38,14 +38,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuCellEditor.PopUpAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PopUpMenuSelector;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -72,14 +69,12 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
 
 /**
  * Cash Category Maintenance.
  */
 public class CashCategoryTable
-        extends JDataTable<CashCategory, MoneyWiseDataType>
-        implements PopUpMenuSelector {
+        extends JDataTable<CashCategory, MoneyWiseDataType> {
     /**
      * Serial Id.
      */
@@ -371,51 +366,6 @@ public class CashCategoryTable
         theModel.fireNewDataEvents();
     }
 
-    @Override
-    public JPopupMenu getPopUpMenu(final PopUpMenuCellEditor pEditor,
-                                   final int pRowIndex,
-                                   final int pColIndex) {
-        /* Create new menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Record active item */
-        CashCategory myCategory = theCategories.get(pRowIndex);
-        CashCategoryType myCurr = myCategory.getCategoryType();
-        JMenuItem myActive = null;
-
-        /* Loop through the CashCategoryTypes */
-        Iterator<CashCategoryType> myIterator = theCategoryTypes.iterator();
-        while (myIterator.hasNext()) {
-            CashCategoryType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-            /* Ignore category if it is a parent */
-            bIgnore |= myType.getCashClass().isParentCategory();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            PopUpAction myAction = pEditor.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
-    }
-
     /**
      * JTable Data Model.
      */
@@ -526,7 +476,7 @@ public class CashCategoryTable
          */
         private CategoryListener() {
             /* Access builders */
-            theCategoryMenuBuilder = theSelectButton.newMenuBuilder();
+            theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
         }
 
@@ -543,8 +493,8 @@ public class CashCategoryTable
 
             /* If we are building selection menu */
             if (theCategoryMenuBuilder.equals(o)) {
-                /* Create a new popUp menu */
-                theCategoryMenuBuilder.newMenu();
+                /* Reset the popUp menu */
+                theCategoryMenuBuilder.clearMenu();
 
                 /* Build the selection menu */
                 if (theCategories != null) {
@@ -681,9 +631,9 @@ public class CashCategoryTable
         private final StringCellEditor theStringEditor;
 
         /**
-         * PopUp Menu Editor.
+         * ScrollButton Menu Editor.
          */
-        private final PopUpMenuCellEditor theMenuEditor;
+        private final ScrollButtonCellEditor<CashCategoryType> theScrollEditor;
 
         /**
          * FullName column.
@@ -708,16 +658,19 @@ public class CashCategoryTable
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theMenuEditor = theFieldMgr.allocatePopUpMenuCellEditor();
+            theScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(CashCategoryType.class);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
             declareColumn(theFullNameColumn);
-            theCategoryColumn = new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theMenuEditor);
+            theCategoryColumn = new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theScrollEditor);
             declareColumn(theCategoryColumn);
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+
+            /* Add listener */
+            theScrollEditor.addChangeListener(new ScrollEditorListener());
         }
 
         /**
@@ -870,6 +823,59 @@ public class CashCategoryTable
                     return CashCategory.FIELD_TOUCH;
                 default:
                     return null;
+            }
+        }
+
+        /**
+         * ScrollEditorListener.
+         */
+        private class ScrollEditorListener
+                implements ChangeListener {
+            @Override
+            public void stateChanged(final ChangeEvent pEvent) {
+                buildCategoryTypeMenu();
+            }
+
+            /**
+             * Build the category type list for the item.
+             */
+            private void buildCategoryTypeMenu() {
+                /* Access details */
+                JScrollMenuBuilder<CashCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
+                Point myCell = theScrollEditor.getPoint();
+                myBuilder.clearMenu();
+
+                /* Record active item */
+                CashCategory myCategory = theCategories.get(myCell.y);
+                CashCategoryType myCurr = myCategory.getCategoryType();
+                JMenuItem myActive = null;
+
+                /* Loop through the CashCategoryTypes */
+                Iterator<CashCategoryType> myIterator = theCategoryTypes.iterator();
+                while (myIterator.hasNext()) {
+                    CashCategoryType myType = myIterator.next();
+
+                    /* Ignore deleted or disabled */
+                    boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+                    /* Ignore category if it is a parent */
+                    bIgnore |= myType.getCashClass().isParentCategory();
+                    if (bIgnore) {
+                        continue;
+                    }
+
+                    /* Create a new action for the type */
+                    JMenuItem myItem = myBuilder.addItem(myType);
+
+                    /* If this is the active type */
+                    if (myType.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+
+                /* Ensure active item is visible */
+                myBuilder.showItem(myActive);
             }
         }
     }

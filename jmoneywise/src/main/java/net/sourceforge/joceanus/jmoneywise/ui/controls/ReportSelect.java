@@ -186,10 +186,7 @@ public class ReportSelect
      */
     private void buildReportMenu() {
         /* Create builder */
-        JScrollMenuBuilder<ReportType> myBuilder = theReportButton.newMenuBuilder();
-
-        /* Create a new popUp menu */
-        myBuilder.newMenu();
+        JScrollMenuBuilder<ReportType> myBuilder = theReportButton.getMenuBuilder();
 
         /* Loop through the reports */
         for (ReportType myType : ReportType.values()) {
