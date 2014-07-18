@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
  */
-public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType>>
+public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
         extends JPanel {
     /**
      * Serial Id.
@@ -147,6 +148,17 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType>>
      * @throws JOceanusException on error
      */
     protected abstract void updateField(final FieldUpdate pUpdate) throws JOceanusException;
+
+    /**
+     * Obtain the list for a class in base updateSet.
+     * @param <X> the data type
+     * @param pClass the class
+     * @return the list
+     */
+    public <X extends DataItem<MoneyWiseDataType> & Comparable<? super X>> DataList<?, MoneyWiseDataType> findBaseList(final Class<X> pClass) {
+        /* Look up the base list */
+        return theUpdateSet.findBaseClass(pClass);
+    }
 
     /**
      * FieldListener class.

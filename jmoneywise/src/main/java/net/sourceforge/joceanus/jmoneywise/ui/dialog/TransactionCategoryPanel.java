@@ -24,17 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
@@ -48,15 +43,15 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.TransactionCategoryTable.CategoryType;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class TransactionCategoryPanel
-        extends DataItemPanel<TransactionCategory>
-        implements JFieldButtonPopUp {
+        extends DataItemPanel<TransactionCategory> {
     /**
      * Serial Id.
      */
@@ -85,12 +80,12 @@ public class TransactionCategoryPanel
     /**
      * Category Type Button Field.
      */
-    private final JButton theTypeButton;
+    private final JScrollButton<TransactionCategoryType> theTypeButton;
 
     /**
      * Parent Button Field.
      */
-    private final JButton theParentButton;
+    private final JScrollButton<TransactionCategory> theParentButton;
 
     /**
      * Constructor.
@@ -100,44 +95,35 @@ public class TransactionCategoryPanel
         /* Initialise the panel */
         super(pFieldMgr);
 
-        /* Create the labels */
-        JLabel myNameLabel = new JLabel(TransactionCategory.FIELD_NAME.getName() + ":", SwingConstants.TRAILING);
-        JLabel mySubNameLabel = new JLabel(TransactionCategory.FIELD_SUBCAT.getName() + ":", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel(TransactionCategory.FIELD_DESC.getName() + ":", SwingConstants.TRAILING);
-        JLabel myTypeLabel = new JLabel(TransactionCategory.FIELD_CATTYPE.getName() + ":", SwingConstants.TRAILING);
-        JLabel myParLabel = new JLabel(TransactionCategory.FIELD_PARENT.getName() + ":", SwingConstants.TRAILING);
-
         /* Create the text fields */
         theName = new JTextField(TransactionCategory.NAMELEN);
         theSubName = new JTextField(TransactionCategory.NAMELEN);
         theDesc = new JTextField(TransactionCategory.DESCLEN);
 
         /* Create the buttons */
-        theTypeButton = new JButton();
-        theParentButton = new JButton();
+        theTypeButton = new JScrollButton<TransactionCategoryType>();
+        theParentButton = new JScrollButton<TransactionCategory>();
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, DataType.STRING, myNameLabel, theName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, DataType.STRING, mySubNameLabel, theSubName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, DataType.STRING, myDescLabel, theDesc);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, this, TransactionCategoryType.class, myTypeLabel, theTypeButton);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, this, TransactionCategory.class, myParLabel, theParentButton);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, DataType.STRING, theName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, theTypeButton);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, theParentButton);
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         setLayout(mySpring);
-        add(myNameLabel);
-        add(theName);
-        add(mySubNameLabel);
-        add(theSubName);
-        add(myDescLabel);
-        add(theDesc);
-        add(myTypeLabel);
-        add(theTypeButton);
-        add(myParLabel);
-        add(theParentButton);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_NAME, this);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_SUBCAT, this);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_DESC, this);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_CATTYPE, this);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_PARENT, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Create the listener */
+        new CategoryListener();
     }
 
     @Override
@@ -150,112 +136,6 @@ public class TransactionCategoryPanel
         /* Set visibility */
         theFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(TransactionCategory.FIELD_NAME, showParent);
-    }
-
-    @Override
-    public JPopupMenu getPopUpMenu(final JFieldButtonAction pActionSrc,
-                                   final JDataField pField) {
-        /* Switch on field */
-        if (pField.equals(TransactionCategory.FIELD_PARENT)) {
-            /* Build the parent menu */
-            return getParentPopUpMenu(pActionSrc);
-        } else if (pField.equals(TransactionCategory.FIELD_CATTYPE)) {
-            /* Build the category type menu */
-            return getCategoryTypePopUpMenu(pActionSrc);
-        }
-
-        /* return no menu */
-        return null;
-    }
-
-    /**
-     * Build the parent menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getParentPopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine which parents we are looking at */
-        TransactionCategory myCategory = getItem();
-        Boolean isExpense = myCategory.getCategoryTypeClass().isExpense();
-
-        /* Loop through the categories */
-        TransactionCategoryList myList = myCategory.getList();
-        Iterator<TransactionCategory> myIterator = myList.iterator();
-        while (myIterator.hasNext()) {
-            TransactionCategory myCat = myIterator.next();
-
-            /* Ignore deleted and non-subTotal items */
-            TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
-            if (myCategory.isDeleted() || !myClass.isSubTotal()) {
-                continue;
-            }
-
-            /* If we are interested */
-            if (myClass.isExpense() == isExpense) {
-                /* Add the menu item */
-                Action myAction = pActionSrc.getNewAction(myCat);
-                JMenuItem myItem = new JMenuItem(myAction);
-                myMenu.addMenuItem(myItem);
-            }
-        }
-
-        /* Return the menu */
-        return myMenu;
-    }
-
-    /**
-     * Build the category type menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getCategoryTypePopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the type of the category */
-        TransactionCategory myCategory = getItem();
-        TransactionCategoryType myCurr = myCategory.getCategoryType();
-        CategoryType myCurrType = CategoryType.determineType(myCurr);
-        JMenuItem myActive = null;
-
-        /* Access Transaction Category types */
-        MoneyWiseData myData = myCategory.getDataSet();
-        TransactionCategoryTypeList myCategoryTypes = myData.getTransCategoryTypes();
-
-        /* Loop through the TransactionCategoryTypes */
-        Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
-        while (myIterator.hasNext()) {
-            TransactionCategoryType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-            /* Ignore category if wrong type */
-            bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            Action myAction = pActionSrc.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
     }
 
     @Override
@@ -280,6 +160,132 @@ public class TransactionCategoryPanel
         } else if (myField.equals(TransactionCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(TransactionCategoryType.class));
+        }
+    }
+
+    /**
+     * Category Listener.
+     */
+    private final class CategoryListener
+            implements ChangeListener {
+        /**
+         * The CategoryType Menu Builder.
+         */
+        private final JScrollMenuBuilder<TransactionCategoryType> theTypeMenuBuilder;
+
+        /**
+         * The Parent Menu Builder.
+         */
+        private final JScrollMenuBuilder<TransactionCategory> theParentMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private CategoryListener() {
+            /* Access the MenuBuilders */
+            theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+            theTypeMenuBuilder.addChangeListener(this);
+            theParentMenuBuilder = theParentButton.getMenuBuilder();
+            theParentMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            /* Handle menu type */
+            if (theTypeMenuBuilder.equals(o)) {
+                buildCategoryTypeMenu();
+            } else if (theParentMenuBuilder.equals(o)) {
+                buildParentMenu();
+            }
+        }
+
+        /**
+         * Build the category type list for the item.
+         */
+        private void buildCategoryTypeMenu() {
+            /* Clear the menu */
+            theTypeMenuBuilder.clearMenu();
+
+            /* Record active item */
+            TransactionCategory myCategory = getItem();
+            TransactionCategoryType myCurr = myCategory.getCategoryType();
+            CategoryType myCurrType = CategoryType.determineType(myCurr);
+            JMenuItem myActive = null;
+
+            /* Access Transaction Category types */
+            MoneyWiseData myData = myCategory.getDataSet();
+            TransactionCategoryTypeList myCategoryTypes = myData.getTransCategoryTypes();
+
+            /* Loop through the TransCategoryTypes */
+            Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
+            while (myIterator.hasNext()) {
+                TransactionCategoryType myType = myIterator.next();
+
+                /* Ignore deleted or disabled */
+                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+                /* Ignore category if wrong type */
+                bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the type */
+                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
+
+                /* If this is the active type */
+                if (myType.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theTypeMenuBuilder.showItem(myActive);
+        }
+
+        /**
+         * Build the parent list for the item.
+         */
+        private void buildParentMenu() {
+            /* Clear the menu */
+            theParentMenuBuilder.clearMenu();
+
+            /* Record active item */
+            TransactionCategory myCategory = getItem();
+            TransactionCategory myCurr = myCategory.getParentCategory();
+            Boolean isExpense = myCategory.getCategoryTypeClass().isExpense();
+            JMenuItem myActive = null;
+
+            /* Loop through the TransactionCategories */
+            TransactionCategoryList myCategories = getItem().getList();
+            Iterator<TransactionCategory> myIterator = myCategories.iterator();
+            while (myIterator.hasNext()) {
+                TransactionCategory myCat = myIterator.next();
+
+                /* Ignore deleted and non-subTotal items */
+                TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
+                if (myCategory.isDeleted() || !myClass.isSubTotal()) {
+                    continue;
+                }
+
+                /* If we are interested */
+                if (myClass.isExpense() == isExpense) {
+                    /* Create a new action for the type */
+                    JMenuItem myItem = theParentMenuBuilder.addItem(myCat);
+
+                    /* If this is the active type */
+                    if (myCat.equals(myCurr)) {
+                        /* Record it */
+                        myActive = myItem;
+                    }
+                }
+            }
+
+            /* Ensure active item is visible */
+            theParentMenuBuilder.showItem(myActive);
         }
     }
 }

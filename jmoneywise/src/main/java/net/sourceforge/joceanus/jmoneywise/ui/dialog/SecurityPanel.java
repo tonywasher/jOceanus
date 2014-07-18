@@ -24,17 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
@@ -49,15 +44,15 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a Security.
  */
 public class SecurityPanel
-        extends DataItemPanel<Security>
-        implements JFieldButtonPopUp {
+        extends DataItemPanel<Security> {
     /**
      * Serial Id.
      */
@@ -86,22 +81,22 @@ public class SecurityPanel
     /**
      * Security Type Button Field.
      */
-    private final JButton theTypeButton;
+    private final JScrollButton<SecurityType> theTypeButton;
 
     /**
      * Security Parent Button Field.
      */
-    private final JButton theParentButton;
+    private final JScrollButton<Payee> theParentButton;
 
     /**
      * Currency Button Field.
      */
-    private final JButton theCurrencyButton;
+    private final JScrollButton<AccountCurrency> theCurrencyButton;
 
     /**
      * Closed Button Field.
      */
-    private final JButton theClosedButton;
+    // private final JButton theClosedButton;
 
     /**
      * Constructor.
@@ -111,223 +106,46 @@ public class SecurityPanel
         /* Initialise the panel */
         super(pFieldMgr);
 
-        /* Create the labels */
-        JLabel myNameLabel = new JLabel(Security.FIELD_NAME.getName() + ":", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel(Security.FIELD_DESC.getName() + ":", SwingConstants.TRAILING);
-        JLabel mySymLabel = new JLabel(Security.FIELD_SYMBOL.getName() + ":", SwingConstants.TRAILING);
-        JLabel myTypeLabel = new JLabel(Security.FIELD_SECTYPE.getName() + ":", SwingConstants.TRAILING);
-        JLabel myParLabel = new JLabel(Security.FIELD_PARENT.getName() + ":", SwingConstants.TRAILING);
-        JLabel myCurrLabel = new JLabel(Security.FIELD_CURRENCY.getName() + ":", SwingConstants.TRAILING);
-        JLabel myClosedLabel = new JLabel(Security.FIELD_CLOSED.getName() + ":", SwingConstants.TRAILING);
-
         /* Create the text fields */
         theName = new JTextField(Security.NAMELEN);
         theDesc = new JTextField(Security.DESCLEN);
         theSymbol = new JTextField(Security.SYMBOLLEN);
 
         /* Create the buttons */
-        theTypeButton = new JButton();
-        theParentButton = new JButton();
-        theCurrencyButton = new JButton();
-        theClosedButton = new JButton();
+        theTypeButton = new JScrollButton<SecurityType>();
+        theParentButton = new JScrollButton<Payee>();
+        theCurrencyButton = new JScrollButton<AccountCurrency>();
+        // theClosedButton = new JButton();
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, myNameLabel, theName);
-        theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, myDescLabel, theDesc);
-        theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, mySymLabel, theSymbol);
-        theFieldSet.addFieldElement(Security.FIELD_SECTYPE, this, SecurityType.class, myTypeLabel, theTypeButton);
-        theFieldSet.addFieldElement(Security.FIELD_PARENT, this, Payee.class, myParLabel, theParentButton);
-        theFieldSet.addFieldElement(Security.FIELD_CURRENCY, this, AccountCurrency.class, myCurrLabel, theCurrencyButton);
-        theFieldSet.addFieldElement(Security.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
+        theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, theName);
+        theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, theSymbol);
+        theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
+        theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
+        theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
+        // theFieldSet.addFieldElement(Security.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         setLayout(mySpring);
-        add(myNameLabel);
-        add(theName);
-        add(myDescLabel);
-        add(theDesc);
-        add(myTypeLabel);
-        add(theTypeButton);
-        add(myParLabel);
-        add(theParentButton);
-        add(mySymLabel);
-        add(theSymbol);
-        add(myCurrLabel);
-        add(theCurrencyButton);
-        add(myClosedLabel);
-        add(theClosedButton);
+        theFieldSet.addFieldToPanel(Security.FIELD_NAME, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_DESC, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_SYMBOL, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_PARENT, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Create the listener */
+        new AccountListener();
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Set visibility */
         theFieldSet.setVisibility(Security.FIELD_CLOSED, false);
-    }
-
-    @Override
-    public JPopupMenu getPopUpMenu(final JFieldButtonAction pActionSrc,
-                                   final JDataField pField) {
-        /* Switch on field */
-        if (pField.equals(Security.FIELD_SECTYPE)) {
-            /* Build the category type menu */
-            return getSecTypePopUpMenu(pActionSrc);
-        } else if (pField.equals(Security.FIELD_CURRENCY)) {
-            /* Build the currency menu */
-            return getCurrencyPopUpMenu(pActionSrc);
-        } else if (pField.equals(Security.FIELD_PARENT)) {
-            /* Build the parent menu */
-            return getParentPopUpMenu(pActionSrc);
-        }
-
-        /* return no menu */
-        return null;
-    }
-
-    /**
-     * Build the security type menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getSecTypePopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the type of the security */
-        Security mySecurity = getItem();
-        SecurityType myCurr = mySecurity.getSecurityType();
-        JMenuItem myActive = null;
-
-        /* Access Security types */
-        MoneyWiseData myData = mySecurity.getDataSet();
-        SecurityTypeList mySecTypes = myData.getSecurityTypes();
-
-        /* Loop through the SecurityTypes */
-        Iterator<SecurityType> myIterator = mySecTypes.iterator();
-        while (myIterator.hasNext()) {
-            SecurityType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            Action myAction = pActionSrc.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
-    }
-
-    /**
-     * Build the currency menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getCurrencyPopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the currency of the security */
-        Security mySecurity = getItem();
-        AccountCurrency myCurr = mySecurity.getSecurityCurrency();
-        JMenuItem myActive = null;
-
-        /* Access AccountCurrencies */
-        MoneyWiseData myData = mySecurity.getDataSet();
-        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
-
-        /* Loop through the Currencies */
-        Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
-        while (myIterator.hasNext()) {
-            AccountCurrency myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the currency */
-            Action myAction = pActionSrc.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active currency */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
-    }
-
-    /**
-     * Build the parent menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getParentPopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the parent of the security */
-        Security mySecurity = getItem();
-        Payee myCurr = mySecurity.getParent();
-        JMenuItem myActive = null;
-
-        /* Access Payees */
-        MoneyWiseData myData = mySecurity.getDataSet();
-        PayeeList myPayees = myData.getPayees();
-
-        /* Loop through the Payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
-
-            /* Ignore deleted or non-owner */
-            boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            Action myAction = pActionSrc.getNewAction(myPayee);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active payee */
-            if (myPayee.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
     }
 
     @Override
@@ -355,6 +173,176 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_CURRENCY)) {
             /* Update the Currency */
             mySecurity.setSecurityCurrency(pUpdate.getValue(AccountCurrency.class));
+        }
+    }
+
+    /**
+     * Account Listener.
+     */
+    private final class AccountListener
+            implements ChangeListener {
+        /**
+         * The SecurityType Menu Builder.
+         */
+        private final JScrollMenuBuilder<SecurityType> theSecTypeMenuBuilder;
+
+        /**
+         * The Parent Menu Builder.
+         */
+        private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
+
+        /**
+         * The Currency Menu Builder.
+         */
+        private final JScrollMenuBuilder<AccountCurrency> theCurrencyMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private AccountListener() {
+            /* Access the MenuBuilders */
+            theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
+            theSecTypeMenuBuilder.addChangeListener(this);
+            theParentMenuBuilder = theParentButton.getMenuBuilder();
+            theParentMenuBuilder.addChangeListener(this);
+            theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
+            theCurrencyMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            /* Handle menu type */
+            if (theSecTypeMenuBuilder.equals(o)) {
+                buildSecTypeMenu();
+            } else if (theParentMenuBuilder.equals(o)) {
+                buildParentMenu();
+            } else if (theCurrencyMenuBuilder.equals(o)) {
+                buildCurrencyMenu();
+            }
+        }
+
+        /**
+         * Build the securityType list for the item.
+         */
+        private void buildSecTypeMenu() {
+            /* Clear the menu */
+            theSecTypeMenuBuilder.clearMenu();
+
+            /* Record active item */
+            Security mySecurity = getItem();
+            SecurityType myCurr = mySecurity.getSecurityType();
+            JMenuItem myActive = null;
+
+            /* Access SecurityTypes */
+            MoneyWiseData myData = mySecurity.getDataSet();
+            SecurityTypeList myTypes = myData.getSecurityTypes();
+
+            /* Loop through the SecurityTypes */
+            Iterator<SecurityType> myIterator = myTypes.iterator();
+            while (myIterator.hasNext()) {
+                SecurityType myType = myIterator.next();
+
+                /* Ignore deleted or disabled */
+                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the secType */
+                JMenuItem myItem = theSecTypeMenuBuilder.addItem(myType);
+
+                /* If this is the active secType */
+                if (myType.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theSecTypeMenuBuilder.showItem(myActive);
+        }
+
+        /**
+         * Build the parent list for the item.
+         */
+        private void buildParentMenu() {
+            /* Clear the menu */
+            theParentMenuBuilder.clearMenu();
+
+            /* Record active item */
+            Security mySecurity = getItem();
+            Payee myCurr = mySecurity.getParent();
+            JMenuItem myActive = null;
+
+            /* Access Payees */
+            PayeeList myPayees = PayeeList.class.cast(findBaseList(Payee.class));
+
+            /* Loop through the Payees */
+            Iterator<Payee> myIterator = myPayees.iterator();
+            while (myIterator.hasNext()) {
+                Payee myPayee = myIterator.next();
+
+                /* Ignore deleted or non-owner */
+                boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentAccount();
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the payee */
+                JMenuItem myItem = theParentMenuBuilder.addItem(myPayee);
+
+                /* If this is the active parent */
+                if (myPayee.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theParentMenuBuilder.showItem(myActive);
+        }
+
+        /**
+         * Build the currency list for the item.
+         */
+        private void buildCurrencyMenu() {
+            /* Clear the menu */
+            theCurrencyMenuBuilder.clearMenu();
+
+            /* Record active item */
+            Security mySecurity = getItem();
+            AccountCurrency myCurr = mySecurity.getSecurityCurrency();
+            JMenuItem myActive = null;
+
+            /* Access Currencies */
+            MoneyWiseData myData = mySecurity.getDataSet();
+            AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
+
+            /* Loop through the AccountCurrencies */
+            Iterator<AccountCurrency> myIterator = myCurrencies.iterator();
+            while (myIterator.hasNext()) {
+                AccountCurrency myCurrency = myIterator.next();
+
+                /* Ignore deleted or disabled */
+                boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the currency */
+                JMenuItem myItem = theCurrencyMenuBuilder.addItem(myCurrency);
+
+                /* If this is the active currency */
+                if (myCurrency.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theCurrencyMenuBuilder.showItem(myActive);
         }
     }
 }

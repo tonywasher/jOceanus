@@ -24,17 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
@@ -45,15 +40,15 @@ import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a Payee.
  */
 public class PayeePanel
-        extends DataItemPanel<Payee>
-        implements JFieldButtonPopUp {
+        extends DataItemPanel<Payee> {
     /**
      * Serial Id.
      */
@@ -77,12 +72,12 @@ public class PayeePanel
     /**
      * Payee Type Button Field.
      */
-    private final JButton theTypeButton;
+    private final JScrollButton<PayeeType> theTypeButton;
 
     /**
      * Closed Button Field.
      */
-    private final JButton theClosedButton;
+    // private final JButton theClosedButton;
 
     /**
      * Constructor.
@@ -92,106 +87,37 @@ public class PayeePanel
         /* Initialise the panel */
         super(pFieldMgr);
 
-        /* Create the labels */
-        JLabel myNameLabel = new JLabel(Payee.FIELD_NAME.getName() + ":", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel(Payee.FIELD_DESC.getName() + ":", SwingConstants.TRAILING);
-        JLabel myTypeLabel = new JLabel(Payee.FIELD_PAYEETYPE.getName() + ":", SwingConstants.TRAILING);
-        JLabel myClosedLabel = new JLabel(Payee.FIELD_CLOSED.getName() + ":", SwingConstants.TRAILING);
-
         /* Create the text fields */
         theName = new JTextField(Payee.NAMELEN);
         theDesc = new JTextField(Payee.DESCLEN);
 
         /* Create the buttons */
-        theTypeButton = new JButton();
-        theClosedButton = new JButton();
+        theTypeButton = new JScrollButton<PayeeType>();
+        // theClosedButton = new JButton();
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(Payee.FIELD_NAME, DataType.STRING, myNameLabel, theName);
-        theFieldSet.addFieldElement(Payee.FIELD_DESC, DataType.STRING, myDescLabel, theDesc);
-        theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, this, PayeeType.class, myTypeLabel, theTypeButton);
-        theFieldSet.addFieldElement(Payee.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
+        theFieldSet.addFieldElement(Payee.FIELD_NAME, DataType.STRING, theName);
+        theFieldSet.addFieldElement(Payee.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, PayeeType.class, theTypeButton);
+        // theFieldSet.addFieldElement(Payee.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         setLayout(mySpring);
-        add(myNameLabel);
-        add(theName);
-        add(myDescLabel);
-        add(theDesc);
-        add(myTypeLabel);
-        add(theTypeButton);
-        add(myClosedLabel);
-        add(theClosedButton);
+        theFieldSet.addFieldToPanel(Payee.FIELD_NAME, this);
+        theFieldSet.addFieldToPanel(Payee.FIELD_DESC, this);
+        theFieldSet.addFieldToPanel(Payee.FIELD_PAYEETYPE, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Create the listener */
+        new AccountListener();
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Set visibility */
         theFieldSet.setVisibility(Payee.FIELD_CLOSED, false);
-    }
-
-    @Override
-    public JPopupMenu getPopUpMenu(final JFieldButtonAction pActionSrc,
-                                   final JDataField pField) {
-        /* Switch on field */
-        if (pField.equals(Payee.FIELD_PAYEETYPE)) {
-            /* Build the category type menu */
-            return getPayeeTypePopUpMenu(pActionSrc);
-        }
-
-        /* return no menu */
-        return null;
-    }
-
-    /**
-     * Build the payee type menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getPayeeTypePopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the type of the payee */
-        Payee myPayee = getItem();
-        PayeeType myCurr = myPayee.getPayeeType();
-        JMenuItem myActive = null;
-
-        /* Access Payee types */
-        MoneyWiseData myData = myPayee.getDataSet();
-        PayeeTypeList myPayeeTypes = myData.getPayeeTypes();
-
-        /* Loop through the PayeeTypes */
-        Iterator<PayeeType> myIterator = myPayeeTypes.iterator();
-        while (myIterator.hasNext()) {
-            PayeeType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            Action myAction = pActionSrc.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
     }
 
     @Override
@@ -210,6 +136,77 @@ public class PayeePanel
         } else if (myField.equals(Payee.FIELD_PAYEETYPE)) {
             /* Update the Payee Type */
             myPayee.setPayeeType(pUpdate.getValue(PayeeType.class));
+        }
+    }
+
+    /**
+     * Account Listener.
+     */
+    private final class AccountListener
+            implements ChangeListener {
+        /**
+         * The PayeeType Menu Builder.
+         */
+        private final JScrollMenuBuilder<PayeeType> theTypeMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private AccountListener() {
+            /* Access the MenuBuilders */
+            theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+            theTypeMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            /* Handle menu type */
+            if (theTypeMenuBuilder.equals(o)) {
+                buildPayeeTypeMenu();
+            }
+        }
+
+        /**
+         * Build the payeeType list for the item.
+         */
+        private void buildPayeeTypeMenu() {
+            /* Clear the menu */
+            theTypeMenuBuilder.clearMenu();
+
+            /* Record active item */
+            Payee myPayee = getItem();
+            PayeeType myCurr = myPayee.getPayeeType();
+            JMenuItem myActive = null;
+
+            /* Access PayeeTypes */
+            MoneyWiseData myData = myPayee.getDataSet();
+            PayeeTypeList myTypes = myData.getPayeeTypes();
+
+            /* Loop through the AccountCurrencies */
+            Iterator<PayeeType> myIterator = myTypes.iterator();
+            while (myIterator.hasNext()) {
+                PayeeType myType = myIterator.next();
+
+                /* Ignore deleted or disabled */
+                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the payeeType */
+                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
+
+                /* If this is the active type */
+                if (myType.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theTypeMenuBuilder.showItem(myActive);
         }
     }
 }

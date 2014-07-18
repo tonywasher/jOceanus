@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.field;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -35,13 +34,11 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -57,6 +54,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
  * Component classes for jFieldSet.
@@ -201,13 +199,11 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * @param <X> Data item type
      * @param pElement the element
      * @param pButton the button
-     * @param pPopUp the popUp manager.
      * @param pClass the class of the button elements.
      * @return the field component
      */
     protected static <I, X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
-                                                                                     final JButton pButton,
-                                                                                     final JFieldButtonPopUp pPopUp,
+                                                                                     final JScrollButton<I> pButton,
                                                                                      final Class<I> pClass) {
         /* Obtain FieldSet and Field */
         JFieldSet<X> mySet = pElement.getFieldSet();
@@ -215,7 +211,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Allocate component */
         JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
-        return new JFieldButton<I, X>(pButton, myModel, pPopUp);
+        return new JFieldButton<I, X>(pButton, myModel);
     }
 
     /**
@@ -231,6 +227,17 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Store the standard border */
         theBorder = pComponent.getBorder();
+    }
+
+    /**
+     * Add component to panel.
+     * @param pPanel the panel to add to
+     */
+    protected void addToPanel(final JPanel pPanel) {
+        /* Add component/scroll pane */
+        pPanel.add(theScroll == null
+                                    ? theComponent
+                                    : theScroll);
     }
 
     /**
@@ -668,12 +675,11 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * @param <T> the Data Item type
      */
     private static class JFieldButton<I, T extends JFieldSetItem>
-            extends JFieldComponent<T>
-            implements JFieldButtonAction {
+            extends JFieldComponent<T> {
         /**
          * The Component.
          */
-        private final JButton theComponent;
+        private final JScrollButton<I> theComponent;
 
         /**
          * The DataModel.
@@ -681,30 +687,22 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         private final JModelObject<I, T> theModel;
 
         /**
-         * The PopUpManager.
-         */
-        private final JFieldButtonPopUp thePopUp;
-
-        /**
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @param pPopUp the popUp manager.
          */
-        protected JFieldButton(final JButton pComponent,
-                               final JModelObject<I, T> pModel,
-                               final JFieldButtonPopUp pPopUp) {
+        protected JFieldButton(final JScrollButton<I> pComponent,
+                               final JModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
             /* Store parameters */
             theComponent = pComponent;
             theModel = pModel;
-            thePopUp = pPopUp;
 
             /* Create the listener and attach it */
             ButtonListener myListener = new ButtonListener();
-            pComponent.addActionListener(myListener);
+            theComponent.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         }
 
         @Override
@@ -713,113 +711,20 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             I myValue = theModel.getValue();
 
             /* Display it */
-            theComponent.setText((myValue != null)
-                                                  ? myValue.toString()
-                                                  : null);
+            theComponent.setValue(myValue);
         }
 
         /**
          * BooleanListener class.
          */
         private final class ButtonListener
-                implements ActionListener {
-            @Override
-            public void actionPerformed(final ActionEvent pEvent) {
-                /* Obtain a menu */
-                JPopupMenu myMenu = thePopUp.getPopUpMenu(JFieldButton.this, theModel.getField());
-
-                /* Show the popUp menu in the correct place */
-                Rectangle myLoc = theComponent.getBounds();
-                myMenu.show(theComponent, 0, myLoc.height);
-            }
-        }
-
-        @Override
-        public PopUpAction getNewAction(final Object pValue) {
-            return new PopUpAction((I) pValue);
-        }
-
-        @Override
-        public PopUpAction getNewAction(final String pName,
-                                        final Object pValue) {
-            return new PopUpAction(pName, (I) pValue);
-        }
-
-        /**
-         * PopUp action class.
-         */
-        public final class PopUpAction
-                extends AbstractAction {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = -1320387693591448536L;
-
-            /**
-             * Action value.
-             */
-            private final I theActionValue;
-
-            /**
-             * Constructor.
-             * @param pValue the value
-             */
-            private PopUpAction(final I pValue) {
-                super(pValue.toString());
-                theActionValue = pValue;
-            }
-
-            /**
-             * Constructor.
-             * @param pName the name
-             * @param pValue the value
-             */
-            private PopUpAction(final String pName,
-                                final I pValue) {
-                super(pName);
-                theActionValue = pValue;
-            }
+                implements PropertyChangeListener {
 
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void propertyChange(final PropertyChangeEvent evt) {
                 /* Record the value */
-                theModel.processValue(theActionValue);
+                theModel.processValue(theComponent.getValue());
             }
         }
-    }
-
-    /**
-     * External Interface for JFieldButton.
-     */
-    public interface JFieldButtonAction {
-        /**
-         * Obtain new action element for given value.
-         * @param pValue the value
-         * @return the new action
-         */
-        Action getNewAction(final Object pValue);
-
-        /**
-         * Obtain new action element for given name and value.
-         * @param pName the name
-         * @param pValue the value
-         * @return the new action
-         */
-        Action getNewAction(final String pName,
-                            final Object pValue);
-    }
-
-    /**
-     * Interface for classes using JFieldButton.
-     */
-    public interface JFieldButtonPopUp {
-        /**
-         * Obtain new action element for given value.
-         * @param pActionSrc the source for actions
-         * @param pField the field for the menu
-         * @return the new action
-         */
-        JPopupMenu getPopUpMenu(final JFieldButtonAction pActionSrc,
-                                final JDataField pField);
     }
 }

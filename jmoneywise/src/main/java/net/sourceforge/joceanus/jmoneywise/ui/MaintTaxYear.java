@@ -37,7 +37,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -251,10 +250,9 @@ public class MaintTaxYear
         theYear.setEditable(false);
 
         /* Create the combo box and add to the field set */
-        JLabel myRegime = new JLabel("Tax Regime:");
         theRegimesBox = new JComboBox<TaxRegime>();
         theRegimesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, myRegime, theRegimesBox);
+        theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, theRegimesBox);
 
         /* Create the buttons */
         theDelButton = new JButton();
@@ -293,10 +291,6 @@ public class MaintTaxYear
         theRegime.add(myYearLabel);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
         theRegime.add(theYear);
-        theRegime.add(Box.createHorizontalGlue());
-        theRegime.add(myRegime);
-        theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
-        theRegime.add(theRegimesBox);
         theRegime.add(Box.createHorizontalGlue());
         theRegime.add(theDelButton);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
@@ -342,13 +336,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildAllowPanel() {
-        /* Allocate labels */
-        JLabel myAllowLabel = new JLabel("Personal Allowance:", SwingConstants.TRAILING);
-        JLabel myLoAgeLabel = new JLabel("Age 65-74 Allowance:", SwingConstants.TRAILING);
-        JLabel myHiAgeLabel = new JLabel("Age 75+ Allowance:", SwingConstants.TRAILING);
-        JLabel myCapLabel = new JLabel("Capital Allowance:", SwingConstants.TRAILING);
-        JLabel myRentalLabel = new JLabel("Rental Allowance:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myAllowance = new JTextField();
         JTextField myLoAgeAllow = new JTextField();
@@ -367,11 +354,11 @@ public class MaintTaxYear
         myRentalAllow.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowLabel, myAllowance);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeLabel, myLoAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeLabel, myHiAgeAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapLabel, myCapitalAllow);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalLabel, myRentalAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), DataType.MONEY, myAllowance);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), DataType.MONEY, myLoAgeAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), DataType.MONEY, myHiAgeAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), DataType.MONEY, myCapitalAllow);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), DataType.MONEY, myRentalAllow);
 
         /* Create the allow panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -380,16 +367,11 @@ public class MaintTaxYear
         /* Layout the allow panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myAllowLabel);
-        myPanel.add(myAllowance);
-        myPanel.add(myLoAgeLabel);
-        myPanel.add(myLoAgeAllow);
-        myPanel.add(myHiAgeLabel);
-        myPanel.add(myHiAgeAllow);
-        myPanel.add(myCapLabel);
-        myPanel.add(myCapitalAllow);
-        myPanel.add(myRentalLabel);
-        myPanel.add(myRentalAllow);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOAGEALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIAGEALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALALLOWANCE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RENTALALLOWANCE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -401,10 +383,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildAllowLimitPanel() {
-        /* Allocate labels */
-        JLabel myAgeLabel = new JLabel("Age Allowance Limit:", SwingConstants.TRAILING);
-        JLabel myAddLabel = new JLabel("Additnl Allow Limit:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myAgeLimit = new JTextField();
         JTextField myAddLimit = new JTextField();
@@ -417,8 +395,8 @@ public class MaintTaxYear
         myAddLimit.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLabel, myAgeLimit);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLabel, myAddLimit);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), DataType.MONEY, myAgeLimit);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), DataType.MONEY, myAddLimit);
 
         /* Create the limits panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -427,10 +405,8 @@ public class MaintTaxYear
         /* Layout the limits panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myAgeLabel);
-        myPanel.add(myAgeLimit);
-        myPanel.add(myAddLabel);
-        myPanel.add(myAddLimit);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AGEALLOWANCELIMIT), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALALLOWANCELIMIT), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -442,11 +418,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildTaxBandsPanel() {
-        /* Allocate labels */
-        JLabel myLoBandLabel = new JLabel("Low Tax Band:", SwingConstants.TRAILING);
-        JLabel myBasicBandLabel = new JLabel("Basic Tax Band:", SwingConstants.TRAILING);
-        JLabel myAddIncLabel = new JLabel("Additnl Tax Boundary:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myLoBand = new JTextField();
         JTextField myBasicBand = new JTextField();
@@ -461,9 +432,9 @@ public class MaintTaxYear
         myAddIncBdy.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBandLabel, myLoBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBandLabel, myBasicBand);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncLabel, myAddIncBdy);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), DataType.MONEY, myLoBand);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), DataType.MONEY, myBasicBand);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), DataType.MONEY, myAddIncBdy);
 
         /* Create the bands panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -472,12 +443,9 @@ public class MaintTaxYear
         /* Layout the bands panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myLoBandLabel);
-        myPanel.add(myLoBand);
-        myPanel.add(myBasicBandLabel);
-        myPanel.add(myBasicBand);
-        myPanel.add(myAddIncLabel);
-        myPanel.add(myAddIncBdy);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXBAND), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXBAND), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALINCOMETHRESHOLD), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -489,12 +457,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildRatesPanel() {
-        /* Allocate labels */
-        JLabel myLoTaxLabel = new JLabel("Low Rate:", SwingConstants.TRAILING);
-        JLabel myBasicTaxLabel = new JLabel("Basic Rate:", SwingConstants.TRAILING);
-        JLabel myHiTaxLabel = new JLabel("High Rate:", SwingConstants.TRAILING);
-        JLabel myAddTaxLabel = new JLabel("Additnl Rate:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myLoTaxRate = new JTextField();
         JTextField myBasicTaxRate = new JTextField();
@@ -511,10 +473,10 @@ public class MaintTaxYear
         myAddTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxLabel, myLoTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxLabel, myBasicTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxLabel, myHiTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxLabel, myAddTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), DataType.RATE, myLoTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), DataType.RATE, myBasicTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), DataType.RATE, myHiTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), DataType.RATE, myAddTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -523,14 +485,10 @@ public class MaintTaxYear
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myLoTaxLabel);
-        myPanel.add(myLoTaxRate);
-        myPanel.add(myBasicTaxLabel);
-        myPanel.add(myBasicTaxRate);
-        myPanel.add(myHiTaxLabel);
-        myPanel.add(myHiTaxRate);
-        myPanel.add(myAddTaxLabel);
-        myPanel.add(myAddTaxRate);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.LOTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BASICTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HITAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -542,12 +500,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildXtraRatesPanel() {
-        /* Allocate labels */
-        JLabel myIntTaxLabel = new JLabel("Interest Rate:", SwingConstants.TRAILING);
-        JLabel myDivTaxLabel = new JLabel("Dividend Rate:", SwingConstants.TRAILING);
-        JLabel myHiDivTaxLabel = new JLabel("High Dividend Rate:", SwingConstants.TRAILING);
-        JLabel myAddDivTaxLabel = new JLabel("Additnl Dividend Rate:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myIntTaxRate = new JTextField();
         JTextField myDivTaxRate = new JTextField();
@@ -564,10 +516,10 @@ public class MaintTaxYear
         myAddDivTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxLabel, myIntTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxLabel, myDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxLabel, myHiDivTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxLabel, myAddDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), DataType.RATE, myIntTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), DataType.RATE, myDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), DataType.RATE, myHiDivTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), DataType.RATE, myAddDivTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -576,14 +528,10 @@ public class MaintTaxYear
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myIntTaxLabel);
-        myPanel.add(myIntTaxRate);
-        myPanel.add(myDivTaxLabel);
-        myPanel.add(myDivTaxRate);
-        myPanel.add(myHiDivTaxLabel);
-        myPanel.add(myHiDivTaxRate);
-        myPanel.add(myAddDivTaxLabel);
-        myPanel.add(myAddDivTaxRate);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.INTERESTTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.DIVIDENDTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HIDIVIDENDTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.ADDITIONALDIVIDENDTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -595,10 +543,6 @@ public class MaintTaxYear
      * @return the panel
      */
     private JPanel buildCapRatesPanel() {
-        /* Allocate labels */
-        JLabel myCapTaxLabel = new JLabel("Capital Rate:", SwingConstants.TRAILING);
-        JLabel myHiCapTaxLabel = new JLabel("High Capital Rate:", SwingConstants.TRAILING);
-
         /* Allocate text fields */
         JTextField myCapTaxRate = new JTextField();
         JTextField myHiCapTaxRate = new JTextField();
@@ -611,8 +555,8 @@ public class MaintTaxYear
         myHiCapTaxRate.setMaximumSize(myDims);
 
         /* Adjust FieldSet */
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxLabel, myCapTaxRate);
-        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxLabel, myHiCapTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), DataType.RATE, myCapTaxRate);
+        theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), DataType.RATE, myHiCapTaxRate);
 
         /* Create the rates panel */
         JEnablePanel myPanel = new JEnablePanel();
@@ -621,10 +565,8 @@ public class MaintTaxYear
         /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        myPanel.add(myCapTaxLabel);
-        myPanel.add(myCapTaxRate);
-        myPanel.add(myHiCapTaxLabel);
-        myPanel.add(myHiCapTaxRate);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CAPITALTAXRATE), myPanel);
+        theFieldSet.addFieldToPanel(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HICAPITALTAXRATE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */

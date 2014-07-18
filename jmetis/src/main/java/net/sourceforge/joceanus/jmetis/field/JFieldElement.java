@@ -23,12 +23,16 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
  * Field Set. This handles a fields for an item, populating the field, rendering and parsing the data.
@@ -94,21 +98,35 @@ public class JFieldElement<T extends JFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pClass the data type of the value
-     * @param pLabel the label for the component
      * @param pComponent the component
      */
     protected JFieldElement(final JFieldSet<T> pFieldSet,
                             final JDataField pField,
                             final DataType pClass,
-                            final JComponent pLabel,
                             final JComponent pComponent) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;
-        theLabel = pLabel;
 
         /* Create the component */
         theComponent = JFieldComponent.deriveComponent(this, pComponent, pClass);
+
+        /* Access the name of the field */
+        String myName = pField.getName();
+
+        /* If the component is a CheckBox */
+        if (pComponent instanceof JCheckBox) {
+            /* We do not have a label */
+            theLabel = null;
+
+            /* Set text of checkBox */
+            ((JCheckBox) pComponent).setText(myName);
+
+            /* Else standard case */
+        } else {
+            /* Create the label */
+            theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
+        }
 
         /* Access the model */
         theModel = theComponent.getModel();
@@ -120,18 +138,19 @@ public class JFieldElement<T extends JFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pClass the class of the combo box elements
-     * @param pLabel the label for the component
      * @param pComboBox the comboBox
      */
     protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
                                 final JDataField pField,
                                 final Class<I> pClass,
-                                final JComponent pLabel,
                                 final JComboBox<I> pComboBox) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;
-        theLabel = pLabel;
+
+        /* Create the label */
+        String myName = pField.getName();
+        theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
 
         /* Create the component */
         theComponent = JFieldComponent.deriveComponent(this, pComboBox, pClass);
@@ -142,30 +161,43 @@ public class JFieldElement<T extends JFieldSetItem> {
 
     /**
      * Constructor.
-     * @param <I> ComboBox element type
+     * @param <I> ScrollButton element type
      * @param pFieldSet the field set
      * @param pField the field id
-     * @param pPopUp the popUp manager.
      * @param pClass the class of the combo box elements
-     * @param pLabel the label for the component
-     * @param pButton the button
+     * @param pButton the scroll button
      */
     protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
                                 final JDataField pField,
-                                final JFieldButtonPopUp pPopUp,
                                 final Class<I> pClass,
-                                final JComponent pLabel,
-                                final JButton pButton) {
+                                final JScrollButton<I> pButton) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;
-        theLabel = pLabel;
+
+        /* Create the label */
+        String myName = pField.getName();
+        theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
 
         /* Create the component */
-        theComponent = JFieldComponent.deriveComponent(this, pButton, pPopUp, pClass);
+        theComponent = JFieldComponent.deriveComponent(this, pButton, pClass);
 
         /* Access the model */
         theModel = theComponent.getModel();
+    }
+
+    /**
+     * Add element to panel.
+     * @param pPanel the panel to add to
+     */
+    protected void addToPanel(final JPanel pPanel) {
+        /* Add label if it exists */
+        if (theLabel != null) {
+            pPanel.add(theLabel);
+        }
+
+        /* Add the actual element */
+        theComponent.addToPanel(pPanel);
     }
 
     /**

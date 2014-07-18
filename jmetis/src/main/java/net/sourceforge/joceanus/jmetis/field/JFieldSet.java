@@ -26,12 +26,11 @@ import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.JMetisDataException;
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
@@ -43,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
@@ -104,15 +104,13 @@ public class JFieldSet<T extends JFieldSetItem>
      * Add Element to field set.
      * @param pField the field id
      * @param pClass the class of the value
-     * @param pLabel the label for the component
      * @param pComponent the component
      */
     public void addFieldElement(final JDataField pField,
                                 final DataType pClass,
-                                final JComponent pLabel,
                                 final JComponent pComponent) {
         /* Create the field */
-        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pLabel, pComponent);
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pComponent);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -120,31 +118,16 @@ public class JFieldSet<T extends JFieldSetItem>
 
     /**
      * Add Element to field set.
-     * @param pField the field id
-     * @param pClass the class of the value
-     * @param pComponent the component
-     */
-    public void addFieldElement(final JDataField pField,
-                                final DataType pClass,
-                                final JComponent pComponent) {
-        /* Add field element with null label */
-        addFieldElement(pField, pClass, null, pComponent);
-    }
-
-    /**
-     * Add Element to field set.
      * @param <I> ComboBox element type
      * @param pField the field id
      * @param pClass the class of the value
-     * @param pLabel the label for the component
      * @param pComboBox the comboBox
      */
     public <I> void addFieldElement(final JDataField pField,
                                     final Class<I> pClass,
-                                    final JComponent pLabel,
                                     final JComboBox<I> pComboBox) {
         /* Create the field */
-        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pLabel, pComboBox);
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pComboBox);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -154,21 +137,33 @@ public class JFieldSet<T extends JFieldSetItem>
      * Add Element to field set.
      * @param <I> ComboBox element type
      * @param pField the field id
-     * @param pPopUp the popUp manager.
      * @param pClass the class of the value
-     * @param pLabel the label for the component
      * @param pButton the button
      */
     public <I> void addFieldElement(final JDataField pField,
-                                    final JFieldButtonPopUp pPopUp,
                                     final Class<I> pClass,
-                                    final JComponent pLabel,
-                                    final JButton pButton) {
+                                    final JScrollButton<I> pButton) {
         /* Create the field */
-        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pPopUp, pClass, pLabel, pButton);
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
+    }
+
+    /**
+     * Add field to panel.
+     * @param pField the field to add
+     * @param pPanel to add to
+     */
+    public void addFieldToPanel(final JDataField pField,
+                                final JPanel pPanel) {
+        /* Access element */
+        JFieldElement<T> myEl = theMap.get(pField);
+        /* If the field exists */
+        if (myEl != null) {
+            /* Add it to the panel */
+            myEl.addToPanel(pPanel);
+        }
     }
 
     /**

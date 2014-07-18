@@ -24,17 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonAction;
-import net.sourceforge.joceanus.jmetis.field.JFieldComponent.JFieldButtonPopUp;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
@@ -47,15 +42,15 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
  * Panel to display/edit/create a CashCategory.
  */
 public class CashCategoryPanel
-        extends DataItemPanel<CashCategory>
-        implements JFieldButtonPopUp {
+        extends DataItemPanel<CashCategory> {
     /**
      * Serial Id.
      */
@@ -84,12 +79,12 @@ public class CashCategoryPanel
     /**
      * Category Type Button Field.
      */
-    private final JButton theTypeButton;
+    private final JScrollButton<CashCategoryType> theTypeButton;
 
     /**
      * Parent Button Field.
      */
-    private final JButton theParentButton;
+    private final JScrollButton<CashCategory> theParentButton;
 
     /**
      * Constructor.
@@ -99,44 +94,35 @@ public class CashCategoryPanel
         /* Initialise the panel */
         super(pFieldMgr);
 
-        /* Create the labels */
-        JLabel myNameLabel = new JLabel(CashCategory.FIELD_NAME.getName() + ":", SwingConstants.TRAILING);
-        JLabel mySubNameLabel = new JLabel(CashCategory.FIELD_SUBCAT.getName() + ":", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel(CashCategory.FIELD_DESC.getName() + ":", SwingConstants.TRAILING);
-        JLabel myTypeLabel = new JLabel(CashCategory.FIELD_CATTYPE.getName() + ":", SwingConstants.TRAILING);
-        JLabel myParLabel = new JLabel(CashCategory.FIELD_PARENT.getName() + ":", SwingConstants.TRAILING);
-
         /* Create the text fields */
         theName = new JTextField(CashCategory.NAMELEN);
         theSubName = new JTextField(CashCategory.NAMELEN);
         theDesc = new JTextField(CashCategory.DESCLEN);
 
         /* Create the buttons */
-        theTypeButton = new JButton();
-        theParentButton = new JButton();
+        theTypeButton = new JScrollButton<CashCategoryType>();
+        theParentButton = new JScrollButton<CashCategory>();
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, DataType.STRING, myNameLabel, theName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, DataType.STRING, mySubNameLabel, theSubName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, DataType.STRING, myDescLabel, theDesc);
-        theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, this, CashCategoryType.class, myTypeLabel, theTypeButton);
-        theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, this, CashCategory.class, myParLabel, theParentButton);
+        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, DataType.STRING, theName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, DataType.STRING, theSubName);
+        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, DataType.STRING, theDesc);
+        theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, theTypeButton);
+        theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, theParentButton);
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         setLayout(mySpring);
-        add(myNameLabel);
-        add(theName);
-        add(mySubNameLabel);
-        add(theSubName);
-        add(myDescLabel);
-        add(theDesc);
-        add(myTypeLabel);
-        add(theTypeButton);
-        add(myParLabel);
-        add(theParentButton);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_NAME, this);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_SUBCAT, this);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_DESC, this);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_CATTYPE, this);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_PARENT, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Create the listener */
+        new CategoryListener();
     }
 
     @Override
@@ -148,105 +134,6 @@ public class CashCategoryPanel
         /* Set visibility */
         theFieldSet.setVisibility(CashCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(CashCategory.FIELD_NAME, showParent);
-    }
-
-    @Override
-    public JPopupMenu getPopUpMenu(final JFieldButtonAction pActionSrc,
-                                   final JDataField pField) {
-        /* Switch on field */
-        if (pField.equals(CashCategory.FIELD_PARENT)) {
-            /* Build the parent menu */
-            return getParentPopUpMenu(pActionSrc);
-        } else if (pField.equals(CashCategory.FIELD_CATTYPE)) {
-            /* Build the category type menu */
-            return getCategoryTypePopUpMenu(pActionSrc);
-        }
-
-        /* return no menu */
-        return null;
-    }
-
-    /**
-     * Build the parent menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getParentPopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Loop through the categories */
-        CashCategoryList myList = getItem().getList();
-        Iterator<CashCategory> myIterator = myList.iterator();
-        while (myIterator.hasNext()) {
-            CashCategory myCategory = myIterator.next();
-
-            /* Ignore deleted and non-parent items */
-            CashCategoryClass myClass = myCategory.getCategoryTypeClass();
-            if (myCategory.isDeleted() || !myClass.isParentCategory()) {
-                continue;
-            }
-
-            /* Add the menu item */
-            Action myAction = pActionSrc.getNewAction(myCategory);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-        }
-
-        /* Return the menu */
-        return myMenu;
-    }
-
-    /**
-     * Build the category type menu.
-     * @param pActionSrc the action source
-     * @return the menu
-     */
-    private JPopupMenu getCategoryTypePopUpMenu(final JFieldButtonAction pActionSrc) {
-        /* Create the menu */
-        JScrollPopupMenu myMenu = new JScrollPopupMenu();
-
-        /* Determine the type of the category */
-        CashCategory myCategory = getItem();
-        CashCategoryType myCurr = myCategory.getCategoryType();
-        boolean isParent = myCurr.isCashCategory(CashCategoryClass.PARENT);
-        JMenuItem myActive = null;
-
-        /* Access Cash Category types */
-        MoneyWiseData myData = myCategory.getDataSet();
-        CashCategoryTypeList myCategoryTypes = myData.getCashCategoryTypes();
-
-        /* Loop through the CashCategoryTypes */
-        Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();
-        while (myIterator.hasNext()) {
-            CashCategoryType myType = myIterator.next();
-
-            /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
-
-            /* Ignore category if wrong type */
-            bIgnore |= isParent != myType.isCashCategory(CashCategoryClass.PARENT);
-            if (bIgnore) {
-                continue;
-            }
-
-            /* Create a new action for the type */
-            Action myAction = pActionSrc.getNewAction(myType);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myMenu.addMenuItem(myItem);
-
-            /* If this is the active type */
-            if (myType.equals(myCurr)) {
-                /* Record it */
-                myActive = myItem;
-            }
-        }
-
-        /* Ensure active item is visible */
-        myMenu.showItem(myActive);
-
-        /* Return the menu */
-        return myMenu;
     }
 
     @Override
@@ -271,6 +158,127 @@ public class CashCategoryPanel
         } else if (myField.equals(CashCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(CashCategoryType.class));
+        }
+    }
+
+    /**
+     * Category Listener.
+     */
+    private final class CategoryListener
+            implements ChangeListener {
+        /**
+         * The CategoryType Menu Builder.
+         */
+        private final JScrollMenuBuilder<CashCategoryType> theTypeMenuBuilder;
+
+        /**
+         * The Parent Menu Builder.
+         */
+        private final JScrollMenuBuilder<CashCategory> theParentMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private CategoryListener() {
+            /* Access the MenuBuilders */
+            theTypeMenuBuilder = theTypeButton.getMenuBuilder();
+            theTypeMenuBuilder.addChangeListener(this);
+            theParentMenuBuilder = theParentButton.getMenuBuilder();
+            theParentMenuBuilder.addChangeListener(this);
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            Object o = pEvent.getSource();
+
+            /* Handle menu type */
+            if (theTypeMenuBuilder.equals(o)) {
+                buildCategoryTypeMenu();
+            } else if (theParentMenuBuilder.equals(o)) {
+                buildParentMenu();
+            }
+        }
+
+        /**
+         * Build the category type list for the item.
+         */
+        private void buildCategoryTypeMenu() {
+            /* Clear the menu */
+            theTypeMenuBuilder.clearMenu();
+
+            /* Record active item */
+            CashCategory myCategory = getItem();
+            CashCategoryType myCurr = myCategory.getCategoryType();
+            JMenuItem myActive = null;
+
+            /* Access Cash Category types */
+            MoneyWiseData myData = myCategory.getDataSet();
+            CashCategoryTypeList myCategoryTypes = myData.getCashCategoryTypes();
+
+            /* Loop through the CashCategoryTypes */
+            Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();
+            while (myIterator.hasNext()) {
+                CashCategoryType myType = myIterator.next();
+
+                /* Ignore deleted or disabled */
+                boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+
+                /* Ignore category if it is a parent */
+                bIgnore |= myType.getCashClass().isParentCategory();
+                if (bIgnore) {
+                    continue;
+                }
+
+                /* Create a new action for the type */
+                JMenuItem myItem = theTypeMenuBuilder.addItem(myType);
+
+                /* If this is the active type */
+                if (myType.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theTypeMenuBuilder.showItem(myActive);
+        }
+
+        /**
+         * Build the parent list for the item.
+         */
+        private void buildParentMenu() {
+            /* Clear the menu */
+            theParentMenuBuilder.clearMenu();
+
+            /* Record active item */
+            CashCategory myCategory = getItem();
+            CashCategoryType myCurr = myCategory.getCategoryType();
+            JMenuItem myActive = null;
+
+            /* Loop through the CashCategories */
+            CashCategoryList myCategories = getItem().getList();
+            Iterator<CashCategory> myIterator = myCategories.iterator();
+            while (myIterator.hasNext()) {
+                CashCategory myCat = myIterator.next();
+
+                /* Ignore deleted and non-parent items */
+                CashCategoryClass myClass = myCat.getCategoryTypeClass();
+                if (myCat.isDeleted() || !myClass.isParentCategory()) {
+                    continue;
+                }
+
+                /* Create a new action for the type */
+                JMenuItem myItem = theParentMenuBuilder.addItem(myCat);
+
+                /* If this is the active type */
+                if (myCat.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theParentMenuBuilder.showItem(myActive);
         }
     }
 }

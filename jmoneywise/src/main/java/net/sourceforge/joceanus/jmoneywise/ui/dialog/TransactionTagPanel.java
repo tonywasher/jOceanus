@@ -22,10 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
@@ -69,26 +67,20 @@ public class TransactionTagPanel
         /* Initialise the panel */
         super(pFieldMgr);
 
-        /* Create the labels */
-        JLabel myNameLabel = new JLabel(TransactionTag.FIELD_NAME.getName() + ":", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel(TransactionTag.FIELD_DESC.getName() + ":", SwingConstants.TRAILING);
-
         /* Create the text fields */
         theName = new JTextField(TransactionTag.NAMELEN);
         theDesc = new JTextField(TransactionTag.DESCLEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, myNameLabel, theName);
-        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, myDescLabel, theDesc);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, theName);
+        theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, theDesc);
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         setLayout(mySpring);
-        add(myNameLabel);
-        add(theName);
-        add(myDescLabel);
-        add(theDesc);
+        theFieldSet.addFieldToPanel(TransactionTag.FIELD_NAME, this);
+        theFieldSet.addFieldToPanel(TransactionTag.FIELD_DESC, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
     }
 
