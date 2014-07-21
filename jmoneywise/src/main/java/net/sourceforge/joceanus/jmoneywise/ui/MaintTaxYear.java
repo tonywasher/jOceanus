@@ -32,8 +32,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
@@ -70,6 +70,8 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
 /**
@@ -154,9 +156,9 @@ public class MaintTaxYear
     private final SaveButtons theSaveButs;
 
     /**
-     * The regimes comboBox.
+     * The regimes button.
      */
-    private final JComboBox<TaxRegime> theRegimesBox;
+    private final JScrollButton<TaxRegime> theRegimesButton;
 
     /**
      * The tax year field.
@@ -250,9 +252,8 @@ public class MaintTaxYear
         theYear.setEditable(false);
 
         /* Create the combo box and add to the field set */
-        theRegimesBox = new JComboBox<TaxRegime>();
-        theRegimesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, theRegimesBox);
+        theRegimesButton = new JScrollButton<TaxRegime>();
+        theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, theRegimesButton);
 
         /* Create the buttons */
         theDelButton = new JButton();
@@ -281,6 +282,14 @@ public class MaintTaxYear
         theError = new ErrorPanel(myDataMgr, theDataEntry);
         theError.addChangeListener(myListener);
 
+        /* Create a simple regime panel */
+        JEnablePanel myPanel = new JEnablePanel();
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(TaxYear.FIELD_REGIME, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, 1, 2, PADDING_SIZE);
+        theRegimesButton.setPreferredSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+
         /* Create the regime panel */
         theRegime = new JEnablePanel();
         theRegime.setBorder(BorderFactory.createTitledBorder("Tax Year"));
@@ -291,6 +300,8 @@ public class MaintTaxYear
         theRegime.add(myYearLabel);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
         theRegime.add(theYear);
+        theRegime.add(Box.createHorizontalGlue());
+        theRegime.add(myPanel);
         theRegime.add(Box.createHorizontalGlue());
         theRegime.add(theDelButton);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
@@ -649,35 +660,12 @@ public class MaintTaxYear
 
         /* Access years and regimes */
         theTaxYears = myData.getTaxYears();
-        TaxRegimeList myRegimes = myData.getTaxRegimes();
 
         /* Note that we are refreshing data */
         theFieldSet.setRefreshingData(true);
 
         /* Refresh the year selection */
         theSelect.refreshData();
-
-        /* If we have regimes already populated */
-        if (theRegimesBox.getItemCount() > 0) {
-            /* Remove the types */
-            theRegimesBox.removeAllItems();
-        }
-
-        /* Create a Tax Year iterator */
-        Iterator<TaxRegime> myRegIterator = myRegimes.iterator();
-
-        /* Add the Tax Regimes to the regimes box */
-        while (myRegIterator.hasNext()) {
-            TaxRegime myRegime = myRegIterator.next();
-
-            /* Skip regime if not enabled */
-            if (!myRegime.getEnabled()) {
-                continue;
-            }
-
-            /* Add the item to the list */
-            theRegimesBox.addItem(myRegime);
-        }
 
         /* Note that we have finished refreshing data */
         theFieldSet.setRefreshingData(false);
@@ -783,6 +771,20 @@ public class MaintTaxYear
      */
     private final class TaxYearListener
             implements ActionListener, ChangeListener {
+        /**
+         * Menu Builder.
+         */
+        private final JScrollMenuBuilder<TaxRegime> theMenuBuilder;
+
+        /**
+         * Constructor
+         */
+        private TaxYearListener() {
+            /* Access builder */
+            theMenuBuilder = theRegimesButton.getMenuBuilder();
+            theMenuBuilder.addChangeListener(this);
+        }
+
         @Override
         public void actionPerformed(final ActionEvent e) {
             Object o = e.getSource();
@@ -962,7 +964,48 @@ public class MaintTaxYear
 
                 /* Lock Save Buttons */
                 theSaveButs.setEnabled(!isError);
+            } else if (theMenuBuilder.equals(o)) {
+                buildRegimeMenu();
             }
+        }
+
+        /**
+         * Build the regimes menu.
+         */
+        private void buildRegimeMenu() {
+            /* Reset the popUp menu */
+            theMenuBuilder.clearMenu();
+
+            /* Record active item */
+            TaxRegime myCurr = theTaxYear.getTaxRegime();
+            JMenuItem myActive = null;
+
+            /* Access years and regimes */
+            MoneyWiseData myData = theTaxYears.getDataSet();
+            TaxRegimeList myRegimes = myData.getTaxRegimes();
+
+            /* Loop through the panels */
+            Iterator<TaxRegime> myIterator = myRegimes.iterator();
+            while (myIterator.hasNext()) {
+                TaxRegime myRegime = myIterator.next();
+
+                /* Skip regime if not enabled */
+                if (!myRegime.getEnabled()) {
+                    continue;
+                }
+
+                /* Create a new JMenuItem and add it to the popUp */
+                JMenuItem myItem = theMenuBuilder.addItem(myRegime);
+
+                /* If this is the active regime */
+                if (myRegime.equals(myCurr)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
+            }
+
+            /* Ensure active item is visible */
+            theMenuBuilder.showItem(myActive);
         }
     }
 }

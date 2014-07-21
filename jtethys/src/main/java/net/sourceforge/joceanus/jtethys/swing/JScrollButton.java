@@ -106,8 +106,13 @@ public class JScrollButton<T>
         /* Store new values */
         storeTheValue(pValue, pName);
 
-        /* If the value has changed */
-        if (isValueChanged(myOld, theValue)) {
+        /* If we are firing all values */
+        if (theText != null) {
+            /* Fire the property change */
+            firePropertyChange(PROPERTY_VALUE, null, theValue);
+
+            /* If the value has changed */
+        } else if (isValueChanged(myOld, theValue)) {
             /* Fire the property change */
             firePropertyChange(PROPERTY_VALUE, myOld, theValue);
 

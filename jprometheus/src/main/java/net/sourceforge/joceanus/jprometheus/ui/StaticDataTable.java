@@ -24,14 +24,13 @@ package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -54,7 +53,8 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JScrollPopupMenu;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Static Data Table.
@@ -107,6 +107,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
+     * Text for New Button.
+     */
+    private static final String NLS_NEW = NLS_BUNDLE.getString("NewButton");
+
+    /**
      * The Data view.
      */
     private final transient DataControl<?, E> theControl;
@@ -120,6 +125,11 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * The Panel.
      */
     private final JEnablePanel thePanel;
+
+    /**
+     * The new button.
+     */
+    private final JScrollButton<S> theNewButton;
 
     /**
      * The Data class.
@@ -164,6 +174,14 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         return thePanel;
     }
 
+    /**
+     * Obtain the new button.
+     * @return the new Button
+     */
+    public JScrollButton<S> getNewButton() {
+        return theNewButton;
+    }
+
     @Override
     protected void setError(final JOceanusException pError) {
         theError.addError(pError);
@@ -194,7 +212,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(pItemClass);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addChangeListener(new StaticListener());
 
         /* Set the table model */
         theModel = new StaticModel();
@@ -211,12 +228,20 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
+        /* Create new button */
+        theNewButton = new JScrollButton<S>(NLS_NEW);
+
         /* Create the panel */
         thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create the listener */
+        StaticListener myListener = new StaticListener();
+        theUpdateSet.addChangeListener(myListener);
+        theNewButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
     }
 
     /**
@@ -289,55 +314,51 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
     }
 
     /**
-     * Obtain PopUp of available new items.
-     * @return the popUpMenu
+     * The listener class.
      */
-    protected JScrollPopupMenu getNewPopUp() {
-        /* Create the new popUp */
-        JScrollPopupMenu myPopUp = new JScrollPopupMenu();
-
-        /* Loop through the missing classes */
-        for (S myValue : theStatic.getMissingClasses()) {
-            /* Create a new JMenuItem and add it to the popUp */
-            StaticAction myAction = new StaticAction(myValue);
-            JMenuItem myItem = new JMenuItem(myAction);
-            myPopUp.addMenuItem(myItem);
-        }
-
-        /* Return the menu */
-        return myPopUp;
-    }
-
-    /**
-     * Static action class.
-     */
-    private final class StaticAction
-            extends AbstractAction {
+    private final class StaticListener
+            implements PropertyChangeListener, ChangeListener {
         /**
-         * Serial Id.
+         * MenuBuilder.
          */
-        private static final long serialVersionUID = -6837848768872886753L;
-
-        /**
-         * Class.
-         */
-        private final S theClass;
+        private final JScrollMenuBuilder<S> theMenuBuilder;
 
         /**
          * Constructor.
-         * @param pValue the value
          */
-        private StaticAction(final S pValue) {
-            super(pValue.toString());
-            theClass = pValue;
+        private StaticListener() {
+            /* Access the builder */
+            theMenuBuilder = theNewButton.getMenuBuilder();
+            theMenuBuilder.addChangeListener(this);
         }
 
         @Override
-        public void actionPerformed(final ActionEvent evt) {
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireNewDataEvents();
+            }
+
+            /* If this is the menu builder */
+            if (theMenuBuilder.equals(o)) {
+                /* Create the new menu */
+                buildNewMenu();
+            }
+        }
+
+        @Override
+        public void propertyChange(final PropertyChangeEvent pEvent) {
+            /* Access the new class */
+            S myClass = theNewButton.getValue();
+
             /* Protect the action */
             try {
                 /* Look to find a deleted value */
-                T myValue = theStatic.findItemByClass(theClass);
+                T myValue = theStatic.findItemByClass(myClass);
 
                 /* If we found a deleted value */
                 if (myValue != null) {
@@ -347,7 +368,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                     /* else we have no existing value */
                 } else {
                     /* Create the new value */
-                    myValue = theStatic.addNewItem(theClass);
+                    myValue = theStatic.addNewItem(myClass);
                     myValue.setNewVersion();
                 }
 
@@ -361,23 +382,18 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                 setError(e);
             }
         }
-    }
 
-    /**
-     * The listener class.
-     */
-    private final class StaticListener
-            implements ChangeListener {
+        /**
+         * Build the menu of available new items.
+         */
+        protected void buildNewMenu() {
+            /* Reset the menu popUp */
+            theMenuBuilder.clearMenu();
 
-        @Override
-        public void stateChanged(final ChangeEvent pEvent) {
-            /* Access source */
-            Object o = pEvent.getSource();
-
-            /* If we are performing a rewind */
-            if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+            /* Loop through the missing classes */
+            for (S myValue : theStatic.getMissingClasses()) {
+                /* Create a new JMenuItem and add it to the popUp */
+                theMenuBuilder.addItem(myValue);
             }
         }
     }
