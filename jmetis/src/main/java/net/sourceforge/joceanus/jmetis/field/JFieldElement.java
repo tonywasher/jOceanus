@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.awt.CardLayout;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -40,6 +42,11 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
  */
 public class JFieldElement<T extends JFieldSetItem> {
     /**
+     * The colon indicator.
+     */
+    private static final String STR_COLON = ":";
+
+    /**
      * The fieldSet.
      */
     private final JFieldSet<T> theFieldSet;
@@ -53,6 +60,11 @@ public class JFieldElement<T extends JFieldSetItem> {
      * The label.
      */
     private final JComponent theLabel;
+
+    /**
+     * The card panel.
+     */
+    private final JFieldCardPanel theCardPanel;
 
     /**
      * The component.
@@ -125,11 +137,14 @@ public class JFieldElement<T extends JFieldSetItem> {
             /* Else standard case */
         } else {
             /* Create the label */
-            theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
+            theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
         }
 
         /* Access the model */
         theModel = theComponent.getModel();
+
+        /* Create card panel */
+        theCardPanel = new JFieldCardPanel();
     }
 
     /**
@@ -150,13 +165,16 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Create the label */
         String myName = pField.getName();
-        theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
+        theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
 
         /* Create the component */
         theComponent = JFieldComponent.deriveComponent(this, pComboBox, pClass);
 
         /* Access the model */
         theModel = theComponent.getModel();
+
+        /* Create card panel */
+        theCardPanel = new JFieldCardPanel();
     }
 
     /**
@@ -177,13 +195,16 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Create the label */
         String myName = pField.getName();
-        theLabel = new JLabel(myName + ":", SwingConstants.TRAILING);
+        theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
 
         /* Create the component */
         theComponent = JFieldComponent.deriveComponent(this, pButton, pClass);
 
         /* Access the model */
         theModel = theComponent.getModel();
+
+        /* Create card panel */
+        theCardPanel = new JFieldCardPanel();
     }
 
     /**
@@ -197,7 +218,7 @@ public class JFieldElement<T extends JFieldSetItem> {
         }
 
         /* Add the actual element */
-        theComponent.addToPanel(pPanel);
+        pPanel.add(theCardPanel);
     }
 
     /**
@@ -222,6 +243,15 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Set the visibility of the component */
         theComponent.setVisible(setVisible);
+    }
+
+    /**
+     * Set editable.
+     * @param setEditable true/false
+     */
+    protected void setEditable(final boolean setEditable) {
+        /* Set the visibility of the component */
+        theCardPanel.setEditable(setEditable);
     }
 
     /**
@@ -265,5 +295,54 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Set visibility */
         setVisible(isVisible);
+    }
+
+    /**
+     * Field CardPanel class.
+     */
+    private final class JFieldCardPanel
+            extends JPanel {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 2524938035631511826L;
+
+        /**
+         * The Editable name.
+         */
+        private static final String NAME_EDITABLE = "Editable";
+
+        /**
+         * The ReadOnly name.
+         */
+        private static final String NAME_READONLY = "ReadOnly";
+
+        /**
+         * The card layout.
+         */
+        private final CardLayout theCardLayout;
+
+        /**
+         * Constructor.
+         */
+        private JFieldCardPanel() {
+            /* Create the card layout */
+            theCardLayout = new CardLayout();
+            setLayout(theCardLayout);
+
+            /* Add the component and ReadOnly label */
+            add(theComponent.getComponent(), NAME_EDITABLE);
+            add(theComponent.getReadOnlyLabel(), NAME_READONLY);
+        }
+
+        /**
+         * Set editable state.
+         * @param setEditable true/false
+         */
+        private void setEditable(final boolean setEditable) {
+            theCardLayout.show(this, setEditable
+                                                ? NAME_EDITABLE
+                                                : NAME_READONLY);
+        }
     }
 }

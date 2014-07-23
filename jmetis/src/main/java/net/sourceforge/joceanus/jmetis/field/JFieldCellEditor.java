@@ -59,6 +59,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.JEventCellEditor;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -398,6 +399,183 @@ public class JFieldCellEditor {
     }
 
     /**
+     * IconButton Cell Editor.
+     * @param <T> the object type
+     */
+    public static class IconButtonCellEditor<T>
+            extends JEventCellEditor
+            implements TableCellEditor {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -6709609365303162431L;
+
+        /**
+         * The class of the object.
+         */
+        private final Class<T> theClass;
+
+        /**
+         * The button.
+         */
+        private final JIconButton<T> theButton;
+
+        /**
+         * The selection Listener.
+         */
+        private final transient ButtonListener theButtonListener = new ButtonListener();
+
+        /**
+         * The mouse Listener.
+         */
+        private final transient MouseListener theMouseListener = new MouseListener();
+
+        /**
+         * The editor table.
+         */
+        private transient JTable theTable;
+
+        /**
+         * The editor value.
+         */
+        private transient T theValue;
+
+        /**
+         * The point at which the editor is active.
+         */
+        private transient Point thePoint;
+
+        /**
+         * Set the CellEditor value.
+         * @param pNewValue the new value
+         */
+        public void setNewValue(final T pNewValue) {
+            theValue = pNewValue;
+            theButton.setValue(theValue);
+        }
+
+        /**
+         * Obtain the location of the CellEditor.
+         * @return the point
+         */
+        public Point getPoint() {
+            return thePoint;
+        }
+
+        /**
+         * Constructor.
+         * @param pClass the class of the object
+         */
+        protected IconButtonCellEditor(final Class<T> pClass) {
+            /* Store parameters */
+            theClass = pClass;
+
+            /* Build the button */
+            theButton = new JIconButton<T>();
+            theButton.setFocusPainted(false);
+            theButton.addActionListener(theButtonListener);
+        }
+
+        @Override
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
+                                                      final boolean isSelected,
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            /* Store location of button */
+            int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            thePoint = new Point(myCol, myRow);
+            theTable = pTable;
+
+            /* Store current value */
+            theValue = theClass.cast(pValue);
+            theButton.setValue(theValue);
+
+            /* Declare the mouse listener */
+            theTable.addMouseListener(theMouseListener);
+
+            /* Return the button */
+            return theButton;
+        }
+
+        /**
+         * Map value.
+         * @param pValue the value
+         * @param pIcon the mapped Icon
+         */
+        public void setIconForValue(final T pValue,
+                                    final Icon pIcon) {
+            /* Declare value to button */
+            theButton.setIconForValue(pValue, pIcon);
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return theValue;
+        }
+
+        /**
+         * Determine Icon for value.
+         * @param pValue the value
+         * @return the icon
+         */
+        protected Icon getIconForValue(final Object pValue) {
+            /* Look to find explicit protected value */
+            T myValue = theClass.cast(pValue);
+            return theButton.getIconForValue(myValue);
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            if (super.stopCellEditing()) {
+                theTable.removeMouseListener(theMouseListener);
+                thePoint = null;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void cancelCellEditing() {
+            super.cancelCellEditing();
+            theTable.removeMouseListener(theMouseListener);
+            thePoint = null;
+        }
+
+        /**
+         * Button Listener class.
+         */
+        private class ButtonListener
+                implements ActionListener {
+            @Override
+            public void actionPerformed(final ActionEvent pEvent) {
+                /* Allow listeners to select the new value */
+                fireStateChanged();
+
+                /* Stop editing */
+                stopCellEditing();
+            }
+        }
+
+        /**
+         * Mouse Adapter class.
+         * <p>
+         * Required to handle button clicked, dragged, and released in different place
+         */
+        private class MouseListener
+                extends MouseAdapter {
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+                Rectangle myRect = theButton.getBounds();
+                if (!myRect.contains(e.getPoint())) {
+                    cancelCellEditing();
+                }
+            }
+        }
+    }
+
+    /**
      * ScrollButton Cell Editor.
      * @param <T> the object type
      */
@@ -533,8 +711,8 @@ public class JFieldCellEditor {
         @Override
         public void cancelCellEditing() {
             super.cancelCellEditing();
-            thePoint = null;
             theTable.removeMouseListener(theMouseListener);
+            thePoint = null;
         }
 
         /**

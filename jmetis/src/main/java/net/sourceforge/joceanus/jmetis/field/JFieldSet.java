@@ -184,6 +184,35 @@ public class JFieldSet<T extends JFieldSetItem>
     }
 
     /**
+     * Set a field to be editable.
+     * @param pField the field id
+     * @param setEditable true/false
+     */
+    public void setEditable(final JDataField pField,
+                            final boolean setEditable) {
+        /* Access element */
+        JFieldElement<T> myEl = theMap.get(pField);
+
+        /* If the field exists */
+        if (myEl != null) {
+            /* Set the edit-ability of the element */
+            myEl.setEditable(setEditable);
+        }
+    }
+
+    /**
+     * Set a set to be editable.
+     * @param setEditable true/false
+     */
+    public void setEditable(final boolean setEditable) {
+        /* Loop through all the map entries */
+        for (JFieldElement<T> myEl : theMap.values()) {
+            /* Set the edit-ability of the element */
+            myEl.setEditable(setEditable);
+        }
+    }
+
+    /**
      * Populate and render the fields.
      * @param pItem the item to render with
      */

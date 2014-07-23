@@ -38,7 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -72,6 +72,11 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
     private final JComponent theComponent;
 
     /**
+     * The ReadOnly Label.
+     */
+    private final JLabel theReadOnlyLabel;
+
+    /**
      * The DataModel.
      */
     private final JFieldModel<T> theModel;
@@ -86,7 +91,25 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * @return the component
      */
     protected JComponent getComponent() {
+        return theScroll == null
+                                ? theComponent
+                                : theScroll;
+    }
+
+    /**
+     * Obtain underlying component.
+     * @return the component
+     */
+    protected JComponent getUnderlyingComponent() {
         return theComponent;
+    }
+
+    /**
+     * Obtain readOnly label.
+     * @return the label
+     */
+    protected JLabel getReadOnlyLabel() {
+        return theReadOnlyLabel;
     }
 
     /**
@@ -227,17 +250,9 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Store the standard border */
         theBorder = pComponent.getBorder();
-    }
 
-    /**
-     * Add component to panel.
-     * @param pPanel the panel to add to
-     */
-    protected void addToPanel(final JPanel pPanel) {
-        /* Add component/scroll pane */
-        pPanel.add(theScroll == null
-                                    ? theComponent
-                                    : theScroll);
+        /* Create a readOnly label */
+        theReadOnlyLabel = new JLabel();
     }
 
     /**
@@ -371,6 +386,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Display it */
             theComponent.setText(myDisplay);
+            getReadOnlyLabel().setText(myDisplay);
         }
 
         /**
@@ -457,8 +473,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             extends JFieldComponent<T> {
 
         @Override
-        protected JTextArea getComponent() {
-            return (JTextArea) super.getComponent();
+        protected JTextArea getUnderlyingComponent() {
+            return (JTextArea) super.getUnderlyingComponent();
         }
 
         @Override
@@ -483,7 +499,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             String myDisplay = getModel().getDisplayString();
 
             /* Display it */
-            getComponent().setText(myDisplay);
+            getUnderlyingComponent().setText(myDisplay);
+            getReadOnlyLabel().setText(myDisplay);
         }
     }
 
@@ -526,12 +543,15 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         protected void displayField() {
             /* Access value from model */
             I myValue = theModel.getValue();
+            JLabel myLabel = getReadOnlyLabel();
 
             /* Display it */
             if (myValue != null) {
                 theComponent.setSelectedItem(myValue);
+                myLabel.setText(myValue.toString());
             } else {
                 theComponent.setSelectedIndex(-1);
+                myLabel.setText(null);
             }
         }
 
@@ -596,6 +616,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Display it */
             theComponent.setSelectedDateDay(myValue);
+            getReadOnlyLabel().setText(theComponent.getText());
         }
 
         /**
@@ -712,6 +733,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
+            getReadOnlyLabel().setText(theComponent.getText());
         }
 
         /**

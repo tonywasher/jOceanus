@@ -777,7 +777,7 @@ public class MaintTaxYear
         private final JScrollMenuBuilder<TaxRegime> theMenuBuilder;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private TaxYearListener() {
             /* Access builder */

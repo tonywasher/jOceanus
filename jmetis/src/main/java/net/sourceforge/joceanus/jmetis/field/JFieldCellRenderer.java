@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.field;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -31,6 +34,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellRenderer;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -293,6 +297,130 @@ public final class JFieldCellRenderer {
 
             /* Return this as the render item */
             return this;
+        }
+    }
+
+    /**
+     * Icon Cell Renderer.
+     * @param <T> the object type
+     */
+    public static class IconButtonCellRenderer<T>
+            extends DefaultTableCellRenderer {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 103642334541674910L;
+
+        /**
+         * The Render Data.
+         */
+        private final transient JFieldData theData;
+
+        /**
+         * Icon Map.
+         */
+        private final Map<T, Icon> theIconMap;
+
+        /**
+         * CellEditor.
+         */
+        private final IconButtonCellEditor<T> theEditor;
+
+        /**
+         * Constructor.
+         * @param pManager the renderer manager
+         * @param pEditor the cell editor
+         */
+        protected IconButtonCellRenderer(final JFieldManager pManager,
+                                         final IconButtonCellEditor<T> pEditor) {
+            this(pManager.allocateRenderData(true), pEditor);
+        }
+
+        /**
+         * Constructor for fixed width.
+         * @param pData the render data
+         * @param pEditor the cell editor
+         */
+        protected IconButtonCellRenderer(final JFieldData pData,
+                                         final IconButtonCellEditor<T> pEditor) {
+            /* Store data */
+            theData = pData;
+            theEditor = pEditor;
+
+            /* Allocate the maps */
+            theIconMap = new HashMap<T, Icon>();
+        }
+
+        /**
+         * Map value.
+         * @param pValue the value
+         * @param pIcon the mapped Icon
+         */
+        public void setIconForValue(final T pValue,
+                                    final Icon pIcon) {
+            /* Put value into map */
+            theIconMap.put(pValue, pIcon);
+        }
+
+        @Override
+        public JComponent getTableCellRendererComponent(final JTable pTable,
+                                                        final Object pValue,
+                                                        final boolean isSelected,
+                                                        final boolean hasFocus,
+                                                        final int pRowIndex,
+                                                        final int pColIndex) {
+            /* Pass call on */
+            super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
+
+            /* Declare the Cell position */
+            theData.setPosition(pRowIndex, pColIndex, isSelected);
+
+            /* Determine the render data */
+            renderComponent(pTable, this, theData);
+
+            /* Determine whether the cell is editable */
+            int iRow = pTable.convertRowIndexToModel(pRowIndex);
+            int iCol = pTable.convertColumnIndexToModel(pColIndex);
+            boolean isEditable = pTable.getModel().isCellEditable(iRow, iCol);
+
+            /* Determine icon to show */
+            Icon myIcon = isEditable
+                                    ? getIconForValue(pValue)
+                                    : getIconForProtectedValue(pValue);
+            setIcon(myIcon);
+            setText(null);
+
+            /* Return this as the render item */
+            return this;
+        }
+
+        /**
+         * Determine Icon for protected value.
+         * @param pValue the value
+         * @return the icon
+         */
+        private Icon getIconForProtectedValue(final Object pValue) {
+            /* Look to find explicit protected value */
+            Icon myIcon = theIconMap.get(pValue);
+
+            /* If no such icon */
+            if (myIcon == null) {
+                /* Obtain editable value */
+                myIcon = getIconForValue(pValue);
+            }
+
+            /* return the icon */
+            return myIcon;
+        }
+
+        /**
+         * Determine Icon for value.
+         * @param pValue the value
+         * @return the icon
+         */
+        private Icon getIconForValue(final Object pValue) {
+            /* Look for the value declared to the editor */
+            return theEditor.getIconForValue(pValue);
         }
     }
 
