@@ -35,11 +35,11 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -66,6 +66,8 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
@@ -381,15 +383,6 @@ public class CashTable
             /* Handle filter */
             return showAll() || !pRow.isDisabled();
         }
-
-        @Override
-        public Object buttonClick(final Point pCell) {
-            /* Access the item */
-            Cash myItem = getItemAtIndex(pCell.y);
-
-            /* Process the click */
-            return theColumns.buttonClick(myItem, pCell.x);
-        }
     }
 
     /**
@@ -457,9 +450,14 @@ public class CashTable
         private static final int COLUMN_LASTTRAN = 6;
 
         /**
-         * Icon Renderer.
+         * Closed Icon Renderer.
          */
-        private final IconCellRenderer theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theClosedIconRenderer;
+
+        /**
+         * Status Icon Renderer.
+         */
+        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
 
         /**
          * Date Renderer.
@@ -477,9 +475,14 @@ public class CashTable
         private final StringCellEditor theStringEditor;
 
         /**
-         * Icon editor.
+         * Closed Icon editor.
          */
-        private final IconCellEditor theIconEditor;
+        private final IconButtonCellEditor<Boolean> theClosedIconEditor;
+
+        /**
+         * Status Icon editor.
+         */
+        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
 
         /**
          * Category ScrollButton Menu Editor.
@@ -505,22 +508,40 @@ public class CashTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(CashCategory.class);
             theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AccountCurrency.class);
+            theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
+            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+
+            /* Configure the closed iconButton */
+            ComplexIconButtonState<Boolean, Boolean> myState = theClosedIconEditor.getComplexState();
+            myState.setState(Boolean.TRUE);
+            myState.setIconForValue(Boolean.FALSE, DepositTable.ICON_LOCKABLE);
+            myState.setIconForValue(Boolean.TRUE, DepositTable.ICON_LOCKED);
+            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+            myState.setState(Boolean.FALSE);
+            myState.setIconForValue(Boolean.TRUE, DepositTable.ICON_LOCKED);
+
+            /* Configure the status iconButton */
+            DefaultIconButtonState<Boolean> myStatusState = theStatusIconEditor.getState();
+            myStatusState.setIconForValue(Boolean.FALSE, ICON_DELETE);
+            myStatusState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
+            myStatusState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
-            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theIconRenderer, theIconEditor);
+            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
             declareColumn(theClosedColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
             declareColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
 
             /* Initialise the columns */
@@ -589,41 +610,14 @@ public class CashTable
                 case COLUMN_CURR:
                     return pCash.getCashCurrency();
                 case COLUMN_CLOSED:
-                    if (pCash.isClosed()) {
-                        return DepositTable.ICON_LOCKED;
-                    }
-                    return pCash.isRelevant()
-                                             ? null
-                                             : DepositTable.ICON_LOCKABLE;
+                    return pCash.isClosed();
                 case COLUMN_ACTIVE:
-                    return pCash.isActive()
-                                           ? ICON_ACTIVE
-                                           : ICON_DELETE;
+                    pCash.isActive();
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pCash.getLatest();
                     return (myTran == null)
                                            ? null
                                            : myTran.getDate();
-                default:
-                    return null;
-            }
-        }
-
-        /**
-         * Handle a button click.
-         * @param pItem the item
-         * @param pColIndex the column
-         * @return the new object
-         */
-        private Object buttonClick(final Cash pItem,
-                                   final int pColIndex) {
-            /* Set the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_ACTIVE:
-                    deleteRow(pItem);
-                    return null;
-                case COLUMN_CLOSED:
-                    return !pItem.isClosed();
                 default:
                     return null;
             }
@@ -654,9 +648,10 @@ public class CashTable
                     pItem.setCashCurrency((AccountCurrency) pValue);
                     break;
                 case COLUMN_CLOSED:
-                    if (pValue instanceof Boolean) {
-                        pItem.setClosed((Boolean) pValue);
-                    }
+                    pItem.setClosed((Boolean) pValue);
+                    break;
+                case COLUMN_ACTIVE:
+                    deleteRow(pItem);
                     break;
                 default:
                     break;

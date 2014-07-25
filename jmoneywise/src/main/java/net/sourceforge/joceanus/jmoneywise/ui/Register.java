@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -40,11 +39,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -79,6 +78,7 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**
  * Event Register Table.
@@ -609,15 +609,6 @@ public class Register
             /* Set the item value for the column */
             theColumns.setItemValue(pItem, pColIndex, pValue);
         }
-
-        @Override
-        public Object buttonClick(final Point pCell) {
-            /* Access the item */
-            Transaction myItem = getItemAtIndex(pCell.y);
-
-            /* Process the click */
-            return theColumns.buttonClick(myItem, pCell.x);
-        }
     }
 
     /**
@@ -1008,7 +999,7 @@ public class Register
         /**
          * Icon Renderer.
          */
-        private final IconCellRenderer theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theIconRenderer;
 
         /**
          * Date editor.
@@ -1018,7 +1009,7 @@ public class Register
         /**
          * Icon editor.
          */
-        private final IconCellEditor theIconEditor;
+        private final IconButtonCellEditor<Boolean> theIconEditor;
 
         /**
          * String editor.
@@ -1033,13 +1024,22 @@ public class Register
             super(Register.this);
 
             /* Create the relevant formatters/editors */
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theIconEditor = theFieldMgr.allocateIconCellEditor(Register.this);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
+
+            /* Configure the iconButton */
+            ComplexIconButtonState<Boolean, Boolean> myState = theIconEditor.getComplexState();
+            myState.setState(Boolean.TRUE);
+            myState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
+            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+            myState.setState(Boolean.FALSE);
+            myState.setIconForValue(Boolean.TRUE, ICON_FROZEN_RECONCILED);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
@@ -1100,28 +1100,7 @@ public class Register
                 case COLUMN_DESC:
                     return pTrans.getComments();
                 case COLUMN_RECONCILED:
-                    return pTrans.isReconciled()
-                                                ? pTrans.isLocked()
-                                                                   ? ICON_FROZEN_RECONCILED
-                                                                   : ICON_RECONCILED
-                                                : null;
-                default:
-                    return null;
-            }
-        }
-
-        /**
-         * Handle a button click.
-         * @param pItem the item
-         * @param pColIndex the column
-         * @return the new object
-         */
-        private Object buttonClick(final Transaction pItem,
-                                   final int pColIndex) {
-            /* Set the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_RECONCILED:
-                    return !pItem.isReconciled();
+                    return pTrans.isReconciled();
                 default:
                     return null;
             }
@@ -1158,9 +1137,7 @@ public class Register
                     pItem.setAmount((JMoney) pValue);
                     break;
                 case COLUMN_RECONCILED:
-                    if (pValue instanceof Boolean) {
-                        pItem.setReconciled((Boolean) pValue);
-                    }
+                    pItem.setReconciled((Boolean) pValue);
                     break;
                 default:
                     break;

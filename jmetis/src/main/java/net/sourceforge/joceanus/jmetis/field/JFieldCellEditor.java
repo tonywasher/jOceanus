@@ -36,8 +36,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -49,9 +47,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayCellEditor;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -60,6 +56,8 @@ import net.sourceforge.joceanus.jtethys.decimal.JDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.JDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.JEventCellEditor;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -268,137 +266,6 @@ public class JFieldCellEditor {
     }
 
     /**
-     * Icon Cell Editor.
-     */
-    public static class IconCellEditor
-            extends AbstractCellEditor
-            implements TableCellEditor {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 838279262363600243L;
-
-        /**
-         * The button.
-         */
-        private final JButton theButton;
-
-        /**
-         * The selection Listener.
-         */
-        private final transient ButtonListener theListener = new ButtonListener();
-
-        /**
-         * The editor table.
-         */
-        private transient JTable theTable;
-
-        /**
-         * The editor value.
-         */
-        private transient Object theValue;
-
-        /**
-         * Is the editor active?
-         */
-        private transient boolean isActive;
-
-        /**
-         * Constructor.
-         * @param pTable the table
-         */
-        protected IconCellEditor(final JTable pTable) {
-            theButton = new JButton();
-            theButton.setFocusPainted(false);
-            theButton.addActionListener(theListener);
-            pTable.addMouseListener(new MouseListener());
-        }
-
-        @Override
-        public JComponent getTableCellEditorComponent(final JTable pTable,
-                                                      final Object pValue,
-                                                      final boolean isSelected,
-                                                      final int pRowIndex,
-                                                      final int pColIndex) {
-            /* Save table and value */
-            theTable = pTable;
-            theValue = pValue;
-            isActive = true;
-
-            /* Set the icon into the button */
-            theButton.setIcon((pValue instanceof Icon)
-                                                      ? (Icon) pValue
-                                                      : null);
-
-            /* Return the button */
-            return theButton;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return theValue;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            if (super.stopCellEditing()) {
-                isActive = false;
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void cancelCellEditing() {
-            super.cancelCellEditing();
-            isActive = false;
-        }
-
-        /**
-         * Button Listener class.
-         */
-        private class ButtonListener
-                implements ActionListener {
-            @Override
-            public void actionPerformed(final ActionEvent pEvent) {
-                /* If we can notify regarding the click */
-                TableModel myModel = theTable.getModel();
-                if (myModel instanceof PopulateFieldData) {
-                    /* Determine the row that this has been invoked in */
-                    int myRow = theTable.getEditingRow();
-                    myRow = theTable.convertRowIndexToModel(myRow);
-
-                    /* Determine the column that this has been invoked in */
-                    int myCol = theTable.getEditingColumn();
-                    myCol = theTable.convertColumnIndexToModel(myCol);
-
-                    /* Notify the model regarding the click */
-                    Point myPoint = new Point(myCol, myRow);
-                    theValue = ((PopulateFieldData) myModel).buttonClick(myPoint);
-                }
-
-                /* Stop editing */
-                stopCellEditing();
-            }
-        }
-
-        /**
-         * Mouse Adapter class.
-         * <p>
-         * Required to handle button clicked, dragged, and released in different place
-         */
-        private class MouseListener
-                extends MouseAdapter {
-            @Override
-            public void mouseReleased(final MouseEvent e) {
-                if (isActive) {
-                    stopCellEditing();
-                }
-            }
-        }
-    }
-
-    /**
      * IconButton Cell Editor.
      * @param <T> the object type
      */
@@ -419,6 +286,11 @@ public class JFieldCellEditor {
          * The button.
          */
         private final JIconButton<T> theButton;
+
+        /**
+         * The state.
+         */
+        private final DefaultIconButtonState<T> theState;
 
         /**
          * The selection Listener.
@@ -467,13 +339,27 @@ public class JFieldCellEditor {
          * @param pClass the class of the object
          */
         protected IconButtonCellEditor(final Class<T> pClass) {
+            /* Use simple setup */
+            this(pClass, false);
+        }
+
+        /**
+         * Constructor.
+         * @param pClass the class of the object
+         * @param pComplex use complex state true/false
+         */
+        protected IconButtonCellEditor(final Class<T> pClass,
+                                       final boolean pComplex) {
             /* Store parameters */
             theClass = pClass;
 
             /* Build the button */
-            theButton = new JIconButton<T>();
+            theState = pComplex
+                               ? new ComplexIconButtonState<T, Boolean>(Boolean.FALSE)
+                               : new DefaultIconButtonState<T>();
+            theButton = new JIconButton<T>(theState);
             theButton.setFocusPainted(false);
-            theButton.addActionListener(theButtonListener);
+            theButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, theButtonListener);
         }
 
         @Override
@@ -490,7 +376,10 @@ public class JFieldCellEditor {
 
             /* Store current value */
             theValue = theClass.cast(pValue);
-            theButton.setValue(theValue);
+            theButton.storeValue(theValue);
+
+            /* ensure EditingState */
+            ensureEditingState();
 
             /* Declare the mouse listener */
             theTable.addMouseListener(theMouseListener);
@@ -499,31 +388,37 @@ public class JFieldCellEditor {
             return theButton;
         }
 
-        /**
-         * Map value.
-         * @param pValue the value
-         * @param pIcon the mapped Icon
-         */
-        public void setIconForValue(final T pValue,
-                                    final Icon pIcon) {
-            /* Declare value to button */
-            theButton.setIconForValue(pValue, pIcon);
-        }
-
         @Override
         public Object getCellEditorValue() {
             return theValue;
         }
 
         /**
-         * Determine Icon for value.
-         * @param pValue the value
-         * @return the icon
+         * Obtain standard state.
+         * @return the state machine
          */
-        protected Icon getIconForValue(final Object pValue) {
-            /* Look to find explicit protected value */
-            T myValue = theClass.cast(pValue);
-            return theButton.getIconForValue(myValue);
+        public DefaultIconButtonState<T> getState() {
+            return theState;
+        }
+
+        /**
+         * Determine Icon for value.
+         * @return the state machine
+         */
+        public ComplexIconButtonState<T, Boolean> getComplexState() {
+            return (theState instanceof ComplexIconButtonState)
+                                                               ? (ComplexIconButtonState<T, Boolean>) theState
+                                                               : null;
+        }
+
+        /**
+         * Ensure editing state.
+         */
+        private void ensureEditingState() {
+            ComplexIconButtonState<T, Boolean> myState = getComplexState();
+            if (myState != null) {
+                myState.setState(Boolean.TRUE);
+            }
         }
 
         @Override
@@ -547,11 +442,11 @@ public class JFieldCellEditor {
          * Button Listener class.
          */
         private class ButtonListener
-                implements ActionListener {
+                implements PropertyChangeListener {
             @Override
-            public void actionPerformed(final ActionEvent pEvent) {
-                /* Allow listeners to select the new value */
-                fireStateChanged();
+            public void propertyChange(final PropertyChangeEvent pEvent) {
+                /* Access the new value */
+                theValue = theButton.getValue();
 
                 /* Stop editing */
                 stopCellEditing();

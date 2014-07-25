@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,19 +42,19 @@ public class JIconButton<T>
     private static final long serialVersionUID = -4943316534086830953L;
 
     /**
+     * Name of the Value property.
+     */
+    public static final String PROPERTY_VALUE = "Value";
+
+    /**
      * Button value.
      */
     private T theValue;
 
     /**
-     * Icon Map.
+     * State Machine.
      */
-    private final Map<T, Icon> theIconMap;
-
-    /**
-     * ToolTip Map.
-     */
-    private final Map<T, String> theTipMap;
+    private final IconButtonState<T> theState;
 
     /**
      * Obtain value.
@@ -63,59 +65,352 @@ public class JIconButton<T>
     }
 
     /**
-     * Obtain icon for value.
-     * @param pValue the value
-     * @return the icon
+     * Obtain state.
+     * @return the state
      */
-    public Icon getIconForValue(final T pValue) {
-        return theIconMap.get(pValue);
+    public IconButtonState<T> getState() {
+        return theState;
     }
 
     /**
      * Constructor.
+     * @param pState the state machine
      */
-    public JIconButton() {
-        /* Allocate the maps */
-        theIconMap = new HashMap<T, Icon>();
-        theTipMap = new HashMap<T, String>();
+    public JIconButton(final IconButtonState<T> pState) {
+        /* Store the state */
+        theState = pState;
+
+        /* Declare this button to the state */
+        pState.declareButton(this);
     }
 
     /**
-     * Map value.
-     * @param pValue the value
-     * @param pIcon the mapped Icon
+     * Set the value.
+     * @param pValue the value to set.
      */
-    public void setIconForValue(final T pValue,
-                                final Icon pIcon) {
-        /* Put value into map */
-        theIconMap.put(pValue, pIcon);
+    public void setValue(final T pValue) {
+        /* Access current value */
+        T myOld = theValue;
+
+        /* Store new values */
+        storeTheValue(pValue);
+
+        /* If the value has changed */
+        if (isValueChanged(myOld, theValue)) {
+            /* Fire the property change */
+            firePropertyChange(PROPERTY_VALUE, myOld, theValue);
+        }
     }
 
     /**
-     * Map ToolTip.
-     * @param pValue the value
-     * @param pTip the mapped toolTip
+     * Has the value changed?
+     * @param pFirst the first value
+     * @param pSecond the second value
+     * @param <T> the object type
+     * @return <code>true/false</code>
      */
-    public void mapValue(final T pValue,
-                         final String pTip) {
-        /* Put value into map */
-        theTipMap.put(pValue, pTip);
+    protected static <T> boolean isValueChanged(final T pFirst,
+                                                final T pSecond) {
+        if (pFirst == null) {
+            return pSecond != null;
+        } else {
+            return !pFirst.equals(pSecond);
+        }
+    }
+
+    /**
+     * Store the value without firing events.
+     * @param pValue the value to set.
+     */
+    public void storeValue(final T pValue) {
+        /* Store new values */
+        storeTheValue(pValue);
     }
 
     /**
      * Set value of button.
      * @param pValue the value to set
      */
-    public void setValue(final T pValue) {
+    private void storeTheValue(final T pValue) {
         /* Store value */
         theValue = pValue;
 
         /* Access Icon */
-        Icon myIcon = getIconForValue(pValue);
+        Icon myIcon = theState.getIconForValue(pValue);
         setIcon(myIcon);
 
         /* Access ToolTip */
-        String myTip = theTipMap.get(pValue);
+        String myTip = theState.getToolTipForValue(pValue);
         setToolTipText(myTip);
+    }
+
+    /**
+     * State Machine class.
+     * @param <T> the object type
+     */
+    public abstract static class IconButtonState<T> {
+        /**
+         * The icon button.
+         */
+        private JIconButton<T> theButton;
+
+        /**
+         * Declare button
+         * @param pButton the button
+         */
+        private void declareButton(final JIconButton<T> pButton) {
+            /* Store the button */
+            theButton = pButton;
+
+            /* Add the button listener */
+            theButton.addActionListener(new ButtonListener());
+        }
+
+        /**
+         * Obtain icon for value.
+         * @param pValue the value
+         * @return the icon
+         */
+        public abstract Icon getIconForValue(final Object pValue);
+
+        /**
+         * Obtain toolTip for value.
+         * @param pValue the value
+         * @return the toolTip
+         */
+        public String getToolTipForValue(final Object pValue) {
+            return null;
+        }
+
+        /**
+         * Obtain new value on click.
+         * @param pValue the current value
+         * @return the new value
+         */
+        protected abstract T getNewValueForValue(final Object pValue);
+
+        /**
+         * Button Listener class.
+         */
+        private class ButtonListener
+                implements ActionListener {
+            @Override
+            public void actionPerformed(final ActionEvent pEvent) {
+                /* Obtain the new value for the button */
+                T myNewValue = getNewValueForValue(theButton.getValue());
+
+                /* Set the value for the button */
+                theButton.setValue(myNewValue);
+            }
+        }
+    }
+
+    /**
+     * Default State Machine class.
+     * @param <T> the object type
+     */
+    public static class DefaultIconButtonState<T>
+            extends IconButtonState<T> {
+        /**
+         * Active Map Set.
+         */
+        private IconMapSet<T> theMapSet;
+
+        /**
+         * Constructor.
+         */
+        public DefaultIconButtonState() {
+            /* Set a default mapSet */
+            setMapSet(new IconMapSet<T>());
+        }
+
+        /**
+         * Obtain the mapSet.
+         * @return the mapSet
+         */
+        protected IconMapSet<T> getMapSet() {
+            return theMapSet;
+        }
+
+        /**
+         * Set the mapSet.
+         * @param pMapSet the mapSet
+         */
+        protected void setMapSet(final IconMapSet<T> pMapSet) {
+            theMapSet = pMapSet;
+        }
+
+        @Override
+        public Icon getIconForValue(final Object pValue) {
+            Map<T, Icon> myMap = theMapSet.getIconMap();
+            return myMap.get(pValue);
+        }
+
+        @Override
+        public String getToolTipForValue(final Object pValue) {
+            Map<T, String> myMap = theMapSet.getToolTipMap();
+            return myMap.get(pValue);
+        }
+
+        @Override
+        protected T getNewValueForValue(final Object pValue) {
+            Map<T, T> myMap = theMapSet.getValueMap();
+            return myMap.get(pValue);
+        }
+
+        /**
+         * Map value.
+         * @param pValue the value
+         * @param pIcon the mapped Icon
+         */
+        public void setIconForValue(final T pValue,
+                                    final Icon pIcon) {
+            /* Put value into map */
+            Map<T, Icon> myMap = theMapSet.getIconMap();
+            myMap.put(pValue, pIcon);
+        }
+
+        /**
+         * Map ToolTip.
+         * @param pValue the value
+         * @param pTip the mapped toolTip
+         */
+        public void setTooltipForValue(final T pValue,
+                                       final String pTip) {
+            /* Put value into map */
+            Map<T, String> myMap = theMapSet.getToolTipMap();
+            myMap.put(pValue, pTip);
+        }
+
+        /**
+         * Map New Value.
+         * @param pValue the value
+         * @param pNewValue the new value
+         */
+        public void setNewValueForValue(final T pValue,
+                                        final T pNewValue) {
+            /* Put value into map */
+            Map<T, T> myMap = theMapSet.getValueMap();
+            myMap.put(pValue, pNewValue);
+        }
+    }
+
+    /**
+     * Default State Machine class.
+     * @param <T> the object type
+     * @param <S> the state
+     */
+    public static class ComplexIconButtonState<T, S>
+            extends DefaultIconButtonState<T> {
+        /**
+         * Current state.
+         */
+        private S theState;
+
+        /**
+         * MapSet Map.
+         */
+        private Map<S, IconMapSet<T>> theStateMap;
+
+        /**
+         * Constructor.
+         */
+        public ComplexIconButtonState() {
+            /* Initialise state to null */
+            this(null);
+        }
+
+        /**
+         * Constructor.
+         * @param pState the initial state
+         */
+        public ComplexIconButtonState(final S pState) {
+            /* Allocate the maps */
+            theStateMap = new HashMap<S, IconMapSet<T>>();
+
+            /* Register the initial state */
+            theState = pState;
+            theStateMap.put(theState, getMapSet());
+        }
+
+        /**
+         * Set state.
+         * @param pState the new state
+         */
+        public void setState(final S pState) {
+            /* Ignore if we are already correct state */
+            if (pState.equals(theState)) {
+                return;
+            }
+
+            /* Look for existing state */
+            IconMapSet<T> mySet = theStateMap.get(pState);
+
+            /* If this is a new state */
+            if (mySet == null) {
+                /* Create the new state and record it */
+                mySet = new IconMapSet<T>();
+                theStateMap.put(pState, mySet);
+            }
+
+            /* register the map Set */
+            theState = pState;
+            setMapSet(mySet);
+        }
+    }
+
+    /**
+     * MapSet.
+     * @param <T> the object type
+     */
+    private static class IconMapSet<T> {
+        /**
+         * Value Map.
+         */
+        private final Map<T, T> theValueMap;
+
+        /**
+         * Icon Map.
+         */
+        private final Map<T, Icon> theIconMap;
+
+        /**
+         * ToolTip Map.
+         */
+        private final Map<T, String> theTipMap;
+
+        /**
+         * Constructor.
+         */
+        private IconMapSet() {
+            /* Allocate the maps */
+            theValueMap = new HashMap<T, T>();
+            theIconMap = new HashMap<T, Icon>();
+            theTipMap = new HashMap<T, String>();
+        }
+
+        /**
+         * Obtain the iconMap
+         * @return the iconMap
+         */
+        private Map<T, Icon> getIconMap() {
+            return theIconMap;
+        }
+
+        /**
+         * Obtain the toolTipMap
+         * @return the toolTipMap
+         */
+        private Map<T, String> getToolTipMap() {
+            return theTipMap;
+        }
+
+        /**
+         * Obtain the toolTipMap
+         * @return the toolTipMap
+         */
+        private Map<T, T> getValueMap() {
+            return theValueMap;
+        }
     }
 }

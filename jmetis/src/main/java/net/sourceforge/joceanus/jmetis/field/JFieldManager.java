@@ -24,17 +24,15 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Point;
 
 import javax.swing.BorderFactory;
-import javax.swing.JTable;
 import javax.swing.border.Border;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IntegerCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.MoneyCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.PriceCellEditor;
@@ -45,7 +43,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.UnitsCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.BooleanCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.RowCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
@@ -168,13 +166,6 @@ public class JFieldManager {
          * @param pData the Field details
          */
         void populateFieldData(final JFieldData pData);
-
-        /**
-         * Notify of a button Click in a row.
-         * @param pCell the cell in which the button was clicked
-         * @return the new value for the field
-         */
-        Object buttonClick(final Point pCell);
     }
 
     /**
@@ -272,12 +263,13 @@ public class JFieldManager {
     }
 
     /**
-     * Allocate an IconRenderer object.
+     * Allocate an IconButtonRenderer object.
+     * @param pEditor the cell editor
      * @return the icon renderer
      */
-    public IconCellRenderer allocateIconCellRenderer() {
+    public <T> IconButtonCellRenderer<T> allocateIconButtonCellRenderer(final IconButtonCellEditor<T> pEditor) {
         /* Return a new IconRenderer object */
-        return new IconCellRenderer(this);
+        return new IconButtonCellRenderer<T>(this, pEditor);
     }
 
     /**
@@ -364,13 +356,16 @@ public class JFieldManager {
     }
 
     /**
-     * Allocate an IconEditor object.
-     * @param pTable the table
+     * Allocate an IconButtonEditor object.
+     * @param <T> the type of the object
+     * @param pClass the class of the objects
+     * @param pComplex use complex state true/false
      * @return the icon editor
      */
-    public IconCellEditor allocateIconCellEditor(final JTable pTable) {
-        /* Return a new IconEditor object */
-        return new IconCellEditor(pTable);
+    public <T> IconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClass,
+                                                                    final boolean pComplex) {
+        /* Return a new IconButtonEditor object */
+        return new IconButtonCellEditor<T>(pClass, pComplex);
     }
 
     /**

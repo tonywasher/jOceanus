@@ -41,10 +41,10 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
@@ -67,6 +67,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -453,15 +454,6 @@ public class TransactionCategoryTable
                                       ? true
                                       : theParent.equals(pRow.getParentCategory());
         }
-
-        @Override
-        public Object buttonClick(final Point pCell) {
-            /* Access the item */
-            TransactionCategory myItem = getItemAtIndex(pCell.y);
-
-            /* Process the click */
-            return theColumns.buttonClick(myItem, pCell.x);
-        }
     }
 
     /**
@@ -622,12 +614,12 @@ public class TransactionCategoryTable
         /**
          * Icon Renderer.
          */
-        private final IconCellRenderer theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theIconRenderer;
 
         /**
          * Icon editor.
          */
-        private final IconCellEditor theIconEditor;
+        private final IconButtonCellEditor<Boolean> theIconEditor;
 
         /**
          * String Renderer.
@@ -658,11 +650,17 @@ public class TransactionCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
             theScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategoryType.class);
+            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+
+            /* Configure the iconButton */
+            DefaultIconButtonState<Boolean> myState = theIconEditor.getState();
+            myState.setIconForValue(Boolean.FALSE, ICON_DELETE);
+            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
@@ -733,9 +731,7 @@ public class TransactionCategoryTable
                 case COLUMN_DESC:
                     return pCategory.getDesc();
                 case COLUMN_ACTIVE:
-                    return pCategory.isActive()
-                                               ? ICON_ACTIVE
-                                               : ICON_DELETE;
+                    return pCategory.isActive();
                 default:
                     return null;
             }
@@ -762,26 +758,11 @@ public class TransactionCategoryTable
                 case COLUMN_CATEGORY:
                     pItem.setCategoryType((TransactionCategoryType) pValue);
                     break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Handle a button click.
-         * @param pItem the item
-         * @param pColIndex the column
-         * @return the new object
-         */
-        private Object buttonClick(final TransactionCategory pItem,
-                                   final int pColIndex) {
-            /* Set the appropriate value */
-            switch (pColIndex) {
                 case COLUMN_ACTIVE:
                     deleteRow(pItem);
-                    return null;
+                    break;
                 default:
-                    return null;
+                    break;
             }
         }
 

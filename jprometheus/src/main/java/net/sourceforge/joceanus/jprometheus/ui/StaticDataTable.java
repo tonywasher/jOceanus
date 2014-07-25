@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
@@ -35,9 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -53,6 +52,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -488,15 +488,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
             /* Handle filter */
             return showAll() || !pRow.isDisabled();
         }
-
-        @Override
-        public Object buttonClick(final Point pCell) {
-            /* Access the item */
-            T myItem = getItemAtIndex(pCell.y);
-
-            /* Process the click */
-            return theColumns.buttonClick(myItem, pCell.x);
-        }
     }
 
     /**
@@ -550,14 +541,24 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         private final StringCellEditor theStringEditor;
 
         /**
-         * Icon renderer.
+         * Icon Status Renderer.
          */
-        private final IconCellRenderer theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theStatusIconRenderer;
+
+        /**
+         * Icon Enabled Renderer.
+         */
+        private final IconButtonCellRenderer<Boolean> theEnabledIconRenderer;
 
         /**
          * Icon editor.
          */
-        private final IconCellEditor theIconEditor;
+        private final IconButtonCellEditor<Boolean> theStatusIconEditor;
+
+        /**
+         * Icon editor.
+         */
+        private final IconButtonCellEditor<Boolean> theEnabledIconEditor;
 
         /**
          * Enabled column.
@@ -572,18 +573,33 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
             super(StaticDataTable.this);
 
             /* Create the relevant renderers/editors */
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
             theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
-            theIconEditor = theFieldMgr.allocateIconCellEditor(StaticDataTable.this);
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
+            theEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
+            theEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theEnabledIconEditor);
+
+            /* Configure the status iconButton */
+            DefaultIconButtonState<Boolean> myState = theStatusIconEditor.getState();
+            myState.setIconForValue(Boolean.FALSE, ICON_DELETE);
+            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+
+            /* Configure the enabled iconButton */
+            myState = theEnabledIconEditor.getState();
+            myState.setIconForValue(Boolean.FALSE, ICON_DISABLED);
+            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
 
             /* Create and declare the columns */
             declareColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            theEnabledColumn = new JDataTableColumn(COLUMN_ENABLED, WIDTH_ICON, theIconRenderer, theIconEditor);
+            theEnabledColumn = new JDataTableColumn(COLUMN_ENABLED, WIDTH_ICON, theEnabledIconRenderer, theEnabledIconEditor);
             declareColumn(theEnabledColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
 
             /* Initialise the columns display */
             setColumns();
@@ -640,13 +656,9 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                 case COLUMN_DESC:
                     return pItem.getDesc();
                 case COLUMN_ENABLED:
-                    return pItem.getEnabled()
-                                             ? ICON_ACTIVE
-                                             : ICON_DISABLED;
+                    return pItem.getEnabled();
                 case COLUMN_ACTIVE:
-                    return pItem.isActive()
-                                           ? ICON_ACTIVE
-                                           : ICON_DELETE;
+                    return pItem.isActive();
                 default:
                     return null;
             }
@@ -671,32 +683,13 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
                     pItem.setDescription((String) pValue);
                     break;
                 case COLUMN_ENABLED:
-                    if (pValue instanceof Boolean) {
-                        pItem.setEnabled((Boolean) pValue);
-                    }
+                    pItem.setEnabled((Boolean) pValue);
                     break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Handle a button click.
-         * @param pItem the item
-         * @param pColIndex the column
-         * @return the new object
-         */
-        private Object buttonClick(final T pItem,
-                                   final int pColIndex) {
-            /* Set the appropriate value */
-            switch (pColIndex) {
                 case COLUMN_ACTIVE:
                     deleteRow(pItem);
-                    return null;
-                case COLUMN_ENABLED:
-                    return !pItem.getEnabled();
+                    break;
                 default:
-                    return null;
+                    break;
             }
         }
 

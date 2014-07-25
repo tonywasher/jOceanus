@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
@@ -242,7 +243,7 @@ public class JFieldElement<T extends JFieldSetItem> {
         }
 
         /* Set the visibility of the component */
-        theComponent.setVisible(setVisible);
+        theCardPanel.setVisible(setVisible);
     }
 
     /**
@@ -330,9 +331,20 @@ public class JFieldElement<T extends JFieldSetItem> {
             theCardLayout = new CardLayout();
             setLayout(theCardLayout);
 
+            /* Access the component and ReadOnly label */
+            JComponent myComponent = theComponent.getComponent();
+            JLabel myLabel = theComponent.getReadOnlyLabel();
+
             /* Add the component and ReadOnly label */
-            add(theComponent.getComponent(), NAME_EDITABLE);
-            add(theComponent.getReadOnlyLabel(), NAME_READONLY);
+            add(myComponent, NAME_EDITABLE);
+            add(myLabel, NAME_READONLY);
+
+            /* Set maximum size and alignment */
+            setMaximumSize(myComponent.getMaximumSize());
+            if (myComponent instanceof JTextField) {
+                JTextField myField = (JTextField) myComponent;
+                myLabel.setHorizontalAlignment(myField.getHorizontalAlignment());
+            }
         }
 
         /**

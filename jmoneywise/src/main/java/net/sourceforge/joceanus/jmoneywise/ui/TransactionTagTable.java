@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.ui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
@@ -36,9 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
@@ -57,6 +56,7 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
 /**
  * TransactionTag Table.
@@ -357,15 +357,6 @@ public class TransactionTagTable
             /* Handle filter */
             return true;
         }
-
-        @Override
-        public Object buttonClick(final Point pCell) {
-            /* Access the item */
-            TransactionTag myItem = getItemAtIndex(pCell.y);
-
-            /* Process the click */
-            return theColumns.buttonClick(myItem, pCell.x);
-        }
     }
 
     /**
@@ -425,12 +416,12 @@ public class TransactionTagTable
         /**
          * Icon Renderer.
          */
-        private final IconCellRenderer theIconRenderer;
+        private final IconButtonCellRenderer<Boolean> theIconRenderer;
 
         /**
          * Icon editor.
          */
-        private final IconCellEditor theIconEditor;
+        private final IconButtonCellEditor<Boolean> theIconEditor;
 
         /**
          * String Renderer.
@@ -451,10 +442,16 @@ public class TransactionTagTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconRenderer = theFieldMgr.allocateIconCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIconEditor = theFieldMgr.allocateIconCellEditor(pTable);
+            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+
+            /* Configure the iconButton */
+            DefaultIconButtonState<Boolean> myState = theIconEditor.getState();
+            myState.setIconForValue(Boolean.FALSE, ICON_DELETE);
+            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
+            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
@@ -495,9 +492,7 @@ public class TransactionTagTable
                 case COLUMN_DESC:
                     return pTransactionTag.getDesc();
                 case COLUMN_ACTIVE:
-                    return pTransactionTag.isActive()
-                                                     ? ICON_ACTIVE
-                                                     : ICON_DELETE;
+                    return pTransactionTag.isActive();
                 default:
                     return null;
             }
@@ -521,26 +516,11 @@ public class TransactionTagTable
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Handle a button click.
-         * @param pItem the item
-         * @param pColIndex the column
-         * @return the new object
-         */
-        private Object buttonClick(final TransactionTag pItem,
-                                   final int pColIndex) {
-            /* Set the appropriate value */
-            switch (pColIndex) {
                 case COLUMN_ACTIVE:
                     deleteRow(pItem);
-                    return null;
+                    break;
                 default:
-                    return null;
+                    break;
             }
         }
 

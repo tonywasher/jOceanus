@@ -340,6 +340,9 @@ public class MaintTaxYear
 
         /* Add listener to updateSet */
         theUpdateSet.addActionListener(myListener);
+
+        /* Default to not editable */
+        theFieldSet.setEditable(false);
     }
 
     /**
