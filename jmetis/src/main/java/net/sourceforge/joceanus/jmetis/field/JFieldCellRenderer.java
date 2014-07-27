@@ -299,6 +299,7 @@ public final class JFieldCellRenderer {
             renderComponent(pTable, this, theData);
 
             /* If we are using a complexState */
+            Icon myIcon;
             if (theState instanceof ComplexIconButtonState) {
                 ComplexIconButtonState<T, Boolean> myState = (ComplexIconButtonState<T, Boolean>) theState;
 
@@ -307,12 +308,13 @@ public final class JFieldCellRenderer {
                 int iCol = pTable.convertColumnIndexToModel(pColIndex);
                 Boolean isEditable = pTable.getModel().isCellEditable(iRow, iCol);
 
-                /* Set state */
-                myState.setState(isEditable);
+                /* Determine icon */
+                myIcon = myState.getIconForValueAndState(pValue, isEditable);
+            } else {
+                myIcon = theState.getIconForValue(pValue);
             }
 
-            /* Determine icon to show */
-            Icon myIcon = theState.getIconForValue(pValue);
+            /* Store details */
             setIcon(myIcon);
             setText(null);
 

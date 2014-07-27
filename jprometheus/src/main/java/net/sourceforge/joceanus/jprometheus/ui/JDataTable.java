@@ -77,22 +77,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * Default row height.
      */
-    private static final int ROW_HEIGHT = 16;
-
-    /**
-     * Default icon extra size.
-     */
-    protected static final int ICON_XTRA_SIZE = 8;
-
-    /**
-     * The active icon.
-     */
-    protected static final Icon ICON_ACTIVE = resizeImage(new ImageIcon(JDataTable.class.getResource("Active.png")), ICON_XTRA_SIZE);
-
-    /**
-     * The delete icon.
-     */
-    protected static final Icon ICON_DELETE = resizeImage(new ImageIcon(JDataTable.class.getResource("RedDelete.png")), ICON_XTRA_SIZE);
+    protected static final int ROW_HEIGHT = 16;
 
     /**
      * The Row Header Table.

@@ -267,7 +267,7 @@ public class TransactionCategoryPanel
 
                 /* Ignore deleted and non-subTotal items */
                 TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
-                if (myCategory.isDeleted() || !myClass.isSubTotal()) {
+                if (myCat.isDeleted() || !myClass.isSubTotal()) {
                     continue;
                 }
 

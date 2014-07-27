@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.AnalysisSelect.StatementSelect;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -69,7 +70,6 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**
  * Analysis Statement.
@@ -655,13 +655,7 @@ public class AnalysisStatement
             theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
 
             /* Configure the iconButton */
-            ComplexIconButtonState<Boolean, Boolean> myState = theIconEditor.getComplexState();
-            myState.setState(Boolean.TRUE);
-            myState.setIconForValue(Boolean.TRUE, Register.ICON_RECONCILED);
-            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-            myState.setState(Boolean.FALSE);
-            myState.setIconForValue(Boolean.TRUE, Register.ICON_FROZEN_RECONCILED);
+            MoneyWiseIcons.buildReconciledButton(theIconEditor.getComplexState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));

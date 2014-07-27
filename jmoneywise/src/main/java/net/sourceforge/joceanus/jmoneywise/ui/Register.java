@@ -30,8 +30,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -60,6 +58,7 @@ import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfo.TransactionInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
@@ -78,7 +77,6 @@ import net.sourceforge.joceanus.jtethys.dateday.JDateDayRange;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayRangeSelect;
 import net.sourceforge.joceanus.jtethys.decimal.JMoney;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 
 /**
  * Event Register Table.
@@ -90,16 +88,6 @@ public class Register
      * Serial Id.
      */
     private static final long serialVersionUID = -5531752729052421790L;
-
-    /**
-     * The reconciled icon.
-     */
-    protected static final Icon ICON_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("GreenJellyCheck.png")), ICON_XTRA_SIZE);
-
-    /**
-     * The frozen reconciled icon.
-     */
-    protected static final Icon ICON_FROZEN_RECONCILED = resizeImage(new ImageIcon(Register.class.getResource("BlueJellyCheck.png")), ICON_XTRA_SIZE);
 
     /**
      * Resource Bundle.
@@ -1033,13 +1021,7 @@ public class Register
             theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
 
             /* Configure the iconButton */
-            ComplexIconButtonState<Boolean, Boolean> myState = theIconEditor.getComplexState();
-            myState.setState(Boolean.TRUE);
-            myState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
-            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-            myState.setState(Boolean.FALSE);
-            myState.setIconForValue(Boolean.TRUE, ICON_FROZEN_RECONCILED);
+            MoneyWiseIcons.buildReconciledButton(theIconEditor.getComplexState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));

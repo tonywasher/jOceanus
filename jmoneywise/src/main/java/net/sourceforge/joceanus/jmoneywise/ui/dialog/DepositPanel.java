@@ -27,6 +27,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -40,13 +44,20 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -95,7 +106,17 @@ public class DepositPanel
     /**
      * Closed Button Field.
      */
-    // private final JButton theClosedButton;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+
+    /**
+     * TaxFree Button Field.
+     */
+    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+
+    /**
+     * Gross Button Field.
+     */
+    private final ComplexIconButtonState<Boolean, Boolean> theGrossState;
 
     /**
      * Constructor.
@@ -113,28 +134,137 @@ public class DepositPanel
         theCategoryButton = new JScrollButton<DepositCategory>();
         theParentButton = new JScrollButton<Payee>();
         theCurrencyButton = new JScrollButton<AccountCurrency>();
-        // theClosedButton = new JButton();
+
+        /* Create icon button states */
+        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theTaxFreeState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theGrossState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
+
+        /* Create a tabbedPane */
+        JTabbedPane myTabs = new JTabbedPane();
+        add(myTabs);
+
+        /* Build the main panel */
+        JPanel myPanel = buildMainPanel();
+        myTabs.add("Main", myPanel);
+
+        /* Build the detail panel */
+        myPanel = buildXtrasPanel();
+        myTabs.add("Details", myPanel);
+
+        /* Build the notes panel */
+        myPanel = buildNotesPanel();
+        myTabs.add("Notes", myPanel);
+
+        /* Create the listener */
+        new AccountListener();
+    }
+
+    /**
+     * Build Main subPanel.
+     * @return the panel
+     */
+    private JPanel buildMainPanel() {
+        /* Set states */
+        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        MoneyWiseIcons.buildOptionButton(theClosedState);
+        JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
+        MoneyWiseIcons.buildOptionButton(theTaxFreeState);
+        JIconButton<Boolean> myGrossButton = new JIconButton<Boolean>(theGrossState);
+        MoneyWiseIcons.buildOptionButton(theGrossState);
+
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(Deposit.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Deposit.FIELD_CATEGORY, DepositCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Deposit.FIELD_CLOSED, Boolean.class, myClosedButton);
+        theFieldSet.addFieldElement(Deposit.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
+        theFieldSet.addFieldElement(Deposit.FIELD_GROSS, Boolean.class, myGrossButton);
+
+        /* Create the main panel */
+        JEnablePanel myPanel = new JEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
+        myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Deposit.FIELD_NAME, this);
         theFieldSet.addFieldToPanel(Deposit.FIELD_DESC, this);
         theFieldSet.addFieldToPanel(Deposit.FIELD_CATEGORY, this);
         theFieldSet.addFieldToPanel(Deposit.FIELD_PARENT, this);
         theFieldSet.addFieldToPanel(Deposit.FIELD_CURRENCY, this);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, this);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_TAXFREE, this);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_GROSS, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
 
-        /* Create the listener */
-        new AccountListener();
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build extras subPanel.
+     * @return the panel
+     */
+    private JPanel buildXtrasPanel() {
+        /* Allocate fields */
+        JDateDayButton myMaturity = new JDateDayButton();
+        JTextField mySortCode = new JTextField();
+        JTextField myAccount = new JTextField();
+        JTextField myReference = new JTextField();
+        JTextField myOpening = new JTextField();
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), DataType.DATEDAY, myMaturity);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), DataType.MONEY, myOpening);
+
+        /* Create the extras panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the extras panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myPanel);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Notes subPanel.
+     * @return the panel
+     */
+    private JPanel buildNotesPanel() {
+        /* Allocate fields */
+        JTextArea myNotes = new JTextArea();
+        JScrollPane myScroll = new JScrollPane(myNotes);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+
+        /* Create the notes panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the notes panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     @Override
@@ -165,6 +295,39 @@ public class DepositPanel
         } else if (myField.equals(Deposit.FIELD_CURRENCY)) {
             /* Update the Currency */
             myDeposit.setDepositCurrency(pUpdate.getValue(AccountCurrency.class));
+        } else if (myField.equals(Deposit.FIELD_CLOSED)) {
+            /* Update the Closed indication */
+            myDeposit.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (myField.equals(Deposit.FIELD_TAXFREE)) {
+            /* Update the taxFree indication */
+            myDeposit.setTaxFree(pUpdate.getValue(Boolean.class));
+        } else if (myField.equals(Deposit.FIELD_GROSS)) {
+            /* Update the Gross indication */
+            myDeposit.setGross(pUpdate.getValue(Boolean.class));
+        } else {
+            /* Switch on the field */
+            switch (DepositInfoSet.getClassForField(myField)) {
+                case MATURITY:
+                    myDeposit.setMaturity(pUpdate.getDateDay());
+                    break;
+                case OPENINGBALANCE:
+                    myDeposit.setOpeningBalance(pUpdate.getMoney());
+                    break;
+                case SORTCODE:
+                    myDeposit.setSortCode(pUpdate.getCharArray());
+                    break;
+                case ACCOUNT:
+                    myDeposit.setAccount(pUpdate.getCharArray());
+                    break;
+                case REFERENCE:
+                    myDeposit.setReference(pUpdate.getCharArray());
+                    break;
+                case NOTES:
+                    myDeposit.setNotes(pUpdate.getCharArray());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

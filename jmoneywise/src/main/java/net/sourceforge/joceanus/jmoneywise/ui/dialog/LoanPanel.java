@@ -27,6 +27,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -40,13 +44,19 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
+import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
@@ -95,7 +105,7 @@ public class LoanPanel
     /**
      * Closed Button Field.
      */
-    // private final JButton theClosedButton;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * Constructor.
@@ -113,16 +123,51 @@ public class LoanPanel
         theCategoryButton = new JScrollButton<LoanCategory>();
         theParentButton = new JScrollButton<Payee>();
         theCurrencyButton = new JScrollButton<AccountCurrency>();
-        // theClosedButton = new JButton();
+
+        /* Set closed button */
+        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
+
+        /* Create a tabbedPane */
+        JTabbedPane myTabs = new JTabbedPane();
+        add(myTabs);
+
+        /* Build the main panel */
+        JPanel myPanel = buildMainPanel();
+        myTabs.add("Main", myPanel);
+
+        /* Build the detail panel */
+        myPanel = buildXtrasPanel();
+        myTabs.add("Details", myPanel);
+
+        /* Build the notes panel */
+        myPanel = buildNotesPanel();
+        myTabs.add("Notes", myPanel);
+
+        /* Create the listener */
+        new AccountListener();
+    }
+
+    /**
+     * Build Main subPanel.
+     * @return the panel
+     */
+    private JPanel buildMainPanel() {
+        /* Build the closed button state */
+        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        MoneyWiseIcons.buildOptionButton(theClosedState);
+
         theFieldSet.addFieldElement(Loan.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
-        // theFieldSet.addFieldElement(Loan.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
+        theFieldSet.addFieldElement(Loan.FIELD_CLOSED, Boolean.class, myClosedButton);
+
+        /* Create the main panel */
+        JEnablePanel myPanel = new JEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -132,10 +177,66 @@ public class LoanPanel
         theFieldSet.addFieldToPanel(Loan.FIELD_CATEGORY, this);
         theFieldSet.addFieldToPanel(Loan.FIELD_PARENT, this);
         theFieldSet.addFieldToPanel(Loan.FIELD_CURRENCY, this);
+        theFieldSet.addFieldToPanel(Loan.FIELD_CLOSED, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
 
-        /* Create the listener */
-        new AccountListener();
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build extras subPanel.
+     * @return the panel
+     */
+    private JPanel buildXtrasPanel() {
+        /* Allocate fields */
+        JTextField mySortCode = new JTextField();
+        JTextField myAccount = new JTextField();
+        JTextField myReference = new JTextField();
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
+
+        /* Create the extras panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the extras panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
+        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
+        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Notes subPanel.
+     * @return the panel
+     */
+    private JPanel buildNotesPanel() {
+        /* Allocate fields */
+        JTextArea myNotes = new JTextArea();
+        JScrollPane myScroll = new JScrollPane(myNotes);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+
+        /* Create the notes panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the notes panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     @Override
@@ -166,6 +267,27 @@ public class LoanPanel
         } else if (myField.equals(Loan.FIELD_CURRENCY)) {
             /* Update the Currency */
             myLoan.setLoanCurrency(pUpdate.getValue(AccountCurrency.class));
+        } else if (myField.equals(Loan.FIELD_CLOSED)) {
+            /* Update the Closed indication */
+            myLoan.setClosed(pUpdate.getValue(Boolean.class));
+        } else {
+            /* Switch on the field */
+            switch (LoanInfoSet.getClassForField(myField)) {
+                case SORTCODE:
+                    myLoan.setSortCode(pUpdate.getCharArray());
+                    break;
+                case ACCOUNT:
+                    myLoan.setAccount(pUpdate.getCharArray());
+                    break;
+                case REFERENCE:
+                    myLoan.setReference(pUpdate.getCharArray());
+                    break;
+                case NOTES:
+                    myLoan.setNotes(pUpdate.getCharArray());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

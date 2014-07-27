@@ -25,6 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -39,11 +43,17 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
@@ -96,7 +106,7 @@ public class SecurityPanel
     /**
      * Closed Button Field.
      */
-    // private final JButton theClosedButton;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * Constructor.
@@ -115,17 +125,48 @@ public class SecurityPanel
         theTypeButton = new JScrollButton<SecurityType>();
         theParentButton = new JScrollButton<Payee>();
         theCurrencyButton = new JScrollButton<AccountCurrency>();
-        // theClosedButton = new JButton();
+
+        /* Set closed button */
+        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
+
+        /* Create a tabbedPane */
+        JTabbedPane myTabs = new JTabbedPane();
+        add(myTabs);
+
+        /* Build the main panel */
+        JPanel myPanel = buildMainPanel();
+        myTabs.add("Main", myPanel);
+
+        /* Build the notes panel */
+        myPanel = buildNotesPanel();
+        myTabs.add("Notes", myPanel);
+
+        /* Create the listener */
+        new AccountListener();
+    }
+
+    /**
+     * Build Main subPanel.
+     * @return the panel
+     */
+    private JPanel buildMainPanel() {
+        /* Build the closed button state */
+        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        MoneyWiseIcons.buildOptionButton(theClosedState);
+
         theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, theSymbol);
         theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
         theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
         theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AccountCurrency.class, theCurrencyButton);
-        // theFieldSet.addFieldElement(Security.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
+        theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
+
+        /* Create the main panel */
+        JEnablePanel myPanel = new JEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -136,10 +177,36 @@ public class SecurityPanel
         theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, this);
         theFieldSet.addFieldToPanel(Security.FIELD_PARENT, this);
         theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, this);
+        theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
 
-        /* Create the listener */
-        new AccountListener();
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Notes subPanel.
+     * @return the panel
+     */
+    private JPanel buildNotesPanel() {
+        /* Allocate fields */
+        JTextArea myNotes = new JTextArea();
+        JScrollPane myScroll = new JScrollPane(myNotes);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+
+        /* Create the notes panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the notes panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     @Override
@@ -173,6 +240,18 @@ public class SecurityPanel
         } else if (myField.equals(Security.FIELD_CURRENCY)) {
             /* Update the Currency */
             mySecurity.setSecurityCurrency(pUpdate.getValue(AccountCurrency.class));
+        } else if (myField.equals(Security.FIELD_CLOSED)) {
+            /* Update the Closed indication */
+            mySecurity.setClosed(pUpdate.getValue(Boolean.class));
+        } else {
+            /* Switch on the field */
+            switch (SecurityInfoSet.getClassForField(myField)) {
+                case NOTES:
+                    mySecurity.setNotes(pUpdate.getCharArray());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

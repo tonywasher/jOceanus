@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -60,6 +58,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -70,8 +69,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.JScrollMenu;
 
@@ -84,16 +81,6 @@ public class DepositTable
      * Serial Id.
      */
     private static final long serialVersionUID = -3345823820472643546L;
-
-    /**
-     * The locked icon.
-     */
-    protected static final Icon ICON_LOCKED = resizeImage(new ImageIcon(DepositTable.class.getResource("AccountLocked.png")));
-
-    /**
-     * The lockable icon.
-     */
-    protected static final Icon ICON_LOCKABLE = resizeImage(new ImageIcon(DepositTable.class.getResource("AccountLockable.png")));
 
     /**
      * Resource Bundle.
@@ -548,21 +535,9 @@ public class DepositTable
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
-            /* Configure the closed iconButton */
-            ComplexIconButtonState<Boolean, Boolean> myState = theClosedIconEditor.getComplexState();
-            myState.setState(Boolean.TRUE);
-            myState.setIconForValue(Boolean.FALSE, ICON_LOCKABLE);
-            myState.setIconForValue(Boolean.TRUE, ICON_LOCKED);
-            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
-            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-            myState.setState(Boolean.FALSE);
-            myState.setIconForValue(Boolean.TRUE, ICON_LOCKED);
-
-            /* Configure the status iconButton */
-            DefaultIconButtonState<Boolean> myStatusState = theStatusIconEditor.getState();
-            myStatusState.setIconForValue(Boolean.FALSE, ICON_DELETE);
-            myStatusState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
-            myStatusState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
+            /* Configure the iconButtons */
+            MoneyWiseIcons.buildLockedButton(theClosedIconEditor.getComplexState());
+            MoneyWiseIcons.buildStatusButton(theStatusIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));

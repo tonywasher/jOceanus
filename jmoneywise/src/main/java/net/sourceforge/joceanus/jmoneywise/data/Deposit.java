@@ -823,6 +823,22 @@ public class Deposit
     }
 
     /**
+     * Set taxFree indication.
+     * @param pTaxFree true/false
+     */
+    public void setTaxFree(final Boolean pTaxFree) {
+        setValueTaxFree(pTaxFree);
+    }
+
+    /**
+     * Set gross indication.
+     * @param pGross true/false
+     */
+    public void setGross(final Boolean pGross) {
+        setValueGross(pGross);
+    }
+
+    /**
      * Set a new Maturity.
      * @param pMaturity the new maturity
      * @throws JOceanusException on error

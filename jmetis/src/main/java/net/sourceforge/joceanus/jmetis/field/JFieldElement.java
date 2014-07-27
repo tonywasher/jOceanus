@@ -35,6 +35,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
@@ -183,13 +184,43 @@ public class JFieldElement<T extends JFieldSetItem> {
      * @param <I> ScrollButton element type
      * @param pFieldSet the field set
      * @param pField the field id
-     * @param pClass the class of the combo box elements
+     * @param pClass the class of the button elements
      * @param pButton the scroll button
      */
     protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
                                 final JDataField pField,
                                 final Class<I> pClass,
                                 final JScrollButton<I> pButton) {
+        /* Store parameters */
+        theFieldSet = pFieldSet;
+        theField = pField;
+
+        /* Create the label */
+        String myName = pField.getName();
+        theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
+
+        /* Create the component */
+        theComponent = JFieldComponent.deriveComponent(this, pButton, pClass);
+
+        /* Access the model */
+        theModel = theComponent.getModel();
+
+        /* Create card panel */
+        theCardPanel = new JFieldCardPanel();
+    }
+
+    /**
+     * Constructor.
+     * @param <I> IconButton element type
+     * @param pFieldSet the field set
+     * @param pField the field id
+     * @param pClass the class of the button elements
+     * @param pButton the icon button
+     */
+    protected <I> JFieldElement(final JFieldSet<T> pFieldSet,
+                                final JDataField pField,
+                                final Class<I> pClass,
+                                final JIconButton<I> pButton) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;

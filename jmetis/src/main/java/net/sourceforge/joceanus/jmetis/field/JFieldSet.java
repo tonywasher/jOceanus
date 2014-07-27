@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.JPrice;
 import net.sourceforge.joceanus.jtethys.decimal.JRate;
 import net.sourceforge.joceanus.jtethys.decimal.JUnits;
 import net.sourceforge.joceanus.jtethys.event.JEventObject;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
@@ -143,6 +144,23 @@ public class JFieldSet<T extends JFieldSetItem>
     public <I> void addFieldElement(final JDataField pField,
                                     final Class<I> pClass,
                                     final JScrollButton<I> pButton) {
+        /* Create the field */
+        JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
+
+        /* Add to the map */
+        theMap.put(pField, myElement);
+    }
+
+    /**
+     * Add Element to field set.
+     * @param <I> ComboBox element type
+     * @param pField the field id
+     * @param pClass the class of the value
+     * @param pButton the button
+     */
+    public <I> void addFieldElement(final JDataField pField,
+                                    final Class<I> pClass,
+                                    final JIconButton<I> pButton) {
         /* Create the field */
         JFieldElement<T> myElement = new JFieldElement<T>(this, pField, pClass, pButton);
 

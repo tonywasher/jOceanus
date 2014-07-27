@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
@@ -218,7 +219,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
     /**
      * Derive component.
-     * @param <I> ComboBox element type
+     * @param <I> ScrollButton element type
      * @param <X> Data item type
      * @param pElement the element
      * @param pButton the button
@@ -234,7 +235,28 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
 
         /* Allocate component */
         JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
-        return new JFieldButton<I, X>(pButton, myModel);
+        return new JFieldScrollButton<I, X>(pButton, myModel);
+    }
+
+    /**
+     * Derive component.
+     * @param <I> IconButton element type
+     * @param <X> Data item type
+     * @param pElement the element
+     * @param pButton the button
+     * @param pClass the class of the button elements.
+     * @return the field component
+     */
+    protected static <I, X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
+                                                                                     final JIconButton<I> pButton,
+                                                                                     final Class<I> pClass) {
+        /* Obtain FieldSet and Field */
+        JFieldSet<X> mySet = pElement.getFieldSet();
+        JDataField myField = pElement.getField();
+
+        /* Allocate component */
+        JModelObject<I, X> myModel = new JModelObject<I, X>(mySet, myField, pClass);
+        return new JFieldIconButton<I, X>(pButton, myModel);
     }
 
     /**
@@ -691,11 +713,11 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
     }
 
     /**
-     * The JButton implementation.
+     * The JScrollButton implementation.
      * @param <I> Button element type
      * @param <T> the Data Item type
      */
-    private static class JFieldButton<I, T extends JFieldSetItem>
+    private static class JFieldScrollButton<I, T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -712,8 +734,8 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected JFieldButton(final JScrollButton<I> pComponent,
-                               final JModelObject<I, T> pModel) {
+        protected JFieldScrollButton(final JScrollButton<I> pComponent,
+                                     final JModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -734,6 +756,66 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
             /* Display it */
             theComponent.setValue(myValue);
             getReadOnlyLabel().setText(theComponent.getText());
+        }
+
+        /**
+         * BooleanListener class.
+         */
+        private final class ButtonListener
+                implements PropertyChangeListener {
+
+            @Override
+            public void propertyChange(final PropertyChangeEvent evt) {
+                /* Record the value */
+                theModel.processValue(theComponent.getValue());
+            }
+        }
+    }
+
+    /**
+     * The JIconButton implementation.
+     * @param <I> Button element type
+     * @param <T> the Data Item type
+     */
+    private static class JFieldIconButton<I, T extends JFieldSetItem>
+            extends JFieldComponent<T> {
+        /**
+         * The Component.
+         */
+        private final JIconButton<I> theComponent;
+
+        /**
+         * The DataModel.
+         */
+        private final JModelObject<I, T> theModel;
+
+        /**
+         * Constructor.
+         * @param pComponent the component.
+         * @param pModel the data model.
+         */
+        protected JFieldIconButton(final JIconButton<I> pComponent,
+                                   final JModelObject<I, T> pModel) {
+            /* Call super-constructor */
+            super(pComponent, pModel);
+
+            /* Store parameters */
+            theComponent = pComponent;
+            theModel = pModel;
+
+            /* Create the listener and attach it */
+            ButtonListener myListener = new ButtonListener();
+            theComponent.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
+        }
+
+        @Override
+        protected void displayField() {
+            /* Access value from model */
+            I myValue = theModel.getValue();
+
+            /* Display it */
+            theComponent.setValue(myValue);
+            getReadOnlyLabel().setIcon(theComponent.getIcon());
         }
 
         /**

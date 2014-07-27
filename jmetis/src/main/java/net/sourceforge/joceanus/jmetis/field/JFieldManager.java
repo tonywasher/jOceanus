@@ -264,6 +264,7 @@ public class JFieldManager {
 
     /**
      * Allocate an IconButtonRenderer object.
+     * @param <T> the type of the object
      * @param pEditor the cell editor
      * @return the icon renderer
      */

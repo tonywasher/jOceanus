@@ -155,7 +155,7 @@ public class JIconButton<T>
         private JIconButton<T> theButton;
 
         /**
-         * Declare button
+         * Declare button.
          * @param pButton the button
          */
         private void declareButton(final JIconButton<T> pButton) {
@@ -357,13 +357,35 @@ public class JIconButton<T>
             theState = pState;
             setMapSet(mySet);
         }
+
+        /**
+         * Obtain state.
+         * @return the state
+         */
+        public S getState() {
+            return theState;
+        }
+
+        /**
+         * Obtain icon for explicit value and state.
+         * @param pValue the value
+         * @param pState the state
+         * @return the icon
+         */
+        public Icon getIconForValueAndState(final Object pValue,
+                                            final S pState) {
+            /* Look for state */
+            IconMapSet<T> mySet = theStateMap.get(pState);
+            Map<T, Icon> myMap = mySet.getIconMap();
+            return myMap.get(pValue);
+        }
     }
 
     /**
      * MapSet.
      * @param <T> the object type
      */
-    private static class IconMapSet<T> {
+    private static final class IconMapSet<T> {
         /**
          * Value Map.
          */
@@ -390,7 +412,7 @@ public class JIconButton<T>
         }
 
         /**
-         * Obtain the iconMap
+         * Obtain the iconMap.
          * @return the iconMap
          */
         private Map<T, Icon> getIconMap() {
@@ -398,7 +420,7 @@ public class JIconButton<T>
         }
 
         /**
-         * Obtain the toolTipMap
+         * Obtain the toolTipMap.
          * @return the toolTipMap
          */
         private Map<T, String> getToolTipMap() {
@@ -406,8 +428,8 @@ public class JIconButton<T>
         }
 
         /**
-         * Obtain the toolTipMap
-         * @return the toolTipMap
+         * Obtain the valueTipMap.
+         * @return the valueTipMap
          */
         private Map<T, T> getValueMap() {
             return theValueMap;

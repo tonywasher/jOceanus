@@ -28,8 +28,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -52,7 +50,6 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
-import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
@@ -75,11 +72,6 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticDataTable.class.getName());
-
-    /**
-     * The disabled icon.
-     */
-    private static final Icon ICON_DISABLED = resizeImage(new ImageIcon(StaticDataTable.class.getResource("Disabled.png")));
 
     /**
      * Class column title.
@@ -580,18 +572,9 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
             theEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theEnabledIconEditor);
 
-            /* Configure the status iconButton */
-            DefaultIconButtonState<Boolean> myState = theStatusIconEditor.getState();
-            myState.setIconForValue(Boolean.FALSE, ICON_DELETE);
-            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
-            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-
-            /* Configure the enabled iconButton */
-            myState = theEnabledIconEditor.getState();
-            myState.setIconForValue(Boolean.FALSE, ICON_DISABLED);
-            myState.setIconForValue(Boolean.TRUE, ICON_ACTIVE);
-            myState.setNewValueForValue(Boolean.FALSE, Boolean.TRUE);
-            myState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+            /* Configure the iconButtons */
+            PrometheusIcons.buildStatusButton(theStatusIconEditor.getState());
+            PrometheusIcons.buildEnabledButton(theEnabledIconEditor.getState());
 
             /* Create and declare the columns */
             declareColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, theStringEditor));

@@ -25,6 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -38,7 +42,13 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
@@ -76,7 +86,12 @@ public class PortfolioPanel
     /**
      * Closed Button Field.
      */
-    // private final JButton theClosedButton;
+    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+
+    /**
+     * TaxFree Button Field.
+     */
+    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
      * Constructor.
@@ -92,14 +107,53 @@ public class PortfolioPanel
 
         /* Create the buttons */
         theHoldingButton = new JScrollButton<Deposit>();
-        // theClosedButton = new JButton();
+
+        /* Set button states */
+        theClosedState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
+        theTaxFreeState = new ComplexIconButtonState<Boolean, Boolean>(Boolean.FALSE);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
+
+        /* Create a tabbedPane */
+        JTabbedPane myTabs = new JTabbedPane();
+        add(myTabs);
+
+        /* Build the main panel */
+        JPanel myPanel = buildMainPanel();
+        myTabs.add("Main", myPanel);
+
+        /* Build the detail panel */
+        myPanel = buildXtrasPanel();
+        myTabs.add("Details", myPanel);
+
+        /* Build the notes panel */
+        myPanel = buildNotesPanel();
+        myTabs.add("Notes", myPanel);
+
+        /* Create the listener */
+        new AccountListener();
+    }
+
+    /**
+     * Build Main subPanel.
+     * @return the panel
+     */
+    private JPanel buildMainPanel() {
+        /* Build the button states */
+        JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
+        MoneyWiseIcons.buildOptionButton(theClosedState);
+        JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
+        MoneyWiseIcons.buildOptionButton(theTaxFreeState);
+
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Portfolio.FIELD_HOLDING, Deposit.class, theHoldingButton);
-        // theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, this, Boolean.class, myClosedLabel, theClosedButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_TAXFREE, Boolean.class, myTaxFreeButton);
+
+        /* Create the main panel */
+        JEnablePanel myPanel = new JEnablePanel();
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
@@ -107,10 +161,79 @@ public class PortfolioPanel
         theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, this);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, this);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_HOLDING, this);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, this);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, this);
         SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
 
-        /* Create the listener */
-        new AccountListener();
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build extras subPanel.
+     * @return the panel
+     */
+    private JPanel buildXtrasPanel() {
+        /* Allocate fields */
+        JTextField mySortCode = new JTextField();
+        JTextField myAccount = new JTextField();
+        JTextField myReference = new JTextField();
+        JTextField myWebSite = new JTextField();
+        JTextField myCustNo = new JTextField();
+        JTextField myUserId = new JTextField();
+        JTextField myPassWord = new JTextField();
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), DataType.CHARARRAY, myReference);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), DataType.CHARARRAY, myWebSite);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), DataType.CHARARRAY, myCustNo);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), DataType.CHARARRAY, myUserId);
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), DataType.CHARARRAY, myPassWord);
+
+        /* Create the extras panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the extras panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Notes subPanel.
+     * @return the panel
+     */
+    private JPanel buildNotesPanel() {
+        /* Allocate fields */
+        JTextArea myNotes = new JTextArea();
+        JScrollPane myScroll = new JScrollPane(myNotes);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), DataType.CHARARRAY, myScroll);
+
+        /* Create the notes panel */
+        JEnablePanel myPanel = new JEnablePanel();
+
+        /* Layout the notes panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     @Override
@@ -135,6 +258,42 @@ public class PortfolioPanel
         } else if (myField.equals(Portfolio.FIELD_HOLDING)) {
             /* Update the Holding */
             myPortfolio.setHolding(pUpdate.getValue(Deposit.class));
+        } else if (myField.equals(Portfolio.FIELD_CLOSED)) {
+            /* Update the Closed indication */
+            myPortfolio.setClosed(pUpdate.getValue(Boolean.class));
+        } else if (myField.equals(Portfolio.FIELD_TAXFREE)) {
+            /* Update the taxFree indication */
+            myPortfolio.setTaxFree(pUpdate.getValue(Boolean.class));
+        } else {
+            /* Switch on the field */
+            switch (PortfolioInfoSet.getClassForField(myField)) {
+                case SORTCODE:
+                    myPortfolio.setSortCode(pUpdate.getCharArray());
+                    break;
+                case ACCOUNT:
+                    myPortfolio.setAccount(pUpdate.getCharArray());
+                    break;
+                case REFERENCE:
+                    myPortfolio.setReference(pUpdate.getCharArray());
+                    break;
+                case WEBSITE:
+                    myPortfolio.setWebSite(pUpdate.getCharArray());
+                    break;
+                case CUSTOMERNO:
+                    myPortfolio.setCustNo(pUpdate.getCharArray());
+                    break;
+                case USERID:
+                    myPortfolio.setUserId(pUpdate.getCharArray());
+                    break;
+                case PASSWORD:
+                    myPortfolio.setPassword(pUpdate.getCharArray());
+                    break;
+                case NOTES:
+                    myPortfolio.setNotes(pUpdate.getCharArray());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
