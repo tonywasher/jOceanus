@@ -160,7 +160,7 @@ public class DepositPanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new DepositListener();
     }
 
     /**
@@ -269,8 +269,19 @@ public class DepositPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Deposit.FIELD_CLOSED, false);
+        /* Access the item */
+        Deposit myDeposit = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean bShowClosed = myDeposit.isClosed() || !myDeposit.isRelevant();
+        theFieldSet.setVisibility(Deposit.FIELD_CLOSED, bShowClosed);
+        theClosedState.setState(bShowClosed);
+
+        /* Currency, Gross and TaxFree status cannot be changed if the item is active */
+        boolean bIsActive = myDeposit.isActive();
+        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, !bIsActive);
+        theFieldSet.setEditable(Deposit.FIELD_GROSS, !bIsActive);
+        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, !bIsActive);
     }
 
     @Override
@@ -332,9 +343,9 @@ public class DepositPanel
     }
 
     /**
-     * Account Listener.
+     * Deposit Listener.
      */
-    private final class AccountListener
+    private final class DepositListener
             implements ChangeListener {
         /**
          * The Category Menu Builder.
@@ -354,7 +365,7 @@ public class DepositPanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private DepositListener() {
             /* Access the MenuBuilders */
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
@@ -402,8 +413,9 @@ public class DepositPanel
             while (myIterator.hasNext()) {
                 DepositCategory myCategory = myIterator.next();
 
-                /* Only process parent items */
-                if (!myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
+                /* Ignore deleted or non-parent */
+                boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 
@@ -418,8 +430,9 @@ public class DepositPanel
             while (myIterator.hasNext()) {
                 DepositCategory myCategory = myIterator.next();
 
-                /* Only process low-level items */
-                if (myCategory.isCategoryClass(DepositCategoryClass.PARENT)) {
+                /* Ignore deleted or parent */
+                boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(DepositCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 

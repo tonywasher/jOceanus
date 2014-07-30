@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
@@ -128,7 +129,7 @@ public class PayeePanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new PayeeListener();
     }
 
     /**
@@ -230,8 +231,17 @@ public class PayeePanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Payee.FIELD_CLOSED, false);
+        /* Access the item */
+        Payee myPayee = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean bShowClosed = myPayee.isClosed() || !myPayee.isRelevant();
+        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+        theClosedState.setState(bShowClosed);
+
+        /* Payee type cannot be changed if the item is active */
+        boolean bIsActive = myPayee.isActive();
+        theFieldSet.setEditable(Payee.FIELD_PAYEETYPE, !bIsActive);
     }
 
     @Override
@@ -287,9 +297,9 @@ public class PayeePanel
     }
 
     /**
-     * Account Listener.
+     * Payee Listener.
      */
-    private final class AccountListener
+    private final class PayeeListener
             implements ChangeListener {
         /**
          * The PayeeType Menu Builder.
@@ -299,7 +309,7 @@ public class PayeePanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private PayeeListener() {
             /* Access the MenuBuilders */
             theTypeMenuBuilder = theTypeButton.getMenuBuilder();
             theTypeMenuBuilder.addChangeListener(this);

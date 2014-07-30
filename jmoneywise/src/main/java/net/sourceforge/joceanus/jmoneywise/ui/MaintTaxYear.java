@@ -993,7 +993,8 @@ public class MaintTaxYear
                 TaxRegime myRegime = myIterator.next();
 
                 /* Skip regime if not enabled */
-                if (!myRegime.getEnabled()) {
+                boolean bIgnore = myRegime.isDeleted() || !myRegime.getEnabled();
+                if (bIgnore) {
                     continue;
                 }
 

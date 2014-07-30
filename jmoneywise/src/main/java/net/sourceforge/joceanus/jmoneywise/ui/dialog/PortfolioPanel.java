@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -132,7 +133,7 @@ public class PortfolioPanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new PortfolioListener();
     }
 
     /**
@@ -238,8 +239,18 @@ public class PortfolioPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Portfolio.FIELD_CLOSED, false);
+        /* Access the item */
+        Portfolio myPortfolio = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean bShowClosed = myPortfolio.isClosed() || !myPortfolio.isRelevant();
+        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+        theClosedState.setState(bShowClosed);
+
+        /* Holding and TaxFree status cannot be changed if the item is active */
+        boolean bIsActive = myPortfolio.isActive();
+        theFieldSet.setEditable(Portfolio.FIELD_HOLDING, !bIsActive);
+        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, !bIsActive);
     }
 
     @Override
@@ -298,9 +309,9 @@ public class PortfolioPanel
     }
 
     /**
-     * Account Listener.
+     * Portfolio Listener.
      */
-    private final class AccountListener
+    private final class PortfolioListener
             implements ChangeListener {
         /**
          * The Holding Menu Builder.
@@ -310,7 +321,7 @@ public class PortfolioPanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private PortfolioListener() {
             /* Access the MenuBuilders */
             theHoldingMenuBuilder = theHoldingButton.getMenuBuilder();
             theHoldingMenuBuilder.addChangeListener(this);

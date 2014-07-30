@@ -147,7 +147,7 @@ public class LoanPanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new LoanListener();
     }
 
     /**
@@ -241,8 +241,17 @@ public class LoanPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Loan.FIELD_CLOSED, false);
+        /* Access the item */
+        Loan myLoan = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean bShowClosed = myLoan.isClosed() || !myLoan.isRelevant();
+        theFieldSet.setVisibility(Loan.FIELD_CLOSED, bShowClosed);
+        theClosedState.setState(bShowClosed);
+
+        /* Currency cannot be changed if the item is active */
+        boolean bIsActive = myLoan.isActive();
+        theFieldSet.setEditable(Loan.FIELD_CURRENCY, !bIsActive);
     }
 
     @Override
@@ -292,9 +301,9 @@ public class LoanPanel
     }
 
     /**
-     * Account Listener.
+     * Loan Listener.
      */
-    private final class AccountListener
+    private final class LoanListener
             implements ChangeListener {
         /**
          * The Category Menu Builder.
@@ -314,7 +323,7 @@ public class LoanPanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private LoanListener() {
             /* Access the MenuBuilders */
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
@@ -362,8 +371,9 @@ public class LoanPanel
             while (myIterator.hasNext()) {
                 LoanCategory myCategory = myIterator.next();
 
-                /* Only process parent items */
-                if (!myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                /* Ignore deleted or non-parent */
+                boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(LoanCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 
@@ -378,8 +388,9 @@ public class LoanPanel
             while (myIterator.hasNext()) {
                 LoanCategory myCategory = myIterator.next();
 
-                /* Only process low-level items */
-                if (myCategory.isCategoryClass(LoanCategoryClass.PARENT)) {
+                /* Ignore deleted or parent */
+                boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 

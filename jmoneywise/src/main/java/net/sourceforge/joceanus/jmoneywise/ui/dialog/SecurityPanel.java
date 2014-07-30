@@ -145,7 +145,7 @@ public class SecurityPanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new SecurityListener();
     }
 
     /**
@@ -211,8 +211,23 @@ public class SecurityPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Security.FIELD_CLOSED, false);
+        /* Access the item */
+        Security mySecurity = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean bShowClosed = mySecurity.isClosed() || !mySecurity.isRelevant();
+        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = mySecurity.isClosed()
+                                                   ? !mySecurity.getParent().isClosed()
+                                                   : !mySecurity.isRelevant();
+        theClosedState.setState(bEditClosed);
+
+        /* Security type and currency cannot be changed if the item is active */
+        boolean bIsActive = mySecurity.isActive();
+        theFieldSet.setEditable(Security.FIELD_SECTYPE, !bIsActive);
+        theFieldSet.setEditable(Security.FIELD_CURRENCY, !bIsActive);
     }
 
     @Override
@@ -256,9 +271,9 @@ public class SecurityPanel
     }
 
     /**
-     * Account Listener.
+     * Security Listener.
      */
-    private final class AccountListener
+    private final class SecurityListener
             implements ChangeListener {
         /**
          * The SecurityType Menu Builder.
@@ -278,7 +293,7 @@ public class SecurityPanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private SecurityListener() {
             /* Access the MenuBuilders */
             theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
             theSecTypeMenuBuilder.addChangeListener(this);

@@ -156,7 +156,7 @@ public class CashPanel
         myTabs.add("Notes", myPanel);
 
         /* Create the listener */
-        new AccountListener();
+        new CashListener();
     }
 
     /**
@@ -242,8 +242,29 @@ public class CashPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Set visibility */
-        theFieldSet.setVisibility(Cash.FIELD_CLOSED, false);
+        /* Access the item */
+        Cash myCash = getItem();
+
+        /* Determine whether the closed button should be visible */
+        boolean isClosed = myCash.isClosed();
+        boolean bShowClosed = isClosed || !myCash.isRelevant();
+        theFieldSet.setVisibility(Cash.FIELD_CLOSED, bShowClosed);
+        theClosedState.setState(bShowClosed);
+
+        /* AutoExpense/Payee cannot be changed for closed item */
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), !isClosed);
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), !isClosed);
+
+        /* Currency cannot be changed if the item is active */
+        boolean bIsActive = myCash.isActive();
+        theFieldSet.setEditable(Cash.FIELD_CURRENCY, !bIsActive);
+
+        /* Currency is hidden if we are autoExpense */
+        boolean isAutoExpense = myCash.isAutoExpense();
+        theFieldSet.setVisibility(Cash.FIELD_CURRENCY, !isAutoExpense);
+
+        /* AutoPayee is hidden unless are autoExpense */
+        theFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), isAutoExpense);
     }
 
     @Override
@@ -287,9 +308,9 @@ public class CashPanel
     }
 
     /**
-     * Account Listener.
+     * Cash Listener.
      */
-    private final class AccountListener
+    private final class CashListener
             implements ChangeListener {
         /**
          * The Category Menu Builder.
@@ -314,7 +335,7 @@ public class CashPanel
         /**
          * Constructor.
          */
-        private AccountListener() {
+        private CashListener() {
             /* Access the MenuBuilders */
             theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
@@ -366,8 +387,9 @@ public class CashPanel
             while (myIterator.hasNext()) {
                 CashCategory myCategory = myIterator.next();
 
-                /* Only process parent items */
-                if (!myCategory.isCategoryClass(CashCategoryClass.PARENT)) {
+                /* Ignore deleted or non-parent */
+                boolean bIgnore = myCategory.isDeleted() || !myCategory.isCategoryClass(CashCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 
@@ -382,8 +404,9 @@ public class CashPanel
             while (myIterator.hasNext()) {
                 CashCategory myCategory = myIterator.next();
 
-                /* Only process low-level items */
-                if (myCategory.isCategoryClass(CashCategoryClass.PARENT)) {
+                /* Ignore deleted or parent */
+                boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(CashCategoryClass.PARENT);
+                if (bIgnore) {
                     continue;
                 }
 
@@ -475,7 +498,7 @@ public class CashPanel
         }
 
         /**
-         * Build the parent list for the item.
+         * Build the payee list for the item.
          */
         private void buildAutoPayeeMenu() {
             /* Clear the menu */
