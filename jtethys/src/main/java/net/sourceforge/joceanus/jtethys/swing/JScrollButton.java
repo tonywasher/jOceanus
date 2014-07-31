@@ -94,6 +94,13 @@ public class JScrollButton<T>
     }
 
     /**
+     * Refresh Text from item.
+     */
+    public void refreshText() {
+        storeValue(theValue);
+    }
+
+    /**
      * Set the value.
      * @param pValue the value to set.
      * @param pName the display name

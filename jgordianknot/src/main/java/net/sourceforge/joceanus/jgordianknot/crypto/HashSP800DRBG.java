@@ -65,22 +65,26 @@ public class HashSP800DRBG
     /**
      * The Initial Seed Id.
      */
-    private static final byte[] INIT_ID = { 0 };
+    private static final byte[] INIT_ID =
+    { 0 };
 
     /**
      * The ReSeed Id.
      */
-    private static final byte[] RESEED_ID = { 1 };
+    private static final byte[] RESEED_ID =
+    { 1 };
 
     /**
      * The Extra bytes Id.
      */
-    private static final byte[] XTRA_ID = { 2 };
+    private static final byte[] XTRA_ID =
+    { 2 };
 
     /**
      * The ReHash Id.
      */
-    private static final byte[] REHASH_ID = { 3 };
+    private static final byte[] REHASH_ID =
+    { 3 };
 
     /**
      * The Seed length.
@@ -302,5 +306,10 @@ public class HashSP800DRBG
 
         /* Return byte array counter */
         return new ByteArrayInteger(myOutput);
+    }
+
+    @Override
+    public int getBlockSize() {
+        return theDigest.getDigestLength();
     }
 }
