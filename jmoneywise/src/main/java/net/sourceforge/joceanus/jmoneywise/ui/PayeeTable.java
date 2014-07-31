@@ -192,8 +192,8 @@ public class PayeeTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        thePayeeEntry = theUpdateSet.registerClass(Payee.class);
-        theInfoEntry = theUpdateSet.registerClass(PayeeInfo.class);
+        thePayeeEntry = theUpdateSet.registerType(MoneyWiseDataType.PAYEE);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.PAYEEINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 

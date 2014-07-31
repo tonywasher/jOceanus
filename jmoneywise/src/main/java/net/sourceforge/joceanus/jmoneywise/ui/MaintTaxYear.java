@@ -238,9 +238,9 @@ public class MaintTaxYear
         JFieldManager myFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theYearsEntry = theUpdateSet.registerClass(TaxYear.class);
-        theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theYearsEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEAR);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TAXYEARINFO);
 
         /* Create the New FieldSet */
         theFieldSet = new JFieldSet<TaxYear>(myFieldMgr);

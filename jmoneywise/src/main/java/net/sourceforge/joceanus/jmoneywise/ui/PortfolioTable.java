@@ -187,8 +187,8 @@ public class PortfolioTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        thePortfolioEntry = theUpdateSet.registerClass(Portfolio.class);
-        theInfoEntry = theUpdateSet.registerClass(PortfolioInfo.class);
+        thePortfolioEntry = theUpdateSet.registerType(MoneyWiseDataType.PORTFOLIO);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.PORTFOLIOINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -228,12 +228,14 @@ public class PortfolioTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    public void refreshData() {
+    public void refreshData() throws JOceanusException {
         /* Get the Portfolios edit list */
         MoneyWiseData myData = theView.getData();
         PortfolioList myPortfolios = myData.getPortfolios();
         thePortfolios = myPortfolios.deriveEditList();
+        thePortfolios.resolveUpdateSetLinks(theUpdateSet);
         thePortfolioEntry.setDataList(thePortfolios);
         PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
         theInfoEntry.setDataList(myInfo);
@@ -674,8 +676,8 @@ public class PortfolioTable
                 Deposit myCurr = myPortfolio.getHolding();
                 JMenuItem myActive = null;
 
-                /* We should use the update payee list */
-                DepositList myDeposits = DepositList.class.cast(theUpdateSet.findClass(Deposit.class));
+                /* We should use the update deposit list */
+                DepositList myDeposits = theUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
                 /* Loop through the Deposits */
                 Iterator<Deposit> myIterator = myDeposits.iterator();

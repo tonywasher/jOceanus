@@ -215,8 +215,8 @@ public class LoanTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theLoanEntry = theUpdateSet.registerClass(Loan.class);
-        theInfoEntry = theUpdateSet.registerClass(LoanInfo.class);
+        theLoanEntry = theUpdateSet.registerType(MoneyWiseDataType.LOAN);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.LOANINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -255,8 +255,9 @@ public class LoanTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    public void refreshData() {
+    public void refreshData() throws JOceanusException {
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theCurrencies = myData.getAccountCurrencies();
@@ -265,6 +266,7 @@ public class LoanTable
         /* Obtain the loan edit list */
         LoanList myLoans = myData.getLoans();
         theLoans = myLoans.deriveEditList();
+        theLoans.resolveUpdateSetLinks(theUpdateSet);
         theLoanEntry.setDataList(theLoans);
         LoanInfoList myInfo = theLoans.getLoanInfo();
         theInfoEntry.setDataList(myInfo);
@@ -759,7 +761,7 @@ public class LoanTable
                 JMenuItem myActive = null;
 
                 /* We should use the update payee list */
-                PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
                 /* Loop through the Payees */
                 Iterator<Payee> myIterator = myPayees.iterator();

@@ -208,8 +208,8 @@ public class CashTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theCashEntry = theUpdateSet.registerClass(Cash.class);
-        theInfoEntry = theUpdateSet.registerClass(CashInfo.class);
+        theCashEntry = theUpdateSet.registerType(MoneyWiseDataType.CASH);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.CASHINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 

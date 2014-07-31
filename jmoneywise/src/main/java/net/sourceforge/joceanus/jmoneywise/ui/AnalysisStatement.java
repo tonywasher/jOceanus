@@ -240,9 +240,9 @@ public class AnalysisStatement
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theTransEntry = theUpdateSet.registerClass(Transaction.class);
-        theInfoEntry = theUpdateSet.registerClass(TransactionInfo.class);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theTransEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */

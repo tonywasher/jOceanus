@@ -200,8 +200,8 @@ public class PricePoint
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theUpdateEntry = theUpdateSet.registerClass(SpotSecurityPrice.class);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theUpdateEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYPRICE);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */

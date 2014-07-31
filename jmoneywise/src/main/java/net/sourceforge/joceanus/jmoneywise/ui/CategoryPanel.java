@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -178,7 +179,7 @@ public class CategoryPanel
      */
     public CategoryPanel(final View pView) {
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = pView.getDataMgr();
@@ -286,7 +287,7 @@ public class CategoryPanel
     /**
      * Refresh data.
      */
-    protected void refreshData() {
+    protected void refreshData() throws JOceanusException {
         /* Refresh the tables */
         theDepositTable.refreshData();
         theCashTable.refreshData();
@@ -434,10 +435,6 @@ public class CategoryPanel
     protected void setVisibility() {
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
-
-        /* Lock down Selection if required */
-        theSelectButton.setEnabled(!hasUpdates);
-        theFilterCardPanel.setEnabled(!hasUpdates);
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);

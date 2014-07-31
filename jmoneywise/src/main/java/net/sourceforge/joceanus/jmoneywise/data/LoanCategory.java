@@ -207,6 +207,12 @@ public class LoanCategory
     }
 
     @Override
+    public void resolveUpdateSetLinks() throws JOceanusException {
+        /* Resolve parent within list */
+        resolveDataLink(FIELD_PARENT, getList());
+    }
+
+    @Override
     public void setCategoryType(final LoanCategoryType pType) {
         setValueType(pType);
     }

@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.jtethys.JOceanusException;
  */
 public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**
-     * The class.
+     * The data type.
      */
-    private final Class<T> theClass;
+    private final E theDataType;
 
     /**
      * The DataList.
@@ -49,7 +49,7 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
      * @return the name
      */
     public String getName() {
-        return theClass.getSimpleName();
+        return theDataType.toString();
     }
 
     /**
@@ -61,12 +61,12 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Is this entry related to this class.
-     * @param pClass the class to compare
+     * Is this entry related to this dataType.
+     * @param pDataType the dataType to compare
      * @return true/false
      */
-    public boolean isClass(final Class<?> pClass) {
-        return theClass.equals(pClass);
+    public boolean isDataType(final E pDataType) {
+        return theDataType.equals(pDataType);
     }
 
     /**
@@ -79,11 +79,11 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Constructor.
-     * @param pClass the class
+     * @param pDataType the dataType
      */
-    protected UpdateEntry(final Class<T> pClass) {
+    protected UpdateEntry(final E pDataType) {
         /* Store details */
-        theClass = pClass;
+        theDataType = pDataType;
         theDataList = null;
     }
 

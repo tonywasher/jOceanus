@@ -209,8 +209,8 @@ public class SecurityTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theSecurityEntry = theUpdateSet.registerClass(Security.class);
-        theInfoEntry = theUpdateSet.registerClass(SecurityInfo.class);
+        theSecurityEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITY);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -249,8 +249,9 @@ public class SecurityTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    public void refreshData() {
+    public void refreshData() throws JOceanusException {
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theCurrencies = myData.getAccountCurrencies();
@@ -259,6 +260,7 @@ public class SecurityTable
         /* Obtain the security edit list */
         SecurityList mySecurities = myData.getSecurities();
         theSecurities = mySecurities.deriveEditList();
+        theSecurities.resolveUpdateSetLinks(theUpdateSet);
         theSecurityEntry.setDataList(theSecurities);
         SecurityInfoList myInfo = theSecurities.getSecurityInfo();
         theInfoEntry.setDataList(myInfo);
@@ -750,7 +752,7 @@ public class SecurityTable
                 JMenuItem myActive = null;
 
                 /* We should use the update payee list */
-                PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
                 /* Loop through the Payees */
                 Iterator<Payee> myIterator = myPayees.iterator();

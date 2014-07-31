@@ -268,9 +268,9 @@ public class Register
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and Entry */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView);
-        theEventEntry = theUpdateSet.registerClass(Transaction.class);
-        theInfoEntry = theUpdateSet.registerClass(TransactionInfo.class);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
+        theEventEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTION);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSACTIONINFO);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */

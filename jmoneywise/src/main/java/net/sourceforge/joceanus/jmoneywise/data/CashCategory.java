@@ -207,6 +207,12 @@ public class CashCategory
     }
 
     @Override
+    public void resolveUpdateSetLinks() throws JOceanusException {
+        /* Resolve parent within list */
+        resolveDataLink(FIELD_PARENT, getList());
+    }
+
+    @Override
     public void setCategoryType(final CashCategoryType pType) {
         setValueType(pType);
     }

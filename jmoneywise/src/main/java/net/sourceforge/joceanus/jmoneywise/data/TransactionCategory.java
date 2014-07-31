@@ -258,6 +258,12 @@ public final class TransactionCategory
     }
 
     @Override
+    public void resolveUpdateSetLinks() throws JOceanusException {
+        /* Resolve parent within list */
+        resolveDataLink(FIELD_PARENT, getList());
+    }
+
+    @Override
     public void setCategoryType(final TransactionCategoryType pType) {
         setValueType(pType);
     }

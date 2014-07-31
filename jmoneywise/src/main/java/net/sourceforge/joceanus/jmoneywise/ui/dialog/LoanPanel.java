@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
@@ -425,7 +426,7 @@ public class LoanPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            PayeeList myPayees = PayeeList.class.cast(findBaseList(Payee.class));
+            PayeeList myPayees = findBaseDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
             /* Loop through the Payees */
             Iterator<Payee> myIterator = myPayees.iterator();

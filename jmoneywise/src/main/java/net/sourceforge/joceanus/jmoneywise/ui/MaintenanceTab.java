@@ -220,7 +220,7 @@ public class MaintenanceTab
         theTaxYearTab.addActionListener(myListener);
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView);
+        theStatic = new StaticDataPanel<MoneyWiseDataType>(theView, MoneyWiseDataType.class);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
         theStatic.addActionListener(myListener);

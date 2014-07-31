@@ -229,7 +229,7 @@ public class TransactionCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theCategoryEntry = theUpdateSet.registerClass(TransactionCategory.class);
+        theCategoryEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSCATEGORY);
         setUpdateSet(theUpdateSet);
 
         /* Create the table model */
@@ -297,20 +297,22 @@ public class TransactionCategoryTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    public void refreshData() {
+    protected void refreshData() throws JOceanusException {
         /* Get the Category edit list */
         MoneyWiseData myData = theView.getData();
         theCategoryTypes = myData.getTransCategoryTypes();
         TransactionCategoryList myCategories = myData.getTransCategories();
         theCategories = myCategories.deriveEditList();
+        theCategories.resolveUpdateSetLinks();
         theCategoryEntry.setDataList(theCategories);
 
         /* If we have a parent */
         if (theParent != null) {
             /* Update the parent via the edit list */
             theParent = theCategories.findItemById(theParent.getId());
-            theSelectButton.setText(theParent.getName());
+            theSelectButton.setValue(theParent);
         }
 
         /* Notify of the change */
@@ -363,9 +365,11 @@ public class TransactionCategoryTable
      */
     private void selectParent(final TransactionCategory pParent) {
         theParent = pParent;
-        theSelectButton.setText(pParent == null
-                                               ? FILTER_ALL
-                                               : pParent.getName());
+        if (pParent == null) {
+            theSelectButton.setValue(null, FILTER_ALL);
+        } else {
+            theSelectButton.setValue(pParent);
+        }
         theColumns.setColumns();
         theModel.fireNewDataEvents();
     }
@@ -483,6 +487,7 @@ public class TransactionCategoryTable
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
+                theSelectButton.refreshText();
                 theModel.fireNewDataEvents();
             }
 

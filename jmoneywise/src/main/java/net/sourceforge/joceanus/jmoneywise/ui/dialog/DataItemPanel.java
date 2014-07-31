@@ -151,13 +151,18 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
 
     /**
      * Obtain the list for a class in base updateSet.
-     * @param <X> the data type
-     * @param pClass the class
+     * @param <L> the list type
+     * @param <X> the object type
+     * @param pDataType the data type
+     * @param pClass the list class
      * @return the list
      */
-    public <X extends DataItem<MoneyWiseDataType> & Comparable<? super X>> DataList<?, MoneyWiseDataType> findBaseList(final Class<X> pClass) {
+    public <L extends DataList<X, MoneyWiseDataType>, X extends DataItem<MoneyWiseDataType> & Comparable<? super X>>
+            L
+            findBaseDataList(final MoneyWiseDataType pDataType,
+                             final Class<L> pClass) {
         /* Look up the base list */
-        return theUpdateSet.findBaseClass(pClass);
+        return theUpdateSet.findBaseDataList(pDataType, pClass);
     }
 
     /**

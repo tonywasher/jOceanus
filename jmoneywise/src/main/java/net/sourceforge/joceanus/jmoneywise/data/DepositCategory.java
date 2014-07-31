@@ -207,6 +207,12 @@ public class DepositCategory
     }
 
     @Override
+    public void resolveUpdateSetLinks() throws JOceanusException {
+        /* Resolve parent within list */
+        resolveDataLink(FIELD_PARENT, getList());
+    }
+
+    @Override
     public void setCategoryType(final DepositCategoryType pType) {
         setValueType(pType);
     }

@@ -215,8 +215,8 @@ public class DepositTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theDepositEntry = theUpdateSet.registerClass(Deposit.class);
-        theInfoEntry = theUpdateSet.registerClass(DepositInfo.class);
+        theDepositEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSIT);
+        theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITINFO);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -255,8 +255,9 @@ public class DepositTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    public void refreshData() {
+    public void refreshData() throws JOceanusException {
         /* Access the various lists */
         MoneyWiseData myData = theView.getData();
         theCurrencies = myData.getAccountCurrencies();
@@ -265,6 +266,7 @@ public class DepositTable
         /* Get the Deposits edit list */
         DepositList myDeposits = myData.getDeposits();
         theDeposits = myDeposits.deriveEditList();
+        theDeposits.resolveUpdateSetLinks(theUpdateSet);
         theDepositEntry.setDataList(theDeposits);
         DepositInfoList myInfo = theDeposits.getDepositInfo();
         theInfoEntry.setDataList(myInfo);
@@ -759,7 +761,7 @@ public class DepositTable
                 JMenuItem myActive = null;
 
                 /* We should use the update payee list */
-                PayeeList myPayees = PayeeList.class.cast(theUpdateSet.findClass(Payee.class));
+                PayeeList myPayees = theUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
                 /* Loop through the Payees */
                 Iterator<Payee> myIterator = myPayees.iterator();

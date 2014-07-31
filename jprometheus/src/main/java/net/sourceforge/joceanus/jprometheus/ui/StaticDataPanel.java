@@ -178,13 +178,15 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
     /**
      * Constructor.
      * @param pControl the data control
+     * @param pClass the dataType class
      */
-    public StaticDataPanel(final DataControl<?, E> pControl) {
+    public StaticDataPanel(final DataControl<?, E> pControl,
+                           final Class<E> pClass) {
         /* Store control */
         theControl = pControl;
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<E>(pControl);
+        theUpdateSet = new UpdateSet<E>(pControl, pClass);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theControl.getDataMgr();
@@ -274,7 +276,7 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
                                                                                                                               final Class<L> pListClass,
                                                                                                                               final Class<T> pItemClass) {
         /* Create the new panel */
-        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pListClass, pItemClass);
+        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pItemType, pListClass, pItemClass);
 
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);

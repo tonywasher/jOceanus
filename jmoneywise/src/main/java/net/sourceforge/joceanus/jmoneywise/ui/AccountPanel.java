@@ -57,6 +57,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
+import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -178,7 +179,7 @@ public class AccountPanel
      */
     public AccountPanel(final View pView) {
         /* Build the Update set */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView);
+        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pView, MoneyWiseDataType.class);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = pView.getDataMgr();
@@ -283,12 +284,12 @@ public class AccountPanel
      */
     public void showLocked(final boolean pShow) {
         /* Adjust lock settings */
+        thePayeeTable.setShowAll(pShow);
+        theSecurityTable.setShowAll(pShow);
         theDepositTable.setShowAll(pShow);
         theCashTable.setShowAll(pShow);
         theLoanTable.setShowAll(pShow);
         thePortfolioTable.setShowAll(pShow);
-        theSecurityTable.setShowAll(pShow);
-        thePayeeTable.setShowAll(pShow);
     }
 
     /**
@@ -296,24 +297,26 @@ public class AccountPanel
      */
     private void cancelEditing() {
         /* Cancel editing */
+        thePayeeTable.cancelEditing();
+        theSecurityTable.cancelEditing();
         theDepositTable.cancelEditing();
         theCashTable.cancelEditing();
         theLoanTable.cancelEditing();
         thePortfolioTable.cancelEditing();
-        theSecurityTable.cancelEditing();
-        thePayeeTable.cancelEditing();
     }
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
-    protected void refreshData() {
+    protected void refreshData() throws JOceanusException {
+        /* Must be done in dataType order to ensure that links are resolved correctly */
+        thePayeeTable.refreshData();
+        theSecurityTable.refreshData();
         theDepositTable.refreshData();
         theCashTable.refreshData();
         theLoanTable.refreshData();
         thePortfolioTable.refreshData();
-        theSecurityTable.refreshData();
-        thePayeeTable.refreshData();
 
         /* Enable the save buttons */
         theSaveButtons.setEnabled(true);
@@ -459,8 +462,8 @@ public class AccountPanel
         boolean hasUpdates = hasUpdates();
 
         /* Lock down Selection if required */
-        theSelectButton.setEnabled(!hasUpdates);
-        theLockedCheckBox.setEnabled(!hasUpdates);
+        // theSelectButton.setEnabled(!hasUpdates);
+        // theLockedCheckBox.setEnabled(!hasUpdates);
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);

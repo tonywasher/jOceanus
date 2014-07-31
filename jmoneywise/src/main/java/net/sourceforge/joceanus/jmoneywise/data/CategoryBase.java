@@ -504,6 +504,12 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     /**
+     * Resolve links within an update set
+     * @throws JOceanusException
+     */
+    public abstract void resolveUpdateSetLinks() throws JOceanusException;
+
+    /**
      * Resolve subCategory name.
      */
     private void resolveSubCategory() {
@@ -773,6 +779,19 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                     myCurr.setCategoryName(myName, myCurr.getSubCategory());
                     myCurr.checkForHistory();
                 }
+            }
+        }
+
+        /**
+         * Resolve update set links.
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks() throws JOceanusException {
+            /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks();
             }
         }
     }

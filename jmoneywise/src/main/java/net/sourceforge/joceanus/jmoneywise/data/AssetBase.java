@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 
@@ -659,6 +660,15 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
+     * Resolve update Set links
+     * @param pUpdateSet the updateSet
+     * @throws JOceanusException
+     */
+    public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* No action by default */
+    }
+
+    /**
      * Set a new name.
      * @param pName the new name
      * @throws JOceanusException on error
@@ -827,6 +837,20 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Resolve update set links.
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+            /* Loop through the items to find the entry */
+            Iterator<T> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                T myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks(pUpdateSet);
+            }
         }
     }
 }

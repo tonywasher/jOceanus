@@ -184,7 +184,7 @@ public class TransactionTagTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theTransactionTagEntry = theUpdateSet.registerClass(TransactionTag.class);
+        theTransactionTagEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSTAG);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -237,7 +237,7 @@ public class TransactionTagTable
     /**
      * Refresh data.
      */
-    public void refreshData() {
+    protected void refreshData() {
         /* Get the Events edit list */
         MoneyWiseData myData = theView.getData();
         TransactionTagList myTransactionTags = myData.getTransactionTags();

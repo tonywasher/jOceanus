@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.views;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,7 +76,7 @@ public class UpdateSet<E extends Enum<E>>
 
     @Override
     public String formatObject() {
-        return getDataFields().getName() + "(" + theList.size() + ")";
+        return getDataFields().getName() + "(" + theMap.size() + ")";
     }
 
     @Override
@@ -98,9 +97,9 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     /**
-     * The list.
+     * The entry map.
      */
-    private final List<UpdateEntry<?, E>> theList;
+    private final Map<E, UpdateEntry<?, E>> theMap;
 
     /**
      * The base Set.
@@ -120,8 +119,10 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Constructor for an update list.
      * @param pControl the Data Control
+     * @param pClass the enum class
      */
-    public UpdateSet(final DataControl<?, E> pControl) {
+    public UpdateSet(final DataControl<?, E> pControl,
+                     final Class<E> pClass) {
         /* Store the Control */
         theControl = pControl;
 
@@ -131,8 +132,8 @@ public class UpdateSet<E extends Enum<E>>
         /* Create local fields */
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
-        /* Create the list */
-        theList = new ArrayList<UpdateEntry<?, E>>();
+        /* Create the map */
+        theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
     }
 
     /**
@@ -149,84 +150,67 @@ public class UpdateSet<E extends Enum<E>>
         /* Copy local fields */
         theLocalFields = pBase.getDataFields();
 
-        /* Create the list */
-        theList = new ArrayList<UpdateEntry<?, E>>(pBase.theList);
+        /* Create the map */
+        theMap = new EnumMap<E, UpdateEntry<?, E>>(pBase.theMap);
     }
 
     /**
      * Register an entry for a class.
-     * @param <T> the data type
-     * @param pClass the class
+     * @param <T> the object type
+     * @param pDataType the data type
      * @return the list class entry
      */
-    public <T extends DataItem<E> & Comparable<? super T>> UpdateEntry<T, E> registerClass(final Class<T> pClass) {
-        /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
-            /* Access entry */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-
-            /* If we have found the class */
-            if (myEntry.isClass(pClass)) {
-                /* Update list to null and return */
-                myEntry.setDataList(null);
-                return (UpdateEntry<T, E>) myEntry;
-            }
+    public <T extends DataItem<E> & Comparable<? super T>> UpdateEntry<T, E> registerType(final E pDataType) {
+        /* Locate any existing entry */
+        UpdateEntry<?, E> myEntry = theMap.get(pDataType);
+        if (myEntry == null) {
+            /* Not found , so add it */
+            myEntry = new UpdateEntry<T, E>(pDataType);
+            theMap.put(pDataType, myEntry);
+            theLocalFields.declareLocalField(myEntry.getName());
         }
 
-        /* Not found , so add it */
-        UpdateEntry<T, E> myResult = new UpdateEntry<T, E>(pClass);
-        theList.add(myResult);
-        theLocalFields.declareLocalField(myResult.getName());
-        return myResult;
+        /* Update list to null and return */
+        myEntry.setDataList(null);
+        return (UpdateEntry<T, E>) myEntry;
     }
 
     /**
      * Obtain the list for a class.
-     * @param <T> the data type
-     * @param pClass the class
+     * @param <L> the list type
+     * @param <T> the object type
+     * @param pDataType the data type
+     * @param pClass the list class
      * @return the list
      */
-    public <T extends DataItem<E> & Comparable<? super T>> DataList<?, E> findClass(final Class<T> pClass) {
-        /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
-            /* Access entry */
-            UpdateEntry<?, E> myEntry = myIterator.next();
+    public <L extends DataList<T, E>, T extends DataItem<E> & Comparable<? super T>> L findDataList(final E pDataType,
+                                                                                                    final Class<L> pClass) {
+        /* Locate an existing entry */
+        UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
 
-            /* If we have found the class */
-            if (myEntry.isClass(pClass)) {
-                /* Update list to null and return */
-                return myEntry.getDataList();
-            }
-        }
-
-        /* Not found , so add it */
-        return null;
+        /* Cast correctly */
+        return myEntry != null
+                              ? pClass.cast(myEntry.getDataList())
+                              : null;
     }
 
     /**
      * Obtain the list for a class in base updateSet.
-     * @param <T> the data type
-     * @param pClass the class
+     * @param <L> the list type
+     * @param <T> the object type
+     * @param pDataType the data type
+     * @param pClass the list class
      * @return the list
      */
-    public <T extends DataItem<E> & Comparable<? super T>> DataList<?, E> findBaseClass(final Class<T> pClass) {
-        /* Loop through the items in the base list */
-        Iterator<UpdateEntry<?, E>> myIterator = theBase.theList.iterator();
-        while (myIterator.hasNext()) {
-            /* Access entry */
-            UpdateEntry<?, E> myEntry = myIterator.next();
+    public <L extends DataList<T, E>, T extends DataItem<E> & Comparable<? super T>> L findBaseDataList(final E pDataType,
+                                                                                                        final Class<L> pClass) {
+        /* Locate an existing entry */
+        UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theBase.theMap.get(pDataType);
 
-            /* If we have found the class */
-            if (myEntry.isClass(pClass)) {
-                /* Update list to null and return */
-                return myEntry.getDataList();
-            }
-        }
-
-        /* Not found , so add it */
-        return null;
+        /* Cast correctly */
+        return myEntry != null
+                              ? pClass.cast(myEntry.getDataList())
+                              : null;
     }
 
     /**
@@ -236,7 +220,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private Object findEntryValue(final String pName) {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access entry */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -263,7 +247,7 @@ public class UpdateSet<E extends Enum<E>>
         theVersion++;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -288,7 +272,7 @@ public class UpdateSet<E extends Enum<E>>
         theVersion = pVersion;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -298,18 +282,7 @@ public class UpdateSet<E extends Enum<E>>
             if (myDataList != null) {
                 /* Rewind the version */
                 myDataList.rewindToVersion(theVersion);
-            }
-        }
 
-        /* Loop through the items in the list */
-        myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
-            /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
-
-            /* If the list exists */
-            if (myDataList != null) {
                 /* determine edit state */
                 myDataList.validate();
                 myDataList.findEditState();
@@ -400,7 +373,7 @@ public class UpdateSet<E extends Enum<E>>
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
-            Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+            Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
                 /* Prepare changes for the entry */
                 UpdateEntry<?, E> myEntry = myIterator.next();
@@ -419,7 +392,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void commitChanges() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Commit changes for the entry */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -434,11 +407,11 @@ public class UpdateSet<E extends Enum<E>>
      * RollBack changes in a ViewSet back into the core data.
      */
     private void rollBackChanges() {
-        /* Loop backwards through the items in the list */
-        ListIterator<UpdateEntry<?, E>> myIterator = theList.listIterator(theList.size());
-        while (myIterator.hasPrevious()) {
-            /* Rollback changes for the entry */
-            UpdateEntry<?, E> myEntry = myIterator.previous();
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        while (myIterator.hasNext()) {
+            /* RollBack changes for the entry */
+            UpdateEntry<?, E> myEntry = myIterator.next();
             myEntry.rollBackChanges();
         }
     }
@@ -449,7 +422,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public boolean hasUpdates() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access the list */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -471,7 +444,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access entry */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -492,7 +465,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void validate() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry<?, E> myEntry = myIterator.next();
@@ -513,7 +486,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public EditState getEditState() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         EditState myState = EditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */

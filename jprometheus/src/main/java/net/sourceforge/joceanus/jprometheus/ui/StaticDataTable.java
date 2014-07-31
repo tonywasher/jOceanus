@@ -184,12 +184,14 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * @param pControl the data control
      * @param pUpdateSet the update set
      * @param pError the error panel
+     * @param pItemType the item type
      * @param pListClass the list class
      * @param pItemClass the item class
      */
     public StaticDataTable(final DataControl<?, E> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final ErrorPanel pError,
+                           final E pItemType,
                            final Class<L> pListClass,
                            final Class<T> pItemClass) {
         /* Record the passed details */
@@ -202,7 +204,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerClass(pItemClass);
+        theUpdateEntry = theUpdateSet.registerType(pItemType);
         setUpdateSet(theUpdateSet);
 
         /* Set the table model */

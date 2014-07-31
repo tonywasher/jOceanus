@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
@@ -350,7 +351,7 @@ public class PortfolioPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            DepositList myDeposits = DepositList.class.cast(findBaseList(Deposit.class));
+            DepositList myDeposits = findBaseDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
             /* Loop through the Deposits */
             Iterator<Deposit> myIterator = myDeposits.iterator();
