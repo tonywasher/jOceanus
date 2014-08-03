@@ -660,11 +660,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     /**
-     * Resolve update Set links
+     * Resolve update Set links.
      * @param pUpdateSet the updateSet
-     * @throws JOceanusException
+     * @throws JOceanusException on error
      */
-    public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* No action by default */
     }
 
@@ -845,7 +845,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
          * @throws JOceanusException on error
          */
         public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
-            /* Loop through the items to find the entry */
+            /* Loop through the items */
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();

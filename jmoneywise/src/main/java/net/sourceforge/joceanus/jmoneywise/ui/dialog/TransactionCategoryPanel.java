@@ -135,7 +135,7 @@ public class TransactionCategoryPanel
 
         /* Set visibility */
         theFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(TransactionCategory.FIELD_NAME, showParent);
+        theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
         boolean bIsActive = myCurr.isActive();

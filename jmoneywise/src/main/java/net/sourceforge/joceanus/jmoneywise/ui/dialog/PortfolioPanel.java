@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
@@ -44,7 +45,6 @@ import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
@@ -117,21 +117,24 @@ public class PortfolioPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the detail panel */
-        myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel();
         myTabs.add("Details", myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new PortfolioListener();
@@ -148,6 +151,14 @@ public class PortfolioPanel
         JIconButton<Boolean> myTaxFreeButton = new JIconButton<Boolean>(theTaxFreeState);
         MoneyWiseIcons.buildOptionButton(theTaxFreeState);
 
+        /* restrict the fields */
+        restrictField(theName, Portfolio.NAMELEN);
+        restrictField(theDesc, Portfolio.NAMELEN);
+        restrictField(theHoldingButton, Portfolio.NAMELEN);
+        restrictField(myClosedButton, Portfolio.NAMELEN);
+        restrictField(myTaxFreeButton, Portfolio.NAMELEN);
+
+        /* Build the FieldSet */
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Portfolio.FIELD_HOLDING, Deposit.class, theHoldingButton);
@@ -159,13 +170,13 @@ public class PortfolioPanel
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_HOLDING, this);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, this);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_HOLDING, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
+        theFieldSet.addFieldToPanel(Portfolio.FIELD_TAXFREE, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -184,6 +195,16 @@ public class PortfolioPanel
         JTextField myCustNo = new JTextField();
         JTextField myUserId = new JTextField();
         JTextField myPassWord = new JTextField();
+
+        /* Restrict the fields */
+        int myWidth = Deposit.NAMELEN >> 1;
+        restrictField(mySortCode, myWidth);
+        restrictField(myAccount, myWidth);
+        restrictField(myReference, myWidth);
+        restrictField(myWebSite, myWidth);
+        restrictField(myCustNo, myWidth);
+        restrictField(myUserId, myWidth);
+        restrictField(myPassWord, myWidth);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
@@ -245,8 +266,30 @@ public class PortfolioPanel
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = myPortfolio.isClosed() || !myPortfolio.isRelevant();
-        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setVisibility(Portfolio.FIELD_CLOSED, bShowClosed);
         theClosedState.setState(bShowClosed);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
+        theFieldSet.setVisibility(Portfolio.FIELD_DESC, bShowDesc);
+
+        /* Determine whether the account details should be visible */
+        boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        boolean bShowReference = isEditable || myPortfolio.getReference() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
+        boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
+        boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
+        boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
+        boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
+        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Holding and TaxFree status cannot be changed if the item is active */
         boolean bIsActive = myPortfolio.isActive();

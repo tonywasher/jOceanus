@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
@@ -39,11 +40,10 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
-import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfoSet;
-import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
@@ -112,21 +112,24 @@ public class PayeePanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the detail panel */
-        myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel();
         myTabs.add("Details", myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new PayeeListener();
@@ -141,6 +144,12 @@ public class PayeePanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* restrict the fields */
+        restrictField(theName, Payee.NAMELEN);
+        restrictField(theDesc, Payee.NAMELEN);
+        restrictField(theTypeButton, Payee.NAMELEN);
+        restrictField(myClosedButton, Payee.NAMELEN);
+
         theFieldSet.addFieldElement(Payee.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Payee.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, PayeeType.class, theTypeButton);
@@ -151,12 +160,12 @@ public class PayeePanel
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Payee.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Payee.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Payee.FIELD_PAYEETYPE, this);
-        theFieldSet.addFieldToPanel(Payee.FIELD_CLOSED, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(Payee.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Payee.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Payee.FIELD_PAYEETYPE, myPanel);
+        theFieldSet.addFieldToPanel(Payee.FIELD_CLOSED, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -176,6 +185,16 @@ public class PayeePanel
         JTextField myUserId = new JTextField();
         JTextField myPassWord = new JTextField();
 
+        /* Restrict the fields */
+        int myWidth = Deposit.NAMELEN >> 1;
+        restrictField(mySortCode, myWidth);
+        restrictField(myAccount, myWidth);
+        restrictField(myReference, myWidth);
+        restrictField(myWebSite, myWidth);
+        restrictField(myCustNo, myWidth);
+        restrictField(myUserId, myWidth);
+        restrictField(myPassWord, myWidth);
+
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), DataType.CHARARRAY, myAccount);
@@ -191,13 +210,13 @@ public class PayeePanel
         /* Layout the extras panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
-        theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
+        theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -236,8 +255,30 @@ public class PayeePanel
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = myPayee.isClosed() || !myPayee.isRelevant();
-        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+        theFieldSet.setVisibility(Payee.FIELD_CLOSED, bShowClosed);
         theClosedState.setState(bShowClosed);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myPayee.getDesc() != null;
+        theFieldSet.setVisibility(Payee.FIELD_DESC, bShowDesc);
+
+        /* Determine whether the account details should be visible */
+        boolean bShowSortCode = isEditable || myPayee.getSortCode() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        boolean bShowAccount = isEditable || myPayee.getAccount() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        boolean bShowReference = isEditable || myPayee.getReference() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        boolean bShowWebSite = isEditable || myPayee.getWebSite() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
+        boolean bShowCustNo = isEditable || myPayee.getCustNo() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
+        boolean bShowUserId = isEditable || myPayee.getUserId() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
+        boolean bShowPasswd = isEditable || myPayee.getPassword() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
+        boolean bShowNotes = isEditable || myPayee.getNotes() != null;
+        theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Payee type cannot be changed if the item is active */
         boolean bIsActive = myPayee.isActive();

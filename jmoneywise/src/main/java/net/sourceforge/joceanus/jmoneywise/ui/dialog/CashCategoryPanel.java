@@ -133,7 +133,7 @@ public class CashCategoryPanel
 
         /* Set visibility */
         theFieldSet.setVisibility(CashCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(CashCategory.FIELD_NAME, showParent);
+        theFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, showParent);
     }
 
     @Override

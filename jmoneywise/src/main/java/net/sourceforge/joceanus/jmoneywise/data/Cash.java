@@ -137,7 +137,7 @@ public class Cash
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }

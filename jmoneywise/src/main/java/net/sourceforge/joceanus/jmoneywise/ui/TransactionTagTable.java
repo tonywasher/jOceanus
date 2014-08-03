@@ -32,8 +32,11 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.StringCellEditor;
@@ -47,6 +50,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionTagPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -144,6 +148,11 @@ public class TransactionTagTable
     private final JButton theNewButton;
 
     /**
+     * The TransactionTag dialog.
+     */
+    private final TransactionTagPanel theActiveTag;
+
+    /**
      * TransactionTags.
      */
     private transient TransactionTagList theTransactionTags = null;
@@ -208,6 +217,11 @@ public class TransactionTagTable
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
+        /* Create a Tag panel */
+        theActiveTag = new TransactionTagPanel(theFieldMgr);
+        thePanel.add(theActiveTag);
+        theActiveTag.setReadOnlyItem(null);
+
         /* Create new button */
         theNewButton = new JButton(NLS_NEW);
         theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
@@ -220,6 +234,9 @@ public class TransactionTagTable
         theFilterPanel.add(Box.createHorizontalGlue());
         theFilterPanel.add(theNewButton);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -363,7 +380,7 @@ public class TransactionTagTable
      * Listener class.
      */
     private final class TransactionTagListener
-            implements ActionListener, ChangeListener {
+            implements ActionListener, ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -384,6 +401,24 @@ public class TransactionTagTable
 
             /* If this is the new button */
             if (theNewButton.equals(o)) {
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    TransactionTag myTag = theTransactionTags.get(iIndex);
+                    theActiveTag.setReadOnlyItem(myTag);
+                } else {
+                    theActiveTag.setReadOnlyItem(null);
+                }
             }
         }
     }

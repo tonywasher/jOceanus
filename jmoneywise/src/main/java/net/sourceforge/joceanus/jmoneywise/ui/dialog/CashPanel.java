@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -140,21 +141,24 @@ public class CashPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the detail panel */
-        myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel();
         myTabs.add("Details", myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new CashListener();
@@ -169,6 +173,13 @@ public class CashPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* restrict the fields */
+        restrictField(theName, Cash.NAMELEN);
+        restrictField(theDesc, Cash.NAMELEN);
+        restrictField(theCategoryButton, Cash.NAMELEN);
+        restrictField(theCurrencyButton, Cash.NAMELEN);
+        restrictField(myClosedButton, Cash.NAMELEN);
+
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Cash.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Cash.FIELD_DESC, DataType.STRING, theDesc);
@@ -181,13 +192,13 @@ public class CashPanel
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Cash.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Cash.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CATEGORY, this);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CURRENCY, this);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CLOSED, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(Cash.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Cash.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Cash.FIELD_CATEGORY, myPanel);
+        theFieldSet.addFieldToPanel(Cash.FIELD_CURRENCY, myPanel);
+        theFieldSet.addFieldToPanel(Cash.FIELD_CLOSED, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -198,6 +209,11 @@ public class CashPanel
      * @return the panel
      */
     private JPanel buildXtrasPanel() {
+        /* restrict the fields */
+        int myWidth = Cash.NAMELEN >> 1;
+        restrictField(theAutoExpenseButton, myWidth);
+        restrictField(theAutoPayeeButton, myWidth);
+
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, theAutoExpenseButton);
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, theAutoPayeeButton);
@@ -252,6 +268,10 @@ public class CashPanel
         theFieldSet.setVisibility(Cash.FIELD_CLOSED, bShowClosed);
         theClosedState.setState(bShowClosed);
 
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myCash.getDesc() != null;
+        theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
+
         /* AutoExpense/Payee cannot be changed for closed item */
         theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), !isClosed);
         theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), !isClosed);
@@ -264,7 +284,7 @@ public class CashPanel
         boolean isAutoExpense = myCash.isAutoExpense();
         theFieldSet.setVisibility(Cash.FIELD_CURRENCY, !isAutoExpense);
 
-        /* AutoPayee is hidden unless are autoExpense */
+        /* AutoPayee is hidden unless we are autoExpense */
         theFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), isAutoExpense);
     }
 

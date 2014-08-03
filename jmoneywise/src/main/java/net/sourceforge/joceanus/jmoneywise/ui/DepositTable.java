@@ -32,8 +32,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -51,6 +54,8 @@ import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfo.DepositInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
+import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
@@ -59,6 +64,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -153,6 +159,11 @@ public class DepositTable
     private final transient UpdateEntry<DepositInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
+     * DepositRate Update Entry.
+     */
+    private final transient UpdateEntry<DepositRate, MoneyWiseDataType> theRateEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -173,9 +184,19 @@ public class DepositTable
     private final JEnablePanel thePanel;
 
     /**
+     * The Deposit dialog.
+     */
+    private final DepositPanel theActiveAccount;
+
+    /**
      * Deposits.
      */
     private transient DepositList theDeposits = null;
+
+    /**
+     * DepositRates.
+     */
+    private transient DepositRateList theRates = null;
 
     /**
      * Categories.
@@ -217,6 +238,7 @@ public class DepositTable
         theUpdateSet = pUpdateSet;
         theDepositEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSIT);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITINFO);
+        theRateEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITRATE);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -239,6 +261,14 @@ public class DepositTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create an account panel */
+        theActiveAccount = new DepositPanel(theFieldMgr);
+        thePanel.add(theActiveAccount);
+        theActiveAccount.setReadOnlyItem(null);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -270,6 +300,12 @@ public class DepositTable
         theDepositEntry.setDataList(theDeposits);
         DepositInfoList myInfo = theDeposits.getDepositInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Get the Deposit rates list */
+        DepositRateList myRates = myData.getDepositRates();
+        theRates = myRates.deriveEditList();
+        theRates.resolveUpdateSetLinks(theUpdateSet);
+        theRateEntry.setDataList(theRates);
         setList(theDeposits);
         fireStateChanged();
     }
@@ -397,7 +433,7 @@ public class DepositTable
      * Listener class.
      */
     private final class DepositListener
-            implements ChangeListener {
+            implements ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -408,6 +444,24 @@ public class DepositTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    Deposit myAccount = theDeposits.get(iIndex);
+                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                } else {
+                    theActiveAccount.setReadOnlyItem(null);
+                }
             }
         }
     }

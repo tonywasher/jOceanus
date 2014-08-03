@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.Dimension;
+
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -71,6 +73,13 @@ public class TransactionTagPanel
         theName = new JTextField(TransactionTag.NAMELEN);
         theDesc = new JTextField(TransactionTag.DESCLEN);
 
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(TransactionTag.DESCLEN * CHAR_WIDTH, FIELD_HEIGHT);
+
+        /* restrict the field */
+        theName.setMaximumSize(myDims);
+        theDesc.setMaximumSize(myDims);
+
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
         theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, theName);
@@ -98,7 +107,7 @@ public class TransactionTagPanel
         if (myField.equals(TransactionTag.FIELD_NAME)) {
             /* Update the Name */
             myTag.setName(pUpdate.getValue(String.class));
-        } else if (myField.equals(TransactionTag.FIELD_NAME)) {
+        } else if (myField.equals(TransactionTag.FIELD_DESC)) {
             /* Update the Description */
             myTag.setDescription(pUpdate.getValue(String.class));
         }

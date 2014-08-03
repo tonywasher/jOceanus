@@ -504,10 +504,10 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     /**
-     * Resolve links within an update set
-     * @throws JOceanusException
+     * Resolve links within an update set.
+     * @throws JOceanusException on error
      */
-    public abstract void resolveUpdateSetLinks() throws JOceanusException;
+    protected abstract void resolveUpdateSetLinks() throws JOceanusException;
 
     /**
      * Resolve subCategory name.
@@ -787,7 +787,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          * @throws JOceanusException on error
          */
         public void resolveUpdateSetLinks() throws JOceanusException {
-            /* Loop through the items to find the entry */
+            /* Loop through the items */
             Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();

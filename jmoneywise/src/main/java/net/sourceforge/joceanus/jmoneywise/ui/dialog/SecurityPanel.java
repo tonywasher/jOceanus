@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
@@ -133,17 +134,20 @@ public class SecurityPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        JPanel myPanel = buildNotesPanel();
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new SecurityListener();
@@ -158,6 +162,15 @@ public class SecurityPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* restrict the fields */
+        restrictField(theName, Security.NAMELEN);
+        restrictField(theDesc, Security.NAMELEN);
+        restrictField(theSymbol, Security.NAMELEN);
+        restrictField(theTypeButton, Security.NAMELEN);
+        restrictField(theCurrencyButton, Security.NAMELEN);
+        restrictField(theParentButton, Security.NAMELEN);
+        restrictField(myClosedButton, Security.NAMELEN);
+
         theFieldSet.addFieldElement(Security.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Security.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Security.FIELD_SYMBOL, DataType.STRING, theSymbol);
@@ -171,15 +184,15 @@ public class SecurityPanel
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Security.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_SYMBOL, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_PARENT, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, this);
-        theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(Security.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_SYMBOL, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_PARENT, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, myPanel);
+        theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -224,6 +237,14 @@ public class SecurityPanel
                                                    ? !mySecurity.getParent().isClosed()
                                                    : !mySecurity.isRelevant();
         theClosedState.setState(bEditClosed);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
+        theFieldSet.setVisibility(Security.FIELD_DESC, bShowDesc);
+
+        /* Determine whether the account details should be visible */
+        boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
+        theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Security type and currency cannot be changed if the item is active */
         boolean bIsActive = mySecurity.isActive();

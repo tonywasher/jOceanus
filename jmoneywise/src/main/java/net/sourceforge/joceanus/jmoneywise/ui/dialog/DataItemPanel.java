@@ -22,10 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
@@ -37,13 +38,14 @@ import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
+import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
  */
 public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        extends JPanel {
+        extends JEnablePanel {
     /**
      * Serial Id.
      */
@@ -53,6 +55,16 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Padding size.
      */
     protected static final int PADDING_SIZE = 5;
+
+    /**
+     * Field Height.
+     */
+    protected static final int FIELD_HEIGHT = 20;
+
+    /**
+     * Character Width.
+     */
+    protected static final int CHAR_WIDTH = 15;
 
     /**
      * The Field Set.
@@ -111,11 +123,19 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         /* Store the element */
         theItem = pItem;
 
-        /* adjust fields */
-        adjustFields(true);
+        /* If we have an item */
+        if (theItem != null) {
+            /* adjust fields */
+            setVisible(true);
+            theFieldSet.setEditable(true);
+            adjustFields(true);
 
-        /* Render the FieldSet */
-        theFieldSet.renderSet(pItem);
+            /* Render the FieldSet */
+            theFieldSet.renderSet(theItem);
+        } else {
+            /* Set visibility */
+            setVisible(false);
+        }
     }
 
     /**
@@ -129,11 +149,19 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         /* Store the element */
         theItem = pItem;
 
-        /* adjust Fields */
-        adjustFields(false);
+        /* If we have an item */
+        if (theItem != null) {
+            /* adjust Fields */
+            setVisible(true);
+            theFieldSet.setEditable(false);
+            adjustFields(false);
 
-        /* Render the FieldSet */
-        theFieldSet.renderSet(theItem);
+            /* Render the FieldSet */
+            theFieldSet.renderSet(theItem);
+        } else {
+            /* Set visibility */
+            setVisible(false);
+        }
     }
 
     /**
@@ -163,6 +191,22 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
                              final Class<L> pClass) {
         /* Look up the base list */
         return theUpdateSet.findBaseDataList(pDataType, pClass);
+    }
+
+    /**
+     * Restrict field.
+     * @param pComponent the component to restrict
+     * @param pWidth field width in characters
+     */
+    protected void restrictField(final JComponent pComponent,
+                                 final int pWidth) {
+        /* Allocate Dimension */
+        Dimension myPrefDims = new Dimension(pWidth * CHAR_WIDTH, FIELD_HEIGHT);
+        Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, FIELD_HEIGHT);
+
+        /* Restrict the field */
+        pComponent.setPreferredSize(myPrefDims);
+        pComponent.setMaximumSize(myMaxDims);
     }
 
     /**

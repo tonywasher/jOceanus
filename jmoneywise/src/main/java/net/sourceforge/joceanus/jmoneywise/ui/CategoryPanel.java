@@ -286,6 +286,7 @@ public class CategoryPanel
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
         /* Refresh the tables */

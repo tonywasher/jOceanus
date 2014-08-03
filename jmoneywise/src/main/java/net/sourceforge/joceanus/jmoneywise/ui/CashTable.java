@@ -32,8 +32,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -57,6 +60,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.CashPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -166,6 +170,11 @@ public class CashTable
     private final JEnablePanel thePanel;
 
     /**
+     * The Cash dialog.
+     */
+    private final CashPanel theActiveAccount;
+
+    /**
      * Cash.
      */
     private transient CashList theCash = null;
@@ -232,6 +241,14 @@ public class CashTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create an account panel */
+        theActiveAccount = new CashPanel(theFieldMgr);
+        thePanel.add(theActiveAccount);
+        theActiveAccount.setReadOnlyItem(null);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -388,7 +405,7 @@ public class CashTable
      * Listener class.
      */
     private final class CashListener
-            implements ChangeListener {
+            implements ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -399,6 +416,24 @@ public class CashTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    Cash myAccount = theCash.get(iIndex);
+                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                } else {
+                    theActiveAccount.setReadOnlyItem(null);
+                }
             }
         }
     }

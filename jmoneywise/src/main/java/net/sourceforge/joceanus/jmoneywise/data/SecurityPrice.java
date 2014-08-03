@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.views.SpotSecurityPrices.SpotSecurityPrice;
@@ -42,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -416,6 +418,17 @@ public class SecurityPrice
     }
 
     /**
+     * Resolve links in an updateSet.
+     * @param pUpdateSet the update Set
+     * @throws JOceanusException on error
+     */
+    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Resolve parent within list */
+        SecurityList mySecurities = pUpdateSet.findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        resolveDataLink(FIELD_SECURITY, mySecurities);
+    }
+
+    /**
      * Validate the price.
      */
     @Override
@@ -601,6 +614,28 @@ public class SecurityPrice
         }
 
         /**
+         * Construct an edit extract of a Rate list.
+         * @return the edit list
+         */
+        public SecurityPriceList deriveEditList() {
+            /* Build an empty List */
+            SecurityPriceList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Loop through the list */
+            Iterator<SecurityPrice> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                SecurityPrice myCurr = myIterator.next();
+
+                /* Copy the item */
+                SecurityPrice myItem = new SecurityPrice(myList, myCurr);
+                myList.append(myItem);
+            }
+
+            /* Return the List */
+            return myList;
+        }
+
+        /**
          * Add a new item to the core list.
          * @param pPrice item
          * @return the newly added item
@@ -730,6 +765,20 @@ public class SecurityPrice
                     /* Clear history and set as a clean item */
                     mySpot.clearHistory();
                 }
+            }
+        }
+
+        /**
+         * Resolve update set links.
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+            /* Loop through the items */
+            Iterator<SecurityPrice> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                SecurityPrice myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks(pUpdateSet);
             }
         }
 

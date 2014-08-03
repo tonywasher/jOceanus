@@ -38,8 +38,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -58,6 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.DepositCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -182,6 +186,11 @@ public class DepositCategoryTable
     private final JButton theNewButton;
 
     /**
+     * The DepositCategory dialog.
+     */
+    private final DepositCategoryPanel theActiveCategory;
+
+    /**
      * Deposit Categories.
      */
     private transient DepositCategoryList theCategories = null;
@@ -273,6 +282,11 @@ public class DepositCategoryTable
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
+        /* Create a Category panel */
+        theActiveCategory = new DepositCategoryPanel(theFieldMgr);
+        thePanel.add(theActiveCategory);
+        theActiveCategory.setReadOnlyItem(null);
+
         /* Initialise the columns */
         theColumns.setColumns();
 
@@ -281,6 +295,9 @@ public class DepositCategoryTable
         theUpdateSet.addChangeListener(myListener);
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theNewButton.addActionListener(myListener);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -297,6 +314,7 @@ public class DepositCategoryTable
 
     /**
      * Refresh data.
+     * @throws JOceanusException on error
      */
     protected void refreshData() throws JOceanusException {
         /* Get the Category edit list */
@@ -460,7 +478,7 @@ public class DepositCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements PropertyChangeListener, ChangeListener, ActionListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener, ListSelectionListener {
         /**
          * Category menu builder.
          */
@@ -506,6 +524,24 @@ public class DepositCategoryTable
 
             /* If this is the new button */
             if (theNewButton.equals(o)) {
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    DepositCategory myCategory = theCategories.get(iIndex);
+                    theActiveCategory.setReadOnlyItem(myCategory);
+                } else {
+                    theActiveCategory.setReadOnlyItem(null);
+                }
             }
         }
 

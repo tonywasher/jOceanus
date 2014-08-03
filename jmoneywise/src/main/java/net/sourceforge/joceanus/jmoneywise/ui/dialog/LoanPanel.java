@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -131,21 +132,24 @@ public class LoanPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the detail panel */
-        myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel();
         myTabs.add("Details", myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new LoanListener();
@@ -160,6 +164,14 @@ public class LoanPanel
         JIconButton<Boolean> myClosedButton = new JIconButton<Boolean>(theClosedState);
         MoneyWiseIcons.buildOptionButton(theClosedState);
 
+        /* restrict the fields */
+        restrictField(theName, Loan.NAMELEN);
+        restrictField(theDesc, Loan.NAMELEN);
+        restrictField(theCategoryButton, Loan.NAMELEN);
+        restrictField(theCurrencyButton, Loan.NAMELEN);
+        restrictField(theParentButton, Loan.NAMELEN);
+        restrictField(myClosedButton, Loan.NAMELEN);
+
         theFieldSet.addFieldElement(Loan.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Loan.FIELD_DESC, DataType.STRING, theDesc);
         theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
@@ -172,14 +184,14 @@ public class LoanPanel
 
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Loan.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Loan.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Loan.FIELD_CATEGORY, this);
-        theFieldSet.addFieldToPanel(Loan.FIELD_PARENT, this);
-        theFieldSet.addFieldToPanel(Loan.FIELD_CURRENCY, this);
-        theFieldSet.addFieldToPanel(Loan.FIELD_CLOSED, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(Loan.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Loan.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Loan.FIELD_CATEGORY, myPanel);
+        theFieldSet.addFieldToPanel(Loan.FIELD_PARENT, myPanel);
+        theFieldSet.addFieldToPanel(Loan.FIELD_CURRENCY, myPanel);
+        theFieldSet.addFieldToPanel(Loan.FIELD_CLOSED, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -194,6 +206,12 @@ public class LoanPanel
         JTextField mySortCode = new JTextField();
         JTextField myAccount = new JTextField();
         JTextField myReference = new JTextField();
+
+        /* Restrict the fields */
+        int myWidth = Loan.NAMELEN >> 1;
+        restrictField(mySortCode, myWidth);
+        restrictField(myAccount, myWidth);
+        restrictField(myReference, myWidth);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
@@ -248,7 +266,26 @@ public class LoanPanel
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = myLoan.isClosed() || !myLoan.isRelevant();
         theFieldSet.setVisibility(Loan.FIELD_CLOSED, bShowClosed);
-        theClosedState.setState(bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = myLoan.isClosed()
+                                               ? !myLoan.getParent().isClosed()
+                                               : !myLoan.isRelevant();
+        theClosedState.setState(bEditClosed);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myLoan.getDesc() != null;
+        theFieldSet.setVisibility(Loan.FIELD_DESC, bShowDesc);
+
+        /* Determine whether the account details should be visible */
+        boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
+        theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        boolean bShowAccount = isEditable || myLoan.getAccount() != null;
+        theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        boolean bShowReference = isEditable || myLoan.getReference() != null;
+        theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        boolean bShowNotes = isEditable || myLoan.getNotes() != null;
+        theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Currency cannot be changed if the item is active */
         boolean bIsActive = myLoan.isActive();

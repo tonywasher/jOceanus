@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmetis.field;
 
 import java.awt.CardLayout;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -299,12 +298,6 @@ public class JFieldElement<T extends JFieldSetItem> {
         /* Render the component */
         theComponent.renderData(pRender, pItem);
 
-        /* If the label is a button */
-        if (theLabel instanceof JButton) {
-            /* Enable it */
-            theLabel.setEnabled(true);
-        }
-
         /* Set visibility */
         setVisible(isVisible);
     }
@@ -318,12 +311,6 @@ public class JFieldElement<T extends JFieldSetItem> {
 
         /* Render the component */
         theComponent.renderNullData();
-
-        /* If the label is a button */
-        if (theLabel instanceof JButton) {
-            /* Disable it */
-            theLabel.setEnabled(false);
-        }
 
         /* Set visibility */
         setVisible(isVisible);
@@ -372,6 +359,7 @@ public class JFieldElement<T extends JFieldSetItem> {
 
             /* Set maximum size and alignment */
             setMaximumSize(myComponent.getMaximumSize());
+            // setMinimumSize(myComponent.getMaximumSize());
             if (myComponent instanceof JTextField) {
                 JTextField myField = (JTextField) myComponent;
                 myLabel.setHorizontalAlignment(myField.getHorizontalAlignment());

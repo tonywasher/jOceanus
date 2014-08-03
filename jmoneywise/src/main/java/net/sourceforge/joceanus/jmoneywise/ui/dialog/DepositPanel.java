@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -144,21 +145,24 @@ public class DepositPanel
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
+        /* Build the main panel */
+        JPanel myMainPanel = buildMainPanel();
+
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
-        add(myTabs);
-
-        /* Build the main panel */
-        JPanel myPanel = buildMainPanel();
-        myTabs.add("Main", myPanel);
 
         /* Build the detail panel */
-        myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel();
         myTabs.add("Details", myPanel);
 
         /* Build the notes panel */
         myPanel = buildNotesPanel();
-        myTabs.add("Notes", myPanel);
+        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the layout */
+        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        add(myMainPanel);
+        add(myTabs);
 
         /* Create the listener */
         new DepositListener();
@@ -177,6 +181,16 @@ public class DepositPanel
         JIconButton<Boolean> myGrossButton = new JIconButton<Boolean>(theGrossState);
         MoneyWiseIcons.buildOptionButton(theGrossState);
 
+        /* restrict the fields */
+        restrictField(theName, Deposit.NAMELEN);
+        restrictField(theDesc, Deposit.NAMELEN);
+        restrictField(theCategoryButton, Deposit.NAMELEN);
+        restrictField(theCurrencyButton, Deposit.NAMELEN);
+        restrictField(theParentButton, Deposit.NAMELEN);
+        restrictField(myClosedButton, Deposit.NAMELEN);
+        restrictField(myTaxFreeButton, Deposit.NAMELEN);
+        restrictField(myGrossButton, Deposit.NAMELEN);
+
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Deposit.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(Deposit.FIELD_DESC, DataType.STRING, theDesc);
@@ -193,15 +207,15 @@ public class DepositPanel
         /* Layout the panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CATEGORY, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_PARENT, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CURRENCY, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_TAXFREE, this);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_GROSS, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_CATEGORY, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_PARENT, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_CURRENCY, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_TAXFREE, myPanel);
+        theFieldSet.addFieldToPanel(Deposit.FIELD_GROSS, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
         return myPanel;
@@ -219,6 +233,14 @@ public class DepositPanel
         JTextField myReference = new JTextField();
         JTextField myOpening = new JTextField();
 
+        /* Restrict the fields */
+        int myWidth = Deposit.NAMELEN >> 1;
+        restrictField(myMaturity, myWidth);
+        restrictField(mySortCode, myWidth);
+        restrictField(myAccount, myWidth);
+        restrictField(myReference, myWidth);
+        restrictField(myOpening, myWidth);
+
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), DataType.DATEDAY, myMaturity);
         theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), DataType.CHARARRAY, mySortCode);
@@ -233,8 +255,8 @@ public class DepositPanel
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myPanel);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
+        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
         theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
         SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -272,17 +294,50 @@ public class DepositPanel
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Deposit myDeposit = getItem();
+        boolean bIsActive = myDeposit.isActive();
+        boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
         boolean bShowClosed = myDeposit.isClosed() || !myDeposit.isRelevant();
         theFieldSet.setVisibility(Deposit.FIELD_CLOSED, bShowClosed);
-        theClosedState.setState(bShowClosed);
+
+        /* Determine the state of the closed button */
+        boolean bEditClosed = myDeposit.isClosed()
+                                                  ? !myDeposit.getParent().isClosed()
+                                                  : !myDeposit.isRelevant();
+        theClosedState.setState(bEditClosed);
+
+        /* Determine whether the taxFree/Gross buttons should be visible */
+        boolean bShowTaxFree = myDeposit.isTaxFree() || bIsChangeable;
+        theFieldSet.setVisibility(Deposit.FIELD_TAXFREE, bShowTaxFree);
+        boolean bShowGross = myDeposit.isGross() || bIsChangeable;
+        theFieldSet.setVisibility(Deposit.FIELD_GROSS, bShowGross);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
+        theFieldSet.setVisibility(Deposit.FIELD_DESC, bShowDesc);
+
+        /* Determine whether the account details should be visible */
+        boolean bShowSortCode = isEditable || myDeposit.getSortCode() != null;
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        boolean bShowAccount = isEditable || myDeposit.getAccount() != null;
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        boolean bShowReference = isEditable || myDeposit.getReference() != null;
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        boolean bShowOpening = bIsChangeable || myDeposit.getOpeningBalance() != null;
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), bShowOpening);
+        boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+
+        /* Maturity is only visible if the item is a bond */
+        boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
+        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), bShowMaturity);
 
         /* Currency, Gross and TaxFree status cannot be changed if the item is active */
-        boolean bIsActive = myDeposit.isActive();
-        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, !bIsActive);
-        theFieldSet.setEditable(Deposit.FIELD_GROSS, !bIsActive);
-        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, !bIsActive);
+        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable);
+        theFieldSet.setEditable(Deposit.FIELD_GROSS, bIsChangeable);
+        theFieldSet.setEditable(Deposit.FIELD_TAXFREE, bIsChangeable);
+        theFieldSet.setEditable(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), bIsChangeable);
     }
 
     @Override
@@ -442,7 +497,7 @@ public class DepositPanel
                 JScrollMenu myMenu = myMap.get(myParent.getName());
 
                 /* Create a new JMenuItem and add it to the popUp */
-                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory);
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                 /* Note active category */
                 if (myCategory.equals(myCurr)) {

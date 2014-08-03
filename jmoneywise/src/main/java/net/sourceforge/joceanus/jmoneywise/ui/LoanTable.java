@@ -32,8 +32,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -59,6 +62,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.LoanPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -173,6 +177,11 @@ public class LoanTable
     private final JEnablePanel thePanel;
 
     /**
+     * The Loan dialog.
+     */
+    private final LoanPanel theActiveAccount;
+
+    /**
      * Loans.
      */
     private transient LoanList theLoans = null;
@@ -239,6 +248,14 @@ public class LoanTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create an account panel */
+        theActiveAccount = new LoanPanel(theFieldMgr);
+        thePanel.add(theActiveAccount);
+        theActiveAccount.setReadOnlyItem(null);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -397,7 +414,7 @@ public class LoanTable
      * Listener class.
      */
     private final class LoanListener
-            implements ChangeListener {
+            implements ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -408,6 +425,24 @@ public class LoanTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    Loan myAccount = theLoans.get(iIndex);
+                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                } else {
+                    theActiveAccount.setReadOnlyItem(null);
+                }
             }
         }
     }

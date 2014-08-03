@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState
 /**
  * Utility class to manage status icon buttons.
  */
-public class MoneyWiseIcons
+public final class MoneyWiseIcons
         extends PrometheusIcons {
     /**
      * The locked icon.

@@ -133,7 +133,7 @@ public class LoanCategoryPanel
 
         /* Set visibility */
         theFieldSet.setVisibility(LoanCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(LoanCategory.FIELD_NAME, showParent);
+        theFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, showParent);
     }
 
     @Override

@@ -97,7 +97,7 @@ public class DepositRatePanel
     }
 
     @Override
-    protected void adjustFields(boolean isEditable) {
+    protected void adjustFields(final boolean isEditable) {
         /* Nothing to do */
     }
 

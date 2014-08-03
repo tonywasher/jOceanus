@@ -38,8 +38,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -58,6 +61,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionCategoryPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -182,6 +186,11 @@ public class TransactionCategoryTable
     private final JButton theNewButton;
 
     /**
+     * The TransactionCategory dialog.
+     */
+    private final TransactionCategoryPanel theActiveCategory;
+
+    /**
      * Event Categories.
      */
     private transient TransactionCategoryList theCategories = null;
@@ -273,6 +282,11 @@ public class TransactionCategoryTable
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
 
+        /* Create a Category panel */
+        theActiveCategory = new TransactionCategoryPanel(theFieldMgr);
+        thePanel.add(theActiveCategory);
+        theActiveCategory.setReadOnlyItem(null);
+
         /* Initialise the columns */
         theColumns.setColumns();
 
@@ -281,6 +295,9 @@ public class TransactionCategoryTable
         theUpdateSet.addChangeListener(myListener);
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theNewButton.addActionListener(myListener);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -464,7 +481,7 @@ public class TransactionCategoryTable
      * Listener class.
      */
     private final class CategoryListener
-            implements PropertyChangeListener, ChangeListener, ActionListener {
+            implements PropertyChangeListener, ChangeListener, ActionListener, ListSelectionListener {
         /**
          * Category menu builder.
          */
@@ -510,6 +527,24 @@ public class TransactionCategoryTable
 
             /* If this is the new button */
             if (theNewButton.equals(o)) {
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    TransactionCategory myCategory = theCategories.get(iIndex);
+                    theActiveCategory.setReadOnlyItem(myCategory);
+                } else {
+                    theActiveCategory.setReadOnlyItem(null);
+                }
             }
         }
 

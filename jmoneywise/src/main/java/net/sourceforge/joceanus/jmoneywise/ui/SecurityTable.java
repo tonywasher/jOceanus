@@ -30,8 +30,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -49,11 +52,14 @@ import net.sourceforge.joceanus.jmoneywise.data.Security;
 import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfo.SecurityInfoList;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice;
+import net.sourceforge.joceanus.jmoneywise.data.SecurityPrice.SecurityPriceList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -147,6 +153,11 @@ public class SecurityTable
     private final transient UpdateEntry<SecurityInfo, MoneyWiseDataType> theInfoEntry;
 
     /**
+     * SecurityPrice Update Entry.
+     */
+    private final transient UpdateEntry<SecurityPrice, MoneyWiseDataType> thePriceEntry;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -167,9 +178,19 @@ public class SecurityTable
     private final JEnablePanel thePanel;
 
     /**
+     * The Security dialog.
+     */
+    private final SecurityPanel theActiveAccount;
+
+    /**
      * Securities.
      */
     private transient SecurityList theSecurities = null;
+
+    /**
+     * SecurityPrices.
+     */
+    private transient SecurityPriceList thePrices = null;
 
     /**
      * Security types.
@@ -211,6 +232,7 @@ public class SecurityTable
         theUpdateSet = pUpdateSet;
         theSecurityEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITY);
         theInfoEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYINFO);
+        thePriceEntry = theUpdateSet.registerType(MoneyWiseDataType.SECURITYPRICE);
         setUpdateSet(theUpdateSet);
         theUpdateSet.addChangeListener(myListener);
 
@@ -233,6 +255,14 @@ public class SecurityTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create an account panel */
+        theActiveAccount = new SecurityPanel(theFieldMgr);
+        thePanel.add(theActiveAccount);
+        theActiveAccount.setReadOnlyItem(null);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -264,6 +294,12 @@ public class SecurityTable
         theSecurityEntry.setDataList(theSecurities);
         SecurityInfoList myInfo = theSecurities.getSecurityInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Get the Security prices list */
+        SecurityPriceList myPrices = myData.getSecurityPrices();
+        thePrices = myPrices.deriveEditList();
+        thePrices.resolveUpdateSetLinks(theUpdateSet);
+        thePriceEntry.setDataList(thePrices);
         setList(theSecurities);
         fireStateChanged();
     }
@@ -391,7 +427,7 @@ public class SecurityTable
      * Listener class.
      */
     private final class SecurityListener
-            implements ChangeListener {
+            implements ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -402,6 +438,24 @@ public class SecurityTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    Security myAccount = theSecurities.get(iIndex);
+                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                } else {
+                    theActiveAccount.setReadOnlyItem(null);
+                }
             }
         }
     }

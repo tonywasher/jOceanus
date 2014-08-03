@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
+import java.awt.Dimension;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
@@ -95,9 +96,17 @@ public class DepositCategoryPanel
         super(pFieldMgr);
 
         /* Create the text fields */
-        theName = new JTextField(DepositCategory.NAMELEN);
-        theSubName = new JTextField(DepositCategory.NAMELEN);
-        theDesc = new JTextField(DepositCategory.DESCLEN);
+        theName = new JTextField();
+        theSubName = new JTextField();
+        theDesc = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(DepositCategory.DESCLEN * CHAR_WIDTH, FIELD_HEIGHT);
+
+        /* restrict the field */
+        theName.setMaximumSize(myDims);
+        theSubName.setMaximumSize(myDims);
+        theDesc.setMaximumSize(myDims);
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<DepositCategoryType>();
@@ -133,7 +142,7 @@ public class DepositCategoryPanel
 
         /* Set visibility */
         theFieldSet.setVisibility(DepositCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(DepositCategory.FIELD_NAME, showParent);
+        theFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, showParent);
     }
 
     @Override

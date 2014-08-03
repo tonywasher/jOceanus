@@ -28,17 +28,18 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.jmetis.viewer.Difference;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedData.EncryptedRate;
 import net.sourceforge.joceanus.jmetis.viewer.EncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.viewer.JDataFieldValue;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFormatter;
 import net.sourceforge.joceanus.jmetis.viewer.ValueSet;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
 import net.sourceforge.joceanus.jprometheus.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.data.EncryptedItem;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDay;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayFormatter;
@@ -427,7 +428,6 @@ public class DepositRate
      */
     public DepositRate(final DepositRateList pList) {
         super(pList, 0);
-        setValueDeposit(pList.theDeposit);
     }
 
     /**
@@ -534,6 +534,17 @@ public class DepositRate
         /* Resolve data links */
         MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_DEPOSIT, myData.getDeposits());
+    }
+
+    /**
+     * Resolve links in an updateSet.
+     * @param pUpdateSet the update Set
+     * @throws JOceanusException on error
+     */
+    private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+        /* Resolve parent within list */
+        DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        resolveDataLink(FIELD_DEPOSIT, myDeposits);
     }
 
     /**
@@ -675,11 +686,6 @@ public class DepositRate
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(LIST_NAME, DataList.FIELD_DEFS);
 
-        /**
-         * Account Field Id.
-         */
-        public static final JDataField FIELD_DEPOSIT = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getItemName());
-
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
@@ -691,21 +697,6 @@ public class DepositRate
         }
 
         @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_DEPOSIT.equals(pField)) {
-                return (theDeposit == null)
-                                           ? JDataFieldValue.SKIP
-                                           : theDeposit;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The Deposit.
-         */
-        private Deposit theDeposit = null;
-
-        @Override
         public String listName() {
             return LIST_NAME;
         }
@@ -713,14 +704,6 @@ public class DepositRate
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
-        }
-
-        /**
-         * Obtain the deposit.
-         * @return the deposit
-         */
-        public Deposit getDeposit() {
-            return theDeposit;
         }
 
         /**
@@ -748,30 +731,16 @@ public class DepositRate
 
         /**
          * Construct an edit extract of a Rate list.
-         * @param pDeposit The deposit to extract rates for
          * @return the edit list
          */
-        public DepositRateList deriveEditList(final Deposit pDeposit) {
+        public DepositRateList deriveEditList() {
             /* Build an empty List */
             DepositRateList myList = getEmptyList(ListStyle.EDIT);
 
-            /* Store the deposit */
-            myList.theDeposit = pDeposit;
-
-            /* Access the list iterator */
-            Iterator<DepositRate> myIterator = iterator();
-
             /* Loop through the list */
+            Iterator<DepositRate> myIterator = iterator();
             while (myIterator.hasNext()) {
                 DepositRate myCurr = myIterator.next();
-
-                /* Check the deposit */
-                int myResult = pDeposit.compareTo(myCurr.getDeposit());
-
-                /* Skip different accounts */
-                if (myResult != 0) {
-                    continue;
-                }
 
                 /* Copy the item */
                 DepositRate myItem = new DepositRate(myList, myCurr);
@@ -780,12 +749,6 @@ public class DepositRate
 
             /* Return the List */
             return myList;
-        }
-
-        /* Is this list locked */
-        @Override
-        public boolean isLocked() {
-            return (theDeposit != null) && theDeposit.isLocked();
         }
 
         /**
@@ -812,7 +775,6 @@ public class DepositRate
         @Override
         public DepositRate addNewItem() {
             DepositRate myRate = new DepositRate(this);
-            myRate.setDeposit(theDeposit);
             add(myRate);
             return myRate;
         }
@@ -871,6 +833,20 @@ public class DepositRate
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Resolve update set links.
+         * @param pUpdateSet the updateSet
+         * @throws JOceanusException on error
+         */
+        public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+            /* Loop through the items */
+            Iterator<DepositRate> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                DepositRate myCurr = myIterator.next();
+                myCurr.resolveUpdateSetLinks(pUpdateSet);
+            }
         }
 
         @Override

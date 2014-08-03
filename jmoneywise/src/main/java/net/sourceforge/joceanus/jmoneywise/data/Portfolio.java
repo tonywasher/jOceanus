@@ -145,7 +145,7 @@ public class Portfolio
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -554,7 +554,7 @@ public class Portfolio
     }
 
     @Override
-    public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve holding within list */
         DepositList myDeposits = pUpdateSet.findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_HOLDING, myDeposits);

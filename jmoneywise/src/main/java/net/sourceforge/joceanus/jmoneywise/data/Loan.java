@@ -152,7 +152,7 @@ public class Loan
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -644,7 +644,7 @@ public class Loan
     }
 
     @Override
-    public void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
+    protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws JOceanusException {
         /* Resolve parent within list */
         PayeeList myPayees = pUpdateSet.findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);

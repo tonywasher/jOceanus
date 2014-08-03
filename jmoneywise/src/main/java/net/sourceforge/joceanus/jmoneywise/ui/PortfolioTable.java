@@ -30,8 +30,11 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.ScrollButtonCellEditor;
@@ -52,6 +55,7 @@ import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfo.PortfolioInfoList;
 import net.sourceforge.joceanus.jmoneywise.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.PortfolioPanel;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -155,6 +159,11 @@ public class PortfolioTable
     private final JEnablePanel thePanel;
 
     /**
+     * The Portfolio dialog.
+     */
+    private final PortfolioPanel theActiveAccount;
+
+    /**
      * Portfolios.
      */
     private transient PortfolioList thePortfolios = null;
@@ -212,6 +221,14 @@ public class PortfolioTable
         thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+
+        /* Create an account panel */
+        theActiveAccount = new PortfolioPanel(theFieldMgr);
+        thePanel.add(theActiveAccount);
+        theActiveAccount.setReadOnlyItem(null);
+
+        /* Add selection listener */
+        getSelectionModel().addListSelectionListener(myListener);
     }
 
     /**
@@ -366,7 +383,7 @@ public class PortfolioTable
      * Listener class.
      */
     private final class PortfolioListener
-            implements ChangeListener {
+            implements ChangeListener, ListSelectionListener {
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -377,6 +394,24 @@ public class PortfolioTable
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireNewDataEvents();
+            }
+        }
+
+        @Override
+        public void valueChanged(final ListSelectionEvent pEvent) {
+            /* If we have finished selecting */
+            if (!pEvent.getValueIsAdjusting()) {
+                /* Access selection model */
+                ListSelectionModel myModel = getSelectionModel();
+                if (!myModel.isSelectionEmpty()) {
+                    /* Loop through the indices */
+                    int iIndex = myModel.getMinSelectionIndex();
+                    iIndex = convertRowIndexToModel(iIndex);
+                    Portfolio myAccount = thePortfolios.get(iIndex);
+                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                } else {
+                    theActiveAccount.setReadOnlyItem(null);
+                }
             }
         }
     }
