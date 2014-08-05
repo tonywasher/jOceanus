@@ -39,13 +39,17 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TaxInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear.TaxYearList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TaxYearInfoClass;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -90,10 +94,14 @@ public class TaxYearPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public TaxYearPanel(final JFieldManager pFieldMgr) {
+    public TaxYearPanel(final JFieldManager pFieldMgr,
+                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                        final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theYear = new JTextField(Deposit.NAMELEN);
@@ -408,6 +416,16 @@ public class TaxYearPanel
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        TaxYear myItem = getItem();
+        if (myItem != null) {
+            TaxYearList myYears = findDataList(MoneyWiseDataType.TAXYEAR, TaxYearList.class);
+            setItem(myYears.findItemById(myItem.getId()));
+        }
     }
 
     @Override

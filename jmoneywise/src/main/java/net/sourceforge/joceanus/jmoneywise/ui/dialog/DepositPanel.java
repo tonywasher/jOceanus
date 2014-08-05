@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
+import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.DepositInfoSet;
@@ -55,6 +56,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.dateday.JDateDayButton;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
@@ -121,12 +124,21 @@ public class DepositPanel
     private final ComplexIconButtonState<Boolean, Boolean> theGrossState;
 
     /**
+     * DepositRate Table.
+     */
+    private final DepositRateTable theRates;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public DepositPanel(final JFieldManager pFieldMgr) {
+    public DepositPanel(final JFieldManager pFieldMgr,
+                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                        final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Deposit.NAMELEN);
@@ -158,6 +170,10 @@ public class DepositPanel
         /* Build the notes panel */
         myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the DepositRates table */
+        theRates = new DepositRateTable(pFieldMgr, getUpdateSet(), pError);
+        myTabs.add("Rates", theRates.getPanel());
 
         /* Create the layout */
         setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
@@ -291,6 +307,19 @@ public class DepositPanel
     }
 
     @Override
+    public void refreshData() {
+        /* If we have an item */
+        Deposit myItem = getItem();
+        if (myItem != null) {
+            DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            setItem(myDeposits.findItemById(myItem.getId()));
+        }
+
+        /* Refresh the rates */
+        theRates.refreshData();
+    }
+
+    @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Deposit myDeposit = getItem();
@@ -396,6 +425,15 @@ public class DepositPanel
                     break;
             }
         }
+    }
+
+    @Override
+    public void setItem(final Deposit pItem) {
+        /* Update the rates */
+        theRates.setDeposit(pItem);
+
+        /* Pass call onwards */
+        super.setItem(pItem);
     }
 
     /**
@@ -523,7 +561,7 @@ public class DepositPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            PayeeList myPayees = findBaseDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
             /* Loop through the Payees */
             Iterator<Payee> myIterator = myPayees.iterator();

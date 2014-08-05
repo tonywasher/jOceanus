@@ -218,9 +218,9 @@ public class TransactionTagTable
         thePanel.add(getScrollPane());
 
         /* Create a Tag panel */
-        theActiveTag = new TransactionTagPanel(theFieldMgr);
+        theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveTag);
-        theActiveTag.setReadOnlyItem(null);
+        theActiveTag.setItem(null);
 
         /* Create new button */
         theNewButton = new JButton(NLS_NEW);
@@ -259,8 +259,13 @@ public class TransactionTagTable
         MoneyWiseData myData = theView.getData();
         TransactionTagList myTransactionTags = myData.getTransactionTags();
         theTransactionTags = myTransactionTags.deriveEditList();
-        setList(theTransactionTags);
         theTransactionTagEntry.setDataList(theTransactionTags);
+
+        /* Notify panel of refresh */
+        theActiveTag.refreshData();
+
+        /* Notify of the change */
+        setList(theTransactionTags);
         fireStateChanged();
     }
 
@@ -415,9 +420,9 @@ public class TransactionTagTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     TransactionTag myTag = theTransactionTags.get(iIndex);
-                    theActiveTag.setReadOnlyItem(myTag);
+                    theActiveTag.setItem(myTag);
                 } else {
-                    theActiveTag.setReadOnlyItem(null);
+                    theActiveTag.setItem(null);
                 }
             }
         }

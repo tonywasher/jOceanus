@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
@@ -74,7 +75,12 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     /**
      * The Update Set.
      */
-    private transient UpdateSet<MoneyWiseDataType> theUpdateSet;
+    private final UpdateSet<MoneyWiseDataType> theUpdateSet;
+
+    /**
+     * The ErrorPanel.
+     */
+    private final ErrorPanel theError;
 
     /**
      * The Item.
@@ -82,11 +88,24 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     private transient T theItem;
 
     /**
+     * The EditVersion.
+     */
+    private transient int theEditVersion;
+
+    /**
      * Obtain the field Set.
      * @return the FieldSet
      */
     protected JFieldSet<T> getFieldSet() {
         return theFieldSet;
+    }
+
+    /**
+     * Obtain the Update Set.
+     * @return the UpdateSet
+     */
+    protected UpdateSet<MoneyWiseDataType> getUpdateSet() {
+        return theUpdateSet;
     }
 
     /**
@@ -100,10 +119,16 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    protected DataItemPanel(final JFieldManager pFieldMgr) {
+    protected DataItemPanel(final JFieldManager pFieldMgr,
+                            final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                            final ErrorPanel pError) {
         /* Create the New FieldSet */
         theFieldSet = new JFieldSet<T>(pFieldMgr);
+        theUpdateSet = pUpdateSet;
+        theError = pError;
 
         /* Create listener */
         FieldListener myListener = new FieldListener();
@@ -112,27 +137,27 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
 
     /**
      * Set editable item.
-     * @param pUpdateSet the base update set
-     * @param pItem the item
+     * @param isEditable true/false
      */
-    public void setEditableItem(final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                final T pItem) {
-        /* Clone the update set */
-        theUpdateSet = new UpdateSet<MoneyWiseDataType>(pUpdateSet);
-
-        /* Store the element */
-        theItem = pItem;
-
+    public void setEditable(final boolean isEditable) {
         /* If we have an item */
         if (theItem != null) {
+            /* Determine EditVersion */
+            theEditVersion = isEditable
+                                       ? theUpdateSet.getVersion()
+                                       : -1;
+
             /* adjust fields */
             setVisible(true);
-            theFieldSet.setEditable(true);
-            adjustFields(true);
+            theFieldSet.setEditable(isEditable);
+            adjustFields(isEditable);
 
             /* Render the FieldSet */
             theFieldSet.renderSet(theItem);
         } else {
+            /* Set EditVersion */
+            theEditVersion = -1;
+
             /* Set visibility */
             setVisible(false);
         }
@@ -142,27 +167,18 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Set readOnly item.
      * @param pItem the item
      */
-    public void setReadOnlyItem(final T pItem) {
-        /* Null the update set */
-        theUpdateSet = null;
-
+    public void setItem(final T pItem) {
         /* Store the element */
         theItem = pItem;
 
-        /* If we have an item */
-        if (theItem != null) {
-            /* adjust Fields */
-            setVisible(true);
-            theFieldSet.setEditable(false);
-            adjustFields(false);
-
-            /* Render the FieldSet */
-            theFieldSet.renderSet(theItem);
-        } else {
-            /* Set visibility */
-            setVisible(false);
-        }
+        /* Set readOnly */
+        setEditable(false);
     }
+
+    /**
+     * Refresh data.
+     */
+    public abstract void refreshData();
 
     /**
      * Adjust Fields.
@@ -187,10 +203,10 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     public <L extends DataList<X, MoneyWiseDataType>, X extends DataItem<MoneyWiseDataType> & Comparable<? super X>>
             L
-            findBaseDataList(final MoneyWiseDataType pDataType,
-                             final Class<L> pClass) {
+            findDataList(final MoneyWiseDataType pDataType,
+                         final Class<L> pClass) {
         /* Look up the base list */
-        return theUpdateSet.findBaseDataList(pDataType, pClass);
+        return theUpdateSet.findDataList(pDataType, pClass);
     }
 
     /**
@@ -207,6 +223,15 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         /* Restrict the field */
         pComponent.setPreferredSize(myPrefDims);
         pComponent.setMaximumSize(myMaxDims);
+    }
+
+    /**
+     * Do we have any updates?
+     * @return true/false
+     */
+    public boolean hasUpdates() {
+        return theEditVersion != -1
+               && theEditVersion < theUpdateSet.getVersion();
     }
 
     /**
@@ -252,7 +277,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
                 JOceanusException myError = new JMoneyWiseDataException("Failed to update field", e);
 
                 /* Show the error */
-                // theError.addError(myError);
+                theError.addError(myError);
                 return;
             }
 

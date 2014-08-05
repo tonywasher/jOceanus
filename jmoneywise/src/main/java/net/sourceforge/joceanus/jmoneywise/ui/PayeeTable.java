@@ -227,9 +227,9 @@ public class PayeeTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new PayeePanel(theFieldMgr);
+        theActiveAccount = new PayeePanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -261,6 +261,11 @@ public class PayeeTable
         thePayeeEntry.setDataList(thePayees);
         PayeeInfoList myInfo = thePayees.getPayeeInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(thePayees);
         fireStateChanged();
     }
@@ -413,9 +418,9 @@ public class PayeeTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Payee myAccount = thePayees.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }

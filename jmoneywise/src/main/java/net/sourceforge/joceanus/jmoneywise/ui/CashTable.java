@@ -243,9 +243,9 @@ public class CashTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new CashPanel(theFieldMgr);
+        theActiveAccount = new CashPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -278,6 +278,11 @@ public class CashTable
         theCashEntry.setDataList(theCash);
         CashInfoList myInfo = theCash.getCashInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(theCash);
         fireStateChanged();
     }
@@ -430,9 +435,9 @@ public class CashTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Cash myAccount = theCash.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }

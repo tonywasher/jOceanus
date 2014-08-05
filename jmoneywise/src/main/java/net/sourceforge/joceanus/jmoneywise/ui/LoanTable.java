@@ -250,9 +250,9 @@ public class LoanTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new LoanPanel(theFieldMgr);
+        theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -287,6 +287,11 @@ public class LoanTable
         theLoanEntry.setDataList(theLoans);
         LoanInfoList myInfo = theLoans.getLoanInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(theLoans);
         fireStateChanged();
     }
@@ -439,9 +444,9 @@ public class LoanTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Loan myAccount = theLoans.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }

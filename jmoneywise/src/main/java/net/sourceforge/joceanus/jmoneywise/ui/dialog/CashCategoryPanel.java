@@ -35,12 +35,15 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryType.CashCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -89,10 +92,14 @@ public class CashCategoryPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public CashCategoryPanel(final JFieldManager pFieldMgr) {
+    public CashCategoryPanel(final JFieldManager pFieldMgr,
+                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(CashCategory.NAMELEN);
@@ -123,6 +130,16 @@ public class CashCategoryPanel
 
         /* Create the listener */
         new CategoryListener();
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        CashCategory myItem = getItem();
+        if (myItem != null) {
+            CashCategoryList myCategories = findDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+            setItem(myCategories.findItemById(myItem.getId()));
+        }
     }
 
     @Override

@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Loan;
+import net.sourceforge.joceanus.jmoneywise.data.Loan.LoanList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.LoanInfoSet;
@@ -55,6 +56,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountC
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -112,10 +115,14 @@ public class LoanPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public LoanPanel(final JFieldManager pFieldMgr) {
+    public LoanPanel(final JFieldManager pFieldMgr,
+                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                     final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Loan.NAMELEN);
@@ -256,6 +263,16 @@ public class LoanPanel
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        Loan myItem = getItem();
+        if (myItem != null) {
+            LoanList myLoans = findDataList(MoneyWiseDataType.LOAN, LoanList.class);
+            setItem(myLoans.findItemById(myItem.getId()));
+        }
     }
 
     @Override
@@ -463,7 +480,7 @@ public class LoanPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            PayeeList myPayees = findBaseDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
             /* Loop through the Payees */
             Iterator<Payee> myIterator = myPayees.iterator();

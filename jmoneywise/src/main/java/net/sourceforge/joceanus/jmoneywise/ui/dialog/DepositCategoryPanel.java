@@ -36,12 +36,15 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.data.DepositCategory.DepositCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.DepositCategoryType.DepositCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -90,10 +93,14 @@ public class DepositCategoryPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public DepositCategoryPanel(final JFieldManager pFieldMgr) {
+    public DepositCategoryPanel(final JFieldManager pFieldMgr,
+                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField();
@@ -132,6 +139,16 @@ public class DepositCategoryPanel
 
         /* Create the listener */
         new CategoryListener();
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        DepositCategory myItem = getItem();
+        if (myItem != null) {
+            DepositCategoryList myCategories = findDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
+            setItem(myCategories.findItemById(myItem.getId()));
+        }
     }
 
     @Override

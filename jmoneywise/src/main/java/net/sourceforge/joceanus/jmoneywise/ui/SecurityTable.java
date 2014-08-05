@@ -257,9 +257,9 @@ public class SecurityTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new SecurityPanel(theFieldMgr);
+        theActiveAccount = new SecurityPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -300,6 +300,11 @@ public class SecurityTable
         thePrices = myPrices.deriveEditList();
         thePrices.resolveUpdateSetLinks(theUpdateSet);
         thePriceEntry.setDataList(thePrices);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(theSecurities);
         fireStateChanged();
     }
@@ -452,9 +457,9 @@ public class SecurityTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Security myAccount = theSecurities.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }

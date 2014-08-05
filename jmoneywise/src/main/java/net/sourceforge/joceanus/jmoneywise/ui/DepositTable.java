@@ -263,9 +263,9 @@ public class DepositTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new DepositPanel(theFieldMgr);
+        theActiveAccount = new DepositPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -306,6 +306,11 @@ public class DepositTable
         theRates = myRates.deriveEditList();
         theRates.resolveUpdateSetLinks(theUpdateSet);
         theRateEntry.setDataList(theRates);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(theDeposits);
         fireStateChanged();
     }
@@ -458,9 +463,9 @@ public class DepositTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Deposit myAccount = theDeposits.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }

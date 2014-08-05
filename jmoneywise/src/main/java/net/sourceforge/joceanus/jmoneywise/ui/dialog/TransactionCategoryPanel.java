@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionCategory.TransactionCategoryList;
@@ -42,6 +43,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.TransactionCategoryTable.CategoryType;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -90,10 +93,14 @@ public class TransactionCategoryPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public TransactionCategoryPanel(final JFieldManager pFieldMgr) {
+    public TransactionCategoryPanel(final JFieldManager pFieldMgr,
+                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                    final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(TransactionCategory.NAMELEN);
@@ -124,6 +131,16 @@ public class TransactionCategoryPanel
 
         /* Create the listener */
         new CategoryListener();
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        TransactionCategory myItem = getItem();
+        if (myItem != null) {
+            TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+            setItem(myCategories.findItemById(myItem.getId()));
+        }
     }
 
     @Override

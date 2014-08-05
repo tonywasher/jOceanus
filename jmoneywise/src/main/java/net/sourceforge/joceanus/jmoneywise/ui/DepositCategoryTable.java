@@ -283,9 +283,9 @@ public class DepositCategoryTable
         thePanel.add(getScrollPane());
 
         /* Create a Category panel */
-        theActiveCategory = new DepositCategoryPanel(theFieldMgr);
+        theActiveCategory = new DepositCategoryPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveCategory);
-        theActiveCategory.setReadOnlyItem(null);
+        theActiveCategory.setItem(null);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -331,6 +331,9 @@ public class DepositCategoryTable
             theParent = theCategories.findItemById(theParent.getId());
             theSelectButton.setValue(theParent);
         }
+
+        /* Notify panel of refresh */
+        theActiveCategory.refreshData();
 
         /* Notify of the change */
         setList(theCategories);
@@ -538,9 +541,9 @@ public class DepositCategoryTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     DepositCategory myCategory = theCategories.get(iIndex);
-                    theActiveCategory.setReadOnlyItem(myCategory);
+                    theActiveCategory.setItem(myCategory);
                 } else {
-                    theActiveCategory.setReadOnlyItem(null);
+                    theActiveCategory.setItem(null);
                 }
             }
         }

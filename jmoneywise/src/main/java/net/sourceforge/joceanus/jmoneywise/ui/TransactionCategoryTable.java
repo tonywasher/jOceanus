@@ -283,9 +283,9 @@ public class TransactionCategoryTable
         thePanel.add(getScrollPane());
 
         /* Create a Category panel */
-        theActiveCategory = new TransactionCategoryPanel(theFieldMgr);
+        theActiveCategory = new TransactionCategoryPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveCategory);
-        theActiveCategory.setReadOnlyItem(null);
+        theActiveCategory.setItem(null);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -331,6 +331,9 @@ public class TransactionCategoryTable
             theParent = theCategories.findItemById(theParent.getId());
             theSelectButton.setValue(theParent);
         }
+
+        /* Notify panel of refresh */
+        theActiveCategory.refreshData();
 
         /* Notify of the change */
         setList(theCategories);
@@ -541,9 +544,9 @@ public class TransactionCategoryTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     TransactionCategory myCategory = theCategories.get(iIndex);
-                    theActiveCategory.setReadOnlyItem(myCategory);
+                    theActiveCategory.setItem(myCategory);
                 } else {
-                    theActiveCategory.setReadOnlyItem(null);
+                    theActiveCategory.setItem(null);
                 }
             }
         }

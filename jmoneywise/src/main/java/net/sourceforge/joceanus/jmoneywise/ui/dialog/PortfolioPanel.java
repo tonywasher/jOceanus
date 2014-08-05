@@ -44,9 +44,12 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.data.Portfolio;
+import net.sourceforge.joceanus.jmoneywise.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.data.PortfolioInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -98,10 +101,14 @@ public class PortfolioPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public PortfolioPanel(final JFieldManager pFieldMgr) {
+    public PortfolioPanel(final JFieldManager pFieldMgr,
+                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                          final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Portfolio.NAMELEN);
@@ -260,6 +267,16 @@ public class PortfolioPanel
     }
 
     @Override
+    public void refreshData() {
+        /* If we have an item */
+        Portfolio myItem = getItem();
+        if (myItem != null) {
+            PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            setItem(myPortfolios.findItemById(myItem.getId()));
+        }
+    }
+
+    @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Portfolio myPortfolio = getItem();
@@ -394,7 +411,7 @@ public class PortfolioPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            DepositList myDeposits = findBaseDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            DepositList myDeposits = findDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
             /* Loop through the Deposits */
             Iterator<Deposit> myIterator = myDeposits.iterator();

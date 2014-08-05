@@ -40,14 +40,18 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
+import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.PayeeInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -94,10 +98,14 @@ public class PayeePanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public PayeePanel(final JFieldManager pFieldMgr) {
+    public PayeePanel(final JFieldManager pFieldMgr,
+                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                      final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Payee.NAMELEN);
@@ -246,6 +254,16 @@ public class PayeePanel
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        Payee myItem = getItem();
+        if (myItem != null) {
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            setItem(myPayees.findItemById(myItem.getId()));
+        }
     }
 
     @Override

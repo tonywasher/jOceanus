@@ -32,7 +32,11 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag.TransactionTagList;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.SpringUtilities;
 
@@ -64,10 +68,14 @@ public class TransactionTagPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public TransactionTagPanel(final JFieldManager pFieldMgr) {
+    public TransactionTagPanel(final JFieldManager pFieldMgr,
+                               final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                               final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(TransactionTag.NAMELEN);
@@ -94,7 +102,18 @@ public class TransactionTagPanel
     }
 
     @Override
+    public void refreshData() {
+        /* If we have an item */
+        TransactionTag myItem = getItem();
+        if (myItem != null) {
+            TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+            setItem(myTags.findItemById(myItem.getId()));
+        }
+    }
+
+    @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Nothing to do */
     }
 
     @Override

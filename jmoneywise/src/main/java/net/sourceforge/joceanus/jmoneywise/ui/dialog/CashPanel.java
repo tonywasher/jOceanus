@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Cash;
+import net.sourceforge.joceanus.jmoneywise.data.Cash.CashList;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.CashInfoSet;
@@ -58,6 +59,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -120,10 +123,14 @@ public class CashPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public CashPanel(final JFieldManager pFieldMgr) {
+    public CashPanel(final JFieldManager pFieldMgr,
+                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                     final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Cash.NAMELEN);
@@ -255,6 +262,16 @@ public class CashPanel
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        Cash myItem = getItem();
+        if (myItem != null) {
+            CashList myCash = findDataList(MoneyWiseDataType.CASH, CashList.class);
+            setItem(myCash.findItemById(myItem.getId()));
+        }
     }
 
     @Override
@@ -531,7 +548,7 @@ public class CashPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            PayeeList myPayees = findBaseDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
             /* Loop through the Payees */
             Iterator<Payee> myIterator = myPayees.iterator();

@@ -102,11 +102,6 @@ public class UpdateSet<E extends Enum<E>>
     private final Map<E, UpdateEntry<?, E>> theMap;
 
     /**
-     * The base Set.
-     */
-    private final UpdateSet<E> theBase;
-
-    /**
      * The DataControl.
      */
     private final DataControl<?, E> theControl;
@@ -115,6 +110,14 @@ public class UpdateSet<E extends Enum<E>>
      * The version.
      */
     private int theVersion = 0;
+
+    /**
+     * Obtain the version.
+     * @return the version
+     */
+    public int getVersion() {
+        return theVersion;
+    }
 
     /**
      * Constructor for an update list.
@@ -126,32 +129,11 @@ public class UpdateSet<E extends Enum<E>>
         /* Store the Control */
         theControl = pControl;
 
-        /* Set no base */
-        theBase = null;
-
         /* Create local fields */
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the map */
         theMap = new EnumMap<E, UpdateEntry<?, E>>(pClass);
-    }
-
-    /**
-     * Constructor for an update set copy.
-     * @param pBase the Data Control
-     */
-    public UpdateSet(final UpdateSet<E> pBase) {
-        /* Store the Control */
-        theControl = pBase.theControl;
-
-        /* Store the base */
-        theBase = pBase;
-
-        /* Copy local fields */
-        theLocalFields = pBase.getDataFields();
-
-        /* Create the map */
-        theMap = new EnumMap<E, UpdateEntry<?, E>>(pBase.theMap);
     }
 
     /**
@@ -187,25 +169,6 @@ public class UpdateSet<E extends Enum<E>>
                                                                                                     final Class<L> pClass) {
         /* Locate an existing entry */
         UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
-
-        /* Cast correctly */
-        return myEntry != null
-                              ? pClass.cast(myEntry.getDataList())
-                              : null;
-    }
-
-    /**
-     * Obtain the list for a class in base updateSet.
-     * @param <L> the list type
-     * @param <T> the object type
-     * @param pDataType the data type
-     * @param pClass the list class
-     * @return the list
-     */
-    public <L extends DataList<T, E>, T extends DataItem<E> & Comparable<? super T>> L findBaseDataList(final E pDataType,
-                                                                                                        final Class<L> pClass) {
-        /* Locate an existing entry */
-        UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theBase.theMap.get(pDataType);
 
         /* Cast correctly */
         return myEntry != null

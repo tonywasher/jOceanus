@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.data.Security;
+import net.sourceforge.joceanus.jmoneywise.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.data.SecurityInfoSet;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency;
 import net.sourceforge.joceanus.jmoneywise.data.statics.AccountCurrency.AccountCurrencyList;
@@ -52,6 +53,8 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
@@ -111,12 +114,21 @@ public class SecurityPanel
     private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
+     * SecurityPrice Table.
+     */
+    private final SecurityPriceTable thePrices;
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public SecurityPanel(final JFieldManager pFieldMgr) {
+    public SecurityPanel(final JFieldManager pFieldMgr,
+                         final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                         final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(Security.NAMELEN);
@@ -143,6 +155,10 @@ public class SecurityPanel
         /* Build the notes panel */
         JPanel myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+
+        /* Create the SecurityPrices table */
+        thePrices = new SecurityPriceTable(pFieldMgr, getUpdateSet(), pError);
+        myTabs.add("Prices", thePrices.getPanel());
 
         /* Create the layout */
         setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
@@ -224,6 +240,19 @@ public class SecurityPanel
     }
 
     @Override
+    public void refreshData() {
+        /* If we have an item */
+        Security myItem = getItem();
+        if (myItem != null) {
+            SecurityList mySecurities = findDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+            setItem(mySecurities.findItemById(myItem.getId()));
+        }
+
+        /* Refresh the prices */
+        thePrices.refreshData();
+    }
+
+    @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
         Security mySecurity = getItem();
@@ -290,6 +319,15 @@ public class SecurityPanel
                     break;
             }
         }
+    }
+
+    @Override
+    public void setItem(final Security pItem) {
+        /* Update the prices */
+        thePrices.setSecurity(pItem);
+
+        /* Pass call onwards */
+        super.setItem(pItem);
     }
 
     /**
@@ -393,7 +431,7 @@ public class SecurityPanel
             JMenuItem myActive = null;
 
             /* Access Payees */
-            PayeeList myPayees = findBaseDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
             /* Loop through the Payees */
             Iterator<Payee> myIterator = myPayees.iterator();

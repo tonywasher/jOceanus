@@ -35,12 +35,15 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmetis.viewer.DataType;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
+import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.LoanCategoryType.LoanCategoryTypeList;
+import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
+import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -89,10 +92,14 @@ public class LoanCategoryPanel
     /**
      * Constructor.
      * @param pFieldMgr the field manager
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public LoanCategoryPanel(final JFieldManager pFieldMgr) {
+    public LoanCategoryPanel(final JFieldManager pFieldMgr,
+                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                             final ErrorPanel pError) {
         /* Initialise the panel */
-        super(pFieldMgr);
+        super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
         theName = new JTextField(LoanCategory.NAMELEN);
@@ -123,6 +130,16 @@ public class LoanCategoryPanel
 
         /* Create the listener */
         new CategoryListener();
+    }
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+        LoanCategory myItem = getItem();
+        if (myItem != null) {
+            LoanCategoryList myCategories = findDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+            setItem(myCategories.findItemById(myItem.getId()));
+        }
     }
 
     @Override

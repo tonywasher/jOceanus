@@ -223,9 +223,9 @@ public class PortfolioTable
         thePanel.add(getScrollPane());
 
         /* Create an account panel */
-        theActiveAccount = new PortfolioPanel(theFieldMgr);
+        theActiveAccount = new PortfolioPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setReadOnlyItem(null);
+        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -256,6 +256,11 @@ public class PortfolioTable
         thePortfolioEntry.setDataList(thePortfolios);
         PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
         theInfoEntry.setDataList(myInfo);
+
+        /* Notify panel of refresh */
+        theActiveAccount.refreshData();
+
+        /* Notify of the change */
         setList(thePortfolios);
         fireStateChanged();
     }
@@ -408,9 +413,9 @@ public class PortfolioTable
                     int iIndex = myModel.getMinSelectionIndex();
                     iIndex = convertRowIndexToModel(iIndex);
                     Portfolio myAccount = thePortfolios.get(iIndex);
-                    theActiveAccount.setEditableItem(theUpdateSet, myAccount);
+                    theActiveAccount.setItem(myAccount);
                 } else {
-                    theActiveAccount.setReadOnlyItem(null);
+                    theActiveAccount.setItem(null);
                 }
             }
         }
