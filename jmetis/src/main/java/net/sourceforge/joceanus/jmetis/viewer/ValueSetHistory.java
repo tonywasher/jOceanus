@@ -223,6 +223,7 @@ public class ValueSetHistory
      */
     public void setHistory(final ValueSet pBase) {
         theStack.clear();
+        theDeltas.clear();
         theOriginal = theCurr.cloneIt();
         theOriginal.copyFrom(pBase);
         theStack.push(theOriginal);
@@ -230,6 +231,37 @@ public class ValueSetHistory
 
         /* Add the delta to the stack */
         theDeltas.push(new ValueSetDelta(theCurr, theOriginal));
+    }
+
+    /**
+     * Condense history.
+     * @param pNewVersion the new maximum version
+     */
+    public void condenseHistory(final int pNewVersion) {
+        /* If we need to condense history */
+        if (theCurr.getVersion() > pNewVersion) {
+            /* While we have unnecessary stack entries */
+            boolean bNewDelta = false;
+            while (!theStack.isEmpty()
+                   && theStack.peek().getVersion() >= pNewVersion) {
+                /* Clear them */
+                theStack.pop();
+                theDeltas.clear();
+                bNewDelta = true;
+            }
+
+            /* Set the desired version */
+            theCurr.setVersion(pNewVersion);
+
+            /* If we need to adjust the delta */
+            if (bNewDelta && !theStack.isEmpty()) {
+                /* remove old delta */
+                theDeltas.pop();
+
+                /* Add the new delta to the stack */
+                theDeltas.push(new ValueSetDelta(theCurr, theStack.peek()));
+            }
+        }
     }
 
     /**

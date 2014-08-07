@@ -89,6 +89,16 @@ public abstract class PrometheusIcons {
     }
 
     /**
+     * Build status button state.
+     * @param pState the button state
+     */
+    public static void buildDeleteButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_DELETE);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
      * Build enabled button state.
      * @param pState the button state
      */

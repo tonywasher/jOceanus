@@ -310,8 +310,8 @@ public class PortfolioPanel
 
         /* Holding and TaxFree status cannot be changed if the item is active */
         boolean bIsActive = myPortfolio.isActive();
-        theFieldSet.setEditable(Portfolio.FIELD_HOLDING, !bIsActive);
-        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, !bIsActive);
+        theFieldSet.setEditable(Portfolio.FIELD_HOLDING, isEditable && !bIsActive);
+        theFieldSet.setEditable(Portfolio.FIELD_TAXFREE, isEditable && !bIsActive);
     }
 
     @Override

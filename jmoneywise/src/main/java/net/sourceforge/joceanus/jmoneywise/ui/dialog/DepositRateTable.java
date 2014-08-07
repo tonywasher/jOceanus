@@ -28,15 +28,18 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellEditor.RateCellEditor;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.field.JFieldCellRenderer.IconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.viewer.JDataFields.JDataField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.data.DepositRate.DepositRateList;
+import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTableColumn;
@@ -72,6 +75,11 @@ public class DepositRateTable
      * EndDate Column Title.
      */
     private static final String TITLE_ENDDATE = DepositRate.FIELD_ENDDATE.getName();
+
+    /**
+     * Delete Column Title.
+     */
+    private static final String TITLE_DELETE = "Delete";
 
     /**
      * The field manager.
@@ -113,6 +121,11 @@ public class DepositRateTable
      */
     private transient DepositRateList theRates = null;
 
+    /**
+     * Editable flag.
+     */
+    private transient boolean isEditable = false;
+
     @Override
     protected void setError(final JOceanusException pError) {
         theError.addError(pError);
@@ -128,7 +141,7 @@ public class DepositRateTable
 
     /**
      * Constructor.
-     * @param pView the data view
+     * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
@@ -143,7 +156,6 @@ public class DepositRateTable
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         setUpdateSet(theUpdateSet);
-        // theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new DepositRateTableModel(this);
@@ -158,7 +170,7 @@ public class DepositRateTable
         setAutoResizeMode(AUTO_RESIZE_ALL_COLUMNS);
 
         /* Set the number of visible rows */
-        setPreferredScrollableViewportSize(new Dimension(400, 50));
+        setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL >> 1, HEIGHT_PANEL >> 2));
 
         /* Create the layout for the panel */
         thePanel = new JEnablePanel();
@@ -185,6 +197,23 @@ public class DepositRateTable
         theDeposit = pDeposit;
         theModel.fireNewDataEvents();
         fireStateChanged();
+    }
+
+    /**
+     * Set whether the table is editable.
+     * @param pEditable true/false
+     */
+    protected void setEditable(final boolean pEditable) {
+        /* Store the value */
+        isEditable = pEditable;
+        theColumns.setColumns();
+    }
+
+    /**
+     * Refresh the table after an updateSet reWind.
+     */
+    protected void refreshAfterUpdate() {
+        theModel.fireNewDataEvents();
     }
 
     /**
@@ -297,6 +326,11 @@ public class DepositRateTable
         private static final int COLUMN_ENDDATE = 2;
 
         /**
+         * Delete column id.
+         */
+        private static final int COLUMN_DELETE = 3;
+
+        /**
          * Date Renderer.
          */
         private final CalendarCellRenderer theDateRenderer;
@@ -305,6 +339,11 @@ public class DepositRateTable
          * Decimal Renderer.
          */
         private final DecimalCellRenderer theDecimalRenderer;
+
+        /**
+         * Delete Icon Renderer.
+         */
+        private final IconButtonCellRenderer<Boolean> theDeleteIconRenderer;
 
         /**
          * Rate editor.
@@ -317,6 +356,16 @@ public class DepositRateTable
         private final CalendarCellEditor theDateEditor;
 
         /**
+         * Delete Icon editor.
+         */
+        private final IconButtonCellEditor<Boolean> theDeleteIconEditor;
+
+        /**
+         * Delete column.
+         */
+        private final JDataTableColumn theDeleteColumn;
+
+        /**
          * Constructor.
          * @param pTable the table
          */
@@ -327,13 +376,35 @@ public class DepositRateTable
             /* Create the relevant formatters */
             theRateEditor = theFieldMgr.allocateRateCellEditor();
             theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDeleteIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            theDeleteIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theDeleteIconEditor);
+
+            /* Configure the iconButton */
+            MoneyWiseIcons.buildDeleteButton(theDeleteIconEditor.getState());
 
             /* Create the columns */
             declareColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theDecimalRenderer, theRateEditor));
             declareColumn(new JDataTableColumn(COLUMN_BONUS, WIDTH_RATE, theDecimalRenderer, theRateEditor));
             declareColumn(new JDataTableColumn(COLUMN_ENDDATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            theDeleteColumn = new JDataTableColumn(COLUMN_DELETE, WIDTH_ICON, theDeleteIconRenderer, theDeleteIconEditor);
+            declareColumn(theDeleteColumn);
+
+            /* Initialise the columns */
+            setColumns();
+        }
+
+        /**
+         * Set visible columns according to the mode.
+         */
+        private void setColumns() {
+            /* Switch on mode */
+            if (showAll()) {
+                revealColumn(theDeleteColumn);
+            } else {
+                hideColumn(theDeleteColumn);
+            }
         }
 
         /**
@@ -349,6 +420,8 @@ public class DepositRateTable
                     return TITLE_BONUS;
                 case COLUMN_ENDDATE:
                     return TITLE_ENDDATE;
+                case COLUMN_DELETE:
+                    return TITLE_DELETE;
                 default:
                     return null;
             }
@@ -370,6 +443,8 @@ public class DepositRateTable
                     return pItem.getBonus();
                 case COLUMN_ENDDATE:
                     return pItem.getEndDate();
+                case COLUMN_DELETE:
+                    return Boolean.TRUE;
                 default:
                     return null;
             }
@@ -396,6 +471,9 @@ public class DepositRateTable
                 case COLUMN_ENDDATE:
                     pItem.setEndDate((JDateDay) pValue);
                     break;
+                case COLUMN_DELETE:
+                    deleteRow(pItem);
+                    break;
                 default:
                     break;
             }
@@ -413,7 +491,9 @@ public class DepositRateTable
                 case COLUMN_RATE:
                 case COLUMN_BONUS:
                 case COLUMN_ENDDATE:
-                    return false;
+                    return isEditable;
+                case COLUMN_DELETE:
+                    return isEditable && theModel.getViewRowCount() > 1;
                 default:
                     return false;
             }

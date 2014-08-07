@@ -247,7 +247,6 @@ public class UpdateSet<E extends Enum<E>>
                 myDataList.rewindToVersion(theVersion);
 
                 /* determine edit state */
-                myDataList.validate();
                 myDataList.findEditState();
             }
         }
@@ -488,6 +487,25 @@ public class UpdateSet<E extends Enum<E>>
         /* Show the error */
         if (!myErrors.isEmpty()) {
             pError.setErrors(myErrors);
+        }
+    }
+
+    /**
+     * Condense history.
+     * @param pNewVersion the new maximum version
+     */
+    public void condenseHistory(final int pNewVersion) {
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry<?, E> myEntry = myIterator.next();
+            DataList<?, E> myDataList = myEntry.getDataList();
+
+            /* Condense history in the list */
+            if (myDataList != null) {
+                myDataList.condenseHistory(pNewVersion);
+            }
         }
     }
 }

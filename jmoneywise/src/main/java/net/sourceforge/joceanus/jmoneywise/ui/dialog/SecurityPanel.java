@@ -330,6 +330,24 @@ public class SecurityPanel
         super.setItem(pItem);
     }
 
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Update the prices=-0o */
+        thePrices.setEditable(isEditable);
+
+        /* Pass call onwards */
+        super.setEditable(isEditable);
+    }
+
+    @Override
+    protected void refreshAfterUpdate() {
+        /* Pass call onwards */
+        super.refreshAfterUpdate();
+
+        /* Refresh the prices */
+        thePrices.refreshAfterUpdate();
+    }
+
     /**
      * Security Listener.
      */

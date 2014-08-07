@@ -882,10 +882,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
-        /* Create an iterator for the list */
-        OrderedListIterator<T> myIterator = listIterator();
-
         /* Loop through the elements */
+        OrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
 
@@ -916,6 +914,44 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (theStyle != ListStyle.EDIT) {
             reSort();
         }
+
+        /* Validate the list */
+        validate();
+    }
+
+    /**
+     * Condense history.
+     * @param pNewVersion the new maximum version
+     */
+    public void condenseHistory(final int pNewVersion) {
+        /* Loop through the elements */
+        OrderedListIterator<T> myIterator = listIterator();
+        while (myIterator.hasNext()) {
+            T myCurr = myIterator.next();
+
+            /* If the version is before required version */
+            if (myCurr.getValueSet().getVersion() < pNewVersion) {
+                /* Ignore */
+                continue;
+            }
+
+            /* If the item is in DELNEW state */
+            if (myCurr.isDeleted()
+                && (myCurr.getOriginalValues().getVersion() >= pNewVersion)) {
+                /* Remove from list */
+                myIterator.remove();
+                myCurr.deRegister();
+
+                /* Re-Loop */
+                continue;
+            }
+
+            /* Condense the history */
+            myCurr.condenseHistory(pNewVersion);
+        }
+
+        /* Adjust list value */
+        setVersion(pNewVersion);
 
         /* Validate the list */
         validate();

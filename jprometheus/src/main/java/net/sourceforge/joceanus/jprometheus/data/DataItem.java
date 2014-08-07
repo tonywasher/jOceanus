@@ -672,6 +672,14 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     /**
+     * Condense history.
+     * @param pNewVersion the new maximum version
+     */
+    public void condenseHistory(final int pNewVersion) {
+        theHistory.condenseHistory(pNewVersion);
+    }
+
+    /**
      * Determine whether a particular field has changed in this edit view.
      * @param pField the field to test
      * @return <code>true/false</code>

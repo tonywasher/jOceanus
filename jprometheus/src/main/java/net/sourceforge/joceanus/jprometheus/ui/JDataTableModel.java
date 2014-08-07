@@ -90,6 +90,16 @@ public abstract class JDataTableModel<T extends DataItem<E> & Comparable<? super
     }
 
     /**
+     * Obtain the filtered row count.
+     * @return the row count
+     */
+    public int getViewRowCount() {
+        return theFilter == null
+                                ? getRowCount()
+                                : theFilter.getViewRowCount();
+    }
+
+    /**
      * Get showAll value.
      * @return true/false
      */

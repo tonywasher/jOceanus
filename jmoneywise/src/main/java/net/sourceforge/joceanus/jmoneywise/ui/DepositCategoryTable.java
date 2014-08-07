@@ -238,7 +238,7 @@ public class DepositCategoryTable
 
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
-        theCategoryEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITINFO);
+        theCategoryEntry = theUpdateSet.registerType(MoneyWiseDataType.DEPOSITCATEGORY);
         setUpdateSet(theUpdateSet);
 
         /* Create the table model */

@@ -306,7 +306,7 @@ public class LoanPanel
 
         /* Currency cannot be changed if the item is active */
         boolean bIsActive = myLoan.isActive();
-        theFieldSet.setEditable(Loan.FIELD_CURRENCY, !bIsActive);
+        theFieldSet.setEditable(Loan.FIELD_CURRENCY, isEditable && !bIsActive);
     }
 
     @Override

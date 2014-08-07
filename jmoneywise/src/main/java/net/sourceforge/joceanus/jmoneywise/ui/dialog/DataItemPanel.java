@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmetis.field.JFieldManager;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet;
@@ -114,6 +116,14 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected T getItem() {
         return theItem;
+    }
+
+    /**
+     * Obtain the edit version.
+     * @return the edit version
+     */
+    protected int getEditVersion() {
+        return theEditVersion;
     }
 
     /**
@@ -235,10 +245,40 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     }
 
     /**
+     * Refresh the item after an updateSet reWind.
+     */
+    protected void refreshAfterUpdate() {
+        theFieldSet.renderSet(theItem);
+    }
+
+    /**
+     * Commit changes.
+     */
+    protected void commitChanges() {
+        /* Condense changes in the updateSet */
+        theUpdateSet.condenseHistory(theEditVersion + 1);
+
+        /* Stop element being editable */
+        setEditable(false);
+    }
+
+    /**
      * FieldListener class.
      */
     private final class FieldListener
-            implements ActionListener {
+            implements ActionListener, ChangeListener {
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            /* Access source */
+            Object o = pEvent.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Note refresh */
+                refreshAfterUpdate();
+            }
+        }
+
         @Override
         public void actionPerformed(final ActionEvent e) {
             Object o = e.getSource();

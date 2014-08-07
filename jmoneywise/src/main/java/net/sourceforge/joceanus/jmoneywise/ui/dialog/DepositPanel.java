@@ -436,6 +436,24 @@ public class DepositPanel
         super.setItem(pItem);
     }
 
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Update the rates */
+        theRates.setEditable(isEditable);
+
+        /* Pass call onwards */
+        super.setEditable(isEditable);
+    }
+
+    @Override
+    protected void refreshAfterUpdate() {
+        /* Pass call onwards */
+        super.refreshAfterUpdate();
+
+        /* Refresh the rates */
+        theRates.refreshAfterUpdate();
+    }
+
     /**
      * Deposit Listener.
      */
