@@ -31,6 +31,8 @@ it will pass the setEnabled() method on to all subcomponents.
 
     * A set of classes to enable Scrollable Menus
 
+    * A set of JButton extensions to utilise Scrollable menus and icons
+
     * A class to provide simple sorting/filtering in a JTable
 
 * A DateDay class

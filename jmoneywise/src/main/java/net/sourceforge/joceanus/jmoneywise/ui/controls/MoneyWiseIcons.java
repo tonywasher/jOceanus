@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * jMoneyWise: Finance Application
  * Copyright 2012,2014 Tony Washer
  *
@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
+import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
 
 /**
  * Utility class to manage status icon buttons.
@@ -79,6 +80,36 @@ public final class MoneyWiseIcons
     private static final Icon ICON_FROZEN_BOXCHECK = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyCheckBox.png")));
 
     /**
+     * The undo arrow.
+     */
+    private static final Icon ICON_UNDO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyArrowLeft.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The reset arrow.
+     */
+    private static final Icon ICON_RESET = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyDoubleArrowLeft.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The cancel arrow.
+     */
+    private static final Icon ICON_CANCEL = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("OrangeJellyUndo.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The edit arrow.
+     */
+    private static final Icon ICON_EDIT = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("ItemEdit.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The goto arrow.
+     */
+    private static final Icon ICON_GOTO = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("BlueJellyGoTo.png")), ICON_XTRA_SIZE);
+
+    /**
+     * The new icon.
+     */
+    private static final Icon ICON_NEW = resizeImage(new ImageIcon(MoneyWiseIcons.class.getResource("GreenJellyPlus.png")));
+
+    /**
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {
@@ -124,5 +155,55 @@ public final class MoneyWiseIcons
         pState.setState(Boolean.FALSE);
         pState.setIconForValue(Boolean.TRUE, ICON_FROZEN_BOXCHECK);
         pState.setIconForValue(Boolean.FALSE, ICON_FROZEN_BOXCLEAR);
+    }
+
+    /**
+     * Build edit button state.
+     * @param pState the button state
+     */
+    public static void buildEditButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_EDIT);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build commit button state.
+     * @param pState the button state
+     */
+    public static void buildCommitButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_RECONCILED);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build undo button state.
+     * @param pState the button state
+     */
+    public static void buildUndoButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_UNDO);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build reset button state.
+     * @param pState the button state
+     */
+    public static void buildResetButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_RESET);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
+    }
+
+    /**
+     * Build cancel button state.
+     * @param pState the button state
+     */
+    public static void buildCancelButton(final DefaultIconButtonState<Boolean> pState) {
+        /* Configure the delete iconButton */
+        pState.setIconForValue(Boolean.TRUE, ICON_CANCEL);
+        pState.setNewValueForValue(Boolean.TRUE, Boolean.FALSE);
     }
 }

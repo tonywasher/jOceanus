@@ -108,8 +108,8 @@ public class PayeePanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Payee.NAMELEN);
-        theDesc = new JTextField(Payee.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<PayeeType>();
@@ -134,10 +134,14 @@ public class PayeePanel
         myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new PayeeListener();
@@ -312,16 +316,16 @@ public class PayeePanel
         /* Process updates */
         if (myField.equals(Payee.FIELD_NAME)) {
             /* Update the Name */
-            myPayee.setName(pUpdate.getValue(String.class));
+            myPayee.setName(pUpdate.getString());
         } else if (myField.equals(Payee.FIELD_DESC)) {
             /* Update the Description */
-            myPayee.setDescription(pUpdate.getValue(String.class));
+            myPayee.setDescription(pUpdate.getString());
         } else if (myField.equals(Payee.FIELD_PAYEETYPE)) {
             /* Update the Payee Type */
             myPayee.setPayeeType(pUpdate.getValue(PayeeType.class));
         } else if (myField.equals(Payee.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myPayee.setClosed(pUpdate.getValue(Boolean.class));
+            myPayee.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (PayeeInfoSet.getClassForField(myField)) {

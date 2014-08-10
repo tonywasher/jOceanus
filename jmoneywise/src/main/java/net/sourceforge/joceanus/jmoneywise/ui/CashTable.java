@@ -245,7 +245,6 @@ public class CashTable
         /* Create an account panel */
         theActiveAccount = new CashPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);

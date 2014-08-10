@@ -5,6 +5,27 @@ jOceanus Project
   In developing <<jMoneyWise>>, a number of supporting generic components were built. Together with jMoneyWise, these have
 been aggregated as the <<jOceanus>> project.
 
-  The project is still under development.
+  The project is still under development, and should currently be viewed as a set of source examples.
+
+* Utility classes (<<jTethys>>)
+
+  * a basic decimal class allowing values with fixed numbers of decimals to be manipulated without resorting to 
+the <<BigDecimal>> class
+
+  * a set of data conversion utilities
+
+  * a set of swing extensions.
+
+* Encryption classes
+
+  A set of classes providing triple encryption and extended support for encrypted zipFiles.
+
+* Database access.
+
+  Access classes for MySQL/PostgreSQL/SQLServer databases as well as OpenOffice/Excel spreadsheets.
+
+
+
+	
 
 

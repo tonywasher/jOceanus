@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -103,13 +104,20 @@ public class TransactionCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(TransactionCategory.NAMELEN);
-        theSubName = new JTextField(TransactionCategory.NAMELEN);
-        theDesc = new JTextField(TransactionCategory.DESCLEN);
+        theName = new JTextField();
+        theSubName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<TransactionCategoryType>();
         theParentButton = new JScrollButton<TransactionCategory>();
+
+        /* restrict the fields */
+        restrictField(theName, TransactionCategory.NAMELEN);
+        restrictField(theSubName, TransactionCategory.NAMELEN);
+        restrictField(theDesc, TransactionCategory.NAMELEN);
+        restrictField(theTypeButton, TransactionCategory.NAMELEN);
+        restrictField(theParentButton, TransactionCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -119,15 +127,19 @@ public class TransactionCategoryPanel
         theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, theParentButton);
 
-        /* Layout the panel */
+        /* Layout the main panel */
+        JPanel myPanel = getMainPanel();
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_SUBCAT, this);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_CATTYPE, this);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_PARENT, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_SUBCAT, myPanel);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_CATTYPE, myPanel);
+        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_PARENT, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new CategoryListener();
@@ -141,22 +153,33 @@ public class TransactionCategoryPanel
             TransactionCategoryList myCategories = findDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        TransactionCategoryType myCurr = getItem().getCategoryType();
-        CategoryType myCurrType = CategoryType.determineType(myCurr);
+        TransactionCategory myCategory = getItem();
+        TransactionCategoryType myType = myCategory.getCategoryType();
+        CategoryType myCurrType = CategoryType.determineType(myType);
         boolean showParent = myCurrType.equals(CategoryType.SUBTOTAL);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        theFieldSet.setVisibility(TransactionCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
         theFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
-        boolean bIsActive = myCurr.isActive();
-        theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, !bIsActive);
+        boolean canEdit = isEditable && !myCategory.isActive();
+        theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
+
+        /* If the category is not a parent then we cannot edit the full name */
+        theFieldSet.setEditable(TransactionCategory.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
@@ -167,17 +190,17 @@ public class TransactionCategoryPanel
 
         /* Process updates */
         if (myField.equals(TransactionCategory.FIELD_NAME)) {
-            /* Update the Name */
-            myCategory.setCategoryName(pUpdate.getValue(String.class));
+            /* Update the SUBCATEGORY(!!) Name */
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(TransactionCategory.FIELD_SUBCAT)) {
             /* Update the SubCategory */
-            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(TransactionCategory.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(TransactionCategory.class));
         } else if (myField.equals(TransactionCategory.FIELD_DESC)) {
             /* Update the Description */
-            myCategory.setDescription(pUpdate.getValue(String.class));
+            myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(TransactionCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(TransactionCategoryType.class));

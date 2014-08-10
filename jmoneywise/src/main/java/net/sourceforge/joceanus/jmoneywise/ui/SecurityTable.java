@@ -259,7 +259,6 @@ public class SecurityTable
         /* Create an account panel */
         theActiveAccount = new SecurityPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);

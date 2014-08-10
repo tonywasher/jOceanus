@@ -133,8 +133,8 @@ public class CashPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Cash.NAMELEN);
-        theDesc = new JTextField(Cash.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<CashCategory>();
@@ -162,10 +162,14 @@ public class CashPanel
         myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new CashListener();
@@ -290,8 +294,9 @@ public class CashPanel
         theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee cannot be changed for closed item */
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), !isClosed);
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), !isClosed);
+        boolean canEdit = isEditable && !isClosed;
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
+        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
 
         /* Currency cannot be changed if the item is active */
         boolean bIsActive = myCash.isActive();
@@ -314,10 +319,10 @@ public class CashPanel
         /* Process updates */
         if (myField.equals(Cash.FIELD_NAME)) {
             /* Update the Name */
-            myCash.setName(pUpdate.getValue(String.class));
+            myCash.setName(pUpdate.getString());
         } else if (myField.equals(Cash.FIELD_DESC)) {
             /* Update the Description */
-            myCash.setDescription(pUpdate.getValue(String.class));
+            myCash.setDescription(pUpdate.getString());
         } else if (myField.equals(Cash.FIELD_CATEGORY)) {
             /* Update the Category */
             myCash.setCashCategory(pUpdate.getValue(CashCategory.class));
@@ -326,12 +331,17 @@ public class CashPanel
             myCash.setCashCurrency(pUpdate.getValue(AccountCurrency.class));
         } else if (myField.equals(Cash.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myCash.setClosed(pUpdate.getValue(Boolean.class));
+            myCash.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (CashInfoSet.getClassForField(myField)) {
                 case AUTOEXPENSE:
                     myCash.setAutoExpense(pUpdate.getValue(TransactionCategory.class));
+                    if (myCash.getAutoExpense() == null) {
+                        myCash.setAutoPayee(null);
+                    } else if (myCash.getAutoPayee() == null) {
+                        /* Select a new payee */
+                    }
                     break;
                 case AUTOPAYEE:
                     myCash.setAutoPayee(pUpdate.getValue(Payee.class));

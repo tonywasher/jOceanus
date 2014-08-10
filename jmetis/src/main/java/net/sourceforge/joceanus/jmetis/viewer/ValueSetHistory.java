@@ -246,7 +246,7 @@ public class ValueSetHistory
                    && theStack.peek().getVersion() >= pNewVersion) {
                 /* Clear them */
                 theStack.pop();
-                theDeltas.clear();
+                theDeltas.pop();
                 bNewDelta = true;
             }
 

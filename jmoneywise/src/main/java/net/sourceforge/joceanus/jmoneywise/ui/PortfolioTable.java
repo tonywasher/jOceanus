@@ -225,7 +225,6 @@ public class PortfolioTable
         /* Create an account panel */
         theActiveAccount = new PortfolioPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);

@@ -23,15 +23,12 @@
 package net.sourceforge.joceanus.jprometheus.ui;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
 import java.util.logging.Logger;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -254,7 +251,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theRowHdrModel = new RowTableModel<E>(this);
 
         /* Set the selection mode */
-        setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     }
 
     /**
@@ -297,28 +294,6 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theScroll.setRowHeaderView(theRowHdrTable);
         theScroll.getRowHeader().setPreferredSize(new Dimension(JDataTableColumnModel.WIDTH_ROWHDR, HEIGHT_PANEL));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, theRowHdrTable.getTableHeader());
-    }
-
-    /**
-     * Resize an icon to the row height.
-     * @param pSource the source icon
-     * @return the resized icon
-     */
-    protected static Icon resizeImage(final ImageIcon pSource) {
-        return resizeImage(pSource, 0);
-    }
-
-    /**
-     * Resize an icon to the row height.
-     * @param pSource the source icon
-     * @param pExtraSize the extra size
-     * @return the resized icon
-     */
-    protected static Icon resizeImage(final ImageIcon pSource,
-                                      final int pExtraSize) {
-        Image myImage = pSource.getImage();
-        Image myNewImage = myImage.getScaledInstance(ROW_HEIGHT + pExtraSize, ROW_HEIGHT + pExtraSize, Image.SCALE_SMOOTH);
-        return new ImageIcon(myNewImage);
     }
 
     @Override

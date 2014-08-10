@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
-import java.awt.Dimension;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -107,17 +107,21 @@ public class DepositCategoryPanel
         theSubName = new JTextField();
         theDesc = new JTextField();
 
-        /* Allocate Dimension */
-        Dimension myDims = new Dimension(DepositCategory.DESCLEN * CHAR_WIDTH, FIELD_HEIGHT);
-
-        /* restrict the field */
-        theName.setMaximumSize(myDims);
-        theSubName.setMaximumSize(myDims);
-        theDesc.setMaximumSize(myDims);
+        /* restrict the fields */
+        restrictField(theName, DepositCategory.NAMELEN);
+        restrictField(theSubName, DepositCategory.NAMELEN);
+        restrictField(theDesc, DepositCategory.NAMELEN);
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<DepositCategoryType>();
         theParentButton = new JScrollButton<DepositCategory>();
+
+        /* restrict the fields */
+        restrictField(theName, DepositCategory.NAMELEN);
+        restrictField(theSubName, DepositCategory.NAMELEN);
+        restrictField(theDesc, DepositCategory.NAMELEN);
+        restrictField(theTypeButton, DepositCategory.NAMELEN);
+        restrictField(theParentButton, DepositCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -127,15 +131,19 @@ public class DepositCategoryPanel
         theFieldSet.addFieldElement(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(DepositCategory.FIELD_PARENT, DepositCategory.class, theParentButton);
 
-        /* Layout the panel */
+        /* Layout the main panel */
+        JPanel myPanel = getMainPanel();
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_SUBCAT, this);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_CATTYPE, this);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_PARENT, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(DepositCategory.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(DepositCategory.FIELD_SUBCAT, myPanel);
+        theFieldSet.addFieldToPanel(DepositCategory.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(DepositCategory.FIELD_CATTYPE, myPanel);
+        theFieldSet.addFieldToPanel(DepositCategory.FIELD_PARENT, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new CategoryListener();
@@ -149,17 +157,32 @@ public class DepositCategoryPanel
             DepositCategoryList myCategories = findDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        DepositCategoryType myCurr = getItem().getCategoryType();
-        boolean showParent = !myCurr.isDepositCategory(DepositCategoryClass.PARENT);
+        DepositCategory myCategory = getItem();
+        DepositCategoryType myType = myCategory.getCategoryType();
+        boolean showParent = !myType.isDepositCategory(DepositCategoryClass.PARENT);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        theFieldSet.setVisibility(DepositCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
         theFieldSet.setVisibility(DepositCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, showParent);
+
+        /* If the category is active then we cannot change the category type */
+        boolean canEdit = isEditable && !myCategory.isActive();
+        theFieldSet.setEditable(DepositCategory.FIELD_CATTYPE, canEdit);
+
+        /* If the category is not a parent then we cannot edit the full name */
+        theFieldSet.setEditable(DepositCategory.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
@@ -170,17 +193,17 @@ public class DepositCategoryPanel
 
         /* Process updates */
         if (myField.equals(DepositCategory.FIELD_NAME)) {
-            /* Update the Name */
-            myCategory.setCategoryName(pUpdate.getValue(String.class));
+            /* Update the SUBCATEGORY(!!) Name */
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(DepositCategory.FIELD_SUBCAT)) {
             /* Update the SubCategory */
-            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(DepositCategory.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(DepositCategory.class));
         } else if (myField.equals(DepositCategory.FIELD_DESC)) {
             /* Update the Description */
-            myCategory.setDescription(pUpdate.getValue(String.class));
+            myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(DepositCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(DepositCategoryType.class));

@@ -26,7 +26,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,17 +44,23 @@ import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
+import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 
 /**
  * Class to enable display/editing of and individual dataItem.
  * @param <T> the item type
  */
 public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
-        extends JEnablePanel {
+        extends JEventPanel {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = 7514751065536367674L;
+
+    /**
+     * ReadOnly EditVersion.
+     */
+    protected static final int VERSION_READONLY = -1;
 
     /**
      * Padding size.
@@ -63,11 +71,6 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Field Height.
      */
     protected static final int FIELD_HEIGHT = 20;
-
-    /**
-     * Character Width.
-     */
-    protected static final int CHAR_WIDTH = 15;
 
     /**
      * The Field Set.
@@ -85,6 +88,21 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     private final ErrorPanel theError;
 
     /**
+     * The MainPanel.
+     */
+    private final JPanel theMainPanel;
+
+    /**
+     * The Item Actions.
+     */
+    private final ItemActions theItemActions;
+
+    /**
+     * The Item Actions.
+     */
+    private final ItemEditActions theEditActions;
+
+    /**
      * The Item.
      */
     private transient T theItem;
@@ -92,7 +110,7 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     /**
      * The EditVersion.
      */
-    private transient int theEditVersion;
+    private transient int theEditVersion = VERSION_READONLY;
 
     /**
      * Obtain the field Set.
@@ -108,6 +126,14 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected UpdateSet<MoneyWiseDataType> getUpdateSet() {
         return theUpdateSet;
+    }
+
+    /**
+     * Obtain the main panel.
+     * @return the main panel
+     */
+    protected JPanel getMainPanel() {
+        return theMainPanel;
     }
 
     /**
@@ -135,14 +161,37 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     protected DataItemPanel(final JFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final ErrorPanel pError) {
-        /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<T>(pFieldMgr);
+        /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
+
+        /* Create the New FieldSet */
+        theFieldSet = new JFieldSet<T>(pFieldMgr);
 
         /* Create listener */
         FieldListener myListener = new FieldListener();
         theFieldSet.addActionListener(myListener);
+        theUpdateSet.addChangeListener(myListener);
+
+        /* Create the main panel */
+        theMainPanel = new JEnablePanel();
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
+        /* create the action panels */
+        theItemActions = new ItemActions(this);
+        theEditActions = new ItemEditActions(this);
+    }
+
+    /**
+     * Layout the panel.
+     */
+    protected void layoutPanel() {
+        add(theMainPanel);
+        add(theItemActions);
+        add(theEditActions);
+
+        /* Set visibility */
+        setVisible(false);
     }
 
     /**
@@ -154,19 +203,29 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
         if (theItem != null) {
             /* Determine EditVersion */
             theEditVersion = isEditable
-                                       ? theUpdateSet.getVersion()
-                                       : -1;
+                                       ? isEditing()
+                                                    ? theEditVersion
+                                                    : theUpdateSet.getVersion()
+                                       : VERSION_READONLY;
 
             /* adjust fields */
             setVisible(true);
             theFieldSet.setEditable(isEditable);
             adjustFields(isEditable);
 
+            /* Set panel visibility */
+            theItemActions.setVisible(!isEditable);
+            theEditActions.setVisible(isEditable);
+
             /* Render the FieldSet */
             theFieldSet.renderSet(theItem);
+
+            /* ensure that the actions are updated */
+            updateActions();
+
         } else {
             /* Set EditVersion */
-            theEditVersion = -1;
+            theEditVersion = VERSION_READONLY;
 
             /* Set visibility */
             setVisible(false);
@@ -174,15 +233,43 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     }
 
     /**
+     * update the actions.
+     */
+    protected void updateActions() {
+        theEditActions.updateState();
+        theItemActions.updateState();
+    }
+
+    /**
      * Set readOnly item.
      * @param pItem the item
      */
     public void setItem(final T pItem) {
-        /* Store the element */
-        theItem = pItem;
+        /* If we are not editing or the item is non-null */
+        if ((pItem != null) || !isEditing()) {
+            /* Store the element */
+            theItem = pItem;
 
-        /* Set readOnly */
-        setEditable(false);
+            /* Set readOnly */
+            setEditable(false);
+        }
+    }
+
+    /**
+     * Is the item edit-able?
+     * @return true/false
+     */
+    protected boolean isEditable() {
+        return true;
+    }
+
+    /**
+     * Is the item delete-able?
+     * @return true/false
+     */
+    protected boolean isDeletable() {
+        return theItem != null
+               && !theItem.isActive();
     }
 
     /**
@@ -226,8 +313,11 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected void restrictField(final JComponent pComponent,
                                  final int pWidth) {
+        /* Calculate the character width */
+        int myCharWidth = pComponent.getFontMetrics(pComponent.getFont()).stringWidth("w");
+
         /* Allocate Dimension */
-        Dimension myPrefDims = new Dimension(pWidth * CHAR_WIDTH, FIELD_HEIGHT);
+        Dimension myPrefDims = new Dimension(pWidth * myCharWidth, FIELD_HEIGHT);
         Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, FIELD_HEIGHT);
 
         /* Restrict the field */
@@ -236,12 +326,28 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     }
 
     /**
+     * Are we editing?
+     * @return true/false
+     */
+    public boolean isEditing() {
+        return theEditVersion != VERSION_READONLY;
+    }
+
+    /**
      * Do we have any updates?
      * @return true/false
      */
     public boolean hasUpdates() {
-        return theEditVersion != -1
+        return isEditing()
                && theEditVersion < theUpdateSet.getVersion();
+    }
+
+    /**
+     * Do we have any errors?
+     * @return true/false
+     */
+    public boolean hasErrors() {
+        return theUpdateSet.hasErrors();
     }
 
     /**
@@ -249,17 +355,80 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      */
     protected void refreshAfterUpdate() {
         theFieldSet.renderSet(theItem);
+        theEditActions.updateState();
     }
 
     /**
-     * Commit changes.
+     * Request cancel.
      */
-    protected void commitChanges() {
-        /* Condense changes in the updateSet */
-        theUpdateSet.condenseHistory(theEditVersion + 1);
+    protected void requestCancel() {
+        /* If we have any updates */
+        if (hasUpdates()) {
+            /* Rewind any changes that have been made */
+            theUpdateSet.rewindToVersion(theEditVersion);
+        }
 
         /* Stop element being editable */
         setEditable(false);
+
+        /* Note status has changed */
+        fireStateChanged();
+    }
+
+    /**
+     * Request reset.
+     */
+    protected void requestReset() {
+        /* If we have any updates */
+        if (hasUpdates()) {
+            /* Rewind any changes that have been made */
+            theUpdateSet.rewindToVersion(theEditVersion);
+        }
+    }
+
+    /**
+     * Request cancel.
+     */
+    protected void requestUndo() {
+        /* If we have any updates */
+        if (hasUpdates()) {
+            /* Undo the last change */
+            theUpdateSet.undoLastChange();
+        }
+    }
+
+    /**
+     * Request commit.
+     */
+    protected void requestCommit() {
+        /* If we have any updates */
+        if (hasUpdates()) {
+            /* Undo the last change */
+            theUpdateSet.condenseHistory(theEditVersion + 1);
+        }
+
+        /* Stop element being editable */
+        setEditable(false);
+
+        /* Note status has changed */
+        fireStateChanged();
+    }
+
+    /**
+     * Request edit.
+     */
+    protected void requestEdit() {
+        /* Start editing */
+        setEditable(true);
+
+        /* Note status has changed */
+        fireStateChanged();
+    }
+
+    /**
+     * Request delete.
+     */
+    protected void requestDelete() {
     }
 
     /**
@@ -325,6 +494,9 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
             if (theItem.checkForHistory()) {
                 /* Increment the update version */
                 theUpdateSet.incrementVersion();
+
+                /* Update according to the details */
+                setEditable(true);
             }
         }
     }

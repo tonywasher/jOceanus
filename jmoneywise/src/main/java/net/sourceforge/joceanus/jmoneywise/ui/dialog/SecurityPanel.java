@@ -131,9 +131,9 @@ public class SecurityPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Security.NAMELEN);
-        theDesc = new JTextField(Security.DESCLEN);
-        theSymbol = new JTextField(Security.SYMBOLLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
+        theSymbol = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<SecurityType>();
@@ -160,10 +160,14 @@ public class SecurityPanel
         thePrices = new SecurityPriceTable(pFieldMgr, getUpdateSet(), pError);
         myTabs.add("Prices", thePrices.getPanel());
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new SecurityListener();
@@ -290,13 +294,13 @@ public class SecurityPanel
         /* Process updates */
         if (myField.equals(Security.FIELD_NAME)) {
             /* Update the Name */
-            mySecurity.setName(pUpdate.getValue(String.class));
+            mySecurity.setName(pUpdate.getString());
         } else if (myField.equals(Security.FIELD_DESC)) {
             /* Update the Description */
-            mySecurity.setDescription(pUpdate.getValue(String.class));
+            mySecurity.setDescription(pUpdate.getString());
         } else if (myField.equals(Security.FIELD_SYMBOL)) {
             /* Update the Symbol */
-            mySecurity.setSymbol(pUpdate.getValue(String.class));
+            mySecurity.setSymbol(pUpdate.getString());
         } else if (myField.equals(Security.FIELD_SECTYPE)) {
             /* Update the Security Type */
             mySecurity.setSecurityType(pUpdate.getValue(SecurityType.class));
@@ -308,7 +312,7 @@ public class SecurityPanel
             mySecurity.setSecurityCurrency(pUpdate.getValue(AccountCurrency.class));
         } else if (myField.equals(Security.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            mySecurity.setClosed(pUpdate.getValue(Boolean.class));
+            mySecurity.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (SecurityInfoSet.getClassForField(myField)) {
@@ -332,7 +336,7 @@ public class SecurityPanel
 
     @Override
     public void setEditable(final boolean isEditable) {
-        /* Update the prices=-0o */
+        /* Update the prices */
         thePrices.setEditable(isEditable);
 
         /* Pass call onwards */
@@ -379,6 +383,7 @@ public class SecurityPanel
             theParentMenuBuilder.addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
             theCurrencyMenuBuilder.addChangeListener(this);
+            thePrices.addChangeListener(this);
         }
 
         @Override
@@ -392,6 +397,9 @@ public class SecurityPanel
                 buildParentMenu();
             } else if (theCurrencyMenuBuilder.equals(o)) {
                 buildCurrencyMenu();
+            } else if (thePrices.equals(o)) {
+                updateActions();
+                fireStateChanged();
             }
         }
 

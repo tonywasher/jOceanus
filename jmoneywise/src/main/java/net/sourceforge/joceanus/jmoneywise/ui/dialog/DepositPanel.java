@@ -141,8 +141,8 @@ public class DepositPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Deposit.NAMELEN);
-        theDesc = new JTextField(Deposit.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<DepositCategory>();
@@ -175,10 +175,14 @@ public class DepositPanel
         theRates = new DepositRateTable(pFieldMgr, getUpdateSet(), pError);
         myTabs.add("Rates", theRates.getPanel());
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new DepositListener();
@@ -378,10 +382,10 @@ public class DepositPanel
         /* Process updates */
         if (myField.equals(Deposit.FIELD_NAME)) {
             /* Update the Name */
-            myDeposit.setName(pUpdate.getValue(String.class));
+            myDeposit.setName(pUpdate.getString());
         } else if (myField.equals(Deposit.FIELD_DESC)) {
             /* Update the Description */
-            myDeposit.setDescription(pUpdate.getValue(String.class));
+            myDeposit.setDescription(pUpdate.getString());
         } else if (myField.equals(Deposit.FIELD_CATEGORY)) {
             /* Update the Category */
             myDeposit.setDepositCategory(pUpdate.getValue(DepositCategory.class));
@@ -393,13 +397,13 @@ public class DepositPanel
             myDeposit.setDepositCurrency(pUpdate.getValue(AccountCurrency.class));
         } else if (myField.equals(Deposit.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myDeposit.setClosed(pUpdate.getValue(Boolean.class));
+            myDeposit.setClosed(pUpdate.getBoolean());
         } else if (myField.equals(Deposit.FIELD_TAXFREE)) {
             /* Update the taxFree indication */
-            myDeposit.setTaxFree(pUpdate.getValue(Boolean.class));
+            myDeposit.setTaxFree(pUpdate.getBoolean());
         } else if (myField.equals(Deposit.FIELD_GROSS)) {
             /* Update the Gross indication */
-            myDeposit.setGross(pUpdate.getValue(Boolean.class));
+            myDeposit.setGross(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (DepositInfoSet.getClassForField(myField)) {
@@ -485,6 +489,7 @@ public class DepositPanel
             theParentMenuBuilder.addChangeListener(this);
             theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
             theCurrencyMenuBuilder.addChangeListener(this);
+            theRates.addChangeListener(this);
         }
 
         @Override
@@ -498,6 +503,8 @@ public class DepositPanel
                 buildParentMenu();
             } else if (theCurrencyMenuBuilder.equals(o)) {
                 buildCurrencyMenu();
+            } else if (theRates.equals(o)) {
+                updateActions();
             }
         }
 

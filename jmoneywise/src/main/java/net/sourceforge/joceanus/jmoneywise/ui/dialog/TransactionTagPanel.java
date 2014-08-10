@@ -22,8 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 
-import java.awt.Dimension;
-
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -78,27 +77,28 @@ public class TransactionTagPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(TransactionTag.NAMELEN);
-        theDesc = new JTextField(TransactionTag.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
-        /* Allocate Dimension */
-        Dimension myDims = new Dimension(TransactionTag.DESCLEN * CHAR_WIDTH, FIELD_HEIGHT);
-
-        /* restrict the field */
-        theName.setMaximumSize(myDims);
-        theDesc.setMaximumSize(myDims);
+        /* restrict the fields */
+        restrictField(theName, TransactionTag.NAMELEN);
+        restrictField(theDesc, TransactionTag.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
         theFieldSet.addFieldElement(TransactionTag.FIELD_NAME, DataType.STRING, theName);
         theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, DataType.STRING, theDesc);
 
-        /* Layout the panel */
+        /* Layout the main panel */
+        JPanel myPanel = getMainPanel();
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionTag.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(TransactionTag.FIELD_DESC, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(TransactionTag.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(TransactionTag.FIELD_DESC, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Layout the panel */
+        layoutPanel();
     }
 
     @Override
@@ -109,11 +109,16 @@ public class TransactionTagPanel
             TransactionTagList myTags = findDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
             setItem(myTags.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
-        /* Nothing to do */
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || getItem().getDesc() != null;
+        theFieldSet.setVisibility(TransactionTag.FIELD_DESC, bShowDesc);
     }
 
     @Override
@@ -125,10 +130,10 @@ public class TransactionTagPanel
         /* Process updates */
         if (myField.equals(TransactionTag.FIELD_NAME)) {
             /* Update the Name */
-            myTag.setName(pUpdate.getValue(String.class));
+            myTag.setName(pUpdate.getString());
         } else if (myField.equals(TransactionTag.FIELD_DESC)) {
             /* Update the Description */
-            myTag.setDescription(pUpdate.getValue(String.class));
+            myTag.setDescription(pUpdate.getString());
         }
     }
 }

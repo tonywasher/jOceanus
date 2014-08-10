@@ -174,6 +174,14 @@ public class TransactionTagTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveTag.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -220,7 +228,7 @@ public class TransactionTagTable
         /* Create a Tag panel */
         theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveTag);
-        theActiveTag.setItem(null);
+        theActiveTag.addChangeListener(myListener);
 
         /* Create new button */
         theNewButton = new JButton(NLS_NEW);
@@ -285,6 +293,17 @@ public class TransactionTagTable
     }
 
     /**
+     * Cancel Editing of underlying objects.
+     */
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveTag.setEditable(false);
+    }
+
+    /**
      * Select tag.
      * @param pTag the tag to select
      */
@@ -295,6 +314,15 @@ public class TransactionTagTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    protected void notifyChanges() {
+        /* Adjust enable of the table */
+        setEnabled(!theActiveTag.isEditing());
+
+        /* Pass call on */
+        super.notifyChanges();
     }
 
     /**
@@ -394,8 +422,20 @@ public class TransactionTagTable
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveTag.isEditing()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+            }
+
+            /* If we are noting change of edit state */
+            if (theActiveTag.equals(o)) {
+                /* Note changes */
+                notifyChanges();
             }
         }
 
@@ -422,7 +462,9 @@ public class TransactionTagTable
                     TransactionTag myTag = theTransactionTags.get(iIndex);
                     theActiveTag.setItem(myTag);
                 } else {
+                    theActiveTag.setEditable(false);
                     theActiveTag.setItem(null);
+                    notifyChanges();
                 }
             }
         }

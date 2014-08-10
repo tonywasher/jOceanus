@@ -111,8 +111,8 @@ public class PortfolioPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Portfolio.NAMELEN);
-        theDesc = new JTextField(Portfolio.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theHoldingButton = new JScrollButton<Deposit>();
@@ -138,10 +138,14 @@ public class PortfolioPanel
         myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new PortfolioListener();
@@ -323,19 +327,19 @@ public class PortfolioPanel
         /* Process updates */
         if (myField.equals(Portfolio.FIELD_NAME)) {
             /* Update the Name */
-            myPortfolio.setName(pUpdate.getValue(String.class));
+            myPortfolio.setName(pUpdate.getString());
         } else if (myField.equals(Portfolio.FIELD_DESC)) {
             /* Update the Description */
-            myPortfolio.setDescription(pUpdate.getValue(String.class));
+            myPortfolio.setDescription(pUpdate.getString());
         } else if (myField.equals(Portfolio.FIELD_HOLDING)) {
             /* Update the Holding */
             myPortfolio.setHolding(pUpdate.getValue(Deposit.class));
         } else if (myField.equals(Portfolio.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myPortfolio.setClosed(pUpdate.getValue(Boolean.class));
+            myPortfolio.setClosed(pUpdate.getBoolean());
         } else if (myField.equals(Portfolio.FIELD_TAXFREE)) {
             /* Update the taxFree indication */
-            myPortfolio.setTaxFree(pUpdate.getValue(Boolean.class));
+            myPortfolio.setTaxFree(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (PortfolioInfoSet.getClassForField(myField)) {

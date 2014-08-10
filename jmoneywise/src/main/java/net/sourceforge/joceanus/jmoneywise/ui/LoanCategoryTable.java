@@ -222,6 +222,14 @@ public class LoanCategoryTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveCategory.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -285,7 +293,6 @@ public class LoanCategoryTable
         /* Create a Category panel */
         theActiveCategory = new LoanCategoryPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveCategory);
-        theActiveCategory.setItem(null);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -356,6 +363,17 @@ public class LoanCategoryTable
     }
 
     /**
+     * Cancel Editing of underlying objects.
+     */
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveCategory.setEditable(false);
+    }
+
+    /**
      * Select category.
      * @param pCategory the category to select
      */
@@ -389,6 +407,16 @@ public class LoanCategoryTable
         }
         theColumns.setColumns();
         theModel.fireNewDataEvents();
+        getSelectionModel().setSelectionInterval(0, 0);
+    }
+
+    @Override
+    protected void notifyChanges() {
+        /* Adjust enable of the table */
+        setEnabled(!theActiveCategory.isEditing());
+
+        /* Pass call on */
+        super.notifyChanges();
     }
 
     /**
@@ -494,6 +522,7 @@ public class LoanCategoryTable
             /* Access builders */
             theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
+            theActiveCategory.addChangeListener(this);
         }
 
         @Override
@@ -503,9 +532,15 @@ public class LoanCategoryTable
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theSelectButton.refreshText();
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveCategory.isEditing()) {
+                    /* Refresh the model */
+                    theSelectButton.refreshText();
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
             }
 
             /* If we are building selection menu */
@@ -517,6 +552,12 @@ public class LoanCategoryTable
                 if (theCategories != null) {
                     buildSelectMenu();
                 }
+            }
+
+            /* If we are noting change of edit state */
+            if (theActiveCategory.equals(o)) {
+                /* Note changes */
+                notifyChanges();
             }
         }
 
@@ -543,7 +584,9 @@ public class LoanCategoryTable
                     LoanCategory myCategory = theCategories.get(iIndex);
                     theActiveCategory.setItem(myCategory);
                 } else {
+                    theActiveCategory.setEditable(false);
                     theActiveCategory.setItem(null);
+                    notifyChanges();
                 }
             }
         }

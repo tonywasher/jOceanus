@@ -115,7 +115,9 @@ public final class JEnableWrapper {
             /* Loop through the registered components */
             for (Component myComp : theList) {
                 /* Pass call on */
+                // if (myComp.isEnabled() != bEnabled) {
                 myComp.setEnabled(bEnabled);
+                // }
             }
         }
     }
@@ -152,10 +154,11 @@ public final class JEnableWrapper {
             }
 
             /* Enable/Disable the active pane */
-            Component myComp = getSelectedComponent();
-            if (myComp != null) {
-                myComp.setEnabled(bEnabled);
-            }
+            // Component myComp = getSelectedComponent();
+            // if ((myComp != null)
+            // && (myComp.isEnabled() != bEnabled)) {
+            // myComp.setEnabled(bEnabled);
+            // }
 
             /* Pass on the call */
             super.setEnabled(bEnabled);

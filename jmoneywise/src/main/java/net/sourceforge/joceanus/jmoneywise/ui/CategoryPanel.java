@@ -233,7 +233,7 @@ public class CategoryPanel
         theFilterCardPanel.add(theTagTable.getFilterPanel(), PanelName.EVENTTAGS.toString());
 
         /* Create the selection panel */
-        JPanel mySelect = new JPanel();
+        JEnablePanel mySelect = new JEnablePanel();
         mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
@@ -378,6 +378,30 @@ public class CategoryPanel
     }
 
     /**
+     * Does this panel have item editing occurring?
+     * @return true/false
+     */
+    public boolean isItemEditing() {
+        /* Determine whether we have item editing */
+        boolean isEditing = theDepositTable.isItemEditing();
+        if (!isEditing) {
+            isEditing = theCashTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theLoanTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theEventTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theTagTable.isItemEditing();
+        }
+
+        /* Return to caller */
+        return isEditing;
+    }
+
+    /**
      * Select category.
      * @param pCategory the category to select
      */
@@ -436,10 +460,15 @@ public class CategoryPanel
     protected void setVisibility() {
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
+        boolean isItemEditing = isItemEditing();
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+
+        /* Update the selection */
+        theSelectButton.setEnabled(!isItemEditing);
+        theFilterCardPanel.setEnabled(!isItemEditing);
 
         /* Alert listeners that there has been a change */
         fireStateChanged();

@@ -97,7 +97,9 @@ public class JScrollButton<T>
      * Refresh Text from item.
      */
     public void refreshText() {
-        storeValue(theValue);
+        if (theValue != null) {
+            storeValue(theValue);
+        }
     }
 
     /**

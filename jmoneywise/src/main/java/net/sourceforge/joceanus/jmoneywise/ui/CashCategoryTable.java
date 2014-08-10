@@ -222,6 +222,14 @@ public class CashCategoryTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveCategory.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -285,7 +293,6 @@ public class CashCategoryTable
         /* Create a Category panel */
         theActiveCategory = new CashCategoryPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveCategory);
-        theActiveCategory.setItem(null);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -356,6 +363,17 @@ public class CashCategoryTable
     }
 
     /**
+     * Cancel Editing of underlying objects.
+     */
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveCategory.setEditable(false);
+    }
+
+    /**
      * Select category.
      * @param pCategory the category to select
      */
@@ -389,6 +407,16 @@ public class CashCategoryTable
         }
         theColumns.setColumns();
         theModel.fireNewDataEvents();
+        getSelectionModel().setSelectionInterval(0, 0);
+    }
+
+    @Override
+    protected void notifyChanges() {
+        /* Adjust enable of the table */
+        setEnabled(!theActiveCategory.isEditing());
+
+        /* Pass call on */
+        super.notifyChanges();
     }
 
     /**
@@ -494,6 +522,7 @@ public class CashCategoryTable
             /* Access builders */
             theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
+            theActiveCategory.addChangeListener(this);
         }
 
         @Override
@@ -503,9 +532,15 @@ public class CashCategoryTable
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theSelectButton.refreshText();
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveCategory.isEditing()) {
+                    /* Refresh the model */
+                    theSelectButton.refreshText();
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
             }
 
             /* If we are building selection menu */
@@ -517,6 +552,12 @@ public class CashCategoryTable
                 if (theCategories != null) {
                     buildSelectMenu();
                 }
+            }
+
+            /* If we are noting change of edit state */
+            if (theActiveCategory.equals(o)) {
+                /* Note changes */
+                notifyChanges();
             }
         }
 
@@ -543,7 +584,9 @@ public class CashCategoryTable
                     CashCategory myCategory = theCategories.get(iIndex);
                     theActiveCategory.setItem(myCategory);
                 } else {
+                    theActiveCategory.setEditable(false);
                     theActiveCategory.setItem(null);
+                    notifyChanges();
                 }
             }
         }
@@ -812,6 +855,7 @@ public class CashCategoryTable
          */
         private boolean isCellEditable(final CashCategory pItem,
                                        final int pColIndex) {
+            /* Switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
                 case COLUMN_DESC:

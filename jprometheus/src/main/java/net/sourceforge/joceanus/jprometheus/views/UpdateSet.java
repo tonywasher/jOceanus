@@ -507,5 +507,8 @@ public class UpdateSet<E extends Enum<E>>
                 myDataList.condenseHistory(pNewVersion);
             }
         }
+
+        /* Store version */
+        theVersion = pNewVersion;
     }
 }

@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -102,13 +103,20 @@ public class LoanCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(LoanCategory.NAMELEN);
-        theSubName = new JTextField(LoanCategory.NAMELEN);
-        theDesc = new JTextField(LoanCategory.DESCLEN);
+        theName = new JTextField();
+        theSubName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<LoanCategoryType>();
         theParentButton = new JScrollButton<LoanCategory>();
+
+        /* restrict the fields */
+        restrictField(theName, LoanCategory.NAMELEN);
+        restrictField(theSubName, LoanCategory.NAMELEN);
+        restrictField(theDesc, LoanCategory.NAMELEN);
+        restrictField(theTypeButton, LoanCategory.NAMELEN);
+        restrictField(theParentButton, LoanCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -118,15 +126,19 @@ public class LoanCategoryPanel
         theFieldSet.addFieldElement(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(LoanCategory.FIELD_PARENT, LoanCategory.class, theParentButton);
 
-        /* Layout the panel */
+        /* Layout the main panel */
+        JPanel myPanel = getMainPanel();
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_SUBCAT, this);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_CATTYPE, this);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_PARENT, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(LoanCategory.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(LoanCategory.FIELD_SUBCAT, myPanel);
+        theFieldSet.addFieldToPanel(LoanCategory.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(LoanCategory.FIELD_CATTYPE, myPanel);
+        theFieldSet.addFieldToPanel(LoanCategory.FIELD_PARENT, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new CategoryListener();
@@ -140,17 +152,32 @@ public class LoanCategoryPanel
             LoanCategoryList myCategories = findDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        LoanCategoryType myCurr = getItem().getCategoryType();
-        boolean showParent = !myCurr.isLoanCategory(LoanCategoryClass.PARENT);
+        LoanCategory myCategory = getItem();
+        LoanCategoryType myType = myCategory.getCategoryType();
+        boolean showParent = !myType.isLoanCategory(LoanCategoryClass.PARENT);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        theFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
         theFieldSet.setVisibility(LoanCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, showParent);
+
+        /* If the category is active then we cannot change the category type */
+        boolean canEdit = isEditable && !myCategory.isActive();
+        theFieldSet.setEditable(LoanCategory.FIELD_CATTYPE, canEdit);
+
+        /* If the category is not a parent then we cannot edit the full name */
+        theFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
@@ -161,17 +188,17 @@ public class LoanCategoryPanel
 
         /* Process updates */
         if (myField.equals(LoanCategory.FIELD_NAME)) {
-            /* Update the Name */
-            myCategory.setCategoryName(pUpdate.getValue(String.class));
+            /* Update the SUBCATEGORY(!!) Name */
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(LoanCategory.FIELD_SUBCAT)) {
             /* Update the SubCategory */
-            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(LoanCategory.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(LoanCategory.class));
         } else if (myField.equals(LoanCategory.FIELD_DESC)) {
             /* Update the Description */
-            myCategory.setDescription(pUpdate.getValue(String.class));
+            myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(LoanCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(LoanCategoryType.class));

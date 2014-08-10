@@ -252,7 +252,6 @@ public class LoanTable
         /* Create an account panel */
         theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);

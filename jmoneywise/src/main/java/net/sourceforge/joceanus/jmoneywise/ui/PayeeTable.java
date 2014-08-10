@@ -229,7 +229,6 @@ public class PayeeTable
         /* Create an account panel */
         theActiveAccount = new PayeePanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
-        theActiveAccount.setItem(null);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);

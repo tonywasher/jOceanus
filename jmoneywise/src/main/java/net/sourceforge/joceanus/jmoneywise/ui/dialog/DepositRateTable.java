@@ -400,7 +400,7 @@ public class DepositRateTable
          */
         private void setColumns() {
             /* Switch on mode */
-            if (showAll()) {
+            if (isEditable) {
                 revealColumn(theDeleteColumn);
             } else {
                 hideColumn(theDeleteColumn);

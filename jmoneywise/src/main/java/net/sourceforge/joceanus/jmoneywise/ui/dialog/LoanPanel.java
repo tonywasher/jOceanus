@@ -125,8 +125,8 @@ public class LoanPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(Loan.NAMELEN);
-        theDesc = new JTextField(Loan.DESCLEN);
+        theName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theCategoryButton = new JScrollButton<LoanCategory>();
@@ -153,10 +153,14 @@ public class LoanPanel
         myPanel = buildNotesPanel();
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
-        /* Create the layout */
-        setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        add(myMainPanel);
-        add(myTabs);
+        /* Layout the main panel */
+        myPanel = getMainPanel();
+        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+        myPanel.add(myMainPanel);
+        myPanel.add(myTabs);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new LoanListener();
@@ -318,10 +322,10 @@ public class LoanPanel
         /* Process updates */
         if (myField.equals(Loan.FIELD_NAME)) {
             /* Update the Name */
-            myLoan.setName(pUpdate.getValue(String.class));
+            myLoan.setName(pUpdate.getString());
         } else if (myField.equals(Loan.FIELD_DESC)) {
             /* Update the Description */
-            myLoan.setDescription(pUpdate.getValue(String.class));
+            myLoan.setDescription(pUpdate.getString());
         } else if (myField.equals(Loan.FIELD_CATEGORY)) {
             /* Update the Category */
             myLoan.setLoanCategory(pUpdate.getValue(LoanCategory.class));
@@ -333,7 +337,7 @@ public class LoanPanel
             myLoan.setLoanCurrency(pUpdate.getValue(AccountCurrency.class));
         } else if (myField.equals(Loan.FIELD_CLOSED)) {
             /* Update the Closed indication */
-            myLoan.setClosed(pUpdate.getValue(Boolean.class));
+            myLoan.setClosed(pUpdate.getBoolean());
         } else {
             /* Switch on the field */
             switch (LoanInfoSet.getClassForField(myField)) {

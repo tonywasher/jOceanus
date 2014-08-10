@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.ui.dialog;
 import java.util.Iterator;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
@@ -102,13 +103,20 @@ public class CashCategoryPanel
         super(pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        theName = new JTextField(CashCategory.NAMELEN);
-        theSubName = new JTextField(CashCategory.NAMELEN);
-        theDesc = new JTextField(CashCategory.DESCLEN);
+        theName = new JTextField();
+        theSubName = new JTextField();
+        theDesc = new JTextField();
 
         /* Create the buttons */
         theTypeButton = new JScrollButton<CashCategoryType>();
         theParentButton = new JScrollButton<CashCategory>();
+
+        /* restrict the fields */
+        restrictField(theName, CashCategory.NAMELEN);
+        restrictField(theSubName, CashCategory.NAMELEN);
+        restrictField(theDesc, CashCategory.NAMELEN);
+        restrictField(theTypeButton, CashCategory.NAMELEN);
+        restrictField(theParentButton, CashCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
@@ -118,15 +126,19 @@ public class CashCategoryPanel
         theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, theTypeButton);
         theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, theParentButton);
 
-        /* Layout the panel */
+        /* Layout the main panel */
+        JPanel myPanel = getMainPanel();
         SpringLayout mySpring = new SpringLayout();
-        setLayout(mySpring);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_NAME, this);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_SUBCAT, this);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_DESC, this);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_CATTYPE, this);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_PARENT, this);
-        SpringUtilities.makeCompactGrid(this, mySpring, getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.setLayout(mySpring);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_NAME, myPanel);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_SUBCAT, myPanel);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_DESC, myPanel);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_CATTYPE, myPanel);
+        theFieldSet.addFieldToPanel(CashCategory.FIELD_PARENT, myPanel);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Layout the panel */
+        layoutPanel();
 
         /* Create the listener */
         new CategoryListener();
@@ -140,17 +152,32 @@ public class CashCategoryPanel
             CashCategoryList myCategories = findDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        CashCategoryType myCurr = getItem().getCategoryType();
-        boolean showParent = !myCurr.isCashCategory(CashCategoryClass.PARENT);
+        CashCategory myCategory = getItem();
+        CashCategoryType myType = myCategory.getCategoryType();
+        boolean showParent = !myType.isCashCategory(CashCategoryClass.PARENT);
+
+        /* Determine whether the description field should be visible */
+        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        theFieldSet.setVisibility(CashCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
         theFieldSet.setVisibility(CashCategory.FIELD_PARENT, showParent);
         theFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, showParent);
+
+        /* If the category is active then we cannot change the category type */
+        boolean canEdit = isEditable && !myCategory.isActive();
+        theFieldSet.setEditable(CashCategory.FIELD_CATTYPE, canEdit);
+
+        /* If the category is not a parent then we cannot edit the full name */
+        theFieldSet.setEditable(CashCategory.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override
@@ -161,17 +188,17 @@ public class CashCategoryPanel
 
         /* Process updates */
         if (myField.equals(CashCategory.FIELD_NAME)) {
-            /* Update the Name */
-            myCategory.setCategoryName(pUpdate.getValue(String.class));
+            /* Update the SUBCATEGORY(!!) Name */
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(CashCategory.FIELD_SUBCAT)) {
             /* Update the SubCategory */
-            myCategory.setSubCategoryName(pUpdate.getValue(String.class));
+            myCategory.setSubCategoryName(pUpdate.getString());
         } else if (myField.equals(CashCategory.FIELD_PARENT)) {
             /* Update the Parent */
             myCategory.setParentCategory(pUpdate.getValue(CashCategory.class));
         } else if (myField.equals(CashCategory.FIELD_DESC)) {
             /* Update the Description */
-            myCategory.setDescription(pUpdate.getValue(String.class));
+            myCategory.setDescription(pUpdate.getString());
         } else if (myField.equals(CashCategory.FIELD_CATTYPE)) {
             /* Update the Category Type */
             myCategory.setCategoryType(pUpdate.getValue(CashCategoryType.class));
