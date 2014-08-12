@@ -362,9 +362,7 @@ public class CashCategoryTable
         return theUpdateSet.hasErrors();
     }
 
-    /**
-     * Cancel Editing of underlying objects.
-     */
+    @Override
     public void cancelEditing() {
         /* Cancel editing on table */
         super.cancelEditing();
@@ -556,6 +554,12 @@ public class CashCategoryTable
 
             /* If we are noting change of edit state */
             if (theActiveCategory.equals(o)) {
+                /* If the category is now deleted */
+                if (theActiveCategory.isItemDeleted()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
                 /* Note changes */
                 notifyChanges();
             }

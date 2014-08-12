@@ -321,6 +321,9 @@ public class DepositPanel
 
         /* Refresh the rates */
         theRates.refreshData();
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override

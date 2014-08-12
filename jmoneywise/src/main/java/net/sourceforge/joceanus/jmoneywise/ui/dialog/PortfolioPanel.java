@@ -278,6 +278,9 @@ public class PortfolioPanel
             PortfolioList myPortfolios = findDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             setItem(myPortfolios.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override

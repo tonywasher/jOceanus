@@ -254,6 +254,9 @@ public class SecurityPanel
 
         /* Refresh the prices */
         thePrices.refreshData();
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override

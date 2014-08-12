@@ -211,6 +211,14 @@ public class SecurityTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveAccount.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -259,6 +267,7 @@ public class SecurityTable
         /* Create an account panel */
         theActiveAccount = new SecurityPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
+        theActiveAccount.addChangeListener(myListener);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -329,6 +338,15 @@ public class SecurityTable
         return theUpdateSet.hasErrors();
     }
 
+    @Override
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveAccount.setEditable(false);
+    }
+
     /**
      * Select security.
      * @param pSecurity the security to select
@@ -341,6 +359,15 @@ public class SecurityTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    protected void notifyChanges() {
+        /* Adjust enable of the table */
+        setEnabled(!theActiveAccount.isEditing());
+
+        /* Pass call on */
+        super.notifyChanges();
     }
 
     /**
@@ -440,8 +467,26 @@ public class SecurityTable
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveAccount.isEditing()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+            }
+
+            /* If we are noting change of edit state */
+            if (theActiveAccount.equals(o)) {
+                /* If the account is now deleted */
+                if (theActiveAccount.isItemDeleted()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Note changes */
+                notifyChanges();
             }
         }
 
@@ -458,7 +503,9 @@ public class SecurityTable
                     Security myAccount = theSecurities.get(iIndex);
                     theActiveAccount.setItem(myAccount);
                 } else {
+                    theActiveAccount.setEditable(false);
                     theActiveAccount.setItem(null);
+                    notifyChanges();
                 }
             }
         }

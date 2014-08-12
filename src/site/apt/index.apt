@@ -16,13 +16,24 @@ the <<BigDecimal>> class
 
   * a set of swing extensions.
 
-* Encryption classes
+* Encryption classes (<<jGordianKnot>>)
 
   A set of classes providing triple encryption and extended support for encrypted zipFiles.
 
-* Database access.
+* Data classes (<<jMetis>>/<<jPrometheus>>.)
 
-  Access classes for MySQL/PostgreSQL/SQLServer databases as well as OpenOffice/Excel spreadsheets.
+  * Access classes for MySQL/PostgreSQL/SQLServer databases as well as OpenOffice/Excel spreadsheets.
+
+  * Secure data model for database.
+
+  * Generic versioned data model enabling easy undo/reset.
+
+  * Integrated Data Viewer
+
+  * Sorted LinkedList implementation.
+
+
+  
 
 
 

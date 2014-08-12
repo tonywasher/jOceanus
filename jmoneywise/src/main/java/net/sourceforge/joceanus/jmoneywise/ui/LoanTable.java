@@ -205,6 +205,14 @@ public class LoanTable
     }
 
     /**
+     * Are we in the middle of an item edit?
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+        return theActiveAccount.isEditing();
+    }
+
+    /**
      * Constructor.
      * @param pView the data view
      * @param pUpdateSet the update set
@@ -252,6 +260,7 @@ public class LoanTable
         /* Create an account panel */
         theActiveAccount = new LoanPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveAccount);
+        theActiveAccount.addChangeListener(myListener);
 
         /* Add selection listener */
         getSelectionModel().addListSelectionListener(myListener);
@@ -316,6 +325,15 @@ public class LoanTable
         return theUpdateSet.hasErrors();
     }
 
+    @Override
+    public void cancelEditing() {
+        /* Cancel editing on table */
+        super.cancelEditing();
+
+        /* Stop editing any item */
+        theActiveAccount.setEditable(false);
+    }
+
     /**
      * Select loan.
      * @param pLoan the loan to select
@@ -328,6 +346,15 @@ public class LoanTable
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
         }
+    }
+
+    @Override
+    protected void notifyChanges() {
+        /* Adjust enable of the table */
+        setEnabled(!theActiveAccount.isEditing());
+
+        /* Pass call on */
+        super.notifyChanges();
     }
 
     /**
@@ -427,8 +454,26 @@ public class LoanTable
 
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
-                /* Refresh the model */
-                theModel.fireNewDataEvents();
+                /* Only action if we are not editing */
+                if (!theActiveAccount.isEditing()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Adjust for changes */
+                notifyChanges();
+            }
+
+            /* If we are noting change of edit state */
+            if (theActiveAccount.equals(o)) {
+                /* If the account is now deleted */
+                if (theActiveAccount.isItemDeleted()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
+                /* Note changes */
+                notifyChanges();
             }
         }
 
@@ -445,7 +490,9 @@ public class LoanTable
                     Loan myAccount = theLoans.get(iIndex);
                     theActiveAccount.setItem(myAccount);
                 } else {
+                    theActiveAccount.setEditable(false);
                     theActiveAccount.setItem(null);
+                    notifyChanges();
                 }
             }
         }

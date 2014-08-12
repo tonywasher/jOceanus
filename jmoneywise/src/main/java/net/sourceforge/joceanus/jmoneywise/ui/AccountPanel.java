@@ -409,6 +409,33 @@ public class AccountPanel
     }
 
     /**
+     * Does this panel have item editing occurring?
+     * @return true/false
+     */
+    public boolean isItemEditing() {
+        /* Determine whether we have item editing */
+        boolean isEditing = theDepositTable.isItemEditing();
+        if (!isEditing) {
+            isEditing = theCashTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theLoanTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = thePortfolioTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = theSecurityTable.isItemEditing();
+        }
+        if (!isEditing) {
+            isEditing = thePayeeTable.isItemEditing();
+        }
+
+        /* Return to caller */
+        return isEditing;
+    }
+
+    /**
      * Select account.
      * @param pAccount the account to select
      */
@@ -460,14 +487,15 @@ public class AccountPanel
     protected void setVisibility() {
         /* Determine whether we have updates */
         boolean hasUpdates = hasUpdates();
-
-        /* Lock down Selection if required */
-        // theSelectButton.setEnabled(!hasUpdates);
-        // theLockedCheckBox.setEnabled(!hasUpdates);
+        boolean isItemEditing = isItemEditing();
 
         /* Update the save buttons */
         theSaveButtons.setEnabled(true);
-        theSaveButtons.setVisible(hasUpdates);
+        theSaveButtons.setVisible(hasUpdates && !isItemEditing);
+
+        /* Update the selection */
+        theSelectButton.setEnabled(!isItemEditing);
+        theLockedCheckBox.setEnabled(!isItemEditing);
 
         /* Alert listeners that there has been a change */
         fireStateChanged();

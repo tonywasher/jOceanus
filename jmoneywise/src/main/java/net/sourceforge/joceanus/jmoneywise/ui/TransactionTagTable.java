@@ -292,9 +292,7 @@ public class TransactionTagTable
         return theUpdateSet.hasErrors();
     }
 
-    /**
-     * Cancel Editing of underlying objects.
-     */
+    @Override
     public void cancelEditing() {
         /* Cancel editing on table */
         super.cancelEditing();
@@ -434,6 +432,12 @@ public class TransactionTagTable
 
             /* If we are noting change of edit state */
             if (theActiveTag.equals(o)) {
+                /* If the tag is now deleted */
+                if (theActiveTag.isItemDeleted()) {
+                    /* Refresh the model */
+                    theModel.fireNewDataEvents();
+                }
+
                 /* Note changes */
                 notifyChanges();
             }

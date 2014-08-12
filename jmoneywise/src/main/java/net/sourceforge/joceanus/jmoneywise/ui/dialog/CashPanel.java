@@ -276,6 +276,9 @@ public class CashPanel
             CashList myCash = findDataList(MoneyWiseDataType.CASH, CashList.class);
             setItem(myCash.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override

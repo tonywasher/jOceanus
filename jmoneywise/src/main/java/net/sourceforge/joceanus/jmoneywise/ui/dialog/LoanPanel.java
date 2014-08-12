@@ -277,6 +277,9 @@ public class LoanPanel
             LoanList myLoans = findDataList(MoneyWiseDataType.LOAN, LoanList.class);
             setItem(myLoans.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override

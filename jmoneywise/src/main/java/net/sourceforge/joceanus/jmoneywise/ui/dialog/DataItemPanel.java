@@ -153,6 +153,15 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
     }
 
     /**
+     * Is the active item deleted.
+     * @return true/false
+     */
+    public boolean isItemDeleted() {
+        return theItem != null
+               && theItem.isDeleted();
+    }
+
+    /**
      * Constructor.
      * @param pFieldMgr the field manager
      * @param pUpdateSet the update set
@@ -429,6 +438,14 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Request delete.
      */
     protected void requestDelete() {
+        /* Mark the item as deleted */
+        theItem.setDeleted(true);
+
+        /* Increment version */
+        theUpdateSet.incrementVersion();
+
+        /* Note status has changed */
+        fireStateChanged();
     }
 
     /**

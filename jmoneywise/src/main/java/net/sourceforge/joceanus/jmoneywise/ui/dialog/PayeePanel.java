@@ -268,6 +268,9 @@ public class PayeePanel
             PayeeList myPayees = findDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
             setItem(myPayees.findItemById(myItem.getId()));
         }
+
+        /* Make sure that the item is not editable */
+        setEditable(false);
     }
 
     @Override
