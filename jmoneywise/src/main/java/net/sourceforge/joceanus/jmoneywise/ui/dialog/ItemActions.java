@@ -27,11 +27,16 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Utility panel to handle actions on selected item.
@@ -42,6 +47,11 @@ public class ItemActions
      * Serial Id.
      */
     private static final long serialVersionUID = 6509682125660951159L;
+
+    /**
+     * The goTo button.
+     */
+    private final JScrollButton<ActionDetailEvent> theGoToButton;
 
     /**
      * The edit button.
@@ -71,11 +81,13 @@ public class ItemActions
         DefaultIconButtonState<Boolean> myDeleteState = new DefaultIconButtonState<Boolean>();
 
         /* Create the buttons */
+        theGoToButton = MoneyWiseIcons.getGotoButton();
         theEditButton = new JIconButton<Boolean>(myEditState);
         theDeleteButton = new JIconButton<Boolean>(myDeleteState);
 
         /* Make buttons the size of the icons */
         Insets myInsets = new Insets(0, 0, 0, 0);
+        theGoToButton.setMargin(myInsets);
         theEditButton.setMargin(myInsets);
         theDeleteButton.setMargin(myInsets);
 
@@ -85,11 +97,13 @@ public class ItemActions
 
         /* Create the layout */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(theGoToButton);
         add(theEditButton);
         add(theDeleteButton);
 
         /* Create the listener */
         ItemListener myListener = new ItemListener();
+        theGoToButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theEditButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
         theDeleteButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
     }
@@ -111,7 +125,21 @@ public class ItemActions
      * Item Listener.
      */
     private final class ItemListener
-            implements PropertyChangeListener {
+            implements ChangeListener, PropertyChangeListener {
+        /**
+         * MenuBuilder.
+         */
+        private JScrollMenuBuilder<ActionDetailEvent> theMenuBuilder;
+
+        /**
+         * Constructor.
+         */
+        private ItemListener() {
+            theMenuBuilder = theGoToButton.getMenuBuilder();
+            theMenuBuilder.addChangeListener(this);
+            theParent.declareGoToMenuBuilder(theMenuBuilder);
+        }
+
         @Override
         public void propertyChange(final PropertyChangeEvent pEvent) {
             Object o = pEvent.getSource();
@@ -121,7 +149,15 @@ public class ItemActions
                 theParent.requestEdit();
             } else if (theDeleteButton.equals(o)) {
                 theParent.requestDelete();
+            } else if (theGoToButton.equals(o)) {
+                theParent.processGoToRequest(theGoToButton.getValue());
             }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent pEvent) {
+            theMenuBuilder.clearMenu();
+            theParent.buildGoToMenu();
         }
     }
 }

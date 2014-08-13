@@ -358,6 +358,19 @@ public class CashPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        Cash myItem = getItem();
+        CashCategory myCategory = myItem.getCategory();
+        TransactionCategory myAutoExpense = myItem.getAutoExpense();
+        Payee myAutoPayee = myItem.getAutoPayee();
+        AccountCurrency myCurrency = myItem.getCashCurrency();
+        buildGoToEvent(myCategory);
+        buildGoToEvent(myCurrency);
+        buildGoToEvent(myAutoExpense);
+        buildGoToEvent(myAutoPayee);
+    }
+
     /**
      * Cash Listener.
      */

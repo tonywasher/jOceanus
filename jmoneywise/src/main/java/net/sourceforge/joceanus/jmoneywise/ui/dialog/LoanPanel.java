@@ -362,6 +362,17 @@ public class LoanPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        Loan myItem = getItem();
+        LoanCategory myCategory = myItem.getCategory();
+        Payee myParent = myItem.getParent();
+        AccountCurrency myCurrency = myItem.getLoanCurrency();
+        buildGoToEvent(myCategory);
+        buildGoToEvent(myParent);
+        buildGoToEvent(myCurrency);
+    }
+
     /**
      * Loan Listener.
      */

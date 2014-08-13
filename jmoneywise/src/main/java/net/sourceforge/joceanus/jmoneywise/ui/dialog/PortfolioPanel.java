@@ -376,6 +376,13 @@ public class PortfolioPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        Portfolio myItem = getItem();
+        Deposit myHolding = myItem.getHolding();
+        buildGoToEvent(myHolding);
+    }
+
     /**
      * Portfolio Listener.
      */

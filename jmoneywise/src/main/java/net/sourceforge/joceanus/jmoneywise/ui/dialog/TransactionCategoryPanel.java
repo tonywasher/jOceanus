@@ -207,6 +207,15 @@ public class TransactionCategoryPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        TransactionCategory myItem = getItem();
+        TransactionCategoryType myType = myItem.getCategoryType();
+        TransactionCategory myParent = myItem.getParentCategory();
+        buildGoToEvent(myType);
+        buildGoToEvent(myParent);
+    }
+
     /**
      * Category Listener.
      */

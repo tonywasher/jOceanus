@@ -71,6 +71,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -298,13 +299,7 @@ public class DepositCategoryTable
         theColumns.setColumns();
 
         /* Create the listener */
-        CategoryListener myListener = new CategoryListener();
-        theUpdateSet.addChangeListener(myListener);
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theNewButton.addActionListener(myListener);
-
-        /* Add selection listener */
-        getSelectionModel().addListSelectionListener(myListener);
+        new CategoryListener();
     }
 
     /**
@@ -378,8 +373,10 @@ public class DepositCategoryTable
     protected void selectCategory(final DepositCategory pCategory) {
         /* Ensure the correct parent is selected */
         DepositCategory myParent = pCategory.getParentCategory();
-        if (!myParent.equals(theParent)) {
-            myParent = theCategories.findItemById(myParent.getId());
+        if (!Difference.isEqual(theParent, myParent)) {
+            if (myParent != null) {
+                myParent = theCategories.findItemById(myParent.getId());
+            }
             selectParent(myParent);
         }
 
@@ -520,7 +517,16 @@ public class DepositCategoryTable
             /* Access builders */
             theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
+
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theNewButton.addActionListener(this);
             theActiveCategory.addChangeListener(this);
+            theActiveCategory.addActionListener(this);
+
+            /* Add selection listener */
+            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -570,8 +576,10 @@ public class DepositCategoryTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the new button */
-            if (theNewButton.equals(o)) {
+            /* Handle actions */
+            if ((theActiveCategory.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 

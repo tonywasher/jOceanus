@@ -26,8 +26,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import net.sourceforge.joceanus.jprometheus.ui.PrometheusIcons;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.ComplexIconButtonState;
 import net.sourceforge.joceanus.jtethys.swing.JIconButton.DefaultIconButtonState;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 
 /**
  * Utility class to manage status icon buttons.
@@ -113,6 +115,14 @@ public final class MoneyWiseIcons
      * Private constructor to prevent instantiation.
      */
     private MoneyWiseIcons() {
+    }
+
+    /**
+     * Obtain goTo icon ScrollButton.
+     * @return the scroll button
+     */
+    public static JScrollButton<ActionDetailEvent> getGotoButton() {
+        return new JScrollButton<ActionDetailEvent>(ICON_GOTO);
     }
 
     /**

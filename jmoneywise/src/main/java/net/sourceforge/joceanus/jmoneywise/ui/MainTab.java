@@ -64,37 +64,37 @@ public class MainTab
     /**
      * View Statement.
      */
-    protected static final int ACTION_VIEWSTATEMENT = ActionEvent.ACTION_PERFORMED + 1;
+    public static final int ACTION_VIEWSTATEMENT = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
      * View Register.
      */
-    protected static final int ACTION_VIEWREGISTER = ACTION_VIEWSTATEMENT + 1;
+    public static final int ACTION_VIEWREGISTER = ACTION_VIEWSTATEMENT + 1;
 
     /**
      * View Account.
      */
-    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
+    public static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
 
     /**
      * View Category.
      */
-    protected static final int ACTION_VIEWCATEGORY = ACTION_VIEWACCOUNT + 1;
+    public static final int ACTION_VIEWCATEGORY = ACTION_VIEWACCOUNT + 1;
 
     /**
      * View Tag.
      */
-    protected static final int ACTION_VIEWTAG = ACTION_VIEWCATEGORY + 1;
+    public static final int ACTION_VIEWTAG = ACTION_VIEWCATEGORY + 1;
 
     /**
      * View TaxYear.
      */
-    protected static final int ACTION_VIEWTAXYEAR = ACTION_VIEWTAG + 1;
+    public static final int ACTION_VIEWTAXYEAR = ACTION_VIEWTAG + 1;
 
     /**
      * View Static.
      */
-    protected static final int ACTION_VIEWSTATIC = ACTION_VIEWTAXYEAR + 1;
+    public static final int ACTION_VIEWSTATIC = ACTION_VIEWTAXYEAR + 1;
 
     /**
      * Resource Bundle.

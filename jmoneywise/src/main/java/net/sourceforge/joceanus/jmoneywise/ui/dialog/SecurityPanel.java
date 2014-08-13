@@ -329,6 +329,17 @@ public class SecurityPanel
     }
 
     @Override
+    protected void buildGoToMenu() {
+        Security myItem = getItem();
+        SecurityType myType = myItem.getSecurityType();
+        Payee myParent = myItem.getParent();
+        AccountCurrency myCurrency = myItem.getSecurityCurrency();
+        buildGoToEvent(myType);
+        buildGoToEvent(myParent);
+        buildGoToEvent(myCurrency);
+    }
+
+    @Override
     public void setItem(final Security pItem) {
         /* Update the prices */
         thePrices.setSecurity(pItem);

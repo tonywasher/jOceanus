@@ -205,6 +205,15 @@ public class CashCategoryPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        CashCategory myItem = getItem();
+        CashCategoryType myType = myItem.getCategoryType();
+        CashCategory myParent = myItem.getParentCategory();
+        buildGoToEvent(myType);
+        buildGoToEvent(myParent);
+    }
+
     /**
      * Category Listener.
      */

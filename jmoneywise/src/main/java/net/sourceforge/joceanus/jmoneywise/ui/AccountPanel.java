@@ -58,6 +58,7 @@ import net.sourceforge.joceanus.jprometheus.ui.SaveButtons;
 import net.sourceforge.joceanus.jprometheus.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
@@ -253,11 +254,17 @@ public class AccountPanel
         theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
         theLockedCheckBox.addItemListener(myListener);
         theDepositTable.addChangeListener(myListener);
+        theDepositTable.addActionListener(myListener);
         theCashTable.addChangeListener(myListener);
+        theCashTable.addActionListener(myListener);
         theLoanTable.addChangeListener(myListener);
+        theLoanTable.addActionListener(myListener);
         thePortfolioTable.addChangeListener(myListener);
+        thePortfolioTable.addActionListener(myListener);
         theSecurityTable.addChangeListener(myListener);
+        theSecurityTable.addActionListener(myListener);
         thePayeeTable.addChangeListener(myListener);
+        thePayeeTable.addActionListener(myListener);
         theSaveButtons.addActionListener(myListener);
 
         /* Hide the save buttons initially */
@@ -521,6 +528,29 @@ public class AccountPanel
 
                 /* Adjust visibility */
                 setVisibility();
+
+                /* If this is an ActionDetailEvent */
+            } else if (pEvent instanceof ActionDetailEvent) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) pEvent;
+                switch (evt.getSubId()) {
+                /* Pass through the event */
+                    case MainTab.ACTION_VIEWREGISTER:
+                    case MainTab.ACTION_VIEWSTATEMENT:
+                    case MainTab.ACTION_VIEWCATEGORY:
+                    case MainTab.ACTION_VIEWTAG:
+                    case MainTab.ACTION_VIEWTAXYEAR:
+                    case MainTab.ACTION_VIEWSTATIC:
+                        cascadeActionEvent(evt);
+                        break;
+
+                    /* Access subPanels */
+                    case MainTab.ACTION_VIEWACCOUNT:
+                        selectAccount(evt.getDetails(AssetBase.class));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

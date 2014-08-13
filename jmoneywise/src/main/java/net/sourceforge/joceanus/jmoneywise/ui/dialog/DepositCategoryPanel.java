@@ -210,6 +210,15 @@ public class DepositCategoryPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        DepositCategory myItem = getItem();
+        DepositCategoryType myType = myItem.getCategoryType();
+        DepositCategory myParent = myItem.getParentCategory();
+        buildGoToEvent(myType);
+        buildGoToEvent(myParent);
+    }
+
     /**
      * Category Listener.
      */

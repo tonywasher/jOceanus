@@ -362,6 +362,13 @@ public class PayeePanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        Payee myItem = getItem();
+        PayeeType myType = myItem.getPayeeType();
+        buildGoToEvent(myType);
+    }
+
     /**
      * Payee Listener.
      */

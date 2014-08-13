@@ -71,6 +71,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton;
 import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
@@ -298,13 +299,7 @@ public class TransactionCategoryTable
         theColumns.setColumns();
 
         /* Create listener */
-        CategoryListener myListener = new CategoryListener();
-        theUpdateSet.addChangeListener(myListener);
-        theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
-        theNewButton.addActionListener(myListener);
-
-        /* Add selection listener */
-        getSelectionModel().addListSelectionListener(myListener);
+        new CategoryListener();
     }
 
     /**
@@ -381,8 +376,9 @@ public class TransactionCategoryTable
 
         /* If we have a changed category */
         if (!Difference.isEqual(myParent, theParent)) {
-            /* Store new category */
-            myParent = theCategories.findItemById(myParent.getId());
+            if (myParent != null) {
+                myParent = theCategories.findItemById(myParent.getId());
+            }
             selectParent(myParent);
         }
 
@@ -523,7 +519,16 @@ public class TransactionCategoryTable
             /* Access builders */
             theCategoryMenuBuilder = theSelectButton.getMenuBuilder();
             theCategoryMenuBuilder.addChangeListener(this);
+
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theSelectButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, this);
+            theNewButton.addActionListener(this);
             theActiveCategory.addChangeListener(this);
+            theActiveCategory.addActionListener(this);
+
+            /* Add selection listener */
+            getSelectionModel().addListSelectionListener(this);
         }
 
         @Override
@@ -573,8 +578,10 @@ public class TransactionCategoryTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the new button */
-            if (theNewButton.equals(o)) {
+            /* Handle actions */
+            if ((theActiveCategory.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 

@@ -205,6 +205,15 @@ public class LoanCategoryPanel
         }
     }
 
+    @Override
+    protected void buildGoToMenu() {
+        LoanCategory myItem = getItem();
+        LoanCategoryType myType = myItem.getCategoryType();
+        LoanCategory myParent = myItem.getParentCategory();
+        buildGoToEvent(myType);
+        buildGoToEvent(myParent);
+    }
+
     /**
      * Category Listener.
      */

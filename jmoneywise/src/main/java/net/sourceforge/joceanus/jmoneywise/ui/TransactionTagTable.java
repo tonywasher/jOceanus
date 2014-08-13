@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jprometheus.ui.JDataTableModel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
+import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 
 /**
@@ -196,14 +197,10 @@ public class TransactionTagTable
         theFieldMgr = theView.getFieldMgr();
         setFieldMgr(theFieldMgr);
 
-        /* Create listener */
-        TransactionTagListener myListener = new TransactionTagListener();
-
         /* Build the Update set and entries */
         theUpdateSet = pUpdateSet;
         theTransactionTagEntry = theUpdateSet.registerType(MoneyWiseDataType.TRANSTAG);
         setUpdateSet(theUpdateSet);
-        theUpdateSet.addChangeListener(myListener);
 
         /* Create the table model */
         theModel = new TransactionTagTableModel(this);
@@ -228,13 +225,11 @@ public class TransactionTagTable
         /* Create a Tag panel */
         theActiveTag = new TransactionTagPanel(theFieldMgr, theUpdateSet, theError);
         thePanel.add(theActiveTag);
-        theActiveTag.addChangeListener(myListener);
 
         /* Create new button */
         theNewButton = new JButton(NLS_NEW);
         theNewButton.setVerticalTextPosition(AbstractButton.CENTER);
         theNewButton.setHorizontalTextPosition(AbstractButton.LEFT);
-        theNewButton.addActionListener(myListener);
 
         /* Create a dummy filter panel */
         theFilterPanel = new JPanel();
@@ -243,8 +238,8 @@ public class TransactionTagTable
         theFilterPanel.add(theNewButton);
         theFilterPanel.add(Box.createRigidArea(new Dimension(CategoryPanel.STRUT_WIDTH, 0)));
 
-        /* Add selection listener */
-        getSelectionModel().addListSelectionListener(myListener);
+        /* Create listener */
+        new TransactionTagListener();
     }
 
     /**
@@ -412,6 +407,19 @@ public class TransactionTagTable
      */
     private final class TransactionTagListener
             implements ActionListener, ChangeListener, ListSelectionListener {
+        /**
+         * Constructor.
+         */
+        private TransactionTagListener() {
+            /* Listen to correct events */
+            theUpdateSet.addChangeListener(this);
+            theNewButton.addActionListener(this);
+            theActiveTag.addChangeListener(this);
+            theActiveTag.addActionListener(this);
+
+            /* Add selection listener */
+            getSelectionModel().addListSelectionListener(this);
+        }
 
         @Override
         public void stateChanged(final ChangeEvent pEvent) {
@@ -448,8 +456,10 @@ public class TransactionTagTable
             /* Access source */
             Object o = pEvent.getSource();
 
-            /* If this is the new button */
-            if (theNewButton.equals(o)) {
+            /* Handle actions */
+            if ((theActiveTag.equals(o))
+                && (pEvent instanceof ActionDetailEvent)) {
+                cascadeActionEvent((ActionDetailEvent) pEvent);
             }
         }
 

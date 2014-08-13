@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.event.PopupMenuListener;
@@ -210,7 +211,7 @@ public class JScrollButton<T>
      * Constructor.
      */
     public JScrollButton() {
-        this(null);
+        this(null, ArrowIcon.DOWN);
     }
 
     /**
@@ -218,13 +219,34 @@ public class JScrollButton<T>
      * @param pText the fixed text.
      */
     public JScrollButton(final String pText) {
-        super(ArrowIcon.DOWN);
+        this(pText, ArrowIcon.DOWN);
+    }
+
+    /**
+     * Constructor.
+     * @param pIcon the icon.
+     */
+    public JScrollButton(final Icon pIcon) {
+        this("", pIcon);
+    }
+
+    /**
+     * Constructor.
+     * @param pText the fixed text.
+     * @param pIcon the icon
+     */
+    private JScrollButton(final String pText,
+                          final Icon pIcon) {
+        super(pIcon);
         setVerticalTextPosition(AbstractButton.CENTER);
         setHorizontalTextPosition(AbstractButton.LEFT);
         theMenuBuilder = new JScrollMenuBuilder<T>(this);
         theText = pText;
         fireOnClose = false;
-        setText(theText);
+        if ((theText != null)
+            && (theText.length() > 0)) {
+            setText(theText);
+        }
     }
 
     /**

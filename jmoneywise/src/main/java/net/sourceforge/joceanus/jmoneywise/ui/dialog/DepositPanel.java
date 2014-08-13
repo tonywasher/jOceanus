@@ -435,6 +435,17 @@ public class DepositPanel
     }
 
     @Override
+    protected void buildGoToMenu() {
+        Deposit myItem = getItem();
+        DepositCategory myCategory = myItem.getCategory();
+        Payee myParent = myItem.getParent();
+        AccountCurrency myCurrency = myItem.getDepositCurrency();
+        buildGoToEvent(myCategory);
+        buildGoToEvent(myParent);
+        buildGoToEvent(myCurrency);
+    }
+
+    @Override
     public void setItem(final Deposit pItem) {
         /* Update the rates */
         theRates.setDeposit(pItem);

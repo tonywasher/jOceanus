@@ -37,14 +37,21 @@ import net.sourceforge.joceanus.jmetis.field.JFieldSet;
 import net.sourceforge.joceanus.jmetis.field.JFieldSet.FieldUpdate;
 import net.sourceforge.joceanus.jmoneywise.JMoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
+import net.sourceforge.joceanus.jmoneywise.data.AssetBase;
+import net.sourceforge.joceanus.jmoneywise.data.CategoryBase;
+import net.sourceforge.joceanus.jmoneywise.data.TaxYear;
+import net.sourceforge.joceanus.jmoneywise.data.TransactionTag;
+import net.sourceforge.joceanus.jmoneywise.ui.MainTab;
 import net.sourceforge.joceanus.jprometheus.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.data.DataList;
+import net.sourceforge.joceanus.jprometheus.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.JOceanusException;
 import net.sourceforge.joceanus.jtethys.event.ActionDetailEvent;
 import net.sourceforge.joceanus.jtethys.event.JEnableWrapper.JEnablePanel;
 import net.sourceforge.joceanus.jtethys.event.JEventPanel;
+import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -101,6 +108,11 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * The Item Actions.
      */
     private final ItemEditActions theEditActions;
+
+    /**
+     * The GoToMenuBuilder.
+     */
+    private JScrollMenuBuilder<ActionDetailEvent> theGoToBuilder;
 
     /**
      * The Item.
@@ -195,8 +207,9 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
      * Layout the panel.
      */
     protected void layoutPanel() {
-        add(theMainPanel);
+        /* Layout the panel */
         add(theItemActions);
+        add(theMainPanel);
         add(theEditActions);
 
         /* Set visibility */
@@ -446,6 +459,74 @@ public abstract class DataItemPanel<T extends DataItem<MoneyWiseDataType> & Comp
 
         /* Note status has changed */
         fireStateChanged();
+    }
+
+    /**
+     * Process goTo request.
+     * @param pEvent the goTo request event
+     */
+    protected void processGoToRequest(final ActionDetailEvent pEvent) {
+        cascadeActionEvent(pEvent);
+    }
+
+    /**
+     * Build goTo menu.
+     * @param pBuilder the menu builder
+     */
+    protected void declareGoToMenuBuilder(final JScrollMenuBuilder<ActionDetailEvent> pBuilder) {
+        theGoToBuilder = pBuilder;
+    }
+
+    /**
+     * Build goTo menu.
+     */
+    protected void buildGoToMenu() {
+        /* Default empty implementation */
+    }
+
+    /**
+     * Build a GoTo entry.
+     * @param pItem the item
+     */
+    protected void buildGoToEvent(final DataItem<MoneyWiseDataType> pItem) {
+        /* Ignore null items */
+        if (pItem == null) {
+            return;
+        }
+
+        /* set default values */
+        int myId = -1;
+        String myName = null;
+
+        /* Handle differing items */
+        if (pItem instanceof StaticData) {
+            StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) pItem;
+            myId = MainTab.ACTION_VIEWSTATIC;
+            myName = myStatic.getName();
+        } else if (pItem instanceof AssetBase) {
+            AssetBase<?> myAccount = (AssetBase<?>) pItem;
+            myId = MainTab.ACTION_VIEWACCOUNT;
+            myName = myAccount.getName();
+        } else if (pItem instanceof CategoryBase) {
+            CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) pItem;
+            myId = MainTab.ACTION_VIEWCATEGORY;
+            myName = myCategory.getName();
+        } else if (pItem instanceof TaxYear) {
+            TaxYear myYear = (TaxYear) pItem;
+            myId = MainTab.ACTION_VIEWTAXYEAR;
+            myName = myYear.getTaxYear().toString();
+        } else if (pItem instanceof TransactionTag) {
+            TransactionTag myTag = (TransactionTag) pItem;
+            myId = MainTab.ACTION_VIEWTAG;
+            myName = myTag.getName();
+        }
+
+        /* Add a prefix */
+        myName = pItem.getItemType().toString() + ": " + myName;
+
+        /* Build the item */
+        ActionDetailEvent myEvent = new ActionDetailEvent(this, ActionEvent.ACTION_PERFORMED, myId, pItem);
+        theGoToBuilder.addItem(myEvent, myName);
     }
 
     /**
