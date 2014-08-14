@@ -205,62 +205,62 @@ public class EncryptionGenerator {
         }
 
         /* We need a new Field so handle each case individually */
-        if (String.class == pClass) {
+        if (String.class.equals(pClass)) {
             return new EncryptedString(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Short.class == pClass) {
+        if (Short.class.equals(pClass)) {
             return new EncryptedShort(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Integer.class == pClass) {
+        if (Integer.class.equals(pClass)) {
             return new EncryptedInteger(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Long.class == pClass) {
+        if (Long.class.equals(pClass)) {
             return new EncryptedLong(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Boolean.class == pClass) {
+        if (Boolean.class.equals(pClass)) {
             return new EncryptedBoolean(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Date.class == pClass) {
+        if (Date.class.equals(pClass)) {
             return new EncryptedDate(theCipherSet, theFormatter, pEncrypted);
         }
-        if (char[].class == pClass) {
+        if (char[].class.equals(pClass)) {
             return new EncryptedCharArray(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Float.class == pClass) {
+        if (Float.class.equals(pClass)) {
             return new EncryptedFloat(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Double.class == pClass) {
+        if (Double.class.equals(pClass)) {
             return new EncryptedDouble(theCipherSet, theFormatter, pEncrypted);
         }
 
         /* Handle BigInteger classes */
-        if (BigInteger.class == pClass) {
+        if (BigInteger.class.equals(pClass)) {
             return new EncryptedBigInteger(theCipherSet, theFormatter, pEncrypted);
         }
-        if (BigDecimal.class == pClass) {
+        if (BigDecimal.class.equals(pClass)) {
             return new EncryptedBigDecimal(theCipherSet, theFormatter, pEncrypted);
         }
 
         /* Handle decimal instances */
-        if (JDateDay.class == pClass) {
+        if (JDateDay.class.equals(pClass)) {
             return new EncryptedDateDay(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JMoney.class == pClass) {
+        if (JMoney.class.equals(pClass)) {
             return new EncryptedMoney(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JUnits.class == pClass) {
+        if (JUnits.class.equals(pClass)) {
             return new EncryptedUnits(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JRate.class == pClass) {
+        if (JRate.class.equals(pClass)) {
             return new EncryptedRate(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JPrice.class == pClass) {
+        if (JPrice.class.equals(pClass)) {
             return new EncryptedPrice(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JDilution.class == pClass) {
+        if (JDilution.class.equals(pClass)) {
             return new EncryptedDilution(theCipherSet, theFormatter, pEncrypted);
         }
-        if (JRatio.class == pClass) {
+        if (JRatio.class.equals(pClass)) {
             return new EncryptedRatio(theCipherSet, theFormatter, pEncrypted);
         }
 

@@ -151,12 +151,12 @@ public class HelpPage
 
         /* Check for equality */
         boolean isEqual = (theName == null)
-                ? myPage.getName() != null
-                : theName.equals(myPage.getName());
+                                           ? myPage.getName() != null
+                                           : theName.equals(myPage.getName());
         if (isEqual) {
             isEqual = (theHtml == null)
-                    ? myPage.getHtml() != null
-                    : theHtml.equals(myPage.getHtml());
+                                       ? myPage.getHtml() != null
+                                       : theHtml.equals(myPage.getHtml());
         }
         return isEqual;
     }
@@ -179,7 +179,7 @@ public class HelpPage
         int result;
 
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

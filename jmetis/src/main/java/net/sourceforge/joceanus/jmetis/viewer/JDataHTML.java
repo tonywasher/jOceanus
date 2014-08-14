@@ -420,22 +420,22 @@ public final class JDataHTML {
             if ((myField.isValueSetField())
                 && (myValues != null)) {
                 myValue = myValueCtl.skipField(myField)
-                        ? JDataFieldValue.SKIP
-                        : myValues.getValue(myField);
+                                                       ? JDataFieldValue.SKIP
+                                                       : myValues.getValue(myField);
             } else {
                 myValue = myDetail.getFieldValue(myField);
             }
 
             /* Skip value if required */
-            if (myValue == JDataFieldValue.SKIP) {
+            if (myValue.equals(JDataFieldValue.SKIP)) {
                 continue;
             }
 
             /* Start the field */
             myEntries.append(HTML_ROWCLSSTART);
             myEntries.append(isOdd
-                    ? CLASS_ODDROW
-                    : CLASS_EVENROW);
+                                  ? CLASS_ODDROW
+                                  : CLASS_EVENROW);
             myEntries.append(HTML_ROWCLSEND);
             myEntries.append(HTML_CELLSTART);
             myEntries.append(myField.getName());
@@ -545,8 +545,8 @@ public final class JDataHTML {
         /* Build a div section */
         myBuffer.append("<div class=\"");
         myBuffer.append(pDifference.isValueChanged()
-                ? CLASS_CHANGED
-                : CLASS_SECCHANGED);
+                                                    ? CLASS_CHANGED
+                                                    : CLASS_SECCHANGED);
         myBuffer.append(HTML_ROWCLSEND);
 
         /* Add value and reformat */
@@ -639,8 +639,8 @@ public final class JDataHTML {
         /* Format the row */
         myBuild.append(HTML_ROWCLSSTART);
         myBuild.append(isOdd
-                ? CLASS_ODDROW
-                : CLASS_EVENROW);
+                            ? CLASS_ODDROW
+                            : CLASS_EVENROW);
         myBuild.append(HTML_ROWCLSEND);
 
         /* Format the key */
@@ -768,8 +768,8 @@ public final class JDataHTML {
             /* Format the row */
             myResults.append(HTML_ROWCLSSTART);
             myResults.append(isOdd
-                    ? CLASS_ODDROW
-                    : CLASS_EVENROW);
+                                  ? CLASS_ODDROW
+                                  : CLASS_EVENROW);
             myResults.append(HTML_ROWCLSEND);
 
             /* Add the stack trace */

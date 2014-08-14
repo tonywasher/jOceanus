@@ -227,7 +227,7 @@ public class ErrorPanel
         @Override
         public void actionPerformed(final ActionEvent evt) {
             /* If this event relates to the Clear box */
-            if (evt.getSource() == theClearButton) {
+            if (theClearButton.equals(evt.getSource())) {
                 /* Clear the error */
                 clearErrors();
             }

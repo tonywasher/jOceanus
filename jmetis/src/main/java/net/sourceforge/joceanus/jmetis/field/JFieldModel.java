@@ -149,7 +149,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
         Object myValue = pItem.getFieldValue(theField);
 
         /* If we are skipping the field */
-        if (myValue == JDataFieldValue.SKIP) {
+        if (JDataFieldValue.SKIP.equals(myValue)) {
             /* Set to null */
             myValue = null;
         }
@@ -262,8 +262,8 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          */
         protected String getEditString() {
             return (isError)
-                    ? theError
-                    : theEdit;
+                            ? theError
+                            : theEdit;
         }
 
         /**

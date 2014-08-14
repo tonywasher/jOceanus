@@ -188,7 +188,7 @@ public abstract class ScmRepository<R extends ScmRepository<R>>
     @Override
     public int compareTo(final R pThat) {
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

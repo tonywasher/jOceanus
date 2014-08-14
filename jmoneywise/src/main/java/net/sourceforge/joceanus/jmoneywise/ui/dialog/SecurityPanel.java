@@ -111,7 +111,7 @@ public class SecurityPanel
     /**
      * Closed Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * SecurityPrice Table.

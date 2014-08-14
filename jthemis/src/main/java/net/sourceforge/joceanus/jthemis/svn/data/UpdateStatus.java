@@ -95,22 +95,22 @@ public class UpdateStatus
         }
         if (FIELD_PSTATUS.equals(pField)) {
             SVNStatusType myStatus = theStatus.getPropertiesStatus();
-            return (myStatus != SVNStatusType.STATUS_NORMAL)
-                    ? myStatus.toString()
-                    : JDataFieldValue.SKIP;
+            return myStatus.equals(SVNStatusType.STATUS_NORMAL)
+                                                               ? JDataFieldValue.SKIP
+                                                               : myStatus.toString();
         }
         if (FIELD_KIND.equals(pField)) {
             return theStatus.getKind().toString();
         }
         if (FIELD_COPYFROM.equals(pField)) {
             return theStatus.isCopied()
-                    ? theStatus.getCopyFromURL()
-                    : JDataFieldValue.SKIP;
+                                       ? theStatus.getCopyFromURL()
+                                       : JDataFieldValue.SKIP;
         }
         if (FIELD_COPYREV.equals(pField)) {
             return theStatus.isCopied()
-                    ? theStatus.getCopyFromRevision().getNumber()
-                    : JDataFieldValue.SKIP;
+                                       ? theStatus.getCopyFromRevision().getNumber()
+                                       : JDataFieldValue.SKIP;
         }
 
         /* Unknown */

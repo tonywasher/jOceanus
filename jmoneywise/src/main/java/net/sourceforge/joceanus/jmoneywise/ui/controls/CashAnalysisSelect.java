@@ -351,7 +351,7 @@ public class CashAnalysisSelect
                 JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
 
                 /* If this is the active category */
-                if (myBucket.equals(myCurrent)) {
+                if (myCategory.equals(myCurrent)) {
                     /* Record it */
                     myActive = myItem;
                 }

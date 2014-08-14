@@ -145,7 +145,7 @@ public class GitRepository
     @Override
     public int compareTo(final GitRepository pThat) {
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

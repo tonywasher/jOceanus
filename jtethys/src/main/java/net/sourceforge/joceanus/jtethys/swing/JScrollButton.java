@@ -505,16 +505,6 @@ public class JScrollButton<T>
          * Constructor.
          * @param pButton the button
          * @param pItem the item
-         */
-        private ItemAction(final JScrollButton<T> pButton,
-                           final T pItem) {
-            this(pButton, pItem, pItem.toString());
-        }
-
-        /**
-         * Constructor.
-         * @param pButton the button
-         * @param pItem the item
          * @param pName the name
          */
         private ItemAction(final JScrollButton<T> pButton,

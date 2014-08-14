@@ -378,7 +378,7 @@ public final class PayeeBucket
     @Override
     public int compareTo(final PayeeBucket pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

@@ -471,7 +471,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

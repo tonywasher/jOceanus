@@ -169,33 +169,33 @@ public class JDataFormatter {
         Class<?> myClass = pValue.getClass();
 
         /* Handle Native classes */
-        if (myClass == String.class) {
+        if (String.class.equals(myClass)) {
             return (String) pValue;
         }
-        if (myClass == Boolean.class) {
+        if (Boolean.class.equals(myClass)) {
             return ((Boolean) pValue)
                                      ? "true"
                                      : "false";
         }
-        if (myClass == Short.class) {
+        if (Short.class.equals(myClass)) {
             return ((Short) pValue).toString();
         }
-        if (myClass == Integer.class) {
+        if (Integer.class.equals(myClass)) {
             return ((Integer) pValue).toString();
         }
-        if (myClass == Long.class) {
+        if (Long.class.equals(myClass)) {
             return ((Long) pValue).toString();
         }
-        if (myClass == Float.class) {
+        if (Float.class.equals(myClass)) {
             return ((Float) pValue).toString();
         }
-        if (myClass == Double.class) {
+        if (Double.class.equals(myClass)) {
             return ((Double) pValue).toString();
         }
-        if (myClass == BigInteger.class) {
+        if (BigInteger.class.equals(myClass)) {
             return ((BigInteger) pValue).toString();
         }
-        if (myClass == BigDecimal.class) {
+        if (BigDecimal.class.equals(myClass)) {
             return ((BigDecimal) pValue).toString();
         }
 
@@ -210,27 +210,27 @@ public class JDataFormatter {
         }
 
         /* Handle Native array classes */
-        if (myClass == byte[].class) {
+        if (byte[].class.equals(myClass)) {
             return DataConverter.bytesToHexString((byte[]) pValue);
         }
-        if (myClass == char[].class) {
+        if (char[].class.equals(myClass)) {
             return new String((char[]) pValue);
         }
 
         /* Handle date classes */
-        if (myClass == Date.class) {
+        if (Date.class.equals(myClass)) {
             return theDateFormatter.formatDate((Date) pValue);
         }
-        if (myClass == Calendar.class) {
+        if (Calendar.class.equals(myClass)) {
             return theDateFormatter.formatCalendarDay((Calendar) pValue);
         }
-        if (myClass == LocalDate.class) {
+        if (LocalDate.class.equals(myClass)) {
             return theDateFormatter.formatLocalDate((LocalDate) pValue);
         }
-        if (myClass == JDateDay.class) {
+        if (JDateDay.class.equals(myClass)) {
             return theDateFormatter.formatDateDay((JDateDay) pValue);
         }
-        if (myClass == JDateDayRange.class) {
+        if (JDateDayRange.class.equals(myClass)) {
             return theDateFormatter.formatDateDayRange((JDateDayRange) pValue);
         }
 
@@ -264,67 +264,67 @@ public class JDataFormatter {
      */
     public <T> T parseValue(final String pSource,
                             final Class<T> pClass) {
-        if (pClass == Boolean.class) {
+        if (Boolean.class.equals(pClass)) {
             return pClass.cast(Boolean.parseBoolean(pSource));
         }
-        if (pClass == Short.class) {
+        if (Short.class.equals(pClass)) {
             return pClass.cast(Short.parseShort(pSource));
         }
-        if (pClass == Integer.class) {
+        if (Integer.class.equals(pClass)) {
             return pClass.cast(Integer.parseInt(pSource));
         }
-        if (pClass == Long.class) {
+        if (Long.class.equals(pClass)) {
             return pClass.cast(Long.parseLong(pSource));
         }
-        if (pClass == Float.class) {
+        if (Float.class.equals(pClass)) {
             return pClass.cast(Float.parseFloat(pSource));
         }
-        if (pClass == Double.class) {
+        if (Double.class.equals(pClass)) {
             return pClass.cast(Double.parseDouble(pSource));
         }
-        if (pClass == BigInteger.class) {
+        if (BigInteger.class.equals(pClass)) {
             return pClass.cast(new BigInteger(pSource));
         }
-        if (pClass == BigDecimal.class) {
+        if (BigDecimal.class.equals(pClass)) {
             return pClass.cast(new BigDecimal(pSource));
         }
-        if (pClass == Date.class) {
+        if (Date.class.equals(pClass)) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseDate(pSource));
         }
-        if (pClass == JDateDay.class) {
+        if (JDateDay.class.equals(pClass)) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseDateDay(pSource));
         }
-        if (pClass == Calendar.class) {
+        if (Calendar.class.equals(pClass)) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseCalendarDay(pSource));
         }
-        if (pClass == LocalDate.class) {
+        if (LocalDate.class.equals(pClass)) {
             /* Parse the date */
             return pClass.cast(theDateFormatter.parseLocalDate(pSource));
         }
-        if (pClass == JPrice.class) {
+        if (JPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.parsePriceValue(pSource));
         }
-        if (pClass == JMoney.class) {
+        if (JMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.parseMoneyValue(pSource));
         }
-        if (pClass == JRate.class) {
+        if (JRate.class.equals(pClass)) {
             /* Parse the rate */
             return pClass.cast(theDecimalParser.parseRateValue(pSource));
         }
-        if (pClass == JUnits.class) {
+        if (JUnits.class.equals(pClass)) {
             /* Parse the units */
             return pClass.cast(theDecimalParser.parseUnitsValue(pSource));
         }
-        if (pClass == JDilution.class) {
+        if (JDilution.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseDilutionValue(pSource));
         }
-        if (pClass == JRatio.class) {
+        if (JRatio.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
@@ -341,27 +341,27 @@ public class JDataFormatter {
      */
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClass) {
-        if (pClass == JPrice.class) {
+        if (JPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
         }
-        if (pClass == JMoney.class) {
+        if (JMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource));
         }
-        if (pClass == JRate.class) {
+        if (JRate.class.equals(pClass)) {
             /* Parse the rate */
             return pClass.cast(theDecimalParser.createRateFromDouble(pSource));
         }
-        if (pClass == JUnits.class) {
+        if (JUnits.class.equals(pClass)) {
             /* Parse the units */
             return pClass.cast(theDecimalParser.createUnitsFromDouble(pSource));
         }
-        if (pClass == JDilution.class) {
+        if (JDilution.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createDilutionFromDouble(pSource));
         }
-        if (pClass == JRatio.class) {
+        if (JRatio.class.equals(pClass)) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
@@ -380,11 +380,11 @@ public class JDataFormatter {
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
                             final Class<T> pClass) {
-        if (pClass == JPrice.class) {
+        if (JPrice.class.equals(pClass)) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
         }
-        if (pClass == JMoney.class) {
+        if (JMoney.class.equals(pClass)) {
             /* Parse the money */
             return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }

@@ -510,7 +510,7 @@ public abstract class PreferenceSet
         /* Access as Enum preference */
         @SuppressWarnings("unchecked")
         EnumPreference<E> myEnumPref = (EnumPreference<E>) myPref;
-        if (myEnumPref.theClass != pClass) {
+        if (!myEnumPref.theClass.equals(pClass)) {
             throw new IllegalArgumentException(ERROR_INVALID
                                                + pName);
         }

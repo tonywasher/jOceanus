@@ -62,6 +62,7 @@ import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType;
 import net.sourceforge.joceanus.jmoneywise.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jmoneywise.ui.controls.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionCategoryPanel;
+import net.sourceforge.joceanus.jmoneywise.ui.dialog.TransactionCategoryPanel.CategoryType;
 import net.sourceforge.joceanus.jmoneywise.views.View;
 import net.sourceforge.joceanus.jprometheus.ui.ErrorPanel;
 import net.sourceforge.joceanus.jprometheus.ui.JDataTable;
@@ -957,110 +958,6 @@ public class TransactionCategoryTable
 
                 /* Ensure active item is visible */
                 myBuilder.showItem(myActive);
-            }
-        }
-    }
-
-    /**
-     * Category Type.
-     */
-    public enum CategoryType {
-        /**
-         * Income.
-         */
-        INCOME,
-
-        /**
-         * Expense.
-         */
-        EXPENSE,
-
-        /**
-         * Totals.
-         */
-        TOTALS,
-
-        /**
-         * SubTotal.
-         */
-        SUBTOTAL,
-
-        /**
-         * Singular.
-         */
-        SINGULAR,
-
-        /**
-         * StockXfer.
-         */
-        STOCKXFER,
-
-        /**
-         * Transfer.
-         */
-        XFER;
-
-        /**
-         * Determine type.
-         * @param pCategory the transaction category
-         * @return the category type
-         */
-        public static CategoryType determineType(final TransactionCategory pCategory) {
-            return determineType(pCategory.getCategoryType());
-        }
-
-        /**
-         * Determine type.
-         * @param pType the transaction category type
-         * @return the category type
-         */
-        public static CategoryType determineType(final TransactionCategoryType pType) {
-            /* Access class */
-            TransactionCategoryClass myClass = pType.getCategoryClass();
-
-            /* Handle Totals */
-            if (myClass.isTotals()) {
-                return TOTALS;
-            }
-
-            /* Handle SubTotals */
-            if (myClass.isSubTotal()) {
-                return SUBTOTAL;
-            }
-
-            /* Handle Singular */
-            if (myClass.isSingular()) {
-                return SUBTOTAL;
-            }
-
-            /* Handle Income */
-            if (myClass.isIncome()) {
-                return INCOME;
-            }
-
-            /* Handle Transfer */
-            if (myClass.isTransfer()) {
-                return myClass.isStockTransfer()
-                                                ? STOCKXFER
-                                                : XFER;
-            }
-
-            /* Must be expense */
-            return EXPENSE;
-        }
-
-        /**
-         * Is this type changeable?
-         * @return true/false
-         */
-        private boolean isChangeable() {
-            switch (this) {
-                case TOTALS:
-                case XFER:
-                case SINGULAR:
-                    return false;
-                default:
-                    return true;
             }
         }
     }

@@ -359,7 +359,6 @@ public class JFieldElement<T extends JFieldSetItem> {
 
             /* Set maximum size and alignment */
             setMaximumSize(myComponent.getMaximumSize());
-            // setMinimumSize(myComponent.getMaximumSize());
             if (myComponent instanceof JTextField) {
                 JTextField myField = (JTextField) myComponent;
                 myLabel.setHorizontalAlignment(myField.getHorizontalAlignment());

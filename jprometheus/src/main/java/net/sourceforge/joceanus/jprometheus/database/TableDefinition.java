@@ -76,6 +76,11 @@ public class TableDefinition {
     protected static final String QUOTE_STRING = "\"";
 
     /**
+     * The Descending string.
+     */
+    protected static final String STR_DESC = " DESC";
+
+    /**
      * The Buffer length.
      */
     private static final int BUFFER_LEN = 1000;
@@ -1133,7 +1138,7 @@ public class TableDefinition {
             myBuilder.append(myDef.getColumnName());
             myBuilder.append(QUOTE_STRING);
             if (myDef.getSortOrder() == SortOrder.DESCENDING) {
-                myBuilder.append(" DESC");
+                myBuilder.append(STR_DESC);
             }
             myFirst = false;
         }
@@ -1333,7 +1338,7 @@ public class TableDefinition {
                     myBuilder.append(myDef.getColumnName());
                     myBuilder.append(QUOTE_STRING);
                     if (myDef.getSortOrder() == SortOrder.DESCENDING) {
-                        myBuilder.append(" DESC");
+                        myBuilder.append(STR_DESC);
                     }
                 }
             } else {
@@ -1342,7 +1347,7 @@ public class TableDefinition {
                 myBuilder.append(myDef.getColumnName());
                 myBuilder.append(QUOTE_STRING);
                 if (myDef.getSortOrder() == SortOrder.DESCENDING) {
-                    myBuilder.append(" DESC");
+                    myBuilder.append(STR_DESC);
                 }
             }
 

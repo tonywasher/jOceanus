@@ -269,8 +269,8 @@ public class JDecimal
             return 0;
         }
         return (theValue < 0)
-                ? -1
-                : 1;
+                             ? -1
+                             : 1;
     }
 
     /**
@@ -587,8 +587,8 @@ public class JDecimal
     public JDecimal max(final JDecimal pValue) {
         /* return the BigDecimal value */
         return (compareTo(pValue) < 0)
-                ? pValue
-                : this;
+                                      ? pValue
+                                      : this;
     }
 
     /**
@@ -599,8 +599,8 @@ public class JDecimal
     public JDecimal min(final JDecimal pValue) {
         /* return the BigDecimal value */
         return (compareTo(pValue) > 0)
-                ? pValue
-                : this;
+                                      ? pValue
+                                      : this;
     }
 
     /**
@@ -972,7 +972,7 @@ public class JDecimal
     @Override
     public int compareTo(final JDecimal pThat) {
         /* Handle trivial case */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
 
@@ -985,8 +985,8 @@ public class JDecimal
                 return 0;
             }
             return (theValue < pThat.theValue)
-                    ? -1
-                    : 1;
+                                              ? -1
+                                              : 1;
         }
 
         /* Compare integral values */
@@ -994,8 +994,8 @@ public class JDecimal
                       - pThat.getIntegral();
         if (myDiff != 0) {
             return (myDiff < 0)
-                    ? -1
-                    : 1;
+                               ? -1
+                               : 1;
         }
 
         /* Access fractional parts */
@@ -1014,8 +1014,8 @@ public class JDecimal
                  - mySecond;
         if (myDiff != 0) {
             return (myDiff < 0)
-                    ? -1
-                    : 1;
+                               ? -1
+                               : 1;
         }
 
         /* Equal to all intents and purposes */

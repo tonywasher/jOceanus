@@ -371,7 +371,8 @@ public class Backup {
                                      final double arg1) throws SVNException {
             /* If this is a step */
             SVNAdminEventAction myAction = pEvent.getAction();
-            if ((myAction == SVNAdminEventAction.REVISION_DUMPED) || (myAction == SVNAdminEventAction.REVISION_LOADED)) {
+            if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
+                || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
                 /* Set steps done value */
                 theTask.setStepsDone((int) pEvent.getRevision());
             }

@@ -102,7 +102,7 @@ public final class LoanCategoryBucket
     @Override
     public int compareTo(final AccountCategoryBucket<Loan, LoanCategory> pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

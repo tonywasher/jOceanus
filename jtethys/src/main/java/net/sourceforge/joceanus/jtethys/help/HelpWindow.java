@@ -238,7 +238,7 @@ public class HelpWindow
     @Override
     public void hyperlinkUpdate(final HyperlinkEvent e) {
         /* Ignore non-activated events */
-        if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+        if (!e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
             return;
         }
         /* If this is a Frame hyper link event */

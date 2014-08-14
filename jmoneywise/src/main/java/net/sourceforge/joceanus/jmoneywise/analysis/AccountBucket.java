@@ -365,7 +365,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     @Override
     public int compareTo(final AccountBucket<T> pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

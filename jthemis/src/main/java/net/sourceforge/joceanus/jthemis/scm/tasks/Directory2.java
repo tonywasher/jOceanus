@@ -278,7 +278,7 @@ public final class Directory2 {
             /* If we successfully deleted the files */
             if (pException == null) {
                 /* If this is not the base directory */
-                if (theBase.equals(pDir.getFileName().toString())) {
+                if (theBase.equals(pDir.getFileName())) {
                     /* Delete the directory */
                     removeFile(pDir);
                 }

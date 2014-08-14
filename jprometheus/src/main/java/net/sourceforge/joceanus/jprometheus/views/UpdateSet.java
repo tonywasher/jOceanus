@@ -87,7 +87,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* If the field is an entry handle specially */
-        if (pField.getAnchor() == theLocalFields) {
+        if (theLocalFields.equals(pField.getAnchor())) {
             /* Obtain the entry */
             return findEntryValue(pField.getName());
         }

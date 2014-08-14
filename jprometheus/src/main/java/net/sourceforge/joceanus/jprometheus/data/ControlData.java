@@ -208,7 +208,7 @@ public class ControlData
     @Override
     public int compareTo(final ControlData pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

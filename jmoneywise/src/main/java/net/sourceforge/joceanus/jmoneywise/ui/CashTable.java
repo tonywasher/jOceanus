@@ -685,7 +685,7 @@ public class CashTable
                 case COLUMN_CLOSED:
                     return pCash.isClosed();
                 case COLUMN_ACTIVE:
-                    pCash.isActive();
+                    return pCash.isActive();
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pCash.getLatest();
                     return (myTran == null)

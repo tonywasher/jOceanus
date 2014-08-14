@@ -186,14 +186,12 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
      * @param pError the error panel
      * @param pItemType the item type
      * @param pListClass the list class
-     * @param pItemClass the item class
      */
     public StaticDataTable(final DataControl<?, E> pControl,
                            final UpdateSet<E> pUpdateSet,
                            final ErrorPanel pError,
                            final E pItemType,
-                           final Class<L> pListClass,
-                           final Class<T> pItemClass) {
+                           final Class<L> pListClass) {
         /* Record the passed details */
         theError = pError;
         theClass = pListClass;

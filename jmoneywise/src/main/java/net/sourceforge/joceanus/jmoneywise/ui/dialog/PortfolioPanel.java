@@ -91,12 +91,12 @@ public class PortfolioPanel
     /**
      * Closed Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * TaxFree Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
      * Constructor.

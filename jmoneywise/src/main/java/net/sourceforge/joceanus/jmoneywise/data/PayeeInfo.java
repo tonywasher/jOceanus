@@ -174,7 +174,7 @@ public class PayeeInfo
     @Override
     public int compareTo(final PayeeInfo pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

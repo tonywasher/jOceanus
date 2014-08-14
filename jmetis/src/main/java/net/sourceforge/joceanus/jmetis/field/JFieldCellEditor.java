@@ -67,6 +67,12 @@ import net.sourceforge.joceanus.jtethys.swing.JScrollButton.JScrollMenuBuilder;
  */
 public class JFieldCellEditor {
     /**
+     * private constructor.
+     */
+    private JFieldCellEditor() {
+    }
+
+    /**
      * Empty string.
      */
     private static final String STR_EMPTY = "";
@@ -290,7 +296,7 @@ public class JFieldCellEditor {
         /**
          * The state.
          */
-        private final DefaultIconButtonState<T> theState;
+        private final transient DefaultIconButtonState<T> theState;
 
         /**
          * The selection Listener.
@@ -495,7 +501,7 @@ public class JFieldCellEditor {
         /**
          * The menu Builder.
          */
-        private final JScrollMenuBuilder<T> theMenuBuilder;
+        private final transient JScrollMenuBuilder<T> theMenuBuilder;
 
         /**
          * The point at which the editor is active.

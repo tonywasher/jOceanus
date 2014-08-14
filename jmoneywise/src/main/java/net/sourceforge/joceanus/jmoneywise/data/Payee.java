@@ -505,7 +505,7 @@ public class Payee
     @Override
     public int compareTo(final Payee pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

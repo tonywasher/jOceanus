@@ -111,7 +111,7 @@ public class JDateDayRange
     @Override
     public int compareTo(final JDateDayRange that) {
         /* Handle the trivial cases */
-        if (this == that) {
+        if (this.equals(that)) {
             return 0;
         }
         if (that == null) {
@@ -160,12 +160,12 @@ public class JDateDayRange
     public String toString() {
         /* Build range description */
         String myFormat = (theStart == null)
-                ? DESC_UNBOUNDED
-                : theStart.toString();
+                                            ? DESC_UNBOUNDED
+                                            : theStart.toString();
         myFormat += DESC_LINK;
         myFormat += (theEnd == null)
-                ? DESC_UNBOUNDED
-                : theEnd.toString();
+                                    ? DESC_UNBOUNDED
+                                    : theEnd.toString();
 
         /* return the format */
         return myFormat;

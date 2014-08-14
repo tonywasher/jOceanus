@@ -102,7 +102,7 @@ public final class CashCategoryBucket
     @Override
     public int compareTo(final AccountCategoryBucket<Cash, CashCategory> pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

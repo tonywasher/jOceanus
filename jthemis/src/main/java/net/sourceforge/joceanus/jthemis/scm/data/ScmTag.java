@@ -165,7 +165,7 @@ public abstract class ScmTag<T extends ScmTag<T, B, C, R>, B extends ScmBranch<B
         int iCompare;
 
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

@@ -110,7 +110,7 @@ public class LoanPanel
     /**
      * Closed Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * Constructor.

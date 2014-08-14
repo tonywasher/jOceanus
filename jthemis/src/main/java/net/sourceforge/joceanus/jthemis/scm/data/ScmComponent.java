@@ -159,7 +159,7 @@ public abstract class ScmComponent<C extends ScmComponent<C, R>, R extends ScmRe
         int iCompare;
 
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

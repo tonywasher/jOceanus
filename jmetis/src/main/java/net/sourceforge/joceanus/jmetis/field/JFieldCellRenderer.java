@@ -257,7 +257,7 @@ public final class JFieldCellRenderer {
         /**
          * IconState.
          */
-        private final IconButtonState<T> theState;
+        private final transient IconButtonState<T> theState;
 
         /**
          * Constructor.

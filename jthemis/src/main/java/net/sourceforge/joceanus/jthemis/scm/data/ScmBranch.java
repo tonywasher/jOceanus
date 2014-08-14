@@ -325,7 +325,7 @@ public abstract class ScmBranch<B extends ScmBranch<B, C, R>, C extends ScmCompo
     @Override
     public int compareTo(final B pThat) {
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

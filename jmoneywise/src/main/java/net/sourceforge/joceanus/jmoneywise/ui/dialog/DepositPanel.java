@@ -111,17 +111,17 @@ public class DepositPanel
     /**
      * Closed Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theClosedState;
 
     /**
      * TaxFree Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theTaxFreeState;
 
     /**
      * Gross Button Field.
      */
-    private final ComplexIconButtonState<Boolean, Boolean> theGrossState;
+    private final transient ComplexIconButtonState<Boolean, Boolean> theGrossState;
 
     /**
      * DepositRate Table.

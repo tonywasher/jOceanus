@@ -828,7 +828,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {
@@ -1193,7 +1193,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         AssetBase<?> myDebit = getDebit();
 
         /* Check credit and debit accounts */
-        return ((myCredit != null) && myCredit.isClosed()) || ((myDebit != null) && myDebit.isClosed());
+        return ((myCredit != null) && myCredit.isClosed())
+               || ((myDebit != null) && myDebit.isClosed());
     }
 
     /**
@@ -1203,7 +1204,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public boolean isCategoryClass(final TransactionCategoryClass pClass) {
         /* Check for match */
-        return getCategoryClass() == pClass;
+        return getCategoryClass().equals(pClass);
     }
 
     /**

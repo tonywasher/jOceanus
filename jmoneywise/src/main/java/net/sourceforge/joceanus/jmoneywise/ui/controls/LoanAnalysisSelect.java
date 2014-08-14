@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -311,6 +312,10 @@ public class LoanAnalysisSelect
             /* Create a simple map for top-level categories */
             Map<String, JScrollMenu> myMap = new HashMap<String, JScrollMenu>();
 
+            /* Record active item */
+            LoanCategory myCurrent = theState.getCategory();
+            JMenuItem myActive = null;
+
             /* Loop through the available category values */
             Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
             while (myIterator.hasNext()) {
@@ -343,8 +348,17 @@ public class LoanAnalysisSelect
 
                 /* Create a new JMenuItem and add it to the popUp */
                 LoanCategory myCategory = myBucket.getAccountCategory();
-                theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+                JMenuItem myItem = theCategoryMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+
+                /* If this is the active category */
+                if (myCategory.equals(myCurrent)) {
+                    /* Record it */
+                    myActive = myItem;
+                }
             }
+
+            /* Ensure active item is visible */
+            theCategoryMenuBuilder.showItem(myActive);
         }
 
         /**

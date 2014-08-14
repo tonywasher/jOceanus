@@ -447,7 +447,7 @@ public class JDataItem {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent pEvent) {
             /* If this is an activated event */
-            if (pEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            if (pEvent.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 if (pEvent instanceof HTMLFrameHyperlinkEvent) {
                     HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) pEvent;
                     HTMLDocument doc = (HTMLDocument) theEditor.getDocument();

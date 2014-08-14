@@ -309,7 +309,7 @@ public final class SvnComponent
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file not existing */
-            if (myCode != SVNErrorCode.FS_NOT_FOUND) {
+            if (!myCode.equals(SVNErrorCode.FS_NOT_FOUND)) {
                 throw new JThemisIOException("Unable to read File URL", e);
             }
 
@@ -454,7 +454,7 @@ public final class SvnComponent
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Ignore if not a directory and if it is top-level */
-                if (pEntry.getKind() != SVNNodeKind.DIR) {
+                if (!SVNNodeKind.DIR.equals(pEntry.getKind())) {
                     return;
                 }
                 if (pEntry.getRelativePath().length() == 0) {

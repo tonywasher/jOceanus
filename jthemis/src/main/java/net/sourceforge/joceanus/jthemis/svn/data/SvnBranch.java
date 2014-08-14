@@ -483,7 +483,7 @@ public final class SvnBranch
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Ignore if not a directory and if it is top-level */
-                if (pEntry.getKind() != SVNNodeKind.DIR) {
+                if (!SVNNodeKind.DIR.equals(pEntry.getKind())) {
                     return;
                 }
                 if (pEntry.getRelativePath().length() == 0) {

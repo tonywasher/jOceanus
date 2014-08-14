@@ -571,7 +571,7 @@ public final class ControlKey
     @Override
     public int compareTo(final ControlKey pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

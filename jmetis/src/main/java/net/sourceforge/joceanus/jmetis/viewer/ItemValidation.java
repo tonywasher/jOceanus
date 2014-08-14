@@ -96,8 +96,8 @@ public class ItemValidation
      */
     public ErrorElement getFirst() {
         return (theErrors.isEmpty())
-                ? null
-                : theErrors.get(0);
+                                    ? null
+                                    : theErrors.get(0);
     }
 
     /**
@@ -128,7 +128,7 @@ public class ItemValidation
         while (myIterator.hasNext()) {
             /* Access the element and return if related to required field */
             ErrorElement myCurr = myIterator.next();
-            if (myCurr.getField() == pField) {
+            if (myCurr.getField().equals(pField)) {
                 return true;
             }
         }
@@ -150,7 +150,7 @@ public class ItemValidation
             ErrorElement myCurr = myIterator.next();
 
             /* If the field matches */
-            if (myCurr.getField() == pField) {
+            if (myCurr.getField().equals(pField)) {
                 /* Add the error */
                 addErrorText(myErrors, myCurr.getError());
             }
@@ -186,7 +186,7 @@ public class ItemValidation
             boolean bFound = false;
             for (JDataField field : aFields) {
                 /* If we have found the field note it and break loop */
-                if (field == myField) {
+                if (field.equals(myField)) {
                     bFound = true;
                     break;
                 }
@@ -221,8 +221,8 @@ public class ItemValidation
                                      final String pError) {
         /* Add relevant prefix */
         pBuilder.append((pBuilder.length() == 0)
-                ? "<html>"
-                : "<br>");
+                                                ? "<html>"
+                                                : "<br>");
 
         /* Add error text */
         pBuilder.append(pError);

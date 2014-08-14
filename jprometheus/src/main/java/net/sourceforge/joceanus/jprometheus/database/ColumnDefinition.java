@@ -55,6 +55,36 @@ import net.sourceforge.joceanus.jtethys.decimal.JUnits;
  */
 public abstract class ColumnDefinition {
     /**
+     * Open bracket.
+     */
+    private static final String STR_OPNBRK = "(";
+
+    /**
+     * Close bracket.
+     */
+    private static final String STR_CLSBRK = ")";
+
+    /**
+     * Comma.
+     */
+    private static final String STR_COMMA = ",";
+
+    /**
+     * Decimal length.
+     */
+    private static final String STR_NUMLEN = "18";
+
+    /**
+     * Standard Decimal length.
+     */
+    private static final String STR_STDDECLEN = "4";
+
+    /**
+     * Decimal length.
+     */
+    private static final String STR_XTRADECLEN = "6";
+
+    /**
      * Table Definition.
      */
     private final TableDefinition theTable;
@@ -373,11 +403,11 @@ public abstract class ColumnDefinition {
             pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(theReference);
             pBuilder.append(TableDefinition.QUOTE_STRING);
-            pBuilder.append('(');
+            pBuilder.append(STR_OPNBRK);
             pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(DataItem.FIELD_ID.getName());
             pBuilder.append(TableDefinition.QUOTE_STRING);
-            pBuilder.append(')');
+            pBuilder.append(STR_CLSBRK);
         }
 
         @Override
@@ -897,9 +927,9 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.STRING));
-            pBuilder.append("(");
+            pBuilder.append(STR_OPNBRK);
             pBuilder.append(theLength);
-            pBuilder.append(')');
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**
@@ -1012,7 +1042,11 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
-            pBuilder.append("(18,4)");
+            pBuilder.append(STR_OPNBRK);
+            pBuilder.append(STR_NUMLEN);
+            pBuilder.append(STR_COMMA);
+            pBuilder.append(STR_STDDECLEN);
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**
@@ -1073,7 +1107,11 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
-            pBuilder.append("(18,4)");
+            pBuilder.append(STR_OPNBRK);
+            pBuilder.append(STR_NUMLEN);
+            pBuilder.append(STR_COMMA);
+            pBuilder.append(STR_STDDECLEN);
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**
@@ -1123,7 +1161,11 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
-            pBuilder.append("(18,4)");
+            pBuilder.append(STR_OPNBRK);
+            pBuilder.append(STR_NUMLEN);
+            pBuilder.append(STR_COMMA);
+            pBuilder.append(STR_STDDECLEN);
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**
@@ -1173,7 +1215,11 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
-            pBuilder.append("(18,6)");
+            pBuilder.append(STR_OPNBRK);
+            pBuilder.append(STR_NUMLEN);
+            pBuilder.append(STR_COMMA);
+            pBuilder.append(STR_XTRADECLEN);
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**
@@ -1223,7 +1269,11 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.DECIMAL));
-            pBuilder.append("(18,6)");
+            pBuilder.append(STR_OPNBRK);
+            pBuilder.append(STR_NUMLEN);
+            pBuilder.append(STR_COMMA);
+            pBuilder.append(STR_XTRADECLEN);
+            pBuilder.append(STR_CLSBRK);
         }
 
         /**

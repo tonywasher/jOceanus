@@ -334,7 +334,7 @@ public abstract class TaxYearBase<T extends TaxYearBase<T>>
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

@@ -261,7 +261,7 @@ public abstract class DatabaseTable<T extends DataItem<E> & Comparable<? super T
     protected void setFieldValue(final T pItem,
                                  final JDataField pField) throws JOceanusException {
         /* Switch on field id */
-        if (pField == DataItem.FIELD_ID) {
+        if (pField.equals(DataItem.FIELD_ID)) {
             theTable.setIntegerValue(DataItem.FIELD_ID, pItem.getId());
         }
     }

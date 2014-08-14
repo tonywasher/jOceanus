@@ -267,16 +267,14 @@ public class StaticDataPanel<E extends Enum<E> & JDataFieldEnum>
      * Add static panel.
      * @param pItemType the type of the list
      * @param pListClass the class of the list
-     * @param pItemClass the class of the items
      * @param <L> the list type
      * @param <S> the static class
      * @param <T> the data type
      */
     public <L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface> void addStatic(final E pItemType,
-                                                                                                                              final Class<L> pListClass,
-                                                                                                                              final Class<T> pItemClass) {
+                                                                                                                              final Class<L> pListClass) {
         /* Create the new panel */
-        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pItemType, pListClass, pItemClass);
+        StaticDataTable<L, T, S, E> myPanel = new StaticDataTable<L, T, S, E>(theControl, theUpdateSet, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
         myPanel.addChangeListener(theListener);

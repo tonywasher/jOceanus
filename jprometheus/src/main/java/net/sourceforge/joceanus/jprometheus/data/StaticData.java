@@ -380,7 +380,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     @Override
     public int compareTo(final T pThat) {
         /* Handle the trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {

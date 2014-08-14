@@ -289,7 +289,7 @@ public final class SvnWorkingCopy
     @Override
     public int compareTo(final SvnWorkingCopy pThat) {
         /* Handle trivial cases */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {
@@ -355,7 +355,8 @@ public final class SvnWorkingCopy
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file/directory exists but is not WC */
-            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
+            if (!myCode.equals(SVNErrorCode.WC_NOT_FILE)
+                && !myCode.equals(SVNErrorCode.WC_NOT_DIRECTORY)) {
                 throw new JThemisIOException("Unable to get status", e);
             }
 

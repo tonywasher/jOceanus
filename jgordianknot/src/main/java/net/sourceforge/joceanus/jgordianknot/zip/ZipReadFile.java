@@ -176,41 +176,32 @@ public class ZipReadFile
             return;
         }
 
-        /* Protect against exceptions */
-        try (FileInputStream myInFile = new FileInputStream(theZipFile);
-             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {
-            /* Reject this is the wrong security control */
-            if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
-                throw new JGordianLogicException("Password Hash does not match ZipFile Security.");
-            }
-
-            /* Store the hash and obtain the generator */
-            PasswordHash myHash = pHash;
-
-            /* Parse the decrypted header */
-            byte[] myBytes = myHash.decryptBytes(theHeader);
-            theContents = new ZipFileContents(DataConverter.byteArrayToString(myBytes));
-
-            /* Access the security details */
-            ZipFileEntry myHeader = theContents.getHeader();
-
-            /* Reject if the entry is not found */
-            if (myHeader == null) {
-                throw new JGordianDataException("Header record not found.");
-            }
-
-            /* Obtain encoded private/public keys */
-            byte[] myPublic = myHeader.getPublicKey();
-            byte[] myPrivate = myHeader.getPrivateKey();
-
-            /* Obtain the asymmetric key */
-            theAsymKey = myHash.deriveAsymmetricKey(myPrivate, myPublic);
-
-            /* Catch exceptions */
-        } catch (IOException e) {
-            throw new JGordianIOException("Exception reading header of Zip file", e);
+        /* Reject this is the wrong security control */
+        if (!Arrays.equals(pHash.getHashBytes(), theHashBytes)) {
+            throw new JGordianLogicException("Password Hash does not match ZipFile Security.");
         }
+
+        /* Store the hash and obtain the generator */
+        PasswordHash myHash = pHash;
+
+        /* Parse the decrypted header */
+        byte[] myBytes = myHash.decryptBytes(theHeader);
+        theContents = new ZipFileContents(DataConverter.byteArrayToString(myBytes));
+
+        /* Access the security details */
+        ZipFileEntry myHeader = theContents.getHeader();
+
+        /* Reject if the entry is not found */
+        if (myHeader == null) {
+            throw new JGordianDataException("Header record not found.");
+        }
+
+        /* Obtain encoded private/public keys */
+        byte[] myPublic = myHeader.getPublicKey();
+        byte[] myPrivate = myHeader.getPrivateKey();
+
+        /* Obtain the asymmetric key */
+        theAsymKey = myHash.deriveAsymmetricKey(myPrivate, myPublic);
     }
 
     /**
@@ -260,7 +251,7 @@ public class ZipReadFile
         /* Protect against exceptions */
         try {
             /* Check that entry belongs to this zip file */
-            if (pFile.getParent() != theContents) {
+            if (!pFile.getParent().equals(theContents)) {
                 throw new JGordianDataException("File does not belong to Zip file");
             }
 

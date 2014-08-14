@@ -662,7 +662,7 @@ public class JDateDay
     @Override
     public int compareTo(final JDateDay pThat) {
         /* Handle trivial compares */
-        if (this == pThat) {
+        if (this.equals(pThat)) {
             return 0;
         } else if (pThat == null) {
             return -1;
